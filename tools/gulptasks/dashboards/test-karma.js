@@ -26,11 +26,11 @@ async function testKarma() {
         'npx karma start ' +
         path.join('test', 'typescript-karma', 'karma-conf.js') +
         ' --tests ' +
-        path.join('test', 'typescript-karma', 'dashboards', '**', '*.ts')
+        path.join('Dashboards', '**', '*.js')
     );
 
     logLib.success('Karma tests successful');
 
 }
 
-gulp.task('dashboards/test-karma', testKarma);
+gulp.task('dashboards/test-karma', gulp.series('scripts', testKarma));
