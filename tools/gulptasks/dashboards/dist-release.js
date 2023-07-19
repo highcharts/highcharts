@@ -101,19 +101,22 @@ async function distRelease() {
     await processLib.exec(`git commit -m "v${release}"`, {
         cwd: distRepository
     });
-    await processLib.exec(`git tag v${release}`, {
-        cwd: distRepository
-    });
 
     // Do magic
 
     if (argv.dryrun) {
-        logLib.warn('Skipped \`git push origin --tags\`');
+        logLib.warn(`Skipped \`git tag v${release}\``);
         await processLib.exec('npm publish --access public --dry-run', {
             cwd: distRepository
         });
     } else {
+        await processLib.exec(`git tag v${release}`, {
+            cwd: distRepository
+        });
         // Play safe - do manually
+        // await processLib.exec('git push', {
+        //     cwd: distRepository
+        // });
         // await processLib.exec('git push origin --tags', {
         //     cwd: distRepository
         // });
