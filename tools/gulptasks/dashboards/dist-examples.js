@@ -19,10 +19,13 @@ const HELPME = `
 Highcharts Dashboards - Dist Examples Task
 ==========================================
 
+No options available. Just run it.
+
+Outdated:
 Requires demo.path to be set in git-ignore-me.properties. This should be set to the output folder of the highcharts-demo-manager frontend. Example: '../highcharts-demo-manager/frontend/tmp/';
 
 Resources:
-* https://github.com/highcharts/highcharts-demo-manager/tree/master/frontend
+* https://github.com/highcharts/highcharts-demo-manager/tree/master/frontend (internal)
 `;
 
 /* *
@@ -69,7 +72,7 @@ async function transformExampleDir(examplesDir) {
             newContent = [
                 '<link rel="stylesheet" type="text/css" href="./demo.css">',
                 newContent,
-                '<script src="demo.js"></script>'
+                '<script src="./demo.js"></script>'
             ].join('\n');
         }
 
