@@ -256,11 +256,4 @@ QUnit.test('hasOptionChanged() method', assert => {
 
     assert.ok(true, 'Should not throw an error.');
 
-    // TODO: add test case for #19203
-
-    // TODO: add test case for: https://jsfiddle.net/BlackLabel/j38f9420/
-    // plotOptions.line.pointStart and series.pointStart when 2 or more series
-    // are present
-
-
 });

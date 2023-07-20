@@ -76,7 +76,6 @@ import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
-import Options from '../Options';
 const {
     addEvent,
     arrayMax,
