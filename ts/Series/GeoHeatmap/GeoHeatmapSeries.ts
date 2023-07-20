@@ -691,17 +691,35 @@ class GeoHeatmapSeries extends MapSeries {
         e: PointerEvent,
         compareX?: boolean | undefined
     ): Point | undefined {
-        const chart = this.chart,
-            projection = chart.mapView?.projection;
-        chart.pointer.normalize(e);
+        const series = this,
+            chart = this.chart,
+            mapView = chart.mapView;
 
-        if (e.lon && e.lat && projection) {
-            return this.searchKDTree({
-                clientX: e.chartX,
-                lon: projection.options.name === 'Orthographic' ?
-                    normalizeLonValue(e.lon) : e.lon, // Loop for Ortho
-                lat: e.lat
-            }, compareX, e);
+        if (mapView && series.bounds) {
+            const topLeft = mapView.projectedUnitsToPixels({
+                    x: series.bounds.x1,
+                    y: series.bounds.y2
+                }),
+                bottomRight = mapView.projectedUnitsToPixels({
+                    x: series.bounds.x2,
+                    y: series.bounds.y1
+                });
+            chart.pointer.normalize(e);
+
+            if (
+                e.lon && e.lat &&
+                topLeft && bottomRight &&
+                e.chartX - chart.plotLeft > topLeft.x &&
+                e.chartX - chart.plotLeft < bottomRight.x &&
+                e.chartY - chart.plotTop > topLeft.y &&
+                e.chartY - chart.plotTop < bottomRight.y
+            ) {
+                return this.searchKDTree({
+                    clientX: e.chartX,
+                    lon: normalizeLonValue(e.lon),
+                    lat: e.lat
+                }, compareX, e);
+            }
         }
     }
 }
