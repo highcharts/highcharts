@@ -316,7 +316,7 @@ class PieSeries extends Series {
                 if (!chart.styledMode) {
                     pointAttr = series.pointAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.state
                     );
                 }
 
