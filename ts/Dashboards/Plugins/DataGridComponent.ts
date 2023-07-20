@@ -209,7 +209,7 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
-        this.syncHandlers = this.handleSyncOptions(DataGridSyncHandlers);
+        this.filterAndAssignSyncOptions(DataGridSyncHandlers);
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers
@@ -348,6 +348,7 @@ class DataGridComponent extends Component {
         }
         await super.update(options);
         if (this.dataGrid) {
+            this.filterAndAssignSyncOptions(DataGridSyncHandlers);
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });
@@ -500,7 +501,7 @@ namespace DataGridComponent {
 
         type: 'DataGrid';
         /**
-         * Generic options to adjust behavor and styling of the rendered data
+         * Generic options to adjust behavior and styling of the rendered data
          * grid.
          */
         dataGridOptions?: BaseDataGridOptions;
