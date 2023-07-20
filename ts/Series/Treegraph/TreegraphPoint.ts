@@ -21,7 +21,6 @@ import type TreegraphNode from './TreegraphNode';
 import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
@@ -105,7 +104,11 @@ class TreegraphPoint extends TreemapPoint {
             { width, height, shape, style } = btnOptions,
             padding = 2,
             chart = this.series.chart;
-        if (!point.shapeArgs) {
+        if (!point.shapeArgs || !this.visible) {
+            if (point.collapseButton) {
+                point.collapseButton.destroy();
+                delete point.collapseButton;
+            }
             return;
         }
 
@@ -147,40 +150,33 @@ class TreegraphPoint extends TreemapPoint {
                     },
                     style
                 ))
-                .add(parentGroup);
+                .add(parentGroup)
+                .attr({ opacity: 0 })
+                .animate({ opacity: 1 });
 
             (point.collapseButton.element as any).point = point;
 
             if (btnOptions.onlyOnHover && !point.collapsed) {
                 point.collapseButton.attr({ opacity: 0 });
             }
-
-            point.collapseButton.attr({
-                opacity: point.visible ? 1 : 0
-            });
         } else {
-            if (!point.node.children.length || !btnOptions.enabled) {
-                point.collapseButton.destroy();
-                delete point.collapseButton;
-            } else {
-                const { x, y } = this.getCollapseBtnPosition(btnOptions);
-                point.collapseButton
-                    .attr({
-                        text: point.collapsed ? '+' : '-',
-                        rotation: chart.inverted ? 90 : 0,
-                        rotationOriginX: width / 2,
-                        rotationOriginY: height / 2
-                    })
-                    .animate({
-                        x,
-                        y,
-                        opacity: point.visible && (
-                            !btnOptions.onlyOnHover ||
-                            point.state === 'hover' ||
-                            point.collapsed
-                        ) ? 1 : 0
-                    });
-            }
+            const { x, y } = this.getCollapseBtnPosition(btnOptions);
+            point.collapseButton
+                .attr({
+                    text: point.collapsed ? '+' : '-',
+                    rotation: chart.inverted ? 90 : 0,
+                    rotationOriginX: width / 2,
+                    rotationOriginY: height / 2
+                })
+                .animate({
+                    x,
+                    y,
+                    opacity: point.visible && (
+                        !btnOptions.onlyOnHover ||
+                        point.state === 'hover' ||
+                        point.collapsed
+                    ) ? 1 : 0
+                });
         }
     }
 
