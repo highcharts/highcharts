@@ -223,68 +223,50 @@
 
     // Locator chart frame logic
     function getMapFrame(chart, plotLeft, plotHeight, plotWidth, plotTop) {
-        const corners = [{
-            x: plotLeft,
-            y: plotTop
-        },
-        {
-            x: plotLeft,
-            y: plotTop + plotHeight
-        },
-        {
-            x: plotLeft + plotWidth,
-            y: plotTop + plotHeight
-        },
-        {
-            x: plotLeft + plotWidth,
-            y: plotTop
-        }
-        ];
+        const steps = 20;
 
-        const points = corners.map(corner => {
-            const [lon, lat] = Object.values(
-                chart.mapView.pixelsToLonLat(corner)
-            ).map((lonLat, i) =>
-                (i === 0 ?
-                    Math.min(179.9, Math.max(-179.9, lonLat)) :
-                    Math.min(90, Math.max(-90, lonLat)))
-            );
-            return [lon, lat];
-        });
-
-        function createPoints(startPoint, endPoint) {
-            const points = [];
-
-            // eslint-disable-next-line prefer-const
-            let [lon, lat] = startPoint;
-            const dif = endPoint[0] - startPoint[0];
-            const increment = dif / 10;
-
-            while (lon <= endPoint[0]) {
-                points.push([lon, lat]);
-                lon += increment;
+        function calculateEdge(xFunc, yFunc) {
+            const edgePoints = [];
+            for (let i = 0; i <= steps; i++) {
+                const x = xFunc(i),
+                    y = yFunc(i),
+                    lonLat = chart.mapView.pixelsToLonLat({
+                        x,
+                        y
+                    });
+                edgePoints.push([lonLat.lon, lonLat.lat]);
             }
-
-            return points;
+            return edgePoints;
         }
 
-        const [
-                leftTopPoint,
-                leftBottomPoint,
-                rightBottomPoint,
-                rightTopPoint
-            ] = points,
+        const topEdge = calculateEdge(
+                i => plotLeft + (i / steps) * plotWidth,
+                () => plotTop
+            ),
 
-            bottomPoints = createPoints(leftBottomPoint, rightBottomPoint),
+            bottomEdge = calculateEdge(
+                i => plotLeft + (i / steps) * plotWidth,
+                () => plotTop + plotHeight
+            ),
 
-            topPoints = createPoints(leftTopPoint, rightTopPoint).reverse(),
+            leftEdge = calculateEdge(
+                () => plotLeft,
+                i => plotTop + (i / steps) * plotHeight
+            ),
 
-            frame = [
-                leftTopPoint,
-                ...bottomPoints,
-                ...topPoints
+            rightEdge = calculateEdge(
+                () => plotLeft + plotWidth,
+                i => plotTop + (i / steps) * plotHeight
+            ),
+
+            rect = [
+                ...leftEdge,
+                ...bottomEdge,
+                ...rightEdge.reverse(),
+                ...topEdge.reverse()
             ];
-        return frame;
+
+        return rect;
     }
 
     // Get the main chart center
