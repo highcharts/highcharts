@@ -619,7 +619,8 @@ const ChartDefaults: ChartOptions = {
 
     /**
      * The button that appears after a selection zoom, allowing the user
-     * to reset zoom.
+     * to reset zoom. This option is deprecated in favor of
+     * [zooming](#chart.zooming).
      *
      * @since      2.2
      * @deprecated 10.2.1
@@ -636,7 +637,6 @@ const ChartDefaults: ChartOptions = {
          *         Relative to the chart
          *
          * @type      {Highcharts.ButtonRelativeToValue}
-         * @default   plot
          * @apioption chart.resetZoomButton.relativeTo
          */
 
@@ -656,9 +656,11 @@ const ChartDefaults: ChartOptions = {
          */
         theme: {
             /**
-             * @internal
+             * zIndex of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.theme.zIndex
              */
-            zIndex: 6
         },
 
         /**
@@ -674,29 +676,33 @@ const ChartDefaults: ChartOptions = {
          * @type {Highcharts.AlignObject}
          */
         position: {
-
             /**
              * The horizontal alignment of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.align
              */
-            align: 'right',
 
             /**
              * The horizontal offset of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.x
              */
-            x: -10,
 
             /**
              * The vertical alignment of the button.
              *
              * @type      {Highcharts.VerticalAlignValue}
-             * @default   top
              * @apioption chart.resetZoomButton.position.verticalAlign
              */
 
             /**
              * The vertical offset of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.y
              */
-            y: 10
         }
     },
 
