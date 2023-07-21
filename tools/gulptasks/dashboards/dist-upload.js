@@ -346,6 +346,15 @@ async function distUpload() {
         )
     });
 
+    logLib.warn('Uploading products.js...');
+    await uploadFile(
+        path.join(buildFolder, '..'),
+        path.join(buildFolder, '..', 'products.js'),
+        targetStorage,
+        bucket,
+        '.'
+    );
+
     const cdnVersionFolder = path.join(cdnFolder, release, '/');
 
     logLib.warn(`Uploading to ${cdnFolder}...`);

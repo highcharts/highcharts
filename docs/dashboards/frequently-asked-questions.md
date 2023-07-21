@@ -5,7 +5,7 @@ Frequently asked questions
 How to connect dataPool to the other components?
 ---------------------------------------------
 
-First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
+First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
 
 After that, you need to pass the connector to the component config, and that’s it.
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
