@@ -401,6 +401,17 @@ class GeoHeatmapSeries extends MapSeries {
     }
 
     /**
+     * Override translate method to not fire if not needed.
+     * @private
+     */
+    public translate(): void {
+        if (this.options.interpolation && this.image) {
+            return;
+        }
+        super.translate.apply(this, arguments);
+    }
+
+    /**
      * Overriding drawPoints original method to apply new features.
      * @private
      */
@@ -413,7 +424,10 @@ class GeoHeatmapSeries extends MapSeries {
             interpolation = seriesOptions.interpolation;
 
         if (interpolation && mapView && series.bounds) {
-            const {
+            const ctx = series.context || series.getContext(),
+                {
+                    canvas,
+                    colorAxis,
                     image,
                     chart,
                     points
@@ -432,231 +446,214 @@ class GeoHeatmapSeries extends MapSeries {
                     y: series.bounds.y1
                 });
 
-            if (topLeft && bottomRight) {
+            if (canvas && ctx && colorAxis && topLeft && bottomRight) {
                 const dimensions = {
-                        x: topLeft.x,
-                        y: topLeft.y,
-                        width: bottomRight.x - topLeft.x,
-                        height: bottomRight.y - topLeft.y
-                    },
-                    colorAxis = (
-                        chart.colorAxis &&
-                        chart.colorAxis[0]
-                    ),
-                    ctx = series.context || series.getContext(),
-                    canvas = series.canvas;
+                    x: topLeft.x,
+                    y: topLeft.y,
+                    width: bottomRight.x - topLeft.x,
+                    height: bottomRight.y - topLeft.y
+                };
 
-                if (canvas && ctx && colorAxis) {
-                    if (
-                        // Do not calculate new canvas if not necessary
-                        series.isDirtyCanvas ||
-                        // Calucate new canvas if data is dirty
-                        series.isDirtyData ||
-                        // Always calculate new canvas for Orthographic proj
-                        mapView.projection.options.name === 'Orthographic'
-                    ) {
-                        series.isDirtyCanvas = true;
-                        const canvasWidth = canvas.width = ~~(
-                                360 / colsize
-                            ) + 1,
-                            canvasHeight = canvas.height = ~~(
-                                180 / rowsize
-                            ) + 1,
-                            canvasArea = canvasWidth * canvasHeight,
-                            pixelData = new Uint8ClampedArray(
-                                canvasArea * 4
-                            ),
-                            colorFromPoint = (p: any): number[] => {
-                                const rgba = ((
-                                    colorAxis.toColor(
-                                        p.value ||
-                                        0,
-                                        pick(p)
-                                    ) as string)
-                                    .split(')')[0]
-                                    .split('(')[1]
-                                    .split(',')
-                                    .map((s): number => pick(
-                                        parseFloat(s),
-                                        parseInt(s, 10)
-                                    ))
-                                );
-                                rgba[3] = pick(rgba[3], 1.0) * 255;
-                                if (!defined(p.value) || !p.visible) {
-                                    rgba[3] = 0;
-                                }
-                                return rgba;
-                            };
-                        series.directTouch = false; // Needed for tooltip
-
-                        // First pixelData represents the geo coordinates
-                        for (let i = 0; i < points.length; i++) {
-                            const p = points[i],
-                                sourceArr = new Uint8ClampedArray(
-                                    colorFromPoint(p)
-                                ),
-                                { lon, lat } = p.options;
-
-                            if (isNumber(lon) && isNumber(lat)) {
-                                pixelData.set(
-                                    sourceArr,
-                                    scaledPointPos(
-                                        lon, lat, canvasWidth, canvasHeight,
-                                        colsize, rowsize
-                                    ) * 4
-                                );
-                            }
-                        }
-
-                        const blur = pick(series.options.interpolationBlur, 1),
-                            blurFactor = blur === 0 ? 1 : blur * 11;
-
-
-                        const upscaledWidth =
-                                ~~(canvasWidth * blurFactor),
-                            upscaledHeight =
-                                ~~(canvasHeight * blurFactor),
-                            projectedWidth = ~~dimensions.width,
-                            projectedHeight = ~~dimensions.height;
-
-                        canvas.width = upscaledWidth;
-                        canvas.height = upscaledHeight;
-
-                        const img =
-                            new ImageData(pixelData, canvasWidth, canvasHeight);
-
-                        // Next step is to upscale pixelData to big image to get
-                        // the blur on the interpolation
-
-                        ctx.putImageData(img, 0, 0);
-                        // Now we have an unscaled version of our ImageData
-                        // let's make the compositing mode to 'copy' so that
-                        // our next drawing op erases whatever was there
-                        // previously just like putImageData would have done
-                        ctx.globalCompositeOperation = 'copy';
-                        // Now we can draw ourself over ourself
-                        ctx.drawImage(
-                            canvas,
-                            0, 0, img.width, img.height, // Grab the ImageData
-                            0, 0, canvas.width, canvas.height // Scale it
-                        );
-
-                        // Add projection to upscaled ImageData
-                        const cartesianImageData = ctx.getImageData(
-                                0, 0, canvas.width, canvas.height
-                            ),
-                            projectedPixelData = getProjectedImageData(
-                                mapView,
-                                projectedWidth,
-                                projectedHeight,
-                                cartesianImageData,
-                                canvas,
-                                dimensions.x,
-                                dimensions.y
+                if (
+                    // Do not calculate new canvas if not necessary
+                    series.isDirtyCanvas ||
+                    // Calculate new canvas if data is dirty
+                    series.isDirtyData ||
+                    // Always calculate new canvas for Orthographic projection
+                    mapView.projection.options.name === 'Orthographic'
+                ) {
+                    series.isDirtyCanvas = true;
+                    const canvasWidth = canvas.width = ~~(360 / colsize) + 1,
+                        canvasHeight = canvas.height = ~~(180 / rowsize) + 1,
+                        canvasArea = canvasWidth * canvasHeight,
+                        pixelData = new Uint8ClampedArray(canvasArea * 4),
+                        colorFromPoint = (p: any): number[] => {
+                            const rgba = ((
+                                colorAxis.toColor(
+                                    p.value ||
+                                    0,
+                                    pick(p)
+                                ) as string)
+                                .split(')')[0]
+                                .split('(')[1]
+                                .split(',')
+                                .map((s): number => pick(
+                                    parseFloat(s),
+                                    parseInt(s, 10)
+                                ))
                             );
+                            rgba[3] = pick(rgba[3], 1.0) * 255;
+                            if (!defined(p.value) || !p.visible) {
+                                rgba[3] = 0;
+                            }
+                            return rgba;
+                        };
+                    series.directTouch = false; // Needed for tooltip
 
-                        const projectedImg = new ImageData(
-                            projectedPixelData,
-                            projectedWidth,
-                            projectedHeight
-                        );
-                        ctx.globalCompositeOperation = 'copy';
-                        canvas.width = projectedWidth;
-                        canvas.height = projectedHeight;
-                        ctx.putImageData(projectedImg, 0, 0);
+                    // First pixelData represents the geo coordinates
+                    for (let i = 0; i < points.length; i++) {
+                        const p = points[i],
+                            sourceArr = new Uint8ClampedArray(
+                                colorFromPoint(p)
+                            ),
+                            { lon, lat } = p.options;
+
+                        if (isNumber(lon) && isNumber(lat)) {
+                            pixelData.set(
+                                sourceArr,
+                                scaledPointPos(
+                                    lon, lat, canvasWidth, canvasHeight,
+                                    colsize, rowsize
+                                ) * 4
+                            );
+                        }
                     }
 
-                    if (image) {
-                        if (
-                            chart.renderer.globalAnimation &&
-                            chart.hasRendered
-                        ) {
-                            const startX = Number(
-                                    image.attr('x')
-                                ),
-                                startY = Number(
-                                    image.attr('y')
-                                ),
-                                startWidth = Number(
-                                    image.attr('width')
-                                ),
-                                startHeight = Number(
-                                    image.attr('height')
-                                );
+                    const blur = pick(series.options.interpolationBlur, 1),
+                        blurFactor = blur === 0 ? 1 : blur * 11;
 
-                            const step: AnimationStepCallbackFunction = (
-                                now,
-                                fx
-                            ): void => {
-                                image.attr({
-                                    x: (
-                                        startX + (
-                                            dimensions.x - startX
-                                        ) * fx.pos
-                                    ),
-                                    y: (
-                                        startY + (
-                                            dimensions.y - startY
-                                        ) * fx.pos
-                                    ),
-                                    width: (
-                                        startWidth + (
-                                            dimensions.width - startWidth
-                                        ) * fx.pos
-                                    ),
-                                    height: (
-                                        startHeight + (
-                                            dimensions.height - startHeight
-                                        ) * fx.pos
-                                    )
-                                });
+
+                    const upscaledWidth =
+                            ~~(canvasWidth * blurFactor),
+                        upscaledHeight =
+                            ~~(canvasHeight * blurFactor),
+                        projectedWidth = ~~dimensions.width,
+                        projectedHeight = ~~dimensions.height;
+
+                    canvas.width = upscaledWidth;
+                    canvas.height = upscaledHeight;
+
+                    const img =
+                        new ImageData(pixelData, canvasWidth, canvasHeight);
+
+                    // Next step is to upscale pixelData to big image to get
+                    // the blur on the interpolation
+
+                    ctx.putImageData(img, 0, 0);
+                    // Now we have an unscaled version of our ImageData
+                    // let's make the compositing mode to 'copy' so that
+                    // our next drawing op erases whatever was there
+                    // previously just like putImageData would have done
+                    ctx.globalCompositeOperation = 'copy';
+                    // Now we can draw ourself over ourself
+                    ctx.drawImage(
+                        canvas,
+                        0, 0, img.width, img.height, // Grab the ImageData
+                        0, 0, canvas.width, canvas.height // Scale it
+                    );
+
+                    // Add projection to upscaled ImageData
+                    const cartesianImageData = ctx.getImageData(
+                            0, 0, canvas.width, canvas.height
+                        ),
+                        projectedPixelData = getProjectedImageData(
+                            mapView,
+                            projectedWidth,
+                            projectedHeight,
+                            cartesianImageData,
+                            canvas,
+                            dimensions.x,
+                            dimensions.y
+                        );
+
+                    const projectedImg = new ImageData(
+                        projectedPixelData,
+                        projectedWidth,
+                        projectedHeight
+                    );
+                    ctx.globalCompositeOperation = 'copy';
+                    canvas.width = projectedWidth;
+                    canvas.height = projectedHeight;
+                    ctx.putImageData(projectedImg, 0, 0);
+                }
+
+                if (image) {
+                    if (chart.renderer.globalAnimation && chart.hasRendered) {
+                        const startX = Number(
+                                image.attr('x')
+                            ),
+                            startY = Number(
+                                image.attr('y')
+                            ),
+                            startWidth = Number(
+                                image.attr('width')
+                            ),
+                            startHeight = Number(
+                                image.attr('height')
+                            );
+
+                        const step: AnimationStepCallbackFunction = (
+                            now,
+                            fx
+                        ): void => {
+                            image.attr({
+                                x: (
+                                    startX + (
+                                        dimensions.x - startX
+                                    ) * fx.pos
+                                ),
+                                y: (
+                                    startY + (
+                                        dimensions.y - startY
+                                    ) * fx.pos
+                                ),
+                                width: (
+                                    startWidth + (
+                                        dimensions.width - startWidth
+                                    ) * fx.pos
+                                ),
+                                height: (
+                                    startHeight + (
+                                        dimensions.height - startHeight
+                                    ) * fx.pos
+                                )
+                            });
+                        };
+
+                        const animOptions = merge(
+                                animObject(chart.renderer.globalAnimation)),
+                            userStep = animOptions.step;
+
+                        animOptions.step =
+                            function (): void {
+                                if (userStep) {
+                                    userStep.apply(this, arguments);
+                                }
+                                step.apply(this, arguments);
                             };
 
-                            const animOptions = merge(
-                                    animObject(chart.renderer.globalAnimation)),
-                                userStep = animOptions.step;
-
-                            animOptions.step =
-                                function (): void {
-                                    if (userStep) {
-                                        userStep.apply(this, arguments);
-                                    }
-                                    step.apply(this, arguments);
-                                };
-
-                            image
-                                .attr(
-                                    merge(
-                                        { animator: 0 },
-                                        series.isDirtyCanvas ? {
-                                            href: canvas.toDataURL()
-                                        } : void 0
-                                    )
-                                )
-                                .animate({ animator: 1 }, animOptions);
-
-                        // When dragging or first rendering, animation is off
-                        } else {
-                            stop(image);
-
-                            image.attr(
+                        image
+                            .attr(
                                 merge(
-                                    dimensions,
+                                    { animator: 0 },
                                     series.isDirtyCanvas ? {
                                         href: canvas.toDataURL()
                                     } : void 0
                                 )
-                            );
-                        }
+                            )
+                            .animate({ animator: 1 }, animOptions);
+
+                    // When dragging or first rendering, animation is off
                     } else {
-                        series.image = chart.renderer.image(
-                            canvas.toDataURL()
-                        )
-                            .attr(dimensions)
-                            .add(series.group);
+                        stop(image);
+
+                        image.attr(
+                            merge(
+                                dimensions,
+                                series.isDirtyCanvas ? {
+                                    href: canvas.toDataURL()
+                                } : void 0
+                            )
+                        );
                     }
-                    series.isDirtyCanvas = false;
+                } else {
+                    series.image = chart.renderer.image(
+                        canvas.toDataURL()
+                    )
+                        .attr(dimensions)
+                        .add(series.group);
                 }
+                series.isDirtyCanvas = false;
             }
         } else {
             super.drawPoints.apply(series, arguments);
@@ -695,30 +692,48 @@ class GeoHeatmapSeries extends MapSeries {
             chart = this.chart,
             mapView = chart.mapView;
 
-        if (mapView && series.bounds) {
-            const topLeft = mapView.projectedUnitsToPixels({
-                    x: series.bounds.x1,
-                    y: series.bounds.y2
-                }),
-                bottomRight = mapView.projectedUnitsToPixels({
-                    x: series.bounds.x2,
-                    y: series.bounds.y1
-                });
-            chart.pointer.normalize(e);
-
+        if (
+            mapView &&
+            series.bounds &&
+            series.image &&
+            chart.tooltip &&
+            chart.tooltip.options.enabled
+        ) {
             if (
-                e.lon && e.lat &&
-                topLeft && bottomRight &&
-                e.chartX - chart.plotLeft > topLeft.x &&
-                e.chartX - chart.plotLeft < bottomRight.x &&
-                e.chartY - chart.plotTop > topLeft.y &&
-                e.chartY - chart.plotTop < bottomRight.y
+                // If user drags map do not build k-d-tree
+                chart.pointer.hasDragged === false &&
+                // If user zooms in/out map do not build k-d-tree
+                (
+                    series.image.attr('animator') as number <= 0.01 ||
+                    series.image.attr('animator') as number >= 0.99
+                )
             ) {
-                return this.searchKDTree({
-                    clientX: e.chartX,
-                    lon: normalizeLonValue(e.lon),
-                    lat: e.lat
-                }, compareX, e);
+                const topLeft = mapView.projectedUnitsToPixels({
+                        x: series.bounds.x1,
+                        y: series.bounds.y2
+                    }),
+                    bottomRight = mapView.projectedUnitsToPixels({
+                        x: series.bounds.x2,
+                        y: series.bounds.y1
+                    });
+                chart.pointer.normalize(e);
+
+                if (
+                    e.lon && e.lat &&
+                    topLeft && bottomRight &&
+                    e.chartX - chart.plotLeft > topLeft.x &&
+                    e.chartX - chart.plotLeft < bottomRight.x &&
+                    e.chartY - chart.plotTop > topLeft.y &&
+                    e.chartY - chart.plotTop < bottomRight.y
+                ) {
+                    return this.searchKDTree({
+                        clientX: e.chartX,
+                        lon: normalizeLonValue(e.lon),
+                        lat: e.lat
+                    }, compareX, e);
+                }
+            } else {
+                chart.tooltip.destroy();
             }
         }
     }
