@@ -1,7 +1,7 @@
-var defaultData = 'https://demo-live-data.highcharts.com/time-data.csv';
-var urlInput = document.getElementById('fetchURL');
-var pollingCheckbox = document.getElementById('enablePolling');
-var pollingInput = document.getElementById('pollingTime');
+const defaultData = 'https://demo-live-data.highcharts.com/time-data.csv';
+const urlInput = document.getElementById('fetchURL');
+const pollingCheckbox = document.getElementById('enablePolling');
+const pollingInput = document.getElementById('pollingTime');
 
 function createChart() {
     Highcharts.chart('container', {
@@ -15,7 +15,10 @@ function createChart() {
             announceNewData: {
                 enabled: true,
                 minAnnounceInterval: 15000,
-                announcementFormatter: function (allSeries, newSeries, newPoint) {
+                announcementFormatter: function (
+                    allSeries,
+                    newSeries,
+                    newPoint) {
                     if (newPoint) {
                         return 'New point added. Value: ' + newPoint.y;
                     }
@@ -39,7 +42,8 @@ urlInput.value = defaultData;
 
 // We recreate instead of using chart update to make sure the loaded CSV
 // and such is completely gone.
-pollingCheckbox.onchange = urlInput.onchange = pollingInput.onchange = createChart;
+pollingCheckbox.onchange = urlInput.onchange =
+   pollingInput.onchange = createChart;
 
 // Create the chart
 createChart();

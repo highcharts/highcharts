@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.1
+ * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2023 Highsoft AS
  *
@@ -81,7 +81,7 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
-.hc-dg-container {
+.highcharts-datagrid-container {
     position: relative;
     height: 100%;
     box-sizing: border-box;
@@ -89,21 +89,21 @@
     border: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.hc-dg-outer-container {
+.highcharts-datagrid-outer-container {
     position: absolute;
     width: 100%;
     bottom: 0;
-    overflow: scroll;
+    overflow: auto;
     z-index: 0;
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }
 
-.hc-dg-scroll-container {
+.highcharts-datagrid-scroll-container {
     height: 1000px;
 }
 
-.hc-dg-inner-container {
+.highcharts-datagrid-inner-container {
     display: flex;
     flex-direction: column;
     position: "-webkit-sticky";
@@ -112,7 +112,7 @@
     overflow: hidden;
 }
 
-.hc-dg-cell {
+.highcharts-datagrid-cell {
     display: flex;
     align-items: center;
     border-left: 1px solid var(--highcharts-neutral-color-20);
@@ -123,11 +123,11 @@
     box-sizing: border-box;
 }
 
-.hc-dg-cell:first-child {
+.highcharts-datagrid-cell:first-child {
     border-left: none;
 }
 
-.hc-dg-cell-input {
+.highcharts-datagrid-cell-input {
     width: calc(100% + 24px);
     margin: -8px -12px;
     padding: 0 10px;
@@ -137,25 +137,25 @@
     font: inherit;
 }
 
-.hc-dg-row {
+.highcharts-datagrid-row {
     display: flex;
     background: var(--highcharts-background-color);
     width: 100%;
 }
 
-.hc-dg-row:nth-child(even) {
+.highcharts-datagrid-row:nth-child(even) {
     background-color: var(--highcharts-neutral-color-3);
 }
 
-.hc-dg-row.hovered {
+.highcharts-datagrid-row.hovered {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.hc-dg-row:first-child .hc-dg-cell {
+.highcharts-datagrid-row:first-child .highcharts-datagrid-cell {
     border-top: none;
 }
 
-.hc-dg-column-header {
+.highcharts-datagrid-column-header {
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
@@ -167,17 +167,17 @@
     box-sizing: border-box;
 }
 
-.hc-dg-column-header:first-child {
+.highcharts-datagrid-column-header:first-child {
     border-left: none;
 }
 
-.hc-dg-column-headers {
+.highcharts-datagrid-column-headers {
     display: flex;
     background-color: var(--highcharts-neutral-color-5);
     width: 100%;
 }
 
-.hc-dg-col-resize-handle {
+.highcharts-datagrid-col-resize-handle {
     cursor: ew-resize;
     opacity: 0;
     background-color: var(--highcharts-highlight-color-100);
@@ -186,7 +186,7 @@
     width: 5px;
 }
 
-.hc-dg-col-resize-crosshair {
+.highcharts-datagrid-col-resize-crosshair {
     position: absolute;
     background-color: var(--highcharts-highlight-color-100);
     width: 3px;

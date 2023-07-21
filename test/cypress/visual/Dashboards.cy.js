@@ -1,7 +1,7 @@
 describe('Dashboards climate demo visual tests', () => {
     before(() => {
         cy.intercept('/**/*.csv').as('getData');
-        cy.visit('/dashboards/demos/climate');
+        cy.visit('/dashboards/demo/climate');
         cy.wait('@getData', {timeout: 100000}) // wait for data to be laoded
     })
 
@@ -22,7 +22,7 @@ describe('Dashboards climate demo visual tests', () => {
 
 describe('Test the rest', () => {
     const DEMOS_TO_VISUALLY_TEST = [
-        '/dashboards/demos/minimal'
+        '/dashboards/demo/minimal'
     ]
 
     for (const demo of DEMOS_TO_VISUALLY_TEST) {

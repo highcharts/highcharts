@@ -1,7 +1,7 @@
 // Bring in other forms of Highcharts
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
 const { PluginHandler } = Dashboards;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);

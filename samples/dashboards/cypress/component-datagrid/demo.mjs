@@ -1,9 +1,9 @@
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/es-modules/Dashboards/Plugins/DataGridPlugin.js';
+import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
 Highcharts.win.Highcharts = Highcharts;
 
@@ -23,14 +23,12 @@ Dashboards.board('container', {
             id: 'connector-1',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },
     gui: {
         layouts: [{
-            id: 'layout-1',
             rows: [{
                 cells: [{
                     id: 'dashboard-col-0'
@@ -53,7 +51,8 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 Food: 'x',
-                'Vitamin A': 'y'
+                'Vitamin A': 'y',
+                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
@@ -84,7 +83,8 @@ Dashboards.board('container', {
             sync: {
                 highlight: true,
                 extremes: true
-            }
+            },
+            visibleColumns: ['Food', 'Vitamin A']
         }
     ]
 }, true);

@@ -12,7 +12,13 @@ QUnit.test('Treegraph series',
                     }],
                     dataLabels: {
                         pointFormat: '{point.id}'
-                    }
+                    },
+                    levels: [{
+                        level: 2,
+                        marker: {
+                            symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                        }
+                    }]
                 }]
             }),
             series = chart.series[0];
@@ -47,6 +53,12 @@ QUnit.test('Treegraph series',
             series.data[1].dataLabel.visibility,
             'inherit',
             'Visible points should have visible data labels (#18891)'
+        );
+
+        assert.strictEqual(
+            series.points[1].graphic.element.nodeName,
+            'image',
+            'The SVG element of the second point should be an image (#19173)'
         );
     }
 );
