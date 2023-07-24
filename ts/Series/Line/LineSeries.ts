@@ -425,7 +425,7 @@ export default LineSeries;
  * A line series displays information as a series of data points connected by
  * straight line segments.
  *
- * @sample {highcharts} highcharts/demo/line-basic/
+ * @sample {highcharts} highcharts/demo/line-chart/
  *         Line chart
  * @sample {highstock} stock/demo/basic-line/
  *         Line chart
