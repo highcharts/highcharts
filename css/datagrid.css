@@ -93,7 +93,7 @@
     position: absolute;
     width: 100%;
     bottom: 0;
-    overflow: scroll;
+    overflow: auto;
     z-index: 0;
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);

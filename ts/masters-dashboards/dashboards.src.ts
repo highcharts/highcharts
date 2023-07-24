@@ -7,13 +7,16 @@
  * License: www.highcharts.com/license
  */
 
+
 'use strict';
+
 
 /* *
  *
  *  Imports
  *
  * */
+
 
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';
@@ -37,18 +40,38 @@ import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 
+
 /* *
  *
  *  Declarations
  *
  * */
 
+
 declare global {
-    interface Window {
-        Dashboards: typeof G;
+    interface Dashboards {
+        board: typeof Board.board;
+        boards: typeof Globals.boards;
+        merge: typeof Utilities.merge;
+        uniqueKey: typeof Utilities.uniqueKey;
+        win: typeof Globals.win;
+        Board: typeof Board;
+        Component: typeof Component;
+        ComponentRegistry: typeof ComponentRegistry;
+        DataConnector: typeof DataConnector;
+        DataCursor: typeof DataCursor;
+        DataModifier: typeof DataModifier;
+        DataPool: typeof DataPool;
+        DataTable: typeof DataTable;
+        PluginHandler: typeof PluginHandler;
+        Sync: typeof Sync;
     }
-    let Dashboards: typeof G;
+    interface Window {
+        Dashboards: Dashboards;
+    }
+    let Dashboards: Dashboards;
 }
+
 
 /* *
  *
@@ -56,7 +79,8 @@ declare global {
  *
  * */
 
-const G: AnyRecord = Globals;
+
+const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
 G.merge = Utilities.merge;
@@ -72,20 +96,24 @@ G.DataTable = DataTable;
 G.PluginHandler = PluginHandler;
 G.Sync = Sync;
 
+
 /* *
  *
  *  Classic Export
  *
  * */
 
+
 if (!G.win.Dashboards) {
     G.win.Dashboards = G;
 }
+
 
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default G;
