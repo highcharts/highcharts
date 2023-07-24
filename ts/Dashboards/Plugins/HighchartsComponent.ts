@@ -32,6 +32,8 @@ import type {
     Series,
     SeriesOptions
 } from './HighchartsTypes';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -551,7 +553,7 @@ class HighchartsComponent extends Component {
     ): void {
         const table = store.table,
             columnName = point.series.name,
-            rowNumber = point.x,
+            rowNumber = point.index,
             converter = new DataConverter(),
             valueToSet = converter.asNumber(point.y);
 
@@ -584,7 +586,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeries(): void {
-        // Heuristically create series from the store dataTable
+        // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
                 this.connector.table.modified.clone() :
@@ -602,7 +604,8 @@ class HighchartsComponent extends Component {
                     .modifyTable(this.presentationTable).modified;
             }
 
-            const table = this.presentationTable;
+            const table = this.presentationTable,
+                modifierOptions = table.getModifier()?.options;
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -656,9 +659,22 @@ class HighchartsComponent extends Component {
                     }
                 }
 
+                // Disable dragging on series, which were created out of a
+                // columns which are created by MathModifier.
+                const shouldBeDraggable = !(
+                    modifierOptions?.type == 'Math' &&
+                    (modifierOptions as MathModifierOptions)
+                    .columnFormulas?.some(
+                        (formula) => formula.column == seriesName
+                    )
+                );
+
                 return chart.addSeries({
                     name: seriesName,
-                    id: `${storeTableID}-series-${index}`
+                    id: `${storeTableID}-series-${index}`,
+                    dragDrop: {
+                        draggableY: shouldBeDraggable
+                    }
                 }, false);
             });
 
