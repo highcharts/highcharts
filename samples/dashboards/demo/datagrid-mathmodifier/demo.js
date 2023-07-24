@@ -62,9 +62,6 @@ Dashboards.board('container', {
                     type: 'line',
                     zooming: false
                 },
-                title: {
-                    text: 'Chart'
-                },
                 tooltip: {
                     shared: true,
                     split: true
@@ -81,14 +78,7 @@ Dashboards.board('container', {
             },
             sync: {
                 highlight: true
-            },
-            columns: {
-                // Disable Math column for editing
-                USD: {
-                    editable: false
-                }
-            },
-            editable: true
+            }
         }
     ]
 });

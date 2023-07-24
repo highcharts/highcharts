@@ -109,3 +109,11 @@ async function distMinify() {
 }
 
 gulp.task('dashboards/dist-minify', distMinify);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+module.exports = distMinify;

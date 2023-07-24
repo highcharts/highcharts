@@ -47,6 +47,7 @@ const DTS_FOLDERS = [
  */
 async function scriptsDTS() {
 
+    const fs = require('fs');
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
@@ -73,11 +74,24 @@ async function scriptsDTS() {
 
     logLib.success('Copied stand-alone DTS');
 
-    fsLib.copyAllFiles(
-        path.join(__dirname, 'scripts-dts/'),
-        bundleTargetFolder,
-        true
-    );
+    const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+
+    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolder, true);
+
+    const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
+
+    for (const bundleDtsFile of bundleDtsFiles) {
+        fs.writeFileSync(
+            path.join(
+                bundleTargetFolder,
+                path
+                    .relative(bundleDtsFolder, bundleDtsFile)
+                    .replace(/\.src\.d\.ts$/u, '.d.ts')
+            ),
+            fs.readFileSync(bundleDtsFile, 'utf8').replace(/\.src"/gu, '"')
+        );
+    }
+
     logLib.success('Created bundle DTS');
 
 }

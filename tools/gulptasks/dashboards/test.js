@@ -17,5 +17,8 @@ require('./test-dts.js');
 
 
 gulp.task('dashboards/test', gulp.series(
-    'dashboards/test-dts'
+    'dashboards/scripts',
+    'dashboards/lint',
+    'dashboards/test-dts',
+    'dashboards/test-karma'
 ));
