@@ -44,7 +44,7 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
 ```
 
 The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). The null value keeps columns selectively out of the chart.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). The null value keeps columns selectively out of the chart. If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
@@ -59,7 +59,7 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
 @import url("https://code.highcharts.com/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
-If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options)
+If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options). By default, some columns have this option disabled, if the data was created by [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier).
 
 ### KPI Component
 Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
