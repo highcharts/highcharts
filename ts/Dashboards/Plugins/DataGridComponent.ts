@@ -20,16 +20,24 @@
  * */
 
 import type Cell from '../Layout/Cell';
-import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataTable from '../../Data/DataTable';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
+import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import U from '../../Core/Utilities.js';
-const { createElement, merge, uniqueKey } = U;
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
+import U from '../../Core/Utilities.js';
+import DataConnectorType from '../../Data/Connectors/DataConnectorType';
+
+const {
+    diffObjects,
+    merge,
+    uniqueKey
+} = U;
 
 /* *
  *
@@ -39,7 +47,7 @@ import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /**
  * DataGrid component for Highcharts Dashboards.
- * @internal
+ * @private
  */
 class DataGridComponent extends Component {
 
@@ -49,13 +57,13 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public static syncHandlers = DataGridSyncHandlers;
 
-    /** @internal */
+    /** @private */
     public static DataGridConstructor?: typeof DataGrid;
 
-    /** @internal */
+    /** @private */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -83,17 +91,17 @@ class DataGridComponent extends Component {
      * be replaced with the {@link DataGridComponent.DataGridOptions#onUpdate}
      * option.
      *
-     * @internal
+     * @private
      *
      * @param e
      * Related keyboard event of the change.
      *
-     * @param store
+     * @param connector
      * Relate store of the change.
      */
     public static onUpdate(
         e: KeyboardEvent,
-        store: Component.ConnectorTypes
+        connector: Component.ConnectorTypes
     ): void {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
@@ -117,7 +125,7 @@ class DataGridComponent extends Component {
                     dataTableRowIndex !== void 0 &&
                     columnName !== void 0
                 ) {
-                    const table = store.table.modified;
+                    const table = connector.table;
 
                     if (table) {
                         let valueToSet = converter
@@ -138,7 +146,7 @@ class DataGridComponent extends Component {
         }
     }
 
-    /** @internal */
+    /** @private */
     public static fromJSON(
         json: DataGridComponent.ClassJSON,
         cell: Cell
@@ -168,15 +176,15 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public dataGrid?: DataGrid;
-    /** @internal */
-    public dataGridOptions: Partial<Options>;
-    /** @internal */
+    /** @private */
+    public dataGridOptions: Partial<BaseDataGridOptions>;
+    /** @private */
     public options: DataGridComponent.ComponentOptions;
-    /** @internal */
+    /** @private */
     public sync: Component['sync'];
-    /** @internal */
+    /** @private */
     private connectorListeners: Array<Function>;
 
     /* *
@@ -210,12 +218,51 @@ class DataGridComponent extends Component {
             this.syncHandlers
         );
 
-        this.dataGridOptions = this.options.dataGridOptions || ({} as any);
+        this.dataGridOptions = this.options.dataGridOptions || ({} as BaseDataGridOptions);
 
         this.innerResizeTimeouts = [];
 
+
+        this.on('afterSetConnector', (e: any): void => {
+            this.disableEditingModifiedColumns(e.connector);
+        });
+
+        this.on('tableChanged', (): void => {
+            this.dataGrid?.update({ dataTable: this.filterColumns() });
+        });
+
         // Add the component instance to the registry
         Component.addInstance(this);
+    }
+
+    /**
+     * Disable editing of the columns that are modified by the data modifier.
+     * @internal
+     *
+     * @param connector
+     * Attached connector
+     */
+    private disableEditingModifiedColumns(connector: DataConnectorType) {
+        const modifierOptions = connector.options.dataModifier;
+
+        if (!modifierOptions || modifierOptions.type !== 'Math') {
+            return;
+        }
+        const modifierColumns = (modifierOptions as MathModifierOptions).columnFormulas;
+        if (!modifierColumns) {
+            return;
+        }
+        const options = {} as Record<string, ColumnOptions>;
+
+        for (let i = 0, iEnd = modifierColumns.length; i < iEnd; ++i) {
+            const columnName = modifierColumns[i].column;
+            options[columnName] = {
+                editable: false
+            }
+        }
+        this.dataGrid?.update({ columns: options })
+
+
     }
 
     /* *
@@ -224,7 +271,10 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /**
+     * Triggered on component initialization.
+     * @private
+     */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -236,7 +286,6 @@ class DataGridComponent extends Component {
             !this.connectorListeners.length
         ) {
             const connectorListeners = this.connectorListeners;
-            // this.on('tableChanged', (): void => this.updateSeries());
 
             // Reload the store when polling.
             connectorListeners.push(this.connector
@@ -247,7 +296,7 @@ class DataGridComponent extends Component {
                 })
             );
 
-            // Update the DataGrid when store changed.
+            // Update the DataGrid when connector changed.
             connectorListeners.push(this.connector.table
                 .on('afterSetCell', (e: any): void => {
                     const dataGrid = this.dataGrid;
@@ -285,7 +334,7 @@ class DataGridComponent extends Component {
         return this;
     }
 
-    /** @internal */
+    /** @private */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
@@ -297,7 +346,7 @@ class DataGridComponent extends Component {
             this.dataGrid &&
             this.dataGrid.dataTable.modified !== this.connector.table.modified
         ) {
-            this.dataGrid.update({ dataTable: this.connector.table.modified });
+            this.dataGrid.update({ dataTable: this.filterColumns() });
         }
 
         this.sync.start();
@@ -308,13 +357,13 @@ class DataGridComponent extends Component {
         return this;
     }
 
-    /** @internal */
+    /** @private */
     public redraw(): this {
         super.redraw();
         return this.render();
     }
 
-    /** @internal */
+    /** @private */
     public resize(
         width?: number|null,
         height?: number|null
@@ -342,7 +391,7 @@ class DataGridComponent extends Component {
         this.emit({ type: 'afterUpdate' });
     }
 
-    /** @internal */
+    /** @private */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
@@ -374,7 +423,39 @@ class DataGridComponent extends Component {
         }
     }
 
-    /** @internal */
+    /**
+     * Based on the `visibleColumns` option, filter the columns of the table.
+     *
+     * @internal
+     */
+    private filterColumns(): DataTable|undefined {
+        const table = this.connector?.table.modified,
+            visibleColumns = this.options.visibleColumns;
+
+        if (table) {
+            // Show all columns if no visibleColumns is provided.
+            if (!visibleColumns?.length) {
+                return table;
+            }
+
+            const columnsToDelete = table
+                .getColumnNames()
+                .filter((columnName): boolean => (
+                    visibleColumns?.length > 0 &&
+                    // Don't add columns that are not listed.
+                    !visibleColumns.includes(columnName)
+                    // Else show the other columns.
+                ));
+
+            // On a fresh table clone remove the columns that are not mapped.
+            const filteredTable = table.clone();
+            filteredTable.deleteColumns(columnsToDelete);
+
+            return filteredTable;
+        }
+    }
+
+    /** @private */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();
@@ -391,6 +472,20 @@ class DataGridComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the DataGrid component's options.
+     * @returns
+     * The JSON of DataGrid component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<DataGridComponent.ComponentOptions> {
+        return {
+            ...diffObjects(this.options, DataGridComponent.defaultOptions),
+            type: 'DataGrid'
+        };
+    }
 }
 
 /* *
@@ -407,13 +502,13 @@ namespace DataGridComponent {
      *
      * */
 
-    /** @internal */
+    /** @private */
     export type ComponentType = DataGridComponent;
 
-    /** @internal */
+    /** @private */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
-    /** @internal */
+    /** @private */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -437,7 +532,7 @@ namespace DataGridComponent {
         dataGridID?: string;
 
         /**
-         * Callback to use when a change in the data grid occures.
+         * Callback to use when a change in the data grid occurs.
          */
         onUpdate: typeof DataGridComponent.onUpdate
 
@@ -458,41 +553,43 @@ namespace DataGridComponent {
          */
         chartID?: string;
 
+        /** @private */
+        tableAxisMap?: Record<string, string | null>;
+
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * If the `visibleColumns` option is not provided, the data grid will
+         * calculate and include each column from the data connector.
+         * When declared, the data grid will only include the columns that are
+         * listed.
+         *
+         * Alternatively, the column visibility can be controlled by the
+         * `dataGridOptions.columns` option.
          * ```
          * Example
-         * columnAssignment: {
-         *      'Food': 'x',
-         *      'Vitamin A': 'y'
-         * }
+         * visibleColumns: ['Food', 'Vitamin A']
          * ```
          */
-        columnAssignment?: Record<string, string | null>;
-
-        /** @internal */
-        tableAxisMap?: Record<string, string | null>;
+        visibleColumns?: Array<string>;
 
     }
 
-    /** @internal */
+    /** @private */
     export interface ComponentJSONOptions
         extends Component.ComponentOptionsJSON {
 
-        /** @internal */
+        /** @private */
         dataGridOptions?: string;
 
-        /** @internal */
+        /** @private */
         chartClassName?: string;
 
-        /** @internal */
+        /** @private */
         chartID?: string;
     }
 
-    /** @internal */
+    /** @private */
     export interface ClassJSON extends Component.JSON {
-        /** @internal */
+        /** @private */
         options: ComponentJSONOptions;
     }
 }

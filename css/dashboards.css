@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.2
+ * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2023 Highsoft AS
  *
@@ -163,6 +163,8 @@
     min-height: 500px;
     transition: 0.5s;
     overflow-x: scroll;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1rem;
 }
 
 .highcharts-dashboards-fullscreen:fullscreen {
@@ -398,7 +400,7 @@
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
-    background: url("https://code.highcharts.com/gfx/dashboard-icons/drag.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/gfx/dashboards-icons/drag.svg") no-repeat 50% 50%;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -406,7 +408,7 @@
 
 .highcharts-dashboards-toolbar .edit-col,
 .highcharts-dashboards-toolbar .edit-row {
-    background: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/gfx/dashboards-icons/settings.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0;
     text-indent: -9999px;
@@ -551,6 +553,9 @@
     background-color: transparent;
     border: none;
     text-align: left;
+    font-size: 1em;
+    padding-left: 3px;
+    cursor: pointer;
 }
 
 .highcharts-dashboards-edit-context-menu-item > button:hover {

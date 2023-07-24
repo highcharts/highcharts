@@ -1,7 +1,8 @@
-var playDuration = 25000,
-    lastMonth;
+const playDuration = 25000;
 
-var chart = Highcharts.stockChart('container', {
+let lastMonth;
+
+const chart = Highcharts.stockChart('container', {
     title: {
         text: 'JFK Airport Climate Data for 2013',
         align: 'left'
@@ -39,7 +40,7 @@ var chart = Highcharts.stockChart('container', {
             type: 'speech',
             mapping: {
                 text: function (context) {
-                    var date = new Date(context.value);
+                    const date = new Date(context.value);
                     return date.toLocaleString('en-US', { month: 'long' });
                 },
                 rate: 2.5,
@@ -48,7 +49,7 @@ var chart = Highcharts.stockChart('container', {
             valueInterval: 1000 * 60 * 60 * 24, // One day
             activeWhen: function (context) {
                 // Speak only when there is a new month
-                var month = new Date(context.value).getMonth(),
+                const month = new Date(context.value).getMonth(),
                     shouldSpeak = month !== lastMonth &&
                         document.getElementById('months').checked;
                 lastMonth = month;
@@ -64,7 +65,7 @@ var chart = Highcharts.stockChart('container', {
         csv: document.getElementById('csv').textContent,
         parsed: function (columns) {
             // Transform dates to UNIX epoch.
-            var i = columns[0].length;
+            let i = columns[0].length;
             while (i--) {
                 columns[0][i] = new Date(columns[0][i]).getTime();
             }
@@ -82,10 +83,10 @@ var chart = Highcharts.stockChart('container', {
             events: {
                 // Play for a bit after a point when clicking it
                 click: function (event) {
-                    var timeline = this.chart.sonification &&
+                    const timeline = this.chart.sonification &&
                         this.chart.sonification.timeline;
                     if (timeline) {
-                        var x = event.point.x,
+                        const x = event.point.x,
                             xAxis = this.xAxis,
                             startTime = playDuration *
                                 (x - xAxis.min) / (xAxis.max - xAxis.min);
@@ -436,7 +437,7 @@ var chart = Highcharts.stockChart('container', {
 // Custom legend
 
 function playEarcon(id) {
-    var instr = {
+    const instr = {
             temp: ['piano', 'a6', 'e5'],
             humid: ['flute', 'a5', 'e5'],
             wind: ['wind', 'c5', 'c6'],

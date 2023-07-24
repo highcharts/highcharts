@@ -125,10 +125,15 @@ export interface ColumnOptions {
      * A string used to format the header row's cells. The context is the
      * column's name and can be accessed only by using `{text}`.
      *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options/ | Add a header format}
+     *
      * @example
      * ```js
      * headerFormat: '{text} (custom format)'
      * ```
+     *
      */
     headerFormat?: string;
 

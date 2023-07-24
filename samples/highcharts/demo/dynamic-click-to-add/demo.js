@@ -5,7 +5,7 @@ Highcharts.chart('container', {
         events: {
             click: function (e) {
                 // find the clicked values and the series
-                var x = Math.round(e.xAxis[0].value),
+                const x = Math.round(e.xAxis[0].value),
                     y = Math.round(e.yAxis[0].value),
                     series = this.series[0];
 

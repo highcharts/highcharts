@@ -15,7 +15,7 @@ Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
     'Z'
 ];
 
-const MathModifier = Highcharts.DataModifier.types.Math; // @todo switch module
+const MathModifier = Dashboards.DataModifier.types.Math;
 const RangeModifier = Dashboards.DataModifier.types.Range;
 
 const colorStopsDays = [
@@ -61,7 +61,7 @@ async function setupBoard() {
             contextMenu: {
                 enabled: true,
                 icon: (
-                    'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
+                    'https://code.highcharts.com/gfx/dashboards-icons/menu.svg'
                 ),
                 items: [
                     'editMode',

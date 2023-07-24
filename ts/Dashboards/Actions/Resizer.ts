@@ -467,13 +467,12 @@ class Resizer {
 
                 currentCell.setSize(newWidth);
                 currentCell.updateSize(newWidth, currentRwdMode);
-
                 this.startX = e.clientX;
             }
 
             // Resize height
             if (currentDimension === 'y') {
-                cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
+                currentCell.setSize(void 0, e.clientY - cellOffsets.top);
             }
             // Call cellResize dashboard event.
             fireEvent(this.editMode.board, 'cellResize', {
@@ -622,6 +621,7 @@ namespace Resizer {
         height?: number;
     }
 
+    /** @internal */
     export interface HTMLDOMElementEvents extends HTMLDOMElement {
         hcEvents: Record<string, Array<Function>>;
     }

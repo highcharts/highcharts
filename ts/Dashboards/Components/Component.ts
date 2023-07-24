@@ -29,9 +29,8 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
+import type Globals from '../Globals';
 import type JSON from '../JSON';
-import type NavigationBindingsOptionsObject from
-    '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -57,7 +56,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    relativeLength
+    relativeLength,
+    diffObjects
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -891,9 +891,11 @@ abstract class Component {
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
+
         if (events) {
             Object.keys(events).forEach((key): void => {
                 const eventCallback = (events as any)[key];
+
                 if (eventCallback) {
                     this.callbackRegistry.addCallback(key, {
                         type: 'component',
@@ -1067,6 +1069,18 @@ abstract class Component {
         return json;
     }
 
+    /**
+     * Get the component's options.
+     * @returns
+     * The JSON of component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<Component.ComponentOptions> {
+        return diffObjects(this.options, Component.defaultOptions);
+    }
+
     public getEditableOptions(): Component.ComponentOptions {
         const component = this;
         return merge(component.options);
@@ -1190,7 +1204,7 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: AnyRecord;
+            detail?: Globals.AnyRecord;
         } & EventRecord;
 
     /**
@@ -1230,11 +1244,13 @@ namespace Component {
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
         type: keyof ComponentTypeRegistry;
-        // allow overwriting gui elements
-        /** @internal */
-        navigationBindings?: NavigationBindingsOptionsObject[];
         /**
-         * Events attached to the component : `mount`, `unmount`.
+         * Allow overwriting gui elements.
+         * @internal
+         */
+        navigationBindings?: Array<Globals.AnyRecord>;
+        /**
+         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *
          * Try it:
          *

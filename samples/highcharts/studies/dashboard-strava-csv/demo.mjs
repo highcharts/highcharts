@@ -5,12 +5,11 @@ import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModif
 import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
 import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
-import DataConnector from '../../../../code/es-modules/Data/Connectors/DataConnector.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -632,7 +631,7 @@ connector.load();
 const editMode = {
     enabled: true,
     contextMenu: {
-        icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
+        icon: 'https://code.highcharts.com/gfx/dashboards-icons/menu.svg',
         enabled: true,
         items: ['editMode', {
             id: 'export-dashboard',
@@ -685,10 +684,10 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/settings.svg'
                 }, {
                     id: 'my-option-1',
                     text: 't1',
@@ -699,7 +698,7 @@ const editMode = {
                     }
                 }, {
                     id: 'destroy',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/destroy.svg'
                 }]
             }
         },
@@ -707,19 +706,19 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/settings.svg'
                 }, {
                     id: 'destroy',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/destroy.svg'
                 }]
             }
         },
         settings: {
-            closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
-            dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+            closeIcon: 'https://code.highcharts.com/gfx/dashboards-icons/close.svg',
+            dragIcon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
         }
     },
     lang: {
@@ -728,12 +727,12 @@ const editMode = {
     },
     tools: {
         addComponentBtn: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboards-icons/add.svg'
         }
     },
     confirmationPopup: {
         close: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboards-icons/close.svg'
         }
     },
     resize: {

@@ -1,35 +1,39 @@
-Math.easeInSine = function (pos) {
-    return -Math.cos(pos * (Math.PI / 2)) + 1;
-};
+(async () => {
 
-Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
-};
-// Math.easeInQuint = function (pos) {
-//     return Math.pow(pos, 5);
-// },
+    Math.easeInSine = function (pos) {
+        return -Math.cos(pos * (Math.PI / 2)) + 1;
+    };
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
-    }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-    }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
-    }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
-};
+    Math.easeOutQuint = function (pos) {
+        return (Math.pow((pos - 1), 5) + 1);
+    };
+    // Math.easeInQuint = function (pos) {
+    //     return Math.pow(pos, 5);
+    // },
 
-const big = window.matchMedia('(min-width: 500px)').matches;
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    Math.easeOutBounce = pos => {
+        if ((pos) < (1 / 2.75)) {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75)) {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75)) {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    };
+
+    const big = window.matchMedia('(min-width: 500px)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+    const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 
-// Create the chart
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
     // split the data set into ohlc and volume
     var ohlc = [],
@@ -837,7 +841,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         series: [
-        // 0 - top area (11) y0
+            // 0 - top area (11) y0
             {
                 type: 'arearange',
                 className: 'stock-top',
@@ -1301,4 +1305,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
     Highcharts.stockChart('stock', animated);
 
-});
+})();
