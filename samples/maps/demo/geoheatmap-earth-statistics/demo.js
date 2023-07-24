@@ -3,6 +3,9 @@
     const topology = await fetch(
             'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
         ).then(response => response.json()),
+        landDayData = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/geoheatmap-land-sea-day-temp-august_2022.json'
+        ).then(response => response.json()),
         data = [{
             type: 'Land Surface (day) and Sea Temperature',
             title: 'Land Surface (day) and Sea Temperature in August 2022',
@@ -26,7 +29,7 @@
                     [1, '#852809']
                 ]
             },
-            data: void 0
+            data: landDayData
         }, {
             type: 'Land Surface (night) and Sea Temperature',
             title: 'Land Surface (night) and Sea Temperature in August 2022',
