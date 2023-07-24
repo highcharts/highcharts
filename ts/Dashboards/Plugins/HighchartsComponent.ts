@@ -662,11 +662,11 @@ class HighchartsComponent extends Component {
                 // Disable dragging on series, which were created out of a
                 // columns which are created by MathModifier.
                 const shouldBeDraggable = !(
-                    modifierOptions?.type == 'Math' &&
+                    modifierOptions?.type === 'Math' &&
                     (modifierOptions as MathModifierOptions)
-                    .columnFormulas?.some(
-                        (formula) => formula.column == seriesName
-                    )
+                        .columnFormulas?.some(
+                            (formula): boolean => formula.column === seriesName
+                        )
                 );
 
                 return chart.addSeries({

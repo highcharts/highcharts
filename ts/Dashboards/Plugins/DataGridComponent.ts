@@ -218,7 +218,10 @@ class DataGridComponent extends Component {
             this.syncHandlers
         );
 
-        this.dataGridOptions = this.options.dataGridOptions || ({} as BaseDataGridOptions);
+        this.dataGridOptions = (
+            this.options.dataGridOptions ||
+            ({} as BaseDataGridOptions)
+        );
 
         this.innerResizeTimeouts = [];
 
@@ -242,27 +245,30 @@ class DataGridComponent extends Component {
      * @param connector
      * Attached connector
      */
-    private disableEditingModifiedColumns(connector: DataConnectorType) {
+    private disableEditingModifiedColumns(connector: DataConnectorType): void {
         const modifierOptions = connector.options.dataModifier;
 
         if (!modifierOptions || modifierOptions.type !== 'Math') {
             return;
         }
-        const modifierColumns = (modifierOptions as MathModifierOptions).columnFormulas;
+
+        const modifierColumns =
+            (modifierOptions as MathModifierOptions).columnFormulas;
+
         if (!modifierColumns) {
             return;
         }
+
         const options = {} as Record<string, ColumnOptions>;
 
         for (let i = 0, iEnd = modifierColumns.length; i < iEnd; ++i) {
             const columnName = modifierColumns[i].column;
             options[columnName] = {
                 editable: false
-            }
+            };
         }
-        this.dataGrid?.update({ columns: options })
 
-
+        this.dataGrid?.update({ columns: options });
     }
 
     /* *
