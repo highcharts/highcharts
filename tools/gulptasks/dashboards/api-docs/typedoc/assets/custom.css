@@ -1,0 +1,11 @@
+.site-menu a > span {
+    white-space: nowrap;
+}
+
+.tsd-navigation.primary .tsd-kind-namespace.tsd-parent-kind-module {
+    display: none;
+}
+
+.tsd-member .tsd-anchor + h3 {
+    padding-top: 2.5em;
+}

@@ -427,10 +427,10 @@ class RangeSelector {
                     maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
-                if (minInput && (minInput.blur)) {
+                if (minInput && !!minInput.blur) {
                     fireEvent(minInput, 'blur');
                 }
-                if (maxInput && (maxInput.blur)) {
+                if (maxInput && !!maxInput.blur) {
                     fireEvent(maxInput, 'blur');
                 }
             };
@@ -896,11 +896,11 @@ class RangeSelector {
         function updateExtremes(): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
-                dataAxis = chart.scroller && chart.scroller.xAxis ?
-                    chart.scroller.xAxis :
-                    chartAxis,
-                dataMin = dataAxis.dataMin,
-                dataMax = dataAxis.dataMax;
+                unionExtremes = (
+                    chart.scroller && chart.scroller.getUnionExtremes()
+                ) || chartAxis,
+                dataMin = unionExtremes.dataMin,
+                dataMax = unionExtremes.dataMax;
 
             let value: number | undefined = rangeSelector.getInputValue(name);
 

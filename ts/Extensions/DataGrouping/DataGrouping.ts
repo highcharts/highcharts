@@ -24,7 +24,7 @@ import type Tooltip from '../../Core/Tooltip';
 import DataGroupingAxisComposition from './DataGroupingAxisComposition.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Core/Utilities.js';
 const {
@@ -112,8 +112,9 @@ function onTooltipHeaderFormatter(
         // if we have grouped data, use the grouping information to get the
         // right format
         if (currentDataGrouping) {
-            labelFormats =
-                dateTimeLabelFormats[(currentDataGrouping as any).unitName];
+            labelFormats = (dateTimeLabelFormats as AnyRecord)[
+                currentDataGrouping.unitName
+            ];
             if ((currentDataGrouping as any).count === 1) {
                 xDateFormat = labelFormats[0];
             } else {

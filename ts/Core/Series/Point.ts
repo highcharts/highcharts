@@ -41,7 +41,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
 const {
@@ -127,7 +127,7 @@ class Point {
 
     public colorIndex?: number;
 
-    public dataLabels?: Array<SVGLabel>;
+    public dataLabels?: Array<SVGElement|SVGLabel>;
 
     public destroyed = false;
 
@@ -524,7 +524,7 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (point.select) { // #2911
+                if (!point.destroyed && point.select) { // #2911, #19075
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
@@ -820,8 +820,22 @@ class Point {
 
     /**
      * Get the pixel position of the point relative to the plot area.
-     * @private
      * @function Highcharts.Point#pos
+     *
+     * @sample highcharts/point/position
+     *         Get point's position in pixels.
+     *
+     * @param {boolean} chartCoordinates
+     * If true, the returned position is relative to the full chart area.
+     * If false, it is relative to the plot area determined by the axes.
+     *
+     * @param {number|undefined} plotY
+     * A custom plot y position to be computed. Used internally for some
+     * series types that have multiple `y` positions, like area range (low
+     * and high values).
+     *
+     * @return {Array<number>|undefined}
+     * Coordinates of the point if the point exists.
      */
     public pos(
         chartCoordinates?: boolean,

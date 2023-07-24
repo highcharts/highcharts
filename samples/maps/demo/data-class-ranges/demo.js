@@ -7,8 +7,7 @@
     function drawChart(data) {
         return Highcharts.mapChart('container', {
             chart: {
-                map: topology,
-                borderWidth: 1
+                map: topology
             },
 
             colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',

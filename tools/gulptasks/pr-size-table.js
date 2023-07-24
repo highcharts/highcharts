@@ -2,9 +2,17 @@ const { join } = require('path');
 const argv = require('yargs').argv;
 const fs = require('fs');
 const gulp = require('gulp');
-const { getFileSizes } = require('../compareFilesize');
-const log = require('./lib/log');
+const { sync: gzipSize } = require('gzip-size');
+const scriptsCompile = require('./scripts-compile');
+const dashboardsDistMinify = require('./dashboards/dist-minify');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
+const log = require('./lib/log');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const files = argv.files ? argv.files.split(',') : [
     'highcharts.src.js',
@@ -19,8 +27,51 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/data.src.js',
     'modules/exporting.src.js',
     'modules/heatmap.src.js',
-    'modules/offline-exporting.src.js'
+    'modules/offline-exporting.src.js',
+    'dashboards/dashboards.src.js',
+    'dashboards/datagrid.src.js',
+    'dashboards/modules/dashboards-plugin.src.js'
 ];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function getFileSizes(out) {
+    const sourceFolder = './code/';
+
+    // Finds
+    function getSizeOfSourceCompiledAndGzip(filenames) {
+        return filenames.reduce((obj, filename) => {
+            const compileName = filename.replace('.src.js', '.js');
+            const compiled = fs.readFileSync(
+                join(sourceFolder, compileName),
+                { encoding: 'utf-8' }
+            );
+            obj[filename] = {
+                gzip: gzipSize(compiled),
+                size: fs.statSync(join(sourceFolder, filename)).size,
+                compiled: compiled.length
+            };
+            return obj;
+        }, {});
+    }
+
+    return Promise.resolve()
+        .then(() => scriptsCompile(files.map(file => join('code', file))))
+        .then(() => dashboardsDistMinify())
+        .then(() => getSizeOfSourceCompiledAndGzip(files))
+
+        // Output the result to the console, or a file if filePath is defined
+        .then(result => {
+            const str = JSON.stringify(result, null, '  ');
+            return out ?
+                fs.promises.writeFile(out, str) :
+                Promise.resolve(log.message(str));
+        });
+}
 
 /**
  * Writes file size.
@@ -37,7 +88,7 @@ const files = argv.files ? argv.files.split(',') : [
 async function writeFileSize(outputFolder, outputFileName) {
     try {
         await fs.promises.mkdir(outputFolder, { recursive: true });
-        await getFileSizes(files, join(outputFolder, outputFileName)).catch(err => log.failure(err));
+        await getFileSizes(join(outputFolder, outputFileName)).catch(err => log.failure(err));
         log.success(`Wrote to ${join(outputFolder, outputFileName)}`);
     } catch (error) {
         log.failure(error);
@@ -140,7 +191,7 @@ async function comment() {
                 await createPRComment(pr, commentBody);
             }
         } else {
-            log.failure('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
+            log.failure('Please specify a PR id with \'--pr\' and a user with \'--user\' ');
         }
     } catch (error) {
         log.failure(error);

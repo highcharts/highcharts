@@ -23,6 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -87,7 +88,7 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * */
 
-    protected static readonly defaultOptions: GoogleSheetsConnector.Options = {
+    protected static readonly defaultOptions: GoogleSheetsConnectorOptions = {
         googleAPIKey: '',
         googleSpreadsheetKey: '',
         worksheet: 1,
@@ -126,7 +127,7 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * */
 
-    public readonly options: GoogleSheetsConnector.Options;
+    public readonly options: GoogleSheetsConnectorOptions;
 
     /**
      * The attached converter, which can be replaced in the constructor
@@ -250,28 +251,11 @@ namespace GoogleSheetsConnector {
     }
 
     /**
-     * Options of the GoogleSheetsConnector.
-     */
-    export interface Options extends DataConnector.Options {
-        dataRefreshRate: number;
-        enablePolling: boolean;
-        endColumn?: number;
-        endRow?: number;
-        firstRowAsNames: boolean;
-        googleAPIKey: string;
-        googleSpreadsheetKey: string;
-        googleSpreadsheetRange?: string;
-        startColumn?: number;
-        startRow?: number;
-        worksheet?: number;
-    }
-
-    /**
      * Available options for constructor and converter of the
      * GoogleSheetsConnector.
      */
     export type UserOptions =
-        (Partial<Options>&GoogleSheetsConverter.UserOptions);
+        (DeepPartial<GoogleSheetsConnectorOptions>&GoogleSheetsConverter.UserOptions);
 
     /* *
      *
@@ -294,7 +278,7 @@ namespace GoogleSheetsConnector {
     export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
-        options: Partial<(FetchURLOptions&Options)> = {}
+        options: Partial<(FetchURLOptions&GoogleSheetsConnectorOptions)> = {}
     ): string {
         return (
             `https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/` +
@@ -321,7 +305,7 @@ namespace GoogleSheetsConnector {
      * @private
      */
     export function buildQueryRange(
-        options: Partial<Options> = {}
+        options: Partial<GoogleSheetsConnectorOptions> = {}
     ): string {
         const {
             endColumn,

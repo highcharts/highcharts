@@ -20,6 +20,7 @@ import type { AlignValue } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
 import type {
+    AxisCollectionKey,
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
@@ -29,7 +30,7 @@ import type {
     YAxisOptions
 } from './AxisOptions';
 import type AxisLike from './AxisLike';
-import type { AxisTypeOptions } from './AxisType';
+import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
@@ -70,6 +71,8 @@ const {
     error,
     extend,
     fireEvent,
+    getClosestDistance,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -151,7 +154,7 @@ declare module '../Series/SeriesOptions' {
  * The Chart instance to apply the axis on.
  *
  * @param {Highcharts.AxisOptions} userOptions
- * Axis options.
+ * Axis options
  */
 class Axis {
 
@@ -166,6 +169,7 @@ class Axis {
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
     public static keepProps = [
+        'coll',
         'extKey',
         'hcEvents',
         'names',
@@ -182,9 +186,10 @@ class Axis {
 
     public constructor(
         chart: Chart,
-        userOptions: DeepPartial<AxisOptions>
+        userOptions: DeepPartial<AxisOptions>,
+        coll?: AxisCollectionKey
     ) {
-        this.init(chart, userOptions);
+        this.init(chart, userOptions, coll);
     }
 
     /* *
@@ -207,7 +212,7 @@ class Axis {
     public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: ('colorAxis'|'xAxis'|'yAxis'|'zAxis') = void 0 as any;
+    public coll: AxisCollectionKey = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
@@ -222,6 +227,7 @@ class Axis {
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
     public horiz?: boolean;
+    public index: number = void 0 as any;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isOrdinal?: boolean;
@@ -323,9 +329,12 @@ class Axis {
      * @emits Highcharts.Axis#event:afterInit
      * @emits Highcharts.Axis#event:init
      */
-    public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
-
-        const isXAxis = userOptions.isX,
+    public init(
+        chart: Chart,
+        userOptions: DeepPartial<AxisOptions>,
+        coll: AxisCollectionKey = this.coll
+    ): void {
+        const isXAxis = coll === 'xAxis',
             axis = this;
 
         /**
@@ -342,7 +351,7 @@ class Axis {
          * @name Highcharts.Axis#horiz
          * @type {boolean|undefined}
          */
-        axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
+        axis.horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
 
         /**
          * Whether the axis is the x-axis.
@@ -360,7 +369,7 @@ class Axis {
          * @name Highcharts.Axis#coll
          * @type {string}
          */
-        axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
+        axis.coll = coll;
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
@@ -526,8 +535,10 @@ class Axis {
                 chart.axes.push(axis);
             }
 
-            (chart as any)[axis.coll].push(axis);
+            insertItem(this, chart[this.coll] as Array<AxisType>);
+
         }
+        chart.orderItems(axis.coll);
 
         /**
          * All series associated to the axis.
@@ -580,7 +591,7 @@ class Axis {
             ][this.side],
             merge(
                 // if set in setOptions (#1053):
-                (defaultOptions as any)[this.coll],
+                defaultOptions[this.coll],
                 userOptions
             )
         );
@@ -1222,17 +1233,13 @@ class Axis {
     public adjustForMinRange(): void {
         const axis = this,
             options = axis.options,
-            log = axis.logarithmic;
+            logarithmic = axis.logarithmic;
 
         let min = axis.min,
             max = axis.max,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange = 0,
-            i,
-            distance,
-            xData,
-            loopLength,
+            closestDataRange: number,
             minArgs: Array<(number|null|undefined)>,
             maxArgs: Array<(number|null|undefined)>,
             minRange;
@@ -1241,7 +1248,7 @@ class Axis {
         if (
             axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !log
+            !logarithmic
         ) {
 
             if (
@@ -1257,22 +1264,14 @@ class Axis {
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
-                axis.series.forEach(function (series): void {
-                    xData = series.xData as any;
-                    loopLength = series.xIncrement ? 1 : xData.length - 1;
+                closestDataRange = getClosestDistance(
+                    axis.series.map((s): number[] =>
+                        // If xIncrement, we only need to measure the two first
+                        // points to get the distance. Saves processing time.
+                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
+                    )
+                ) || 0;
 
-                    if (xData.length > 1) {
-                        for (i = loopLength; i > 0; i--) {
-                            distance = xData[i] - xData[i - 1];
-                            if (
-                                !closestDataRange ||
-                                distance < closestDataRange
-                            ) {
-                                closestDataRange = distance;
-                            }
-                        }
-                    }
-                });
                 axis.minRange = Math.min(
                     closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
@@ -1296,8 +1295,8 @@ class Axis {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMin as any) :
+                minArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1308,8 +1307,8 @@ class Axis {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = log ?
-                    log.log2lin(axis.dataMax as any) :
+                maxArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -1329,34 +1328,47 @@ class Axis {
     }
 
     /**
-     * Find the closestPointRange across all series.
+     * Find the closestPointRange across all series, including the single data
+     * series.
      *
      * @private
      * @function Highcharts.Axis#getClosest
      */
-    public getClosest(): number {
-        let ret: any;
+    public getClosest(): number | undefined {
+        let closestSingleDistance: number | undefined,
+            closestDistance: number | undefined;
 
         if (this.categories) {
-            ret = 1;
+            closestDistance = 1;
         } else {
+            const singleXs: number[] = [];
             this.series.forEach(function (series): void {
                 const seriesClosest = series.closestPointRange,
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
-                if (
+                if (series.xData?.length === 1) {
+                    singleXs.push(series.xData[0]);
+                } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
                     visible
                 ) {
-                    ret = defined(ret) ?
-                        Math.min(ret, seriesClosest as any) :
+                    closestDistance = defined(closestDistance) ?
+                        Math.min(closestDistance, seriesClosest) :
                         seriesClosest;
                 }
             });
+            if (singleXs.length) {
+                singleXs.sort((a, b): number => a - b);
+                closestSingleDistance = getClosestDistance([singleXs]);
+            }
         }
-        return ret;
+
+        if (closestSingleDistance && closestDistance) {
+            return Math.min(closestSingleDistance, closestDistance);
+        }
+        return closestSingleDistance || closestDistance;
     }
 
     /**
@@ -1491,7 +1503,7 @@ class Axis {
             isXAxis = axis.isXAxis;
 
         let pointRange = axis.axisPointRange || 0,
-            closestPointRange: number,
+            closestPointRange: number | undefined,
             minPointOffset = 0,
             pointRangePadding = 0,
             ordinalCorrection,
@@ -1577,7 +1589,7 @@ class Axis {
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
             // is 0 while closestPointRange is some other value
-            if (isXAxis) {
+            if (isXAxis && closestPointRange) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -3865,10 +3877,11 @@ class Axis {
             const otherAxis = this.isXAxis ? chart.yAxis[0] : chart.xAxis[0],
                 directionFactor = [1, -1, -1, 1][this.side];
             if (otherAxis) {
-                this.offset = directionFactor * otherAxis.toPixels(
-                    crossing,
-                    true
-                );
+                let px = otherAxis.toPixels(crossing, true);
+                if (axis.horiz) {
+                    px = otherAxis.len - px;
+                }
+                axis.offset = directionFactor * px;
             }
         }
 
@@ -4363,7 +4376,7 @@ class Axis {
      */
     public remove(redraw?: boolean): void {
         const chart = this.chart,
-            key = this.coll, // xAxis or yAxis
+            coll = this.coll,
             axisSeries = this.series;
 
         let i = axisSeries.length;
@@ -4377,15 +4390,9 @@ class Axis {
 
         // Remove the axis
         erase(chart.axes, this);
-        erase((chart as any)[key], this);
+        erase(chart[coll] || [], this);
 
-        (chart as any)[key].forEach(function (
-            axis: Axis,
-            i: number
-        ): void {
-            // Re-index, #1706, #8075
-            axis.options.index = axis.userOptions.index = i;
-        });
+        chart.orderItems(coll);
         this.destroy();
         chart.isDirtyBox = true;
 

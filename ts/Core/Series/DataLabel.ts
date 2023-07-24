@@ -30,7 +30,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -59,7 +59,7 @@ declare module './PointLike' {
         connector?: SVGElement;
         connectors?: Array<SVGElement>;
         contrastColor?: ColorString;
-        dataLabel?: SVGLabel;
+        dataLabel?: SVGElement|SVGLabel;
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
@@ -93,7 +93,7 @@ declare module './SeriesLike' {
             point: Point,
             dataLabel: SVGElement,
             options: DataLabelOptions,
-            alignTo: BBoxObject,
+            alignTo: BBoxObject|undefined,
             isNew?: boolean
         ): void;
         drawDataLabels(points?:Array<Point>): void;
@@ -191,7 +191,7 @@ namespace DataLabel {
         point: Point,
         dataLabel: SVGElement,
         options: DataLabelOptions,
-        alignTo: BBoxObject,
+        alignTo: BBoxObject|undefined,
         isNew?: boolean
     ): void {
         const series = this,
@@ -280,7 +280,7 @@ namespace DataLabel {
                 y: Math.round(pos[1]),
                 width: 0,
                 height: 0
-            }, alignTo);
+            }, alignTo as any);
 
             // Add the text size for alignment calculation
             extend<DataLabelOptions|BBoxObject>(options, {
@@ -506,6 +506,7 @@ namespace DataLabel {
             seriesOptions = series.options,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
+            plotOptions = chart.options.plotOptions,
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
@@ -513,7 +514,7 @@ namespace DataLabel {
             );
 
         let seriesDlOptions = seriesOptions.dataLabels,
-            pointOptions: Array<DataLabelOptions&AnyRecord>,
+            pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
 
         const firstDLOptions = splat(seriesDlOptions)[0],
@@ -525,23 +526,17 @@ namespace DataLabel {
         // Merge in plotOptions.dataLabels for series
         seriesDlOptions = mergeArrays(
             mergeArrays(
-                chart.options.plotOptions &&
-                chart.options.plotOptions.series &&
-                chart.options.plotOptions.series.dataLabels as any,
-                chart.options.plotOptions &&
-                chart.options.plotOptions[series.type] &&
-                (
-                    chart.options.plotOptions[series.type] as any
-                ).dataLabels as any
+                plotOptions?.series?.dataLabels,
+                plotOptions?.[series.type]?.dataLabels
             ),
-            seriesDlOptions as any
+            seriesDlOptions
         );
 
         fireEvent(this, 'drawDataLabels');
 
         if (
             isArray(seriesDlOptions) ||
-            (seriesDlOptions as any).enabled ||
+            seriesDlOptions.enabled ||
             series._hasPointLabels
         ) {
             dataLabelsGroup = this.initDataLabels(animationConfig);
@@ -549,17 +544,16 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
+                const dataLabels = point.dataLabels || [];
+
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
                 // the need for dlOptions, and simplify the section below.
                 pointOptions = splat(
                     mergeArrays(
-                        seriesDlOptions as any,
+                        seriesDlOptions,
                         // dlOptions is used in treemaps
-                        (
-                            (point.dlOptions as any) ||
-                            (point.options && point.options.dataLabels)
-                        )
+                        point.dlOptions || point.options?.dataLabels
                     )
                 );
 
@@ -574,16 +568,16 @@ namespace DataLabel {
                         ),
                         connector = point.connectors ?
                             point.connectors[i] :
-                            point.connector;
+                            point.connector,
+                        style = labelOptions.style || {};
 
                     let labelConfig,
                         formatString,
                         labelText,
-                        style,
                         rotation,
-                        attr: any,
-                        dataLabel: SVGLabel = point.dataLabels ?
-                            point.dataLabels[i] : point.dataLabel as any,
+                        attr: SVGAttributes = {},
+                        dataLabel: SVGLabel|SVGElement|undefined =
+                            dataLabels[i],
                         isNew = !dataLabel;
 
                     const labelDistance = pick(
@@ -594,8 +588,6 @@ namespace DataLabel {
                     if (labelEnabled) {
                         // Create individual options structure that can be
                         // extended without affecting others
-                        labelConfig = point.getLabelConfig();
-
                         formatString = pick(
                             (labelOptions as any)[
                                 point.formatPrefix + 'Format'
@@ -603,6 +595,7 @@ namespace DataLabel {
                             labelOptions.format
                         );
 
+                        labelConfig = point.getLabelConfig();
                         labelText = defined(formatString) ?
                             format(formatString, labelConfig, chart) :
                             (
@@ -612,42 +605,43 @@ namespace DataLabel {
                                 labelOptions.formatter
                             ).call(labelConfig, labelOptions);
 
-                        style = labelOptions.style;
                         rotation = labelOptions.rotation;
 
                         if (!chart.styledMode) {
                             // Determine the color
-                            (style as any).color = pick(
+                            style.color = pick(
                                 labelOptions.color,
-                                (style as any).color,
-                                series.color,
+                                style.color,
+                                isString(series.color) ? series.color : void 0,
                                 Palette.neutralColor100
                             );
                             // Get automated contrast color
-                            if ((style as any).color === 'contrast') {
+                            if (style.color === 'contrast') {
                                 point.contrastColor = renderer.getContrast(
                                     (point.color || series.color) as any
                                 );
 
-                                (style as any).color = (
-                                    !defined(labelDistance) &&
+                                style.color = (
+                                    (
+                                        !defined(labelDistance) &&
                                         labelOptions.inside
-                                ) ||
-                                    labelDistance < 0 ||
-                                    !!seriesOptions.stacking ?
+                                    ) ||
+                                    (labelDistance || 0) < 0 ||
+                                    seriesOptions.stacking
+                                ) ?
                                     point.contrastColor :
                                     contrastColor;
                             } else {
                                 delete point.contrastColor;
                             }
                             if (seriesOptions.cursor) {
-                                (style as any).cursor = seriesOptions.cursor;
+                                style.cursor = seriesOptions.cursor;
                             }
                         }
 
                         attr = {
                             r: labelOptions.borderRadius || 0,
-                            rotation: rotation,
+                            rotation,
                             padding: labelOptions.padding,
                             zIndex: 1
                         };
@@ -667,18 +661,16 @@ namespace DataLabel {
                         }
 
                         // Remove unused attributes (#947)
-                        objectEach(attr, function (
-                            val: any,
-                            name: string
-                        ): void {
+                        objectEach(attr, (val, name): void => {
                             if (typeof val === 'undefined') {
                                 delete attr[name];
                             }
                         });
                     }
 
-                    // If the point is outside the plot area, destroy it. #678,
-                    // #820
+                    // If the point is outside the plot area, or the label
+                    // changes properties that we cannot change, destroy it and
+                    // build a new one below. #678, #820.
                     if (
                         dataLabel && (
                             !labelEnabled ||
@@ -696,24 +688,10 @@ namespace DataLabel {
                             )
                         )
                     ) {
+                        dataLabel = void 0;
                         isNew = true;
-                        point.dataLabel = dataLabel =
-                            point.dataLabel && point.dataLabel.destroy() as any;
-                        if (point.dataLabels) {
-                            // Remove point.dataLabels if this was the last one
-                            if (point.dataLabels.length === 1) {
-                                delete point.dataLabels;
-                            } else {
-                                delete point.dataLabels[i];
-                            }
-                        }
-                        if (!i) {
-                            delete point.dataLabel;
-                        }
-                        if (connector) {
-                            point.connector = (
-                                point.connector as any
-                            ).destroy();
+                        if (connector && point.connector) {
+                            point.connector = point.connector.destroy();
                             if (point.connectors) {
                                 // Remove point.connectors if this was the last
                                 // one
@@ -733,8 +711,7 @@ namespace DataLabel {
 
                         if (!dataLabel) {
                             // Create new label element
-                            point.dataLabels = point.dataLabels || [];
-                            dataLabel = point.dataLabels[i] = rotation ?
+                            dataLabel = rotation ?
 
                                 // Labels don't rotate, use text element
                                 renderer.text(
@@ -742,91 +719,112 @@ namespace DataLabel {
                                     0,
                                     0,
                                     labelOptions.useHTML)
-                                    .addClass('highcharts-data-label') as any :
+                                    .addClass('highcharts-data-label') :
 
                                 // We can use label
                                 renderer.label(
                                     labelText,
                                     0,
                                     0,
-                                    labelOptions.shape as any,
-                                    null as any,
-                                    null as any,
+                                    labelOptions.shape,
+                                    void 0,
+                                    void 0,
                                     labelOptions.useHTML,
-                                    null as any,
+                                    void 0,
                                     'data-label'
                                 );
 
-                            // Store for backwards compatibility
-                            if (!i) {
-                                point.dataLabel = dataLabel;
+                            if (dataLabel) {
+                                dataLabel.addClass(
+                                    ' highcharts-data-label-color-' +
+                                    point.colorIndex +
+                                    ' ' + (labelOptions.className || '') +
+                                    ( // #3398
+                                        labelOptions.useHTML ?
+                                            ' highcharts-tracker' :
+                                            ''
+                                    )
+                                );
                             }
-
-                            dataLabel.addClass(
-                                ' highcharts-data-label-color-' +
-                                point.colorIndex +
-                                ' ' + (labelOptions.className || '') +
-                                ( // #3398
-                                    labelOptions.useHTML ?
-                                        ' highcharts-tracker' :
-                                        ''
-                                )
-                            );
                         } else {
                             // Use old element and just update text
                             attr.text = labelText;
                         }
 
                         // Store data label options for later access
-                        dataLabel.options = labelOptions;
+                        if (dataLabel) {
+                            dataLabel.options = labelOptions;
+                            dataLabel.attr(attr);
 
-                        dataLabel.attr(attr);
-
-                        if (!chart.styledMode) {
-                            // Styles must be applied before add in order to
-                            // read text bounding box
-                            dataLabel.css(style as any).shadow(
-                                labelOptions.shadow
-                            );
-                        }
-
-                        const textPathOptions =
-                            labelOptions[point.formatPrefix + 'TextPath'] ||
-                            labelOptions.textPath;
-
-                        if (textPathOptions && !labelOptions.useHTML) {
-                            dataLabel.setTextPath(
-                                (
-                                    point.getDataLabelPath &&
-                                    point.getDataLabelPath(dataLabel)
-                                ) || point.graphic,
-                                textPathOptions
-                            );
-
-                            if (
-                                point.dataLabelPath &&
-                                !textPathOptions.enabled
-                            ) {
-                                // clean the DOM
-                                point.dataLabelPath = (
-                                    point.dataLabelPath.destroy()
+                            if (!chart.styledMode) {
+                                // Styles must be applied before add in order to
+                                // read text bounding box
+                                dataLabel.css(style).shadow(
+                                    labelOptions.shadow
                                 );
                             }
-                        }
 
-                        if (!dataLabel.added) {
-                            dataLabel.add(dataLabelsGroup);
-                        }
+                            const textPathOptions =
+                                (labelOptions as any)[
+                                    point.formatPrefix + 'TextPath'
+                                ] || labelOptions.textPath;
 
-                        // Now the data label is created and placed at 0,0, so
-                        // we need to align it
-                        series.alignDataLabel(
-                            point, dataLabel, labelOptions, null as any, isNew
-                        );
-                    } else if (dataLabel) {
-                        dataLabel.hide();
+                            if (textPathOptions && !labelOptions.useHTML) {
+                                dataLabel.setTextPath(
+                                    point.getDataLabelPath?.(dataLabel) ||
+                                        point.graphic,
+                                    textPathOptions
+                                );
+
+                                if (
+                                    point.dataLabelPath &&
+                                    !textPathOptions.enabled
+                                ) {
+                                    // clean the DOM
+                                    point.dataLabelPath = (
+                                        point.dataLabelPath.destroy()
+                                    );
+                                }
+                            }
+
+                            if (!dataLabel.added) {
+                                dataLabel.add(dataLabelsGroup);
+                            }
+
+                            // Now the data label is created and placed at 0,0,
+                            // so we need to align it
+                            series.alignDataLabel(
+                                point,
+                                dataLabel,
+                                labelOptions,
+                                void 0,
+                                isNew
+                            );
+
+                            dataLabel.isActive = true;
+                            if (dataLabels[i] && dataLabels[i] !== dataLabel) {
+                                dataLabels[i].destroy();
+                            }
+                            dataLabels[i] = dataLabel;
+                        }
                     }
                 });
+
+
+                // Destroy and remove the inactive ones
+                let j = dataLabels.length;
+                while (j--) {
+                    if (dataLabels[j].isActive) {
+                        dataLabels[j].isActive = false;
+                    } else {
+                        dataLabels[j].destroy();
+                        dataLabels.splice(j, 1);
+                    }
+                }
+
+                // Write back
+                point.dataLabel = dataLabels[0];
+                point.dataLabels = dataLabels;
             });
         }
 
@@ -921,30 +919,31 @@ namespace DataLabel {
      * @private
      */
     function mergeArrays(
-        one: (DataLabelOptions|Array<DataLabelOptions>),
-        two: (DataLabelOptions|Array<DataLabelOptions>)
+        one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
+        two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
     ): (DataLabelOptions|Array<DataLabelOptions>) {
         let res: (DataLabelOptions|Array<DataLabelOptions>) = [],
             i: number;
 
         if (isArray(one) && !isArray(two)) {
-            res = (one as any).map(
+            res = one.map(
                 function (el: DataLabelOptions): DataLabelOptions {
                     return merge(el, two);
                 }
             );
         } else if (isArray(two) && !isArray(one)) {
-            res = (two as any).map(
+            res = two.map(
                 function (el: DataLabelOptions): DataLabelOptions {
                     return merge(one, el);
                 }
             );
         } else if (!isArray(one) && !isArray(two)) {
             res = merge(one, two);
-        } else {
-            i = Math.max((one as any).length, (two as any).length);
+
+        } else if (isArray(one) && isArray(two)) {
+            i = Math.max(one.length, two.length);
             while (i--) {
-                (res as any)[i] = merge((one as any)[i], (two as any)[i]);
+                res[i] = merge(one[i], two[i]);
             }
         }
         return res;

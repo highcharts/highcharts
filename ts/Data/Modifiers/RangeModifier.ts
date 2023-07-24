@@ -20,6 +20,10 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -50,10 +54,10 @@ class RangeModifier extends DataModifier {
     /**
      * Default options for the range modifier.
      */
-    public static readonly defaultOptions: RangeModifier.Options = {
-        modifier: 'Range',
-        strict: false,
-        ranges: []
+    public static readonly defaultOptions: RangeModifierOptions = {
+        type: 'Range',
+        ranges: [],
+        strict: false
     };
 
     /* *
@@ -69,7 +73,7 @@ class RangeModifier extends DataModifier {
      * Options to configure the range modifier.
      */
     public constructor(
-        options?: DeepPartial<RangeModifier.Options>
+        options?: DeepPartial<RangeModifierOptions>
     ) {
         super();
 
@@ -85,7 +89,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public readonly options: Readonly<RangeModifier.Options>;
+    public readonly options: RangeModifierOptions;
 
     /* *
      *
@@ -126,7 +130,7 @@ class RangeModifier extends DataModifier {
             for (
                 let i = 0,
                     iEnd = ranges.length,
-                    range: RangeModifier.RangeOptions,
+                    range: RangeModifierRangeOptions,
                     rangeColumn: DataTable.Column;
                 i < iEnd;
                 ++i
@@ -190,58 +194,40 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-/**
- * Additionally provided types for modifier events and options.
- * @private
- */
-namespace RangeModifier {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
 
     /**
-     * Options to configure the modifier.
+     * Utility function that returns the first row index
+     * if the table has been modified by a range modifier
+     * @param {DataTable} table the table to get the offset from
+     *
+     * @return {number} The row offset of the modified table
      */
-    export interface Options extends DataModifier.Options {
-        /**
-         * Value ranges to include in the result.
-         */
-        ranges: Array<RangeOptions>;
-        /**
-         * If set to true, it will also compare the value type.
-         */
-        strict: boolean;
-    }
+    public getModifiedTableOffset(table: DataTable): number {
+        const { ranges } = this.options;
 
-    /**
-     * Options to configure a range.
-     */
-    export interface RangeOptions {
-        /**
-         * Column containing the values to filter.
-         */
-        column: string;
-        /**
-         * Maximum including value (`<=` operator).
-         */
-        maxValue: (boolean|number|string);
-        /**
-         * Minimum including value (`>=` operator).
-         */
-        minValue: (boolean|number|string);
-    }
+        if (ranges) {
+            const minRange = ranges.reduce(
+                (minRange, currentRange): RangeModifierRangeOptions => {
+                    if (currentRange.minValue > minRange.minValue) {
+                        minRange = currentRange;
+                    }
+                    return minRange;
 
+                }, ranges[0]
+            );
+
+            const tableRowIndex = table.getRowIndexBy(
+                minRange.column,
+                minRange.minValue
+            );
+
+            if (tableRowIndex) {
+                return tableRowIndex;
+            }
+        }
+
+        return 0;
+    }
 }
 
 /* *

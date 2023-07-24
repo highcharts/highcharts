@@ -39,15 +39,9 @@
                         fontWeight: 'bold'
                     },
                     // Only show dataLabels for areas with high label rank
-                    format: null,
-                    formatter: function () {
-                        if (
-                            this.point.properties &&
-                            this.point.properties.labelrank.toString() < 5
-                        ) {
-                            return this.point.properties['iso-a2'];
-                        }
-                    }
+                    format: '{#if (lt point.properties.labelrank 5)}' +
+                        '{point.properties.iso-a2}' +
+                        '{/if}'
                 },
                 tooltip: {
                     headerFormat: '',

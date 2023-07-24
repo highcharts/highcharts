@@ -161,6 +161,46 @@ QUnit.test('series.centerInCategory', function (assert) {
 
     chart.update({
         chart: {
+            type: 'columnpyramid'
+        },
+        series: [{
+            data: [
+                [0, 2],
+                [1, 1],
+                [2, 2]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, null],
+                [2, 3]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, 2]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, 1]
+            ]
+        }]
+    }, true, true);
+
+    point = chart.series[2].points[1];
+    tickX = chart.xAxis[0].ticks[1].mark.element.getBBox().x;
+
+    const pointBBox = point.graphic.element.getBBox();
+
+    assert.ok(
+        chart.plotLeft + pointBBox.x < tickX &&
+            chart.plotLeft + pointBBox.x + pointBBox.width > tickX,
+        '#19127: Point should be centered on the tick if series is columnpyramid.'
+    );
+
+    chart.update({
+        chart: {
             type: 'column'
         },
         series: [{

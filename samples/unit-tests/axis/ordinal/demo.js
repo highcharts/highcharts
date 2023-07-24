@@ -46,6 +46,38 @@ QUnit.test('Ordinal general tests.', function (assert) {
             'ordinal is enabled (#12716).'
     );
 
+    assert.close(
+        chart.xAxis[0].toValue(
+            chart.series[0].data[chart.series[0].data.length - 1].plotX,
+            true
+        ),
+        0.001,
+        chart.series[0].xData[chart.series[0].xData.length - 1],
+        'Column: toValue should return a correct value for ordinal axes, #18863'
+    );
+
+    chart.series.forEach(series => {
+        series.update({
+            type: 'line'
+        });
+    });
+
+    assert.close(
+        chart.xAxis[0].toValue(
+            chart.xAxis[0].len,
+            true
+        ),
+        0.001,
+        chart.series[0].xData[chart.series[0].xData.length - 1],
+        'Line: toValue should return a correct value for ordinal axes, #18863'
+    );
+
+    chart.series.forEach(series => {
+        series.update({
+            type: 'column'
+        });
+    });
+
     chart.update({
         xAxis: {
             min: 1451577600000,
@@ -285,6 +317,18 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
     );
+    // #16068
+    chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
+    const controller = new TestController(chart),
+        visiblePoints = chart.series[0].points.filter(p => p.isInside);
+
+    controller.pan([20, 100], [chart.xAxis[0].len, 100]);
+
+    assert.strictEqual(
+        visiblePoints.length,
+        chart.series[0].points.filter(p => p.isInside).length,
+        'Amount of visible points should remain the same while panning, #16068.'
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
@@ -323,9 +367,11 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         },
         series: [{
             points: [{
+                isInside: true, // #18459
                 x: 3,
                 plotX: -20
             }, {
+                isInside: true, // #18459
                 x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
@@ -581,34 +627,42 @@ QUnit.test('Ordinal axis, data grouping and boost module, #14055.', assert => {
 });
 
 QUnit.test('Circular translation, #17128.', assert => {
+    const data = [{
+        type: 'line',
+        data: [
+            [548935806499, 95.82],
+            [1548936121889, 95.84],
+            [1548936895949, 95.75],
+            [1548937941785, 95.48],
+            [1548938881593, 95.6],
+            [1548939834796, 95.37],
+            [1548940821273, 95.16],
+            [1548941760541, 95.15],
+            [1548942617180, 94.9],
+            [1548943265472, 95.04],
+            [1548943953574, 94.93],
+            [1548944604420, 94.94],
+            [1548945157396, 95.19],
+            [1548945448867, 94.92],
+            [1548946059662, 94.98],
+            [1548946666809, 95.17],
+            [1548947190658, 95.38]
+        ],
+        showInNavigator: true
+    }, {
+        type: 'scatter',
+        data: [
+            [1548936121889, 90],
+            [1548938881593, 95]
+        ],
+        showInNavigator: false
+    }];
+
     const chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [
-                    [548935806499, 95.82],
-                    [1548936121889, 95.84],
-                    [1548936895949, 95.75],
-                    [1548937941785, 95.48],
-                    [1548938881593, 95.6],
-                    [1548939834796, 95.37],
-                    [1548940821273, 95.16],
-                    [1548941760541, 95.15],
-                    [1548942617180, 94.9],
-                    [1548943265472, 95.04],
-                    [1548943953574, 94.93],
-                    [1548944604420, 94.94],
-                    [1548945157396, 95.19],
-                    [1548945448867, 94.92],
-                    [1548946059662, 94.98],
-                    [1548946666809, 95.17],
-                    [1548947190658, 95.38]
-                ]
-            }, {
-                type: 'scatter',
-                data: [
-                    [1548936121889, 90],
-                    [1548938881593, 95]
-                ]
-            }]
+            series: data,
+            legend: {
+                enabled: true
+            }
         }),
         x = Date.UTC(2019, 0, 31, 14, 30);
 
@@ -634,5 +688,122 @@ QUnit.test('Circular translation, #17128.', assert => {
         ),
         `After zooming, when the scatterer series is not visible, a circular
         translation of the date should return the same value.`
+    );
+
+    // Reverse the order of the series
+    chart.xAxis[0].setExtremes();
+    chart.update({ series: data.reverse() });
+
+    // Perform the exact same tests as above
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `When two series (scatter and line) are visible, circular translation of
+        the date should return the same value.`
+    );
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2019, 0, 31, 14),
+        Date.UTC(2019, 0, 31, 15)
+    );
+
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `After zooming, when the scatterer series is not visible, a circular
+        translation of the date should return the same value.`
+    );
+});
+
+QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
+    const data = [
+        [
+            1622640600000,
+            124.28,
+            125.24,
+            124.05,
+            125.06
+        ],
+        [
+            1622727000000,
+            124.68,
+            124.85,
+            123.13,
+            123.54
+        ],
+        [
+            1622813400000,
+            124.07,
+            126.16,
+            123.85,
+            125.89
+        ],
+        [
+            1623072600000,
+            126.17,
+            126.32,
+            124.83,
+            125.9
+        ],
+        [
+            1623159000000,
+            126.6,
+            128.46,
+            126.21,
+            126.74
+        ],
+        [
+            1623245400000,
+            127.21,
+            127.75,
+            126.52,
+            127.13
+        ]
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'ohlc',
+            data: data
+        }, {
+            type: 'sma',
+            linkedTo: ':previous',
+            params: {
+                period: 2
+            }
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1622727000000, 1622813400000);
+
+    const circle = chart.addAnnotation({
+        shapes: [{
+            type: 'circle',
+            point: {
+                x: 1623072600000,
+                y: 125,
+                xAxis: 0,
+                yAxis: 0
+            },
+            r: 20
+        }]
+    });
+
+    const controller = new TestController(chart),
+        { x: pointX, y: pointY } = circle.userOptions.shapes[0].point,
+        x = chart.xAxis[0].toPixels(pointX),
+        y = chart.yAxis[0].toPixels(pointY);
+
+    controller.pan([x, y], [x - 50, y]);
+
+    assert.close(
+        x - 50,
+        chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
+        0.1,
+        'Annotation dragged on ordinal axis charts should follow mouse pointer.'
     );
 });

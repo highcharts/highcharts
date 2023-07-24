@@ -128,11 +128,14 @@
 
         /* Deprecated */
         // "ignoreDeprecations": "5.0",                      /* Silence deprecation errors of specified TypeScript version. */
+        "ignoreDeprecations": "5.0",
         // "keyofStringsOnly": false                         /* Change the keyof type operator to return 'string' instead of 'string|number'. Ends in TypeScript 5.5. */
         "keyofStringsOnly": true
     },
     "exclude": [
-        "./masters-es5/"
+        "./Dashboards/**/*.ts",
+        "./masters-dashboards/**/*.ts",
+        "./masters-es5/**/*.ts"
     ],
     "include": [
         "./**/*.ts"

@@ -33,7 +33,7 @@ import type {
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const {
@@ -879,7 +879,7 @@ class NavigationBindings {
             // If it's a number (not "format" options), parse it:
             if (
                 isNumber(parsedValue) &&
-                !value.match(/px/g) &&
+                !value.match(/px|em/g) &&
                 !field.match(/format/g)
             ) {
                 value = parsedValue as any;
@@ -1224,6 +1224,7 @@ class NavigationBindings {
 
 interface NavigationBindings extends NavigationBindingsLike {
 }
+
 
 /* *
  *

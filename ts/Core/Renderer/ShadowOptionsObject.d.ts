@@ -24,6 +24,7 @@ import type ColorString from '../Color/ColorString';
 
 export interface ShadowOptionsObject {
     color: ColorString;
+    filterUnits?: string;
     offsetX: number;
     offsetY: number;
     opacity: number;

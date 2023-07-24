@@ -5,6 +5,8 @@ globals:
     $: true
     ADBE: true
     CallAnalyzer: true
+    Dashboards: true
+    DataGrid: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide

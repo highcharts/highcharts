@@ -1,5 +1,5 @@
-import DataConverter from '/base/js/Data/Converters/DataConverter.js';
-import DataTable from '/base/js/Data/DataTable.js';
+import DataConverter from '/base/code/es-modules/Data/Converters/DataConverter.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
 
 const {test, only} = QUnit;
 

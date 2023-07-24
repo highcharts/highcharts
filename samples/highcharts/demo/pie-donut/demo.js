@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors,
+const colors = Highcharts.getOptions().colors,
     categories = [
         'Chrome',
         'Safari',
@@ -154,9 +154,10 @@ var colors = Highcharts.getOptions().colors,
     ],
     browserData = [],
     versionsData = [],
-    i,
+    dataLen = data.length;
+
+let i,
     j,
-    dataLen = data.length,
     drillDataLen,
     brightness;
 
@@ -210,9 +211,6 @@ Highcharts.chart('container', {
         data: browserData,
         size: '60%',
         dataLabels: {
-            formatter: function () {
-                return this.y > 5 ? this.point.name : null;
-            },
             color: '#ffffff',
             distance: -30
         }
@@ -222,10 +220,14 @@ Highcharts.chart('container', {
         size: '80%',
         innerSize: '60%',
         dataLabels: {
-            formatter: function () {
-                // display only if larger than 1
-                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                    this.y + '%' : null;
+            format: '<b>{point.name}:</b> <span style="opacity: 0.5">{y}%</span>',
+            filter: {
+                property: 'y',
+                operator: '>',
+                value: 1
+            },
+            style: {
+                fontWeight: 'normal'
             }
         },
         id: 'versions'

@@ -12,6 +12,7 @@
 'use strict';
 import './broken-axis.src.js';
 import './datagrouping.src.js';
+import './mouse-wheel-zoom.src.js';
 import Highcharts from '../../Core/Globals.js';
 import DataModifyComposition from '../../Series/DataModifyComposition.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';

@@ -28,7 +28,7 @@ import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
-import F from './FormatUtilities.js';
+import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
 const { doc, isSafari } = H;
@@ -408,13 +408,7 @@ class Tooltip {
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
-            doSplit = this.split && this.allowShared,
-            pointerEvents = (
-                options.style.pointerEvents ||
-                (
-                    this.shouldStickOnContact() ? 'auto' : 'none'
-                )
-            );
+            doSplit = this.split && this.allowShared;
 
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
@@ -446,10 +440,14 @@ class Tooltip {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = 'highcharts-tooltip-container';
+
+                // We need to set pointerEvents = 'none' as otherwise it makes
+                // the area under the tooltip non-hoverable even after the
+                // tooltip disappears, #19035.
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents,
+                    pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
@@ -507,7 +505,12 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents });
+                        .css({
+                            pointerEvents: (
+                                options.style.pointerEvents ||
+                                (this.shouldStickOnContact() ? 'auto' : 'none')
+                            )
+                        });
                 }
             }
             // Split tooltip use updateTooltipContainer to position the tooltip
@@ -997,10 +1000,11 @@ class Tooltip {
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
+            formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
-        let textConfig = {} as Tooltip.FormatterContextObject;
+        let formatterContext = {} as Tooltip.FormatterContextObject;
 
         if (!options.enabled || !point.series) { // #16820
             return;
@@ -1034,21 +1038,17 @@ class Tooltip {
                 pointConfig.push(item.getLabelConfig());
             });
 
-            textConfig = {
-                x: point.category,
-                y: point.y
-            } as any;
-            textConfig.points = pointConfig;
+            formatterContext = point.getLabelConfig();
+            formatterContext.points = pointConfig;
 
         // single point tooltip
         } else {
-            textConfig = point.getLabelConfig();
+            formatterContext = point.getLabelConfig();
         }
         this.len = pointConfig.length; // #6128
-        const text = formatter.call(
-            textConfig,
-            tooltip
-        );
+        const text = isString(formatString) ?
+            format(formatString, formatterContext, chart) :
+            formatter.call(formatterContext, tooltip);
 
         // register the current series
         const currentSeries = point.series;
@@ -1862,7 +1862,7 @@ namespace Tooltip {
         plotY: number;
     }
 
-    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+    export type ShapeValue = ('callout'|'circle'|'rect');
 
     /* *
      *
@@ -1995,7 +1995,7 @@ export default Tooltip;
  */
 
 /**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ * @typedef {"callout"|"circle"|"rect"} Highcharts.TooltipShapeValue
  */
 
 ''; // keeps doclets above in JS file

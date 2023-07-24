@@ -7,22 +7,18 @@
  * Fires on chart load, called from the chart.events.load option.
  */
 function onChartLoad() {
-    var centerX = 140,
+    const centerX = 140,
         centerY = 110,
         path = [],
-        angle,
-        radius,
         badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
             .brighten(-0.2)
-            .get(),
-        spike,
-        empImage,
-        big5,
-        label,
+            .get();
+
+    let spike,
+        angle,
+        radius,
         left,
-        right,
-        years,
-        renderer;
+        right;
 
     if (this.chartWidth < 530) {
         return;
@@ -49,7 +45,7 @@ function onChartLoad() {
         .add();
 
     // Employee image overlay
-    empImage = this.renderer
+    const empImage = this.renderer
         .path(path)
         .attr({
             zIndex: 7,
@@ -60,12 +56,12 @@ function onChartLoad() {
         .add();
 
     // Find timedifference in  year
-    var diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
+    let diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
     diff /= 60 * 60 * 24;
-    var yearsSince = Math.abs(Math.round(diff / 365.25));
+    const yearsSince = Math.abs(Math.round(diff / 365.25));
 
     // Big 5
-    big5 = this.renderer
+    const big5 = this.renderer
         .text(yearsSince)
         .attr({
             zIndex: 6
@@ -83,7 +79,7 @@ function onChartLoad() {
     });
 
     // Draw the label
-    label = this.renderer
+    const label = this.renderer
         .text('years and counting')
         .attr({
             zIndex: 6
@@ -170,7 +166,7 @@ function onChartLoad() {
         .add();
 
     // 2009-2014
-    years = this.renderer
+    const years = this.renderer
         .text('2009-' + new Date().getFullYear())
         .attr({
             zIndex: 6
@@ -187,7 +183,7 @@ function onChartLoad() {
     });
 
     // Prepare mouseover
-    renderer = this.renderer;
+    const renderer = this.renderer;
     if (renderer.defs) {
         // is SVG
         this.get('employees').points.forEach(point => {

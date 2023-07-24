@@ -43,11 +43,9 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
             tooltip: {
                 outside: true
             },
-            series: [
-                {
-                    data: [1, 3, 2, 4]
-                }
-            ]
+            series: [{
+                data: [1, 3, 2, 4]
+            }]
         }),
         point = chart.series[0].points[0],
         tooltip = chart.tooltip;

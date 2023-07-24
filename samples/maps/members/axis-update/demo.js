@@ -4,35 +4,37 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
+
     var chart;
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        // Initialize the chart
-        chart = Highcharts.mapChart('container', {
+    // Initialize the chart
+    chart = Highcharts.mapChart('container', {
 
-            title: {
-                text: 'Update the color axis'
-            },
+        title: {
+            text: 'Update the color axis'
+        },
 
-            colorAxis: {
-                min: 1,
-                max: 1000,
-                type: 'logarithmic',
-                minColor: '#FFFFFF',
-                maxColor: '#000000',
-                tickPixelInterval: 100
-            },
+        colorAxis: {
+            min: 1,
+            max: 1000,
+            type: 'logarithmic',
+            minColor: '#FFFFFF',
+            maxColor: '#000000',
+            tickPixelInterval: 100
+        },
 
-            series: [{
-                data: data,
-                mapData: topology,
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                tooltip: {
-                    valueSuffix: '/km²'
-                }
-            }]
-        });
+        series: [{
+            data: data,
+            mapData: topology,
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            tooltip: {
+                valueSuffix: '/km²'
+            }
+        }]
     });
 
     let blackAndWhite = true,

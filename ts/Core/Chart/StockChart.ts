@@ -17,6 +17,7 @@
  * */
 
 import type {
+    AxisCollectionKey,
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
@@ -31,7 +32,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
-import F from '../../Core/FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
@@ -236,21 +237,21 @@ class StockChart extends Chart {
      *
      * @private
      * @function Highcharts.StockChart#createAxis
-     * @param {string} type
+     * @param {string} coll
      * An axis type.
      * @param {Chart.CreateAxisOptionsObject} options
      * The axis creation options.
      */
     public createAxis(
-        type: string,
+        coll: AxisCollectionKey,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
         options.axis = merge(
-            getDefaultAxisOptions(type, options.axis),
+            getDefaultAxisOptions(coll, options.axis),
             options.axis,
-            getForcedAxisOptions(type, this.userOptions)
+            getForcedAxisOptions(coll, this.userOptions)
         );
-        return super.createAxis(type, options);
+        return super.createAxis(coll, options);
     }
 }
 

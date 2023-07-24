@@ -478,24 +478,6 @@ function parseFormula(
 
     while (next) {
 
-        // Check for a function
-        match = next.match(functionRegExp);
-        if (match) {
-            next = next.substring(match[1].length).trim();
-
-            const parantheses = extractParantheses(next);
-
-            formula.push({
-                type: 'function',
-                name: match[1],
-                args: parseArguments(parantheses, alternativeSeparators)
-            });
-
-            next = next.substring(parantheses.length + 2).trim();
-
-            continue;
-        }
-
         // Check for an R1C1 reference notation
         match = next.match(referenceR1C1RegExp);
         if (match) {
@@ -567,6 +549,16 @@ function parseFormula(
             continue;
         }
 
+        // Check for a formula operator
+        match = next.match(operatorRegExp);
+        if (match) {
+            formula.push(match[0] as Operator);
+
+            next = next.substring(match[0].length).trim();
+
+            continue;
+        }
+
         // Check for a boolean value
         match = next.match(booleanRegExp);
         if (match) {
@@ -587,12 +579,31 @@ function parseFormula(
             continue;
         }
 
-        // Check for a formula operator
-        match = next.match(operatorRegExp);
-        if (match) {
-            formula.push(match[0] as Operator);
+        // Check for a quoted string
+        if (next[0] === '"') {
+            const string = extractString(next);
 
-            next = next.substring(match[0].length).trim();
+            formula.push(string.substring(1, -1));
+
+            next = next.substring(string.length + 2).trim();
+
+            continue;
+        }
+
+        // Check for a function
+        match = next.match(functionRegExp);
+        if (match) {
+            next = next.substring(match[1].length).trim();
+
+            const parantheses = extractParantheses(next);
+
+            formula.push({
+                type: 'function',
+                name: match[1],
+                args: parseArguments(parantheses, alternativeSeparators)
+            });
+
+            next = next.substring(parantheses.length + 2).trim();
 
             continue;
         }
@@ -609,17 +620,6 @@ function parseFormula(
 
                 continue;
             }
-        }
-
-        // Check for a quoted string
-        if (next[0] === '"') {
-            const string = extractString(next);
-
-            formula.push(string.substring(1, -1));
-
-            next = next.substring(string.length + 2).trim();
-
-            continue;
         }
 
         // Something is not right

@@ -25,7 +25,7 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../Core/FormatUtilities';
+import type Templating from '../Core/Templating';
 import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
 import type {
     PlotLineLabelOptions,
@@ -60,7 +60,7 @@ interface CurrentDateIndicatorLabelFormatterCallbackFunction {
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
     format?: string;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;

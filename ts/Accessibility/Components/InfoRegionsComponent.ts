@@ -44,7 +44,7 @@ const {
     getChartTitle,
     unhideChartElementFromAT
 } = CU;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { doc } = H;
@@ -178,7 +178,7 @@ function getTypeDescription(
         return getTypeDescForEmptyChart(chart, formatContext);
     }
 
-    if (firstType === 'map') {
+    if (firstType === 'map' || firstType === 'tiledwebmap') {
         return getTypeDescForMapChart(chart, formatContext);
     }
 
@@ -268,6 +268,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 setTimeout(function (): void {
                     component.focusDataTable();
                 }, 300);
+            }
+        });
+
+        this.addEvent(chart, 'afterHideData', function (): void {
+            if (component.viewDataTableButton) {
+                component.viewDataTableButton
+                    .setAttribute('aria-expanded', 'false');
             }
         });
 
@@ -556,7 +563,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
-        return stripHTMLTagsFromString(content);
+        return stripHTMLTagsFromString(content, this.chart.renderer.forExport);
     }
 
 
@@ -636,7 +643,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const subtitle = (
             this.chart.options.subtitle
         );
-        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
+        return stripHTMLTagsFromString(
+            subtitle && subtitle.text || '',
+            this.chart.renderer.forExport
+        );
     }
 
 

@@ -432,6 +432,7 @@ function onAfterInit(this: Axis): void {
                     gridOptions.columns.length - columnIndex - 1
                 ],
                 {
+                    isInternal: true,
                     linkedTo: 0,
                     // Force to behave like category axis
                     type: 'category',
@@ -444,15 +445,18 @@ function onAfterInit(this: Axis): void {
 
             delete (columnOptions.grid as any).columns; // Prevent recursion
 
-            const column =
-                new Axis(axis.chart, columnOptions) as GridAxisComposition;
+            const column = new Axis(
+                axis.chart,
+                columnOptions,
+                'yAxis'
+            ) as GridAxisComposition;
             column.grid.isColumn = true;
             column.grid.columnIndex = columnIndex;
 
             // Remove column axis from chart axes array, and place it
             // in the columns array.
             erase(chart.axes, column);
-            erase((chart as any)[axis.coll], column);
+            erase(chart[axis.coll] || [], column);
             columns.push(column);
         }
     }
@@ -1531,7 +1535,8 @@ export default GridAxis;
 
 /**
  * Set cell height for grid axis labels. By default this is calculated from font
- * size. This option only applies to horizontal axes.
+ * size. This option only applies to horizontal axes. For vertical axes, check
+ * the [#yAxis.staticScale](yAxis.staticScale) option.
  *
  * @sample gantt/grid-axis/cellheight
  *         Gant chart with custom cell height
