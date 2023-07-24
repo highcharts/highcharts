@@ -105,12 +105,7 @@ QUnit.test('GeoHeatMap Series', assert => {
         { plotX, plotY } = point,
         { container, plotLeft, plotTop } = chart;
 
-    controller.moveTo(
-        plotLeft + plotX,
-        plotTop + plotY,
-        void 0,
-        true
-    );
+    controller.moveTo(plotLeft + plotX, plotTop + plotY);
 
     assert.ok(
         container.getElementsByClassName('highcharts-tooltip') !== undefined,
@@ -121,5 +116,21 @@ QUnit.test('GeoHeatMap Series', assert => {
         [chart.hoverPoint.lon, chart.hoverPoint.lat],
         [point.lon, point.lat],
         'Hovered point should be correct.'
+    );
+
+    series.setData([{
+        lon: 0,
+        lat: 20,
+        value: 5
+    }, [0, 30, 0]]);
+
+    // Move mouse a little bit to refresh tooltip
+    controller.moveTo(plotLeft + plotX + 5, plotTop + plotY);
+
+    assert.strictEqual(
+        chart.hoverPoint.value,
+        5,
+        `Hovered point value should be changed be correct after changing the
+        data.`
     );
 });

@@ -405,7 +405,12 @@ class GeoHeatmapSeries extends MapSeries {
      * @private
      */
     public translate(): void {
-        if (this.options.interpolation && this.image) {
+        if (
+            this.options.interpolation &&
+            this.image &&
+            !this.isDirty &&
+            !this.isDirtyData
+        ) {
             return;
         }
         super.translate.apply(this, arguments);
