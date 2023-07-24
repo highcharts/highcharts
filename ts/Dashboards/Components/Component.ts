@@ -438,7 +438,7 @@ abstract class Component {
                 {}
             );
 
-        this.sync? this.sync.syncConfig = syncHandlers : void 0;
+        this.sync ? this.sync.syncConfig = syncHandlers : void 0;
         this.syncHandlers = syncHandlers;
     }
 
