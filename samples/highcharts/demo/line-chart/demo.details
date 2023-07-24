@@ -1,5 +1,5 @@
 ---
-name: Basic line
+name: Line chart
 authors:
   - Torstein Hønsi
 js_wrap: b
