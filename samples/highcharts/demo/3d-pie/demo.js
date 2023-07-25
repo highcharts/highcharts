@@ -32,7 +32,11 @@ Highcharts.chart('container', {
             depth: 35,
             dataLabels: {
                 enabled: true,
-                format: '{point.name}'
+                distance: -50,
+                format: '{point.name}',
+                style: {
+                    fontSize: '12px'
+                }
             }
         }
     },
@@ -40,17 +44,54 @@ Highcharts.chart('container', {
         type: 'pie',
         name: 'Share',
         data: [
-            ['Samsung', 23],
-            ['Apple', 18],
+            {
+                name: 'Samsung',
+                y: 23,
+                dataLabels: {
+                    x: -30,
+                    y: -5
+                }
+            },
+            {
+                name: 'Apple',
+                y: 18,
+                dataLabels: {
+                    x: -20
+                }
+            },
             {
                 name: 'Xiaomi',
                 y: 12,
                 sliced: true,
-                selected: true
+                selected: true,
+                dataLabels: {
+                    distance: -30,
+                    x: -75,
+                    y: -10
+                }
             },
-            ['Oppo*', 9],
-            ['Vivo', 8],
-            ['Others', 30]
+            {
+                name: 'Oppo*',
+                y: 9,
+                dataLabels: {
+                    x: 45,
+                    y: 10
+                }
+            },
+            {
+                name: 'Vivo',
+                y: 8,
+                dataLabels: {
+                    y: 10
+                }
+            },
+            {
+                name: 'Others',
+                y: 30,
+                dataLabels: {
+                    x: 25
+                }
+            }
         ]
     }]
 });
