@@ -133,7 +133,8 @@ Dashboards.board('container', {
         type: 'DataGrid',
         editable: true,
         sync: {
-            highlight: true
+            highlight: true,
+            visibility: true
         }
     }]
 }, true);
