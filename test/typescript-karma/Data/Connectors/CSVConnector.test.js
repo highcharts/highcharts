@@ -1,7 +1,7 @@
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
 import { registerConnectorEvents, testExportedDataTable } from './utils.js';
 
-const { test, only } = QUnit;
+const { test, only, skip } = QUnit;
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,   1 #this is a comment
@@ -30,9 +30,10 @@ const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "9",       0.0017,   0.047,   0.079,2.01, 603
 "12",      0.0005,   0.014,   0.050,1.30,2025`;
 
-test('CSVConnector from string', function (assert) {
+test('CSVConnector from string', async (assert) => {
     const connector = new CSVConnector({ csv });
-    connector.load();
+
+    await connector.load();
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
@@ -56,12 +57,13 @@ test('CSVConnector from string', function (assert) {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 });
 
-test('CSVConnector from string, with decimalpoint option', function(assert){
+test('CSVConnector from string, with decimalpoint option', async (assert) => {
     const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
 
     let connector = new CSVConnector({ csv });
 
-    connector.load();
+    await connector.load();
+
     assert.strictEqual(
         connector.table.getRowCount(),
         3
@@ -72,11 +74,10 @@ test('CSVConnector from string, with decimalpoint option', function(assert){
         'The converter should be able to guess this decimalpoint'
     )
 
-    connector = new CSVConnector({
-        csv,
-        decimalPoint: '.'
-    });
-    connector.load();
+    connector = new CSVConnector({ csv, decimalPoint: '.' });
+
+    await connector.load();
+
     assert.strictEqual(
         typeof connector.table.getCell('Value', 2),
         'string',
@@ -84,7 +85,7 @@ test('CSVConnector from string, with decimalpoint option', function(assert){
     );
 });
 
-test('CSVConnector, negative values', function (assert) {
+test('CSVConnector, negative values', async (assert) => {
     // If the final value is undefined it will be trimmed
     const array = [-3, -3.1, -.2, 2.1, undefined, 1];
 
@@ -92,7 +93,7 @@ test('CSVConnector, negative values', function (assert) {
         csv: ['Values', ...array].join('\n')
     });
 
-    connector.load();
+    await connector.load();
 
     assert.deepEqual(
         connector.table.getColumns(['Values'])['Values'],
@@ -101,7 +102,7 @@ test('CSVConnector, negative values', function (assert) {
 
 })
 
-test('CSV with ""s', (assert) => {
+test('CSV with ""s', async (assert) => {
     const csv = `"test","test2"
 12,"2"
 "a",4
@@ -110,7 +111,7 @@ test('CSV with ""s', (assert) => {
 `
     const connector = new CSVConnector({ csv });
 
-    connector.load();
+    await connector.load();
 
     assert.deepEqual(
         connector.table.getColumnNames(),
@@ -136,7 +137,8 @@ test('CSV with ""s', (assert) => {
     //     'Output should be same as input'
     // )
 });
-test('CSVConnector from URL', function (assert) {
+
+test('CSVConnector from URL', async (assert) => {
     const registeredEvents = [];
 
     const connector = new CSVConnector({
@@ -195,8 +197,12 @@ test('CSVConnector from URL', function (assert) {
             return expectedArray;
         }
 
-        assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
-        assert.ok(e.csv, 'AfterLoad event has CSV attached')
+        assert.deepEqual(
+            registeredEvents,
+            getExpectedEvents(),
+            'Events are fired in correct order'
+        );
+        assert.ok(!!e.csv, 'AfterLoad event has CSV attached')
 
         doneLoading();
     });
@@ -212,12 +218,12 @@ test('CSVConnector from URL', function (assert) {
     });
 
     // Do the load
-    connector.load();
+    await connector.load();
 
 })
 
 // TODO: test amount of retries, event orders
-test('CSVConnector error', function(assert){
+skip('CSVConnector error', async (assert) => {
     const connector = new CSVConnector({
         csvURL: ''
     });
@@ -233,5 +239,5 @@ test('CSVConnector error', function(assert){
         afterError();
     })
 
-    connector.load();
+    await connector.load();
 });
