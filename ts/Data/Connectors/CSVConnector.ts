@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -254,7 +255,10 @@ namespace CSVConnector {
     /**
      * Available options for constructor and converter of the CSVConnector.
      */
-    export type UserOptions = (DeepPartial<CSVConnectorOptions>&CSVConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<CSVConnectorOptions>&
+        CSVConverter.UserOptions
+    );
 
 }
 

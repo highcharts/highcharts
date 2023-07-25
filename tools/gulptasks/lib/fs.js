@@ -108,11 +108,18 @@ function copyFile(fileSourcePath, fileTargetPath) {
  * @param {boolean} [includeEntries]
  *        Set to true to remove containing entries as well
  *
+ * @param {Function} [filterCallback]
+ *        Callback to return `true` for files to delete.
+ *
  * @return {void}
  *
  * @throws {Error}
  */
-function deleteDirectory(directoryPath, includeEntries) {
+function deleteDirectory(
+    directoryPath,
+    includeEntries,
+    filterCallback
+) {
 
     if (!FS.existsSync(directoryPath)) {
         return;
@@ -120,9 +127,17 @@ function deleteDirectory(directoryPath, includeEntries) {
 
     if (includeEntries) {
         getDirectoryPaths(directoryPath).forEach(
-            path => deleteDirectory(path, true)
+            path => deleteDirectory(path, true, filterCallback)
         );
-        getFilePaths(directoryPath).forEach(path => deleteFile(path, true));
+
+        for (const filePath of getFilePaths(directoryPath)) {
+            if (
+                !filterCallback ||
+                filterCallback(filePath) === true
+            ) {
+                deleteFile(filePath, true);
+            }
+        }
     }
 
     FS.rmdirSync(directoryPath);
