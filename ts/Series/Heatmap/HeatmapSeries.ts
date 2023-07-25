@@ -55,6 +55,13 @@ const {
     defined
 } = U;
 
+import IU from '../InterpolationUtilities.js';
+
+const {
+    colorFromPoint,
+    getContext
+} = IU;
+
 /* *
  *
  *  Declarations
@@ -537,7 +544,7 @@ class HeatmapSeries extends ScatterSeries {
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     ),
-                    ctx = series.getContext(),
+                    ctx = getContext(series),
                     canvas = series.canvas;
 
                 if (canvas && ctx && colorAxis) {
@@ -556,26 +563,6 @@ class HeatmapSeries extends ScatterSeries {
                             canvasWidth - (noOffset && 1 || 0)
                         ),
                         heightLastIndex = canvasHeight - 1,
-                        colorFromPoint = (p: HeatmapPoint): number[] => {
-                            const rgba = ((
-                                colorAxis.toColor(
-                                    p.value ||
-                                    0,
-                                    pick(p)
-                                ) as string)
-                                .split(')')[0]
-                                .split('(')[1]
-                                .split(',')
-                                .map((s): number => pick(
-                                    parseFloat(s),
-                                    parseInt(s, 10)
-                                ))
-                            );
-
-                            rgba[3] = pick(rgba[3], 1.0) * 255;
-
-                            return rgba;
-                        },
 
                         scaleToImg = (
                             val: number,
@@ -642,7 +629,7 @@ class HeatmapSeries extends ScatterSeries {
                             ),
                             p = points[toPointScale],
                             sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p)
+                                colorFromPoint(p.value, p, colorAxis)
                             );
                         pixelData.set(
                             sourceArr,
@@ -696,24 +683,6 @@ class HeatmapSeries extends ScatterSeries {
                 }
             });
         }
-    }
-
-    /**
-     * @private
-     */
-    public getContext(): CanvasRenderingContext2D | undefined {
-        const series = this,
-            { canvas, context } = series;
-        if (canvas && context) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        } else {
-            series.canvas = doc.createElement('canvas');
-
-            series.context = series.canvas.getContext('2d') || void 0;
-            return series.context;
-        }
-
-        return context;
     }
 
     /**

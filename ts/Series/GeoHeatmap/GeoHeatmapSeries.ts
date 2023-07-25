@@ -46,12 +46,18 @@ import type MapView from '../../Maps/MapView.js';
 
 const {
     addEvent,
-    defined,
     extend,
     isNumber,
     merge,
     pick
 } = U;
+
+import IU from '../InterpolationUtilities.js';
+
+const {
+    colorFromPoint,
+    getContext
+} = IU;
 
 /**
  * Normalize longitute value to -180:180 range.
@@ -429,7 +435,7 @@ class GeoHeatmapSeries extends MapSeries {
             interpolation = seriesOptions.interpolation;
 
         if (interpolation && mapView && series.bounds) {
-            const ctx = series.context || series.getContext(),
+            const ctx = series.context || getContext(series),
                 {
                     canvas,
                     colorAxis,
@@ -471,35 +477,14 @@ class GeoHeatmapSeries extends MapSeries {
                     const canvasWidth = canvas.width = ~~(360 / colsize) + 1,
                         canvasHeight = canvas.height = ~~(180 / rowsize) + 1,
                         canvasArea = canvasWidth * canvasHeight,
-                        pixelData = new Uint8ClampedArray(canvasArea * 4),
-                        colorFromPoint = (p: any): number[] => {
-                            const rgba = ((
-                                colorAxis.toColor(
-                                    p.value ||
-                                    0,
-                                    pick(p)
-                                ) as string)
-                                .split(')')[0]
-                                .split('(')[1]
-                                .split(',')
-                                .map((s): number => pick(
-                                    parseFloat(s),
-                                    parseInt(s, 10)
-                                ))
-                            );
-                            rgba[3] = pick(rgba[3], 1.0) * 255;
-                            if (!defined(p.value) || !p.visible) {
-                                rgba[3] = 0;
-                            }
-                            return rgba;
-                        };
+                        pixelData = new Uint8ClampedArray(canvasArea * 4);
                     series.directTouch = false; // Needed for tooltip
 
                     // First pixelData represents the geo coordinates
                     for (let i = 0; i < points.length; i++) {
                         const p = points[i],
                             sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p)
+                                colorFromPoint(p.value, p, colorAxis)
                             ),
                             { lon, lat } = p.options;
 
@@ -632,7 +617,7 @@ class GeoHeatmapSeries extends MapSeries {
                                 merge(
                                     { animator: 0 },
                                     series.isDirtyCanvas ? {
-                                        href: canvas.toDataURL()
+                                        href: canvas.toDataURL('image/png', 1)
                                     } : void 0
                                 )
                             )
@@ -646,14 +631,14 @@ class GeoHeatmapSeries extends MapSeries {
                             merge(
                                 dimensions,
                                 series.isDirtyCanvas ? {
-                                    href: canvas.toDataURL()
+                                    href: canvas.toDataURL('image/png', 1)
                                 } : void 0
                             )
                         );
                     }
                 } else {
                     series.image = chart.renderer.image(
-                        canvas.toDataURL()
+                        canvas.toDataURL('image/png', 1)
                     )
                         .attr(dimensions)
                         .add(series.group);
@@ -663,30 +648,6 @@ class GeoHeatmapSeries extends MapSeries {
         } else {
             super.drawPoints.apply(series, arguments);
         }
-    }
-
-    /**
-     * Method responsible for creating a canvas for interpolation image.
-     * @private
-     */
-    public getContext(): CanvasRenderingContext2D | undefined {
-        const series = this,
-            {
-                canvas,
-                context
-            } = series;
-        if (canvas && context) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        } else {
-            series.canvas = doc.createElement('canvas');
-
-            series.context = series.canvas.getContext('2d', {
-                willReadFrequently: true
-            }) || void 0;
-            return series.context;
-        }
-
-        return context;
     }
 
     public searchPoint(
