@@ -15,7 +15,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
-import type Point from '../Core/Series/Point';
 const {
     addEvent,
     isArray,
@@ -73,6 +72,16 @@ declare global {
  * @product   highstock
  * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.enabled
+ */
+
+/**
+ * Enable or disable the animation of the price indicator.
+ *
+ * @type      {boolean|Highcharts.AnimationOptionsObject}
+ * @product   highstock
+ * @default   true
+ * @since     next
+ * @apioption plotOptions.series.lastVisiblePrice.animation
  */
 
 /**
@@ -196,6 +205,16 @@ declare global {
  * @product   highstock
  * @default   false
  * @apioption plotOptions.series.lastPrice.enabled
+ */
+
+/**
+ * Enable or disable the animation of the price indicator.
+ *
+ * @type      {boolean|Highcharts.AnimationOptionsObject}
+ * @product   highstock
+ * @default   true
+ * @since     next
+ * @apioption plotOptions.series.lastPrice.animation
  */
 
 /**
@@ -329,7 +348,9 @@ addEvent(Series, 'afterRender', function (): void {
             yValue;
 
         if (lastPrice && lastPrice.enabled) {
-            yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
+            yAxis.crosshair = yAxis.options.crosshair = merge({
+                animation: true
+            }, seriesOptions.lastPrice);
 
             if (!series.chart.styledMode &&
                     yAxis.crosshair &&
@@ -344,11 +365,11 @@ addEvent(Series, 'afterRender', function (): void {
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
 
-            if (series.lastPriceLabel) {
-                series.lastPriceLabel.destroy();
-            }
-
             delete yAxis.crossLabel;
+
+            if (series.lastPriceLabel) {
+                yAxis.crossLabel = series.lastPriceLabel;
+            }
 
             yAxis.drawCrosshair((null as any), ({
                 x: x,
@@ -371,20 +392,22 @@ addEvent(Series, 'afterRender', function (): void {
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent' // line invisible by default
+                color: 'transparent', // line invisible by default
+                animation: true
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
             const lastPoint = points[pLength - 1].isInside ?
                 points[pLength - 1] : points[pLength - 2];
 
-            if (series.lastVisiblePriceLabel) {
-                series.lastVisiblePriceLabel.destroy();
-            }
             // Set to undefined to avoid collision with
             // the yAxis crosshair #11480
             // Delete the crossLabel each time the code is invoked, #13876.
             delete yAxis.crossLabel;
+
+            if (series.lastVisiblePriceLabel) {
+                yAxis.crossLabel = series.lastVisiblePriceLabel;
+            }
 
             // Save price
             yAxis.drawCrosshair((null as any), lastPoint);

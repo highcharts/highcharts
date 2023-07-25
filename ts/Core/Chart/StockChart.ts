@@ -687,6 +687,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         top = this.top, // top position
         width = this.width,
         crossLabel = this.crossLabel, // the svgElement
+        animation = crossLabel && this.crosshair.animation || false,
         posx,
         posy,
         crossBox,
@@ -712,13 +713,21 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         (this.labelAlign === 'right' ? 'right' : 'left') :
         (this.labelAlign === 'left' ? 'left' : 'center'));
 
+    if (horiz) {
+        posx = snap ? (point.plotX || 0) + left : e.chartX;
+        posy = top + (opposite ? 0 : this.height);
+    } else {
+        posx = left + this.offset + (opposite ? width : 0);
+        posy = snap ? (point.plotY || 0) + top : e.chartY;
+    }
+
     // If the label does not exist yet, create it.
     if (!crossLabel) {
         crossLabel = this.crossLabel = chart.renderer
             .label(
                 '',
-                0,
-                void 0,
+                posx,
+                posy,
                 options.shape || 'callout'
             )
             .addClass(
@@ -755,14 +764,6 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         }
     }
 
-    if (horiz) {
-        posx = snap ? (point.plotX || 0) + left : e.chartX;
-        posy = top + (opposite ? 0 : this.height);
-    } else {
-        posx = left + this.offset + (opposite ? width : 0);
-        posy = snap ? (point.plotY || 0) + top : e.chartY;
-    }
-
     if (!formatOption && !options.formatter) {
         if (this.dateTime) {
             formatFormat = '%b %d, %Y';
@@ -790,34 +791,35 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     crossLabel.attr({
-        text,
+        text
+    }).animate({
         x: posx,
         y: posy,
         visibility: isInside ? 'inherit' : 'hidden'
-    });
+    }, animation);
 
     crossBox = crossLabel.getBBox();
 
-    // now it is placed we can correct its position
+    // Now it is placed we can correct its position
     if (isNumber(crossLabel.x) && !horiz && !opposite) {
-        posx = crossLabel.x - (crossBox.width / 2);
+        posx -= crossBox.width / 2;
     }
 
     if (isNumber(crossLabel.y)) {
         if (horiz) {
             if ((tickInside && !opposite) || (!tickInside && opposite)) {
-                posy = crossLabel.y - crossBox.height;
+                posy -= crossBox.height;
             }
         } else {
-            posy = crossLabel.y - (crossBox.height / 2);
+            posy -= crossBox.height / 2;
         }
     }
 
-    // check the edges
+    // Check the edges
     if (horiz) {
         limit = {
-            left: left - crossBox.x,
-            right: left + this.width - crossBox.x
+            left: left - posx,
+            right: left + this.width - posx
         };
     } else {
         limit = {
@@ -828,17 +830,17 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         };
     }
 
-    // left edge
+    // Left edge
     if (crossLabel.translateX < limit.left) {
         offset = limit.left - crossLabel.translateX;
     }
-    // right edge
+    // Right edge
     if (crossLabel.translateX + crossBox.width >= limit.right) {
         offset = -(crossLabel.translateX + crossBox.width - limit.right);
     }
 
-    // show the crosslabel
-    crossLabel.attr({
+    // Show the crosslabel
+    crossLabel.animate({
         x: posx + offset,
         y: posy,
         // First set x and y, then anchorX and anchorY, when box is actually
@@ -849,7 +851,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         anchorY: horiz ?
             (this.opposite ? chart.chartHeight : 0) :
             posy + crossBox.height / 2
-    });
+    }, animation);
 });
 
 /**

@@ -4286,9 +4286,9 @@ class Axis {
                 }
             }
 
-            graphic.show().attr({
+            graphic.show().animate({
                 d: path
-            });
+            }, options.animation || false);
 
             if (categorized && !(options as any).width) {
                 graphic.attr({
