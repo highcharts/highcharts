@@ -75,6 +75,9 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             linkFormat: '',
+            animation: {
+                defer: 3000
+            },
             style: {
                 fontSize: '0.8em',
                 fontWeight: 'normal'
