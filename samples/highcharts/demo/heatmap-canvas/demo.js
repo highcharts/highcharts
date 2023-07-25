@@ -59,9 +59,10 @@ Highcharts.chart('container', {
     colorAxis: {
         stops: [
             [0, '#3060cf'],
+            [0.25, '#4ee4f5'],
             [0.5, '#fffbbc'],
-            [0.9, '#c4463a'],
-            [1, '#c4463a']
+            [0.75, '#b8e04a'],
+            [0.9, '#c4463a']
         ],
         min: -15,
         max: 25,
