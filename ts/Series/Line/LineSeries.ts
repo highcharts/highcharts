@@ -592,6 +592,7 @@ export default LineSeries;
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
+ * @type      {*|Array<*>}
  * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
