@@ -489,7 +489,6 @@ class DataGrid {
             this.outerContainer.style.top = '0';
         }
 
-        this.updateInnerContainerWidth();
         this.renderInitialRows();
         this.addEvents();
         this.updateScrollingLength();
@@ -711,17 +710,6 @@ class DataGrid {
             delete this.cellInputEl;
         }
     }
-
-
-    /**
-     * Inherits the inner width from the scroll container.
-     * @internal
-     */
-    private updateInnerContainerWidth(): void {
-        const newWidth = this.outerContainer.offsetWidth;
-        this.innerContainer.style.width = newWidth + 'px';
-    }
-
 
     /**
      * Updates the scroll container to reflect the data size.
