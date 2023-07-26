@@ -32,7 +32,6 @@ import type {
 import type Globals from '../Globals';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
-
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
@@ -56,7 +55,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    relativeLength
+    relativeLength,
+    diffObjects
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -68,7 +68,6 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
-import ComponentRegistry from './ComponentRegistry.js';
 
 /* *
  *
@@ -272,7 +271,7 @@ abstract class Component {
     /**
      * @internal
      */
-    protected syncHandlers: Sync.OptionsRecord;
+    protected syncHandlers?: Sync.OptionsRecord;
 
     /**
      * DataModifier that is applied on top of modifiers set on the DataStore.
@@ -364,7 +363,7 @@ abstract class Component {
         };
 
 
-        this.syncHandlers = this.handleSyncOptions();
+        this.filterAndAssignSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
         });
@@ -381,7 +380,7 @@ abstract class Component {
      * Inits connectors for the component and redraws it.
      *
      * @returns
-     * Promise resolviing to the component.
+     * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
         if (
@@ -405,23 +404,19 @@ abstract class Component {
      * */
 
     /**
-    * Handles the sync options. Applies the given defaults if no
-    * specific callback given.
+    * Filter the sync options that are declared in the component options.
+    * Assigns the sync options to the component and to the sync instance.
     *
     * @param defaultHandlers
     * Sync handlers on component.
     *
-    * @returns
-    * Sync component.
-    *
     * @internal
     */
-    protected handleSyncOptions(
+    protected filterAndAssignSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
-    ): Component['syncHandlers'] {
+    ): void {
         const sync = this.options.sync || {};
-
-        return Object.keys(sync)
+        const syncHandlers = Object.keys(sync)
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
@@ -442,6 +437,9 @@ abstract class Component {
                 },
                 {}
             );
+
+        this.sync ? this.sync.syncConfig = syncHandlers : void 0;
+        this.syncHandlers = syncHandlers;
     }
 
     /**
@@ -871,7 +869,7 @@ abstract class Component {
      */
     public load(): this {
 
-        // Set up the connector on inital load if it has not been done
+        // Set up the connector on initial load if it has not been done
         if (!this.hasLoaded && this.connector) {
             this.setConnector(this.connector);
         }
@@ -890,9 +888,11 @@ abstract class Component {
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
+
         if (events) {
             Object.keys(events).forEach((key): void => {
                 const eventCallback = (events as any)[key];
+
                 if (eventCallback) {
                     this.callbackRegistry.addCallback(key, {
                         type: 'component',
@@ -1066,6 +1066,18 @@ abstract class Component {
         return json;
     }
 
+    /**
+     * Get the component's options.
+     * @returns
+     * The JSON of component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<Component.ComponentOptions> {
+        return diffObjects(this.options, Component.defaultOptions);
+    }
+
     public getEditableOptions(): Component.ComponentOptions {
         const component = this;
         return merge(component.options);
@@ -1235,7 +1247,7 @@ namespace Component {
          */
         navigationBindings?: Array<Globals.AnyRecord>;
         /**
-         * Events attached to the component : `mount`, `unmount`.
+         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *
          * Try it:
          *

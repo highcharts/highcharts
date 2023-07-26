@@ -9,6 +9,7 @@ on:
       - 'samples/dashboards/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'css/**'
       - '.github/workflows/**'
 
 permissions:

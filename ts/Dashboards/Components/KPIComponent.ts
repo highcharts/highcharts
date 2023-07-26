@@ -30,6 +30,7 @@ import type {
     Highcharts
 } from '../Plugins/HighchartsTypes';
 import type TextOptions from './TextOptions';
+import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
@@ -45,7 +46,8 @@ const {
     getStyle,
     isArray,
     isNumber,
-    merge
+    merge,
+    diffObjects
 } = U;
 
 /* *
@@ -134,7 +136,7 @@ class KPIComponent extends Component {
     /**
      * Default options of the KPI component.
      */
-    public static defaultChartOptions: DeepPartial<Options> = {
+    public static defaultChartOptions: Types.DeepPartial<Options> = {
         chart: {
             type: 'spline',
             backgroundColor: 'transparent'
@@ -144,13 +146,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as DeepPartial<Options['xAxis']>,
+        } as Types.DeepPartial<Options['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as DeepPartial<Options['yAxis']>,
+        } as Types.DeepPartial<Options['yAxis']>,
         legend: {
             enabled: false
         },
@@ -622,6 +624,21 @@ class KPIComponent extends Component {
         this.emit({ type: 'toJSON', json: base });
 
         return json;
+    }
+
+    /**
+     * Get the KPI component's options.
+     * @returns
+     * The JSON of KPI component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+        return {
+            ...diffObjects(this.options, KPIComponent.defaultOptions),
+            type: 'KPI'
+        };
     }
 }
 

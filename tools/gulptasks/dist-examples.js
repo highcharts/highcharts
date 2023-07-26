@@ -166,8 +166,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-          FS.readFileSync(path).toString() ||
-          ''
+                    FS.readFileSync(path).toString() ||
+                    ''
                 );
                 return obj;
             },
@@ -190,7 +190,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     function getLocalSidebar(path) {
         const sidebarPath =
-      Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
         try {
             const file = readFileSync(sidebarPath,
                 'utf-8');
@@ -204,12 +204,16 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     LogLib.success('Created', targetPath);
 
-    const localsidebar = getLocalSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, ''));
+    const localsidebar = getLocalSidebar(
+        sourcePath
+            .replaceAll('samples/', '')
+            .replaceAll('/demo', '')
+    );
 
     LogLib.success('Created', targetPath);
     const indexContent = localsidebar
-        .replace(/style=\"display:none;\"/g, '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
+        .replaceAll('style="display:none;"', '') // remove hidden style
+        .replace(/(?!href= ")(\.\/.+?)(?=")/gu, 'examples\/$1\/index.html'); // replace links
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(
@@ -263,7 +267,6 @@ function convertURLToLocal(str) {
  *         Promise to keep
  */
 function distExamples() {
-
     const FS = require('fs');
 
     return new Promise((resolve, reject) => {
@@ -312,3 +315,7 @@ function distExamples() {
 }
 
 Gulp.task('dist-examples', distExamples);
+
+module.exports = {
+    getDemoBuildPath
+};
