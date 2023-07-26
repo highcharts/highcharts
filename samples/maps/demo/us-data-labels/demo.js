@@ -52,11 +52,18 @@
                 enabled: false
             }
         },
-
+        // Add custom color stops to the chart
         colorAxis: {
             labels: {
                 format: '{value}%'
-            }
+            },
+            stops: [
+                [0, '#00FF00'], // Green
+                [0.5, '#FFFF00'], // Yellow
+                [1, '#FF0000'] // Red
+            ],
+            min: 0,
+            max: 8
         },
 
         series: [{
@@ -75,7 +82,7 @@
                 valueSuffix: '%'
             }
         }, {
-            // The connector lines
+        // The connector lines
             type: 'mapline',
             data: Highcharts.geojson(topology, 'mapline'),
             color: 'silver',
