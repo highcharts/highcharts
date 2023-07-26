@@ -69,11 +69,11 @@ class RangeModifier extends DataModifier {
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {RangeModifier.Options} [options]
+     * @param {Partial<RangeModifier.Options>} [options]
      * Options to configure the range modifier.
      */
     public constructor(
-        options?: DeepPartial<RangeModifierOptions>
+        options?: Partial<RangeModifierOptions>
     ) {
         super();
 

@@ -33,25 +33,25 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
     /**
      * Data in CSV format passed directly to connector as a string.
      */
-    csv: string;
+    csv?: string;
     /**
      * The URL to a remote CSV dataset
      */
-    csvURL: string;
+    csvURL?: string;
     /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
      */
-    dataRefreshRate: number;
+    dataRefreshRate?: number;
     /**
      * Whether to enable polling for live data.
      */
-    enablePolling: boolean;
+    enablePolling?: boolean;
     /**
      * Whether to treat the first row of the data set as series names.
      * @default true
      */
-    firstRowAsNames: boolean;
+    firstRowAsNames?: boolean;
 }
 
 /* *

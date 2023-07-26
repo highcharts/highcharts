@@ -63,11 +63,11 @@ class InvertModifier extends DataModifier {
     /**
      * Constructs an instance of the invert modifier.
      *
-     * @param {InvertModifier.Options} [options]
+     * @param {Partial<InvertModifier.Options>} [options]
      * Options to configure the invert modifier.
      */
     public constructor(
-        options?: DeepPartial<InvertModifierOptions>
+        options?: Partial<InvertModifierOptions>
     ) {
         super();
 
