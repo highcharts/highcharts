@@ -427,5 +427,4 @@ test('Export as HTML', async (assert) => {
 
     await connectorWithExport.load();
 
-    assert.ok(true)
-})
+});
