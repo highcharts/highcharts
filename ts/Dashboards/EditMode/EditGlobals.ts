@@ -76,7 +76,9 @@ const EditGlobals: EditGlobals = {
 
         // Confirmation popup
         confirmationPopup: PREFIX + 'confirmation-popup',
+        popupButtonContainer: PREFIX + 'confirmation-popup-button-container',
         popupContentContainer: PREFIX + 'confirmation-popup-content',
+        popupCancelBtn: PREFIX + 'confirmation-popup-cancel-btn',
         popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
         popupCloseButton: PREFIX + 'popup-close',
 
@@ -123,8 +125,8 @@ const EditGlobals: EditGlobals = {
         chartType: 'Chart type',
         connectorName: 'Connector name',
         confirmButton: 'Confirm',
-        confirmDestroyCell: 'Do you want to destroy the cell?',
-        confirmDestroyRow: 'Do you want to destroy the row?',
+        confirmDestroyCell: 'Do you really want to destroy the cell?',
+        confirmDestroyRow: 'Do you really want to destroy the row?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
@@ -214,7 +216,9 @@ namespace EditGlobals {
         menuItem: string;
         menuVerticalSeparator: string;
         popupCloseButton: string;
+        popupCancelBtn: string;
         popupConfirmBtn: string;
+        popupButtonContainer: string;
         popupContentContainer: string;
         resizePointer: string;
         resizeSnap: string;
@@ -272,11 +276,11 @@ namespace EditGlobals {
          */
         confirmButton: string;
         /**
-         * @default 'Do you want to destroy the cell?'
+         * @default 'Do you really want to destroy the cell?'
          */
         confirmDestroyCell: string;
         /**
-         * @default 'Do you want to destroy the row?'
+         * @default 'Do you really want to destroy the row?'
          */
         confirmDestroyRow: string;
         /**
