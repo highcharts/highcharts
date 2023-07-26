@@ -1459,7 +1459,7 @@ class DataTable implements DataEvent.Emitter {
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
-     * Resolves to this table if successfull, or rejects on failure.
+     * Resolves to this table if successfully, or rejects on failure.
      *
      * @emits #setModifier
      * @emits #afterSetModifier
@@ -1472,13 +1472,6 @@ class DataTable implements DataEvent.Emitter {
 
         let promise: Promise<this>;
 
-        table.emit({
-            type: 'setModifier',
-            detail: eventDetail,
-            modifier,
-            modified: table.modified
-        });
-
         table.modified = table;
         table.modifier = modifier;
 
@@ -1489,15 +1482,9 @@ class DataTable implements DataEvent.Emitter {
         }
 
         return promise
-            .then((table): this => {
-                table.emit({
-                    type: 'afterSetModifier',
-                    detail: eventDetail,
-                    modifier,
-                    modified: table.modified
-                });
-                return table;
-            })['catch']((error): this => {
+            .then(
+                (table): this => table
+            )['catch']((error): this => {
                 table.emit({
                     type: 'setModifierError',
                     error,
