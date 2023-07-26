@@ -629,7 +629,7 @@ class HeatmapSeries extends ScatterSeries {
                             ),
                             p = points[toPointScale],
                             sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p.value, p, colorAxis)
+                                colorFromPoint(p.value, p)
                             );
                         pixelData.set(
                             sourceArr,
