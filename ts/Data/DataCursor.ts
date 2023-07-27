@@ -191,7 +191,7 @@ class DataCursor {
      * The related table of the cursor.
      *
      * @param {string} group
-     * The state cursor to emit.
+     * The related group on the table.
      *
      * @param {Data.DataCursor.Type} cursor
      * The state cursor to emit.
