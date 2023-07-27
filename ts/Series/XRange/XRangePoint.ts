@@ -181,32 +181,12 @@ class XRangePoint extends ColumnPoint {
                 XRangePoint.XRangePointLabelObject,
             yCats = this.series.yAxis.categories;
 
-        // Check if the xAxis type is datetime
-        if (this.series.xAxis.options.type === 'datetime') {
-            // Format the date values
-            let startDate = new Date(this.x as number);
-            let endDate = new Date(this.x2 as number);
-
-            // Add formatted dates to the cfg object
-            cfg.x = startDate.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-            cfg.x2 = endDate.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        } else {
-            // If not datetime, just use the original values
-            cfg.x = this.x;
-            cfg.x2 = this.x2;
-        }
-
+        cfg.x2 = this.x2;
         cfg.yCategory = this.yCategory = yCats && yCats[this.y as any];
+
+        // Use 'category' as 'key' to ensure tooltip datetime formatting.
+        // Use 'name' only when 'category' is undefined.
+        cfg.key = this.category || this.name;
 
         return cfg;
     }
@@ -234,7 +214,7 @@ interface XRangePoint {
     partShapeArgs?: XRangePointPartialFillOptions;
     shapeType: string;
     tooltipDateKeys: Array<string>;
-    x2?: number | string;
+    x2?: number;
     yCategory?: string;
 
 }
