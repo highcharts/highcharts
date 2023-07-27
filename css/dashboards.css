@@ -792,13 +792,15 @@
     flex-direction: column;
 }
 
-.highcharts-dashboards-edit-grid-items div {
+ .highcharts-dashboards-edit-grid-items div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-height: 100px;
     margin: 10px 0;
-    text-align: center;
     padding: 10px;
-    display: inline-block;
-    background-color: var(--highcharts-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
     cursor: grab;
     border-radius: 5px;
 }

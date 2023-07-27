@@ -414,6 +414,7 @@ class SidebarPopup extends BaseForm {
                 cell: newCell.id
             });
             Bindings.addComponent(options, newCell);
+            sidebar.editMode.setEditOverlay();
 
             return newCell;
         }
