@@ -272,7 +272,7 @@ namespace EditGlobals {
          */
         chartType: string;
         /**
-         * @default 'Connector name'
+         * @default 'Confirm'
          */
         confirmButton: string;
         /**

@@ -312,7 +312,7 @@ class SidebarPopup extends BaseForm {
             context ?
                 this.editMode.lang.settings :
                 this.editMode.lang.addComponent,
-            this.iconsURL + 'settings.svg'
+            ''
         );
 
         if (!context) {
