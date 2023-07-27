@@ -660,7 +660,7 @@
     z-index: 1000;
     min-height: 500px;
     height: 100%;
-    padding: 10px 20px;
+    padding: 20px;
     overflow: scroll;
 }
 
@@ -760,8 +760,9 @@
 }
 
 .highcharts-dashboards-edit-sidebar-title {
+    display: inline-block;
     color: var(--highcharts-neutral-color-80);
-    padding: 5px 5px 5px 30px;
+    padding: 5px 5px 5px 0px;
     text-transform: uppercase;
     background-repeat: no-repeat;
     background-position: 0% 50%;
@@ -771,6 +772,11 @@
     width: 75%;
     cursor: pointer;
     margin-bottom: 20px;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-popup-close {
+    display: inline-block;
+    float: right;
 }
 
 .highcharts-dashboards-edit-rotate-element {
@@ -786,19 +792,20 @@
 }
 
 .highcharts-dashboards-edit-grid-items {
-    margin-top: 20px;
     display: flex;
+    margin-top: 20px;
     flex-direction: column;
 }
 
 .highcharts-dashboards-edit-grid-items div {
-    clear: both;
+    min-height: 100px;
     margin: 10px 0;
     text-align: center;
     padding: 10px;
     display: inline-block;
-    background-color: var(--highcharts-dashboards-neutral-color-10);
+    background-color: var(--highcharts-neutral-color-20);
     cursor: grab;
+    border-radius: 5px;
 }
 
 .highcharts-dashboards-edit-grid-items div:hover {
@@ -884,6 +891,7 @@
     height: 30px;
     cursor: pointer;
     margin-left: auto;
+    background-color: red;
 }
 
 .highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content {
