@@ -731,8 +731,11 @@
     border: 1px solid var(--highcharts-highlight-color-80);
 }
 
-.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
+.highcharts-dashboards-edit-button {
     cursor: pointer;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
     gap: 10px;
     flex: 1;
 }

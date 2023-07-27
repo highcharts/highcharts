@@ -136,6 +136,4 @@ Dashboards.board('container', {
             highlight: true
         }
     }]
-}, true).then(dashboard => {
-    dashboard.editMode.activate();
-});
+}, true);
