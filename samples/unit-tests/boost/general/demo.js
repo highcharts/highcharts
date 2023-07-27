@@ -331,3 +331,45 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boost handling of individual boostable series',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    boostThreshold: 5
+                }
+            },
+            series: [{
+                type: 'scatter',
+                data: [
+                    [1, 0],
+                    [4, 0],
+                    [8, 0]
+                ]
+            }, {
+                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.boost.forceChartBoost,
+            false,
+            `Boost forcing for the entire chart should be turned off when one of
+            the series has less points than the threshold. (#18815)`
+        );
+
+        assert.strictEqual(
+            chart.series[0].boosted,
+            false,
+            'The first series should not be boosted. (#18815)'
+        );
+
+        assert.strictEqual(
+            chart.series[1].boosted,
+            true,
+            'The second series should be boosted. (#18815)'
+        );
+    }
+);
