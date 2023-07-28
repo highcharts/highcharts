@@ -27,11 +27,13 @@ import type {
     AxisOptions,
     Chart,
     Options as ChartOptions,
-    Highcharts,
+    Highcharts as H,
     Point,
     Series,
     SeriesOptions
 } from './HighchartsTypes';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -59,10 +61,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof Highcharts.chart;
-        ganttChart: typeof Highcharts.chart;
-        mapChart: typeof Highcharts.chart;
-        stockChart: typeof Highcharts.chart;
+        chart: typeof H.chart;
+        ganttChart: typeof H.chart;
+        mapChart: typeof H.chart;
+        stockChart: typeof H.chart;
     }
 }
 
@@ -86,7 +88,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof Highcharts;
+    public static charter?: typeof H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -537,7 +539,7 @@ class HighchartsComponent extends Component {
             this.chartContainer.id = this.options.chartID;
         }
 
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
+        this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
@@ -551,7 +553,7 @@ class HighchartsComponent extends Component {
     ): void {
         const table = store.table,
             columnName = point.series.name,
-            rowNumber = point.x,
+            rowNumber = point.index,
             converter = new DataConverter(),
             valueToSet = converter.asNumber(point.y);
 
@@ -584,7 +586,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeries(): void {
-        // Heuristically create series from the store dataTable
+        // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
                 this.connector.table.modified.clone() :
@@ -602,7 +604,8 @@ class HighchartsComponent extends Component {
                     .modifyTable(this.presentationTable).modified;
             }
 
-            const table = this.presentationTable;
+            const table = this.presentationTable,
+                modifierOptions = table.getModifier()?.options;
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -656,9 +659,22 @@ class HighchartsComponent extends Component {
                     }
                 }
 
+                // Disable dragging on series, which were created out of a
+                // columns which are created by MathModifier.
+                const shouldBeDraggable = !(
+                    modifierOptions?.type === 'Math' &&
+                    (modifierOptions as MathModifierOptions)
+                        .columnFormulas?.some(
+                            (formula): boolean => formula.column === seriesName
+                        )
+                );
+
                 return chart.addSeries({
                     name: seriesName,
-                    id: `${storeTableID}-series-${index}`
+                    id: `${storeTableID}-series-${index}`,
+                    dragDrop: {
+                        draggableY: shouldBeDraggable
+                    }
                 }, false);
             });
 
@@ -714,7 +730,7 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof Highcharts
+            Globals.win.Highcharts as unknown as typeof H
         );
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];

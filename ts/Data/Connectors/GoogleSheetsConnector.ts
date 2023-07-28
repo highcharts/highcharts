@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -254,8 +255,10 @@ namespace GoogleSheetsConnector {
      * Available options for constructor and converter of the
      * GoogleSheetsConnector.
      */
-    export type UserOptions =
-        (DeepPartial<GoogleSheetsConnectorOptions>&GoogleSheetsConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<GoogleSheetsConnectorOptions>&
+        GoogleSheetsConverter.UserOptions
+    );
 
     /* *
      *
