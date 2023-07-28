@@ -1,0 +1,10 @@
+---
+name: Calendar Heatmap
+authors:
+  - Marita Vindedal
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Heat and tree maps
+...
