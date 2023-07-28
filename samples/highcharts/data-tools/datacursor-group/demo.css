@@ -1,6 +1,8 @@
 #wrapper {
     display: flex;
     justify-content: stretch;
+    margin: 1em;
+    gap: 1em;
 }
 
 #container1,
