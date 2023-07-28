@@ -122,20 +122,22 @@ class Fibonacci extends Tunnel {
 
         Fibonacci.levels.forEach((level, i): void => {
             const startRetracement = (points[0].y as any) - startDiff * level,
-                endRetracement = (points[1].y as any) - endDiff * level;
+                endRetracement = (points[1].y as any) - endDiff * level,
+                index = this.options.typeOptions.reverse ?
+                    (Fibonacci.levels.length - i - 1) : i;
 
             this.startRetracements = this.startRetracements || [];
             this.endRetracements = this.endRetracements || [];
 
             this.linkRetracementPoint(
-                i,
+                index,
                 startX,
                 startRetracement,
                 this.startRetracements
             );
 
             this.linkRetracementPoint(
-                i,
+                index,
                 endX,
                 endRetracement,
                 this.endRetracements
@@ -249,6 +251,12 @@ Fibonacci.prototype.defaultOptions = merge(
     {
         typeOptions: {
             /**
+             * Whether the annotation levels should be reversed. By default they
+             * start from 0 and go to 1.
+             */
+            reverse: false,
+
+            /**
              * The height of the fibonacci in terms of yAxis.
              */
             height: 2,
@@ -338,6 +346,7 @@ namespace Fibonacci {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends Tunnel.TypeOptions {
+        reverse: boolean;
         backgroundColors: Array<ColorString>;
         labels: Array<CrookedLine.Options['labelOptions']>;
         lineColor: ColorString;
