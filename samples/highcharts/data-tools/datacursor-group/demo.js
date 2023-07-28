@@ -1,18 +1,25 @@
 const container1 = document.querySelector('#container1');
 const container2 = document.querySelector('#container2');
 const container3 = document.querySelector('#container3');
-const sort = new Highcharts.DataModifier.types.Sort({
-    direction: 'asc',
-    orderByColumn: 'City'
-});
-const table = new Highcharts.DataTable({
+// Main table with cursors
+const table1 = new Highcharts.DataTable({
     columns: {
         Rank: [1, 2, 3, 4, 5, 6],
         City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
         Population: [5259764, 4976157, 2568927, 2192229, 1402393, 453558]
     }
 });
-const tableModified = sort.modifyTable(table.clone());
+// Resorted tables
+const sort2 = new Highcharts.DataModifier.types.Sort({
+    direction: 'asc',
+    orderByColumn: 'City'
+});
+const table2 = sort2.modifyTable(table1.clone());
+const sort3 = new Highcharts.DataModifier.types.Sort({
+    direction: 'asc',
+    orderByColumn: 'Population'
+});
+const table3 = sort3.modifyTable(table1.clone());
 
 
 // Render HTML Tables
@@ -53,9 +60,9 @@ function renderTable(container, table) {
     container.innerHTML = html.join('\n');
 }
 
-renderTable(container1, table);
-renderTable(container2, tableModified);
-renderTable(container3, table);
+renderTable(container1, table1);
+renderTable(container2, table2);
+renderTable(container3, table3);
 
 
 // Synchronize MouseOver
@@ -74,7 +81,7 @@ function synchronizeMouseOver(e) {
     }
 
     // Both tables are based on the same data
-    cursor.emitCursor(table, group, {
+    cursor.emitCursor(table1, group, {
         column: td.dataset.column,
         // We use the values of the "Rank" column to identify the rows
         row: parseInt(td.parentNode.dataset.rank, 10),
@@ -120,22 +127,22 @@ function synchronizeCursor(e) {
 }
 
 cursor.addListener(
-    table.id,
+    table1.id,
     'table.mouseover',
     synchronizeCursor.bind({ group: 'a', tbody: tbody1 })
 );
 cursor.addListener(
-    table.id,
+    table1.id,
     'table.mouseover',
     synchronizeCursor.bind({ group: 'a', tbody: tbody2 })
 );
 cursor.addListener(
-    table.id,
+    table1.id,
     'table.mouseover',
     synchronizeCursor.bind({ group: 'b', tbody: tbody2 })
 );
 cursor.addListener(
-    table.id,
+    table1.id,
     'table.mouseover',
     synchronizeCursor.bind({ group: 'b', tbody: tbody3 })
 );
