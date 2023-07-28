@@ -23,6 +23,26 @@ function test_board() {
                     csv: ''
                 }
             }]
-        }
+        },
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'cell1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            cell: 'cell1',
+            title: {
+                className: 'custom-title',
+                text: 'My title',
+                style: {
+                    color: 'red'
+                }
+            }
+        }]
     });
 }

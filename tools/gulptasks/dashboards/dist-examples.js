@@ -70,9 +70,18 @@ async function transformExampleDir(examplesDir) {
         if (fileName === 'demo.html') {
             filePath = filePath.replace('demo.html', 'index.html');
             newContent = [
+                '<!DOCTYPE HTML>',
+                '<html>',
+                '<head>',
+                '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
+                '<meta name="viewport" content="width=device-width, initial-scale=1" />',
                 '<link rel="stylesheet" type="text/css" href="./demo.css">',
+                '</head>',
+                '<body>',
                 newContent,
-                '<script src="./demo.js"></script>'
+                '<script src="./demo.js"></script>',
+                '</body>',
+                '</html>'
             ].join('\n');
         }
 
