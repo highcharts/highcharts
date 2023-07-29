@@ -197,7 +197,11 @@ class RangeModifier extends DataModifier {
                         cell >= range.minValue &&
                         cell <= range.maxValue
                     ) {
-                        row = table.getRow(j);
+                        row = (
+                            additive ?
+                                table.getRow(j) :
+                                modified.getRow(j)
+                        );
 
                         if (row) {
                             rows.push(row);
