@@ -1,21 +1,3 @@
-const chartOptions = {
-    xAxis: {
-        type: 'category'
-    },
-    chart: {
-        type: 'bar',
-        zoomType: 'x'
-    },
-    plotOptions: {
-        series: {
-            colorByPoint: true
-        }
-    },
-    title: {
-        text: ''
-    }
-};
-
 const csv = document.getElementById('csv').innerText;
 
 Dashboards.board('container', {
@@ -86,13 +68,12 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'bar',
+                type: 'column',
                 zoomType: 'x'
             },
             plotOptions: {
                 series: {
-                    colorByPoint: true,
-                    pointWidth: 6
+                    colorByPoint: true
                 }
             },
             title: {
@@ -142,16 +123,12 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'pie',
+                type: 'column',
                 zoomType: 'x'
             },
             plotOptions: {
                 series: {
-                    innerSize: '50%',
-                    colorByPoint: true,
-                    dataLabels: {
-                        enabled: false
-                    }
+                    colorByPoint: true
                 }
             },
             title: {
@@ -201,16 +178,12 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'line',
+                type: 'column',
                 zoomType: 'x'
             },
             plotOptions: {
                 series: {
-                    colorByPoint: true,
-                    marker: {
-                        radius: 6,
-                        enabledThreshold: 0
-                    }
+                    colorByPoint: true
                 },
                 tooltip: {
                     headerFormat: '{point.key}',
@@ -259,6 +232,11 @@ Dashboards.board('container', {
                     colorByPoint: true,
                     marker: {
                         symbol: 'square'
+                    },
+                    events: {
+                        legendItemClick: function () {
+                            return false;
+                        }
                     }
                 }
             },
