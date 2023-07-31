@@ -212,8 +212,8 @@ const configs: {
             }
         },
         visibilityHandler: function(this: DataGridComponent): void {
-            const component = this;
-            const { board } = this;
+            const component = this,
+                { board } = component;
 
             const handleVisibilityChange = (e: DataCursor.Event): void => {
                 const cursor = e.cursor,
