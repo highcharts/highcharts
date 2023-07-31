@@ -50,7 +50,6 @@ function buildChartOptions(type, table, cursor) {
                 load: function () {
                     const chart = this;
                     const series = chart.series[0];
-                    console.log(series);
                     if (series.userOptions.type === 'pie') {
 
                         chart.update({
@@ -72,7 +71,7 @@ function buildChartOptions(type, table, cursor) {
                             dataLabels: {
                                 enabled: false
                             }
-                        });
+                        }, false);
                     }
 
                     // react to table cursor
