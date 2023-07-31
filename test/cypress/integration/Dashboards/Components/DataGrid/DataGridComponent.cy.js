@@ -74,4 +74,32 @@ describe('layout resize on window changes', () => {
 
         })
     });
+
+    it('DataGridComponent should not throw error when dragging point on chart.', () => {
+        cy.chart().then(chart => {
+            const points = chart.series[0].points;
+            const lastPointIndex = points.length - 1;
+            let error = false;
+
+            // simulate dragging
+            points[lastPointIndex].update(2000);
+
+            cy.board().then((board) => {
+                // datagrid component
+                try {
+                    board.mountedComponents[1].component.connector.table.emit({
+                        type: 'afterSetCell'
+                    });
+                }
+                catch (e) {
+                    error = true;
+                }
+
+                assert.ok(
+                    !error,
+                    'Error in reference to cells should not be thrown.'
+                )
+            });
+        });
+    });
 });
