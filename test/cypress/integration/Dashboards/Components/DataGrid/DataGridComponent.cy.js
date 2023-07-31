@@ -74,4 +74,11 @@ describe('layout resize on window changes', () => {
 
         })
     });
+
+    it('Toggling series visibility should change hide/show column in DataGridComponent', () => {
+        cy.get('.highcharts-legend-item').eq(0).click();
+        cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 1);
+        cy.get('.highcharts-legend-item').eq(0).click();
+        cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 2);
+    });
 });

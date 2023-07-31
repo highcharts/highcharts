@@ -47,6 +47,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
             },
             columnAssignment: {
@@ -82,6 +83,7 @@ Dashboards.board('container', {
             editable: true,
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
             },
             visibleColumns: ['Food', 'Vitamin A']
