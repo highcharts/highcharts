@@ -37,7 +37,7 @@
     /* Edit row */
     --highcharts-dashboards-edit-row-color: #7bb343;
     --highcharts-dashboards-edit-row-contrast-color: #1a5e20;
-    --highcharts-dashboards-edit-row-highlight-color: 224, 239, 173;
+    --highcharts-dashboards-edit-row-highlight-color: #b0c2d4;
 
     /* Dropdown */
     --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
@@ -261,8 +261,8 @@
     background:
         repeating-linear-gradient(
             -45deg,
-            rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7),
-            rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7) 5px,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 5px,
             var(--highcharts-neutral-color-0) 5px,
             var(--highcharts-neutral-color-0) 10px
         );
@@ -293,8 +293,8 @@
     background:
         repeating-linear-gradient(
             45deg,
-            rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7),
-            rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7) 10px,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 10px,
             var(--highcharts-neutral-color-0) 10px,
             var(--highcharts-neutral-color-0) 20px
         );
@@ -340,26 +340,17 @@
 
 .highcharts-dashboards-edit-resize-snap {
     position: absolute;
-    background: var(--highcharts-background-color);
-    border-radius: 9999px;
-    border: 1px solid var(--highcharts-neutral-color-60);
+    background-color: var(--highcharts-background-color);
     z-index: 10;
 }
 
 .highcharts-dashboards-edit-resize-snap-x {
     cursor: col-resize;
-    width: 20px;
-    height: 20px;
-    right: 0;
-    top: 0;
 }
 
 .highcharts-dashboards-edit-resize-snap-y {
     cursor: row-resize;
-    width: 20px;
-    height: 20px;
-    left: 0;
-    bottom: 0;
+    rotate: 90deg;
 }
 
 .highcharts-dashboards-edit-resizer-menu-btn-active {
@@ -591,7 +582,7 @@
 .highcharts-dashboards-edit-toolbar-row {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: var(--highcharts-dashboards-edit-row-color);
+    background-color: var(--highcharts-dashboards-edit-row-highlight-color);
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -632,7 +623,7 @@
     position: absolute;
     pointer-events: none;
     display: none;
-    border: 2px solid var(--highcharts-dashboards-edit-row-color);
+    border: 2px solid var(--highcharts-dashboards-edit-row-highlight-color);
     opacity: 1;
 }
 
