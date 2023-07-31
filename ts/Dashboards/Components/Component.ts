@@ -1333,6 +1333,9 @@ namespace Component {
     /** @internal */
     export type ConnectorTypes = DataConnector;
 
+    /**
+     * Allowed types for the text.
+    */
     export type TextOptionsType = string | false | TextOptions | undefined;
     /** @internal */
     export interface MessageTarget {

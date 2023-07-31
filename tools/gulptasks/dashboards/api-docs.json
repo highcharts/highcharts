@@ -38,6 +38,7 @@
         "../../../ts/DataGrid/DataGridOptions.d.ts",
         "../../../ts/Dashboards/Plugins/HighchartsComponent.ts",
         "../../../ts/Dashboards/Plugins/DataGridComponent.ts",
+        "../../../ts/Dashboards/Components/TextOptions.d.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
