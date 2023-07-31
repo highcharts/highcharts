@@ -101,6 +101,7 @@ Dashboards.board('container', {
                     dashStyle: 'shortDash',
                     label: {
                         text: 'RDA',
+                        align: 'right',
                         style: {
                             color: '#B73C28'
                         }
@@ -161,6 +162,7 @@ Dashboards.board('container', {
                     dashStyle: 'shortDash',
                     label: {
                         text: 'RDA',
+                        align: 'right',
                         style: {
                             color: '#B73C28'
                         }
