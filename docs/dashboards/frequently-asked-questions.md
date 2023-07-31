@@ -102,7 +102,7 @@ Example of synchronized components
 
 
 You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
-See the next question for possible syncrhonization events.
+See the next question for possible synchronization events.
 
 * * *
 What are the synchronization events available in Highcharts Dashboards?
@@ -141,7 +141,7 @@ afterRender(e) {
 }
 ```
 
-If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the correspoding column in the dataTable:
+If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
 
 ```js
   dataPool: {
