@@ -465,11 +465,7 @@
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
-    background-color: var(--highcharts-highlight-color-60);
-}
-
-.highcharts-dashboards-edit-toggle-wrapper input:focus + .highcharts-dashboards-edit-toggle-slider {
-    box-shadow: 0 0 1px var(--highcharts-highlight-color-60);
+    background-color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider::before {
@@ -534,7 +530,7 @@
 
 .highcharts-dashboards-edit-context-menu-item {
     padding: 10px 15px;
-    color: var(--highcharts-neutral-color-60);
+    color: var(--highcharts-neutral-color-100);
     font-size: 0.876em;
     line-height: 1em;
     cursor: pointer;
@@ -545,7 +541,7 @@
 }
 
 .highcharts-dashboards-edit-context-menu-item > button {
-    color: var(--highcharts-neutral-color-60);
+    color: var(--highcharts-neutral-color-100);
     background-color: transparent;
     border: none;
     text-align: left;
