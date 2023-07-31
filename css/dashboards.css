@@ -25,6 +25,8 @@
     --highcharts-highlight-color-10: #e6e9ff;
 
     /* Other colors */
+    --highcharts-dashboards-toggle-button-color: #016667;
+    --highcharts-dashboards-overlay-color: #dae3ec90;
     --highcharts-dashboards-pointer-selected-color: #4a4a53;
     --highcharts-dashboards-danger-color: rgb(153, 0, 51);
 
@@ -272,7 +274,6 @@
     z-index: 100;
     pointer-events: auto;
     transition: all 0.5s ease;
-    border-color: var(--highcharts-highlight-color-60);
     box-sizing: border-box;
 }
 
@@ -788,7 +789,7 @@
     flex-direction: column;
 }
 
- .highcharts-dashboards-edit-grid-items div {
+.highcharts-dashboards-edit-grid-items div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -924,7 +925,7 @@
 .highcharts-dashboards-edit-overlay-active {
     z-index: 99;
     display: block;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--highcharts-dashboards-overlay-color);
 }
 
 @media (max-width: 728px) {
@@ -1000,7 +1001,7 @@
     flex-direction: row;
     align-items: center;
     padding: 5px;
-    background: var(--highcharts-background-color);
+    background: var(--highcharts-neutral-color-3);
     border: 1px solid var(--highcharts-neutral-color-20);
     border-radius: 5px;
     cursor: pointer;
@@ -1142,11 +1143,16 @@
 }
 
 .highcharts-dashboards-edit-accordion-content input {
-    background-color: var(--highcharts-background-color);
+    background-color: var(--highcharts-neutral-color-3);
     border: 1px solid var(--highcharts-neutral-color-20);
     color: var(--highcharts-neutral-color-100);
     border-radius: 5px;
     padding: 5px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: var(--highcharts-dashboards-toggle-button-color);
 }
 
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content > label {
