@@ -452,13 +452,11 @@ class CSVConverter extends DataConverter {
                 read(++i);
 
                 while (i < columnStr.length) {
-                    if (c === '"' && cl !== '"' && cn !== '"') {
+                    if (c === '"') {
                         break;
                     }
 
-                    if (c !== '"' || (c === '"' && cl !== '"')) {
-                        token += c;
-                    }
+                    token += c;
 
                     read(++i);
                 }

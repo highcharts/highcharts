@@ -26,6 +26,7 @@ import type {
     DataModifierType,
     DataModifierTypeOptions
 } from './DataModifierType';
+import type Types from '../../Shared/Types';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -89,7 +90,7 @@ class ChainModifier extends DataModifier {
         for (
             let i = 0,
                 iEnd = optionsChain.length,
-                modifierOptions: DeepPartial<DataModifierTypeOptions>,
+                modifierOptions: Partial<DataModifierTypeOptions>,
                 ModifierClass: (DataModifierType|undefined);
             i < iEnd;
             ++i
@@ -103,7 +104,9 @@ class ChainModifier extends DataModifier {
             ModifierClass = DataModifier.types[modifierOptions.type];
 
             if (ModifierClass) {
-                chain.unshift(new ModifierClass(modifierOptions as AnyRecord));
+                chain.push(new ModifierClass(
+                    modifierOptions as Types.AnyRecord
+                ));
             }
         }
     }
@@ -202,6 +205,10 @@ class ChainModifier extends DataModifier {
                 this.chain.slice()
         );
 
+        if (table.modified === table) {
+            table.modified = table.clone(false, eventDetail);
+        }
+
         let promiseChain: Promise<T> = Promise.resolve(table);
 
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
@@ -212,7 +219,8 @@ class ChainModifier extends DataModifier {
         }
 
         promiseChain = promiseChain.then((chainTable): T => {
-            table.modified = chainTable.modified;
+            table.modified.deleteColumns();
+            table.modified.setColumns(chainTable.modified.getColumns());
             return table;
         });
 

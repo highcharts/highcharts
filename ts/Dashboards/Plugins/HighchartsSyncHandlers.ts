@@ -126,7 +126,7 @@ const configs: {
                         const { chart, connector, board } = component;
                         const table = connector && connector.table;
                         if (
-                            table && // Has a store
+                            table && // Has a connector
                             board &&
                             chart
                         ) {
