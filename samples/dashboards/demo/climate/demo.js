@@ -789,6 +789,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
+            columnAssignment: {},
             sync: {
                 highlight: true
             },
@@ -1064,13 +1065,13 @@ async function updateBoard(board, city, column, scale, newData) {
             },
             columnAssignment: {
                 time: 'x',
-                FD: column === 'FD' ? 'y' : void 0,
-                ID: column === 'ID' ? 'y' : void 0,
-                RR1: column === 'RR1' ? 'y' : void 0,
-                TNC: column === 'TNC' ? 'y' : void 0,
-                TNF: column === 'TNF' ? 'y' : void 0,
-                TXC: column === 'TXC' ? 'y' : void 0,
-                TXF: column === 'TXF' ? 'y' : void 0
+                FD: column === 'FD' && 'y',
+                ID: column === 'ID' && 'y',
+                RR1: column === 'RR1' && 'y',
+                TNC: column === 'TNC' && 'y',
+                TNF: column === 'TNF' && 'y',
+                TXC: column === 'TXC' && 'y',
+                TXF: column === 'TXF' && 'y'
             }
         });
     }
@@ -1083,13 +1084,13 @@ async function updateBoard(board, city, column, scale, newData) {
     await cityChart.update({
         columnAssignment: {
             time: 'x',
-            FD: column === 'FD' ? 'y' : void 0,
-            ID: column === 'ID' ? 'y' : void 0,
-            RR1: column === 'RR1' ? 'y' : void 0,
-            TNC: column === 'TNC' ? 'y' : void 0,
-            TNF: column === 'TNF' ? 'y' : void 0,
-            TXC: column === 'TXC' ? 'y' : void 0,
-            TXF: column === 'TXF' ? 'y' : void 0
+            FD: column === 'FD' && 'y',
+            ID: column === 'ID' && 'y',
+            RR1: column === 'RR1' && 'y',
+            TNC: column === 'TNC' && 'y',
+            TNF: column === 'TNF' && 'y',
+            TXC: column === 'TXC' && 'y',
+            TXF: column === 'TXF' && 'y'
         },
         chartOptions: {
             chart: {
