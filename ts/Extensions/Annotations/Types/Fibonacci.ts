@@ -253,6 +253,12 @@ Fibonacci.prototype.defaultOptions = merge(
             /**
              * Whether the annotation levels should be reversed. By default they
              * start from 0 and go to 1.
+             *
+             * @sample highcharts/annotations-advanced/fibonacci-reverse/
+             *         Fibonacci annotation reversed
+             *
+             * @type {boolean}
+             * @apioption annotations.fibonacci.typeOptions.reverse
              */
             reverse: false,
 
