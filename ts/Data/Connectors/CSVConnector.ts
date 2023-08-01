@@ -135,76 +135,56 @@ class CSVConnector extends DataConnector {
             table = connector.table,
             {
                 csv,
-                csvURL
+                csvURL,
+                dataModifier
             } = connector.options;
 
-        if (csv) {
-            // If already loaded, clear the current rows
-            table.deleteRows();
-            connector.emit<CSVConnector.Event>({
-                type: 'load',
-                csv,
-                detail: eventDetail,
-                table
+        connector.emit<CSVConnector.Event>({
+            type: 'load',
+            csv,
+            detail: eventDetail,
+            table
+        });
+
+        // If already loaded, clear the current rows
+        table.deleteRows();
+
+        return Promise
+            .resolve(
+                csv ?
+                    csv :
+                    csvURL ?
+                        fetch(csvURL || '').then(
+                            (response): Promise<string> => response.text()
+                        ) :
+                        ''
+            )
+            .then((csv): Promise<string> => {
+                if (csv) {
+                    converter.parse({ csv });
+                    table.setColumns(converter.getTable().getColumns());
+                }
+                return connector
+                    .setModifierOptions(dataModifier)
+                    .then((): string => csv);
+            })
+            .then((csv): this => {
+                connector.emit<CSVConnector.Event>({
+                    type: 'afterLoad',
+                    csv,
+                    detail: eventDetail,
+                    table
+                });
+                return connector;
+            })['catch']((error): never => {
+                connector.emit<CSVConnector.Event>({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table
+                });
+                throw error;
             });
-            converter.parse({ csv });
-            table.setColumns(converter.getTable().getColumns());
-            connector.emit<CSVConnector.Event>({
-                type: 'afterLoad',
-                csv,
-                detail: eventDetail,
-                table
-            });
-        } else if (csvURL) {
-            // Clear the table
-            connector.table.deleteColumns();
-
-            connector.emit<CSVConnector.Event>({
-                type: 'load',
-                detail: eventDetail,
-                table: connector.table
-            });
-
-            return fetch(csvURL || '')
-                .then((response): Promise<void> => response.text().then(
-                    (csv): void => {
-                        connector.converter.parse({ csv });
-
-                        // On inital fetch we need to set the columns
-                        connector.table.setColumns(
-                            connector.converter.getTable().getColumns()
-                        );
-
-                        connector.emit<CSVConnector.Event>({
-                            type: 'afterLoad',
-                            csv,
-                            detail: eventDetail,
-                            table: connector.table
-                        });
-                    }
-                ))['catch']((error): Promise<void> => {
-                    connector.emit<CSVConnector.Event>({
-                        type: 'loadError',
-                        detail: eventDetail,
-                        error,
-                        table: connector.table
-                    });
-
-                    return Promise.reject(error);
-                })
-                .then((): this =>
-                    connector
-                );
-        } else {
-            connector.emit<CSVConnector.Event>({
-                type: 'loadError',
-                detail: eventDetail,
-                error: 'Unable to load: no CSV string or URL was provided',
-                table
-            });
-        }
-
-        return Promise.resolve(connector);
     }
 
 }

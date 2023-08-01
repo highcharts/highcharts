@@ -229,22 +229,6 @@ class DataPool implements DataEvent.Emitter {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             connector
                 .load()
-                .then((connector): (DataConnector|Promise<DataConnector>) => {
-                    if (options?.options?.dataModifier) {
-                        const ModifierClass = DataModifier
-                            .types[options.options.dataModifier.type];
-
-                        return connector.table
-                            .setModifier(
-                                new ModifierClass(
-                                    options.options.dataModifier as AnyRecord
-                                )
-                            )
-                            .then((): DataConnector => connector);
-                    }
-
-                    return connector;
-                })
                 .then((connector): void => {
                     this.emit<DataPool.Event>({
                         type: 'afterLoad',

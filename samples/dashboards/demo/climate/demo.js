@@ -16,7 +16,6 @@ Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
 ];
 
 const MathModifier = Dashboards.DataModifier.types.Math;
-const RangeModifier = Dashboards.DataModifier.types.Range;
 
 const colorStopsDays = [
     [0.0, '#C2CAEB'],
@@ -44,7 +43,12 @@ async function setupBoard() {
         dataPool: {
             connectors: [{
                 id: 'Range Selection',
-                type: 'CSV'
+                type: 'CSV',
+                options: {
+                    dataModifier: {
+                        type: 'Range'
+                    }
+                }
             }, {
                 id: 'Cities',
                 type: 'CSV',
@@ -977,20 +981,30 @@ async function updateBoard(board, city, column, scale, newData) {
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
+
+        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
     }
 
     // Update range selection
-    selectionTable.setColumns(cityTable.modified.getColumns(), 0);
     const timeRangeMax = timeRangeSelector.chart.axes[0].max;
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
-    await selectionTable.setModifier(new RangeModifier({
-        modifier: 'Range',
-        ranges: [{
+    const selectionModifier = selectionTable.getModifier();
+
+    if (
+        !selectionModifier.options.ranges[0] ||
+        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
+        selectionModifier.options.ranges[0].minValue !== timeRangeMin
+    ) {
+        selectionModifier.options.ranges = [{
             column: 'time',
             maxValue: timeRangeMax,
             minValue: timeRangeMin
-        }]
-    }));
+        }];
+        await selectionTable.setModifier(selectionModifier);
+    } else if (newData) {
+        await selectionTable.setModifier(selectionTable.getModifier());
+    }
+
     const rangeTable = selectionTable.modified;
 
     // Update world map

@@ -211,7 +211,7 @@ const configs: {
                 this.on('afterSetConnector', (): void => registerCursorListeners());
             }
         },
-        visibilityHandler: function(this: DataGridComponent): void {
+        visibilityHandler: function (this: DataGridComponent): void {
             const component = this,
                 { board } = component;
 
@@ -229,7 +229,7 @@ const configs: {
                             show: cursor.state !== 'series.hide'
                         }
                     }
-                })
+                });
             };
 
             const registerCursorListeners = (): void => {
