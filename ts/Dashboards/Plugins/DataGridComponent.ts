@@ -309,8 +309,12 @@ class DataGridComponent extends Component {
                     let shouldUpdateTheGrid = true;
 
                     if (dataGrid) {
-                        const row = dataGrid.rowElements[e.rowIndex],
+                        const row = dataGrid.rowElements[e.rowIndex];
+                        let cells = [];
+
+                        if (row) {
                             cells = Array.prototype.slice.call(row.childNodes);
+                        }
 
                         cells.forEach((cell: HTMLElement): void => {
                             if (cell.childElementCount > 0) {

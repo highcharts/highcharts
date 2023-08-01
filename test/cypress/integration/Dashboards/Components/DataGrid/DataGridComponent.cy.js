@@ -65,13 +65,11 @@ describe('layout resize on window changes', () => {
             .trigger('mousemove', 300, 100)
             .trigger('mouseup');
 
-
         cy.get('.highcharts-datagrid-outer-container').then($container =>{
             assert.ok(
                 $container.scrollTop() > containerTop,
                 'When selecting a range in the chart, the DataGridComponent should scroll.'
             )
-
         })
     });
 
@@ -80,5 +78,31 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 1);
         cy.get('.highcharts-legend-item').eq(0).click();
         cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 2);
+    });
+
+    it('DataGridComponent should not throw error when dragging point on chart.', () => {
+        cy.board().then((board) => {
+            const hcComponent = board.mountedComponents[0].component,
+                points = hcComponent.chart.series[0].points,
+                lastPointIndex = points.length - 1;
+            let error = false;
+
+            // simulate dragging
+            points[lastPointIndex].update(2000);
+            // datagrid component
+            try {
+                board.mountedComponents[1].component.connector.table.emit({
+                    type: 'afterSetCell'
+                });
+            }
+            catch (e) {
+                error = true;
+            }
+
+            assert.ok(
+                !error,
+                'Error in reference to cells should not be thrown.'
+            )
+        });
     });
 });
