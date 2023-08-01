@@ -969,7 +969,6 @@ async function updateBoard(board, city, column, scale, newData) {
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
-    console.log(await dataPool.getConnector('Range Selection'));
 
     column = (column[0] === 'T' ? column + scale : column);
 
