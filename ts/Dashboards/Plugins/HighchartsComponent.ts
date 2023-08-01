@@ -618,11 +618,7 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnAssignment[name]) {
-                        return false;
-                    }
-
-                    if (columnAssignment[name] === null) {
+                    if (!isVisible || !columnAssignment[name]) {
                         return false;
                     }
 
