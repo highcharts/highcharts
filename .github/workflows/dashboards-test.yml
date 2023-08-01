@@ -27,11 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [lts]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Note that this adds a post-job step that saves the cache
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v3
@@ -45,6 +46,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      # Lists modules if no cache
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         name: List the state of node modules
         continue-on-error: true
