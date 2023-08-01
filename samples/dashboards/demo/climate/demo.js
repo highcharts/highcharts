@@ -43,7 +43,12 @@ async function setupBoard() {
         dataPool: {
             connectors: [{
                 id: 'Range Selection',
-                type: 'CSV'
+                type: 'CSV',
+                options: {
+                    dataModifier: {
+                        type: 'Range'
+                    }
+                }
             }, {
                 id: 'Cities',
                 type: 'CSV',
@@ -964,6 +969,7 @@ async function updateBoard(board, city, column, scale, newData) {
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
+    console.log(await dataPool.getConnector('Range Selection'));
 
     column = (column[0] === 'T' ? column + scale : column);
 
@@ -977,17 +983,16 @@ async function updateBoard(board, city, column, scale, newData) {
                 .getRows(void 0, void 0, ['time', column])
         });
 
-        // Update range selection
         selectionTable.setColumns(cityTable.modified.getColumns(), 0);
-        await selectionTable.setModifier();
     }
 
+    // Update range selection
     const timeRangeMax = timeRangeSelector.chart.axes[0].max;
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
     const selectionModifier = selectionTable.getModifier();
 
     if (
-        !selectionModifier ||
+        !selectionModifier.options.ranges[0] ||
         selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
         selectionModifier.options.ranges[0].minValue !== timeRangeMin
     ) {
@@ -997,6 +1002,8 @@ async function updateBoard(board, city, column, scale, newData) {
             minValue: timeRangeMin
         }];
         await selectionTable.setModifier(selectionModifier);
+    } else if (newData) {
+        await selectionTable.setModifier(selectionTable.getModifier());
     }
 
     const rangeTable = selectionTable.modified;
