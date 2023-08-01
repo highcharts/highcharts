@@ -40,7 +40,9 @@ import U from '../Core/Utilities.js';
  * */
 
 
-type WaitingCallbacks = Array<(connector: DataConnector) => void>;
+type ConnectorResolve = (
+    value: (DataConnector | PromiseLike<DataConnector>)
+) => void;
 
 
 /* *
@@ -91,7 +93,7 @@ class DataPool implements DataEvent.Emitter {
      * Internal dictionary with the connectors and their names.
      * @private
      */
-    protected readonly connectors: Record<string, (DataConnector|undefined)>;
+    protected readonly connectors: Record<string, DataConnector>;
 
 
     /**
@@ -108,7 +110,7 @@ class DataPool implements DataEvent.Emitter {
      * be done loading.
      * @private
      */
-    protected readonly waiting: Record<string, (WaitingCallbacks|undefined)>;
+    protected readonly waiting: Record<string, Array<ConnectorResolve>>;
 
 
     /* *
@@ -146,24 +148,22 @@ class DataPool implements DataEvent.Emitter {
         name: string
     ): Promise<DataConnector> {
         const connector = this.connectors[name];
-        let waiting = this.waiting[name];
 
         // already loaded
         if (connector) {
             return Promise.resolve(connector);
         }
 
+        let waiting = this.waiting[name];
+
         // currently loading
         if (waiting) {
-            return new Promise((resolve): void => {
-                if (!waiting) {
-                    throw new Error('Internal race condition.');
-                }
+            return new Promise((resolve: ConnectorResolve): void => {
                 waiting.push(resolve);
             });
         }
 
-        this.waiting[name] = [];
+        this.waiting[name] = waiting = [];
 
         const connectorOptions = this.getConnectorOptions(name);
 
@@ -171,14 +171,9 @@ class DataPool implements DataEvent.Emitter {
             return this
                 .loadConnector(connectorOptions)
                 .then((connector): DataConnector => {
-                    waiting = this.waiting[name];
-
                     delete this.waiting[name];
 
                     window.setTimeout((): void => {
-                        if (!waiting) {
-                            throw new Error('Internal race condition.');
-                        }
                         for (let i = 0, iEnd = waiting.length; i < iEnd; ++i) {
                             waiting[i](connector);
                         }
