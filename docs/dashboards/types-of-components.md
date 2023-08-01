@@ -31,7 +31,10 @@ Code snippet:
 Also please check the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 
 ### Highcharts Component
-The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
+The option to include a Highcharts chart in one of the components is available out of the box. 
+Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.
+
+Here is the set of files that need to be included to make the Highcharts component work.
 ```html
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -42,6 +45,7 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
 ```css
 @import url("https://code.highcharts.com/css/highcharts.css");
 ```
+More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). The null value keeps columns selectively out of the chart. If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
