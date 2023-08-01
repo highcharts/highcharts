@@ -50,7 +50,8 @@ const {
     splat,
     uniqueKey,
     error,
-    diffObjects
+    diffObjects,
+    defined
 } = U;
 
 /* *
@@ -283,7 +284,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: {}
+            columnAssignment: null
         }
     );
 
@@ -617,6 +618,10 @@ class HighchartsComponent extends Component {
                             .getSharedState()
                             .getColumnVisibility(name) !== false :
                         true;
+
+                    if (!defined(this.options.columnAssignment)) {
+                        return true;
+                    }
 
                     if (!isVisible || !columnAssignment[name]) {
                         return false;

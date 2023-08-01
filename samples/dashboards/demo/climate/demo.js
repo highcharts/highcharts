@@ -789,19 +789,6 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {
-                time: null,
-                FD: null,
-                ID: null,
-                RR1: null,
-                TN: null,
-                TX: null,
-                TNC: null,
-                TNF: null,
-                TXC: null,
-                TXF: null,
-                Date: null
-            },
             sync: {
                 highlight: true
             },
@@ -1077,16 +1064,13 @@ async function updateBoard(board, city, column, scale, newData) {
             },
             columnAssignment: {
                 time: 'x',
-                FD: column === 'FD' ? 'y' : null,
-                ID: column === 'ID' ? 'y' : null,
-                RR1: column === 'RR1' ? 'y' : null,
-                TN: null,
-                TNC: column === 'TNC' ? 'y' : null,
-                TNF: column === 'TNF' ? 'y' : null,
-                TX: null,
-                TXC: column === 'TXC' ? 'y' : null,
-                TXF: column === 'TXF' ? 'y' : null,
-                Date: null
+                FD: column === 'FD' ? 'y' : void 0,
+                ID: column === 'ID' ? 'y' : void 0,
+                RR1: column === 'RR1' ? 'y' : void 0,
+                TNC: column === 'TNC' ? 'y' : void 0,
+                TNF: column === 'TNF' ? 'y' : void 0,
+                TXC: column === 'TXC' ? 'y' : void 0,
+                TXF: column === 'TXF' ? 'y' : void 0
             }
         });
     }
@@ -1099,16 +1083,13 @@ async function updateBoard(board, city, column, scale, newData) {
     await cityChart.update({
         columnAssignment: {
             time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TN: null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TX: null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null,
-            Date: null
+            FD: column === 'FD' ? 'y' : void 0,
+            ID: column === 'ID' ? 'y' : void 0,
+            RR1: column === 'RR1' ? 'y' : void 0,
+            TNC: column === 'TNC' ? 'y' : void 0,
+            TNF: column === 'TNF' ? 'y' : void 0,
+            TXC: column === 'TXC' ? 'y' : void 0,
+            TXF: column === 'TXF' ? 'y' : void 0
         },
         chartOptions: {
             chart: {
