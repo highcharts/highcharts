@@ -106,12 +106,12 @@ const EditGlobals: EditGlobals = {
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
         // Custom dropdown with icons
+        collapsedElement: PREFIX + 'collapsed-element',
         dropdown: PREFIX + 'dropdown',
         dropdownContent: PREFIX + 'dropdown-content',
         dropdownButton: PREFIX + 'dropdown-button',
         dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
-        rotateElement: PREFIX + 'rotate-element',
         icon: PREFIX + 'icon'
     },
     lang: {
@@ -225,7 +225,7 @@ namespace EditGlobals {
         resizeSnapX: string;
         resizeSnapY: string;
         resizerMenuBtnActive: string;
-        rotateElement: string;
+        collapsedElement: string;
         rowContextHighlight: string;
         separator: string;
         sidebarCloseButton: string;

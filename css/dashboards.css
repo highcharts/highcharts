@@ -1058,6 +1058,29 @@
     font-size: 0.75rem;
 }
 
+.highcharts-dashboards-edit-accordion-header-icon.highcharts-dashboards-edit-collapsed-element {
+    padding: 1px;
+    margin: 0 10px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    transform: rotate(45deg);
+    width: 5px;
+    height: 5px;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-accordion-header-icon {
+    padding: 1px;
+    margin: 0 10px;
+    border: solid black;
+    border-width: 2px 0 0 0;
+    display: inline-block;
+    width: 10px;
+    height: 1px;
+    cursor: pointer;
+}
+
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content {
     display: flex;
     flex-direction: column;
