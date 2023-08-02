@@ -101,6 +101,14 @@ class EditMode {
                     close: {
                         icon: this.iconsURLPrefix + 'close.svg'
                     }
+                },
+                toolbars: {
+                    cell: {
+                        enabled: true
+                    },
+                    row: {
+                        enabled: true
+                    }
                 }
             },
             options || {});
