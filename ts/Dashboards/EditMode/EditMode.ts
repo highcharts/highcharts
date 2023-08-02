@@ -1039,7 +1039,7 @@ namespace EditMode {
         resize?: Resizer.Options;
         /**
          * Toolbar options.
-         * 
+         *
          * Try it:
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
