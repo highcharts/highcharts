@@ -1065,13 +1065,16 @@ async function updateBoard(board, city, column, scale, newData) {
             },
             columnAssignment: {
                 time: 'x',
-                FD: column === 'FD' && 'y',
-                ID: column === 'ID' && 'y',
-                RR1: column === 'RR1' && 'y',
-                TNC: column === 'TNC' && 'y',
-                TNF: column === 'TNF' && 'y',
-                TXC: column === 'TXC' && 'y',
-                TXF: column === 'TXF' && 'y'
+                FD: column === 'FD' ? 'y' : null,
+                ID: column === 'ID' ? 'y' : null,
+                RR1: column === 'RR1' ? 'y' : null,
+                TN: null,
+                TNC: column === 'TNC' ? 'y' : null,
+                TNF: column === 'TNF' ? 'y' : null,
+                TX: null,
+                TXC: column === 'TXC' ? 'y' : null,
+                TXF: column === 'TXF' ? 'y' : null,
+                Date: null
             }
         });
     }
@@ -1084,13 +1087,16 @@ async function updateBoard(board, city, column, scale, newData) {
     await cityChart.update({
         columnAssignment: {
             time: 'x',
-            FD: column === 'FD' && 'y',
-            ID: column === 'ID' && 'y',
-            RR1: column === 'RR1' && 'y',
-            TNC: column === 'TNC' && 'y',
-            TNF: column === 'TNF' && 'y',
-            TXC: column === 'TXC' && 'y',
-            TXF: column === 'TXF' && 'y'
+            FD: column === 'FD' ? 'y' : null,
+            ID: column === 'ID' ? 'y' : null,
+            RR1: column === 'RR1' ? 'y' : null,
+            TN: null,
+            TNC: column === 'TNC' ? 'y' : null,
+            TNF: column === 'TNF' ? 'y' : null,
+            TX: null,
+            TXC: column === 'TXC' ? 'y' : null,
+            TXF: column === 'TXF' ? 'y' : null,
+            Date: null
         },
         chartOptions: {
             chart: {
