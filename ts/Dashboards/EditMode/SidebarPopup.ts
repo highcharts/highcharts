@@ -49,6 +49,80 @@ class SidebarPopup extends BaseForm {
 
     public static components: Array<SidebarPopup.AddComponentDetails> = [
         {
+            text: 'chart',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell|Row
+            ): Cell | void {
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'Highcharts',
+                        chartOptions: {
+                            series: [
+                                {
+                                    name: 'Series from options',
+                                    data: [1, 2, 1, 4]
+                                }
+                            ],
+                            chart: {
+                                animation: false,
+                                type: 'pie'
+                            }
+                        }
+                    });
+                }
+            }
+        }, {
+            text: 'datagrid',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell | Row
+            ): Cell|void {
+
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'DataGrid'
+                    });
+                }
+            }
+        }, {
+            text: 'KPI',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell | Row
+            ): Cell|void {
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'KPI',
+                        title: 'Example KPI',
+                        value: 70
+                    });
+                }
+            }
+        }, {
+            text: 'HTML',
+            onDrop:
+                function (
+                    sidebar: SidebarPopup,
+                    dropContext: Cell|Row
+                ): void|Cell {
+                    if (sidebar && dropContext) {
+                        return sidebar.onDropNewComponent(dropContext, {
+                            cell: '',
+                            type: 'HTML',
+                            elements: [{
+                                tagName: 'img',
+                                attributes: {
+                                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+                                }
+                            }]
+                        });
+                    }
+                }
+        }, {
             text: 'layout',
             onDrop: function (
                 sidebar: SidebarPopup,
@@ -95,80 +169,6 @@ class SidebarPopup extends BaseForm {
                     ]
                 });
 
-            }
-        }, {
-            text: 'chart',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell | void {
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'Highcharts',
-                        chartOptions: {
-                            series: [
-                                {
-                                    name: 'Series from options',
-                                    data: [1, 2, 1, 4]
-                                }
-                            ],
-                            chart: {
-                                animation: false,
-                                type: 'pie'
-                            }
-                        }
-                    });
-                }
-            }
-        }, {
-            text: 'HTML',
-            onDrop:
-                function (
-                    sidebar: SidebarPopup,
-                    dropContext: Cell|Row
-                ): void|Cell {
-                    if (sidebar && dropContext) {
-                        return sidebar.onDropNewComponent(dropContext, {
-                            cell: '',
-                            type: 'HTML',
-                            elements: [{
-                                tagName: 'img',
-                                attributes: {
-                                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                                }
-                            }]
-                        });
-                    }
-                }
-        }, {
-            text: 'datagrid',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'DataGrid'
-                    });
-                }
-            }
-        }, {
-            text: 'KPI',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'KPI',
-                        title: 'Example KPI',
-                        value: 70
-                    });
-                }
             }
         }
     ];
