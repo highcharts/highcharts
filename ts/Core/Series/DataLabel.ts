@@ -814,10 +814,10 @@ namespace DataLabel {
                 // Destroy and remove the inactive ones
                 let j = dataLabels.length;
                 while (j--) {
-                    if (dataLabels[j].isActive) {
+                    if (dataLabels[j]?.isActive) {
                         dataLabels[j].isActive = false;
                     } else {
-                        dataLabels[j].destroy();
+                        dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     }
                 }
