@@ -284,7 +284,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: null
+            columnAssignment: void 0
         }
     );
 
@@ -611,7 +611,7 @@ class HighchartsComponent extends Component {
             this.emit({ type: 'afterPresentationModifier', table: table });
 
             // Remove series names that match the xKeys
-            const seriesNames = table.modified.getColumnNames()
+            const seriesNames = table.modified.getColumnNames().concat('')
                 .filter((name): boolean => {
                     const isVisible = this.activeGroup ?
                         this.activeGroup
@@ -994,8 +994,8 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * Names / aliases that should be mapped to xAxis values.
+         *
          * ```
          * Example
          * columnAssignment: {
