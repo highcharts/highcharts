@@ -4113,13 +4113,6 @@ class Series {
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
 
-            // Check if below `plotOptions.series` props are defined (#19203)
-            typeof plotOptions.series?.dataGrouping !== 'undefined' ||
-            typeof plotOptions.series?.pointStart !== 'undefined' ||
-            typeof plotOptions.series?.pointInterval !== 'undefined' ||
-            typeof plotOptions.series?.pointIntervalUnit !== 'undefined' ||
-            typeof plotOptions.series?.keys !== 'undefined' ||
-
             options.joinBy ||
             options.mapData || // #11636
             // Changes to data grouping requires new points in new group
@@ -4361,6 +4354,7 @@ class Series {
                 plotOptions?.series?.[optionName as keyof Omit<SeriesOptions, NonPlotOptions>]
             );
 
+        // Check if `plotOptions` are defined already, #19203
         if (oldOption && !defined(plotOptionsOption)) {
             return option !== oldOption;
         }
