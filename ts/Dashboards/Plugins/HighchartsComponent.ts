@@ -994,8 +994,8 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can declare
-         * which columns will be visible selectively on the chart.
+         * Names / aliases that should be mapped to xAxis values. You can
+         * declare which columns will be visible selectively on the chart.
          *
          * When the columnAssignment is not declared, all columns are visible.
          *
