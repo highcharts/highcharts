@@ -50,8 +50,7 @@ const {
     splat,
     uniqueKey,
     error,
-    diffObjects,
-    defined
+    diffObjects
 } = U;
 
 /* *
@@ -284,7 +283,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: void 0
+            columnAssignment: {}
         }
     );
 
@@ -611,7 +610,7 @@ class HighchartsComponent extends Component {
             this.emit({ type: 'afterPresentationModifier', table: table });
 
             // Remove series names that match the xKeys
-            const seriesNames = table.modified.getColumnNames().concat('')
+            const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
                     const isVisible = this.activeGroup ?
                         this.activeGroup
@@ -619,11 +618,11 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!defined(this.options.columnAssignment)) {
-                        return true;
+                    if (!isVisible && !columnAssignment[name]) {
+                        return false;
                     }
 
-                    if (!isVisible || !columnAssignment[name]) {
+                    if (columnAssignment[name] === null) {
                         return false;
                     }
 
@@ -994,7 +993,10 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values.
+         * Names / aliases that should be mapped to xAxis values. You can declare
+         * which columns will be visible selectively on the chart.
+         *
+         * When the columnAssignment is not declared, all columns are visible.
          *
          * ```
          * Example
