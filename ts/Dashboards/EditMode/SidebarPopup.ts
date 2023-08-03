@@ -248,7 +248,6 @@ class SidebarPopup extends BaseForm {
         const classNames = EditGlobals.classNames,
             classList = this.container.classList;
         classList.remove(classNames.editSidebarShow);
-        classList.remove(classNames.editSidebarRight);
         classList.remove(classNames.editSidebarRightShow);
     }
 
@@ -264,6 +263,10 @@ class SidebarPopup extends BaseForm {
 
         if (isRightSidebar) {
             classList.add(
+                EditGlobals.classNames.editSidebarRight
+            );
+        } else {
+            classList.remove(
                 EditGlobals.classNames.editSidebarRight
             );
         }
@@ -441,7 +444,6 @@ class SidebarPopup extends BaseForm {
         const editMode = this.editMode;
         const editCellContext = editMode.editCellContext;
 
-        this.closePopup();
         this.removeClassNames();
 
         // Remove edit overlay if active.
