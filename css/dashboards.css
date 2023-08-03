@@ -307,12 +307,13 @@
     position: absolute;
     top: 100px;
     left: 100px;
-    height: 50px;
-    width: 50px;
+    min-height: 150px;
+    min-width: 300px;
     z-index: 99999;
     display: none;
     cursor: grab;
     pointer-events: none;
+    border-radius: 5px;
     background-color: var(--highcharts-background-color);
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
@@ -796,6 +797,20 @@
 .highcharts-dashboards-edit-grid-items div:hover {
     background-color: var(--highcharts-neutral-color-20);
 }
+
+.highcharts-dashboards-edit-grid-items div:active {
+    scale: 0.9;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 5px,
+            var(--highcharts-neutral-color-0) 5px,
+            var(--highcharts-neutral-color-0) 10px
+        );
+    pointer-events: none;
+}
+
 
 .highcharts-dashboards-edit-sidebar-tabs {
     display: flex;

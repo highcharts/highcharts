@@ -32,6 +32,7 @@ import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     createElement,
     merge
 } = U;
@@ -351,7 +352,16 @@ class SidebarPopup extends BaseForm {
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
                 if (sidebar.editMode.dragDrop) {
-                    sidebar.hide();
+
+                    const onMouseLeave = (): void => {
+                        sidebar.hide();
+                    };
+
+                    sidebar.container.addEventListener(
+                        'mouseleave',
+                        onMouseLeave
+                    );
+
                     sidebar.editMode.dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
@@ -383,6 +393,10 @@ class SidebarPopup extends BaseForm {
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
                             }
+                            sidebar.container.removeEventListener(
+                                'mouseleave',
+                                onMouseLeave
+                            );
                         }
                     );
                 }

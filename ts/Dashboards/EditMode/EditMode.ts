@@ -881,6 +881,10 @@ class EditMode {
      */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
+        if (this.dragDrop) {
+            this.dragDrop.mouseCellContext = void 0;
+        }
+        this.mouseCellContext = void 0;
         this.hideContextPointer();
     }
 
