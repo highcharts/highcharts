@@ -252,6 +252,7 @@ Dashboards.board(
                         enabled: true,
                         verticalAlign: 'middle',
                         width: 1000,
+                        align: 'center',
                         visible: false
                     },
                     xAxis: {

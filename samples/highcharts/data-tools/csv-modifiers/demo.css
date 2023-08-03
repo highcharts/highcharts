@@ -34,3 +34,7 @@
 .highcharts-legend-item > text {
     font-size: 1.5em;
 }
+
+.highcharts-graph {
+    stroke-width: 3px;
+}
