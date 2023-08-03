@@ -561,10 +561,10 @@
     z-index: 90;
     border-radius: 3px;
     box-shadow:
-        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
-        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1);
 }
 
 .highcharts-dashboards-edit-toolbar-item div {
@@ -577,13 +577,13 @@
     background-repeat: no-repeat;
     background-position: 50% 50%;
     cursor: pointer;
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(0);
 }
 
 .highcharts-dashboards-edit-toolbar-row {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: var(--highcharts-dashboards-edit-row-highlight-color);
+    background-color: var(--highcharts-background-color);
     padding-left: 3px;
     padding-right: 3px;
 }
@@ -595,7 +595,7 @@
 }
 
 .highcharts-dashboards-edit-toolbar-row .highcharts-dashboards-edit-toolbar-item:hover {
-    background-color: var(--highcharts-dashboards-edit-row-contrast-color);
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-dashboards-edit-toolbar-cell .highcharts-dashboards-edit-toolbar-item div {
@@ -603,14 +603,13 @@
 }
 
 .highcharts-dashboards-edit-toolbar-cell {
-    background-color: var(--highcharts-highlight-color-60);
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    background-color: var(--highcharts-background-color);
+    border-radius: 5px;
     color: var(--highcharts-background-color);
 }
 
 .highcharts-dashboards-edit-toolbar-cell .highcharts-dashboards-edit-toolbar-item:hover {
-    background-color: var(--highcharts-highlight-color-80);
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-dashboards-edit-toolbar-cell-outline {
@@ -624,7 +623,6 @@
     position: absolute;
     pointer-events: none;
     display: none;
-    border: 2px solid var(--highcharts-dashboards-edit-row-highlight-color);
     opacity: 1;
 }
 
