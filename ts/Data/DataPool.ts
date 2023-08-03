@@ -284,16 +284,14 @@ class DataPool implements DataEvent.Emitter {
             connector
                 .load()
                 .then((connector): void => {
+                    this.connectors[options.id] = connector;
 
                     this.emit<DataPool.Event>({
                         type: 'afterLoad',
                         options
                     });
 
-                    this.connectors[options.id] = connector;
-
                     resolve(connector);
-
                 })['catch'](reject);
         });
     }
