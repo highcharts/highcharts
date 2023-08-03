@@ -793,19 +793,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {
-                time: null,
-                FD: null,
-                ID: null,
-                RR1: null,
-                TN: null,
-                TX: null,
-                TNC: null,
-                TNF: null,
-                TXC: null,
-                TXF: null,
-                Date: null
-            },
+            columnAssignment: {},
             sync: {
                 highlight: true
             },
