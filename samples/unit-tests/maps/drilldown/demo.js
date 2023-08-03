@@ -14,7 +14,7 @@ QUnit.test('Map drilldown animation', assert => {
             germanyTopo = JSON.parse(germanyTopojsonText),
             europeGeo = JSON.parse(europeGeojsonText),
             germanyGeo = JSON.parse(germanyGeojsonText),
-            duration = 400,
+            duration = 350,
             chart = Highcharts.mapChart('container', {
                 chart: {
                     animation: {
