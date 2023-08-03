@@ -127,14 +127,6 @@ Dashboards.board(
                 type: 'Highcharts',
                 columnAssignment: {
                     columnNames: 'x',
-                    Brazil: null,
-                    Argentina: null,
-                    Uruguay: null,
-                    Paraguay: null,
-                    'United States': null,
-                    Canada: null,
-                    Mexico: null,
-                    Guatemala: null,
                     China: 'y',
                     Japan: 'y',
                     India: 'y',
@@ -163,18 +155,10 @@ Dashboards.board(
                 type: 'Highcharts',
                 columnAssignment: {
                     columnNames: 'x',
-                    Brazil: null,
-                    Argentina: null,
-                    Uruguay: null,
-                    Paraguay: null,
                     'United States': 'y',
                     Canada: 'y',
                     Mexico: 'y',
-                    Guatemala: 'y',
-                    China: null,
-                    Japan: null,
-                    India: null,
-                    Indonesia: null
+                    Guatemala: 'y'
                 },
                 chartOptions: {
                     title: {
@@ -201,15 +185,7 @@ Dashboards.board(
                     Brazil: 'y',
                     Argentina: 'y',
                     Uruguay: 'y',
-                    Paraguay: 'y',
-                    'United States': null,
-                    Canada: null,
-                    Mexico: null,
-                    Guatemala: null,
-                    China: null,
-                    Japan: null,
-                    India: null,
-                    Indonesia: null
+                    Paraguay: 'y'
                 },
                 chartOptions: {
                     colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
