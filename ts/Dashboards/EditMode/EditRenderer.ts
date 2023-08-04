@@ -147,7 +147,7 @@ function renderCollapseHeader(
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
-            name: name,
+            name: '',
             onchange: onchange,
             value: isEnabled || false,
             lang
@@ -391,7 +391,8 @@ function renderToggle(
         return;
     }
 
-    const { value, title, lang } = options;
+    const { value, lang } = options
+    const title = options.title || options.name;
     const toggleContainer = createElement(
         'div',
         { className: EditGlobals.classNames.toggleContainer },
