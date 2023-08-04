@@ -92,7 +92,14 @@ function createTreeJson() {
                     'highcharts-documentation-generators', 'jsdoc', 'plugins',
                     'highcharts.jsdoc'
                 )
-            ]
+            ],
+            opts: {
+                template: path.posix.join(
+                    'node_modules', '@highcharts',
+                    'highcharts-documentation-generators', 'docstrap',
+                    'template'
+                )
+            }
         };
 
         log.success('Generating', TREE_FILE + '...');
