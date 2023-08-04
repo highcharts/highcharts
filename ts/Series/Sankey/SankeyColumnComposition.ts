@@ -105,7 +105,8 @@ namespace SankeyColumnComposition {
                 while (i--) {
                     if (column[i].getSum() * factor < minLinkWidth) {
                         column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
+                        remainingHeight =
+                            Math.max(0, remainingHeight - minLinkWidth);
                         skipPoint = true;
                     }
                 }
