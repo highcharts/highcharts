@@ -65,7 +65,7 @@ class Resizer {
         type: 'xy',
         snap: {
             width: 9,
-            height: 18
+            height: 17
         }
     };
 
