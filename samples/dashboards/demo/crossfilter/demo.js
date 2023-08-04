@@ -221,6 +221,4 @@
         }]
     });
 
-    console.log(board);
-
 })();
