@@ -151,7 +151,7 @@
                 },
                 xAxis: {
                     type: 'category',
-                    minRange: 0.5,
+                    minRange: 0.8,
                     labels: {
                         rotation: 90
                     },
@@ -199,7 +199,7 @@
                     visible: false
                 },
                 xAxis: {
-                    minRange: 0.5,
+                    minRange: 0.8,
                     visible: false,
                     events: {
                         setExtremes: function (extremes) {
