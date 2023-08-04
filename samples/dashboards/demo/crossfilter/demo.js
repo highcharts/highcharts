@@ -203,6 +203,10 @@
                     visible: false,
                     events: {
                         setExtremes: function (extremes) {
+                            setCrossfilter('Countries', 'Year', this, {
+                                min: extremes.max || this.dataMax,
+                                max: extremes.max || this.dataMax
+                            });
                             setCrossfilter('Economy', 'Year', this, extremes);
                         }
                     }
