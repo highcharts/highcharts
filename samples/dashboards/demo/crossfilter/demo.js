@@ -120,7 +120,7 @@
                     text: 'Countries'
                 },
                 subtitle: {
-                    text: 'Select a Range'
+                    text: 'Select a range'
                 },
                 chart: {
                     zooming: {
@@ -130,7 +130,8 @@
                 plotOptions: {
                     series: {
                         marker: {
-                            enabled: false
+                            enabled: false,
+                            radius: 1
                         },
                         stickyTracking: false
                     }
@@ -141,7 +142,9 @@
                 },
                 tooltip: {
                     positioner: () => ({ x: 10, y: 10 }),
-                    shadow: false
+                    shadow: false,
+                    shared: true,
+                    valueSuffix: '%'
                 },
                 yAxis: {
                     visible: false
@@ -167,7 +170,7 @@
                     text: 'Years'
                 },
                 subtitle: {
-                    text: 'Select a Range'
+                    text: 'Select a range'
                 },
                 chart: {
                     type: 'timeline',
