@@ -1,5 +1,44 @@
 (async () => {
-    const board = await Dashboards.board('container', {
+
+    let board = void 0;
+
+    // Crossfilter Emitter
+    async function setCrossfilter(
+        connectorId,
+        column,
+        axis,
+        extremes
+    ) {
+        // Get DataTable from Board.dataPool
+        const table = await board.dataPool.getConnectorTable(connectorId);
+
+        // Extract row values from Highcharts.Axis
+        const names = axis.names;
+        const minValue = names[Math.round(
+            typeof extremes.min === 'number' ?
+                extremes.min :
+                axis.dataMin
+        )];
+        const maxValue = names[Math.round(
+            typeof extremes.max === 'number' ?
+                extremes.max :
+                axis.dataMax
+        )];
+
+        // Configure and apply RangeModifier
+        const modifier = table.getModifier();
+        for (const range of modifier.options.ranges) {
+            if (range.column === column) {
+                range.minValue = minValue;
+                range.maxValue = maxValue;
+                break;
+            }
+        }
+        await table.setModifier(modifier);
+    }
+
+    // Dashboard with Crossfilter
+    board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'Countries',
@@ -43,19 +82,29 @@
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'Top-left'
-                    }, {
-                        id: 'Top-right'
+                        id: 'Top'
                     }]
                 }, {
                     cells: [{
-                        id: 'Center'
+                        id: 'Middle-left'
+                    }, {
+                        id: 'Middle-right'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'Bottom'
                     }]
                 }]
             }]
         },
         components: [{
-            cell: 'Top-left',
+            cell: 'Top',
+            type: 'HTML',
+            elements: [
+                '<h2 style="text-align:center">Economic Acitivity</h2>'
+            ]
+        }, {
+            cell: 'Middle-left',
             type: 'Highcharts',
             connector: {
                 id: 'Countries'
@@ -71,7 +120,7 @@
                     text: 'Countries'
                 },
                 subtitle: {
-                    text: '1 - 145'
+                    text: 'Select a Range'
                 },
                 chart: {
                     zooming: {
@@ -104,43 +153,21 @@
                         rotation: 90
                     },
                     events: {
-                        // crossfilter countries
-                        setExtremes: async function (extremes) {
-                            const countries = this.names;
-                            const min = (
-                                typeof extremes.min === 'number' ?
-                                    extremes.min :
-                                    this.dataMin
-                            );
-                            const firstCountry = countries[Math.round(min)];
-                            const max = (
-                                typeof extremes.max === 'number' ?
-                                    extremes.max :
-                                    this.dataMax
-                            );
-                            const lastCountry = countries[Math.round(max)];
-
-                            const table = await board.dataPool
-                                .getConnectorTable('Economy');
-                            const modifier = table.getModifier();
-
-                            modifier.options.ranges[0].minValue = firstCountry;
-                            modifier.options.ranges[0].maxValue = lastCountry;
-
-                            await table.setModifier(modifier);
+                        setExtremes: function (extremes) {
+                            setCrossfilter('Economy', 'Country', this, extremes);
                         }
                     }
                 }
             }
         }, {
-            cell: 'Top-right',
+            cell: 'Middle-right',
             type: 'Highcharts',
             chartOptions: {
                 title: {
                     text: 'Years'
                 },
                 subtitle: {
-                    text: '1995 - 2020'
+                    text: 'Select a Range'
                 },
                 chart: {
                     type: 'timeline',
@@ -172,43 +199,18 @@
                     minRange: 0.5,
                     visible: false,
                     events: {
-                        // crossfilter years
-                        setExtremes: async function (extremes) {
-                            const years = this.names;
-                            const min = (
-                                typeof extremes.min === 'number' ?
-                                    extremes.min :
-                                    this.dataMin
-                            );
-                            const minYear =
-                                parseInt(years[Math.round(min)], 10);
-                            const max = (
-                                typeof extremes.max === 'number' ?
-                                    extremes.max :
-                                    this.dataMax
-                            );
-                            const maxYear =
-                                parseInt(years[Math.round(max)], 10);
-
-                            const table = await board.dataPool
-                                .getConnectorTable('Economy');
-                            const modifier = table.getModifier();
-
-                            modifier.options.ranges[1].minValue = minYear;
-                            modifier.options.ranges[1].maxValue = maxYear;
-
-                            await table.setModifier(modifier);
+                        setExtremes: function (extremes) {
+                            setCrossfilter('Economy', 'Year', this, extremes);
                         }
                     }
                 }
             }
         }, {
-            cell: 'Center',
+            cell: 'Bottom',
             type: 'DataGrid',
             connector: {
                 id: 'Economy'
-            },
-            title: 'Economic Acitivity'
+            }
         }]
     });
 
