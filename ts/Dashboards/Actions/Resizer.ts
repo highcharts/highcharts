@@ -189,7 +189,7 @@ class Resizer {
                     EditGlobals.classNames.resizeSnapX,
                 // src: iconsURLPrefix + 'resize-handle.svg'
                 // eslint-disable-next-line max-len
-                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@da8539118fd493ac0342ccba566a39137d92e0eb/gfx/dashboards-icons/resize-handle.svg'
+                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b2d3673cfd596a9615e57233914836c78544884c/gfx/dashboards-icons/resize-handle.svg'
             },
             {
                 width: snapWidth + 'px',
@@ -207,7 +207,7 @@ class Resizer {
                     EditGlobals.classNames.resizeSnapY,
                 // src: iconsURLPrefix + 'resize-handle.svg'
                 // eslint-disable-next-line max-len
-                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@da8539118fd493ac0342ccba566a39137d92e0eb/gfx/dashboards-icons/resize-handle.svg'
+                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b2d3673cfd596a9615e57233914836c78544884c/gfx/dashboards-icons/resize-handle.svg'
             },
             {
                 width: snapWidth + 'px',
