@@ -2,17 +2,17 @@
 
     let board = void 0;
 
-    // Crossfilter Emitter
+    // Crossfilter a connector table
     async function setCrossfilter(
         connectorId,
         column,
         axis,
         extremes
     ) {
-        // Get DataTable from Board.dataPool
+        // Get DataTable from data pool
         const table = await board.dataPool.getConnectorTable(connectorId);
 
-        // Extract row values from Highcharts.Axis
+        // Extract column values from axis
         const names = axis.names;
         const minValue = names[Math.round(
             typeof extremes.min === 'number' ?
@@ -25,7 +25,7 @@
                 axis.dataMax
         )];
 
-        // Configure and apply RangeModifier
+        // Configure and apply range
         const modifier = table.getModifier();
         for (const range of modifier.options.ranges) {
             if (range.column === column) {
@@ -37,7 +37,7 @@
         await table.setModifier(modifier);
     }
 
-    // Dashboard with Crossfilter
+    // Dashboard with crossfilter
     board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
