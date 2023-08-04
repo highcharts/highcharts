@@ -898,8 +898,13 @@
     margin-bottom: 20px;
 }
 
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-label-text {
+    text-align: center;
+}
+
 .highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-button-container {
-    float: right;
+    display: flex;
+    justify-content: center;
 }
 
 .highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-button {
