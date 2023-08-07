@@ -64,14 +64,14 @@ function buildChartOptions(type, table, cursor) {
                                 x: -200,
                                 verticalAlign: 'middle'
                             }
-                        });
+                        }, false);
                         series.update({
                             showInLegend: true,
                             innerSize: '60%',
                             dataLabels: {
                                 enabled: false
                             }
-                        }, false);
+                        });
                     }
 
                     // react to table cursor

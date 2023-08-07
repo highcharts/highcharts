@@ -27,3 +27,7 @@
 .highcharts-legend-item text {
     cursor: default;
 }
+
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
+    opacity: 1;
+}

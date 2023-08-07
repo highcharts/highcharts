@@ -24,7 +24,7 @@ Dashboards.board('container', {
                     cells: [
                         {
                             id: 'dashboard-col-3',
-                            height: 130
+                            height: 140
                         }
                     ]
                 }, {
@@ -209,6 +209,15 @@ Dashboards.board('container', {
         },
         cell: 'dashboard-col-3',
         type: 'Highcharts',
+        connector: {
+            id: 'Population'
+        },
+        columnAssignment: {
+            Town: 'x',
+            Population: null,
+            'Metro Area(km2)': null,
+            'Highest Elevation(m)': 'y'
+        },
         chartOptions: {
             xAxis: {
                 visible: false
@@ -223,12 +232,13 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'scatter',
+                type: 'column',
                 margin: 0,
                 spacing: 0
             },
             plotOptions: {
                 series: {
+                    legendType: 'point',
                     colorByPoint: true,
                     marker: {
                         symbol: 'square'
@@ -236,6 +246,11 @@ Dashboards.board('container', {
                     events: {
                         legendItemClick: function () {
                             return false;
+                        }
+                    },
+                    states: {
+                        inactive: {
+                            enabled: false
                         }
                     }
                 }
@@ -254,88 +269,7 @@ Dashboards.board('container', {
                 navigation: {
                     enabled: false
                 }
-            },
-            series: [{
-                name: 'Tokyo',
-                y: 5
-            },
-            {
-                name: 'Delhi',
-                y: 5
-            },
-            {
-                name: 'Shanghai',
-                y: 5
-            },
-            {
-                name: 'Sao Paulo',
-                y: 5
-            },
-            {
-                name: 'Mexico City',
-                y: 5
-            },
-            {
-                name: 'Dhaka',
-                y: 5
-            },
-            {
-                name: 'Cairo',
-                y: 5
-            },
-            {
-                name: 'Beijing',
-                y: 5
-            },
-            {
-                name: 'Mumbai',
-                y: 5
-            },
-            {
-                name: 'Osaka',
-                y: 5
-            },
-            {
-                name: 'Karachi',
-                y: 5
-            },
-            {
-                name: 'Chongqing',
-                y: 5
-            },
-            {
-                name: 'Istanbul',
-                y: 5
-            },
-            {
-                name: 'Buenos Aires',
-                y: 5
-            },
-            {
-                name: 'Kolkata',
-                y: 5
-            },
-            {
-                name: 'Kinshasa',
-                y: 5
-            },
-            {
-                name: 'Lagos',
-                y: 5
-            },
-            {
-                name: 'Manila',
-                y: 5
-            },
-            {
-                name: 'Tianjin',
-                y: 5
-            },
-            {
-                name: 'Guangzhou',
-                y: 5
             }
-            ]
         }
     },
     {
