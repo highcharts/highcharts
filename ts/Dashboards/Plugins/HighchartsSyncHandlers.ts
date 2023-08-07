@@ -27,7 +27,6 @@ import type {
     Series
 } from './HighchartsTypes';
 import type DataCursor from '../../Data/DataCursor';
-import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Sync from '../Components/Sync/Sync';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type DataTable from '../../Data/DataTable';
@@ -114,7 +113,7 @@ const configs: {
                                                     const modifier = table.getModifier();
                                                     if (modifier && modifier.options.type === 'Range') {
                                                         offset = getModifiedTableOffset(
-                                                            table, 
+                                                            table,
                                                             modifier.options as RangeModifierOptions
                                                         );
                                                     }
@@ -130,7 +129,7 @@ const configs: {
                                                     const modifier = table.getModifier();
                                                     if (modifier && modifier.options.type === 'Range') {
                                                         offset = getModifiedTableOffset(
-                                                            table, 
+                                                            table,
                                                             modifier.options as RangeModifierOptions
                                                         );
                                                     }
