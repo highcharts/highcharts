@@ -391,7 +391,7 @@ function renderToggle(
         return;
     }
 
-    const { value, lang } = options
+    const { value, lang } = options;
     const title = options.title || options.name;
     const toggleContainer = createElement(
         'div',
