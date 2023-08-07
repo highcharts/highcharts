@@ -1,7 +1,5 @@
 const csvData = document.getElementById('csv').innerText;
 
-let chartCount = 0;
-
 const chartOptions = {
     xAxis: {
         type: 'category'
@@ -13,24 +11,7 @@ const chartOptions = {
     },
     chart: {
         animation: false,
-        type: 'column',
-        events: {
-            load: function () {
-                const chart = this;
-                if (chartCount === 1) {
-                    chart.update({
-                        title: {
-                            text: 'allowConnectorUpdate: false'
-                        },
-                        subtitle: {
-                            useHTML: true,
-                            text: 'Dragging points <em>will not update</em> the grid'
-                        }
-                    });
-                }
-                chartCount = chartCount + 1;
-            }
-        }
+        type: 'column'
     },
     credits: {
         enabled: false
@@ -114,7 +95,16 @@ const board = Dashboards.board('container', {
                 text: 'Vitamin A'
             },
             allowConnectorUpdate: false,
-            chartOptions
+            chartOptions: {
+                ...chartOptions,
+                title: {
+                    text: 'allowConnectorUpdate: false'
+                },
+                subtitle: {
+                    useHTML: true,
+                    text: 'Dragging points <em>will not update</em> the grid'
+                }
+            }
         }, {
             cell: 'dashboard-col-2',
             connector: {
