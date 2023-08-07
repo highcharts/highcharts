@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Highcharts Sankey Diagram'
+        text: 'Estimated US Energy Consumption in 2017'
     },
     subtitle: {
         text:
@@ -11,6 +11,12 @@ Highcharts.chart('container', {
         point: {
             valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
         }
+    },
+    tooltip: {
+        headerFormat: null,
+        pointFormat:
+      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} quads',
+        nodeFormat: '{point.name}: {point.sum:.2f} quads'
     },
     series: [{
         keys: ['from', 'to', 'weight'],
