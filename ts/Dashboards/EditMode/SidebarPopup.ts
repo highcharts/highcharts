@@ -31,6 +31,9 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
+import DataGridOptions from '../../DataGrid/DataGridOptions';
+import DataGridComponent from '../Plugins/DataGridComponent';
+import KPIComponent from '../Components/KPIComponent';
 const {
     createElement,
     merge
@@ -147,13 +150,21 @@ class SidebarPopup extends BaseForm {
             ): Cell|void {
                 if (sidebar && dropContext) {
                     const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
-                    return sidebar.onDropNewComponent(dropContext, {
+                    let options = {
                         cell: '',
                         type: 'DataGrid',
-                        connector: {
-                            id: connectorsIds[0] || ''
+                    } as Partial<DataGridComponent.ComponentOptions>;
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
                         }
-                    });
+                    }
+
+                    return sidebar.onDropNewComponent(dropContext, options);
                 }
             }
         }, {
@@ -163,16 +174,12 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
-                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
-                    return sidebar.onDropNewComponent(dropContext, {
+                    const options = {
                         cell: '',
                         type: 'KPI',
-                        title: 'Example KPI',
-                        // value: 70,
-                        connector: {
-                            id: connectorsIds[0] || ''
-                        }
-                    });
+                        title: 'Example KPI'
+                    } as Partial<KPIComponent.ComponentOptions>;
+                    return sidebar.onDropNewComponent(dropContext, options);
                 }
             }
         }

@@ -572,7 +572,7 @@ function renderInput(
             id: options.id || '',
             name: options.name || '',
             value: (
-                options.value && options.value.replace(/\"/g, '') ||
+                options.value && options.value.toString().replace(/\"/g, '') ||
                 ''
             )
         },
