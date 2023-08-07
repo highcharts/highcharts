@@ -103,20 +103,18 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell|Row
             ): Cell | void {
                 if (sidebar && dropContext) {
+                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'Highcharts',
                         chartOptions: {
-                            series: [
-                                {
-                                    name: 'Series from options',
-                                    data: [1, 2, 1, 4]
-                                }
-                            ],
                             chart: {
                                 animation: false,
                                 type: 'pie'
                             }
+                        },
+                        connector: {
+                            id: connectorsIds[0] || ''
                         }
                     });
                 }
@@ -147,11 +145,14 @@ class SidebarPopup extends BaseForm {
                 sidebar: SidebarPopup,
                 dropContext: Cell | Row
             ): Cell|void {
-
                 if (sidebar && dropContext) {
+                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
-                        type: 'DataGrid'
+                        type: 'DataGrid',
+                        connector: {
+                            id: connectorsIds[0] || ''
+                        }
                     });
                 }
             }
@@ -162,11 +163,15 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
+                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'KPI',
                         title: 'Example KPI',
-                        value: 70
+                        // value: 70,
+                        connector: {
+                            id: connectorsIds[0] || ''
+                        }
                     });
                 }
             }
@@ -379,6 +384,11 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
+                                // skip init connecter when is not defined by options
+                                // f.e HTML component.
+                                if (newCell.mountedComponent.options?.connector?.id) {
+                                    newCell.mountedComponent.initConnector();
+                                }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
@@ -411,7 +421,7 @@ class SidebarPopup extends BaseForm {
 
             dragDrop.onCellDragEnd(newCell);
             const options = merge(componentOptions, {
-                cell: newCell.id
+                cell: newCell.id,
             });
             Bindings.addComponent(options, newCell);
 
