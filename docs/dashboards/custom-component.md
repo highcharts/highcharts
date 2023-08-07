@@ -10,11 +10,11 @@ We start by importing the default `Component` class and `ComponentRegistry` from
 The name of the class will automatically be the string, that will be used to reference this component type e.g. the class `YouTubeComponent` will be referenced by name: "`YouTube`".
 
 ```js
-    const { Component, ComponentRegistry } = Dashboards;
+const { Component, ComponentRegistry } = Dashboards;
 
-    class YouTubeComponent extends Component {
+class YouTubeComponent extends Component {
 
-    }
+}
 ```
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
@@ -56,7 +56,7 @@ class YouTubeComponent extends Component {
     }
 }
 
-Component.addComponent(YouTubeComponent);
+ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
 ```
 
 And that's it! The component is ready to be used. Now, the new component type can be referenced like that:
@@ -79,11 +79,11 @@ Dashboards.board({
     }]
 });
 ```
-[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-component).
+[The live example can be found here](https://www.highcharts.com/samples/embed/dashboards/components/custom-component).
 
 ---
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
 
 This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
 
@@ -91,7 +91,7 @@ Then we can create our custom class, which extends the `HTMLComponent` class. Th
 
 ```js
 const { ComponentRegistry } = Dashboards,
-    HTMLComponent = ComponentRegistry.getComponent('HTML'),
+    HTMLComponent = ComponentRegistry.types.HTML,
     AST = Highcharts.AST;
 
 class CustomHTML extends HTMLComponent {
@@ -114,7 +114,7 @@ class CustomHTML extends HTMLComponent {
     }
 }
 
-ComponentRegistry.registerComponent(CustomHTML);
+ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
 
 This custom component can generate HTML elements in the dashboards by:
@@ -150,7 +150,7 @@ Dashboards.board('container', {
             <div>
                 <h1>Custom HTML 2</h1>
                 <span id="custom-html-div-2">Custom HTML added as string </span>
-            </div>`
+            </div>
     },
     {
         cell: 'dashboard-col-2',
@@ -163,4 +163,4 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-html-component).
+Check out the [live example here](https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component).

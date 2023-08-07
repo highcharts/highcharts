@@ -1,19 +1,16 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsComponent from '../../../../code/es-modules/Dashboards/Plugins/HighchartsComponent.js';
-import HTMLComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
-import Component from '../../../../code/es-modules/Dashboards/Components/Component.js';
-import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
 
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
-import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
-import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
-
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
-HighchartsComponent.charter = Highcharts;
+DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.HighchartsPlugin);
 
 const { test, only, skip } = QUnit;
+
+const Component = Dashboards.Component;
+const CSVConnector = Dashboards.DataConnector.types.CSV;
+const HighchartsComponent = Dashboards.ComponentRegistry.types.Highcharts;
 
 const eventTypes = [
     'load',
@@ -476,7 +473,7 @@ skip('toJSON', function (assert) {
     container.id = 'container';
 
     const connector = new CSVConnector();
-    const component = new HighchartsComponent({
+    const component = new HighchartsComponent(void 0, {
         connector,
         parentElement: container,
         chartOptions: {

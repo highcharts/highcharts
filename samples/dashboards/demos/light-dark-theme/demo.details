@@ -1,6 +1,0 @@
----
- name: Dashboard Demo with light/dark theme detection
- authors:
-   - Karol Kolodziej
- js_wrap: b
-...

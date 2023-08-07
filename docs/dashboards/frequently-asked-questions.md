@@ -5,10 +5,10 @@ Frequently asked questions
 How to connect dataPool to the other components?
 ---------------------------------------------
 
-First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
+First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
 
 After that, you need to pass the connector to the component config, and that’s it.
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboard-minimal).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 * * *
 
@@ -41,7 +41,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
         }]
 ```
 
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 * * *
 
@@ -101,13 +101,13 @@ Example of synchronized components
 
 
 
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboard-minimal).
-See the next question for possible syncrhonization events.
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
+See the next question for possible synchronization events.
 
 * * *
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboard-minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 The events, that can be synchronized between components are:
 * 'visibility’
@@ -117,7 +117,61 @@ The events, that can be synchronized between components are:
 * * *
 What browsers are supported?
 ---------------
-The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
-In particular, those are Chrome, Edge, Firefox, and Safari.
+Highcharts Dashboards supports the following browsers:
+
+|  Browser |    Version    |
+|----------|:-------------:|
+| Firefox  | 52.0+ (2017+) |
+| Chrome   | 55.0+ (2016+) |
+| Safari   | 11.0+ (2017+) |
+| Opera    | 42.0+ (2016+) |
+| Edge     | 16.0+ (2017+) |
 
 * * *
+
+## I modified series names in a chart, and now sync is not working? What can I do?
+
+Sync to other components may not work if you modify certain series properties. For instance modifying series names in the chart `afterRender` event callback:
+
+```js
+afterRender(e) {
+    // Potential problem: setting custom name for series
+    e.target.chart.series[0].name = 'customName'
+    e.target.chart.series[1].name = 'otherCustomName'
+}
+```
+
+If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
+
+```js
+  dataPool: {
+    connectors: [{
+      id: 'Vitamin',
+      type: 'CSV',
+      options: {
+        csv: csvData,
+        firstRowAsNames: true,
+        dataTable: {
+          aliases: {
+            // Workaround for renamed series:
+            // set an alias that matches the series name
+            'customName': 'water',
+            'otherCustomName': 'air'
+          }
+        }
+      }
+    }]
+  }
+```
+See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
+* * *
+How to style the Highcharts Component?
+-----------------------------------------------------------------------
+Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default. 
+
+The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
+```css
+@import url("https://code.highcharts.com/css/highcharts.css");
+```
+
+To customize your styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)

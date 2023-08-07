@@ -62,7 +62,7 @@ const configs: {
                                 const table = this.connector && this.connector.table;
                                 if (table) {
                                     const row = e.row;
-                                    const cell = row.querySelector(`.hc-dg-cell[data-original-data="${row.dataset.rowXIndex}"]`);
+                                    const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
 
                                     cursor.emitCursor(table, {
                                         type: 'position',
@@ -110,7 +110,7 @@ const configs: {
 
                         if (row !== void 0 && dataGrid) {
                             const highlightedDataRow = dataGrid.container
-                                .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
+                                .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
 
                             if (highlightedDataRow) {
                                 dataGrid.toggleRowHighlight(highlightedDataRow);
@@ -210,13 +210,72 @@ const configs: {
                 this.on('setConnector', (): void => unregisterCursorListeners());
                 this.on('afterSetConnector', (): void => registerCursorListeners());
             }
+        },
+        visibilityHandler: function (this: DataGridComponent): void {
+            const component = this,
+                { board } = component;
+
+            const handleVisibilityChange = (e: DataCursor.Event): void => {
+                const cursor = e.cursor,
+                    dataGrid = component.dataGrid;
+                if (!(dataGrid && cursor.type === 'position' && cursor.column)) {
+                    return;
+                }
+
+                const columnName = cursor.column;
+                dataGrid.update({
+                    columns: {
+                        [columnName]: {
+                            show: cursor.state !== 'series.hide'
+                        }
+                    }
+                });
+            };
+
+            const registerCursorListeners = (): void => {
+                const { dataCursor: cursor } = board;
+
+                if (!cursor) {
+                    return;
+                }
+                const table = this.connector && this.connector.table;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.addListener(table.id, 'series.show', handleVisibilityChange);
+                cursor.addListener(table.id, 'series.hide', handleVisibilityChange);
+            };
+
+            const unregisterCursorListeners = (): void => {
+                const table = this.connector && this.connector.table;
+                const { dataCursor: cursor } = board;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.removeListener(table.id, 'series.show', handleVisibilityChange);
+                cursor.removeListener(table.id, 'series.hide', handleVisibilityChange);
+            };
+
+
+            if (board) {
+                registerCursorListeners();
+
+                this.on('setConnector', (): void => unregisterCursorListeners());
+                this.on('afterSetConnector', (): void => registerCursorListeners());
+            }
+
         }
     }
 };
 
 const defaults: Sync.OptionsRecord = {
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
-    extremes: { handler: configs.handlers.extremesHandler }
+    extremes: { handler: configs.handlers.extremesHandler },
+    visibility: { handler: configs.handlers.visibilityHandler }
 };
 
 

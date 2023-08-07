@@ -29,7 +29,8 @@ import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    merge
+    merge,
+    diffObjects
 } = U;
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -383,6 +384,21 @@ class HTMLComponent extends Component {
 
         return json;
     }
+
+    /**
+     * Get the HTML component's options.
+     * @returns
+     * The JSON of HTML component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<HTMLComponent.HTMLComponentOptions> {
+        return {
+            ...diffObjects(this.options, HTMLComponent.defaultOptions),
+            type: 'HTML'
+        };
+    }
 }
 
 
@@ -416,6 +432,13 @@ namespace HTMLComponent {
          *   }
          * }]
          * ```
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/single-element/ | HTML component with one image.}
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/nested-elements/ | HTML component with nested images.}
+         *
          */
         elements?: (AST.Node | string)[];
         type: 'HTML';

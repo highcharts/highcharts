@@ -43,7 +43,7 @@ export interface ChainModifierOptions extends DataModifierOptions {
     /**
      * Array of options of the chain modifiers.
      */
-    chain?: Array<DeepPartial<DataModifierTypeOptions>>;
+    chain?: Array<Partial<DataModifierTypeOptions>>;
 
     /**
      * Whether to revert the order before execution.

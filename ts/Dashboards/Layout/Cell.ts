@@ -25,7 +25,7 @@
 import type Component from '../Components/Component.js';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
 import type Serializable from '../Serializable';
@@ -347,6 +347,18 @@ class Cell extends GUIElement {
         };
     }
 
+    /**
+     * Get the cell's options.
+     * @returns
+     * The JSON of cell's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Globals.DeepPartial<Cell.Options> {
+        return this.options;
+    }
+
     protected changeVisibility(
         setVisible: boolean = true
     ): void {
@@ -450,25 +462,41 @@ class Cell extends GUIElement {
      *
      * @param width
      * % value or 'auto' or px
+     *
+     * @param height
+     * value in px
      */
     public setSize(
-        width: (string|number)
+        width?: (string|number),
+        height?: (string|number)
     ): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width === 'auto' && cell.container.style.flex !== '1 1 0%') {
-                cell.container.style.flex = '1 1 0%';
-            } else {
-                const cellWidth = cell.convertWidthToValue(width);
-
+            if (width) {
                 if (
-                    cellWidth &&
-                    cell.container.style.flex !== '0 0 ' + cellWidth
+                    width === 'auto' &&
+                    cell.container.style.flex !== '1 1 0%'
                 ) {
-                    cell.container.style.flex = '0 0 ' + cellWidth;
+                    cell.container.style.flex = '1 1 0%';
+                } else {
+                    const cellWidth = cell.convertWidthToValue(width);
+
+                    if (
+                        cellWidth &&
+                        cell.container.style.flex !== '0 0 ' + cellWidth
+                    ) {
+                        cell.container.style.flex = '0 0 ' + cellWidth;
+                    }
+
+                    cell.options.width = cellWidth;
                 }
+            }
+
+            if (height) {
+                cell.options.height = cell.container.style.height =
+                    height + 'px';
             }
 
             if (editMode) {
@@ -628,6 +656,10 @@ namespace Cell {
          * ```
          * width: '33.333%'
          * ```
+         *
+         *  Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         width?: (string|number);
         /**
@@ -640,6 +672,10 @@ namespace Cell {
          * ```
          * height: '300px'
          * ```
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         height?: (string|number);
         /**
@@ -655,7 +691,11 @@ namespace Cell {
          **/
         mountedComponentJSON?: Component.JSON;
         /**
-         * To create a nested layout, cell might contain an additional layouts.
+         * To create a nested layout, add a layout object to a cell.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
          **/
         layout?: LayoutType.Options;
         /**
@@ -664,6 +704,10 @@ namespace Cell {
         layoutJSON?: LayoutType.JSON;
         /**
          * Options for responsive design.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
          **/
         responsive?: Record<string, CellResponsiveOptions>;
     }

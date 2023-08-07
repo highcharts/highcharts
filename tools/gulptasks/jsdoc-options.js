@@ -11,21 +11,20 @@ const path = require('path');
  *
  * */
 
-const SOURCE_DIRECTORY = 'js';
+const SOURCE_DIRECTORY = 'code/es-modules/';
 
 const SOURCE_GLOBS = [
-    'Accessibility/**/*',
-    'Boost/**/*',
-    'Core/**/*',
-    'Data/**/*',
-    'DataGrid/**/*',
-    'Extensions/**/*',
-    'Gantt/**/*',
-    'Maps/**/*',
-    'Stock/**/*',
-    'Series/**/*'
+    'Accessibility',
+    'Core',
+    'Data',
+    'Extensions',
+    'Gantt',
+    'Maps',
+    'Series',
+    'Shared',
+    'Stock'
 ].map(
-    glob => SOURCE_DIRECTORY + '/' + glob
+    glob => SOURCE_DIRECTORY + '/' + glob + '/**/*'
 );
 
 const TARGET_DIRECTORY = path.join('build', 'api');
