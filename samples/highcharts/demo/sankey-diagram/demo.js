@@ -3,6 +3,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Sankey Diagram'
     },
+    subtitle: {
+        text:
+      'Source: <a href=\'https://www.llnl.gov/\'> Lawrence Livermore National Laboratory</a>'
+    },
     accessibility: {
         point: {
             valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
