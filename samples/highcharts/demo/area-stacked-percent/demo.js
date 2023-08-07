@@ -27,7 +27,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.1f} million Gt)<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.1f} million people)<br/>',
         split: true
     },
     plotOptions: {
