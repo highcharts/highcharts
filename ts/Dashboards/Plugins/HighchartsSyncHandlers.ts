@@ -29,12 +29,57 @@ import type {
 import type DataCursor from '../../Data/DataCursor';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Sync from '../Components/Sync/Sync';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type DataTable from '../../Data/DataTable';
 
 import ComponentType from '../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
+
+/**
+ * Utility function that returns the first row index
+ * if the table has been modified by a range modifier
+ *
+ * @param {DataTable} table
+ * The table to get the offset from.
+     *
+ * @param {RangeModifierOptions} modifierOptions
+ * The modifier options to use
+ *
+ * @return {number}
+ * The row offset of the modified table.
+ */
+function getModifiedTableOffset(
+    table: DataTable,
+    modifierOptions: RangeModifierOptions
+): number {
+    const { ranges } = modifierOptions;
+
+    if (ranges) {
+        const minRange = ranges.reduce(
+            (minRange, currentRange): RangeModifierRangeOptions => {
+                if (currentRange.minValue > minRange.minValue) {
+                    minRange = currentRange;
+                }
+                return minRange;
+
+            }, ranges[0]
+        );
+
+        const tableRowIndex = table.getRowIndexBy(
+            minRange.column,
+            minRange.minValue
+        );
+
+        if (tableRowIndex) {
+            return tableRowIndex;
+        }
+    }
+
+    return 0;
+}
 
 /* *
  *
@@ -67,8 +112,11 @@ const configs: {
                                                 mouseOver: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
-                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    if (modifier && modifier.options.type === 'Range') {
+                                                        offset = getModifiedTableOffset(
+                                                            table, 
+                                                            modifier.options as RangeModifierOptions
+                                                        );
                                                     }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
@@ -80,8 +128,11 @@ const configs: {
                                                 mouseOut: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
-                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    if (modifier && modifier.options.type === 'Range') {
+                                                        offset = getModifiedTableOffset(
+                                                            table, 
+                                                            modifier.options as RangeModifierOptions
+                                                        );
                                                     }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
@@ -386,8 +437,8 @@ const configs: {
 
                     const modifier = table.getModifier();
 
-                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                    if (modifier && modifier.options.type === 'Range') {
+                        offset = getModifiedTableOffset(table, modifier.options as RangeModifierOptions);
                     }
 
                     if (chart && chart.series.length) {
