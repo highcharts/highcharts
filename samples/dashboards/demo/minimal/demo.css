@@ -29,13 +29,13 @@
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-subtitle,
 #kpi-iron .highcharts-dashboards-component-kpi-subtitle {
     margin-top: 10px;
-    font-size: 1.2em !important;
+    font-size: 1.2em;
     color: var(--highcharts-neutral-color-60);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
 #kpi-iron .highcharts-dashboards-component-kpi-value {
-    font-size: 4em !important;
+    font-size: 4em;
     font-weight: normal;
     line-height: 2.4rem;
     margin-top: 10px;
@@ -53,9 +53,9 @@
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value::after,
 #kpi-iron .highcharts-dashboards-component-kpi-value::after {
-    content: "micrograms";
+    content: 'micrograms';
     display: block;
-    font-size: 1rem !important;
+    font-size: 1rem;
 }
 
 .highcharts-plot-line {
