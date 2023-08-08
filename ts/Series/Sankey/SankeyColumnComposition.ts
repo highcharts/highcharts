@@ -150,7 +150,16 @@ namespace SankeyColumnComposition {
                 height += nodeHeight;
                 return height;
             }, 0);
-            return ((series.chart.plotSizeY || 0) - height) / 2;
+
+            // Node alignment option handling #19096
+            switch (series.options.nodeAlignment) {
+                case 'top':
+                    return 0;
+                case 'bottom':
+                    return (series.chart.plotSizeY || 0) - height;
+                default:
+                    return ((series.chart.plotSizeY || 0) - height) / 2;
+            }
         }
 
 
