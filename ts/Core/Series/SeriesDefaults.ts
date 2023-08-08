@@ -434,7 +434,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Whether to use the Y extremes of the total chart width or only the
-     * zoomed area when zooming in on parts of the X axis. By default, the
+     * zoomed area wtehen zooming in on parts of the X axis. By default, the
      * Y axis adjusts to the min and max of the visible data. Cartesian
      * series only.
      *
@@ -443,6 +443,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     4.1.6
      * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
+     */
+
+    /**
+     * Highlight only the hovered point and fade the remaining points.
+     *
+     * Scatter-type series require enabling the 'inactive' marker state and
+     * adjusting opacity. Note that this approach could affect performance
+     * with large datasets.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-inactiveotherpoints-enabled/
+     *         Chart with inactiveOtherPoints option enabled.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @apioption plotOptions.series.inactiveOtherPoints
      */
 
     /**
