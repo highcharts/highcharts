@@ -1,16 +1,3 @@
-const chartOptions = {
-    xAxis: {
-        type: 'category'
-    },
-    chart: {
-        type: 'column',
-        zoomType: 'x'
-    },
-    title: {
-        text: ''
-    }
-};
-
 const csv = document.getElementById('csv').innerText;
 
 Dashboards.board('container', {
@@ -51,9 +38,14 @@ Dashboards.board('container', {
                     }
                 }]
             }, {
-                cells: [
-                    { id: 'dashboard-col-3' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-3',
+                    height: 140
+                }]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-4'
+                }]
             }]
         }]
     },
@@ -75,7 +67,42 @@ Dashboards.board('container', {
             'Metro Area(km2)': null,
             'Highest Elevation(m)': null
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                labels: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Millions',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
+            }
+        }
     },
     {
         cell: 'dashboard-col-1',
@@ -95,13 +122,42 @@ Dashboards.board('container', {
             'Metro Area(km2)': 'y',
             'Highest Elevation(m)': null
         },
-        chartOptions: Highcharts.merge(chartOptions, {
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                labels: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Area km2'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column',
+                zoomType: 'x'
+            },
             plotOptions: {
                 series: {
-                    colorIndex: 3
+                    colorByPoint: true
                 }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'km2',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
             }
-        })
+        }
     },
     {
         cell: 'dashboard-col-2',
@@ -121,16 +177,118 @@ Dashboards.board('container', {
             'Metro Area(km2)': null,
             'Highest Elevation(m)': 'y'
         },
-        chartOptions: Highcharts.merge(chartOptions, {
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                labels: {
+                    enabled: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column',
+                zoomType: 'x'
+            },
             plotOptions: {
                 series: {
-                    colorIndex: 2
+                    colorByPoint: true
+                },
+                tooltip: {
+                    headerFormat: '{point.key}',
+                    format: '{y}'
                 }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Meters',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
             }
-        })
+        }
     },
     {
+        title: {
+            text: ''
+        },
         cell: 'dashboard-col-3',
+        type: 'Highcharts',
+        connector: {
+            id: 'Population'
+        },
+        columnAssignment: {
+            Town: 'x',
+            Population: null,
+            'Metro Area(km2)': null,
+            'Highest Elevation(m)': 'y'
+        },
+        chartOptions: {
+            xAxis: {
+                visible: false
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                },
+                height: 0
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column',
+                margin: 0,
+                spacing: 0
+            },
+            plotOptions: {
+                series: {
+                    legendType: 'point',
+                    colorByPoint: true,
+                    marker: {
+                        symbol: 'square'
+                    },
+                    events: {
+                        legendItemClick: function () {
+                            return false;
+                        }
+                    },
+                    states: {
+                        inactive: {
+                            enabled: false
+                        }
+                    }
+                }
+            },
+            title: {
+                text: ''
+            },
+            legend: {
+                title: {
+                    text: 'Cities'
+                },
+                enabled: true,
+                padding: 0,
+                floating: true,
+                y: -30,
+                navigation: {
+                    enabled: false
+                }
+            }
+        }
+    },
+    {
+        cell: 'dashboard-col-4',
         connector: {
             id: 'Population'
         },

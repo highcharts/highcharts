@@ -57,6 +57,10 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    id: 'title'
+                }]
+            }, {
+                cells: [{
                     id: 'dashboard-col-1'
                 }]
             }, {
@@ -73,6 +77,18 @@ Dashboards.board('container', {
         }]
     },
     components: [
+        {
+            cell: 'title',
+            type: 'HTML',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'Polio (Pol3) immunization coverage'
+            },
+            {
+                tagName: 'p',
+                textContent: ' Among 1-year-olds (%) | Source: https://apps.who.int/gho/data/'
+            }]
+        },
         {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
@@ -94,10 +110,16 @@ Dashboards.board('container', {
                     zoomType: 'x'
                 },
                 title: {
-                    text: 'Polio (Pol3) immunization coverage among 1-year-olds (%) '
+                    text: 'Global'
                 },
                 subtitle: {
-                    text: 'Source: https://apps.who.int/gho/data/'
+                    text: ''
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {
@@ -122,6 +144,12 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'South-East Asia'
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 },
                 plotOptions: {
                     series: {
@@ -156,6 +184,12 @@ Dashboards.board('container', {
                     series: {
                         colorIndex: 2
                     }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {

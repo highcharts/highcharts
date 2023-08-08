@@ -8,21 +8,30 @@ const chartOptions = {
         animation: false,
         type: 'column'
     },
+    credits: {
+        enabled: false
+    },
     title: {
-        align: 'left'
+        text: 'allowConnectorUpdate: true'
+    },
+    subtitle: {
+        text: 'Drag points to update the data grid'
     },
     yAxis: {
         title: {
             text: ''
         }
     },
+    legend: {
+        enabled: false
+    },
     plotOptions: {
         series: {
+            colorByPoint: true,
             dragDrop: {
                 draggableY: true,
                 dragPrecisionY: 1
-            },
-            colorByPoint: true
+            }
         }
     }
 };
@@ -75,11 +84,7 @@ Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            chartOptions: Highcharts.merge(chartOptions, {
-                title: {
-                    text: 'Drag points to update all'
-                }
-            })
+            chartOptions: chartOptions
         }, {
             cell: 'dashboard-col-1',
             connector: {
@@ -97,6 +102,10 @@ Dashboards.board('container', {
             chartOptions: Highcharts.merge(chartOptions, {
                 title: {
                     text: 'Dragging points does not affect other components'
+                },
+                subtitle: {
+                    useHTML: true,
+                    text: 'Dragging points <em>will not update</em> the grid'
                 }
             })
         }, {
