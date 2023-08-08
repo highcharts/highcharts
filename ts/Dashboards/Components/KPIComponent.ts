@@ -279,6 +279,8 @@ class KPIComponent extends Component {
                 this.contentElement
             );
         }
+
+        this.on('tableChanged', (): void => this.setValue());
     }
 
     /* *
@@ -436,31 +438,32 @@ class KPIComponent extends Component {
         this.redraw();
     }
 
+    public getValue(): string|number|undefined {
+        if (this.connector && this.options.columnName) {
+            const table = this.connector?.table.modified;
+            const column = table.getColumn(this.options.columnName);
+            const length = column?.length || 0;
+
+           const rowCount = table.getRowCount();
+           return table.getCellAsString(this.options.columnName, length - 1);
+        } else {
+            return this.options.value;
+        }
+
+    }
     /**
      * Handles updating elements via options
      *
      * @internal
      */
-    private updateElements(): void {
+
+    private setValue() {
+
         const {
-            style,
-            subtitle,
             valueFormat,
             valueFormatter
         } = this.options;
-
-        if (this.options.title) {
-            this.setTitle(this.options.title);
-            if (this.dimensions.width && this.dimensions.height) {
-                this.updateTitleSize(
-                    this.dimensions.width,
-                    this.dimensions.height
-                );
-            }
-        }
-
-        let value = this.options.value;
-
+        let value = this.getValue();
         if (defined(value)) {
             let prevValue;
             if (isNumber(value)) {
@@ -476,11 +479,29 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, value);
-            AST.setElementHTML(this.subtitle, this.getSubtitle());
 
             this.prevValue = prevValue;
         }
+    }
+    private updateElements(): void {
+        const {
+            style,
+            subtitle,
+        } = this.options;
 
+        if (this.options.title) {
+            this.setTitle(this.options.title);
+            if (this.dimensions.width && this.dimensions.height) {
+                this.updateTitleSize(
+                    this.dimensions.width,
+                    this.dimensions.height
+                );
+            }
+        }
+
+        this.setValue();
+
+        AST.setElementHTML(this.subtitle, this.getSubtitle());
         if (style) {
             css(this.element, style);
         }
@@ -674,6 +695,7 @@ namespace KPIComponent {
         valueFormat?: string;
     }
     export interface ComponentOptions extends Component.ComponentOptions {
+        columnName: string;
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
