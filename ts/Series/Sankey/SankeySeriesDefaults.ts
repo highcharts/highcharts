@@ -246,8 +246,11 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Determines which side of the chart the nodes are to be aligned to.
      *
+     * @sample highcharts/plotoptions/sankey-nodealignment
+     *         Node alignment demonstrated
+     *
      * @type      {'top'|'center'|'bottom'}
-     * @apioption plotOptions.sankey.nodeAlignemt
+     * @apioption plotOptions.sankey.nodeAlignment
      */
     nodeAlignment: 'center',
 
