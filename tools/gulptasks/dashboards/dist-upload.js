@@ -293,23 +293,6 @@ async function uploadZips(
  * */
 
 /**
- * Returns truncated versions
- * @param {string} fullVersion the full semver string
- *
- * @return {[string, string]}
- * Array containing truncated versions ordered from most to least specific, i.e. ["1.1", "1"]
- */
-function getTruncatedVersions(fullVersion) {
-    const [major, minor] = fullVersion.split('.');
-
-    return [
-        `${major}.${minor}`,
-        major
-    ];
-}
-
-
-/**
  * Uploads distribution files.
  *
  * @return {Promise<void>}
@@ -375,10 +358,13 @@ async function distUpload() {
         '.'
     );
 
+
     // Upload versioned paths
+    const [major, minor] = release.split('.');
     const versions = [
         release,
-        ...getTruncatedVersions(release)
+        `${major}.${minor}`,
+        major
     ];
 
     for (const version of versions) {
