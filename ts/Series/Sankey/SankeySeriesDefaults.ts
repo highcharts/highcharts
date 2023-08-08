@@ -244,6 +244,14 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     minLinkWidth: 0,
 
     /**
+     * Determines which side of the chart the nodes are to be aligned to.
+     *
+     * @type      {'top'|'center'|'bottom'}
+     * @apioption plotOptions.sankey.nodeAlignemt
+     */
+    nodeAlignment: 'center',
+
+    /**
      * The pixel width of each node in a sankey diagram or dependency wheel,
      * or the height in case the chart is inverted.
      *
