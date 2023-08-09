@@ -1,0 +1,11 @@
+---
+name: Technical analysis with annotations
+authors:
+  - Kamil Musialowski
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 0
+...
