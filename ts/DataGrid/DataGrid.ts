@@ -141,7 +141,7 @@ class DataGrid {
      * The input element of a cell after mouse focus.
      * @internal
      */
-    private cellInputEl?: HTMLInputElement;
+    public cellInputEl?: HTMLInputElement;
 
     /**
      * The container for the column headers.
