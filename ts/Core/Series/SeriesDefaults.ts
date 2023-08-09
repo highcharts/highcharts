@@ -200,6 +200,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * chart's legend and tooltip.
      *
      * @sample {highcharts} highcharts/css/point-series-classname
+     *         Series and point class name
      *
      * @type      {string}
      * @since     5.0.0
