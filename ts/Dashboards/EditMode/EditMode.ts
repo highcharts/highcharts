@@ -101,6 +101,14 @@ class EditMode {
                     close: {
                         icon: this.iconsURLPrefix + 'close.svg'
                     }
+                },
+                toolbars: {
+                    cell: {
+                        enabled: true
+                    },
+                    row: {
+                        enabled: true
+                    }
                 }
             },
             options || {});
@@ -315,12 +323,12 @@ class EditMode {
         );
 
         // Init rowToolbar.
-        if (!editMode.rowToolbar) {
+        if (editMode.options.toolbars?.row?.enabled && !editMode.rowToolbar) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
         }
 
         // Init cellToolbar.
-        if (!editMode.cellToolbar) {
+        if (editMode.options.toolbars?.cell?.enabled && !editMode.cellToolbar) {
             editMode.cellToolbar = new CellEditToolbar(editMode);
         }
 
@@ -1039,6 +1047,10 @@ namespace EditMode {
         resize?: Resizer.Options;
         /**
          * Toolbar options.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
          */
         toolbars?: Toolbars;
         /**

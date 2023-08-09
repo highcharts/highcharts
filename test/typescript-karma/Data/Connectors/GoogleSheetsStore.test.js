@@ -3,7 +3,7 @@ import GoogleSheetsConnector from '/base/code/es-modules/Data/Connectors/GoogleS
 import { registerConnectorEvents } from './utils.js'
 const { test, only } = QUnit;
 
-test('GoogleDataConnector', function (assert) {
+test('GoogleDataConnector', (assert) => {
     const registeredEvents = [];
 
     const connector = new GoogleSheetsConnector({

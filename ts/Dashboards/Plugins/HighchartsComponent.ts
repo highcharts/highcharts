@@ -50,7 +50,8 @@ const {
     splat,
     uniqueKey,
     error,
-    diffObjects
+    diffObjects,
+    defined
 } = U;
 
 /* *
@@ -283,7 +284,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: {}
+            columnAssignment: void 0
         }
     );
 
@@ -618,11 +619,11 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnAssignment[name]) {
-                        return false;
+                    if (!defined(this.options.columnAssignment)) {
+                        return true;
                     }
 
-                    if (columnAssignment[name] === null) {
+                    if (!isVisible || !columnAssignment[name]) {
                         return false;
                     }
 
@@ -993,8 +994,11 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * Names / aliases that should be mapped to xAxis values. You can
+         * declare which columns will be visible selectively on the chart.
+         *
+         * When the columnAssignment is not declared, all columns are visible.
+         *
          * ```
          * Example
          * columnAssignment: {

@@ -231,7 +231,10 @@ class DataGridComponent extends Component {
         });
 
         this.on('tableChanged', (): void => {
-            this.dataGrid?.update({ dataTable: this.filterColumns() });
+            // When the table is in the middle of editing a cell, don't update.
+            if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
+                this.dataGrid?.update({ dataTable: this.filterColumns() });
+            }
         });
 
         // Add the component instance to the registry
@@ -309,8 +312,12 @@ class DataGridComponent extends Component {
                     let shouldUpdateTheGrid = true;
 
                     if (dataGrid) {
-                        const row = dataGrid.rowElements[e.rowIndex],
+                        const row = dataGrid.rowElements[e.rowIndex];
+                        let cells = [];
+
+                        if (row) {
                             cells = Array.prototype.slice.call(row.childNodes);
+                        }
 
                         cells.forEach((cell: HTMLElement): void => {
                             if (cell.childElementCount > 0) {
