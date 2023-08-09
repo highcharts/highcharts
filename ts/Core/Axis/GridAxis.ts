@@ -214,7 +214,6 @@ function compose<T extends typeof Axis>(
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
-        wrap(AxisClass.prototype, 'getClosest', wrapGetClosest);
 
         // Add event handlers
         addEvent(AxisClass, 'init', onInit);
@@ -1287,10 +1286,6 @@ function wrapUnsquish(
     }
 
     return proceed.apply(axis, argsToArray(arguments));
-}
-
-function wrapGetClosest(): number {
-    return 1;
 }
 
 /* *
