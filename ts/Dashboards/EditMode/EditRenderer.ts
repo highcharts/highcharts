@@ -573,8 +573,10 @@ function renderInput(
             id: options.id || '',
             name: options.name || '',
             value: (
-                defined(options.value) && options.value.toString().replace(/\"/g, '') ||
-                ''
+                (
+                    defined(options.value) &&
+                    options.value.toString().replace(/\"/g, '')
+                ) || ''
             )
         },
         {},
