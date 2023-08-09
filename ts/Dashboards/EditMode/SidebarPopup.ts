@@ -34,6 +34,7 @@ import U from '../../Core/Utilities.js';
 import DataGridOptions from '../../DataGrid/DataGridOptions';
 import DataGridComponent from '../Plugins/DataGridComponent';
 import KPIComponent from '../Components/KPIComponent';
+import HighchartsComponent from '../Plugins/HighchartsComponent';
 const {
     createElement,
     merge
@@ -108,7 +109,8 @@ class SidebarPopup extends BaseForm {
                 if (sidebar && dropContext) {
                     const connectorsIds =
                         sidebar.editMode.board.dataPool.getConnectorIds();
-                    return sidebar.onDropNewComponent(dropContext, {
+
+                    let options = {
                         cell: '',
                         type: 'Highcharts',
                         chartOptions: {
@@ -117,10 +119,18 @@ class SidebarPopup extends BaseForm {
                                 type: 'pie'
                             }
                         },
-                        connector: {
-                            id: connectorsIds[0] || ''
-                        }
-                    });
+                    } as Partial<HighchartsComponent.Options>;
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
+                        };
+                    }
+
+                    return sidebar.onDropNewComponent(dropContext, options);
                 }
             }
         }, {
