@@ -14,13 +14,26 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'Last day\'s value',
         columnName: 'Value',
+        sync: {
+            extremes: true
+        },
         connector: {
             id: 'value'
         }
     }, {
         cell: 'chart',
         type: 'Highcharts',
+        sync: {
+            extremes: true
+        },
         chartOptions: {
+            chart: {
+                zooming: {
+                    enabled: true,
+                    type: 'x'
+                }
+
+            },
             xAxis: {
                 type: 'datetime'
             }
@@ -32,12 +45,6 @@ Dashboards.board('container', {
         connector: {
             id: 'value'
         }
-    }, {
-        type: 'DataGrid',
-        cell: 'datagrid',
-        connector: {
-            id: 'value'
-        }
     }],
     gui: {
         layouts: [{
@@ -46,10 +53,6 @@ Dashboards.board('container', {
                     id: 'kpi'
                 }, {
                     id: 'chart'
-                }]
-            }, {
-                cells: [{
-                    id: 'datagrid'
                 }]
             }]
         }]

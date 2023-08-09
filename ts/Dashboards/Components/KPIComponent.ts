@@ -35,6 +35,8 @@ import type Types from '../../Shared/Types';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import Templating from '../../Core/Templating.js';
+import KPISyncHandlers from '../Plugins/KPISyncHandlers.js';
+
 const {
     format
 } = Templating;
@@ -123,6 +125,7 @@ class KPIComponent extends Component {
                 `${Component.defaultOptions.className}-kpi`
             ].join(' '),
             minFontSize: 20,
+            syncHandlers: KPISyncHandlers,
             thresholdColors: ['#f45b5b', '#90ed7d']
         }
     );
@@ -247,11 +250,12 @@ class KPIComponent extends Component {
         this.options = options as KPIComponent.ComponentOptions;
 
         this.type = 'KPI';
-        this.sync = new Component.Sync(
+        this.sync = new KPIComponent.Sync(
             this,
             this.syncHandlers
         );
 
+        this.filterAndAssignSyncOptions(KPISyncHandlers);
         this.value = createElement(
             'span',
             {
@@ -413,6 +417,7 @@ class KPIComponent extends Component {
             this.chart = void 0;
         }
 
+        this.sync.start();
         return this;
     }
 
@@ -457,13 +462,12 @@ class KPIComponent extends Component {
      * @internal
      */
 
-    private setValue() {
+    public setValue(value: number|string|undefined = this.getValue()) {
 
         const {
             valueFormat,
             valueFormatter
         } = this.options;
-        let value = this.getValue();
         if (defined(value)) {
             let prevValue;
             if (isNumber(value)) {
