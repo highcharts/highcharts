@@ -11,12 +11,11 @@ describe('Mouse wheel chart zoom, #19178', () => {
                 { min, max } = yAxis.getExtremes();
 
             cy.get('#container')
-                .trigger("wheel",
-                    {
-                        deltaY: -66.666666, wheelDelta: 120, wheelDeltaX: 0,
-                        wheelDeltaY: 120, bubbles: true
-                    }
-                ).then(() => {
+                .trigger("wheel", {
+                    deltaY: -66.666666, wheelDelta: 120, wheelDeltaX: 0,
+                    wheelDeltaY: 120, bubbles: true
+                })
+                .then(() => {
                     assert.notEqual(
                         yAxis.min,
                         min,
