@@ -118,7 +118,7 @@ class SidebarPopup extends BaseForm {
                                 animation: false,
                                 type: 'pie'
                             }
-                        },
+                        }
                     } as Partial<HighchartsComponent.Options>;
 
                     if (connectorsIds.length) {
