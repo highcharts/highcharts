@@ -19,7 +19,6 @@
 import type HeatmapSeries from './Heatmap/HeatmapSeries';
 import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries';
 import type Point from '../Core/Series/Point';
-import type ColorAxis from '../Core/Axis/Color/ColorAxis';
 
 import H from '../Core/Globals.js';
 const {
@@ -81,9 +80,9 @@ function colorFromPoint(
 }
 
 /**
-     * Method responsible for creating a canvas for interpolation image.
-     * @private
-     */
+ * Method responsible for creating a canvas for interpolation image.
+ * @private
+ */
 function getContext(
     series: HeatmapSeries | GeoHeatmapSeries
 ): CanvasRenderingContext2D | undefined {
