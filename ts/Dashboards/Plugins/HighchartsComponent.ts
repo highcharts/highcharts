@@ -736,7 +736,7 @@ class HighchartsComponent extends Component {
             defaultColumnAssignment[columnNames[i]] = 'y';
             if (i === 0) {
                 const firstColumnValues =
-                    this.presentationTable?.getColumn(columnNames[i]);
+                    this.presentationTable?.getColumn(columnNames[i], true);
 
                 if (firstColumnValues && isString(firstColumnValues[0])) {
                     defaultColumnAssignment[columnNames[i]] = 'x';
