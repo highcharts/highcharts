@@ -1,7 +1,39 @@
 Highcharts.chart('container', {
     chart: {
         type: 'spline',
-        inverted: true
+        inverted: true,
+
+        events: {
+            load: function () {
+                // Access the chart renderer
+                var renderer = this.renderer;
+
+                // Define the gradient colors
+                var gradientColors = {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#191970'],
+                        [0.4, '#3456a5'],
+                        [0.75, '#1E90FF'],
+                        [1, '#87CEEB']
+                    ]
+                };
+
+                // Create a rectangle with gradient background within the plot area
+                renderer
+                    .rect(
+                        this.plotLeft,
+                        this.plotTop,
+                        this.plotWidth,
+                        this.plotHeight
+                    )
+                    .attr({
+                        fill: gradientColors,
+                        zIndex: -1 // Place the rectangle behind the chart series
+                    })
+                    .add();
+            }
+        }
     },
     title: {
         text: 'Atmosphere Temperature by Altitude',
@@ -47,14 +79,30 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         spline: {
+            lineWidth: 3,
+            lineColor: '#FFFFFF',
             marker: {
-                enable: false
+                enable: false,
+                fillColor: '#FFFFFF',
+                lineWidth: 1,
+                lineColor: '#0f0f0f'
             }
         }
     },
-    series: [{
-        name: 'Temperature',
-        data: [[0, 15], [10, -50], [20, -56.5], [30, -46.5], [40, -22.1],
-            [50, -2.5], [60, -27.7], [70, -55.7], [80, -76.5]]
-    }]
+    series: [
+        {
+            name: 'Temperature',
+            data: [
+                [0, 15],
+                [10, -50],
+                [20, -56.5],
+                [30, -46.5],
+                [40, -22.1],
+                [50, -2.5],
+                [60, -27.7],
+                [70, -55.7],
+                [80, -76.5]
+            ]
+        }
+    ]
 });
