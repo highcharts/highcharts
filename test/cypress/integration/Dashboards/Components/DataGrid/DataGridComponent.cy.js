@@ -49,6 +49,8 @@ describe('layout resize on window changes', () => {
                 'After updating the Data Grid the chart should be updated.'
             )
         })
+
+        cy.get('input.highcharts-datagrid-cell-input').should('have.focus');
     })
 
     it('Chart and DataGridComponent should have synced selection events.', () => {
