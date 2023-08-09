@@ -133,6 +133,35 @@ QUnit.test('Sankey', function (assert) {
         `Border radius should not greater than half the height of the node,
         small nodes shouldn't be rendered as circles (#18956).`
     );
+
+    const lastNode = series.nodeColumns[2][0];
+
+    assert.close(
+        lastNode.nodeY,
+        (chart.plotHeight - lastNode.graphic.height) / 2,
+        2,
+        'Center-aligned nodes should be in the correct y-position. (#19096)'
+    );
+
+    series.update({
+        nodeAlignment: 'top'
+    });
+
+    assert.strictEqual(
+        lastNode.nodeY,
+        0,
+        'Top-aligned nodes should be in the correct y-position. (#19096)'
+    );
+
+    series.update({
+        nodeAlignment: 'bottom'
+    });
+
+    assert.strictEqual(
+        lastNode.nodeY,
+        chart.plotHeight - lastNode.graphic.height,
+        'Bottom-aligned nodes should be in the correct y-position. (#19096)'
+    );
 });
 
 QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
