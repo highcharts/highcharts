@@ -129,7 +129,7 @@ class KPIComponent extends Component {
                     [{
                         name: 'Value',
                         type: 'input',
-                        propertyPath: ['value'],
+                        propertyPath: ['value']
                     }]
                 )
         }

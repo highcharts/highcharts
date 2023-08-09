@@ -106,7 +106,8 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell|Row
             ): Cell | void {
                 if (sidebar && dropContext) {
-                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'Highcharts',
@@ -149,10 +150,11 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
-                    const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
                     let options = {
                         cell: '',
-                        type: 'DataGrid',
+                        type: 'DataGrid'
                     } as Partial<DataGridComponent.ComponentOptions>;
 
                     if (connectorsIds.length) {
@@ -161,7 +163,7 @@ class SidebarPopup extends BaseForm {
                             connector: {
                                 id: connectorsIds[0]
                             }
-                        }
+                        };
                     }
 
                     return sidebar.onDropNewComponent(dropContext, options);
@@ -391,10 +393,12 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
-                                // skip init connecter when is not defined by options
-                                // f.e HTML component.
-                                if (newCell.mountedComponent.options?.connector?.id) {
-                                    newCell.mountedComponent.initConnector();
+                                const mountedComponent =
+                                    newCell.mountedComponent;
+                                // skip init connecter when is not defined by
+                                // options f.e HTML component.
+                                if (mountedComponent.options?.connector?.id) {
+                                    mountedComponent.initConnector();
                                 }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
