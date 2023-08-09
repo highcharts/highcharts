@@ -613,7 +613,7 @@ class HighchartsComponent extends Component {
             this.emit({ type: 'afterPresentationModifier', table: table });
 
             // Remove series names that match the xKeys
-            let seriesNames = table.modified.getColumnNames()
+            const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
                     const isVisible = this.activeGroup ?
                         this.activeGroup
