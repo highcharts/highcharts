@@ -22,19 +22,12 @@
  *
  * */
 
-import type {
-    Axis,
-    Series
-} from './HighchartsTypes';
 import type DataCursor from '../../Data/DataCursor';
-import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Sync from '../Components/Sync/Sync';
 
-import ComponentType from '../Components/ComponentType';
-import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
+const { defined } = U;
 import KPIComponent from '../Components/KPIComponent';
-const { addEvent } = U;
 
 
 /* *
@@ -52,19 +45,21 @@ const configs: {
     handlers: {
         extremesHandler:
             function (this: KPIComponent): Function | void {
-            const { board, connector } = this;
+            const { board } = this;
 
             const handleChangeExtremes = (e: DataCursor.Event): void => {
-                if (e.cursor.type === 'position' && e.cursors.length) {
-                    // Lasting cursor, so get last cursor
-                    const lastCursor = e.cursors[e.cursors.length - 1];
-                    if ('row' in lastCursor && typeof lastCursor.row === 'number') {
-                        const { row, column } = lastCursor;
-                        if (column && this.connector) {
-                            const value = this.connector.table.modified.getCellAsString(column, row);
-                            this.setValue(value);
-                        }
-                    }
+                const cursor = e.cursor;
+                if (
+                    cursor.type === 'position' &&
+                    typeof cursor?.row === 'number' &&
+                    defined(cursor.column) &&
+                    this.connector
+                ) {
+                    const value = this.connector.table.modified.getCellAsString(
+                        cursor.column,
+                        cursor.row
+                    );
+                    this.setValue(value);
                 }
 
             };

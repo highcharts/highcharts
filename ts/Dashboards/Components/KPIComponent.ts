@@ -71,6 +71,7 @@ class KPIComponent extends Component {
      *
      * */
 
+    public static syncHandlers = KPISyncHandlers;
     /**
      * Creates component from JSON.
      *
@@ -255,7 +256,6 @@ class KPIComponent extends Component {
             this.syncHandlers
         );
 
-        this.filterAndAssignSyncOptions(KPISyncHandlers);
         this.value = createElement(
             'span',
             {
@@ -428,19 +428,29 @@ class KPIComponent extends Component {
     }
 
     /**
+     * Internal method for handling option updates.
+     *
+     * @private
+     */
+    private setOptions() {
+        this.filterAndAssignSyncOptions(KPISyncHandlers);
+    }
+    /**
      * Handles updating via options.
      * @param options
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.ComponentOptions>
+        options: Partial<KPIComponent.ComponentOptions>,
+        redraw: boolean = true
     ): Promise<void> {
         await super.update(options);
+        this.setOptions();
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }
 
-        this.redraw();
+        redraw && this.redraw();
     }
 
     public getValue(): string|number|undefined {
@@ -449,7 +459,6 @@ class KPIComponent extends Component {
             const column = table.getColumn(this.options.columnName);
             const length = column?.length || 0;
 
-           const rowCount = table.getRowCount();
            return table.getCellAsString(this.options.columnName, length - 1);
         } else {
             return this.options.value;

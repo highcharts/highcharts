@@ -32,7 +32,6 @@ Dashboards.board('container', {
                     enabled: true,
                     type: 'x'
                 }
-
             },
             xAxis: {
                 type: 'datetime'

@@ -181,6 +181,10 @@ abstract class Component {
      */
     public cell: Cell;
     /**
+     * Defalut sync Handlers
+     */
+    public static syncHandlers: Sync.OptionsRecord = {handlers: {}, emitters: {}};
+    /**
      * Connector that allows you to load data via URL or from a local source.
      */
     public connector?: Component.ConnectorTypes;
@@ -413,7 +417,7 @@ abstract class Component {
     * @internal
     */
     protected filterAndAssignSyncOptions(
-        defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
+        defaultHandlers: typeof Sync.defaultHandlers = (this.constructor as typeof Component).syncHandlers
     ): void {
         const sync = this.options.sync || {};
         const syncHandlers = Object.keys(sync)
