@@ -26,6 +26,8 @@ async function dashboardsScripts() {
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
 
+    const { join } = require('node:path');
+
     const {
         bundleTargetFolder,
         esModulesFolder,
@@ -58,6 +60,8 @@ async function dashboardsScripts() {
         // Fix masters
         fs.renameSync('js/masters-dashboards', 'js/masters');
 
+        const { release } = argv;
+
         // Assemble bundle
         await buildTool
             .getBuildScripts({
@@ -69,8 +73,12 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
+                product: 'Dashboards',
                 output: bundleTargetFolder,
-                version: (argv.release || '0.9.9')
+                version: (release || ''),
+                assetPrefix: release ?
+                    `https://code.highcharts.com/dashboards/${release}` :
+                    '/code'
             })
             .fnFirstBuild();
 
