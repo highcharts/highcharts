@@ -12,11 +12,11 @@ Highcharts.chart('container', {
                 var gradientColors = {
                     linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                     stops: [
-                        [0, '#001F33'],
-                        [0.2, '#001F3F'],
-                        [0.6, '#0088CC'],
-                        [0.7, '#3399CC'],
-                        [1, '#66C2E0']
+                        [0, 'rgba(0, 31, 51, 0.8)'],
+                        [0.2, 'rgba(0, 31, 63, 0.7)'],
+                        [0.6, 'rgba(0, 136, 204, 0.5)'],
+                        [0.7, 'rgba(51, 153, 204, 0.5)'],
+                        [1, 'rgba(102, 194, 224, 0.5)']
                     ]
                 };
 
@@ -80,15 +80,14 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         spline: {
-            lineWidth: 3,
-            lineColor: '#FFFFFF',
+            lineColor: '#0f0f0f',
+            lineWidth: 2,
             marker: {
                 enable: false,
-                fillColor: '#FFFFFF',
+                fillColor: '#0f0f0f',
                 lineWidth: 1,
                 lineColor: '#0f0f0f',
-                // lineColor: '#FFFFFF',
-                radius: 6
+                radius: 3.5
             }
         }
     },
