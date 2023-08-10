@@ -453,23 +453,29 @@ class KPIComponent extends Component {
         redraw && this.redraw();
     }
 
-    public getValue(): string|number|undefined {
+    /**
+     * Gets the default value that should be displayed in the KPI.
+     *
+     * @returns
+     * The value that should be displayed in the KPI.
+     */
+    private getValue(): string|number|undefined {
         if (this.connector && this.options.columnName) {
-            const table = this.connector?.table.modified;
-            const column = table.getColumn(this.options.columnName);
-            const length = column?.length || 0;
+            const table = this.connector?.table.modified,
+                column = table.getColumn(this.options.columnName),
+                length = column?.length || 0;
 
             return table.getCellAsString(this.options.columnName, length - 1);
         }
 
         return this.options.value;
     }
-    /**
-     * Handles updating elements via options
-     *
-     * @internal
-     */
 
+    /**
+     * Sets the value that should be displayed in the KPI.
+     * @param value
+     * The value to display in the KPI.
+     */
     public setValue(value: number|string|undefined = this.getValue()): void {
         const {
             valueFormat,
@@ -495,6 +501,12 @@ class KPIComponent extends Component {
             this.prevValue = prevValue;
         }
     }
+
+    /**
+     * Handles updating elements via options
+     *
+     * @internal
+     */
     private updateElements(): void {
         const {
             style,
