@@ -26,8 +26,6 @@ async function dashboardsScripts() {
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
 
-    const { join } = require('node:path');
-
     const {
         bundleTargetFolder,
         esModulesFolder,
