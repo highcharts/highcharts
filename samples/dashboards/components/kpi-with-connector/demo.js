@@ -1,6 +1,5 @@
 Dashboards.board('container', {
     dataPool: {
-
         connectors: [{
             id: 'value',
             type: 'CSV',
