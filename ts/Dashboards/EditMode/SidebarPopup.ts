@@ -110,16 +110,16 @@ class SidebarPopup extends BaseForm {
                     const connectorsIds =
                         sidebar.editMode.board.dataPool.getConnectorIds();
 
-                    let options = {
+                    let options: Partial<HighchartsComponent.Options> = {
                         cell: '',
                         type: 'Highcharts',
                         chartOptions: {
                             chart: {
                                 animation: false,
-                                type: 'pie'
+                                type: 'column'
                             }
                         }
-                    } as Partial<HighchartsComponent.Options>;
+                    };
 
                     if (connectorsIds.length) {
                         options = {
@@ -162,10 +162,10 @@ class SidebarPopup extends BaseForm {
                 if (sidebar && dropContext) {
                     const connectorsIds =
                         sidebar.editMode.board.dataPool.getConnectorIds();
-                    let options = {
+                    let options: Partial<DataGridComponent.ComponentOptions> = {
                         cell: '',
                         type: 'DataGrid'
-                    } as Partial<DataGridComponent.ComponentOptions>;
+                    };
 
                     if (connectorsIds.length) {
                         options = {
@@ -186,11 +186,11 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
-                    const options = {
+                    const options: Partial<KPIComponent.ComponentOptions> = {
                         cell: '',
                         type: 'KPI',
                         title: 'Example KPI'
-                    } as Partial<KPIComponent.ComponentOptions>;
+                    };
                     return sidebar.onDropNewComponent(dropContext, options);
                 }
             }
