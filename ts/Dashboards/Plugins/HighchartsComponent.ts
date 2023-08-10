@@ -51,7 +51,7 @@ const {
     uniqueKey,
     error,
     diffObjects,
-    defined
+    isString
 } = U;
 
 /* *
@@ -595,10 +595,6 @@ class HighchartsComponent extends Component {
             const { id: storeTableID } = this.connector.table;
             const { chart } = this;
 
-            // Names/aliases that should be mapped to xAxis values
-            const columnAssignment = this.options.columnAssignment || {};
-            const xKeyMap: Record<string, string> = {};
-
             if (this.presentationModifier) {
                 this.presentationTable = this.presentationModifier
                     .modifyTable(this.presentationTable).modified;
@@ -606,6 +602,12 @@ class HighchartsComponent extends Component {
 
             const table = this.presentationTable,
                 modifierOptions = table.getModifier()?.options;
+
+            // Names/aliases that should be mapped to xAxis values
+            const columnNames = table.modified.getColumnNames();
+            const columnAssignment = this.options.columnAssignment ||
+                this.getDefaultColumnAssignment(columnNames);
+            const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -617,10 +619,6 @@ class HighchartsComponent extends Component {
                             .getSharedState()
                             .getColumnVisibility(name) !== false :
                         true;
-
-                    if (!defined(this.options.columnAssignment)) {
-                        return true;
-                    }
 
                     if (!isVisible || !columnAssignment[name]) {
                         return false;
@@ -716,6 +714,36 @@ class HighchartsComponent extends Component {
      */
     private getChart(): Chart {
         return this.chart || this.createChart();
+    }
+
+    /**
+     * Creates default mapping when columnAssignment is not declared.
+     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     *
+     * @returns
+     * The record of mapping
+     *
+     * @private
+     *
+     */
+    private getDefaultColumnAssignment(
+        columnNames: Array<string> = []
+    ): Record<string, string | null> {
+        const defaultColumnAssignment:Record<string, string> = {};
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            defaultColumnAssignment[columnNames[i]] = 'y';
+            if (i === 0) {
+                const firstColumnValues =
+                    this.presentationTable?.getColumn(columnNames[i], true);
+
+                if (firstColumnValues && isString(firstColumnValues[0])) {
+                    defaultColumnAssignment[columnNames[i]] = 'x';
+                }
+            }
+        }
+
+        return defaultColumnAssignment;
     }
 
     /**

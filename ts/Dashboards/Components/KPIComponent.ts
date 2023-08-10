@@ -127,7 +127,23 @@ class KPIComponent extends Component {
             ].join(' '),
             minFontSize: 20,
             syncHandlers: KPISyncHandlers,
-            thresholdColors: ['#f45b5b', '#90ed7d']
+            thresholdColors: ['#f45b5b', '#90ed7d'],
+            editableOptions:
+                (Component.defaultOptions.editableOptions || []).concat(
+                    [{
+                        name: 'Value',
+                        type: 'input',
+                        propertyPath: ['value']
+                    }, {
+                        name: 'Column name',
+                        type: 'input',
+                        propertyPath: ['columnName']
+                    }, {
+                        name: 'Value format',
+                        type: 'input',
+                        propertyPath: ['valueFormat']
+                    }]
+                )
         }
     );
 
