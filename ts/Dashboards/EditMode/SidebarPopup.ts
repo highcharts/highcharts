@@ -22,6 +22,9 @@ import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
 import type Row from '../Layout/Row';
+import type DataGridComponent from '../Plugins/DataGridComponent';
+import type KPIComponent from '../Components/KPIComponent';
+import type HighchartsComponent from '../Plugins/HighchartsComponent';
 
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -31,10 +34,7 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
-import DataGridOptions from '../../DataGrid/DataGridOptions';
-import DataGridComponent from '../Plugins/DataGridComponent';
-import KPIComponent from '../Components/KPIComponent';
-import HighchartsComponent from '../Plugins/HighchartsComponent';
+
 const {
     createElement,
     merge
