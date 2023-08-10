@@ -310,6 +310,7 @@ function chartGetDataRows(
         csvOptions = (
             (this.options.exporting && this.options.exporting.csv) || {}
         ),
+        uniqueNames = csvOptions.uniqueNames,
         xAxes = this.xAxis,
         rows: Record<string, (Array<any>&AnyRecord)> =
             {},
@@ -523,8 +524,12 @@ function chartGetDataRows(
                 );
                 key = mockPoint.x as any;
 
-                if (defined(rows[key]) &&
-                    rows[key].seriesIndices.includes(mockSeries.index)
+                if (
+                    defined(rows[key]) &&
+                    (
+                        rows[key].seriesIndices.includes(mockSeries.index) ||
+                        uniqueNames
+                    )
                 ) {
                     // find keys, which belong to actual series
                     const keysFromActualSeries =
@@ -538,7 +543,8 @@ function chartGetDataRows(
                                 propertyName.indexOf(String(key)) === 0
                             );
 
-                    key = key.toString() + ',' + existingKeys.length;
+                    key = key.toString() + ',' + existingKeys.length +
+                        (uniqueNames ? ',' + mockSeries.index : '');
                 }
 
                 const name = series.data[pIdx] && series.data[pIdx].name;

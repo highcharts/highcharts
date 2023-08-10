@@ -163,8 +163,15 @@ const exporting: ExportingOptions = {
         /**
          * The line delimiter in the exported data, defaults to a newline.
          */
-        lineDelimiter: '\n'
+        lineDelimiter: '\n',
 
+        /**
+         * Whether points with the same x value should be exported separately.
+         *
+         * @sample highcharts/export-data/unique-names
+         *         Separated points
+         */
+        uniqueNames: false
     },
 
     /**
