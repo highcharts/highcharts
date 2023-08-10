@@ -432,7 +432,7 @@ class KPIComponent extends Component {
      *
      * @private
      */
-    private setOptions() {
+    private setOptions(): void {
         this.filterAndAssignSyncOptions(KPISyncHandlers);
     }
     /**
@@ -459,11 +459,10 @@ class KPIComponent extends Component {
             const column = table.getColumn(this.options.columnName);
             const length = column?.length || 0;
 
-           return table.getCellAsString(this.options.columnName, length - 1);
-        } else {
-            return this.options.value;
+            return table.getCellAsString(this.options.columnName, length - 1);
         }
 
+        return this.options.value;
     }
     /**
      * Handles updating elements via options
@@ -471,12 +470,12 @@ class KPIComponent extends Component {
      * @internal
      */
 
-    public setValue(value: number|string|undefined = this.getValue()) {
-
+    public setValue(value: number|string|undefined = this.getValue()): void {
         const {
             valueFormat,
             valueFormatter
         } = this.options;
+
         if (defined(value)) {
             let prevValue;
             if (isNumber(value)) {
@@ -499,7 +498,7 @@ class KPIComponent extends Component {
     private updateElements(): void {
         const {
             style,
-            subtitle,
+            subtitle
         } = this.options;
 
         if (this.options.title) {

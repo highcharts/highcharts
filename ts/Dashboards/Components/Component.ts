@@ -183,7 +183,7 @@ abstract class Component {
     /**
      * Defalut sync Handlers
      */
-    public static syncHandlers: Sync.OptionsRecord = {handlers: {}, emitters: {}};
+    public static syncHandlers: Sync.OptionsRecord = {};
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
@@ -417,7 +417,9 @@ abstract class Component {
     * @internal
     */
     protected filterAndAssignSyncOptions(
-        defaultHandlers: typeof Sync.defaultHandlers = (this.constructor as typeof Component).syncHandlers
+        defaultHandlers: typeof Sync.defaultHandlers = (
+            this.constructor as typeof Component
+        ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
         const syncHandlers = Object.keys(sync)

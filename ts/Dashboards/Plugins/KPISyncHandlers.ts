@@ -7,12 +7,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Gøran Slettemark
- *  - Sophie Bremer
+ *  - Pawel Lysy
  *
  * */
-
-/* eslint-disable require-jsdoc, max-len */
 
 'use strict';
 
@@ -24,10 +21,10 @@
 
 import type DataCursor from '../../Data/DataCursor';
 import type Sync from '../Components/Sync/Sync';
+import type KPIComponent from '../Components/KPIComponent';
 
 import U from '../../Core/Utilities.js';
 const { defined } = U;
-import KPIComponent from '../Components/KPIComponent';
 
 
 /* *
@@ -45,58 +42,71 @@ const configs: {
     handlers: {
         extremesHandler:
             function (this: KPIComponent): Function | void {
-            const { board } = this;
+                const { board } = this;
 
-            const handleChangeExtremes = (e: DataCursor.Event): void => {
-                const cursor = e.cursor;
-                if (
-                    cursor.type === 'position' &&
-                    typeof cursor?.row === 'number' &&
-                    defined(cursor.column) &&
-                    this.connector
-                ) {
-                    const value = this.connector.table.modified.getCellAsString(
-                        cursor.column,
-                        cursor.row
+                const handleChangeExtremes = (e: DataCursor.Event): void => {
+                    const cursor = e.cursor;
+                    if (
+                        cursor.type === 'position' &&
+                        typeof cursor?.row === 'number' &&
+                        defined(cursor.column) &&
+                        this.connector
+                    ) {
+                        const value =
+                            this.connector.table.modified.getCellAsString(
+                                cursor.column,
+                                cursor.row
+                            );
+                        this.setValue(value);
+                    }
+
+                };
+
+                const registerCursorListeners = (): void => {
+                    const { dataCursor: cursor } = board;
+
+                    if (!cursor) {
+                        return;
+                    }
+                    const table = this.connector && this.connector.table;
+
+                    if (!table) {
+                        return;
+                    }
+
+                    cursor.addListener(
+                        table.id,
+                        'xAxis.extremes.max',
+                        handleChangeExtremes
                     );
-                    this.setValue(value);
+                };
+
+                const unregisterCursorListeners = (): void => {
+                    const table = this.connector && this.connector.table;
+                    const { dataCursor: cursor } = board;
+
+                    if (!table) {
+                        return;
+                    }
+
+                    cursor.removeListener(
+                        table.id,
+                        'xAxis.extremes.max',
+                        handleChangeExtremes
+                    );
+                };
+
+
+                if (board) {
+                    registerCursorListeners();
+
+                    this.on('setConnector', (): void =>
+                        unregisterCursorListeners()
+                    );
+                    this.on('afterSetConnector', (): void =>
+                        registerCursorListeners()
+                    );
                 }
-
-            };
-
-            const registerCursorListeners = (): void => {
-                const { dataCursor: cursor } = board;
-
-                if (!cursor) {
-                    return;
-                }
-                const table = this.connector && this.connector.table;
-
-                if (!table) {
-                    return;
-                }
-
-                cursor.addListener(table.id, 'xAxis.extremes.max', handleChangeExtremes);
-            };
-
-            const unregisterCursorListeners = (): void => {
-                const table = this.connector && this.connector.table;
-                const { dataCursor: cursor } = board;
-
-                if (!table) {
-                    return;
-                }
-
-                cursor.removeListener(table.id, 'xAxis.extremes.max', handleChangeExtremes);
-            };
-
-
-            if (board) {
-                registerCursorListeners();
-
-                this.on('setConnector', (): void => unregisterCursorListeners());
-                this.on('afterSetConnector', (): void => registerCursorListeners());
-            }
             }
     }
 };

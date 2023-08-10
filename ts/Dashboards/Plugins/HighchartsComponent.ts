@@ -539,8 +539,6 @@ class HighchartsComponent extends Component {
         if (this.options.chartID) {
             this.chartContainer.id = this.options.chartID;
         }
-
-        // this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
