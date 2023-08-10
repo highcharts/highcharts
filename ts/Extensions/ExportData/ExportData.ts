@@ -493,6 +493,8 @@ function chartGetDataRows(
                 index: series.index
             };
 
+            const seriesIndex = mockSeries.index;
+
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -524,14 +526,14 @@ function chartGetDataRows(
                 if (
                     defined(rows[key]) &&
                     (
-                        rows[key].seriesIndices.includes(mockSeries.index) ||
+                        rows[key].seriesIndices.includes(seriesIndex) ||
                         uniqueNames
                     )
                 ) {
                     // find keys, which belong to actual series
                     const keysFromActualSeries =
                         Object.keys(rows).filter((i: string): void =>
-                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                            rows[i].seriesIndices.includes(seriesIndex) &&
                                 key
                         ),
                         // find all properties, which start with actual key
@@ -541,7 +543,7 @@ function chartGetDataRows(
                             );
 
                     key = key.toString() + ',' + existingKeys.length +
-                        (uniqueNames ? ',' + mockSeries.index : '');
+                        (uniqueNames ? ',' + seriesIndex : '');
                 }
 
                 const name = series.data[pIdx] && series.data[pIdx].name;
@@ -578,7 +580,7 @@ function chartGetDataRows(
                     rows[key].seriesIndices = [];
                 }
                 rows[key].seriesIndices = [
-                    ...rows[key].seriesIndices, mockSeries.index
+                    ...rows[key].seriesIndices, seriesIndex
                 ];
 
                 while (j < valueCount) {
