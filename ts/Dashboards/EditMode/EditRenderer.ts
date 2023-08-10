@@ -30,7 +30,8 @@ import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    createElement
+    createElement,
+    defined
 } = U;
 
 
@@ -576,8 +577,10 @@ function renderInput(
             id: options.id || '',
             name: options.name || '',
             value: (
-                options.value && options.value.replace(/\"/g, '') ||
-                ''
+                (
+                    defined(options.value) &&
+                    options.value.toString().replace(/\"/g, '')
+                ) || ''
             )
         },
         {},

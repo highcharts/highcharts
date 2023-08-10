@@ -22,6 +22,9 @@ import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
 import type Row from '../Layout/Row';
+import type DataGridComponent from '../Plugins/DataGridComponent';
+import type KPIComponent from '../Components/KPIComponent';
+import type HighchartsComponent from '../Plugins/HighchartsComponent';
 
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -31,6 +34,7 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
     createElement,
@@ -50,60 +54,6 @@ class SidebarPopup extends BaseForm {
 
     public static components: Array<SidebarPopup.AddComponentDetails> = [
         {
-            text: 'chart',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell | void {
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'Highcharts',
-                        chartOptions: {
-                            series: [
-                                {
-                                    name: 'Series from options',
-                                    data: [1, 2, 1, 4]
-                                }
-                            ],
-                            chart: {
-                                animation: false,
-                                type: 'pie'
-                            }
-                        }
-                    });
-                }
-            }
-        }, {
-            text: 'datagrid',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'DataGrid'
-                    });
-                }
-            }
-        }, {
-            text: 'KPI',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'KPI',
-                        title: 'Example KPI',
-                        value: 70
-                    });
-                }
-            }
-        }, {
             text: 'HTML',
             onDrop:
                 function (
@@ -170,6 +120,81 @@ class SidebarPopup extends BaseForm {
                     ]
                 });
 
+            }
+
+        }, {
+            text: 'chart',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell|Row
+            ): Cell | void {
+                if (sidebar && dropContext) {
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
+
+                    let options: Partial<HighchartsComponent.Options> = {
+                        cell: '',
+                        type: 'Highcharts',
+                        chartOptions: {
+                            chart: {
+                                animation: false,
+                                type: 'column'
+                            }
+                        }
+                    };
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
+                        };
+                    }
+
+                    return sidebar.onDropNewComponent(dropContext, options);
+                }
+            }
+        }, {
+            text: 'datagrid',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell | Row
+            ): Cell|void {
+                if (sidebar && dropContext) {
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
+                    let options: Partial<DataGridComponent.ComponentOptions> = {
+                        cell: '',
+                        type: 'DataGrid'
+                    };
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
+                        };
+                    }
+
+                    return sidebar.onDropNewComponent(dropContext, options);
+                }
+            }
+        }, {
+            text: 'KPI',
+            onDrop: function (
+                sidebar: SidebarPopup,
+                dropContext: Cell | Row
+            ): Cell|void {
+                if (sidebar && dropContext) {
+                    const options: Partial<KPIComponent.ComponentOptions> = {
+                        cell: '',
+                        type: 'KPI',
+                        title: 'Example KPI'
+                    };
+                    return sidebar.onDropNewComponent(dropContext, options);
+                }
             }
         }
     ];
@@ -392,6 +417,13 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
+                                const mountedComponent =
+                                    newCell.mountedComponent;
+                                // skip init connector when is not defined by
+                                // options f.e HTML component.
+                                if (mountedComponent.options?.connector?.id) {
+                                    mountedComponent.initConnector();
+                                }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();

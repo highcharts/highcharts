@@ -123,7 +123,15 @@ class KPIComponent extends Component {
                 `${Component.defaultOptions.className}-kpi`
             ].join(' '),
             minFontSize: 20,
-            thresholdColors: ['#f45b5b', '#90ed7d']
+            thresholdColors: ['#f45b5b', '#90ed7d'],
+            editableOptions:
+                (Component.defaultOptions.editableOptions || []).concat(
+                    [{
+                        name: 'Value',
+                        type: 'input',
+                        propertyPath: ['value']
+                    }]
+                )
         }
     );
 
