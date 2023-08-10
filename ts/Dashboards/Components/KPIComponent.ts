@@ -259,7 +259,7 @@ class KPIComponent extends Component {
         this.value = createElement(
             'span',
             {
-                className: `${Component.defaultOptions.className}-kpi-value`
+                className: `${options.className}-value`
             },
             {},
             this.contentElement
@@ -277,7 +277,7 @@ class KPIComponent extends Component {
             this.chartContainer = createElement(
                 'div',
                 {
-                    className: `${Component.defaultOptions.className}-kpi-chart-container`
+                    className: `${options.className}-chart-container`
                 },
                 {},
                 this.contentElement
@@ -311,13 +311,6 @@ class KPIComponent extends Component {
         height?: number | string | null
     ): this {
         super.resize(width, height);
-        if (
-            !this.updatingSize &&
-            this.dimensions.width &&
-            this.dimensions.height
-        ) {
-            this.updateSize(this.dimensions.width, this.dimensions.height);
-        }
 
         if (this.chart) {
             this.chart.reflow();
@@ -328,71 +321,6 @@ class KPIComponent extends Component {
         return this;
     }
 
-    /**
-     * Calculates and applies font size for the title.
-     *
-     * @param width
-     * The width to calculate the title's font size.
-     * @param height
-     * The height to calculate the title's font size.
-     *
-     * @internal
-     */
-    private updateTitleSize(width: number, height: number): void {
-        if (this.titleElement) {
-            this.titleElement.style.fontSize = this.getFontSize(
-                width,
-                height,
-                0.08 * (this.chart ? 1 : 1.7)
-            );
-        }
-    }
-
-    private getFontSize(
-        width: number,
-        height: number,
-        multiplier: number
-    ): string {
-        return (
-            Math.max(
-                this.options.minFontSize,
-                Math.round(multiplier * Math.min(width, height))
-            ) + 'px'
-        );
-    }
-
-    /**
-     * Updates title / subtitle font size and component dimensions.
-     *
-     * @param width
-     * The width to set the component to.
-     * @param height
-     * The height to set the component to.
-     *
-     * @internal
-     */
-    private updateSize(width: number, height: number): void {
-        this.updateTitleSize(width, height);
-        // If there is no chart, make the font size  bigger.
-        const noChartMultiplier = (this.chart ? 1 : 1.7);
-        const noTitleMultiplier = (this.options.title ? 0.7 : 1);
-        this.value.style.fontSize = this.getFontSize(
-            width,
-            height,
-            0.15 * noChartMultiplier * noTitleMultiplier
-        );
-        this.subtitle.style.fontSize = this.getFontSize(
-            width,
-            height,
-            0.08 * noChartMultiplier
-        );
-
-        this.updatingSize = true;
-        super.resize(
-            Number(getStyle(this.parentElement, 'width')),
-            Number(getStyle(this.parentElement, 'height'))
-        );
-    }
 
     public render(): this {
         super.render();
@@ -503,12 +431,6 @@ class KPIComponent extends Component {
 
         if (this.options.title) {
             this.setTitle(this.options.title);
-            if (this.dimensions.width && this.dimensions.height) {
-                this.updateTitleSize(
-                    this.dimensions.width,
-                    this.dimensions.height
-                );
-            }
         }
 
         this.setValue();
@@ -591,7 +513,7 @@ class KPIComponent extends Component {
      */
     private getSubtitleClassName(): string {
         const { subtitle } = this.options;
-        return `${Component.defaultOptions.className}-kpi-subtitle` +
+        return `${Component.defaultOptions.className}-subtitle` +
             ((typeof subtitle === 'object' && subtitle.className) || '');
     }
 
