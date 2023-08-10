@@ -405,7 +405,7 @@ class SidebarPopup extends BaseForm {
                             if (newCell) {
                                 const mountedComponent =
                                     newCell.mountedComponent;
-                                // skip init connecter when is not defined by
+                                // skip init connector when is not defined by
                                 // options f.e HTML component.
                                 if (mountedComponent.options?.connector?.id) {
                                     mountedComponent.initConnector();
