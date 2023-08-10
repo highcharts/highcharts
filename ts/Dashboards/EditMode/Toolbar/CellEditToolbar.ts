@@ -82,6 +82,8 @@ class CellEditToolbar extends EditToolbar {
                 icon: iconURLPrefix + 'settings.svg',
                 events: {
                     click: function (this: MenuItem, e: any): void {
+                        this.menu.parent.editMode.setEditOverlay();
+
                         (this.menu.parent as CellEditToolbar).onCellOptions();
                     }
                 }
@@ -159,7 +161,9 @@ class CellEditToolbar extends EditToolbar {
 
     public showToolbar(cell: Cell): void {
         const toolbar = this,
-            cellCnt = cell.container;
+            cellCnt = cell.container,
+            toolbarWidth = 30,
+            toolbarMargin = 10;
 
         let x, y;
 
@@ -173,8 +177,8 @@ class CellEditToolbar extends EditToolbar {
                 toolbar.editMode.board.container
             );
 
-            x = cellOffsets.right;
-            y = cellOffsets.top;
+            x = cellOffsets.right - toolbarWidth - toolbarMargin;
+            y = cellOffsets.top + toolbarMargin;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
