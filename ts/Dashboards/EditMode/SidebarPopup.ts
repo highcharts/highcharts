@@ -188,11 +188,22 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
-                    const options: Partial<KPIComponent.ComponentOptions> = {
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
+                    let options: Partial<KPIComponent.ComponentOptions> = {
                         cell: '',
-                        type: 'KPI',
-                        title: 'Example KPI'
+                        type: 'KPI'
                     };
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
+                        };
+                    }
+
                     return sidebar.onDropNewComponent(dropContext, options);
                 }
             }

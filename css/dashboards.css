@@ -812,7 +812,6 @@
     pointer-events: none;
 }
 
-
 .highcharts-dashboards-edit-sidebar-tabs {
     display: flex;
     font-size: 0.876em;
@@ -1092,7 +1091,7 @@
 .highcharts-dashboards-edit-accordion-header-icon {
     margin: 0 10px;
     border: solid black;
-    border-width: 2px 0 0 0;
+    border-width: 2px 0 0;
     display: inline-block;
     width: 6.5px;
     height: 1px;

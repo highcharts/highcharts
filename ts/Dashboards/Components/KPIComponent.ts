@@ -35,6 +35,8 @@ import type Types from '../../Shared/Types';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import Templating from '../../Core/Templating.js';
+import KPISyncHandlers from '../Plugins/KPISyncHandlers.js';
+
 const {
     format
 } = Templating;
@@ -69,6 +71,7 @@ class KPIComponent extends Component {
      *
      * */
 
+    public static syncHandlers = KPISyncHandlers;
     /**
      * Creates component from JSON.
      *
@@ -123,6 +126,7 @@ class KPIComponent extends Component {
                 `${Component.defaultOptions.className}-kpi`
             ].join(' '),
             minFontSize: 20,
+            syncHandlers: KPISyncHandlers,
             thresholdColors: ['#f45b5b', '#90ed7d'],
             editableOptions:
                 (Component.defaultOptions.editableOptions || []).concat(
@@ -130,6 +134,14 @@ class KPIComponent extends Component {
                         name: 'Value',
                         type: 'input',
                         propertyPath: ['value']
+                    }, {
+                        name: 'Column name',
+                        type: 'input',
+                        propertyPath: ['columnName']
+                    }, {
+                        name: 'Value format',
+                        type: 'input',
+                        propertyPath: ['valueFormat']
                     }]
                 )
         }
@@ -255,7 +267,7 @@ class KPIComponent extends Component {
         this.options = options as KPIComponent.ComponentOptions;
 
         this.type = 'KPI';
-        this.sync = new Component.Sync(
+        this.sync = new KPIComponent.Sync(
             this,
             this.syncHandlers
         );
@@ -287,6 +299,8 @@ class KPIComponent extends Component {
                 this.contentElement
             );
         }
+
+        this.on('tableChanged', (): void => this.setValue());
     }
 
     /* *
@@ -419,6 +433,7 @@ class KPIComponent extends Component {
             this.chart = void 0;
         }
 
+        this.sync.start();
         return this;
     }
 
@@ -429,45 +444,59 @@ class KPIComponent extends Component {
     }
 
     /**
+     * Internal method for handling option updates.
+     *
+     * @private
+     */
+    private setOptions(): void {
+        this.filterAndAssignSyncOptions(KPISyncHandlers);
+    }
+    /**
      * Handles updating via options.
      * @param options
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.ComponentOptions>
+        options: Partial<KPIComponent.ComponentOptions>,
+        redraw: boolean = true
     ): Promise<void> {
         await super.update(options);
+        this.setOptions();
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }
 
-        this.redraw();
+        redraw && this.redraw();
     }
 
     /**
-     * Handles updating elements via options
+     * Gets the default value that should be displayed in the KPI.
      *
-     * @internal
+     * @returns
+     * The value that should be displayed in the KPI.
      */
-    private updateElements(): void {
+    private getValue(): string|number|undefined {
+        if (this.connector && this.options.columnName) {
+            const table = this.connector?.table.modified,
+                column = table.getColumn(this.options.columnName),
+                length = column?.length || 0;
+
+            return table.getCellAsString(this.options.columnName, length - 1);
+        }
+
+        return this.options.value;
+    }
+
+    /**
+     * Sets the value that should be displayed in the KPI.
+     * @param value
+     * The value to display in the KPI.
+     */
+    public setValue(value: number|string|undefined = this.getValue()): void {
         const {
-            style,
-            subtitle,
             valueFormat,
             valueFormatter
         } = this.options;
-
-        if (this.options.title) {
-            this.setTitle(this.options.title);
-            if (this.dimensions.width && this.dimensions.height) {
-                this.updateTitleSize(
-                    this.dimensions.width,
-                    this.dimensions.height
-                );
-            }
-        }
-
-        let value = this.options.value;
 
         if (defined(value)) {
             let prevValue;
@@ -484,11 +513,35 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, value);
-            AST.setElementHTML(this.subtitle, this.getSubtitle());
 
             this.prevValue = prevValue;
         }
+    }
 
+    /**
+     * Handles updating elements via options
+     *
+     * @internal
+     */
+    private updateElements(): void {
+        const {
+            style,
+            subtitle
+        } = this.options;
+
+        if (this.options.title) {
+            this.setTitle(this.options.title);
+            if (this.dimensions.width && this.dimensions.height) {
+                this.updateTitleSize(
+                    this.dimensions.width,
+                    this.dimensions.height
+                );
+            }
+        }
+
+        this.setValue();
+
+        AST.setElementHTML(this.subtitle, this.getSubtitle());
         if (style) {
             css(this.element, style);
         }
@@ -682,6 +735,7 @@ namespace KPIComponent {
         valueFormat?: string;
     }
     export interface ComponentOptions extends Component.ComponentOptions {
+        columnName: string;
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
