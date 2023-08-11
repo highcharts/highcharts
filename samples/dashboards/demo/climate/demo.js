@@ -1090,10 +1090,6 @@ async function updateBoard(board, city, column, scale, newData) {
         });
     }
 
-    selectionGrid.dataGrid.scrollToRow(
-        selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
-    );
-
     // Update city chart selection
     await cityChart.update({
         columnAssignment: {
