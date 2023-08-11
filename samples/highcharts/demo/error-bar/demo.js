@@ -101,7 +101,7 @@ Highcharts.chart('container', {
         {
             name: 'Temperature',
             type: 'spline',
-            color: '#FFA500',
+            color: '#0f0f0f',
 
             zones: [
                 {
