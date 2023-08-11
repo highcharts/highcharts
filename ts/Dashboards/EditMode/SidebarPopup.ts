@@ -193,7 +193,7 @@ class SidebarPopup extends BaseForm {
                     let options: Partial<KPIComponent.ComponentOptions> = {
                         cell: '',
                         type: 'KPI'
-                    }
+                    };
 
                     if (connectorsIds.length) {
                         options = {
@@ -202,7 +202,8 @@ class SidebarPopup extends BaseForm {
                                 id: connectorsIds[0]
                             }
                         };
-                    };
+                    }
+
                     return sidebar.onDropNewComponent(dropContext, options);
                 }
             }
