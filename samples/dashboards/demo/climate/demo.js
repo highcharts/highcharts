@@ -1059,6 +1059,17 @@ async function updateBoard(board, city, column, scale, newData) {
 
     // Update city grid selection
     const showCelsius = scale === 'C';
+    const sharedColumnAssignment = {
+        time: 'x',
+        FD: column === 'FD' ? 'y' : null,
+        ID: column === 'ID' ? 'y' : null,
+        RR1: column === 'RR1' ? 'y' : null,
+        TNC: column === 'TNC' ? 'y' : null,
+        TNF: column === 'TNF' ? 'y' : null,
+        TXC: column === 'TXC' ? 'y' : null,
+        TXF: column === 'TXF' ? 'y' : null
+    };
+
     if (newData) {
         await selectionGrid.update({
             dataGridOptions: {
@@ -1077,31 +1088,13 @@ async function updateBoard(board, city, column, scale, newData) {
                     }
                 }
             },
-            columnAssignment: {
-                time: 'x',
-                FD: column === 'FD' ? 'y' : null,
-                ID: column === 'ID' ? 'y' : null,
-                RR1: column === 'RR1' ? 'y' : null,
-                TNC: column === 'TNC' ? 'y' : null,
-                TNF: column === 'TNF' ? 'y' : null,
-                TXC: column === 'TXC' ? 'y' : null,
-                TXF: column === 'TXF' ? 'y' : null
-            }
+            columnAssignment: sharedColumnAssignment
         });
     }
 
     // Update city chart selection
     await cityChart.update({
-        columnAssignment: {
-            time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null
-        },
+        columnAssignment: sharedColumnAssignment,
         chartOptions: {
             chart: {
                 type: column[0] === 'T' ? 'spline' : 'column'
