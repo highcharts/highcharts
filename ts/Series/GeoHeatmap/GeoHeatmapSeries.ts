@@ -650,8 +650,8 @@ class GeoHeatmapSeries extends MapSeries {
                 chart.pointer.hasDragged === false &&
                 // If user zooms in/out map do not build k-d-tree
                 (
-                    series.image.attr('animator') as number <= 0.01 ||
-                    series.image.attr('animator') as number >= 0.99
+                    +series.image.attr('animator') <= 0.01 ||
+                    +series.image.attr('animator') >= 0.99
                 )
             ) {
                 const topLeft = mapView.projectedUnitsToPixels({
