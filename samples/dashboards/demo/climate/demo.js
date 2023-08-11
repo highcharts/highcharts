@@ -990,7 +990,7 @@ async function updateBoard(board, city, column, scale, newData) {
         }];
         await selectionTable.setModifier(selectionModifier);
     } else if (newData) {
-        await selectionTable.setModifier(selectionTable.getModifier());
+        await selectionTable.setModifier(selectionModifier);
     }
 
     const rangeTable = selectionTable.modified;
