@@ -785,9 +785,11 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
+            // TODO: Check if this is needed.
             this.shouldRedraw = true;
         }
 
+        // TODO: The options are set twice. Clean this up.
         this.options = merge(this.options, newOptions);
 
         if (redraw || eventObject.shouldForceRedraw) {
@@ -868,12 +870,16 @@ abstract class Component {
      * @internal
      */
     public load(): this {
+        // TODO: Move load call to the constructor of Component.
+        // Call it only once.
 
         // Set up the connector on initial load if it has not been done
+        // TODO: Remove setting connector. The connector can only be set after initializiation of the component.
         if (!this.hasLoaded && this.connector) {
             this.setConnector(this.connector);
         }
 
+        // TODO: Split creating the title/caption element, and updating it.
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
         [
@@ -913,7 +919,7 @@ abstract class Component {
             }
         });
 
-        // TODO: should cleanup this event listener
+        // TODO: should cleanup this event listener. Replace with resize observer.
         window.addEventListener(
             'resize',
             (): void => this.resizeTo(this.parentElement)
@@ -951,14 +957,13 @@ abstract class Component {
      * The component for chaining.
      */
     public redraw(): this {
-        // Do a redraw
         const e = {
             component: this
         };
 
         fireEvent(this, 'redraw', e);
 
-        this.shouldRedraw = true; // set to make render call load as well
+        this.shouldRedraw = true; // set to make render call load as well TODO: Remove it
 
         return this.render();
     }

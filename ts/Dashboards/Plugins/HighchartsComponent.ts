@@ -587,6 +587,9 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeries(): void {
+        // TODO: Change this method to be called something like `updateComponentOnConnectorChange`,
+        // which should be called when the connnector is updated.
+
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
@@ -705,7 +708,7 @@ class HighchartsComponent extends Component {
     }
 
     /**
-     * Destroy chart and create a new one.
+     * Get the chart instance or create it.
      *
      * @returns
      * The chart.
