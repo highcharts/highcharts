@@ -42,7 +42,7 @@ class CellEditToolbar extends EditToolbar {
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
-        outline: true,
+        outline: false,
         outlineClassName: EditGlobals.classNames.editToolbarCellOutline,
         menu: {
             className: EditGlobals.classNames.editToolbarCell,
