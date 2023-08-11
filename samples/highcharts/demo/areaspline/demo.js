@@ -23,11 +23,14 @@ Highcharts.chart('container', {
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     xAxis: {
-        plotBands: [{ // Highlight the two last years
-            from: 2019,
-            to: 2020,
-            color: 'rgba(68, 170, 213, .2)'
-        }]
+        plotBands: [
+            {
+                // Highlight the two last years
+                from: 2019,
+                to: 2020,
+                color: 'rgba(68, 170, 213, .2)'
+            }
+        ]
     },
     yAxis: {
         title: {
@@ -46,60 +49,37 @@ Highcharts.chart('container', {
             pointStart: 2000
         },
         areaspline: {
-            fillOpacity: 0.5
+            fillOpacity: 0.5,
+            marker: {
+                lineWidth: 1,
+                radius: 3.5
+            }
         }
     },
-    series: [{
-        name: 'Moose',
-        data:
-            [
-                38000,
-                37300,
-                37892,
-                38564,
-                36770,
-                36026,
-                34978,
-                35657,
-                35620,
-                35971,
-                36409,
-                36435,
-                34643,
-                34956,
-                33199,
-                31136,
-                30835,
-                31611,
-                30666,
-                30319,
-                31766
-            ]
-    }, {
-        name: 'Deer',
-        data:
-            [
-                22534,
-                23599,
-                24533,
-                25195,
-                25896,
-                27635,
-                29173,
-                32646,
-                35686,
-                37709,
-                39143,
-                36829,
-                35031,
-                36202,
-                35140,
-                33718,
-                37773,
-                42556,
-                43820,
-                46445,
-                50048
-            ]
-    }]
+    series: [
+        {
+            name: 'Moose',
+            data: [
+                38000, 37300, 37892, 38564, 36770, 36026, 34978, 35657, 35620,
+                35971, 36409, 36435, 34643, 34956, 33199, 31136, 30835, 31611,
+                30666, 30319, 31766
+            ],
+            marker: {
+                fillColor: 'rgba(44,175,254,0.4)',
+                lineColor: 'rgba(44, 175, 254, 0.4)'
+            }
+        },
+        {
+            name: 'Deer',
+            data: [
+                22534, 23599, 24533, 25195, 25896, 27635, 29173, 32646, 35686,
+                37709, 39143, 36829, 35031, 36202, 35140, 33718, 37773, 42556,
+                43820, 46445, 50048
+            ],
+            marker: {
+                fillColor: 'rgba(84,79,197,0.4)',
+                lineColor: 'rgba(84, 79, 197,0.4)'
+            }
+        }
+    ]
 });
