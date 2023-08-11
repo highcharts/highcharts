@@ -385,11 +385,12 @@ class WGLRenderer {
             isStacked = !!options.stacking,
             rawData = options.data,
             xExtremes = series.xAxis.getExtremes(),
-            xMin = xExtremes.min,
-            xMax = xExtremes.max,
+            // Taking into account the offset of the min point #19497
+            xMin = xExtremes.min - (series.xAxis.minPointOffset || 0),
+            xMax = xExtremes.max + (series.xAxis.minPointOffset || 0),
             yExtremes = series.yAxis.getExtremes(),
-            yMin = yExtremes.min,
-            yMax = yExtremes.max,
+            yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
+            yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
             xData =
                 series.xData || (options as any).xData || series.processedXData,
             yData =
