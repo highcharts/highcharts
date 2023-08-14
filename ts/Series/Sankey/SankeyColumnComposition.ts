@@ -152,14 +152,13 @@ namespace SankeyColumnComposition {
             }, 0);
 
             // Node alignment option handling #19096
-            switch (series.options.nodeAlignment) {
-                case 'top':
-                    return 0;
-                case 'bottom':
-                    return (series.chart.plotSizeY || 0) - height;
-                default:
-                    return ((series.chart.plotSizeY || 0) - height) / 2;
-            }
+            return {
+                top: 0,
+                center: 0.5,
+                bottom: 1
+            }[series.options.nodeAlignment || 'center'] * (
+                (series.chart.plotSizeY || 0) - height
+            );
         }
 
 
