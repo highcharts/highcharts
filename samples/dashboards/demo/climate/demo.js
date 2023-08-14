@@ -247,7 +247,6 @@ async function setupBoard() {
                                 ) {
                                     activeTimeRange = [e.min, e.max];
 
-                                    console.time('updateBoard');
                                     const newColumn =
                                         activeColumn[0] === 'T' ? activeColumn + activeScale : activeColumn;
                                     await onNavigatorChange(
@@ -256,7 +255,6 @@ async function setupBoard() {
                                         newColumn,
                                         activeScale
                                     );
-                                    console.timeEnd('updateBoard');
                                 }
                             }, 50);
                         }
@@ -1099,10 +1097,19 @@ async function updateBoard(board, city, column, scale, newData) {
         await selectionTable.setModifier(selectionTable.getModifier());
     }
 
-    const rangeTable = selectionTable.modified;
-
     // Update city grid selection
     const showCelsius = scale === 'C';
+    const sharedColumnAssignment = {
+        time: 'x',
+        FD: column === 'FD' ? 'y' : null,
+        ID: column === 'ID' ? 'y' : null,
+        RR1: column === 'RR1' ? 'y' : null,
+        TNC: column === 'TNC' ? 'y' : null,
+        TNF: column === 'TNF' ? 'y' : null,
+        TXC: column === 'TXC' ? 'y' : null,
+        TXF: column === 'TXF' ? 'y' : null
+    };
+
     if (newData) {
         await selectionGrid.update({
             dataGridOptions: {
@@ -1121,50 +1128,27 @@ async function updateBoard(board, city, column, scale, newData) {
                     }
                 }
             },
-            columnAssignment: {
-                time: 'x',
-                FD: column === 'FD' ? 'y' : null,
-                ID: column === 'ID' ? 'y' : null,
-                RR1: column === 'RR1' ? 'y' : null,
-                TN: null,
-                TNC: column === 'TNC' ? 'y' : null,
-                TNF: column === 'TNF' ? 'y' : null,
-                TX: null,
-                TXC: column === 'TXC' ? 'y' : null,
-                TXF: column === 'TXF' ? 'y' : null,
-                Date: null
-            }
+            columnAssignment: sharedColumnAssignment
         });
     }
-
-    selectionGrid.dataGrid.scrollToRow(
-        selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
-    );
 
     // Update city chart selection
     if (newData) {
         await cityChart.update({
-            columnAssignment: {
-                time: 'x',
-                FD: column === 'FD' ? 'y' : null,
-                ID: column === 'ID' ? 'y' : null,
-                RR1: column === 'RR1' ? 'y' : null,
-                TN: null,
-                TNC: column === 'TNC' ? 'y' : null,
-                TNF: column === 'TNF' ? 'y' : null,
-                TX: null,
-                TXC: column === 'TXC' ? 'y' : null,
-                TXF: column === 'TXF' ? 'y' : null,
-                Date: null
-            },
+            columnAssignment: sharedColumnAssignment,
             chartOptions: {
                 chart: {
                     type: column[0] === 'T' ? 'spline' : 'column'
                 },
-                colorAxis: {
-                    min: colorMin,
-                    max: colorMax,
-                    stops: colorStops
+                chartOptions: {
+                    chart: {
+                        type: column[0] === 'T' ? 'spline' : 'column'
+                    },
+                    colorAxis: {
+                        min: colorMin,
+                        max: colorMax,
+                        stops: colorStops
+                    }
                 }
             }
         });
