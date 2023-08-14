@@ -244,7 +244,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     minLinkWidth: 0,
 
     /**
-     * Determines which side of the chart the nodes are to be aligned to.
+     * Determines which side of the chart the nodes are to be aligned to. When
+     * the chart is inverted, `top` aligns to the left and `bottom` to the
+     * right.
      *
      * @sample highcharts/plotoptions/sankey-nodealignment
      *         Node alignment demonstrated
