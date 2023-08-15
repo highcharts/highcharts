@@ -1419,7 +1419,7 @@ addEvent(MapChart, 'afterInit', function (): void {
      * @type {Highcharts.MapView|undefined}
      */
     this.mapView = new MapView(this, this.options.mapView);
-});
+}, { order: 0 });
 
 
 export default MapView;
