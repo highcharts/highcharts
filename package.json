@@ -43,6 +43,7 @@
     "@aws-sdk/credential-provider-ini": "^3.282.0",
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
+    "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.2",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.5",
