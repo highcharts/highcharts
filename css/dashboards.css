@@ -157,6 +157,12 @@
 }
 /* stylelint-enable max-line-length */
 
+.highcharts-dark .highcharts-dashboards-edit-popup-close,
+.highcharts-dark .highcharts-dashboards-edit-pointer,
+.highcharts-dark .highcharts-dashboards-edit-accordion-header-icon {
+    filter: invert(1);
+}
+
 .highcharts-dark .highcharts-dashboards-edit-sidebar-title {
     filter: brightness(0) invert(1);
 }
