@@ -80,6 +80,7 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
+            'dashboards/dashboards-with-angular',
             'dashboards/layout-description',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
