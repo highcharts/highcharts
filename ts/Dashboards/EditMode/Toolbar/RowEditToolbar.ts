@@ -78,6 +78,8 @@ class RowEditToolbar extends EditToolbar {
             icon: iconURLPrefix + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
+                    this.menu.parent.editMode.setEditOverlay();
+
                     (this.menu.parent as RowEditToolbar).onRowOptions(e);
                 }
             }

@@ -48,9 +48,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Town: 'x',
-            Population: 'y',
-            'Metro Area(km2)': null,
-            'Highest Elevation(m)': null
+            Population: 'y'
         },
         chartOptions: {
             xAxis: {
@@ -103,9 +101,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Town: 'x',
-            Population: null,
-            'Metro Area(km2)': 'y',
-            'Highest Elevation(m)': null
+            'Metro Area(km2)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -158,8 +154,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Town: 'x',
-            Population: null,
-            'Metro Area(km2)': null,
             'Highest Elevation(m)': 'y'
         },
         chartOptions: {
