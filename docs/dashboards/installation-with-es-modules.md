@@ -19,8 +19,7 @@ production.
             editMode: {
                 enabled: true,
                 contextMenu: {
-                    enabled: true,
-                    items: ['editMode']
+                    enabled: true
                 }
             },
             gui: {
@@ -66,8 +65,7 @@ For a line chart create the JavaScript files as shown below.
         editMode: {
             enabled: true,
             contextMenu: {
-                enabled: true,
-                items: ['editMode']
+                enabled: true
             }
         },
         gui: {
