@@ -29,13 +29,13 @@ Highcharts.chart('container', {
             labels: {
                 format: '{value} °C',
                 style: {
-                    color: Highcharts.getOptions().colors[10]
+                    color: '#DF8500'
                 }
             },
             title: {
                 text: 'Temperature',
                 style: {
-                    color: Highcharts.getOptions().colors[10]
+                    color: '#DF8500'
                 }
             }
         },
@@ -101,8 +101,8 @@ Highcharts.chart('container', {
         {
             name: 'Temperature',
             type: 'spline',
-            color: '#0f0f0f',
-
+            color: '#DF8500',
+            lineWidth: 2,
             zones: [
                 {
                     value: 0,
