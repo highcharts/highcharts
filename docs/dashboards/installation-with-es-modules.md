@@ -56,7 +56,7 @@ are loaded. This reduces the total download size. We can create a bundle of all
 files to further improve the load size and load time. Create a NodeJS project
 and install Highcharts and Webpack as NPM packages.
 
-For a line chart create the JavaScript files as shown below.
+For a board create the JavaScript files as shown below.
 
 ```js
     import Dashboards from 'https://code.highcharts.com/dashboards/es-modules/masters/dashboards.src.js';
