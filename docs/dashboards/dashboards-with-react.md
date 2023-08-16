@@ -1,7 +1,7 @@
 Highcharts Dashboards with React
 ===
 
-To create a dashboard with Angular please follow the steps below: <br>
+To create a dashboard with React please follow the steps below: <br>
 
 1. Install the Dashboards package.
 
