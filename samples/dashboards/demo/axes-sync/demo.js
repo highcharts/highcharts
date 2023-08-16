@@ -101,9 +101,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Europe: null,
-                Africa: null,
-                'South-East Asia': null
+                Global: 'y'
             },
             chartOptions: {
                 chart: {
@@ -134,9 +132,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Europe: null,
-                Africa: null
+                'South-East Asia': 'y'
             },
             chartOptions: {
                 chart: {
@@ -169,9 +165,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Europe: null,
-                'South-East Asia': null
+                Africa: 'y'
             },
             chartOptions: {
                 chart: {
@@ -204,9 +198,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Africa: null,
-                'South-East Asia': null
+                Europe: 'y'
             },
             chartOptions: {
                 chart: {

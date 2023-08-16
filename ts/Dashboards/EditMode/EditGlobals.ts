@@ -76,7 +76,9 @@ const EditGlobals: EditGlobals = {
 
         // Confirmation popup
         confirmationPopup: PREFIX + 'confirmation-popup',
+        popupButtonContainer: PREFIX + 'confirmation-popup-button-container',
         popupContentContainer: PREFIX + 'confirmation-popup-content',
+        popupCancelBtn: PREFIX + 'confirmation-popup-cancel-btn',
         popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
         popupCloseButton: PREFIX + 'popup-close',
 
@@ -104,12 +106,12 @@ const EditGlobals: EditGlobals = {
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
         // Custom dropdown with icons
+        collapsedElement: PREFIX + 'collapsed-element',
         dropdown: PREFIX + 'dropdown',
         dropdownContent: PREFIX + 'dropdown-content',
         dropdownButton: PREFIX + 'dropdown-button',
         dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
-        rotateElement: PREFIX + 'rotate-element',
         icon: PREFIX + 'icon'
     },
     lang: {
@@ -123,8 +125,8 @@ const EditGlobals: EditGlobals = {
         chartType: 'Chart type',
         connectorName: 'Connector name',
         confirmButton: 'Confirm',
-        confirmDestroyCell: 'Do you want to destroy the cell?',
-        confirmDestroyRow: 'Do you want to destroy the row?',
+        confirmDestroyCell: 'Do you really want to destroy the cell?',
+        confirmDestroyRow: 'Do you really want to destroy the row?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
@@ -214,14 +216,16 @@ namespace EditGlobals {
         menuItem: string;
         menuVerticalSeparator: string;
         popupCloseButton: string;
+        popupCancelBtn: string;
         popupConfirmBtn: string;
+        popupButtonContainer: string;
         popupContentContainer: string;
         resizePointer: string;
         resizeSnap: string;
         resizeSnapX: string;
         resizeSnapY: string;
         resizerMenuBtnActive: string;
-        rotateElement: string;
+        collapsedElement: string;
         rowContextHighlight: string;
         separator: string;
         sidebarCloseButton: string;
@@ -268,15 +272,15 @@ namespace EditGlobals {
          */
         chartType: string;
         /**
-         * @default 'Connector name'
+         * @default 'Confirm'
          */
         confirmButton: string;
         /**
-         * @default 'Do you want to destroy the cell?'
+         * @default 'Do you really want to destroy the cell?'
          */
         confirmDestroyCell: string;
         /**
-         * @default 'Do you want to destroy the row?'
+         * @default 'Do you really want to destroy the row?'
          */
         confirmDestroyRow: string;
         /**

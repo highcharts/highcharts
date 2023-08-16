@@ -50,7 +50,8 @@ const {
     splat,
     uniqueKey,
     error,
-    diffObjects
+    diffObjects,
+    isString
 } = U;
 
 /* *
@@ -283,7 +284,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: {}
+            columnAssignment: void 0
         }
     );
 
@@ -538,8 +539,6 @@ class HighchartsComponent extends Component {
         if (this.options.chartID) {
             this.chartContainer.id = this.options.chartID;
         }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
@@ -571,6 +570,7 @@ class HighchartsComponent extends Component {
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
+        this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
@@ -595,10 +595,6 @@ class HighchartsComponent extends Component {
             const { id: storeTableID } = this.connector.table;
             const { chart } = this;
 
-            // Names/aliases that should be mapped to xAxis values
-            const columnAssignment = this.options.columnAssignment || {};
-            const xKeyMap: Record<string, string> = {};
-
             if (this.presentationModifier) {
                 this.presentationTable = this.presentationModifier
                     .modifyTable(this.presentationTable).modified;
@@ -606,6 +602,12 @@ class HighchartsComponent extends Component {
 
             const table = this.presentationTable,
                 modifierOptions = table.getModifier()?.options;
+
+            // Names/aliases that should be mapped to xAxis values
+            const columnNames = table.modified.getColumnNames();
+            const columnAssignment = this.options.columnAssignment ||
+                this.getDefaultColumnAssignment(columnNames);
+            const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -618,11 +620,7 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnAssignment[name]) {
-                        return false;
-                    }
-
-                    if (columnAssignment[name] === null) {
+                    if (!isVisible || !columnAssignment[name]) {
                         return false;
                     }
 
@@ -662,11 +660,11 @@ class HighchartsComponent extends Component {
                 // Disable dragging on series, which were created out of a
                 // columns which are created by MathModifier.
                 const shouldBeDraggable = !(
-                    modifierOptions?.type == 'Math' &&
+                    modifierOptions?.type === 'Math' &&
                     (modifierOptions as MathModifierOptions)
-                    .columnFormulas?.some(
-                        (formula) => formula.column == seriesName
-                    )
+                        .columnFormulas?.some(
+                            (formula): boolean => formula.column === seriesName
+                        )
                 );
 
                 return chart.addSeries({
@@ -716,6 +714,36 @@ class HighchartsComponent extends Component {
      */
     private getChart(): Chart {
         return this.chart || this.createChart();
+    }
+
+    /**
+     * Creates default mapping when columnAssignment is not declared.
+     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     *
+     * @returns
+     * The record of mapping
+     *
+     * @private
+     *
+     */
+    private getDefaultColumnAssignment(
+        columnNames: Array<string> = []
+    ): Record<string, string | null> {
+        const defaultColumnAssignment:Record<string, string> = {};
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            defaultColumnAssignment[columnNames[i]] = 'y';
+            if (i === 0) {
+                const firstColumnValues =
+                    this.presentationTable?.getColumn(columnNames[i], true);
+
+                if (firstColumnValues && isString(firstColumnValues[0])) {
+                    defaultColumnAssignment[columnNames[i]] = 'x';
+                }
+            }
+        }
+
+        return defaultColumnAssignment;
     }
 
     /**
@@ -993,8 +1021,11 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * Names / aliases that should be mapped to xAxis values. You can
+         * declare which columns will be visible selectively on the chart.
+         *
+         * When the columnAssignment is not declared, all columns are visible.
+         *
          * ```
          * Example
          * columnAssignment: {

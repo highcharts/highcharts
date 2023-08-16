@@ -212,13 +212,15 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
-        this.syncHandlers = this.handleSyncOptions(DataGridSyncHandlers);
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers
         );
 
-        this.dataGridOptions = this.options.dataGridOptions || ({} as BaseDataGridOptions);
+        this.dataGridOptions = (
+            this.options.dataGridOptions ||
+            ({} as BaseDataGridOptions)
+        );
 
         this.innerResizeTimeouts = [];
 
@@ -228,7 +230,10 @@ class DataGridComponent extends Component {
         });
 
         this.on('tableChanged', (): void => {
-            this.dataGrid?.update({ dataTable: this.filterColumns() });
+            // When the table is in the middle of editing a cell, don't update.
+            if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
+                this.dataGrid?.update({ dataTable: this.filterColumns() });
+            }
         });
 
         // Add the component instance to the registry
@@ -242,27 +247,30 @@ class DataGridComponent extends Component {
      * @param connector
      * Attached connector
      */
-    private disableEditingModifiedColumns(connector: DataConnectorType) {
+    private disableEditingModifiedColumns(connector: DataConnectorType): void {
         const modifierOptions = connector.options.dataModifier;
 
         if (!modifierOptions || modifierOptions.type !== 'Math') {
             return;
         }
-        const modifierColumns = (modifierOptions as MathModifierOptions).columnFormulas;
+
+        const modifierColumns =
+            (modifierOptions as MathModifierOptions).columnFormulas;
+
         if (!modifierColumns) {
             return;
         }
+
         const options = {} as Record<string, ColumnOptions>;
 
         for (let i = 0, iEnd = modifierColumns.length; i < iEnd; ++i) {
             const columnName = modifierColumns[i].column;
             options[columnName] = {
                 editable: false
-            }
+            };
         }
-        this.dataGrid?.update({ columns: options })
 
-
+        this.dataGrid?.update({ columns: options });
     }
 
     /* *
@@ -303,8 +311,12 @@ class DataGridComponent extends Component {
                     let shouldUpdateTheGrid = true;
 
                     if (dataGrid) {
-                        const row = dataGrid.rowElements[e.rowIndex],
+                        const row = dataGrid.rowElements[e.rowIndex];
+                        let cells = [];
+
+                        if (row) {
                             cells = Array.prototype.slice.call(row.childNodes);
+                        }
 
                         cells.forEach((cell: HTMLElement): void => {
                             if (cell.childElementCount > 0) {
@@ -386,6 +398,7 @@ class DataGridComponent extends Component {
         }
         await super.update(options);
         if (this.dataGrid) {
+            this.filterAndAssignSyncOptions(DataGridSyncHandlers);
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });
@@ -538,7 +551,7 @@ namespace DataGridComponent {
 
         type: 'DataGrid';
         /**
-         * Generic options to adjust behavor and styling of the rendered data
+         * Generic options to adjust behavior and styling of the rendered data
          * grid.
          */
         dataGridOptions?: BaseDataGridOptions;

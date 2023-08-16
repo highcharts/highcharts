@@ -22,12 +22,15 @@ async function testKarma() {
     const processLib = require('../lib/process');
     const logLib = require('../lib/log');
 
-    await processLib.exec(
-        'npx karma start ' +
-        path.join('test', 'typescript-karma', 'karma-conf.js') +
-        ' --tests ' +
-        path.join('Dashboards', '**', '*.js')
-    );
+    const conf = path.join('test', 'typescript-karma', 'karma-conf.js');
+    const tests = [
+        path.join('Dashboards', '**', '*'),
+        path.join('Data', '**', '*'),
+        path.join('DataGrid', '**', '*'),
+        path.join('Shared', '**', '*')
+    ].join(',');
+
+    await processLib.exec(`npx karma start ${conf} --tests ${tests}`);
 
     logLib.success('Karma tests successful');
 
