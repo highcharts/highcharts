@@ -144,7 +144,7 @@ abstract class Component {
      */
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
-        parentElement: document.body,
+        // parentElement: document.body,
         id: '',
         title: false,
         caption: false,
@@ -173,7 +173,7 @@ abstract class Component {
      *
      * @internal
      */
-    public parentElement: HTMLElement;
+    // public parentElement: HTMLElement;
     /**
      * Instance of cell, where component is attached.
      *
@@ -339,7 +339,7 @@ abstract class Component {
 
         this.cell = cell;
         // TODO: Change the TS of cell.
-        this.parentElement = cell.container!;
+        // this.parentElement = cell.container;
         this.attachCellListeneres();
 
 
@@ -467,7 +467,7 @@ abstract class Component {
             this.cellListeners.push(
                 // Listen for resize on dashboard
                 addEvent(board, 'cellResize', (): void => {
-                    this.resizeTo(this.parentElement);
+                    this.resizeTo(this.cell.container);
                 }),
                 // Listen for changed parent
                 addEvent(
@@ -502,12 +502,12 @@ abstract class Component {
      */
     public setCell(cell: Cell, resize = false): void {
         this.cell = cell;
-        if (cell.container) {
-            this.parentElement = cell.container;
-        }
+        // if (cell.container) {
+        //     this.parentElement = cell.container;
+        // }
         this.attachCellListeneres();
         if (resize) {
-            this.resizeTo(this.parentElement);
+            this.resizeTo(cell.container);
         }
     }
 
@@ -699,13 +699,19 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
+        const parentCellContainer = this.cell.container;
+
+        if (!parentCellContainer) {
+            return;
+        }
+
         if (height) {
             // Get offset for border, padding
             const pad =
                 getPaddings(this.element).y + getMargins(this.element).y;
 
             this.dimensions.height = relativeLength(
-                height, Number(getStyle(this.parentElement, 'height'))
+                height, Number(getStyle(parentCellContainer, 'height'))
             ) - pad;
             this.element.style.height = this.dimensions.height + 'px';
             this.contentElement.style.height = this.getContentHeight() + 'px';
@@ -714,7 +720,7 @@ abstract class Component {
             const pad =
                 getPaddings(this.element).x + getMargins(this.element).x;
             this.dimensions.width = relativeLength(
-                width, Number(getStyle(this.parentElement, 'width'))
+                width, Number(getStyle(parentCellContainer, 'width'))
             ) - pad;
             this.element.style.width = this.dimensions.width + 'px';
         }
@@ -740,7 +746,12 @@ abstract class Component {
      * @param element
      * HTML element that is resized.
      */
-    public resizeTo(element: HTMLElement): void {
+    public resizeTo(element: HTMLElement|undefined): void {
+
+        if (!element) {
+            return;
+        }
+
         while (this.resizeTimeouts.length) {
             const timeout = this.resizeTimeouts.pop();
             if (timeout) {
@@ -922,7 +933,7 @@ abstract class Component {
         // TODO: should cleanup this event listener
         window.addEventListener(
             'resize',
-            (): void => this.resizeTo(this.parentElement)
+            (): void => this.resizeTo(this.cell.container)
         );
 
         this.hasLoaded = true;
@@ -946,7 +957,7 @@ abstract class Component {
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
             // Call resize to fit to the cell.
-            this.resizeTo(this.parentElement);
+            this.resizeTo(this.cell.container);
         }
         return this;
     }
@@ -1062,7 +1073,7 @@ abstract class Component {
             // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
-                parentElement: this.parentElement.id,
+                // parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
                 type: this.type
@@ -1236,7 +1247,7 @@ namespace Component {
          *
          * @internal
          */
-        parentElement: HTMLElement | string;
+        // parentElement: HTMLElement | string;
 
         /**
          * The name of class that is applied to the component's container.
@@ -1329,7 +1340,7 @@ namespace Component {
         id: string;
         parentCell?: Cell.JSON;
         // store?: DataStore.ClassJSON; // store id
-        parentElement?: string; // ID?
+        // parentElement?: string; // ID?
         style?: {};
         sync?: SyncOptions&JSON.Object;
         title?: string;

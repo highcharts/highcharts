@@ -238,7 +238,8 @@ class HTMLComponent extends Component {
 
         this.constructTree();
 
-        this.parentElement.appendChild(this.element);
+        // this.parentElement.appendChild(this.element);
+        this.cell.container?.appendChild(this.element);
 
         if (this.scaleElements) {
             this.autoScale();
