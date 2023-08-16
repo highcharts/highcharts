@@ -43,8 +43,10 @@ export interface AnimationOptions extends Globals.AnyRecord {
 export interface Axis {
     coll: AxisCollectionKey;
     dateTime?: unknown;
+    hasNames?: boolean;
     max: (number|null);
     min: (number|null);
+    names: Array<string>;
     options: Axis;
     series: Array<Series>;
     setExtremes(
@@ -54,13 +56,29 @@ export interface Axis {
         animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: any
     ): void;
+    update(
+        options: Partial<AxisOptions>,
+        redraw?: boolean
+    ): void;
 }
 
 export type AxisCollectionKey = ('colorAxis'|'xAxis'|'yAxis'|'zAxis');
 
+export interface AxisExtremesObject {
+    dataMax: number;
+    dataMin: number;
+    max: number;
+    min: number;
+    userMax?: number;
+    userMin?: number;
+}
+
 export interface AxisOptions extends Globals.AnyRecord {
     id?: string;
     events?: EventsOptionsFor<Axis>;
+}
+
+export interface BBoxObject extends PositionObject, SizeObject {
 }
 
 export interface Chart {
@@ -71,10 +89,17 @@ export interface Chart {
         callback?: Function
     ): Chart;
     axes: Array<Axis>;
+    chartHeight: number;
+    chartWidth: number;
+    margin: Array<number>;
+    navigator?: Navigator;
     options: Options;
-    resetZoomButton?: SVGElement;
+    plotHeight: number;
+    plotWidth: number;
+    resetZoomButton?: DOMElement;
     series: Array<Series>;
     tooltip: Tooltip;
+    userOptions: Partial<Options>;
     xAxis: Array<Axis>;
     yAxis: Array<Axis>;
     addSeries(
@@ -115,6 +140,18 @@ export interface CreditsOptions extends Globals.AnyRecord {
     enabled?: boolean;
 }
 
+export interface DOMElement {
+    element: Element;
+    height?: number;
+    width?: number;
+    x?: number;
+    y?: number;
+    getBBox(
+        reload?: boolean,
+        rot?: number
+    ): BBoxObject
+}
+
 export type EventsOptionsFor<T> = Partial<Record<string, ((this: T) => void)>>;
 
 export interface LangOptions {
@@ -125,12 +162,31 @@ export interface LegendOptions extends Globals.AnyRecord {
     enabled?: boolean;
 }
 
+export interface Navigator {
+    chart: Chart;
+    navigatorSeries: Series;
+    height: number;
+    options: NavigatorOptions;
+    scrollbarHeight: number;
+    series?: Array<Series>;
+    xAxis: Axis;
+    yAxis: Axis;
+    update(
+        options: Partial<NavigatorOptions>
+    ): void;
+}
+
+export interface NavigatorOptions extends Globals.AnyRecord {
+    enabled?: boolean;
+}
+
 export interface Options extends Globals.AnyRecord {
     accessibility?: AccessibilityOptions;
     chart?: ChartOptions;
     credits?: CreditsOptions;
     lang?: LangOptions;
     legend?: LegendOptions;
+    navigator?: NavigatorOptions;
     plotOptions?: Record<string, Omit<SeriesOptions, ('data'|'id'|'name')>>;
     series?: Array<SeriesOptions>;
     sonification?: SonificationOptions;
@@ -159,11 +215,18 @@ export type PointShortOptions = (
     null
 );
 
+export interface PositionObject {
+    x: number;
+    y: number;
+}
+
 export interface Series {
     /* eslint-disable-next-line  @typescript-eslint/no-misused-new */
     new (options: SeriesOptions): Series;
+    data: Array<PointShortOptions>;
     options: SeriesOptions;
     points: Array<Point>;
+    type: string;
     visible?: boolean;
     destroy(): void;
     remove(
@@ -200,6 +263,11 @@ export interface SeriesOptions extends Globals.AnyRecord {
     marker?: SeriesMarkerOptions;
     point?: PointOptions;
     type?: string;
+}
+
+export interface SizeObject {
+    height: number;
+    width: number;
 }
 
 export interface SonificationOptions extends Globals.AnyRecord {
