@@ -180,9 +180,6 @@ class ThresholdComponent extends Component {
             valueName && isNumber(options.value) ?
                 { [valueName]: options.value } :
                 {},
-            // {
-            //     parentElement: options.parentElement
-            // },
             componentOptions
         );
 

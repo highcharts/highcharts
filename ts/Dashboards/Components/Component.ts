@@ -144,7 +144,6 @@ abstract class Component {
      */
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
-        // parentElement: document.body,
         id: '',
         title: false,
         caption: false,
@@ -167,13 +166,6 @@ abstract class Component {
             type: 'input'
         }]
     };
-    /**
-     * The HTML element or id of HTML element that is used for appending
-     * a component.
-     *
-     * @internal
-     */
-    // public parentElement: HTMLElement;
     /**
      * Instance of cell, where component is attached.
      *
@@ -339,7 +331,6 @@ abstract class Component {
 
         this.cell = cell;
         // TODO: Change the TS of cell.
-        // this.parentElement = cell.container;
         this.attachCellListeneres();
 
 
@@ -502,9 +493,6 @@ abstract class Component {
      */
     public setCell(cell: Cell, resize = false): void {
         this.cell = cell;
-        // if (cell.container) {
-        //     this.parentElement = cell.container;
-        // }
         this.attachCellListeneres();
         if (resize) {
             this.resizeTo(cell.container);
@@ -1073,7 +1061,6 @@ abstract class Component {
             // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
-                // parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
                 type: this.type
@@ -1242,14 +1229,6 @@ namespace Component {
         cell?: string;
 
         /**
-         * The HTML element or id of HTML element that is used for appending
-         * a component.
-         *
-         * @internal
-         */
-        // parentElement: HTMLElement | string;
-
-        /**
          * The name of class that is applied to the component's container.
          */
         className?: string;
@@ -1340,7 +1319,6 @@ namespace Component {
         id: string;
         parentCell?: Cell.JSON;
         // store?: DataStore.ClassJSON; // store id
-        // parentElement?: string; // ID?
         style?: {};
         sync?: SyncOptions&JSON.Object;
         title?: string;
