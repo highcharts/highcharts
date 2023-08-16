@@ -50,7 +50,6 @@ class YouTubeComponent extends Component {
         this.youTubeElement.setAttribute('frameborder', '0');
         this.youTubeElement.allowfullscreen = true;
         this.contentElement.appendChild(this.youTubeElement);
-        this.parentElement.appendChild(this.element);
 
         return this;
     }
