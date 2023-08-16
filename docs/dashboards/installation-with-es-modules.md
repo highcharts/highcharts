@@ -53,7 +53,7 @@ production.
 
 The advantage of core files over packages is, that only the required features
 are loaded. This reduces the total download size. We can create a bundle of all
-files to improve the load size and load time further. Create a NodeJS project
+files to further improve the load size and load time. Create a NodeJS project
 and install Highcharts and Webpack as NPM packages.
 
 For a line chart create the JavaScript files as shown below.
