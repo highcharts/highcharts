@@ -153,7 +153,7 @@ function callout(
     }
 
     // Anchor on right side
-    if (x + anchorX >= w * 0.75) {
+    if (x + anchorX >= w - safeDistance) {
 
         // Chevron
         if (
@@ -182,7 +182,7 @@ function callout(
         }
 
     // Anchor on left side
-    } else if (x + anchorX <= w * 0.25) {
+    } else if (x + anchorX <= safeDistance) {
 
         // Chevron
         if (
@@ -212,7 +212,7 @@ function callout(
 
     } else if ( // replace bottom
         anchorY > h &&
-        anchorX <= w * 0.75
+        anchorX <= w - safeDistance
     ) {
         path.splice(
             5,
@@ -225,7 +225,7 @@ function callout(
 
     } else if ( // replace top
         anchorY < 0 &&
-        anchorX >= w * 0.25
+        anchorX >= safeDistance
     ) {
         path.splice(
             1,
