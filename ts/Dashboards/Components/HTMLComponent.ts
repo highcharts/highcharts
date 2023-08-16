@@ -197,8 +197,6 @@ class HTMLComponent extends Component {
                 this.redraw();
             }
         });
-
-        Component.addInstance(this);
     }
 
 

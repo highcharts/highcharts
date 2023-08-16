@@ -235,9 +235,6 @@ class DataGridComponent extends Component {
                 this.dataGrid?.update({ dataTable: this.filterColumns() });
             }
         });
-
-        // Add the component instance to the registry
-        Component.addInstance(this);
     }
 
     /**
