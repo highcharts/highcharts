@@ -1,0 +1,106 @@
+/* *
+ *
+ *  (c) 2009-2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import type NavigatorComponentOptions from './NavigatorComponentOptions';
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
+    type: 'Navigator',
+    chartOptions: {
+        chart: {
+            animation: false,
+            height: 200,
+            styleMode: true,
+            type: 'column',
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        navigator: {
+            enabled: true,
+            outlineWidth: 0,
+            series: [{
+                lineWidth: 0
+            }],
+            xAxis: {
+                endOnTick: true,
+                gridZIndex: 4,
+                labels: {
+                    format: '{value}',
+                    x: 1,
+                    y: 22
+                },
+                opposite: true,
+                showFirstLabel: true,
+                showLastLabel: true,
+                startOnTick: true,
+                tickPosition: 'inside'
+            },
+            yAxis: {
+                maxPadding: 0.5
+            }
+        },
+        plotOptions: {
+            series: {
+                borderRadius: 0
+            }
+        },
+        scrollbar: {
+            enabled: true
+        },
+        tooltip: {
+            enabled: false
+        },
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false
+        }
+    }
+};
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+
+export default NavigatorComponentDefaults;
