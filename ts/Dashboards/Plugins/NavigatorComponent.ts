@@ -26,7 +26,7 @@ import type {
     Axis,
     AxisExtremesObject,
     Chart,
-    Highcharts,
+    Highcharts as H,
     Options as HighchartsOptions
 } from './HighchartsTypes';
 import type DataCursor from '../../Data/DataCursor';
@@ -119,14 +119,16 @@ function crossfilterEmitter(
                     });
                 }
             } else {
-                modifier = new RangeModifier({ ranges: [{
-                    column: filterColumn,
-                    maxValue: max,
-                    minValue: min
-                }] });
+                modifier = new RangeModifier({
+                    ranges: [{
+                        column: filterColumn,
+                        maxValue: max,
+                        minValue: min
+                    }]
+                });
             }
 
-            await table.setModifier(modifier)
+            await table.setModifier(modifier);
 
             dataCursor.emitCursor(
                 table,
@@ -174,7 +176,7 @@ function extremesReceiver(this: Component): void {
             if (cursor.columns) {
                 extremesColumn = pick(cursor.columns[0], extremesColumn);
             }
-        } else if (cursor.state = 'xAxis.extremes.max') {
+        } else if (cursor.state === 'xAxis.extremes.max') {
             extremesColumn = pick(cursor.column, extremesColumn);
             maxIndex = pick(cursor.row, maxIndex);
         } else {
@@ -310,7 +312,7 @@ class NavigatorComponent extends Component {
 
 
     /** @private */
-    public static charter: typeof Highcharts;
+    public static charter: typeof H;
 
 
     /* *
@@ -367,7 +369,7 @@ class NavigatorComponent extends Component {
 
         const charter = (
             NavigatorComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof Highcharts
+            Globals.win.Highcharts as unknown as typeof H
         );
 
         this.chartContainer = Globals.win.document.createElement('div');
@@ -448,7 +450,7 @@ class NavigatorComponent extends Component {
         if (chart.navigator) {
             const navigator = chart.navigator,
                 navigatorHeight = chart.plotHeight + navigator.height;
-            
+
             if (navigator.height !== navigatorHeight) {
                 chartUpdates.navigator = {
                     handles: {
@@ -484,7 +486,7 @@ class NavigatorComponent extends Component {
 
         let columnsAssignment: (string|null);
 
-        for (const column in columnAssignments) {
+        for (const column of Object.keys(columnAssignments)) {
             columnsAssignment = columnAssignments[column];
 
             if (columnsAssignment !== null) {
@@ -566,9 +568,7 @@ class NavigatorComponent extends Component {
 
                     if (value === null) {
                         continue;
-                    } else if (isNumber(value)) {
-                        value = value;
-                    } else {
+                    } else if (!isNumber(value)) {
                         value = `${value}`;
                     }
 
