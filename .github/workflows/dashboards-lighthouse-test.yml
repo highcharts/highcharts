@@ -118,6 +118,10 @@ jobs:
           config: specPattern=**/performance/*.cy.js
           install: false
 
+      - name: Summary
+        run: |
+          node test/cypress/lighthouseCompare.mjs  --proposed ./tmp/lighthouse.json > $GITHUB_STEP_SUMMARY
+
       - name: Store artifacts
         uses: actions/upload-artifact@v3
         with:
