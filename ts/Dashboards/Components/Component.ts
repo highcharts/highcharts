@@ -797,6 +797,9 @@ abstract class Component {
 
         this.options = merge(this.options, newOptions);
 
+        this.setTitle();
+        this.setCaption();
+
         if (redraw || eventObject.shouldForceRedraw) {
             this.redraw();
         }
@@ -808,8 +811,8 @@ abstract class Component {
      * Then appends them to the component's container.
      */
     private addComponentTitleAndCaption(): void {
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
+        this.setTitle();
+        this.setCaption();
         [
             this.titleElement,
             this.contentElement,
@@ -827,29 +830,23 @@ abstract class Component {
      * @param titleOptions
      * The options for the title.
      */
-    public setTitle(titleOptions: Component.TextOptionsType): void {
+    public setTitle(): void {
+        const titleOptions = this.options.title;
         const previousTitle = this.titleElement;
 
-        if (
-            !titleOptions || typeof titleOptions === 'string' ?
-                titleOptions === '' :
-                titleOptions.text === ''
+        // If no title is set, remove it.
+        if (previousTitle &&
+            (!titleOptions || !(typeof titleOptions === 'string' || titleOptions.text))
         ) {
-            if (previousTitle) {
-                previousTitle.remove();
-            }
+            previousTitle.remove();
             return;
         }
 
-        const titleElement =
-            Component.createTextElement('h1', 'title', titleOptions);
+        const newTitle = Component.createTextElement('h1', 'title', titleOptions);
 
-        if (titleElement) {
-            this.titleElement = titleElement;
-
-            if (previousTitle) {
-                previousTitle.replaceWith(this.titleElement);
-            }
+        if (newTitle) {
+            this.titleElement = newTitle;
+            if (previousTitle) previousTitle.replaceWith(this.titleElement);
         }
     }
 
@@ -859,29 +856,22 @@ abstract class Component {
      * @param captionOptions
      * The options for the caption.
      */
-    public setCaption(captionOptions: Component.TextOptionsType): void {
-        const previousCaption = this.captionElement;
-        if (
-            !captionOptions ||
-                typeof captionOptions === 'string' ?
-                captionOptions === '' :
-                captionOptions.text === ''
+    public setCaption(): void {
+        const captionOptions = this.options.caption;
+
+        // If no caption is set, remove it.
+        if (this.captionElement &&
+            (!captionOptions || !(typeof captionOptions === 'string' || captionOptions.text))
         ) {
-            if (previousCaption) {
-                previousCaption.remove();
-            }
+            this.captionElement.remove();
             return;
         }
 
-        const captionElement =
-            Component.createTextElement('div', 'caption', captionOptions);
+        const newCaption = Component.createTextElement('div', 'caption', captionOptions);
 
-        if (captionElement) {
-            this.captionElement = captionElement;
-
-            if (previousCaption) {
-                previousCaption.replaceWith(this.captionElement);
-            }
+        if (newCaption) {
+            this.captionElement = newCaption;
+            if (this.captionElement) this.captionElement.replaceWith(this.captionElement);
         }
     }
 
