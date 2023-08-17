@@ -13,6 +13,7 @@ const outPutColums = {
 }
 
 const compareMetrics = [
+    "categories.performance",
     "first-contentful-paint",
     "first-meaningful-paint",
     "dom-size"
@@ -36,8 +37,22 @@ async function loadJSON(path){
 for (const [argName, argValue] of Object.entries(args)){
     if( outPutColums[argName] ){
         const reportData = await loadJSON(argValue);
-        if(reportData){
+
+        if( reportData ) {
             compareMetrics.forEach(metric => {
+                if(metric.startsWith('categories.')){
+                    const category = metric.replace('categories.', '');
+                    const categoryData = reportData.categories[category];
+                    if (categoryData) {
+                            if(!outPutColums[argName][category]){
+                                outPutColums[argName][category] = {}
+                            }
+
+                            outPutColums[argName][category].score = categoryData.score
+                    }
+                    return;
+                }
+
                 if (reportData.audits[metric]) {
                     Object.keys(reportData.audits[metric])
                         .filter(key => valueTypes.includes(key))
@@ -63,26 +78,30 @@ const lineFmt = ({
     valueReference,
     valueProposed
 }) =>
-    `| ${audit} – ${measure} | ${valueReference} | ${valueProposed} | ${typeof valueReference === 'number' && typeof valueProposed === 'number' ? (valueProposed - valueReference).toFixed(2) : ''} |`;
+    measure ? `| ${audit} – ${measure} | ${valueReference} | ${valueProposed} | ${typeof valueReference === 'number' && typeof valueProposed === 'number' ? (valueProposed - valueReference).toFixed(2) : ''} |`: '';
 
 function printTableLines(audit){
     let lines = [];
 
-    const hasReference = Boolean(outPutColums.reference[audit]);
+    const reference = outPutColums.reference[audit];
+    const proposed  = outPutColums.proposed[audit];
 
     lines.push(lineFmt({
         audit,
         measure: 'score',
-        valueReference: hasReference ? outPutColums.reference[audit].score: '',
-        valueProposed: outPutColums.proposed[audit].score
+        valueReference: reference ? reference.score: '',
+        valueProposed: proposed.score
     }));
 
-    lines.push(lineFmt({
-        audit,
-        measure: (hasReference ? outPutColums.reference : outPutColums.proposed)[audit].numericUnit + 's',
-        valueReference: hasReference ? parseFloat(outPutColums.reference[audit].numericValue.toFixed(2)): '',
-        valueProposed: parseFloat(outPutColums.proposed[audit].numericValue.toFixed(2))
-    }));
+
+    if (proposed.numericUnit) {
+        lines.push(lineFmt({
+            audit,
+            measure: proposed.numericUnit + 's',
+            valueReference: reference ? parseFloat(reference.numericValue?.toFixed(2)): '',
+            valueProposed: parseFloat(outPutColums.proposed[audit].numericValue?.toFixed(2))
+        }));
+    }
 
     return lines.join('\n')
 }
