@@ -103,12 +103,14 @@ class TreegraphPoint extends TreemapPoint {
             ) as CollapseButtonOptions,
             { width, height, shape, style } = btnOptions,
             padding = 2,
-            chart = this.series.chart;
-        if (!point.shapeArgs || !this.visible) {
-            if (point.collapseButton) {
-                point.collapseButton.destroy();
-                delete point.collapseButton;
-            }
+            chart = this.series.chart,
+            calculatedOpacity = (
+                point.visible &&
+                (point.collapsed ||
+                    !btnOptions.onlyOnHover ||
+                    point.state === 'hover')
+            ) ? 1 : 0;
+        if (!point.shapeArgs) {
             return;
         }
 
@@ -137,7 +139,9 @@ class TreegraphPoint extends TreemapPoint {
                     'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
-                    zIndex: 1
+                    zIndex: 1,
+                    opacity: calculatedOpacity,
+                    visibility: point.visible ? 'inherit' : 'hidden'
                 })
                 .addClass('highcharts-tracker')
                 .addClass('highcharts-collapse-button')
@@ -150,33 +154,30 @@ class TreegraphPoint extends TreemapPoint {
                     },
                     style
                 ))
-                .add(parentGroup)
-                .attr({ opacity: 0 })
-                .animate({ opacity: 1 });
+                .add(parentGroup);
 
             (point.collapseButton.element as any).point = point;
 
-            if (btnOptions.onlyOnHover && !point.collapsed) {
-                point.collapseButton.attr({ opacity: 0 });
-            }
         } else {
-            const { x, y } = this.getCollapseBtnPosition(btnOptions);
-            point.collapseButton
-                .attr({
-                    text: point.collapsed ? '+' : '-',
-                    rotation: chart.inverted ? 90 : 0,
-                    rotationOriginX: width / 2,
-                    rotationOriginY: height / 2
-                })
-                .animate({
-                    x,
-                    y,
-                    opacity: point.visible && (
-                        !btnOptions.onlyOnHover ||
-                        point.state === 'hover' ||
-                        point.collapsed
-                    ) ? 1 : 0
-                });
+            if (!point.node.children.length || !btnOptions.enabled) {
+                point.collapseButton.destroy();
+                delete point.collapseButton;
+            } else {
+                const { x, y } = this.getCollapseBtnPosition(btnOptions);
+                point.collapseButton
+                    .attr({
+                        text: point.collapsed ? '+' : '-',
+                        rotation: chart.inverted ? 90 : 0,
+                        rotationOriginX: width / 2,
+                        rotationOriginY: height / 2,
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    })
+                    .animate({
+                        x,
+                        y,
+                        opacity: calculatedOpacity
+                    });
+            }
         }
     }
 
@@ -228,7 +229,7 @@ addEvent(TreegraphPoint, 'mouseOut', function (): void {
 });
 
 addEvent(TreegraphPoint, 'mouseOver', function (): void {
-    if (this.collapseButton) {
+    if (this.collapseButton && this.visible) {
         this.collapseButton.animate(
             { opacity: 1 },
             this.series.options.states &&

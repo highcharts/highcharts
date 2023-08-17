@@ -95,7 +95,7 @@ QUnit.test('Treegraph series',
 
         assert.strictEqual(
             collapseButtonOpacity,
-            0 || undefined,
+            0,
             'CollapseButton should be hidden when point is collapsed (#19368).'
         );
 
