@@ -86,6 +86,7 @@ module.exports = {
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/custom-component',
+            'dashboards/installation-with-es-modules',
             'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [
