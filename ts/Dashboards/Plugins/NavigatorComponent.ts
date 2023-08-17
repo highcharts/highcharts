@@ -74,81 +74,54 @@ const navigatorComponentSync = {
 
 
 /** @internal */
-function addRangeOptions(
-    ranges: Array<RangeModifierRangeOptions>,
-    column: string,
-    minValue: (boolean|number|string),
-    maxValue: (boolean|number|string)
-): void {
-    let changed = false;
-
-    for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
-        if (ranges[i].column === column) {
-            ranges[i].maxValue = maxValue;
-            ranges[i].minValue = minValue;
-            changed = true;
-            break;
-        }
-    }
-
-    if (!changed) {
-        ranges.push({ column, maxValue, minValue });
-    }
-}
-
-
-/** @internal */
 function crossfilterEmitter(
     this: Component
 ): (Function|undefined) {
     const component = this as NavigatorComponent;
 
-    const extremesHandler = async (
+    const afterSetExtremes = async (
         axis: Axis,
         extremes: AxisExtremesObject
     ): Promise<void> => {
+        if (component.connector) {
+            const table = component.connector.table,
+                dataCursor = component.board.dataCursor,
+                filterColumn = component.getColumn(),
+                [min, max] = getAxisExtremes(axis, extremes);
 
-        if (!component.connector) {
-            return;
-        }
+            let modifier = table.getModifier();
 
-        const table = component.connector.table,
-            dataCursor = component.board.dataCursor,
-            filterColumn = component.getColumn(),
-            [min, max] = getAxisExtremes(axis, extremes);
+            if (modifier instanceof RangeModifier) {
+                setRangeOptions(
+                    modifier.options.ranges,
+                    filterColumn,
+                    min,
+                    max
+                );
+            } else {
+                modifier = new RangeModifier({
+                    ranges: [{
+                        column: filterColumn,
+                        maxValue: max,
+                        minValue: min
+                    }]
+                });
+            }
 
-        let modifier = table.getModifier();
+            await table.setModifier(modifier);
 
-        if (modifier instanceof RangeModifier) {
-            addRangeOptions(
-                modifier.options.ranges,
-                filterColumn,
-                min,
-                max
+            dataCursor.emitCursor(
+                table,
+                {
+                    type: 'range',
+                    columns: [filterColumn],
+                    firstRow: 0,
+                    lastRow: table.getRowCount() - 1,
+                    state: 'crossfilter'
+                },
+                extremes as unknown as Event
             );
-        } else {
-            modifier = new RangeModifier({
-                ranges: [{
-                    column: filterColumn,
-                    maxValue: max,
-                    minValue: min
-                }]
-            });
         }
-
-        await table.setModifier(modifier);
-
-        dataCursor.emitCursor(
-            table,
-            {
-                type: 'range',
-                columns: [filterColumn],
-                firstRow: 0,
-                lastRow: table.getRowCount() - 1,
-                state: 'crossfilter'
-            },
-            extremes as unknown as Event
-        );
     };
 
     let delay: number;
@@ -157,8 +130,13 @@ function crossfilterEmitter(
         component.chart.xAxis[0],
         'afterSetExtremes',
         function (extremes: AxisExtremesObject): void {
-            clearTimeout(delay);
-            delay = setTimeout(extremesHandler, 50, this, extremes);
+            if (!delay) { // initially no delay
+                delay = 0.1;
+                afterSetExtremes(this, extremes);
+            } else {
+                clearTimeout(delay);
+                delay = setTimeout(afterSetExtremes, 50, this, extremes);
+            }
         }
     );
 }
@@ -212,7 +190,7 @@ function extremesReceiver(this: Component): void {
                 max !== null && typeof max !== 'undefined' &&
                 min !== null && typeof min !== 'undefined'
             ) {
-                removeRangeOptions(ranges, extremesColumn);
+                unsetRangeOptions(ranges, extremesColumn);
                 ranges.unshift({
                     column: extremesColumn,
                     maxValue: max,
@@ -302,7 +280,31 @@ function getAxisExtremes(
 
 
 /** @internal */
-function removeRangeOptions(
+function setRangeOptions(
+    ranges: Array<RangeModifierRangeOptions>,
+    column: string,
+    minValue: (boolean|number|string),
+    maxValue: (boolean|number|string)
+): void {
+    let changed = false;
+
+    for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
+        if (ranges[i].column === column) {
+            ranges[i].maxValue = maxValue;
+            ranges[i].minValue = minValue;
+            changed = true;
+            break;
+        }
+    }
+
+    if (!changed) {
+        ranges.push({ column, maxValue, minValue });
+    }
+}
+
+
+/** @internal */
+function unsetRangeOptions(
     ranges: Array<RangeModifierRangeOptions>,
     column: string
 ): (RangeModifierRangeOptions|undefined) {
@@ -473,7 +475,8 @@ class NavigatorComponent extends Component {
 
         if (chart.navigator) {
             const navigator = chart.navigator,
-                navigatorHeight = chart.plotHeight + navigator.height;
+                navigatorHeight =
+                    (navigator.top - chart.plotTop + navigator.height);
 
             if (navigator.height !== navigatorHeight) {
                 chartUpdates.navigator = {
@@ -571,11 +574,11 @@ class NavigatorComponent extends Component {
 
     /** @private */
     private renderNavigator(): void {
-        const chart = this.chart,
-            table = this.connector && this.connector.table;
+        const chart = this.chart;
 
-        if (table) {
-            const options = this.options,
+        if (this.connector) {
+            const table = this.connector.table,
+                options = this.options,
                 column = this.getColumn(),
                 values = (table.getColumn(column, true) || []);
 
@@ -636,8 +639,8 @@ class NavigatorComponent extends Component {
 
     /** @private */
     public resize(
-        width?: number | string | null,
-        height?: number | string | null
+        width?: (number|string|null),
+        height?: (number|string|null)
     ): this {
 
         super.resize(width, height);
@@ -673,9 +676,13 @@ class NavigatorComponent extends Component {
 
         await super.update(options, false);
 
-        this.filterAndAssignSyncOptions(navigatorComponentSync);
+        if (options.sync) {
+            this.filterAndAssignSyncOptions(navigatorComponentSync);
+        }
 
-        chart.update(merge(options.chartOptions), false);
+        if (options.chartOptions) {
+            chart.update(merge(options.chartOptions), false);
+        }
 
         this.emit({ type: 'afterUpdate' });
 

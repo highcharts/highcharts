@@ -95,6 +95,8 @@ export interface Chart {
     navigator?: Navigator;
     options: Options;
     plotHeight: number;
+    plotLeft: number;
+    plotTop: number;
     plotWidth: number;
     resetZoomButton?: DOMElement;
     series: Array<Series>;
@@ -169,6 +171,7 @@ export interface Navigator {
     options: NavigatorOptions;
     scrollbarHeight: number;
     series?: Array<Series>;
+    top: number;
     xAxis: Axis;
     yAxis: Axis;
     update(

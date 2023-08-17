@@ -517,11 +517,12 @@ abstract class Component {
         if (connector) {
             if (table) {
                 [
-                    'afterSetRows',
-                    'afterDeleteRows',
-                    'afterSetColumns',
                     'afterDeleteColumns',
-                    'afterSetCell'
+                    'afterDeleteRows',
+                    'afterSetCell',
+                    'afterSetConnector',
+                    'afterSetColumns',
+                    'afterSetRows'
                 ].forEach((event: any): void => {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
