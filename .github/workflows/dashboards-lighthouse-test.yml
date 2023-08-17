@@ -118,11 +118,14 @@ jobs:
           config: specPattern=**/performance/*.cy.js
           install: false
 
-      - name: Summary
+      - name: Add to summary
+        if: ${{ always() }}
         run: |
-          node test/cypress/lighthouseCompare.mjs  --proposed ./tmp/lighthouse.json > $GITHUB_STEP_SUMMARY
+          echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
+          node test/cypress/lighthouseCompare.mjs  --proposed ./tmp/lighthouse.json >> $GITHUB_STEP_SUMMARY
 
       - name: Store artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: post-tests

@@ -63,7 +63,7 @@ const lineFmt = ({
     valueReference,
     valueProposed
 }) =>
-    `| ${audit} – ${measure} | ${valueReference} | ${valueProposed} | ${typeof valueReference === 'number' && typeof valueProposed === 'number' ? (valueProposed - valueReference).toFixed(2) : 'NaN'} |`;
+    `| ${audit} – ${measure} | ${valueReference} | ${valueProposed} | ${typeof valueReference === 'number' && typeof valueProposed === 'number' ? (valueProposed - valueReference).toFixed(2) : ''} |`;
 
 function printTableLines(audit){
     let lines = [];
@@ -73,14 +73,14 @@ function printTableLines(audit){
     lines.push(lineFmt({
         audit,
         measure: 'score',
-        valueReference: hasReference ? outPutColums.reference[audit].score: NaN,
+        valueReference: hasReference ? outPutColums.reference[audit].score: '',
         valueProposed: outPutColums.proposed[audit].score
     }));
 
     lines.push(lineFmt({
         audit,
-        measure: hasReference ? outPutColums.reference[audit].numericUnit + 's' : '',
-        valueReference: hasReference ? parseFloat(outPutColums.reference[audit].numericValue.toFixed(2)): NaN,
+        measure: (hasReference ? outPutColums.reference : outPutColums.proposed)[audit].numericUnit + 's',
+        valueReference: hasReference ? parseFloat(outPutColums.reference[audit].numericValue.toFixed(2)): '',
         valueProposed: parseFloat(outPutColums.proposed[audit].numericValue.toFixed(2))
     }));
 

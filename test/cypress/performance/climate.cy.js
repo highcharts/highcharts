@@ -22,7 +22,7 @@ describe('Lighthouse tests', () => {
         cy.visit('/dashboards/demo/climate');
         cy.lighthouse(
             {
-                performance: 25
+                performance: 60
             },
             desktopConfig
         )
