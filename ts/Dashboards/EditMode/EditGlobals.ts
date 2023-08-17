@@ -137,7 +137,6 @@ const EditGlobals: EditGlobals = {
         off: 'off',
         on: 'on',
         pointFormat: 'Point format',
-        scaleElements: 'Scale elements',
         settings: 'Settings',
         small: 'Small',
         style: 'Styles',
@@ -323,10 +322,6 @@ namespace EditGlobals {
          * @default 'Point format'
          */
         pointFormat: string;
-        /**
-         * @default 'Scale elements'
-         */
-        scaleElements: string;
         /**
          * @default 'Settings'
          */

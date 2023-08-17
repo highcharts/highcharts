@@ -76,7 +76,6 @@ class HTMLComponent extends Component {
         Component.defaultOptions,
         {
             type: 'HTML',
-            scaleElements: false,
             elements: []
         }
     );
@@ -147,12 +146,6 @@ class HTMLComponent extends Component {
      */
     private elements: AST.Node[];
     /**
-     * Enables auto-scaling of the elements inside the component.
-     *
-     * @internal
-     */
-    private scaleElements: boolean;
-    /**
      * HTML component's options.
      */
     public options: HTMLComponent.HTMLComponentOptions;
@@ -186,7 +179,6 @@ class HTMLComponent extends Component {
 
         this.type = 'HTML';
         this.elements = [];
-        this.scaleElements = !!this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -238,10 +230,6 @@ class HTMLComponent extends Component {
 
         this.parentElement.appendChild(this.element);
 
-        if (this.scaleElements) {
-            this.autoScale();
-        }
-
         this.emit({ type: 'afterLoad' });
 
         if (isError) {
@@ -252,45 +240,6 @@ class HTMLComponent extends Component {
         }
 
         return this;
-    }
-
-    /**
-     * Handle scaling inner elements.
-     *
-     * @internal
-     */
-    public autoScale(): void {
-        this.element.style.display = 'flex';
-        this.element.style.flexDirection = 'column';
-
-        this.contentElement.childNodes.forEach((element): void => {
-            if (element && element instanceof HTMLElement) {
-                element.style.width = 'auto';
-                element.style.maxWidth = '100%';
-                element.style.maxHeight = '100%';
-                element.style.flexBasis = 'auto';
-                element.style.overflow = 'auto';
-            }
-        });
-
-        if (this.options.scaleElements) {
-            this.scaleText();
-        }
-    }
-
-    /**
-     * Basic font size scaling
-     *
-     * @internal
-     */
-    public scaleText(): void {
-        this.contentElement.childNodes.forEach((element): void => {
-            if (element instanceof HTMLElement) {
-                element.style.fontSize = Math.max(
-                    Math.min(element.clientWidth / (1 * 10), 200), 20
-                ) + 'px';
-            }
-        });
     }
 
     public render(): this {
@@ -312,9 +261,6 @@ class HTMLComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        if (this.scaleElements) {
-            this.scaleText();
-        }
         super.resize(width, height);
         return this;
     }
@@ -433,16 +379,9 @@ namespace HTMLComponent {
          */
         elements?: (AST.Node | string)[];
         type: 'HTML';
-        /**
-         * Enables auto-scaling of the elements inside the component.
-         *
-         * @internal
-         */
-        scaleElements?: boolean;
     }
     /** @internal */
     export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
-        scaleElements?: boolean;
         type: 'HTML'
     }
 
