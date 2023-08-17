@@ -44,5 +44,3 @@ To create a dashboard with Vue, please follow the steps below: <br>
     - `isAsync` - whether the dashboard should be rendered asynchronously or not - useful when using external data resources
 
 See how it works in this [basic live example](https://stackblitz.com/edit/dashboards-vue3-urkttx?file=src%2FApp.vue).
-
-*In case something is unclear, you encounter a problem, or simply have a question, feel free to ask us on our [Support Forum](https://www.highcharts.com/forum). Our team will gladly answer your Dashboards-related questions from Monday to Friday.*
