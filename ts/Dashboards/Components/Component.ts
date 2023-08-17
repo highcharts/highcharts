@@ -117,17 +117,25 @@ abstract class Component {
     ): HTMLElement | undefined {
         if (typeof textOptions === 'object') {
             const { className, text, style } = textOptions;
-            return createElement(tagName, {
-                className: className || `${classNamePrefix}component-${elementName}`,
-                textContent: text
-            }, style);
+            return createElement(
+                tagName,
+                {
+                    className: className || `${classNamePrefix}component-${elementName}`,
+                    textContent: text
+                },
+                style
+            );
         }
 
         if (typeof textOptions === 'string') {
-            return createElement(tagName, {
-                className: `${classNamePrefix}component-${elementName}`,
-                textContent: textOptions
-            });
+            return createElement(
+                tagName,
+                {
+                    className: `${classNamePrefix}component-${elementName}`,
+                    textContent: textOptions
+                },
+                {}
+            );
         }
     }
 
@@ -337,37 +345,29 @@ abstract class Component {
     ) {
         this.board = cell.row.layout.board;
 
-        this.cell = cell;
-        // TODO: Change the TS of cell.
         this.parentElement = cell.container!;
-        this.attachCellListeneres();
 
+        this.cell = cell;
 
         this.options = merge(
             Component.defaultOptions as Required<Component.ComponentOptions>,
             options
         );
+
         this.id = this.options.id && this.options.id.length ?
             this.options.id :
             uniqueKey();
 
-        // Todo: we might want to handle this later
-
-        this.hasLoaded = false;
-        this.shouldRerender = true;
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
-        // Initial dimensions
         this.dimensions = {
             width: null,
             height: null
         };
 
-
-        this.filterAndAssignSyncOptions();
         this.element = createElement(
             'div',
             {
@@ -377,14 +377,23 @@ abstract class Component {
             this.parentElement
         );
 
-        this.contentElement = createElement('div', {
-            className: `${this.options.className}-content`
-        }, {
-            height: '100%'
-        }, void 0, true);
+        this.contentElement = createElement(
+            'div', {
+                className: `${this.options.className}-content`
+            }, {
+                height: '100%'
+            },
+            this.element,
+            true
+        );
 
-        this.addComponentTitleAndCaption();
+        this.filterAndAssignSyncOptions();
         this.setupEventListeners();
+        this.attachCellListeneres();
+
+        // Todo: we might want to handle this later
+        this.hasLoaded = false;
+        this.shouldRerender = true;
     }
 
     /**
@@ -803,34 +812,12 @@ abstract class Component {
 
         this.options = merge(this.options, newOptions);
 
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.shouldRerender = true;
             this.render();
         }
 
-    }
-
-    /**
-     * Private method which sets the title and caption of the component.
-     * Then appends them to the component's container.
-     *
-     * @internal
-     */
-    private addComponentTitleAndCaption(): void {
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
-        [
-            this.titleElement,
-            this.contentElement,
-            this.captionElement
-        ].forEach((element): void => {
-            if (element) {
-                this.element.appendChild(element);
-            }
-        });
     }
 
     /**
@@ -873,24 +860,45 @@ abstract class Component {
      * The options for the title.
      */
     public setTitle(titleOptions: Component.TextOptionsType): void {
-        const titleElement = this.titleElement;
+        const titleElement = this.titleElement,
+            shouldExist =
+                titleOptions &&
+                (typeof titleOptions === 'string' || titleOptions.text);
 
-        // If no title is set, remove it.
-        if (titleElement &&
-            (!titleOptions ||
-                !(typeof titleOptions === 'string' || titleOptions.text)
-            )
-        ) {
-            titleElement.remove();
-            return;
-        }
+        if (!titleElement) {
+            if (shouldExist) {
+                this.titleElement =
+                    Component.createTextElement(
+                        'h1',
+                        'title',
+                        titleOptions
+                    );
 
-        const newTitle =
-            Component.createTextElement('h1', 'title', titleOptions);
+                if (this.titleElement) {
+                    this.element.insertBefore(
+                        this.titleElement,
+                        this.element.firstChild
+                    );
+                }
+            }
+        } else {
+            if (shouldExist) {
+                const newTitle =
+                    Component.createTextElement('h1', 'title', titleOptions);
 
-        if (newTitle) {
-            this.titleElement = newTitle;
-            titleElement?.replaceWith(this.titleElement);
+                if (newTitle) {
+                    this.element.insertBefore(
+                        newTitle,
+                        this.element.firstChild
+                    );
+
+                    titleElement.replaceWith(newTitle);
+                    this.titleElement = newTitle;
+                }
+            } else {
+                titleElement.remove();
+                return;
+            }
         }
     }
 
@@ -901,24 +909,41 @@ abstract class Component {
      * The options for the caption.
      */
     public setCaption(captionOptions: Component.TextOptionsType): void {
-        const captionElement = this.captionElement;
+        const captionElement = this.captionElement,
+            shouldExist =
+                captionOptions &&
+                (typeof captionOptions === 'string' || captionOptions.text);
 
-        // If no caption is set, remove it.
-        if (captionElement &&
-            (!captionOptions ||
-                !(typeof captionOptions === 'string' || captionOptions.text)
-            )
-        ) {
-            captionElement.remove();
-            return;
-        }
+        if (!captionElement) {
+            if (shouldExist) {
+                this.captionElement =
+                    Component.createTextElement(
+                        'div',
+                        'caption',
+                        captionOptions
+                    );
 
-        const newCaption =
-            Component.createTextElement('div', 'caption', captionOptions);
+                if (this.captionElement) {
+                    this.element.appendChild(this.captionElement);
+                }
+            }
+        } else {
+            if (shouldExist) {
+                const newTitle =
+                    Component.createTextElement(
+                        'div',
+                        'caption',
+                        captionOptions
+                    );
 
-        if (newCaption) {
-            this.captionElement = newCaption;
-            captionElement?.replaceWith(captionElement);
+                if (newTitle) {
+                    captionElement.replaceWith(newTitle);
+                    this.captionElement = newTitle;
+                }
+            } else {
+                captionElement.remove();
+                return;
+            }
         }
     }
 
@@ -955,6 +980,9 @@ abstract class Component {
             // Call resize to fit to the cell.
             this.resizeTo(this.parentElement);
         }
+
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
         return this;
     }
 
