@@ -391,12 +391,18 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
+            // Show the loading indicator
+            this.cell.setLoadingState(true);
+
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
             this.shouldRedraw = true;
             this.redraw();
+
+            // Hide the loading indicator
+            this.cell.setLoadingState(false);
         }
         return this;
     }

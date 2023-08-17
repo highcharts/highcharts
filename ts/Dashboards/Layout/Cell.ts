@@ -590,6 +590,16 @@ class Cell extends GUIElement {
         }
     }
 
+    public setLoadingState(enabled: boolean): void {
+        const cell = this;
+        if (cell.container) {
+            cell.container.classList.toggle(
+                Globals.classNames.cellLoading,
+                enabled
+            );
+        }
+    }
+
     private convertWidthToValue(
         width: (number|string)
     ): string {
