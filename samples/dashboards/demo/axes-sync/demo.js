@@ -110,9 +110,6 @@ Dashboards.board('container', {
                 title: {
                     text: 'Global'
                 },
-                subtitle: {
-                    text: ''
-                },
                 legend: {
                     enabled: false
                 },

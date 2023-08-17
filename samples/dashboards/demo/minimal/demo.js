@@ -123,7 +123,7 @@ Dashboards.board('container', {
                 },
                 plotLines: [{
                     value: 900,
-                    zIndex: 20,
+                    zIndex: 7,
                     dashStyle: 'shortDash',
                     label: {
                         text: 'RDA',
