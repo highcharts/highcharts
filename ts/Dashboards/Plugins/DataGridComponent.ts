@@ -367,12 +367,6 @@ class DataGridComponent extends Component {
     }
 
     /** @private */
-    public redraw(): this {
-        super.redraw();
-        return this.render();
-    }
-
-    /** @private */
     public resize(
         width?: number|null,
         height?: number|null

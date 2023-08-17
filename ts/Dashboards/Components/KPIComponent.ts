@@ -232,12 +232,6 @@ class KPIComponent extends Component {
      * @internal
      */
     private prevValue?: number;
-    /**
-     * Flag used in resize method to avoid multi redraws.
-     *
-     * @internal
-     */
-    private updatingSize?: boolean;
 
     /* *
      *
@@ -332,14 +326,14 @@ class KPIComponent extends Component {
             this.chart.reflow();
         }
 
-        this.updatingSize = false;
-
         return this;
     }
 
 
     public render(): this {
         super.render();
+        this.updateElements();
+
         const charter = KPIComponent.charter;
 
         if (
@@ -365,12 +359,6 @@ class KPIComponent extends Component {
         return this;
     }
 
-    public redraw(): this {
-        super.redraw();
-        this.updateElements();
-        return this;
-    }
-
     /**
      * Internal method for handling option updates.
      *
@@ -386,7 +374,7 @@ class KPIComponent extends Component {
      */
     public async update(
         options: Partial<KPIComponent.ComponentOptions>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
         this.setOptions();
@@ -394,7 +382,7 @@ class KPIComponent extends Component {
             this.chart.update(options.chartOptions);
         }
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
     }
 
     /**

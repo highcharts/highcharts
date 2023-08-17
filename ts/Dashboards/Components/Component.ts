@@ -181,7 +181,7 @@ abstract class Component {
      */
     public cell: Cell;
     /**
-     * Defalut sync Handlers
+     * Default sync Handlers.
      */
     public static syncHandlers: Sync.OptionsRecord = {};
     /**
@@ -245,19 +245,19 @@ abstract class Component {
      */
     public callbackRegistry = new CallbackRegistry();
     /**
-     * The interval for redrawing the component on data changes.
+     * The interval for rendering the component on data changes.
      * @internal
      */
     private tableEventTimeout?: number;
     /**
-     * Event listeners tied to the current DataTable. Used for redrawing the
+     * Event listeners tied to the current DataTable. Used for rerendering the
      * component on data changes.
      *
      * @internal
      */
     private tableEvents: Function[] = [];
     /**
-     * Event listeners tied to the parent cell. Used for redrawing/resizing the
+     * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
      *
      * @internal
@@ -271,7 +271,7 @@ abstract class Component {
     /**
      * @internal
      */
-    protected shouldRedraw: boolean;
+    protected shouldRerender: boolean;
     /**
      * @internal
      */
@@ -354,7 +354,7 @@ abstract class Component {
         // Todo: we might want to handle this later
 
         this.hasLoaded = false;
-        this.shouldRedraw = true;
+        this.shouldRerender = true;
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
 
@@ -383,7 +383,7 @@ abstract class Component {
     }
 
     /**
-     * Inits connectors for the component and redraws it.
+     * Inits connectors for the component and rerenders it.
      *
      * @returns
      * Promise resolving to the component.
@@ -397,8 +397,8 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-            this.shouldRedraw = true;
-            this.redraw();
+            this.shouldRerender = true;
+            this.render();
         }
         return this;
     }
@@ -768,16 +768,16 @@ abstract class Component {
      * @param newOptions
      * The options to apply.
      *
-     * @param redraw
-     * Set to true if the update should redraw the component.
+     * @param shouldRerender
+     * Set to true if the update should rerender the component.
      */
     public async update(
         newOptions: Partial<Component.ComponentOptions>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
             options: newOptions,
-            shouldForceRedraw: false
+            shouldForceRerender: false
         };
 
         // Update options
@@ -793,7 +793,7 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-            this.shouldRedraw = true;
+            this.shouldRerender = true;
         }
 
         this.options = merge(this.options, newOptions);
@@ -801,8 +801,9 @@ abstract class Component {
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
 
-        if (redraw || eventObject.shouldForceRedraw) {
-            this.redraw();
+        if (shouldRerender || eventObject.shouldForceRerender) {
+            this.shouldRerender = true;
+            this.render();
         }
 
     }
@@ -927,7 +928,7 @@ abstract class Component {
     public load(): this {
 
         this.hasLoaded = true;
-        this.shouldRedraw = false;
+        this.shouldRerender = false;
 
         return this;
     }
@@ -944,7 +945,7 @@ abstract class Component {
         /**
          * TODO: make this call load on initial render
          */
-        if (this.shouldRedraw || !this.hasLoaded) {
+        if (this.shouldRerender || !this.hasLoaded) {
             this.load();
             // Call resize to fit to the cell.
             this.resizeTo(this.parentElement);
@@ -953,30 +954,12 @@ abstract class Component {
     }
 
     /**
-     * Redraws the component.
-     * @returns
-     * The component for chaining.
-     */
-    public redraw(): this {
-        // Do a redraw
-        const e = {
-            component: this
-        };
-
-        fireEvent(this, 'redraw', e);
-
-        this.shouldRedraw = true; // set to make render call load as well
-
-        return this.render();
-    }
-
-    /**
      * Destroys the component.
      */
     public destroy(): void {
         /**
          * TODO: Should perhaps also remove the component from the registry
-         * or set an `isactive` flag to false.
+         * or set an `isActive` flag to false.
          */
 
         while (this.element.firstChild) {
@@ -1125,7 +1108,6 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
-        RedrawEvent |
         JSONEvent |
         PresentationModifierEvent;
 
@@ -1146,8 +1128,6 @@ namespace Component {
 
     /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
-    /** @internal */
-    export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
     /** @internal */
     export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
 

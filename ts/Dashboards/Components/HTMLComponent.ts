@@ -186,7 +186,7 @@ class HTMLComponent extends Component {
 
         this.on('tableChanged', (e: Component.EventTypes): void => {
             if ('detail' in e && e.detail && e.detail.sender !== this.id) {
-                this.redraw();
+                this.render();
             }
         });
     }
@@ -245,15 +245,8 @@ class HTMLComponent extends Component {
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
-        this.emit({ type: 'afterRender' });
-        return this;
-    }
-
-    public redraw(): this {
-        super.redraw();
         this.constructTree();
-
-        this.emit({ type: 'afterRedraw' });
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -285,7 +278,7 @@ class HTMLComponent extends Component {
      * @internal
      */
     private constructTree(): void {
-        // Remove old tree if redrawing
+        // Remove old tree if rerendering.
         while (this.contentElement.firstChild) {
             this.contentElement.firstChild.remove();
         }

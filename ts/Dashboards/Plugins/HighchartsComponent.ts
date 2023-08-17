@@ -562,7 +562,7 @@ class HighchartsComponent extends Component {
      */
     public async update(
         options: Partial<HighchartsComponent.Options>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
@@ -573,7 +573,7 @@ class HighchartsComponent extends Component {
         }
         this.emit({ type: 'afterUpdate' });
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
     }
 
     /**
@@ -694,8 +694,6 @@ class HighchartsComponent extends Component {
 
                 series.setData(seriesData);
             });
-
-            /* chart.redraw(); */
         }
     }
 

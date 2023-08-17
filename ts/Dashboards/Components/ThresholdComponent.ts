@@ -214,12 +214,6 @@ class ThresholdComponent extends Component {
 
         return this;
     }
-
-    public redraw(): this {
-        super.redraw();
-        return this.render();
-    }
-
 }
 
 namespace ThresholdComponent {
