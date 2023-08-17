@@ -14,15 +14,11 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'Top'
-                }]
-            }, {
-                cells: [{
-                    id: 'Middle-left'
+                    id: 'Top-left'
                 }, {
-                    id: 'Middle-middle'
+                    id: 'Top-middle'
                 }, {
-                    id: 'Middle-right'
+                    id: 'Top-right'
                 }]
             }, {
                 cells: [{
@@ -32,25 +28,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'Top',
-        type: 'Navigator',
-        connector: {
-            id: 'Economy'
-        },
-        columnAssignments: {
-            Year: 'Economy'
-        },
-        sync: {
-            crossfilter: true,
-            extremes: true
-        },
-        chartOptions: {
-            chart: {
-                height: 100
-            }
-        }
-    }, {
-        cell: 'Middle-left',
+        cell: 'Top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -63,7 +41,7 @@ Dashboards.board('container', {
             extremes: true
         }
     }, {
-        cell: 'Middle-middle',
+        cell: 'Top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -76,7 +54,7 @@ Dashboards.board('container', {
             extremes: true
         }
     }, {
-        cell: 'Middle-right',
+        cell: 'Top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -93,6 +71,19 @@ Dashboards.board('container', {
         type: 'DataGrid',
         connector: {
             id: 'Economy'
+        },
+        dataGridOptions: {
+            columns: {
+                Agriculture: {
+                    cellFormat: '{value:.1f}%'
+                },
+                Industry: {
+                    cellFormat: '{value:.1f}%'
+                },
+                Services: {
+                    cellFormat: '{value:.1f}%'
+                }
+            }
         },
         sync: {
             extremes: true
