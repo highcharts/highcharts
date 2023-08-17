@@ -441,10 +441,6 @@ class HighchartsComponent extends Component {
         }
 
         this.innerResizeTimeouts = [];
-
-        // Add the component instance to the registry
-        Component.addInstance(this);
-
     }
 
     /* *
