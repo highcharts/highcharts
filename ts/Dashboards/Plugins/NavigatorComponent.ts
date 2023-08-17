@@ -21,7 +21,6 @@
  * */
 
 
-import type Cell from '../Layout/Cell';
 import type {
     Axis,
     AxisExtremesObject,
@@ -29,15 +28,17 @@ import type {
     Highcharts as H,
     Options as HighchartsOptions
 } from './HighchartsTypes';
+import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
+import type { RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
-import Globals from '../Globals.js';
-import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataModifier from '../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
+import Globals from '../Globals.js';
+import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -72,87 +73,100 @@ const navigatorComponentSync = {
  * */
 
 
+/** @internal */
+function addRangeOptions(
+    ranges: Array<RangeModifierRangeOptions>,
+    column: string,
+    minValue: (boolean|number|string),
+    maxValue: (boolean|number|string)
+): void {
+    let changed = false;
+
+    for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
+        if (ranges[i].column === column) {
+            ranges[i].maxValue = maxValue;
+            ranges[i].minValue = minValue;
+            changed = true;
+            break;
+        }
+    }
+
+    if (!changed) {
+        ranges.push({ column, maxValue, minValue });
+    }
+}
+
+
+/** @internal */
 function crossfilterEmitter(
     this: Component
 ): (Function|undefined) {
+    const component = this as NavigatorComponent;
 
-    if (!(this instanceof NavigatorComponent)) {
-        return;
-    }
+    const extremesHandler = async (
+        axis: Axis,
+        extremes: AxisExtremesObject
+    ): Promise<void> => {
 
-    const component = this;
+        if (!component.connector) {
+            return;
+        }
+
+        const table = component.connector.table,
+            dataCursor = component.board.dataCursor,
+            filterColumn = component.getColumn(),
+            [min, max] = getAxisExtremes(axis, extremes);
+
+        let modifier = table.getModifier();
+
+        if (modifier instanceof RangeModifier) {
+            addRangeOptions(
+                modifier.options.ranges,
+                filterColumn,
+                min,
+                max
+            );
+        } else {
+            modifier = new RangeModifier({
+                ranges: [{
+                    column: filterColumn,
+                    maxValue: max,
+                    minValue: min
+                }]
+            });
+        }
+
+        await table.setModifier(modifier);
+
+        dataCursor.emitCursor(
+            table,
+            {
+                type: 'range',
+                columns: [filterColumn],
+                firstRow: 0,
+                lastRow: table.getRowCount() - 1,
+                state: 'crossfilter'
+            },
+            extremes as unknown as Event
+        );
+    };
+
+    let delay: number;
 
     return addEvent(
-        this.chart.xAxis[0],
+        component.chart.xAxis[0],
         'afterSetExtremes',
-        async function (extremes: AxisExtremesObject): Promise<void> {
-
-            if (!component.connector) {
-                return;
-            }
-
-            const table = component.connector.table,
-                dataCursor = component.board.dataCursor,
-                filterColumn = component.getColumn(),
-                [min, max] =
-                    getAxisExtremes(this, extremes);
-
-            let modifier = table.getModifier();
-
-            if (modifier instanceof RangeModifier) {
-                let changed = false;
-
-                for (const range of modifier.options.ranges) {
-                    if (range.column === filterColumn) {
-                        range.minValue = min;
-                        range.maxValue = max;
-                        changed = true;
-                        break;
-                    }
-                }
-
-                if (!changed) {
-                    modifier.options.ranges.push({
-                        column: filterColumn,
-                        maxValue: max,
-                        minValue: min
-                    });
-                }
-            } else {
-                modifier = new RangeModifier({
-                    ranges: [{
-                        column: filterColumn,
-                        maxValue: max,
-                        minValue: min
-                    }]
-                });
-            }
-
-            await table.setModifier(modifier);
-
-            dataCursor.emitCursor(
-                table,
-                {
-                    type: 'range',
-                    columns: [filterColumn],
-                    firstRow: 0,
-                    lastRow: table.getRowCount() - 1,
-                    state: 'crossfilter'
-                },
-                extremes as unknown as Event
-            );
+        function (extremes: AxisExtremesObject): void {
+            clearTimeout(delay);
+            delay = setTimeout(extremesHandler, 50, this, extremes);
         }
     );
 }
 
 
+/** @internal */
 function extremesReceiver(this: Component): void {
-
-    if (!(this instanceof NavigatorComponent)) {
-        return;
-    }
-
-    const component = this,
+    const component = this as NavigatorComponent,
         dataCursor = component.board.dataCursor;
 
     const extremesListener = (e: DataCursor.Event): void => {
@@ -198,24 +212,19 @@ function extremesReceiver(this: Component): void {
                 max !== null && typeof max !== 'undefined' &&
                 min !== null && typeof min !== 'undefined'
             ) {
-                if (ranges[0].column === extremesColumn) {
-                    ranges[0].maxValue = min;
-                    ranges[0].minValue = min;
-                } else {
-                    ranges.unshift({
-                        column: extremesColumn,
-                        maxValue: max,
-                        minValue: min
-                    });
-                }
-
+                removeRangeOptions(ranges, extremesColumn);
+                ranges.unshift({
+                    column: extremesColumn,
+                    maxValue: max,
+                    minValue: min
+                });
                 table.setModifier(modifier);
             }
         }
     };
 
     const registerCursorListeners = (): void => {
-        const table = component.connector?.table;
+        const table = component.connector && component.connector.table;
 
         if (table) {
             dataCursor.addListener(
@@ -237,7 +246,7 @@ function extremesReceiver(this: Component): void {
     };
 
     const unregisterCursorListeners = (): void => {
-        const table = component.connector?.table;
+        const table = component.connector && component.connector.table;
 
         if (table) {
             dataCursor.removeListener(
@@ -265,6 +274,7 @@ function extremesReceiver(this: Component): void {
 }
 
 
+/** @internal */
 function getAxisExtremes(
     axis: Axis,
     extremes: AxisExtremesObject
@@ -288,6 +298,19 @@ function getAxisExtremes(
     }
 
     return [min, max];
+}
+
+
+/** @internal */
+function removeRangeOptions(
+    ranges: Array<RangeModifierRangeOptions>,
+    column: string
+): (RangeModifierRangeOptions|undefined) {
+    for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
+        if (ranges[i].column === column) {
+            return ranges.splice(i, 1)[0];
+        }
+    }
 }
 
 
@@ -431,7 +454,8 @@ class NavigatorComponent extends Component {
             chartUpdates: HighchartsOptions = {
                 title: {
                     text: pick(
-                        chart.userOptions.title?.text,
+                        chart.userOptions.title &&
+                        chart.userOptions.title.text,
                         this.getColumn(true)
                     )
                 }
@@ -462,9 +486,11 @@ class NavigatorComponent extends Component {
 
             chart.update(chartUpdates, false);
 
-            navigator.series?.[0].update({
-                type: chart.series[0].type
-            }, false);
+            if (navigator.series) {
+                navigator.series[0].update({
+                    type: chart.series[0].type
+                }, false);
+            }
         } else {
             chart.update(chartUpdates, false);
         }
@@ -546,7 +572,7 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart,
-            table = this.connector?.table;
+            table = this.connector && this.connector.table;
 
         if (table) {
             const options = this.options,
