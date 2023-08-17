@@ -379,6 +379,7 @@ abstract class Component {
         }, void 0, true);
 
         this.addComponentTitleAndCaption();
+        this.setupEventListeners();
     }
 
     /**
@@ -809,6 +810,8 @@ abstract class Component {
     /**
      * Private method which sets the title and caption of the component.
      * Then appends them to the component's container.
+     *
+     * @internal
      */
     private addComponentTitleAndCaption(): void {
         this.setTitle(this.options.title);
@@ -822,6 +825,39 @@ abstract class Component {
                 this.element.appendChild(element);
             }
         });
+    }
+
+    /**
+     * Private method which sets up event listeners for the component.
+     *
+     * @internal
+     */
+    private setupEventListeners(): void {
+        const events = this.options.events;
+
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+
+        // TODO: Replace with a resize observer.
+        window.addEventListener(
+            'resize',
+            (): void => this.resizeTo(this.parentElement)
+        );
     }
 
     /**
@@ -889,34 +925,6 @@ abstract class Component {
      * @internal
      */
     public load(): this {
-
-        // Setup event listeners
-        // Grabbed from Chart.ts
-        const events = this.options.events;
-
-        if (events) {
-            Object.keys(events).forEach((key): void => {
-                const eventCallback = (events as any)[key];
-
-                if (eventCallback) {
-                    this.callbackRegistry.addCallback(key, {
-                        type: 'component',
-                        func: eventCallback
-                    });
-                }
-            });
-            objectEach(events, (eventCallback, eventType): void => {
-                if (isFunction(eventCallback)) {
-                    this.on(eventType as any, eventCallback as any);
-                }
-            });
-        }
-
-        // TODO: should cleanup this event listener
-        window.addEventListener(
-            'resize',
-            (): void => this.resizeTo(this.parentElement)
-        );
 
         this.hasLoaded = true;
         this.shouldRedraw = false;
