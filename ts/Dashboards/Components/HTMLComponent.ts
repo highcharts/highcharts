@@ -228,8 +228,6 @@ class HTMLComponent extends Component {
 
         this.constructTree();
 
-        this.parentElement.appendChild(this.element);
-
         this.emit({ type: 'afterLoad' });
 
         if (isError) {

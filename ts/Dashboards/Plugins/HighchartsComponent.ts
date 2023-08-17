@@ -412,7 +412,7 @@ class HighchartsComponent extends Component {
             'figure',
             void 0,
             void 0,
-            void 0,
+            this.contentElement,
             true
         );
 
@@ -453,8 +453,7 @@ class HighchartsComponent extends Component {
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
-        this.parentElement.appendChild(this.element);
-        this.contentElement.appendChild(this.chartContainer);
+
         this.hasLoaded = true;
 
         this.emit({ type: 'afterLoad' });

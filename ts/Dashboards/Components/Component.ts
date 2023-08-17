@@ -368,9 +368,14 @@ abstract class Component {
 
 
         this.filterAndAssignSyncOptions();
-        this.element = createElement('div', {
-            className: this.options.className
-        });
+        this.element = createElement(
+            'div',
+            {
+                className: this.options.className
+            },
+            {},
+            this.parentElement
+        );
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`

@@ -283,7 +283,6 @@ class DataGridComponent extends Component {
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
-        this.parentElement.appendChild(this.element);
         this.hasLoaded = true;
 
         if (

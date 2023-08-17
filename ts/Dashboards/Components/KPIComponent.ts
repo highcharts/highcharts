@@ -309,7 +309,6 @@ class KPIComponent extends Component {
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
-        this.parentElement.appendChild(this.element);
 
         this.updateElements();
 
