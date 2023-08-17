@@ -163,8 +163,6 @@ class DataCursor {
      * });
      * ```
      *
-     * @function #emitCursor
-     *
      * @param {Data.DataTable} table
      * The related table of the cursor.
      *
@@ -186,13 +184,67 @@ class DataCursor {
         cursor: DataCursor.Type,
         event?: Event,
         lasting?: boolean
+    ): this;
+
+    /**
+     * @param {Data.DataTable} table
+     * The related table of the cursor.
+     *
+     * @param {string} group
+     * The related group on the table.
+     *
+     * @param {Data.DataCursor.Type} cursor
+     * The state cursor to emit.
+     *
+     * @param {Event} [event]
+     * Optional event information from a related source.
+     *
+     * @param {boolean} [lasting]
+     * Whether this state cursor should be kept until it is cleared with
+     * {@link DataCursor#remitCursor}.
+     *
+     * @return {Data.DataCursor}
+     * Returns the DataCursor instance for a call chain.
+     */
+    public emitCursor(
+        table: DataTable,
+        group: string,
+        cursor: DataCursor.Type,
+        event?: Event,
+        lasting?: boolean
+    ): this;
+
+    // Implementation
+    public emitCursor(
+        table: DataTable,
+        groupOrCursor: (string|DataCursor.Type),
+        cursorOrEvent?: (DataCursor.Type|Event),
+        eventOrLasting?: (Event|boolean),
+        lasting?: boolean
     ): this {
-        const tableId = table.id,
+        const cursor = (
+                typeof groupOrCursor === 'object' ?
+                    groupOrCursor :
+                    cursorOrEvent as DataCursor.Type
+            ),
+            event = (
+                typeof eventOrLasting === 'object' ?
+                    eventOrLasting :
+                    cursorOrEvent as Event
+            ),
+            group = (
+                typeof groupOrCursor === 'string' ?
+                    groupOrCursor :
+                    void 0
+            ),
+            tableId = table.id,
             state = cursor.state,
             listeners = (
                 this.listenerMap[tableId] &&
                 this.listenerMap[tableId][state]
             );
+
+        lasting = (lasting || eventOrLasting === true);
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
@@ -200,12 +252,12 @@ class DataCursor {
                 {}
             );
 
-            let cursors = stateMap[cursor.state];
+            const cursors = stateMap[cursor.state] || [];
 
             if (lasting) {
 
-                if (!cursors) {
-                    cursors = stateMap[cursor.state] = [];
+                if (!cursors.length) {
+                    stateMap[cursor.state] = cursors;
                 }
 
                 if (DataCursor.getIndex(cursor, cursors) === -1) {
@@ -215,12 +267,16 @@ class DataCursor {
 
             const e: DataCursor.Event = {
                 cursor,
-                cursors: cursors || [],
+                cursors,
                 table
             };
 
             if (event) {
                 e.event = event;
+            }
+
+            if (group) {
+                e.group = group;
             }
 
             const emittingRegister = this.emittingRegister,
@@ -361,9 +417,10 @@ namespace DataCursor {
     }
 
     export interface Event {
-        event?: globalThis.Event;
         cursor: Type;
         cursors: Array<Type>;
+        event?: globalThis.Event;
+        group?: string;
         table: DataTable;
     }
 

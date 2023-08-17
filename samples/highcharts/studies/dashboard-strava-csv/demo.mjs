@@ -226,7 +226,6 @@ const components = state => [
         type: "html",
         connector,
         title: "Datasource",
-        scaleElements: false,
         elements: [
             {
                 tagName: "label",
@@ -261,7 +260,6 @@ const components = state => [
         type: "html",
         connector,
         title: "Filters",
-        scaleElements: false,
         elements: [
             ...generateChecks(),
             { tagName: 'br' },
@@ -573,7 +571,6 @@ const components = state => [
         cell: "table",
         type: "html",
         connector,
-        scaleElements: false,
         title: 'Activities',
         style: {
             boxShadow: 'none',

@@ -62,12 +62,12 @@ function jsDocESMDTS() {
                 product => dtsFile.endsWith(`${product}.src.d.ts`)
             ) ?
                 [
-                    `import * as Highcharts from '${source}';`,
+                    `import * as Highcharts from '${fsLib.path(source, true)}';`,
                     'export default Highcharts;',
                     ''
                 ].join('\n') :
                 [
-                    `import '${source}';`,
+                    `import '${fsLib.path(source, true)}';`,
                     ''
                 ].join('\n')
         ));

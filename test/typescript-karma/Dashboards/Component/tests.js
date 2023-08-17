@@ -22,8 +22,7 @@ const eventTypes = [
     'tableChanged',
     'setConnector',
     'update',
-    'afterUpdate',
-    'message'
+    'afterUpdate'
 ];
 
 const registeredEvents = [];
@@ -270,8 +269,6 @@ test('Board with data connectors and HighchartsComponent update', async function
     // expectedEvents.push('message', 'message');
 
     // assert.deepEqual(registeredEvents, expectedEvents);
-
-    Component.removeInstance(componentWithConnector);
 });
 
 test('component resizing', function (assert) {
