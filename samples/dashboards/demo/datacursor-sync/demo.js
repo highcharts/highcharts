@@ -48,42 +48,23 @@ Dashboards.board('container', {
     ]
 });
 
-// Build chart options for each HighchartsComponent
 function buildChartOptions(type, table, cursor) {
+
     const typeString = type.charAt(0).toUpperCase() + type.slice(1);
+    const seriesOptions = type === 'pie' ? {
+        innerSize: '60%',
+        dataLabels: {
+            enabled: true
+        }
+    } :
+        {};
 
     return {
         chart: {
-            spacing: [20, 20, 0, 20],
-            margin: [50, 50, 80, 100],
             events: {
                 load: function () {
                     const chart = this;
                     const series = chart.series[0];
-                    if (series.userOptions.type === 'pie') {
-
-                        chart.update({
-                            chart: {
-                                margin: 50,
-                                spacing: 30
-                            },
-                            legend: {
-                                enabled: true,
-                                layout: 'vertical',
-                                align: 'center',
-                                x: -200,
-                                verticalAlign: 'middle'
-                            }
-                        }, false);
-                        series.update({
-                            showInLegend: true,
-                            innerSize: '60%',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        });
-                    }
-
                     // react to table cursor
                     cursor.addListener(table.id, 'point.mouseOver', function (e) {
                         const point = series.data[e.cursor.row];
@@ -132,7 +113,8 @@ function buildChartOptions(type, table, cursor) {
                     }
                 }
             },
-            colorByPoint: type !== 'line'
+            colorByPoint: type !== 'line',
+            ...seriesOptions
         }],
         title: {
             text: table.id  + ' ' + typeString
