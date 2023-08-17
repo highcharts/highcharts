@@ -378,6 +378,7 @@ abstract class Component {
             height: '100%'
         }, void 0, true);
 
+        this.addComponentTitleAndCaption();
     }
 
     /**
@@ -803,7 +804,26 @@ abstract class Component {
     }
 
     /**
+     * Private method which sets the title and caption of the component.
+     * Then appends them to the component's container.
+     */
+    private addComponentTitleAndCaption(): void {
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
+        [
+            this.titleElement,
+            this.contentElement,
+            this.captionElement
+        ].forEach((element): void => {
+            if (element) {
+                this.element.appendChild(element);
+            }
+        });
+    }
+
+    /**
      * Adds title at the top of component's container.
+     *
      * @param titleOptions
      * The options for the title.
      */
@@ -875,22 +895,6 @@ abstract class Component {
      */
     public load(): this {
 
-        // Set up the connector on initial load if it has not been done
-        if (!this.hasLoaded && this.connector) {
-            this.setConnector(this.connector);
-        }
-
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
-        [
-            this.titleElement,
-            this.contentElement,
-            this.captionElement
-        ].forEach((element): void => {
-            if (element) {
-                this.element.appendChild(element);
-            }
-        });
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
