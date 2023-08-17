@@ -143,7 +143,7 @@ function callout(
         halfDistance = 6,
         r = Math.min((options && options.r) || 0, w, h),
         safeDistance = r + halfDistance,
-        anchorX = options && options.anchorX,
+        anchorX = options && options.anchorX || 0,
         anchorY = options && options.anchorY || 0;
 
     const path = roundedRect(x, y, w, h, { r });
@@ -152,8 +152,13 @@ function callout(
         return path;
     }
 
+    // Do not render a connector, if anchor starts inside the label
+    if (anchorX < w && anchorX > 0 && anchorY < h && anchorY > 0) {
+        return path;
+    }
+
     // Anchor on right side
-    if (x + anchorX > w - safeDistance) {
+    if (anchorX > x + w - safeDistance) {
 
         // Chevron
         if (
@@ -182,7 +187,7 @@ function callout(
         }
 
     // Anchor on left side
-    } else if (x + anchorX < safeDistance) {
+    } else if (anchorX < x + safeDistance) {
 
         // Chevron
         if (
@@ -211,8 +216,7 @@ function callout(
         }
 
     } else if ( // replace bottom
-        anchorY > h &&
-        anchorX < w - safeDistance
+        anchorY > h
     ) {
         path.splice(
             5,
@@ -224,8 +228,7 @@ function callout(
         );
 
     } else if ( // replace top
-        anchorY < 0 &&
-        anchorX > safeDistance
+        anchorY < 0
     ) {
         path.splice(
             1,
