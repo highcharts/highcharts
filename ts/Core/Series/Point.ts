@@ -1657,7 +1657,7 @@ namespace Point {
         total?: number;
     }
     export interface SeriesPointsOptions {
-        events?: Highcharts.PointEventsOptionsObject;
+        events?: Record<string, Function>;
     }
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;

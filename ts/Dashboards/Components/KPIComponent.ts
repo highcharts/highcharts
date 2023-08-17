@@ -27,7 +27,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
     Options,
-    Highcharts
+    Highcharts as H
 } from '../Plugins/HighchartsTypes';
 import type TextOptions from './TextOptions';
 import type Types from '../../Shared/Types';
@@ -113,7 +113,7 @@ class KPIComponent extends Component {
      * */
 
     /** @internal */
-    public static charter?: typeof Highcharts;
+    public static charter?: H;
     /**
      * Default options of the KPI component.
      */
@@ -440,7 +440,7 @@ class KPIComponent extends Component {
                 value = value.toLocaleString();
             }
 
-            AST.setElementHTML(this.value, value);
+            AST.setElementHTML(this.value, '' + value);
 
             this.prevValue = prevValue;
         }

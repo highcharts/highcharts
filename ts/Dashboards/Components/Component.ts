@@ -29,7 +29,6 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type Globals from '../Globals';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -45,6 +44,7 @@ const {
 } = DG;
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -532,13 +532,16 @@ abstract class Component {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
                             clearInterval(this.tableEventTimeout);
-                            this.tableEventTimeout = setTimeout((): void => {
-                                this.emit({
-                                    ...e,
-                                    type: 'tableChanged'
-                                });
-                                this.tableEventTimeout = void 0;
-                            }, 0);
+                            this.tableEventTimeout = Globals.win.setTimeout(
+                                (): void => {
+                                    this.emit({
+                                        ...e,
+                                        type: 'tableChanged'
+                                    });
+                                    this.tableEventTimeout = void 0;
+                                },
+                                0
+                            );
                         }));
                 });
             }
