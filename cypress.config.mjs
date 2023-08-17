@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin.js';
 import { lighthouse, prepareAudit } from '@cypress-audit/lighthouse';
 
-import { writeFile } from 'node:fs';
+import { writeFile, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 export default defineConfig({
@@ -23,8 +23,7 @@ export default defineConfig({
             });
             on('task', {
                 lighthouse: lighthouse(lighthouseReport => {
-                    // console.log(lighthouseReport); // raw lighthouse reports
-                    console.log('doing a write');
+                    mkdirSync('tmp', { recursive: true });
                     writeFile(
                         join(
                             'tmp',
