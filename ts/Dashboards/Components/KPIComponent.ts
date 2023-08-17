@@ -457,9 +457,8 @@ class KPIComponent extends Component {
             subtitle
         } = this.options;
 
-        if (this.options.title) {
-            this.setTitle(this.options.title);
-        }
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
 
         this.setValue();
 

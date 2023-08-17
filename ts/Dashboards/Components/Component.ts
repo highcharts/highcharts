@@ -835,17 +835,20 @@ abstract class Component {
 
         // If no title is set, remove it.
         if (titleElement &&
-            (!titleOptions || !(typeof titleOptions === 'string' || titleOptions.text))
+            (!titleOptions ||
+                !(typeof titleOptions === 'string' || titleOptions.text)
+            )
         ) {
             titleElement.remove();
             return;
         }
 
-        const newTitle = Component.createTextElement('h1', 'title', titleOptions);
+        const newTitle =
+            Component.createTextElement('h1', 'title', titleOptions);
 
         if (newTitle) {
             this.titleElement = newTitle;
-            if (titleElement) titleElement.replaceWith(this.titleElement);
+            titleElement?.replaceWith(this.titleElement);
         }
     }
 
@@ -860,17 +863,20 @@ abstract class Component {
 
         // If no caption is set, remove it.
         if (captionElement &&
-            (!captionOptions || !(typeof captionOptions === 'string' || captionOptions.text))
+            (!captionOptions ||
+                !(typeof captionOptions === 'string' || captionOptions.text)
+            )
         ) {
             captionElement.remove();
             return;
         }
 
-        const newCaption = Component.createTextElement('div', 'caption', captionOptions);
+        const newCaption =
+            Component.createTextElement('div', 'caption', captionOptions);
 
         if (newCaption) {
             this.captionElement = newCaption;
-            if (captionElement) captionElement.replaceWith(captionElement);
+            captionElement?.replaceWith(captionElement);
         }
     }
 
