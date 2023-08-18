@@ -29,6 +29,12 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
