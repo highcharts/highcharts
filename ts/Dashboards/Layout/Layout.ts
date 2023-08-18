@@ -139,7 +139,7 @@ class Layout extends GUIElement {
         const layoutOptions = (this.options || {}),
             layoutClassName = layoutOptions.rowClassName || '';
 
-        this.container = this.setElementContainer({
+        this.container = this.getElementContainer({
             render: board.guiEnabled,
             parentContainer: parentContainer,
             attribs: {

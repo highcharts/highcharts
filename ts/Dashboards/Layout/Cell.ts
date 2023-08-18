@@ -139,7 +139,7 @@ class Cell extends GUIElement {
             }
         }
 
-        this.container = this.setElementContainer({
+        this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
             attribs: {

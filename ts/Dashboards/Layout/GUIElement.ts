@@ -146,13 +146,13 @@ abstract class GUIElement {
     * */
 
     /**
-     * Create or set existing HTML element as a GUIElement container.
+     * Create or get existing HTML element as a GUIElement container.
      *
      * @param {GUIElement.ContainerOptions} options
      * Options.
      */
-    protected setElementContainer(
-        options: GUIElement.SetElementContainerOptions
+    protected getElementContainer(
+        options: GUIElement.GetElementContainerOptions
     ): HTMLElement {
         const guiElement = this;
         let elem = createElement(
@@ -252,7 +252,7 @@ abstract class GUIElement {
 }
 
 namespace GUIElement {
-    export interface SetElementContainerOptions {
+    export interface GetElementContainerOptions {
         render?: boolean;
         parentContainer?: HTMLDOMElement;
         attribs?: HTMLAttributes;

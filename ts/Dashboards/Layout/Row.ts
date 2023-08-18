@@ -123,7 +123,7 @@ class Row extends GUIElement {
         const layoutOptions = (layout.options || {}),
             rowClassName = layoutOptions.rowClassName || '';
 
-        this.container = this.setElementContainer({
+        this.container = this.getElementContainer({
             render: layout.board.guiEnabled,
             parentContainer: parentContainer,
             attribs: {
