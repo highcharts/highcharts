@@ -1,11 +1,12 @@
 ---
-name: Earth Statictics August 2022 - GeoHeatmap interpolation
+name: GeoHeatmap with interpolation
 authors:
   - Hubert Kozik
 js_wrap: b
 alt_text: >-
   Highcharts Maps GeoHeatmap series interpolation example showing the
-  possibility of using multiple datasets.
+  possibility of using multiple datasets about Earth Statistics from August
+  2022.
 tags:
   - Highcharts Maps demo
 categories:

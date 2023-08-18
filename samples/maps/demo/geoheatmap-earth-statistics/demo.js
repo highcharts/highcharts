@@ -4,12 +4,12 @@
             'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
         ).then(response => response.json()),
         landDayData = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/geoheatmap-land-sea-day-temp-august_2022.json'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-day-temp-august-2022.json'
         ).then(response => response.json()),
-        data = [{
+        datasets = [{
             type: 'Land Surface (day) and Sea Temperature',
             title: 'Land Surface (day) and Sea Temperature in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/geoheatmap-land-sea-day-temp-august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-day-temp-august-2022.json',
             colorAxis: {
                 min: -20,
                 max: 40,
@@ -33,7 +33,7 @@
         }, {
             type: 'Land Surface (night) and Sea Temperature',
             title: 'Land Surface (night) and Sea Temperature in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/geoheatmap-land-sea-night-temp-august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-night-temp-august-2022.json',
             colorAxis: {
                 min: -20,
                 max: 40,
@@ -57,7 +57,7 @@
         }, {
             type: 'Net Radiation',
             title: 'Net radiation in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/net_radiation_august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/net-radiation-august-2022.json',
             colorAxis: {
                 min: -200,
                 max: 200,
@@ -77,7 +77,7 @@
         }, {
             type: 'Vegetation Index (NDVI)',
             title: 'Vegetation Index (NDVI) in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a4b25b3845/samples/data/ndvi_august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/ndvi-august-2022.json',
             colorAxis: {
                 min: 0,
                 max: 1,
@@ -107,7 +107,7 @@
                         geoheatmap = chart.series[0],
                         datasetSelect = document.getElementById('dataset');
 
-                    data.forEach(el => {
+                    datasets.forEach(el => {
                         const option = document.createElement('option');
                         option.value = el.type;
                         option.innerHTML = el.type;
@@ -118,7 +118,7 @@
                     chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
 
                     async function getDataset(type) {
-                        const dataset = data.find(el => el.type === type);
+                        const dataset = datasets.find(el => el.type === type);
 
                         if (typeof dataset.data === 'undefined') {
                             const apiData = await fetch(dataset.url)
