@@ -304,8 +304,8 @@ class KPIComponent extends Component {
      * */
 
     /** @internal */
-    public load(): this {
-        super.load();
+    public async load(): Promise<this> {
+        await super.load();
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';

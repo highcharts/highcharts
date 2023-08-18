@@ -280,10 +280,9 @@ class DataGridComponent extends Component {
      * Triggered on component initialization.
      * @private
      */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
-        this.hasLoaded = true;
+        await super.load();
 
         if (
             this.connector &&

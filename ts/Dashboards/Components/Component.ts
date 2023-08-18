@@ -271,15 +271,6 @@ abstract class Component {
      * @internal
      */
     private cellListeners: Function[] = [];
-
-    /**
-     * @internal
-     */
-    protected hasLoaded: boolean;
-    /**
-     * @internal
-     */
-    protected shouldRerender: boolean;
     /**
      * @internal
      */
@@ -390,10 +381,6 @@ abstract class Component {
         this.filterAndAssignSyncOptions();
         this.setupEventListeners();
         this.attachCellListeneres();
-
-        // Todo: we might want to handle this later
-        this.hasLoaded = false;
-        this.shouldRerender = true;
     }
 
     /**
@@ -411,7 +398,6 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-            this.shouldRerender = true;
             this.render();
         }
         return this;
@@ -807,14 +793,12 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-            this.shouldRerender = true;
         }
 
         this.options = merge(this.options, newOptions);
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
-            this.shouldRerender = true;
             this.render();
         }
 
@@ -955,10 +939,10 @@ abstract class Component {
      *
      * @internal
      */
-    public load(): this {
+    public async load(): Promise<this> {
 
-        this.hasLoaded = true;
-        this.shouldRerender = false;
+        await this.initConnector();
+        this.render();
 
         return this;
     }
@@ -972,17 +956,10 @@ abstract class Component {
      * @internal
      */
     public render(): this {
-        /**
-         * TODO: make this call load on initial render
-         */
-        if (this.shouldRerender || !this.hasLoaded) {
-            this.load();
-            // Call resize to fit to the cell.
-            this.resizeTo(this.parentElement);
-        }
-
+        this.resizeTo(this.parentElement);
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
+
         return this;
     }
 
@@ -991,8 +968,7 @@ abstract class Component {
      */
     public destroy(): void {
         /**
-         * TODO: Should perhaps also remove the component from the registry
-         * or set an `isActive` flag to false.
+         * TODO: Should perhaps set an `isActive` flag to false.
          */
 
         while (this.element.firstChild) {

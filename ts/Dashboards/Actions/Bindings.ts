@@ -36,7 +36,6 @@ import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge,
     addEvent,
     fireEvent,
     error
@@ -87,11 +86,11 @@ namespace Bindings {
         return guiElement;
     }
 
-    export function addComponent(
+    export async function addComponent(
         options: Partial<ComponentType['options']>,
         cell?: Cell
-    ): (Component|undefined) {
-        // TODO: Check if there are states in the options, and if so, add them
+    ): Promise<(Component|undefined)> {
+    // TODO: Check if there are states in the options, and if so, add them
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
 
@@ -99,8 +98,8 @@ namespace Bindings {
 
         if (!cell || !cell.container || !options.type) {
             error(
-                'The component is misconfigured and is unable to find the ' +
-                'HTML cell element `' + options.cell + '` to render the content.'
+                `The component is misconfigured and is unable to find the
+                HTML cell element ${options.cell} to render the content.`
             );
             return;
         }
@@ -112,9 +111,8 @@ namespace Bindings {
 
         if (!ComponentClass) {
             error(
-                'The component\'s type `' + options.type + '` does not exist.'
+                `The component's type ${options.type} does not exist.`
             );
-
             ComponentClass =
                 ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
@@ -124,23 +122,11 @@ namespace Bindings {
                     Globals.classNamePrefix + 'component-title-error ' +
                     Globals.classNamePrefix + 'component-title'
             };
+
         }
 
-        let board = cell.row.layout.board;
         const component = new ComponentClass(cell, options);
 
-        try {
-            component.render();
-        } catch (e) {
-            component.update({
-                title: {
-                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                }
-            });
-        }
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
 
@@ -181,9 +167,23 @@ namespace Bindings {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
 
+        let promise;
+        try {
+            promise = component.load();
+        } catch (e) {
+            component.update({
+                title: {
+                    text:
+                        cell.row.layout.board?.editMode?.lang.errorMessage,
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                }
+            });
+        }
         fireEvent(component, 'afterLoad');
 
-        return component;
+        return promise;
     }
 
     /** @internal */

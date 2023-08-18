@@ -43,7 +43,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         return;
     }
 
-    const board = Dashboards.board(parentElement, {
+    const board = await Dashboards.board(parentElement, {
         gui: {
             enabled: true,
             layouts: [
@@ -85,7 +85,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 ]
             }
         ]
-    });
+    }, true);
     // Test the HighchartsComponent
     const highchartsComponent = board.mountedComponents[0].component;
 
@@ -131,8 +131,6 @@ test('Board without data connectors and HighchartsComponent update', async funct
         [
             'update',
             'beforeRender',
-            'load',
-            'afterLoad',
             'afterRender'
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
@@ -235,8 +233,6 @@ test('Board with data connectors and HighchartsComponent update', async function
             'setConnector',
             'afterUpdate',
             'beforeRender',
-            'load',
-            'afterLoad',
             'afterRender',
         ],
         'If connector is given in options, it will be attached during load'

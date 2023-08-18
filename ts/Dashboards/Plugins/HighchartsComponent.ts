@@ -450,11 +450,10 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
 
-        this.hasLoaded = true;
+        await super.load();
 
         this.emit({ type: 'afterLoad' });
 

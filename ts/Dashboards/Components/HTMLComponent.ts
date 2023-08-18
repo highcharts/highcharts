@@ -199,11 +199,11 @@ class HTMLComponent extends Component {
      * */
 
     /** @internal */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({
             type: 'load'
         });
-        super.load();
+        await super.load();
         const options = this.options;
         let isError = false;
 
@@ -242,7 +242,7 @@ class HTMLComponent extends Component {
 
     public render(): this {
         this.emit({ type: 'beforeRender' });
-        super.render(); // Fires the render event and calls load
+        super.render();
         this.constructTree();
         this.emit({ type: 'afterRender' });
         return this;
