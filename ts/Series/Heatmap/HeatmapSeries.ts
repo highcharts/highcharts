@@ -46,6 +46,7 @@ const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 
 const {
+    addEvent,
     clamp,
     extend,
     fireEvent,
@@ -443,6 +444,8 @@ class HeatmapSeries extends ScatterSeries {
 
     public valueMin: number = NaN;
 
+    public isDirtyCanvas: boolean = true;
+
     /* *
      *
      *  Functions
@@ -538,7 +541,7 @@ class HeatmapSeries extends ScatterSeries {
                         y: 0
                     };
 
-            if (!image || series.isDirtyData) {
+            if (!image || series.isDirtyData || series.isDirtyCanvas) {
                 const
                     colorAxis = (
                         chart.colorAxis &&
@@ -657,6 +660,7 @@ class HeatmapSeries extends ScatterSeries {
                     }
 
                 }
+                series.isDirtyCanvas = false;
             } else if (
                 image.width !== dimensions.width ||
                 image.height !== dimensions.height
@@ -958,6 +962,11 @@ class HeatmapSeries extends ScatterSeries {
     /* eslint-enable valid-jsdoc */
 
 }
+
+addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
+    this.isDirtyCanvas = true;
+    this.drawPoints();
+});
 
 /* *
  *

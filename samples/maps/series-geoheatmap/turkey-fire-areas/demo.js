@@ -51,8 +51,10 @@ Highcharts.mapChart('container', {
     }, {
         name: 'GeoHeatMap',
         type: 'geoheatmap',
-        interpolation: true,
-        interpolationBlur: 1, // Change the value to change the interpolation blur
+        interpolation: {
+            enabled: true,
+            blur: 1 // Change the value to change the interpolation blur
+        },
         data: [{
             lon: 25,
             lat: 40,

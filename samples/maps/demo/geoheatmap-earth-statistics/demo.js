@@ -210,8 +210,9 @@
         series: [{
             name: 'GeoHeatMap series',
             type: 'geoheatmap',
-            interpolation: true,
-            interpolationBlur: 1
+            interpolation: {
+                enabled: true
+            }
         }, {
             nullColor: '#383838',
             type: 'mapline',

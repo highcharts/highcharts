@@ -96,7 +96,9 @@ QUnit.test('GeoHeatMap Series', assert => {
     );
 
     series.update({
-        interpolation: true
+        interpolation: {
+            enabled: true
+        }
     });
 
     const

@@ -222,27 +222,37 @@ class GeoHeatmapSeries extends MapSeries {
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.interpolation
              */
-            interpolation: false,
-
-            /**
-             * Represents how much blur should be added to the interpolated
-             * image. Works best in the range of 0-1, all higher values would
-             * need a lot more perfomance of the machine to calculate more
-             * detailed interpolation.
-             *
-             *  * **Note:** Useful, if the data is spread into wide range of
-             *  longitue and latitude values.
-             *
-             * @sample maps/series-geoheatmap/turkey-fire-areas
-             *         Simple demo of GeoHeatmap interpolation
-             *
-             * @type      {number}
-             * @default   1
-             * @since     @next
-             * @product   highmaps
-             * @apioption plotOptions.geoheatmap.interpolationBlur
-             */
-            interpolationBlur: 1
+            interpolation: {
+                /**
+                 * Enable or disable the interpolation of the geoheatmap series.
+                 *
+                 * @type      {boolean}
+                 * @default   false
+                 * @since     @next
+                 * @product   highmaps
+                 * @apioption plotOptions.geoheatmap.interpolation.enabled
+                 */
+                enabled: false,
+                /**
+                 * Represents how much blur should be added to the interpolated
+                 * image. Works best in the range of 0-1, all higher values
+                 * would need a lot more perfomance of the machine to calculate
+                 * more detailed interpolation.
+                 *
+                 *  * **Note:** Useful, if the data is spread into wide range of
+                 *  longitue and latitude values.
+                 *
+                 * @sample maps/series-geoheatmap/turkey-fire-areas
+                 *         Simple demo of GeoHeatmap interpolation
+                 *
+                 * @type      {number}
+                 * @default   1
+                 * @since     @next
+                 * @product   highmaps
+                 * @apioption plotOptions.geoheatmap.interpolation.blur
+                 */
+                blur: 1
+            }
 
         } as GeoHeatmapSeriesOptions);
 
@@ -272,22 +282,6 @@ class GeoHeatmapSeries extends MapSeries {
 
     /* eslint-disable valid-jsdoc */
 
-    public init(): void {
-        const series = this;
-
-        super.init.apply(series, arguments);
-
-        if (
-            Object.keys(pick(series.hcEvents, {}))
-                .indexOf('afterDataClassLegendClick') === -1
-        ) {
-            addEvent(series, 'afterDataClassLegendClick', function (): void {
-                series.isDirtyCanvas = true;
-                series.drawPoints();
-            });
-        }
-    }
-
     /**
      * For updated colsize and rowsize options
      * @private
@@ -296,7 +290,7 @@ class GeoHeatmapSeries extends MapSeries {
         const series = this;
 
         series.options = merge(series.options, arguments[0]);
-        if (series.options.interpolation) {
+        if (series.options.interpolation.enabled) {
             series.isDirtyCanvas = true;
 
             series.points.forEach((point): void => {
@@ -315,7 +309,7 @@ class GeoHeatmapSeries extends MapSeries {
      */
     public translate(): void {
         if (
-            this.options.interpolation &&
+            this.options.interpolation.enabled &&
             this.image &&
             !this.isDirty &&
             !this.isDirtyData
@@ -337,7 +331,7 @@ class GeoHeatmapSeries extends MapSeries {
             seriesOptions = series.options,
             interpolation = seriesOptions.interpolation;
 
-        if (interpolation && mapView && series.bounds) {
+        if (interpolation.enabled && mapView && series.bounds) {
             const ctx = series.context || getContext(series),
                 {
                     canvas,
@@ -402,7 +396,7 @@ class GeoHeatmapSeries extends MapSeries {
                         }
                     }
 
-                    const blur = pick(series.options.interpolationBlur, 1),
+                    const blur = pick(series.options.interpolation.blur, 1),
                         blurFactor = blur === 0 ? 1 : blur * 11,
                         upscaledWidth = ~~(canvasWidth * blurFactor),
                         upscaledHeight = ~~(canvasHeight * blurFactor),
@@ -684,6 +678,11 @@ class GeoHeatmapSeries extends MapSeries {
         }
     }
 }
+
+addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
+    this.isDirtyCanvas = true;
+    this.drawPoints();
+});
 
 /* *
  *
