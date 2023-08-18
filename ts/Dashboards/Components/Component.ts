@@ -144,7 +144,6 @@ abstract class Component {
      */
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
-        parentElement: document.body,
         id: '',
         title: false,
         caption: false,
@@ -338,8 +337,7 @@ abstract class Component {
         this.board = cell.row.layout.board;
 
         this.cell = cell;
-        // TODO: Change the TS of cell.
-        this.parentElement = cell.container!;
+        this.parentElement = cell.container;
         this.attachCellListeneres();
 
 
@@ -1182,14 +1180,6 @@ namespace Component {
          * Cell id, where component is attached.
          */
         cell?: string;
-
-        /**
-         * The HTML element or id of HTML element that is used for appending
-         * a component.
-         *
-         * @internal
-         */
-        parentElement: HTMLElement | string;
 
         /**
          * The name of class that is applied to the component's container.
