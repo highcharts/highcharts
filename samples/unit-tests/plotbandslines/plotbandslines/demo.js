@@ -100,7 +100,6 @@ QUnit.test('Plot band labels', function (assert) {
         'Label greater than x axis should not be rendered'
     );
 
-
     assert.close(
         chart.yAxis[0].plotLinesAndBands[0].label.element
             .getBoundingClientRect()
