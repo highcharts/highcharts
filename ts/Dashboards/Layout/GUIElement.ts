@@ -30,7 +30,8 @@ const {
     addEvent,
     createElement,
     uniqueKey,
-    objectEach
+    objectEach,
+    error
 } = U;
 
 abstract class GUIElement {
@@ -152,50 +153,42 @@ abstract class GUIElement {
      */
     protected setElementContainer(
         options: GUIElement.SetElementContainerOptions
-    ): void {
+    ): HTMLElement {
         const guiElement = this;
+        let elem = createElement(
+            'div',
+            options.attribs || {},
+            options.style || {},
+            options.parentContainer
+        );
 
-        let elem;
-
-        // @ToDo use try catch block
-        if (options.render && options.parentContainer) {
-
-            // Purge empty id attribute.
+        if (options.render) {
             if (options.attribs && !options.attribs.id) {
                 delete options.attribs.id;
             }
-
-            guiElement.container = createElement(
-                'div',
-                options.attribs || {},
-                options.style || {},
-                options.parentContainer
-            );
-        } else if (options.element instanceof HTMLElement) { // @ToDo check if this is enough
-            guiElement.container = options.element;
+        } else if (options.element instanceof HTMLElement) {
+            elem = options.element;
         } else if (typeof options.elementId === 'string') {
-            elem = document.getElementById(options.elementId);
+            const div = document.getElementById(options.elementId);
 
-            if (elem) {
-                guiElement.container = elem;
+            if (div) {
+                guiElement.container = div;
             } else {
-                // Error
+                error('Element ' + options.elementId + ' does not exist');
             }
-        } else {
-            // Error
         }
 
         // Set bindedGUIElement event on GUIElement container.
-        if (guiElement.container) {
-            guiElement.removeBindedEventFn = addEvent(
-                guiElement.container,
-                'bindedGUIElement',
-                function (e: GUIElement.BindedGUIElementEvent): void {
-                    e.guiElement = guiElement;
-                    e.stopImmediatePropagation();
-                }
-            );
-        }
+        guiElement.removeBindedEventFn = addEvent(
+            elem,
+            'bindedGUIElement',
+            function (e: GUIElement.BindedGUIElementEvent): void {
+                e.guiElement = guiElement;
+                e.stopImmediatePropagation();
+            }
+        );
+
+        return elem;
     }
 
     /**
