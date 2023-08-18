@@ -22,7 +22,7 @@ jobs:
   #   continue-on-error: true
   #   strategy:
   #     matrix:
-  #       node-version: [18.x]
+  #       node-version: [lts/*]
   #   steps:
   #     - uses: actions/checkout@v3
   #       with:
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [lts/*]
     steps:
       - uses: actions/checkout@v3
 
