@@ -27,7 +27,7 @@ function generateCSV(rows:number, columns: number){
     return csv;
 }
 
-export function testStockSeries() {
+export function benchCSVConnector() {
     describe('Data benchmark v1');
 
     const hc = require('../../../code/highcharts.js')();
@@ -80,7 +80,7 @@ export function testStockSeries() {
         details.avg = details.results.reduce((a, b) => a + b, 0) / details.results.length;
         details.stdDev = getStandardDeviation(details.results)
 
-        console.log(details)
+        console.table(details)
     }
 
 
