@@ -974,7 +974,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": { "typeOptions": { "reverse": false }}}
+     * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": { "typeOptions": { "reversed": false }}}
      */
     fibonacci: {
         className: 'highcharts-fibonacci',
