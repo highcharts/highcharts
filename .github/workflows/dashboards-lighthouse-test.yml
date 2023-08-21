@@ -70,7 +70,7 @@ jobs:
 
 
   cypress_lighthouse_actual:
-    needs: cypress_visual_base
+    needs: cypress_lighthouse_base
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
