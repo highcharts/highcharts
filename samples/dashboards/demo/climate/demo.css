@@ -512,3 +512,7 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
     left: 2px;
     bottom: 2px;
 }
+
+#description {
+    padding: 0 20px;
+}
