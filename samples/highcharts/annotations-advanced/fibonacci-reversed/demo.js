@@ -9,7 +9,7 @@ Highcharts.chart('container', {
                 x: 4,
                 y: 4
             }],
-            reverse: true
+            reversed: true
         }
     }, {
         type: 'fibonacci',
