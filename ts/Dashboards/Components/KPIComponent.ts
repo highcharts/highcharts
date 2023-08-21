@@ -310,8 +310,6 @@ class KPIComponent extends Component {
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
 
-        this.updateElements();
-
         return this;
     }
 
@@ -443,9 +441,6 @@ class KPIComponent extends Component {
             style,
             subtitle
         } = this.options;
-
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
 
         this.setValue();
 
