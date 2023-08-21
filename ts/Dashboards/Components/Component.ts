@@ -392,7 +392,7 @@ abstract class Component {
             this.connectorId !== this.options.connector.id
         ) {
             // Show the loading indicator when there are no errors.
-            if (!this.cell.mountedComponent?.titleElement?.classList.contains(
+            if (!this.titleElement?.classList.contains(
                 DG.classNamePrefix + 'component-title-error'
             )) {
                 this.cell.setLoadingState();
@@ -403,13 +403,14 @@ abstract class Component {
                     .getConnector(this.options.connector.id);
 
                 this.setConnector(connector);
-                this.shouldRedraw = true;
-                this.redraw();
             } catch (error) {
                 // Hide the loading indicator when catched an error.
                 this.cell.setLoadingState(false);
                 return Promise.reject(error);
             }
+
+            this.shouldRedraw = true;
+            this.redraw();
 
             // Hide the loading indicator when finished loading the connector.
             this.cell.setLoadingState(false);
