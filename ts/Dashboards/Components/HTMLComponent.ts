@@ -260,9 +260,6 @@ class HTMLComponent extends Component {
      * Handles updating via options.
      * @param options
      * The options to apply.
-     *
-     * @returns
-     * The component for chaining.
      */
     public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
         await super.update(options);

@@ -30,6 +30,9 @@ const board = Dashboards.board('container', {
                 dataLabels: {
                     enabled: false
                 },
+                animation: {
+                    duration: 900
+                },
                 rounded: true,
                 data: [{
                     y: speed,

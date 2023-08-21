@@ -258,18 +258,18 @@ class DataGridComponent extends Component {
      * Get the column options for the data grid.
      * @internal
      */
-    private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions>|undefined {
+    private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions> {
         const modifierOptions = connector.options.dataModifier;
 
         if (!modifierOptions || modifierOptions.type !== 'Math') {
-            return;
+            return {};
         }
 
         const modifierColumns =
             (modifierOptions as MathModifierOptions).columnFormulas;
 
         if (!modifierColumns) {
-            return;
+            return {};
         }
 
         const options = {} as Record<string, ColumnOptions>;
@@ -411,19 +411,17 @@ class DataGridComponent extends Component {
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             const columnOptions = this.connector ?
-                {
-                    columns:
-                        this.getColumnOptions(
-                            this.connector as DataConnectorType
-                        )
-                } : {};
+                    this.getColumnOptions(
+                        this.connector as DataConnectorType
+                    )
+                 : {};
 
             this.dataGrid = new DataGridComponent.DataGridConstructor(
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
                     dataTable: this.filterColumns(),
-                    ...columnOptions
+                    columns: columnOptions
                 }
             );
             return this.dataGrid;
