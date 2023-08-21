@@ -229,12 +229,17 @@ class DataGridComponent extends Component {
             this.disableEditingModifiedColumns(e.connector);
         });
 
-        this.on('tableChanged', (): void => {
-            // When the table is in the middle of editing a cell, don't update.
-            if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
-                this.dataGrid?.update({ dataTable: this.filterColumns() });
-            }
-        });
+        this.on('tableChanged', this.onTableChanged);
+    }
+
+    /**
+     * When the table is changed, update the data grid.
+     * @internal
+     */
+    public onTableChanged(): void {
+        if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
+            this.dataGrid?.update({ dataTable: this.filterColumns() });
+        }
     }
 
     /**
@@ -245,6 +250,15 @@ class DataGridComponent extends Component {
      * Attached connector
      */
     private disableEditingModifiedColumns(connector: DataConnectorType): void {
+        const options = this.getColumnOptions(connector);
+        this.dataGrid?.update({ columns: options });
+    }
+
+    /**
+     * Get the column options for the data grid.
+     * @internal
+     */
+    private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions>|undefined {
         const modifierOptions = connector.options.dataModifier;
 
         if (!modifierOptions || modifierOptions.type !== 'Math') {
@@ -267,7 +281,7 @@ class DataGridComponent extends Component {
             };
         }
 
-        this.dataGrid?.update({ columns: options });
+        return options;
     }
 
     /* *
@@ -396,11 +410,20 @@ class DataGridComponent extends Component {
     /** @private */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
+            const columnOptions = this.connector ?
+                {
+                    columns:
+                        this.getColumnOptions(
+                            this.connector as DataConnectorType
+                        )
+                } : {};
+
             this.dataGrid = new DataGridComponent.DataGridConstructor(
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.connector && this.connector.table.modified
+                    dataTable: this.filterColumns(),
+                    ...columnOptions
                 }
             );
             return this.dataGrid;
