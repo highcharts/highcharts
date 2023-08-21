@@ -391,8 +391,12 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
-            // Show the loading indicator
-            this.cell.setLoadingState();
+            // Show the loading indicator when there are no errors.
+            if (!this.cell.mountedComponent?.titleElement?.classList.contains(
+                DG.classNamePrefix + 'component-title-error'
+            )) {
+                this.cell.setLoadingState();
+            }
 
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
@@ -401,7 +405,7 @@ abstract class Component {
             this.shouldRedraw = true;
             this.redraw();
 
-            // Hide the loading indicator
+            // Hide the loading indicator.
             this.cell.setLoadingState(false);
         }
         return this;

@@ -590,6 +590,11 @@ class Cell extends GUIElement {
         }
     }
 
+    /**
+     * Enables or disables the loading indicator in the cell.
+     *
+     * @internal
+     */
     public setLoadingState(enabled: boolean = true): void {
         const cell = this;
         if (cell.container) {
