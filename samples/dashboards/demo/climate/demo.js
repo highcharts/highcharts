@@ -161,7 +161,12 @@ async function setupBoard() {
             chartOptions: {
                 chart: {
                     height: '80px',
-                    type: 'spline'
+                    type: 'spline',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 credits: {
                     enabled: false
@@ -274,7 +279,12 @@ async function setupBoard() {
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
                     ).then(response => response.json()),
-                    styledMode: true
+                    styledMode: true,
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 colorAxis: {
                     startOnTick: false,
@@ -389,7 +399,12 @@ async function setupBoard() {
                     margin: [8, 8, 16, 8],
                     spacing: [8, 8, 8, 8],
                     styledMode: true,
-                    type: 'solidgauge'
+                    type: 'solidgauge',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 pane: {
                     background: {
@@ -461,7 +476,12 @@ async function setupBoard() {
                     margin: [8, 8, 16, 8],
                     spacing: [8, 8, 8, 8],
                     styledMode: true,
-                    type: 'solidgauge'
+                    type: 'solidgauge',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 pane: {
                     background: {
@@ -536,7 +556,12 @@ async function setupBoard() {
                     margin: [8, 8, 16, 8],
                     spacing: [8, 8, 8, 8],
                     styledMode: true,
-                    type: 'solidgauge'
+                    type: 'solidgauge',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 pane: {
                     background: {
@@ -607,7 +632,12 @@ async function setupBoard() {
                     margin: [8, 8, 16, 8],
                     spacing: [8, 8, 8, 8],
                     styledMode: true,
-                    type: 'solidgauge'
+                    type: 'solidgauge',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 pane: {
                     background: {
@@ -679,7 +709,12 @@ async function setupBoard() {
                     margin: [8, 8, 16, 8],
                     spacing: [8, 8, 8, 8],
                     styledMode: true,
-                    type: 'solidgauge'
+                    type: 'solidgauge',
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 pane: {
                     background: {
@@ -806,7 +841,12 @@ async function setupBoard() {
                     styledMode: true,
                     type: 'spline',
                     animation: false,
-                    animationLimit: 0
+                    animationLimit: 0,
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 credits: {
                     enabled: false
