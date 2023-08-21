@@ -359,11 +359,17 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      */
     private initEvents(): void {
-        const board = this;
+        const board = this,
+            runReflow = () => {
+                board.reflow();
+            };
 
-        addEvent(window, 'resize', function (): void {
-            board.reflow();
-        });
+        if (typeof ResizeObserver === 'function') {
+            (new ResizeObserver(runReflow)).observe(board.container);
+        } else {
+            const unbind = addEvent(window, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
+        }
     }
 
     /**

@@ -428,12 +428,19 @@ class Resizer {
         //     }
         // }
 
-        // Update snaps, when resize the window
-        addEvent(window, 'resize', (): void => {
+        const runReflow = () => {
             if (resizer.currentCell) {
                 resizer.setSnapPositions(resizer.currentCell);
             }
-        });
+        }
+
+        if (typeof ResizeObserver === 'function') {
+            (new ResizeObserver(runReflow))
+                .observe(resizer.editMode.board.container);
+        } else {
+            const unbind = addEvent(window, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
+        }
     }
     /**
      * General method used on resizing.
