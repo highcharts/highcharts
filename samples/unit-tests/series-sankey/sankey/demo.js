@@ -847,6 +847,24 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
         'The translate-factor value should not be changed significantly ' +
             'while changing the minLinkWidth (#13308)'
     );
+
+    const series = chart.addSeries({
+        type: 'sankey',
+        keys: ['from', 'to', 'weight'],
+        minLinkWidth: 30,
+        data: [
+            ['Brazil', 'Portugal', 1],
+            ['Canada', 'Portugal', 1],
+            ['Mexico', 'Portugal', 1],
+            ['India', 'Portugal', 1],
+            ['USA', 'Portugal', 2]
+        ]
+    });
+
+    assert.ok(
+        series.translationFactor >= 0,
+        'The translationFactor property shouldn\'t be less than zero (#19110).'
+    );
 });
 
 QUnit.test('#14584: Sankey overlapping datalabels', assert => {
