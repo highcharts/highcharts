@@ -62,9 +62,9 @@ const
         colorKey: 't',
         tooltip: {
             headerFormat: (
-                '<div style="display:grid; place-items: center; height:30vh; border-radius:20%; text-align: center;">' +
-                '<span><b style="font-size: 2rem; color:#FFFFFF; height:14vh;">Day: {point.x}</b></span>' +
-                '<span style="margin-top:4vh;background: #FFFFFF; border-radius:50%;font-size: 1rem; padding: 1rem;' +
+                '<div style="display:grid; place-items: center; height:22vh; border-radius:20%; text-align: center;">' +
+                '<span><b style="font-size: 2rem; color:#FFFFFF; height:12vh;">Day: {point.x}</b></span>' +
+                '<span style="width:100%; position: absolute; margin:1.5rem; background: #FFFFFF; border-radius:50%;font-size: 1rem; padding: 0.5rem;' +
                 'border: 0.2rem outset {series.color}; border-block-end: 0.2rem outset {series.color};">' +
                 '<b style="color: {series.color};">●</b> <b>{series.name}</b></span>'
             ),
@@ -72,7 +72,7 @@ const
                 '<span style="font-size: 1.25rem; text-align:center;">' +
                 '<b>Daily Sales:</b> {point.z}</span>'
             ),
-            footerFormat: '</span>'
+            footerFormat: '</div>'
         }
     }).map((seriesProps, i) => (
         {
@@ -247,9 +247,9 @@ const
             pane: 1,
             reversed: true,
             gridLineWidth: 0,
-            tickInterval: 50,
+            tickInterval: 100,
             min: 0,
-            max: 350,
+            max: 400,
             labels: { enabled: false }
         }, {
             pane: 2,
