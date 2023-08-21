@@ -434,11 +434,11 @@ class Resizer {
         //     }
         // }
 
-        const runReflow = () => {
+        const runReflow = (): void => {
             if (resizer.currentCell) {
                 resizer.setSnapPositions(resizer.currentCell);
             }
-        }
+        };
 
         if (typeof ResizeObserver === 'function') {
             this.resizeObserver = new ResizeObserver(runReflow);

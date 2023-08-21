@@ -366,7 +366,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     private initEvents(): void {
         const board = this,
-            runReflow = () => {
+            runReflow = (): void => {
                 board.reflow();
             };
 
