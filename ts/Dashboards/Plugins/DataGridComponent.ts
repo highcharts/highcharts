@@ -411,10 +411,10 @@ class DataGridComponent extends Component {
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             const columnOptions = this.connector ?
-                    this.getColumnOptions(
-                        this.connector as DataConnectorType
-                    )
-                 : {};
+                this.getColumnOptions(
+                    this.connector as DataConnectorType
+                ) :
+                {};
 
             this.dataGrid = new DataGridComponent.DataGridConstructor(
                 this.contentElement,
