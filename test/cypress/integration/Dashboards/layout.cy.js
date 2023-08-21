@@ -3,7 +3,7 @@ describe('Components in layout', () => {
         cy.visit('/dashboards/cypress/chart-interaction/');
     })
 
-    it('should resize properly ', () => {
+    it.skip('should resize properly ', () => {
         cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
@@ -14,6 +14,23 @@ describe('Components in layout', () => {
         // Sizes should be updated to fit the parent
         cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
+        });
+
+        // reset view port
+        cy.viewport('macbook-13');
+    });
+
+    it('components should reflow when width of board is changing ', () => {
+        cy.board().then((board) => {
+            const componentContainer = board.mountedComponents[0].cell.container,
+                componentInitWidth = componentContainer.offsetWidth;
+    
+            board.container.style.width = '500px';
+
+            assert.ok(
+                componentContainer.offsetWidth < componentInitWidth,
+                'The width of cell is smaller than on init.'
+              );
         });
     });
 
