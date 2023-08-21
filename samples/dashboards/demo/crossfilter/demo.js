@@ -34,11 +34,16 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         columnAssignments: {
-            Agriculture: 'Agriculture'
+            Agriculture: 'y'
         },
         sync: {
             crossfilter: true,
             extremes: true
+        },
+        chartOptions: {
+            title: {
+                text: 'Agriculture'
+            }
         }
     }, {
         cell: 'Top-middle',
@@ -47,11 +52,16 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         columnAssignments: {
-            Industry: 'Industry'
+            Industry: 'y'
         },
         sync: {
             crossfilter: true,
             extremes: true
+        },
+        chartOptions: {
+            title: {
+                text: 'Industry'
+            }
         }
     }, {
         cell: 'Top-right',
@@ -60,11 +70,16 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         columnAssignments: {
-            Services: 'Services'
+            Services: 'y'
         },
         sync: {
             crossfilter: true,
             extremes: true
+        },
+        chartOptions: {
+            title: {
+                text: 'Services'
+            }
         }
     }, {
         cell: 'Bottom',

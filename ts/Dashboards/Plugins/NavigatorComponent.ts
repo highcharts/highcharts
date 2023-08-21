@@ -86,7 +86,7 @@ function crossfilterEmitter(
         if (component.connector) {
             const table = component.connector.table,
                 dataCursor = component.board.dataCursor,
-                filterColumn = component.getColumn(),
+                filterColumn = component.getColumnAssignment()[0],
                 [min, max] = getAxisExtremes(axis, extremes);
 
             let modifier = table.getModifier();
@@ -130,13 +130,8 @@ function crossfilterEmitter(
         component.chart.xAxis[0],
         'afterSetExtremes',
         function (extremes: AxisExtremesObject): void {
-            if (!delay) { // initially no delay
-                delay = 0.1;
-                afterSetExtremes(this, extremes);
-            } else {
-                clearTimeout(delay);
-                delay = setTimeout(afterSetExtremes, 50, this, extremes);
-            }
+            clearTimeout(delay);
+            delay = setTimeout(afterSetExtremes, 50, this, extremes);
         }
     );
 }
@@ -453,15 +448,7 @@ class NavigatorComponent extends Component {
         const chart = this.chart,
             height = this.contentElement.clientHeight,
             width = this.contentElement.clientWidth,
-            chartUpdates: HighchartsOptions = {
-                title: {
-                    text: pick(
-                        chart.userOptions.title &&
-                        chart.userOptions.title.text,
-                        this.getColumn(true)
-                    )
-                }
-            };
+            chartUpdates: HighchartsOptions = {};
 
         if (
             chart.chartHeight !== height ||
@@ -489,7 +476,7 @@ class NavigatorComponent extends Component {
 
             chart.update(chartUpdates, false);
 
-            if (navigator.series) {
+            if (navigator.series && navigator.series[0]) {
                 navigator.series[0].update({
                     type: chart.series[0].type
                 }, false);
@@ -504,13 +491,10 @@ class NavigatorComponent extends Component {
      * Returns the first column of columnAssignments to use for navigator data.
      * @private
      *
-     * @param assignment
-     * Whether to return the column or the assignment.
-     *
      * @return
-     * Navigator column.
+     * Navigator column assignment.
      */
-    public getColumn(assignment?: boolean): string {
+    public getColumnAssignment(): [string, string] {
         const columnAssignments = (this.options.columnAssignments || {});
 
         let columnsAssignment: (string|null);
@@ -519,7 +503,7 @@ class NavigatorComponent extends Component {
             columnsAssignment = columnAssignments[column];
 
             if (columnsAssignment !== null) {
-                return (assignment ? columnsAssignment : column);
+                return [column, columnsAssignment];
             }
         }
 
@@ -527,11 +511,11 @@ class NavigatorComponent extends Component {
             const columns = this.connector.table.getColumnNames();
 
             if (columns.length) {
-                return columns[0];
+                return [columns[0], 'y'];
             }
         }
 
-        return '';
+        return ['', 'y'];
     }
 
 
@@ -561,6 +545,23 @@ class NavigatorComponent extends Component {
 
 
     /** @private */
+    private redrawChart(): void {
+        const timeouts = this.resizeTimeouts;
+
+        for (let i = 0, iEnd = timeouts.length; i < iEnd; ++i) {
+            clearTimeout(timeouts[i]);
+        }
+
+        timeouts.length = 0;
+
+        timeouts.push(setTimeout((): void => {
+            this.adjustNavigator();
+            this.chart.redraw();
+        }, 50));
+    }
+
+
+    /** @private */
     public render(): this {
 
         super.render();
@@ -579,8 +580,8 @@ class NavigatorComponent extends Component {
         if (this.connector) {
             const table = this.connector.table,
                 options = this.options,
-                column = this.getColumn(),
-                values = (table.getColumn(column, true) || []);
+                column = this.getColumnAssignment(),
+                values = (table.getColumn(column[0], true) || []);
 
             let data: (
                 Array<(number|string|null)>|
@@ -629,11 +630,9 @@ class NavigatorComponent extends Component {
             } else {
                 chart.series[0].setData(data, false);
             }
-
-            this.adjustNavigator();
         }
 
-        chart.redraw();
+        this.redrawChart();
     }
 
 
@@ -642,22 +641,8 @@ class NavigatorComponent extends Component {
         width?: (number|string|null),
         height?: (number|string|null)
     ): this {
-
         super.resize(width, height);
-
-        const timeouts = this.resizeTimeouts;
-
-        for (let i = 0, iEnd = timeouts.length; i < iEnd; ++i) {
-            clearTimeout(timeouts[i]);
-        }
-
-        timeouts.length = 0;
-
-        timeouts.push(setTimeout((): void => {
-            this.adjustNavigator();
-            this.chart.redraw();
-        }, 50));
-
+        this.redrawChart();
         return this;
     }
 
