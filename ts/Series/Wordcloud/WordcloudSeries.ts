@@ -241,12 +241,9 @@ class WordcloudSeries extends ColumnSeries {
         extend(this.xAxis.options, wordcloudAxis);
     }
 
-    public pointAttribs(
-        point: WordcloudPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point: WordcloudPoint): SVGAttributes {
         const attribs = H.seriesTypes.column.prototype
-            .pointAttribs.call(this, point, state);
+            .pointAttribs.call(this, point);
 
         delete attribs.stroke;
         delete attribs['stroke-width'];
@@ -379,10 +376,7 @@ class WordcloudSeries extends ColumnSeries {
                     rotation: rotation
                 }),
                 attr = extend(
-                    series.pointAttribs(
-                        point,
-                        (point.selected && 'select' as any)
-                    ),
+                    series.pointAttribs(point),
                     {
                         align: 'center',
                         'alignment-baseline': 'middle',

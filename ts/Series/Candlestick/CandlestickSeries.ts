@@ -93,8 +93,7 @@ class CandlestickSeries extends OHLCSeries {
     ): SVGAttributes {
         const attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
-                point,
-                state
+                point
             ),
             options = this.options,
             isUp = point.open < point.close,

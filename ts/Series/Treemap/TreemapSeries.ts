@@ -1063,12 +1063,10 @@ class TreemapSeries extends ScatterSeries {
                     shouldAnimate ? animatableAttribs : attribs,
                     // Add shapeArgs to animate/attr if graphic exists
                     hasGraphic ? shapeArgs : {},
-                    // Add style attribs if !styleMode
+                    // Add style attribs if !styledMode
                     styledMode ?
                         {} :
-                        series.pointAttribs(
-                            point, point.selected ? 'select' : void 0
-                        )
+                        series.pointAttribs(point)
                 );
 
                 // In styled mode apply point.color. Use CSS, otherwise the
@@ -1458,10 +1456,7 @@ class TreemapSeries extends ScatterSeries {
      * Get presentational attributes
      * @private
      */
-    public pointAttribs(
-        point: TreemapPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point: TreemapPoint): SVGAttributes {
         let series = this,
             mapOptionsToLevel = (
                 isObject(series.mapOptionsToLevel) ?
@@ -1470,9 +1465,9 @@ class TreemapSeries extends ScatterSeries {
             ),
             level = point && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
+            state = point?.state || 'normal',
             attr: SVGAttributes,
-            stateOptions =
-                state && options.states && options.states[state] || {},
+            stateOptions = options?.states && options.states?.[state] || {},
             className = (point && point.getClassName()) || '',
             opacity: number;
 

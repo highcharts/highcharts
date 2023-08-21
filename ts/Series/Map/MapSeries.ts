@@ -910,16 +910,14 @@ class MapSeries extends ScatterSeries {
      * used.
      * @private
      */
-    public pointAttribs(
-        point: MapPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point: MapPoint): SVGAttributes {
         const { mapView, styledMode } = point.series.chart;
         const attr = styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
-                this, point as any, state
+                this, point as any
             );
+        const state = point?.state || 'normal';
 
         // Individual stroke width
         let pointStrokeWidth = this.getStrokeWidth(point.options);

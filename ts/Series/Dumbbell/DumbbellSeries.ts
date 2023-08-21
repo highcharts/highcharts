@@ -470,10 +470,8 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @return {Highcharts.SVGAttributes} pointAttribs SVGAttributes
      */
-    public pointAttribs(
-        point: DumbbellPoint,
-        state?: string
-    ): SVGAttributes {
+    public pointAttribs(point: DumbbellPoint): SVGAttributes {
+        const state = point.state || 'normal';
         let pointAttribs;
 
         pointAttribs = seriesProto.pointAttribs.apply(this, arguments as any);

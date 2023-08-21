@@ -702,7 +702,7 @@ class BubbleSeries extends ScatterSeries {
     ): SVGAttributes {
         const markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
-            attr = Series.prototype.pointAttribs.call(this, point, state);
+            attr = Series.prototype.pointAttribs.call(this, point);
 
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)

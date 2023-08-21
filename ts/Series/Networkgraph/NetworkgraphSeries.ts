@@ -379,16 +379,12 @@ class NetworkgraphSeries extends Series {
      * Return the presentational attributes.
      * @private
      */
-    public pointAttribs(
-        point?: NetworkgraphPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point?: NetworkgraphPoint): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
+        let pointState = point?.state || 'normal',
             attribs = Series.prototype.pointAttribs.call(
                 this,
-                point,
-                pointState
+                point
             ),
             stateOptions = (this.options.states as any)[pointState];
 

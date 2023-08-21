@@ -1437,7 +1437,7 @@ class Point {
             }
 
             if (!chart.styledMode) {
-                pointAttribs = series.pointAttribs(point, state);
+                pointAttribs = series.pointAttribs(point);
                 pointAttribsAnimation = pick(
                     chart.options.chart.animation,
                     stateOptions.animation
@@ -1531,7 +1531,7 @@ class Point {
                 if (!chart.styledMode && stateMarkerGraphic &&
                     point.state !== 'inactive'
                 ) {
-                    stateMarkerGraphic.attr(series.pointAttribs(point, state));
+                    stateMarkerGraphic.attr(series.pointAttribs(point));
                 }
             }
 

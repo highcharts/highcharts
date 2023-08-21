@@ -858,12 +858,10 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public pointAttribs(
-        point?: HeatmapPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public pointAttribs(point?: HeatmapPoint): SVGAttributes {
         const series = this,
-            attr = Series.prototype.pointAttribs.call(series, point, state),
+            attr = Series.prototype.pointAttribs.call(series, point),
+            state = point?.state || 'normal',
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},

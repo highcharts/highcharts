@@ -314,10 +314,7 @@ class PieSeries extends Series {
                 groupTranslation = point.getTranslate();
 
                 if (!chart.styledMode) {
-                    pointAttr = series.pointAttribs(
-                        point,
-                        point.state
-                    );
+                    pointAttr = series.pointAttribs(point);
                 }
 
                 // Draw the slice

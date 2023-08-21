@@ -2682,14 +2682,7 @@ class Series {
 
                     // Presentational attributes
                     if (graphic) {
-                        const pointAttr = series.pointAttribs(
-                            point,
-                            (
-                                (styledMode || !point.selected) ?
-                                    void 0 :
-                                    'select'
-                            )
-                        );
+                        const pointAttr = series.pointAttribs(point);
 
                         if (!styledMode) {
                             graphic[verb](pointAttr);
@@ -2809,8 +2802,7 @@ class Series {
      * The presentational attributes to be set on the point.
      */
     public pointAttribs(
-        point?: Point,
-        state?: StatesOptionsKey
+        point?: Point
     ): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
             pointOptions = point && point.options,
@@ -2819,7 +2811,8 @@ class Series {
             ),
             pointColorOption = pointOptions && pointOptions.color,
             pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color;
+            zoneColor = point && point.zone && point.zone.color,
+            state = point?.state || 'normal';
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2850,7 +2843,6 @@ class Series {
         );
 
         // Handle hover and select states
-        state = state || 'normal';
         if (state) {
             seriesStateOptions = (
                 (seriesMarkerOptions as any).states[state] || {}
