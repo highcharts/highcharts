@@ -4800,7 +4800,7 @@ interface Series extends SeriesLike {
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
-    kdAxisArray: Array<'clientX' | 'plotY'>;
+    kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
     pointClass: typeof Point;
     requireSorting: boolean;

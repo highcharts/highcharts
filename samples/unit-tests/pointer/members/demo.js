@@ -204,9 +204,7 @@ QUnit.test(
         // mouse move event due to searchKDTree including radius of the marker.
         controller.moveTo(
             chart.plotLeft + chart.series[2].points[0].plotX + bigRadius + 7,
-            chart.plotTop + chart.series[2].points[0].plotY + 70,
-            {},
-            true
+            chart.plotTop + chart.series[2].points[0].plotY + 70
         );
         assert.strictEqual(
             events.pop(),
