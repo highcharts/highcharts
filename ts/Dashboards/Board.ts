@@ -285,6 +285,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * */
     public options: Board.Options;
 
+    /**
+     * Reference to resizeObserver, that allows to run unobserver.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /* *
      *
      *  Functions
@@ -365,7 +371,8 @@ class Board implements Serializable<Board, Board.JSON> {
             };
 
         if (typeof ResizeObserver === 'function') {
-            (new ResizeObserver(runReflow)).observe(board.container);
+            this.resizeObserver = new ResizeObserver(runReflow);
+            this.resizeObserver.observe(board.container);
         } else {
             const unbind = addEvent(window, 'resize', runReflow);
             addEvent(this, 'destroy', unbind);
@@ -504,6 +511,9 @@ class Board implements Serializable<Board, Board.JSON> {
         for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
             board.layouts[i].destroy();
         }
+
+        // Remove resizeObserver from the board
+        this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
         board.container.remove();

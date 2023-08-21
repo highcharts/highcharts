@@ -165,6 +165,12 @@ class Resizer {
      */
     public tempSiblingsWidth: Array<Cell>;
 
+    /**
+     * Reference to resizeObserver, that allows to run unobserver.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /* *
      *
      *  Functions
@@ -435,8 +441,8 @@ class Resizer {
         }
 
         if (typeof ResizeObserver === 'function') {
-            (new ResizeObserver(runReflow))
-                .observe(resizer.editMode.board.container);
+            this.resizeObserver = new ResizeObserver(runReflow);
+            this.resizeObserver.observe(resizer.editMode.board.container);
         } else {
             const unbind = addEvent(window, 'resize', runReflow);
             addEvent(this, 'destroy', unbind);
@@ -506,6 +512,8 @@ class Resizer {
         // Unbind events
         removeEvent(document, 'mousemove');
         removeEvent(document, 'mouseup');
+
+        this.resizeObserver?.unobserve(this.editMode.board.container);
 
         for (let i = 0, iEnd = snaps.length; i < iEnd; ++i) {
             snap = (this as any)[snaps[i]];
