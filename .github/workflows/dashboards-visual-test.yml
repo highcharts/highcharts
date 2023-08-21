@@ -1,7 +1,7 @@
 name: Dashboards visual comparison tests
 on:
   pull_request:
-    branches: 
+    branches:
       - 'master'
     paths:
       - 'test/cypress/visual/**'
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [lts/*]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -44,7 +44,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils 
+        run: npm i github:highcharts/highcharts-utils
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [lts/*]
     steps:
       - uses: actions/checkout@v3
 
@@ -80,12 +80,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Checkout current branch 
+      - name: Checkout current branch
         uses: actions/checkout@v3
 
       - name: Download references
         uses: actions/download-artifact@v3
-        with: 
+        with:
           name: reference
           path: cypress # this path is root relative, not based on the working-directory above
 
@@ -95,7 +95,7 @@ jobs:
           runTests: false
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils 
+        run: npm i github:highcharts/highcharts-utils
 
       - name: Build Highcharts
         run: npx gulp scripts
