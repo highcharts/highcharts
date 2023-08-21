@@ -1235,7 +1235,7 @@ class Tooltip {
             let anchorY;
             if (isHeader) {
                 // Set anchorX to plotX
-                anchorX = plotLeft + plotX;
+                anchorX = Math.max(plotLeft + plotX, plotLeft);
                 // Set anchorY to center of visible plot area.
                 anchorY = plotTop + plotHeight / 2;
             } else {
