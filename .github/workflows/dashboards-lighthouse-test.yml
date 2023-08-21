@@ -64,7 +64,7 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: reference
+          name: lighthouse-reference
           path: |
             tmp/*.json
 
@@ -88,17 +88,17 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v3
 
-      - name: Download references
-        uses: actions/download-artifact@v3
-        with:
-          name: reference
-          path: tmp # this path is root relative, not based on the working-directory above
-
       - name: Install dependencies
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
           runTests: false
+
+      - name: Download references
+        uses: actions/download-artifact@v3
+        with:
+          name: lighthouse-reference
+          path: tmp # this path is root relative, not based on the working-directory above
 
       - name: Install utils
         run: npm i github:highcharts/highcharts-utils
