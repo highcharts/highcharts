@@ -7,8 +7,16 @@
 }
 
 h1,
-p {
+a {
     text-align: center;
+}
+
+/* Center the 'a' element in the div */
+a {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--highcharts-color-0);
 }
 
 h1 {

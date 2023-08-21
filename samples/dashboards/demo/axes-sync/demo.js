@@ -85,8 +85,14 @@ Dashboards.board('container', {
                 textContent: 'Polio (Pol3) immunization coverage'
             },
             {
-                tagName: 'p',
-                textContent: ' Among 1-year-olds (%) | Source: https://apps.who.int/gho/data/'
+                tagName: 'div',
+                children: [{
+                    tagName: 'a',
+                    href: 'https://apps.who.int/gho/data/',
+                    class: 'subtitle',
+                    textContent: 'Among 1-year-olds (%)'
+
+                }]
             }]
         },
         {

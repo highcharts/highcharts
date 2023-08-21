@@ -6,6 +6,11 @@ Dashboards.board('container', {
             id: 'Population',
             type: 'CSV',
             options: {
+                dataTable: {
+                    aliases: {
+                        Town: 'City'
+                    }
+                },
                 csv,
                 firstRowAsNames: true
             }
@@ -36,11 +41,13 @@ Dashboards.board('container', {
                             width: '100%'
                         }
                     }
-                }]
-            }, {
-                cells: [{
+                }, {
                     id: 'dashboard-col-3',
-                    height: 140
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
                 }]
             }, {
                 cells: [{
@@ -81,7 +88,7 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'column',
+                type: 'bar',
                 zoomType: 'x'
             },
             plotOptions: {
@@ -134,7 +141,7 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'column',
+                type: 'bar',
                 zoomType: 'x'
             },
             plotOptions: {
@@ -187,7 +194,7 @@ Dashboards.board('container', {
                 enabled: false
             },
             chart: {
-                type: 'column',
+                type: 'bar',
                 zoomType: 'x'
             },
             plotOptions: {
@@ -222,7 +229,7 @@ Dashboards.board('container', {
             id: 'Population'
         },
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             Population: null,
             'Metro Area(km2)': null,
             'Highest Elevation(m)': 'y'
@@ -274,6 +281,7 @@ Dashboards.board('container', {
                 enabled: true,
                 padding: 0,
                 floating: true,
+                layout: 'vertical',
                 y: -30,
                 navigation: {
                     enabled: false

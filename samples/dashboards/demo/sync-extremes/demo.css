@@ -31,3 +31,7 @@
 .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
     opacity: 1;
 }
+
+.highcharts-a11y-proxy-button {
+    cursor: default;
+}
