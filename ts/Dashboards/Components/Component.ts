@@ -398,14 +398,20 @@ abstract class Component {
                 this.cell.setLoadingState();
             }
 
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+            try {
+                const connector = await this.board.dataPool
+                    .getConnector(this.options.connector.id);
 
-            this.setConnector(connector);
-            this.shouldRedraw = true;
-            this.redraw();
+                this.setConnector(connector);
+                this.shouldRedraw = true;
+                this.redraw();
+            } catch (error) {
+                // Hide the loading indicator when catched an error.
+                this.cell.setLoadingState(false);
+                return Promise.reject(error);
+            }
 
-            // Hide the loading indicator.
+            // Hide the loading indicator when finished loading the connector.
             this.cell.setLoadingState(false);
         }
         return this;
