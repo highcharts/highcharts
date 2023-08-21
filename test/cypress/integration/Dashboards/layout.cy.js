@@ -3,7 +3,7 @@ describe('Components in layout', () => {
         cy.visit('/dashboards/cypress/chart-interaction/');
     })
 
-    it.skip('should resize properly ', () => {
+    it('should resize properly ', () => {
         cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
