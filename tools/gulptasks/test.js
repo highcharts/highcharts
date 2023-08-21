@@ -50,7 +50,7 @@ function checkJSWrap() {
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
     ).forEach(f => {
 
-        const detailsFile = f.replace(/\.html$/, '.details');
+        const detailsFile = f.replace(/\.html$/u, '.details');
 
         try {
             const details = yaml.safeLoad(
@@ -60,7 +60,7 @@ function checkJSWrap() {
                 logLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
-        } catch (e) {
+        } catch {
             logLib.failure('File not found:', detailsFile);
             errors++;
         }
@@ -114,7 +114,7 @@ function checkDemosConsistency() {
                 }
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
-                if (!name || /High.*demo/.test(name)) {
+                if (!name || /High.*demo/u.test(name)) {
                     logLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
@@ -139,7 +139,7 @@ function checkDemosConsistency() {
                     }
                 }
 
-            } catch (e) {
+            } catch {
                 logLib.failure('File not found:', detailsFile);
                 errors++;
             }
@@ -415,7 +415,8 @@ Available arguments for 'gulp test':
 
             LogLib.message('Run `gulp test --help` for available options');
 
-            const KarmaServer = require('karma').Server;
+            const karma = require('karma');
+            const KarmaServer = karma.Server;
             const PluginError = require('plugin-error');
             const {
                 reporters: defaultReporters,
@@ -423,15 +424,20 @@ Available arguments for 'gulp test':
             } = require(KARMA_CONFIG_FILE);
 
             new KarmaServer(
-                {
-                    configFile: KARMA_CONFIG_FILE,
-                    reporters: argv.dots ? ['dots'] : defaultReporters,
-                    browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-                    singleRun: true,
-                    client: {
-                        cliArgs: argv
+                karma.config.parseConfig(
+                    KARMA_CONFIG_FILE,
+                    {
+                        reporters: argv.dots ? ['dots'] : defaultReporters,
+                        browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
+                        singleRun: true,
+                        client: {
+                            cliArgs: argv
+                        }
+                    }, {
+                        promiseConfig: false,
+                        throwErrors: false
                     }
-                },
+                ),
                 err => {
 
                     if (err !== 0) {

@@ -70,7 +70,14 @@ function jsDocNamespace() {
                         'highcharts-documentation-generators', 'jsdoc',
                         'plugins', 'highcharts.namespace'
                     )
-                ]
+                ],
+                opts: {
+                    template: path.posix.join(
+                        'node_modules', '@highcharts',
+                        'highcharts-documentation-generators', 'docstrap',
+                        'template'
+                    )
+                }
             };
 
         if (codeFiles.length === 0) {

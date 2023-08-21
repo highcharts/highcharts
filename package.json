@@ -112,6 +112,18 @@
     "webpack": "^5.75.0",
     "yargs": "^17.6.2"
   },
+  "overrides": {
+    "gulp": {
+      "glob-watcher": "^6.0.0",
+      "vinyl-fs": "^4.0.0"
+    },
+    "gulp-jsdoc3": {
+      "jsdoc": "^4.0.2"
+    },
+    "karma-coverage": {
+      "dateformat": "^5.0.3"
+    }
+  },
   "engines": {
     "node": ">=14.14.0"
   },
