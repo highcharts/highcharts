@@ -52,7 +52,7 @@ const
     data = JSON.parse(document.getElementById('data').innerHTML),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
-    teamColors = ['#da3585', '#598EFF', '#AA91E6'],
+    teamColors = ['#FF8076', '#4E94C9', '#ADFFA6'],
     teamSeries = Array(3).fill({
         type: 'bubble',
         shadow: true,
@@ -95,7 +95,7 @@ const
                     inside: true,
                     style: {
                         textOutline: undefined,
-                        color: '#576AFF',
+                        color: '#707099',
                         'letter-spacing': '0.02em',
                         margin: '2rem',
                         textAlign: 'center'
@@ -136,17 +136,10 @@ const
             }
         },
         colorAxis: [{
-            minColor: '#B6F7D1',
-            maxColor: '#73b0f2',
+            minColor: 'rgb(226, 214, 255)',
+            maxColor: '#D9E0FF',
             showInLegend: false,
             ...weekExtremes
-        },
-        {
-            minColor: '#6ED1FF',
-            maxColor: '#A1A5FF',
-            showInLegend: false,
-            min: 0,
-            max: 2
         },
         {
             minColor: '#A0FAB4',
@@ -161,8 +154,8 @@ const
             ...paneOpeningAngles,
             background: {
                 borderWidth: 4,
-                borderColor: '#708FFF',
-                backgroundColor: '#E2F4F8',
+                borderColor: '#7C6DB3',
+                backgroundColor: '#C8F9D3',
                 outerRadius: '60%'
             }
         }, {
@@ -171,7 +164,7 @@ const
             ...paneOpeningAngles,
             background: {
                 borderWidth: 16,
-                borderColor: '#6FC4FF',
+                borderColor: '#A8C4FF',
                 backgroundColor: toggleableGradient,
                 innerRadius: '95%'
             }
@@ -185,21 +178,20 @@ const
                 backgroundColor: {
                     radialGradient: { cx: 0.5, cy: 0.5, r: 1.8 },
                     stops: [
-                        [0, 'rgba(66, 72, 179,1)'],
-                        [0.2, 'rgba(232, 201, 245, 1)'],
-                        [0.25, 'rgba(243, 255, 240, 1)'],
-                        [0.3, 'rgba(10, 255, 226, 1)']
+                        [0, 'rgba(148, 136, 191,1)'],
+                        [0.2, 'rgba(232, 231, 245, 1)'],
+                        [0.25, 'rgba(243,245, 240, 1)'],
+                        [0.3, 'rgba(156, 245, 245,1)']
                     ]
                 },
                 innerRadius: '55%',
                 outerRadius: '100%'
             }
         }],
-
         xAxis: [{
             pane: 0,
             lineWidth: 8,
-            lineColor: '#8575BF',
+            lineColor: '#A4B4FC',
             tickInterval: 1,
             gridLineWidth: 0,
             min: 1,
@@ -210,7 +202,7 @@ const
             linkedTo: 0,
             gridLineWidth: 0,
             lineWidth: 4,
-            lineColor: '#708FFF',
+            lineColor: '#A8C4FF',
             plotBands: Array(3).fill(7).map(
                 (weekendOffset, week) => {
                     const
@@ -230,12 +222,11 @@ const
             tickAmount: 5,
             tickInterval: 1,
             gridLineWidth: 0,
-            lineColor: '#A69BE8',
+            lineColor: '#B1E6FC',
             lineWidth: 16,
             ...weekExtremes,
             labels: { enabled: false }
         }],
-
         yAxis: [{
             pane: 0,
             tickInterval: 8,
@@ -255,16 +246,15 @@ const
             pane: 2,
             tickInterval: 0.25,
             gridLineWidth: 4,
-            gridLineColor: '#D8FDF4',
+            gridLineColor: '#727EB0',
             min: -3,
             max: 1,
             labels: { enabled: false }
         }],
-
         legend: {
             enabled: true,
-            backgroundColor: '#E2F4F8',
-            borderColor: '#D2B8FA',
+            backgroundColor: '#EAFAEF',
+            borderColor: '#A8C4FF',
             borderRadius: 32,
             floating: true,
             layout: 'vertical',
@@ -272,7 +262,11 @@ const
             squareSymbol: true,
             borderWidth: 4,
 
-            itemStyle: { color: '#333333', fontSize: '0.86rem', letterSpacing: '0.032rem' },
+            itemStyle: {
+                color: '#333333',
+                fontSize: '0.86rem',
+                letterSpacing: '0.032rem'
+            },
             y: this.plotSizeY,
             width: '10%',
             padding: 16,
@@ -300,7 +294,7 @@ const
                 xAxis: 2,
                 yAxis: 2,
                 showInLegend: false,
-                pointPlacement: 'between',
+                pointPlacement: 'on',
                 pointPadding: 0,
                 groupping: false,
                 centerInCategory: true,
@@ -316,7 +310,7 @@ const
                 showInLegend: false,
                 centerInCategory: true,
                 pointPlacement: 'on',
-                colorAxis: 2,
+                colorAxis: 1,
                 groupPadding: 0,
                 pointPadding: 0,
                 colorKey: 'x',
@@ -325,21 +319,39 @@ const
                 borderWidth: 0.35,
                 tooltip: {
                     headerFormat: (
-                        '<span style=\"display:flex; justify-content: center; align-items:center; flex-direction:column;\">' +
-                        '<b style=\"padding:0.4rem; font-size: 2.6rem; letter-spacing: 0.208rem; text-decoration: underline solid {point.color} 0.2rem; text-align:center;\"> Day {point.x}</b>'
+                        '<span style=\"display:flex; ' +
+                        'justify-content: center; align-items:center; ' +
+                        'flex-direction:column;\"><b style=\"padding:0.4rem;' +
+                        'font-size: 2.6rem; letter-spacing: 0.208rem; ' +
+                        'text-decoration: underline solid {point.color} ' +
+                        '0.2rem; text-align:center;\">Day {point.x}</b>'
                     ),
-
                     pointFormat: (
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;width: 5rem; text-align:left\"><span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
+                        '<span style=\"font-size: 0.9rem;padding:0.3rem;' +
+                        'width: 5rem; text-align:left\"><span style=\" ' +
+                        'color:{point.color}; font-size: 1rem;\">●</span> ' +
                         '<b>Sales: </b><span>{point.high}</span></span>' +
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;width: 5rem;text-align:left\"><span style=\"color:{point.color}; font-size: 1rem;\">●</span><b> Average: </b><span>{point.avg}</span></span>' +
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;width: 5rem; text-align:left\"><span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
-                        '<b>Highscore: </b><span>{point.highscore}</span></span>' +
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;width: 5rem; text-align:left\"><span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
-                        '<b>Top earner: </b><span>{point.topEarner}</span></span>'
+                        '<span style=\"font-size: 0.9rem;padding:0.3rem;' +
+                        'width: 5rem;text-align:left\">' +
+                        '<span style=\"color:{point.color}; ' +
+                        'font-size: 1rem;\">●</span><b> Average: </b>' +
+                        '<span>{point.avg}</span></span><span style=\"' +
+                        'font-size: 0.9rem;padding:0.3rem;width: 5rem;' +
+                        'text-align:left\"><span style=\"color:' +
+                        '{point.color}; font-size: 1rem;\">●</span> ' +
+                        '<b>Highscore: </b><span>{point.highscore}</span>' +
+                        '</span><span style=\"font-size: 0.9rem;' +
+                        'padding:0.3rem;width: 5rem; text-align:left\">' +
+                        '<span style=\"color:{point.color}; font-size: ' +
+                        '1rem;\">●</span><b>Top earner: </b><span>' +
+                        '{point.topEarner}</span></span>'
                     ),
-
-                    footerFormat: '<i style=\"margin:0.3rem; padding:0.3rem;width: 10rem;text-align:center; border-top: 0.1rem solid {point.color};\">Week {point.week}</i></span>'
+                    footerFormat: (
+                        '<i style=\"margin:0.3rem; ' +
+                        'padding:0.3rem;width: 10rem;text-align:center;' +
+                        ' border-top: 0.1rem solid {point.color};\">' +
+                        'Week {point.week}</i></span>'
+                    )
                 }
             }
         ]
@@ -347,5 +359,4 @@ const
     resizeObserver = new ResizeObserver(() => {
         chart.legend.update({ y: chart.chartHeight / 12 });
     });
-
 resizeObserver.observe(chart.renderTo);
