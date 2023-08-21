@@ -63,14 +63,14 @@ const
         tooltip: {
             headerFormat: (
                 '<div style="display:grid; place-items: center; height:22vh; border-radius:20%; text-align: center;">' +
-                '<span><b style="font-size: 2rem; color:#FFFFFF; height:12vh;">Day: {point.x}</b></span>' +
+                '<span style="margin-bottom:8rem;"><b style="font-size: 2rem; color:#FFFFFF; height:12vh;">Day: {point.x}</b></span>' +
                 '<span style="width:100%; position: absolute; margin:1.5rem; background: #FFFFFF; border-radius:50%;font-size: 1rem; padding: 0.5rem;' +
                 'border: 0.2rem outset {series.color}; border-block-end: 0.2rem outset {series.color};">' +
                 '<b style="color: {series.color};">●</b> <b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="font-size: 1.25rem; text-align:center;">' +
-                '<b>Daily Sales:</b> {point.z}</span>'
+                '<span style="margin-top:8rem; position: absolute;font-size: 1.25rem;">' +
+                '<b style="width:100%;text-align:center;">Daily Sales:</b> {point.z}</span>'
             ),
             footerFormat: '</div>'
         }
