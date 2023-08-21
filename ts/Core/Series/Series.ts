@@ -4348,10 +4348,16 @@ class Series {
         const chart = this.chart,
             option = this.options[optionName as keyof SeriesOptions],
             plotOptions = chart.options.plotOptions,
-            oldOption = this.userOptions[optionName as keyof DeepPartial<SeriesOptions>],
+            oldOption = this.userOptions[
+                optionName as keyof DeepPartial<SeriesOptions>
+            ],
             plotOptionsOption = pick(
-                plotOptions?.[this.type]?.[optionName as keyof Omit<SeriesOptions, NonPlotOptions>],
-                plotOptions?.series?.[optionName as keyof Omit<SeriesOptions, NonPlotOptions>]
+                plotOptions?.[this.type]?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ],
+                plotOptions?.series?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ]
             );
 
         // Check if `plotOptions` are defined already, #19203
@@ -4359,11 +4365,7 @@ class Series {
             return option !== oldOption;
         }
 
-        return option !==
-            pick(
-                plotOptionsOption,
-                option
-            );
+        return option !== pick(plotOptionsOption, option);
     }
 
     /**
