@@ -590,7 +590,7 @@ class Cell extends GUIElement {
         }
     }
 
-    public setLoadingState(enabled: boolean): void {
+    public setLoadingState(enabled: boolean = true): void {
         const cell = this;
         if (cell.container) {
             cell.container.classList.toggle(
