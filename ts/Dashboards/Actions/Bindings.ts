@@ -132,6 +132,8 @@ namespace Bindings {
         try {
             component.render();
         } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e);
             component.update({
                 title: {
                     text: cell.row.layout.board?.editMode?.lang.errorMessage,
