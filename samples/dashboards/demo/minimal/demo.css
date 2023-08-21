@@ -27,7 +27,7 @@ h1#title {
 }
 
 #kpi-iron .highcharts-dashboards-component-title::before {
-    background-color: var(--highcharts-color-1);
+    background-color: var(--highcharts-color-2);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-subtitle,
@@ -47,12 +47,12 @@ h1#title {
 }
 
 #kpi-iron .highcharts-dashboards-component-kpi-value {
-    color: var(--highcharts-color-1);
+    color: var(--highcharts-color-2);
 }
 
 #dashboard-col-1 .highcharts-color-0 {
-    fill: var(--highcharts-color-1);
-    stroke: var(--highcharts-color-1);
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value::after,
@@ -64,9 +64,9 @@ h1#title {
 
 .highcharts-plot-line {
     stroke-dasharray: 2px;
-    stroke: #b73c28;
+    stroke: var(--highcharts-color-3);
 }
 
 .highcharts-plot-line-label {
-    fill: #b73c28;
+    fill: var(--highcharts-color-3);
 }
