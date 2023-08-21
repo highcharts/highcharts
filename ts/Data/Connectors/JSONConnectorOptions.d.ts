@@ -15,7 +15,7 @@
  *
  *  Imports
  *
- * */
+* */
 
 import type DataConnectorOptions from './DataConnectorOptions';
 
@@ -30,10 +30,29 @@ import type DataConnectorOptions from './DataConnectorOptions';
  * Options of the JSONConnector.
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
+    /**
+     * Should first row be treated as names of columns.
+     */
+    firstRowAsNames?: boolean,
+    /**
+     * URL to the JSON data.
+     */
     dataUrl?: string;
+    /**
+     * Should polling be enabled.
+     */
     enablePolling?: boolean;
+    /**
+     * Data in JSON format.
+     */
     data?: Array<Array<number|string>>;
+    /**
+     * Data refresh rate in milliseconds.
+     */
     dataRefreshRate?: number;
+    /**
+     * Whether data is in columns or rows.
+     */
     orientation?: 'columns'|'rows';
 }
 

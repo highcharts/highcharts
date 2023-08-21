@@ -50,7 +50,8 @@ class JSONConnector extends DataConnector {
         data: [],
         enablePolling: false,
         dataRefreshRate: 0,
-        orientation: 'columns'
+        firstRowAsNames: true,
+        orientation: 'rows'
     };
 
     /* *

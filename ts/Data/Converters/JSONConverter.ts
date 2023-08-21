@@ -134,7 +134,12 @@ class JSONConverter extends DataConverter {
 
         const converter = this;
         options = merge(converter.options, options);
-        const { beforeParse, orientation, firstRowAsNames } = options;
+        const {
+            beforeParse,
+            orientation,
+            firstRowAsNames,
+            columnNames
+        } = options;
         let data = options.data;
 
         if (data && beforeParse) {
@@ -149,6 +154,8 @@ class JSONConverter extends DataConverter {
             for (let i = 0, iEnd = data.length; i < iEnd; i++) {
                 if (firstRowAsNames) {
                     converter.headers.push(data[i][0] as string);
+                } else if (columnNames) {
+                    converter.headers.push(columnNames[i]);
                 }
                 converter.columns.push(data[i].slice(firstRowAsNames ? 1 : 0));
             }
@@ -157,6 +164,8 @@ class JSONConverter extends DataConverter {
             if (firstRowAsNames) {
                 converter.headers = data[0] as Array<string>;
                 startRow++;
+            } else if (columnNames) {
+                converter.headers = columnNames;
             }
 
             for (
@@ -219,6 +228,7 @@ namespace JSONConverter {
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
+        columnNames?: Array<string>;
         data: Array<Array<number|string>>;
         orientation: 'columns'|'rows';
     }
