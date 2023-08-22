@@ -152,6 +152,11 @@ function callout(
         return path;
     }
 
+    // Do not render a connector, if anchor starts inside the label
+    if (anchorX < w && anchorX > 0 && anchorY < h && anchorY > 0) {
+        return path;
+    }
+
     // Anchor on right side
     if (x + anchorX > w - safeDistance) {
 
