@@ -246,7 +246,9 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
                         x,
                         y
                     });
-                edgePoints.push([lonLat.lon, lonLat.lat]);
+                if (!isNaN(lonLat.lon) && !isNaN(lonLat.lat)) {
+                    edgePoints.push([lonLat.lon, lonLat.lat]);
+                }
             }
             return edgePoints;
         }
