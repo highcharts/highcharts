@@ -513,6 +513,7 @@ Highcharts.prepareShot = function (chart) {
                 if (
                     points[i] &&
                     !points[i].isNull &&
+                    points[i].isInside &&
                     !( // Map point with no extent, like Aruba
                         points[i].shapeArgs &&
                         points[i].shapeArgs.d &&
