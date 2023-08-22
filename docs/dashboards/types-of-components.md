@@ -4,7 +4,7 @@ Types of components
 Components are the building blocks of the dashboard layout. There are several types of components, which you can use out of the box. Some of them come with a default configuration (KPI, Highcharts, DataGrid), and some components are completely flexible, so that you can configure them all by yourself (HTMLComponent). You define which type of component you want to use by defining its `type` property in the configuration object.
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboards-plugin.js` module.
 
-Here is the overview of most important parameters, that can be defined for a component:
+Here is the overview of the most important parameters, that can be defined for a component:
 * `id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
 * `cell` - id of the cell, in which the component should be placed
 * `class` - CSS class

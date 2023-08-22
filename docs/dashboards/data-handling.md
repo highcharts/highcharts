@@ -23,7 +23,25 @@ changes.  All connectors manage the data in a DataTable which is accessible via
 `DataConnector.table` property.  Some connectors support source polling to
 update the DataTable with new data from the source.
 
+The type of the connector, depends on the data source. Possible are:
+| Name | `connector.type` option |
+|------|---|
+| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html) | `'CSV'` |
+| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'` |
+| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html) | `'HTMLTable'` |
 
+### Example
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-csv-connector',
+        type: 'CSV',
+        options: {
+            csv: csvData
+        }
+    }]
+}
+```
 
 ## DataTable
 
