@@ -596,13 +596,10 @@ class Cell extends GUIElement {
      * @internal
      */
     public setLoadingState(enabled: boolean = true): void {
-        const cell = this;
-        if (cell.container) {
-            cell.container.classList.toggle(
-                Globals.classNames.cellLoading,
-                enabled
-            );
-        }
+        this.container?.classList?.toggle(
+            Globals.classNames.cellLoading,
+            enabled
+        );
     }
 
     private convertWidthToValue(
