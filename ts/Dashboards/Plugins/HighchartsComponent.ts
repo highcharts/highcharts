@@ -110,7 +110,12 @@ class HighchartsComponent extends Component {
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
                 chart: {
-                    styledMode: true
+                    styledMode: true,
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 series: []
             },
