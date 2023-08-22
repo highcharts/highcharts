@@ -378,7 +378,20 @@ abstract class Component {
         this.filterAndAssignSyncOptions();
         this.setupEventListeners();
         this.attachCellListeneres();
+        this.on('tableChanged', this.onTableChanged);
     }
+
+    /**
+     * Function fired when component's `tableChanged` event is fired.
+     * @internal
+     */
+    public abstract onTableChanged(e?: Component.EventTypes): void;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Inits connectors for the component and rerenders it.
@@ -399,13 +412,6 @@ abstract class Component {
         }
         return this;
     }
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
     /**
     * Filter the sync options that are declared in the component options.
     * Assigns the sync options to the component and to the sync instance.

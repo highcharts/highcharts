@@ -183,12 +183,6 @@ class HTMLComponent extends Component {
             this,
             this.syncHandlers
         );
-
-        this.on('tableChanged', (e: Component.EventTypes): void => {
-            if ('detail' in e && e.detail && e.detail.sender !== this.id) {
-                this.render();
-            }
-        });
     }
 
 
@@ -267,7 +261,7 @@ class HTMLComponent extends Component {
     }
 
     /**
-     * Could probably use the serialize function moved on
+     * TODO: Could probably use the serialize function moved on
      * the exportdata branch
      *
      * @internal
@@ -323,6 +317,15 @@ class HTMLComponent extends Component {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
             type: 'HTML'
         };
+    }
+
+    /**
+     * @internal
+     */
+    public onTableChanged(e: Component.EventTypes): void {
+        if ('detail' in e && e.detail && e.detail.sender !== this.id) {
+            this.render();
+        }
     }
 }
 

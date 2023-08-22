@@ -89,8 +89,7 @@ namespace Bindings {
     export async function addComponent(
         options: Partial<ComponentType['options']>,
         cell?: Cell
-    ): Promise<(Component|undefined)> {
-    // TODO: Check if there are states in the options, and if so, add them
+    ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
 
@@ -126,11 +125,20 @@ namespace Bindings {
         }
 
         const component = new ComponentClass(cell, options);
+        const promise = component.load()['catch']((e): void => {
+            // eslint-disable-next-line no-console
+            console.error(e);
+            component.update({
+                title: {
+                    text:
+                        cell?.row.layout.board?.editMode?.lang.errorMessage,
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                }
+            });
+        });
 
-        // update cell size (when component is wider, cell should adjust)
-        // this.updateSize();
-
-        // add events
         fireEvent(component, 'mount');
 
         component.setCell(cell);
@@ -160,27 +168,10 @@ namespace Bindings {
         }
 
         // states
-        if (
-            optionsStates &&
-            optionsStates.hover
-        ) {
+        if (optionsStates && optionsStates.hover) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
 
-        let promise;
-        try {
-            promise = component.load();
-        } catch (e) {
-            component.update({
-                title: {
-                    text:
-                        cell.row.layout.board?.editMode?.lang.errorMessage,
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                }
-            });
-        }
         fireEvent(component, 'afterLoad');
 
         return promise;

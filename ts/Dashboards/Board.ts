@@ -442,7 +442,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public setComponents(
         components: Array<Partial<ComponentType['options']>>
-    ): Array<Promise<Component|undefined>> {
+    ): Array<Promise<Component|void>> {
         const promises = [];
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             promises.push(Bindings.addComponent(components[i]));

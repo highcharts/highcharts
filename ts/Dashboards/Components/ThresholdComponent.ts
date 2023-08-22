@@ -100,6 +100,7 @@ class ThresholdComponent extends Component {
         );
     }
 
+
     /* *
      *
      *  Properties
@@ -116,6 +117,12 @@ class ThresholdComponent extends Component {
      *  Functions
      *
      * */
+
+    /**
+     * @internal
+     */
+    public onTableChanged(): void {
+    }
 
     public render(): this {
         super.render();

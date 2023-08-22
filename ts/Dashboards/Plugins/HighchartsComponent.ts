@@ -429,8 +429,6 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        this.on('tableChanged', (): void => this.updateSeries());
-
         if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
@@ -443,6 +441,9 @@ class HighchartsComponent extends Component {
         this.innerResizeTimeouts = [];
     }
 
+    public onTableChanged(): void {
+        this.updateSeries();
+    }
     /* *
      *
      *  Functions
@@ -579,7 +580,7 @@ class HighchartsComponent extends Component {
      *
      * @private
      */
-    private updateSeries(): void {
+    public updateSeries(): void {
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?

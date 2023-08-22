@@ -294,7 +294,6 @@ class KPIComponent extends Component {
             );
         }
 
-        this.on('tableChanged', (): void => this.setValue());
     }
 
     /* *
@@ -380,6 +379,13 @@ class KPIComponent extends Component {
         }
 
         shouldRerender && this.render();
+    }
+
+    /**
+     * @internal
+     */
+    public onTableChanged(): void {
+        this.setValue();
     }
 
     /**

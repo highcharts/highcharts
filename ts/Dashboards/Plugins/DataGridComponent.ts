@@ -229,13 +229,8 @@ class DataGridComponent extends Component {
             this.disableEditingModifiedColumns(e.connector);
         });
 
-        this.on('tableChanged', this.onTableChanged);
     }
 
-    /**
-     * When the table is changed, update the data grid.
-     * @internal
-     */
     public onTableChanged(): void {
         if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
             this.dataGrid?.update({ dataTable: this.filterColumns() });
