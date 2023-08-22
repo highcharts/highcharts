@@ -23,6 +23,8 @@
 
 import type NavigatorComponentOptions from './NavigatorComponentOptions';
 
+import Component from '../Components/Component.js';
+
 
 /* *
  *
@@ -83,6 +85,9 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
         scrollbar: {
             enabled: true
         },
+        title: {
+            text: ''
+        },
         tooltip: {
             enabled: false
         },
@@ -92,7 +97,8 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
         yAxis: {
             visible: false
         }
-    }
+    },
+    editableOptions: (Component.defaultOptions.editableOptions || []).concat()
 };
 
 

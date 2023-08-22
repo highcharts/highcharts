@@ -335,6 +335,14 @@ class NavigatorComponent extends Component {
     public static charter: typeof H;
 
 
+    /**
+     * Default options of the Navigator component.
+     */
+    public static defaultOptions: Partial<NavigatorComponentOptions> = merge(
+        Component.defaultOptions, NavigatorComponentDefaults
+    );
+
+
     /* *
      *
      *  Static Functions
@@ -385,7 +393,7 @@ class NavigatorComponent extends Component {
     ) {
         super(cell, options);
 
-        this.options = merge(NavigatorComponentDefaults, options);
+        this.options = merge(NavigatorComponent.defaultOptions, options);
 
         const charter = (
             NavigatorComponent.charter ||
@@ -393,11 +401,10 @@ class NavigatorComponent extends Component {
         );
 
         this.chartContainer = Globals.win.document.createElement('div');
-        this.chart = charter.chart(
-            this.chartContainer,
-            (this.options.chartOptions || {})
-        );
-        this.chartContainer.classList.add('navigator-container');
+        this.chart = charter
+            .chart(this.chartContainer, (this.options.chartOptions || {}));
+        this.chartContainer.classList
+            .add(Globals.classNamePrefix + 'navigator');
 
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
