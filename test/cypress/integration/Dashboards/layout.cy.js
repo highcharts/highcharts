@@ -15,9 +15,6 @@ describe('Components in layout', () => {
         cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
-
-        // reset view port
-        cy.viewport('macbook-13');
     });
 
     it('components should reflow when width of board is changing ', () => {
