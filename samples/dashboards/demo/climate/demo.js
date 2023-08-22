@@ -113,6 +113,12 @@ async function setupBoard() {
                     cells: [{
                         id: 'world-map',
                         responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
                             small: {
                                 width: '100%'
                             }
@@ -120,6 +126,12 @@ async function setupBoard() {
                     }, {
                         id: 'kpi-layout',
                         responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
                             small: {
                                 width: '100%'
                             }
@@ -128,29 +140,87 @@ async function setupBoard() {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-temperature',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-max-temperature',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
-                                }]
-                            }, {
-                                cells: [{
+                                }, {
                                     id: 'kpi-rain',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-ice',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-frost',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }]
                             }]
@@ -160,6 +230,12 @@ async function setupBoard() {
                     cells: [{
                         id: 'selection-grid',
                         responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
                             small: {
                                 width: '100%'
                             }
@@ -167,6 +243,12 @@ async function setupBoard() {
                     }, {
                         id: 'city-chart',
                         responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
                             small: {
                                 width: '100%'
                             }
