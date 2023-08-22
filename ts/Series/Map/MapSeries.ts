@@ -581,10 +581,7 @@ class MapSeries extends ScatterSeries {
 
                 // Restore state color on update/redraw (#3529)
                 if (shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    shapeArgs.fill = this.pointAttribs(
-                        point,
-                        point.state
-                    ).fill;
+                    shapeArgs.fill = this.pointAttribs(point).fill;
                 }
             });
 
@@ -615,10 +612,7 @@ class MapSeries extends ScatterSeries {
                     // In styled mode, apply point colors by CSS
                     if (chart.styledMode) {
                         graphic.css(
-                            this.pointAttribs(
-                                point,
-                                point.selected && 'select' || void 0
-                            ) as any
+                            this.pointAttribs(point) as any
                         );
                     }
 
@@ -917,7 +911,7 @@ class MapSeries extends ScatterSeries {
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any
             );
-        const state = point?.state || 'normal';
+        const state = point?.state || (point?.selected && 'select' || void 0);
 
         // Individual stroke width
         let pointStrokeWidth = this.getStrokeWidth(point.options);
@@ -1308,10 +1302,7 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
     drawMapDataLabels(): void;
     drawPoints(): void;
     hasData(): boolean;
-    pointAttribs(
-        point?: MapPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes;
+    pointAttribs(point?: MapPoint): SVGAttributes;
     render(): void;
 }
 extend(MapSeries.prototype, {
