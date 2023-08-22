@@ -41,17 +41,10 @@ Dashboards.board('container', {
                             width: '100%'
                         }
                     }
-                }, {
-                    id: 'dashboard-col-3',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    }
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-4'
+                    id: 'dashboard-col-3'
                 }]
             }]
         }]
@@ -69,15 +62,12 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             Population: 'y'
         },
         chartOptions: {
             xAxis: {
-                type: 'category',
-                labels: {
-                    enabled: false
-                }
+                type: 'category'
             },
             yAxis: {
                 title: {
@@ -122,19 +112,16 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             'Metro Area(km2)': 'y'
         },
         chartOptions: {
             xAxis: {
-                type: 'category',
-                labels: {
-                    enabled: false
-                }
+                type: 'category'
             },
             yAxis: {
                 title: {
-                    text: 'Area km2'
+                    text: ''
                 }
             },
             credits: {
@@ -175,15 +162,12 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             'Highest Elevation(m)': 'y'
         },
         chartOptions: {
             xAxis: {
-                type: 'category',
-                labels: {
-                    enabled: false
-                }
+                type: 'category'
             },
             yAxis: {
                 title: {
@@ -220,77 +204,7 @@ Dashboards.board('container', {
         }
     },
     {
-        title: {
-            text: ''
-        },
         cell: 'dashboard-col-3',
-        type: 'Highcharts',
-        connector: {
-            id: 'Population'
-        },
-        columnAssignment: {
-            City: 'x',
-            Population: null,
-            'Metro Area(km2)': null,
-            'Highest Elevation(m)': 'y'
-        },
-        chartOptions: {
-            xAxis: {
-                visible: false
-            },
-            yAxis: {
-                title: {
-                    text: ''
-                },
-                height: 0
-            },
-            credits: {
-                enabled: false
-            },
-            chart: {
-                type: 'column',
-                margin: 0,
-                spacing: 0
-            },
-            plotOptions: {
-                series: {
-                    legendType: 'point',
-                    colorByPoint: true,
-                    marker: {
-                        symbol: 'square'
-                    },
-                    events: {
-                        legendItemClick: function () {
-                            return false;
-                        }
-                    },
-                    states: {
-                        inactive: {
-                            enabled: false
-                        }
-                    }
-                }
-            },
-            title: {
-                text: ''
-            },
-            legend: {
-                title: {
-                    text: 'Cities'
-                },
-                enabled: true,
-                padding: 0,
-                floating: true,
-                layout: 'vertical',
-                y: -30,
-                navigation: {
-                    enabled: false
-                }
-            }
-        }
-    },
-    {
-        cell: 'dashboard-col-4',
         connector: {
             id: 'Population'
         },
