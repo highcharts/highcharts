@@ -847,6 +847,35 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
             'while changing the minLinkWidth (#13308)'
     );
 
+    const node = chart.series[0].nodes[4],
+        hor = -100,
+        ver = -100;
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    const posBefore = node.shapeArgs;
+
+    node.update({
+        offsetHorizontal: hor,
+        offsetVertical: ver
+    });
+
+    assert.strictEqual(
+        posBefore.x - ver,
+        node.shapeArgs.x,
+        'Point should be moved to the left (#18988 and #17594).'
+    );
+
+    assert.strictEqual(
+        posBefore.y - hor,
+        node.shapeArgs.y,
+        'Point should be moved to the bottom (#18988 and #17594).'
+    );
+
     const series = chart.addSeries({
         type: 'sankey',
         keys: ['from', 'to', 'weight'],
