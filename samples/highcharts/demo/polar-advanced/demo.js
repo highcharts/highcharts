@@ -55,6 +55,11 @@ const
         }
     },
     data = JSON.parse(document.getElementById('data').innerHTML),
+    legendHeight = (document
+        .getElementById('container')
+        .getBoundingClientRect()
+        .height / 12
+    ),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
     teamColors = ['#FF8076', '#4E94C9', '#ADFFA6'],
@@ -134,6 +139,7 @@ const
             backgroundColor: undefined,
             useHTML: true,
             positioner: function (labelWidth, labelHeight) {
+                console.log(this);
                 const { chartWidth, chartHeight } = this.chart;
                 return {
                     x: (chartWidth / 2) - (labelWidth / 2),
@@ -268,7 +274,7 @@ const
                 color: '#333333',
                 fontSize: '0.8rem'
             },
-            y: this.plotSizeY,
+            y: legendHeight,
             width: '30%',
             padding: 12,
             maxHeight: '18%',
@@ -324,10 +330,4 @@ const
                 }
             }
         ]
-    }),
-    resizeObserver = new ResizeObserver(() => {
-        if (chart) {
-            chart.legend.update({ y: chart.chartHeight / 10 });
-        }
     });
-resizeObserver.observe(chart.renderTo);
