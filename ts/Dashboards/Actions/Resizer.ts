@@ -166,7 +166,7 @@ class Resizer {
     public tempSiblingsWidth: Array<Cell>;
 
     /**
-     * Reference to resizeObserver, that allows to run unobserver.
+     * Reference to ResizeObserver, which allows running 'unobserve'.
      * @internal
      */
     private resizeObserver?: ResizeObserver;
