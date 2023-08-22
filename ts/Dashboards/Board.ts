@@ -623,6 +623,41 @@ class Board implements Serializable<Board, Board.JSON> {
         };
     }
 
+    /**
+     * Convert the current state of board's options into JSON. The function does
+     * not support converting functions or events into JSON object.
+     *
+     * @returns
+     * The JSON of boards's options.
+     */
+    public getOptions(): Globals.DeepPartial<Board.Options> {
+        const board = this,
+            layouts = [],
+            components = [];
+
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layouts.push(board.layouts[i].getOptions());
+        }
+
+        for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; ++i) {
+            if (
+                board.mountedComponents[i].cell &&
+                board.mountedComponents[i].cell.mountedComponent
+            ) {
+                components.push(
+                    board.mountedComponents[i].component.getOptions()
+                );
+            }
+        }
+
+        return {
+            ...this.options,
+            gui: {
+                layouts
+            },
+            components: components
+        };
+    }
 }
 
 /* *
@@ -753,7 +788,7 @@ namespace Board {
          *
          * @default true
          **/
-        enabled: boolean;
+        enabled?: boolean;
         /**
          * General options for the layouts applied to all layouts.
          **/

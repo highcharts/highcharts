@@ -64,8 +64,8 @@ class Resizer {
         },
         type: 'xy',
         snap: {
-            width: 20,
-            height: 20
+            width: 9,
+            height: 17
         }
     };
 
@@ -100,9 +100,7 @@ class Resizer {
         this.startX = 0;
         this.tempSiblingsWidth = [];
 
-        this.addSnaps(
-            this.options
-        );
+        this.addSnaps();
     }
 
     /* *
@@ -176,26 +174,26 @@ class Resizer {
     /**
      * Add Snap - create snaps and add events.
      *
-     * @param {Resizer.Options} options
-     * Reference to options of snaps
-     *
      */
-    public addSnaps(options: Resizer.Options): void {
-        const minWidth = options.styles.minWidth;
-        const minHeight = options.styles.minHeight;
+    public addSnaps(): void {
+        const iconsURLPrefix = this.editMode.iconsURLPrefix;
         const snapWidth = this.options.snap.width || 0;
         const snapHeight = this.options.snap.height || 0;
         const dashboardContainer = this.editMode.board.container;
 
         // Right snap
         this.snapRight = createElement(
-            'div',
+            'img',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapX
+                    EditGlobals.classNames.resizeSnapX,
+                // src: iconsURLPrefix + 'resize-handle.svg'
+                // eslint-disable-next-line max-len
+                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b2d3673cfd596a9615e57233914836c78544884c/gfx/dashboards-icons/resize-handle.svg'
             },
             {
                 width: snapWidth + 'px',
+                height: snapHeight + 'px',
                 left: -9999 + 'px'
             },
             dashboardContainer
@@ -203,12 +201,16 @@ class Resizer {
 
         // Bottom snap
         this.snapBottom = createElement(
-            'div',
+            'img',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapY
+                    EditGlobals.classNames.resizeSnapY,
+                // src: iconsURLPrefix + 'resize-handle.svg'
+                // eslint-disable-next-line max-len
+                src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b2d3673cfd596a9615e57233914836c78544884c/gfx/dashboards-icons/resize-handle.svg'
             },
             {
+                width: snapWidth + 'px',
                 height: snapHeight + 'px',
                 top: -9999 + 'px',
                 left: '0px'
@@ -467,13 +469,12 @@ class Resizer {
 
                 currentCell.setSize(newWidth);
                 currentCell.updateSize(newWidth, currentRwdMode);
-
                 this.startX = e.clientX;
             }
 
             // Resize height
             if (currentDimension === 'y') {
-                cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
+                currentCell.setSize(void 0, e.clientY - cellOffsets.top);
             }
             // Call cellResize dashboard event.
             fireEvent(this.editMode.board, 'cellResize', {

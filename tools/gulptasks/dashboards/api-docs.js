@@ -18,7 +18,7 @@ async function apiDocs() {
     await processLib.exec(
         'npx typedoc' +
         ' --options tools/gulptasks/dashboards/api-docs.json' +
-        ' --tsconfig ts/tsconfig.json'
+        ' --tsconfig ts/masters-dashboards/tsconfig.json'
     );
 
     fsLib.copyAllFiles(

@@ -1,0 +1,7 @@
+---
+ name: CSV demo with modifiers
+ authors:
+   - Pawel Lysy
+ js_wrap: b
+ skipTest: true
+...

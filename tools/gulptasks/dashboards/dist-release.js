@@ -63,15 +63,23 @@ async function distRelease() {
         cwd: distRepository
     });
 
+    // Remove deprecated files and folders
+
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'css', 'dashboards'),
+        true
+    );
+
+    fsLib.deleteDirectory(path.join(distRepository, 'examples'), true);
+
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'gfx', 'dashboard-icons'),
+        true
+    );
+
     // Copy build/dist into repository
 
     fsLib.copyAllFiles(path.join(buildFolder, 'code'), distRepository, true);
-
-    fsLib.copyAllFiles(
-        path.join(buildFolder, 'examples'),
-        path.join(distRepository, 'examples'),
-        true
-    );
 
     fsLib.copyFile(
         config.readmeFile,
@@ -93,19 +101,22 @@ async function distRelease() {
     await processLib.exec(`git commit -m "v${release}"`, {
         cwd: distRepository
     });
-    await processLib.exec(`git tag v${release}`, {
-        cwd: distRepository
-    });
 
     // Do magic
 
     if (argv.dryrun) {
-        logLib.warn('Skipped \`git push origin --tags\`');
+        logLib.warn(`Skipped \`git tag v${release}\``);
         await processLib.exec('npm publish --access public --dry-run', {
             cwd: distRepository
         });
     } else {
+        await processLib.exec(`git tag v${release}`, {
+            cwd: distRepository
+        });
         // Play safe - do manually
+        // await processLib.exec('git push', {
+        //     cwd: distRepository
+        // });
         // await processLib.exec('git push origin --tags', {
         //     cwd: distRepository
         // });

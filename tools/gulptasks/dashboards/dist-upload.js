@@ -7,6 +7,8 @@ const fs = require('fs');
 const gulp = require('gulp');
 const path = require('path').posix;
 
+const { dryrun } = require('yargs').argv;
+
 
 /* *
  *
@@ -155,22 +157,24 @@ async function uploadFile(
         path.relative(sourceFolder, sourceFile)
     );
 
-    await targetStorage.putObject({
-        Bucket: targetBucket,
-        Key: filePath,
-        Body: fileContent,
-        ACL: 'public-read',
-        ContentType: MIME_TYPE[path.extname(filePath)],
-        ...(!maxAge ? {} : {
-            CacheControl: `public, max-age=${maxAge}`,
-            Expires: new Date(NOW + (maxAge * 1000))
-        }),
-        ...(!isGzip ? {} : {
-            ContentEncoding: 'gzip'
-        })
-    });
+    if (!dryrun) {
+        await targetStorage.putObject({
+            Bucket: targetBucket,
+            Key: filePath,
+            Body: fileContent,
+            ACL: 'public-read',
+            ContentType: MIME_TYPE[path.extname(filePath)],
+            ...(!maxAge ? {} : {
+                CacheControl: `public, max-age=${maxAge}`,
+                Expires: new Date(NOW + (maxAge * 1000))
+            }),
+            ...(!isGzip ? {} : {
+                ContentEncoding: 'gzip'
+            })
+        });
+    }
 
-    logLib.message(filePath, 'uploaded');
+    logLib.message(filePath, 'uploaded', dryrun ? '(dryrun)' : '');
 }
 
 
@@ -288,7 +292,6 @@ async function uploadZips(
  *
  * */
 
-
 /**
  * Uploads distribution files.
  *
@@ -346,19 +349,40 @@ async function distUpload() {
         )
     });
 
-    const cdnVersionFolder = path.join(cdnFolder, release, '/');
-
-    logLib.warn(`Uploading to ${cdnFolder}...`);
-    await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
-
-    logLib.warn(`Uploading to ${cdnVersionFolder}...`);
-    await uploadFolder(
-        sourceFolder,
+    logLib.warn('Uploading products.js...');
+    await uploadFile(
+        path.join(buildFolder, '..'),
+        path.join(buildFolder, '..', 'products.js'),
         targetStorage,
         bucket,
-        cdnVersionFolder,
-        HTTP_MAX_AGE.fiveYears
+        '.'
     );
+
+
+    // Upload versioned paths
+    const [major, minor] = release.split('.');
+    const versions = [
+        release,
+        `${major}.${minor}`,
+        major
+    ];
+
+    for (const version of versions) {
+        const cdnVersionFolder = path.join(cdnFolder, version, '/');
+
+        logLib.warn(`Uploading to ${cdnVersionFolder}...`);
+        await uploadFolder(
+            sourceFolder,
+            targetStorage,
+            bucket,
+            cdnVersionFolder,
+            HTTP_MAX_AGE.fiveYears
+        );
+    }
+
+    // Upload to path without version
+    logLib.warn(`Uploading to ${cdnFolder}...`);
+    await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
 
     // Hack
     const sourceCssFolder = path.join(sourceFolder, 'css');

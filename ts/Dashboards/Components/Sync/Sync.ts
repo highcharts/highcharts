@@ -109,7 +109,7 @@ class Sync {
      *
      * */
     /**
-     * Add new emmiter to the registered emitters.
+     * Add new emitter to the registered emitters.
      * @param emitter
      The emitter to register.
      */

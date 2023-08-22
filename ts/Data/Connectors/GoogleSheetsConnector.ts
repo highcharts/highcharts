@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -151,7 +152,10 @@ class GoogleSheetsConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
+            converter = connector.converter,
+            table = connector.table,
             {
+                dataModifier,
                 dataRefreshRate,
                 enablePolling,
                 firstRowAsNames,
@@ -164,62 +168,65 @@ class GoogleSheetsConnector extends DataConnector {
                 connector.options
             );
 
-        // If already loaded, clear the current table
-        connector.table.deleteColumns();
-
         connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: connector.table,
+            table,
             url
         });
 
+        // If already loaded, clear the current table
+        table.deleteColumns();
+
         return fetch(url)
-            .then((response): Promise<void> => response
-                .json()
-                .then((json): void => {
+            .then((
+                response
+            ): Promise<GoogleSheetsConverter.GoogleSpreadsheetJSON> => (
+                response.json()
+            ))
+            .then((json): Promise<this> => {
 
-                    if (isGoogleError(json)) {
-                        throw new Error(json.error.message);
-                    }
+                if (isGoogleError(json)) {
+                    throw new Error(json.error.message);
+                }
 
-                    connector.converter.parse({
-                        firstRowAsNames,
-                        json:
-                            json as GoogleSheetsConverter.GoogleSpreadsheetJSON
-                    });
+                converter.parse({
+                    firstRowAsNames,
+                    json
+                });
 
-                    connector.table.setColumns(
-                        connector.converter.getTable().getColumns()
+                table.setColumns(
+                    converter.getTable().getColumns()
+                );
+
+                return connector.setModifierOptions(dataModifier);
+            })
+            .then((): this => {
+                connector.emit<GoogleSheetsConnector.Event>({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table,
+                    url
+                });
+
+                // Polling
+                if (enablePolling) {
+                    setTimeout(
+                        (): Promise<this> => connector.load(),
+                        Math.max(dataRefreshRate || 0, 1) * 1000
                     );
+                }
 
-                    connector.emit<GoogleSheetsConnector.Event>({
-                        type: 'afterLoad',
-                        detail: eventDetail,
-                        table: connector.table,
-                        url
-                    });
-
-                    // Polling
-                    if (enablePolling) {
-                        setTimeout(
-                            (): Promise<this> => connector.load(),
-                            Math.max(dataRefreshRate || 0, 1) * 1000
-                        );
-                    }
-                })
-            )['catch']((error): Promise<void> => {
+                return connector;
+            })['catch']((error): never => {
                 connector.emit<GoogleSheetsConnector.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table: connector.table
+                    table
                 });
-                return Promise.reject(error);
-            })
-            .then((): this =>
-                connector
-            );
+                throw error;
+            });
     }
 
 }
@@ -254,8 +261,10 @@ namespace GoogleSheetsConnector {
      * Available options for constructor and converter of the
      * GoogleSheetsConnector.
      */
-    export type UserOptions =
-        (DeepPartial<GoogleSheetsConnectorOptions>&GoogleSheetsConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<GoogleSheetsConnectorOptions>&
+        GoogleSheetsConverter.UserOptions
+    );
 
     /* *
      *
