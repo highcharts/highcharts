@@ -12,11 +12,12 @@ a {
 }
 
 /* Center the 'a' element in the div */
-a {
+a.subtitle {
     display: block;
     margin: 0 auto;
     width: 100%;
     color: var(--highcharts-color-0);
+    padding-bottom: 10px;
 }
 
 h1 {
