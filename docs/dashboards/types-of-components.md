@@ -5,18 +5,19 @@ Components are the building blocks of the dashboard layout. There are several ty
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboards-plugin.js` module.
 
 Here is the overview of most important parameters, that can be defined for a component:
-* `Id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
-* `Cell` - id of the cell, in which the component should be placed
-* `Class` - CSS class
-* `Type` - the type of the component.
-* `Events` - object containing a pair of name of the event and callback function that should be called on a given event. The list of events can be found in the API Reference but the most common one is `mount`.
-* `Sync` - list of events, which should be synchronized between components.
+* `id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
+* `cell` - id of the cell, in which the component should be placed
+* `class` - CSS class
+* `type` - the type of the component. It can be [`HTML`](#html-component), [`KPI`](#kpi-component), [`Highcharts`](#highcharts-component),
+[`DataGrid`](#datagrid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
+* `events` - object containing a pair of name of the event and callback function that should be called on a given event. The list of events can be found in the API Reference but the most common one is `mount`.
+* `sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
 The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
 
 Code snippet:
-``` JS
+```js
 {
     type: 'HTML',
     cell: 'dashboard-1',
@@ -72,7 +73,7 @@ You can define the threshold to change the style of the component, when one valu
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi)
 
 Code snippet:
-``` JS
+```js
 {
     cell: 'kpi-00',
     type: 'KPI',
