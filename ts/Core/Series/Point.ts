@@ -1657,7 +1657,7 @@ namespace Point {
         total?: number;
     }
     export interface SeriesPointsOptions {
-        events?: Record<string, Function>;
+        events?: PointEventsOptions;
     }
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;

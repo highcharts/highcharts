@@ -38,13 +38,10 @@ import type Row from '../Layout/Row';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
-import DG from '../Globals.js';
-const {
-    classNamePrefix
-} = DG;
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
 import Globals from '../Globals.js';
+const { classNamePrefix } = Globals;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
