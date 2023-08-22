@@ -1,6 +1,4 @@
 const
-    monthExtremes = { min: 0, max: 26 },
-    weekExtremes = { min: 1, max: 5 },
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
     toggleableGradient = {
         pattern: undefined,
@@ -10,6 +8,13 @@ const
             [1, 'rgba(199, 216, 225, 0.2)']
         ]
     },
+    specialSeriesProps = {
+        showInLegend: false,
+        groupPadding: 0,
+        pointPadding: 0
+    },
+    monthExtremes = { min: 0, max: 26 },
+    weekExtremes = { min: 1, max: 5 },
     bubbleEvents =  {
         mouseOver: function () {
             const
@@ -53,6 +58,11 @@ const
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
     teamColors = ['#FF8076', '#4E94C9', '#ADFFA6'],
+    asColFieldStr = str => (
+        '<span class=\"col-display-fieldwrap\">' +
+        '<span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
+        str + '</span>'
+    ),
     teamSeries = Array(3).fill({
         type: 'bubble',
         shadow: true,
@@ -62,8 +72,7 @@ const
         colorKey: 't',
         tooltip: {
             headerFormat: (
-                '<div style="display:grid; place-items: center; height:22vh;' +
-                ' border-radius:20%; text-align: center;">' +
+                '<div class="team-day-display center">' +
                 '<span style="margin-bottom:8rem;"><b style="' +
                 'font-size: 2rem; color:#FFFFFF; height:12vh;">' +
                 'Day: {point.x}</b></span><span style="width:100%;' +
@@ -124,10 +133,8 @@ const
         tooltip: {
             backgroundColor: undefined,
             useHTML: true,
-            padding: 16,
             positioner: function (labelWidth, labelHeight) {
                 const { chartWidth, chartHeight } = this.chart;
-
                 return {
                     x: (chartWidth / 2) - (labelWidth / 2),
                     y: (chartHeight / 2) - (labelHeight / 2)
@@ -151,8 +158,6 @@ const
             innerSize: '60%',
             ...paneOpeningAngles,
             background: {
-                borderWidth: 4,
-                borderColor: '#7C6DB3',
                 backgroundColor: '#C8F9D3',
                 outerRadius: '60%'
             }
@@ -200,7 +205,6 @@ const
             pane: 1,
             linkedTo: 0,
             gridLineWidth: 0,
-            lineWidth: 4,
             lineColor: '#A8C4FF',
             plotBands: Array(3).fill(7).map(
                 (weekendOffset, week) => {
@@ -273,35 +277,25 @@ const
         },
         series: [
             ...teamSeries, {
+                ...specialSeriesProps,
                 name: 'Month',
                 type: 'column',
                 data: weekLabels,
                 xAxis: 2,
                 yAxis: 2,
+                colorKey: 'x',
                 pointPlacement: 'between',
-                groupping: false,
-
-                centerInCategory: true,
-                showInLegend: false,
-                pointPadding: 0,
-                groupPadding: 0,
-
                 enableMouseTracking: false,
                 pointWidth: 1.2,
                 borderRadius: 50
             }, {
+                ...specialSeriesProps,
                 name: 'Total',
                 type: 'columnrange',
                 data: scoreData,
                 xAxis: 1,
                 yAxis: 1,
                 shadow: true,
-
-                centerInCategory: true,
-                showInLegend: false,
-                groupPadding: 0,
-                pointPadding: 0,
-
                 pointPlacement: 'on',
                 colorAxis: 1,
                 colorKey: 'x',
@@ -310,37 +304,21 @@ const
                 borderWidth: 0.35,
                 tooltip: {
                     headerFormat: (
-                        '<span style=\"display:flex; ' +
-                        'justify-content: center; align-items:center; ' +
-                        'flex-direction:column;\"><b style=\"padding:0.4rem;' +
-                        'font-size: 2.6rem; letter-spacing: 0.208rem; ' +
-                        'text-decoration: underline solid {point.color} ' +
-                        '0.2rem; text-align:center;\">Day {point.x}</b>'
+                        '<span class="center">' +
+                        '<b class="col-display-header"' +
+                        'style=\"text-decoration:' +
+                        'underline solid {point.color} 0.2rem;\"' +
+                        '>Day {point.x}</b>'
                     ),
                     pointFormat: (
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;' +
-                        'width: 5rem; text-align:left\"><span style=\" ' +
-                        'color:{point.color}; font-size: 1rem;\">●</span> ' +
-                        '<b>Sales: </b><span>{point.high}</span></span>' +
-                        '<span style=\"font-size: 0.9rem;padding:0.3rem;' +
-                        'width: 5rem;text-align:left\">' +
-                        '<span style=\"color:{point.color}; ' +
-                        'font-size: 1rem;\">●</span><b> Average: </b>' +
-                        '<span>{point.avg}</span></span><span style=\"' +
-                        'font-size: 0.9rem;padding:0.3rem;width: 5rem;' +
-                        'text-align:left\"><span style=\"color:' +
-                        '{point.color}; font-size: 1rem;\">●</span> ' +
-                        '<b>Highscore: </b><span>{point.highscore}</span>' +
-                        '</span><span style=\"font-size: 0.9rem;' +
-                        'padding:0.3rem;width: 5rem; text-align:left\">' +
-                        '<span style=\"color:{point.color}; font-size: ' +
-                        '1rem;\">●</span><b>Top earner: </b><span>' +
-                        '{point.topEarner}</span></span>'
+                        asColFieldStr('<b>Sales: </b><span>{point.high}</span>') +
+                        asColFieldStr('<b>Average: </b><span>{point.avg}</span>') +
+                        asColFieldStr('<b>Highscore: </b><span>{point.highscore}</span>') +
+                        asColFieldStr('<b>Top earner: </b><span>{point.topEarner}</span>')
                     ),
                     footerFormat: (
-                        '<i style=\"margin:0.3rem; ' +
-                        'padding:0.3rem;width: 10rem;text-align:center;' +
-                        ' border-top: 0.1rem solid {point.color};\">' +
+                        '<i class="col-display-footer" style=\"' +
+                        'border-top: 0.1rem solid {point.color};\">' +
                         'Week {point.week}</i></span>'
                     )
                 }
@@ -348,6 +326,8 @@ const
         ]
     }),
     resizeObserver = new ResizeObserver(() => {
-        chart.legend.update({ y: chart.chartHeight / 10 });
+        if (chart) {
+            chart.legend.update({ y: chart.chartHeight / 10 });
+        }
     });
 resizeObserver.observe(chart.renderTo);
