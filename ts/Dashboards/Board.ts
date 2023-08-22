@@ -286,7 +286,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public options: Board.Options;
 
     /**
-     * Reference to resizeObserver, that allows to run unobserver.
+     * Reference to ResizeObserver, which allows running 'unobserve'.
      * @internal
      */
     private resizeObserver?: ResizeObserver;
