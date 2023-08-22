@@ -545,6 +545,7 @@ class NavigatorComponent extends Component {
 
         this.contentElement.appendChild(this.chartContainer);
         this.parentElement.appendChild(this.element);
+        this.adjustNavigator();
         this.hasLoaded = true;
 
         return this;
@@ -552,7 +553,7 @@ class NavigatorComponent extends Component {
 
 
     /** @private */
-    private redrawChart(): void {
+    private redrawNavigator(): void {
         const timeouts = this.resizeTimeouts;
 
         for (let i = 0, iEnd = timeouts.length; i < iEnd; ++i) {
@@ -564,7 +565,7 @@ class NavigatorComponent extends Component {
         timeouts.push(setTimeout((): void => {
             this.adjustNavigator();
             this.chart.redraw();
-        }, 50));
+        }, 33));
     }
 
 
@@ -639,7 +640,7 @@ class NavigatorComponent extends Component {
             }
         }
 
-        this.redrawChart();
+        this.redrawNavigator();
     }
 
 
@@ -649,7 +650,7 @@ class NavigatorComponent extends Component {
         height?: (number|string|null)
     ): this {
         super.resize(width, height);
-        this.redrawChart();
+        this.redrawNavigator();
         return this;
     }
 
