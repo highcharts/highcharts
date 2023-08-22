@@ -125,9 +125,6 @@ const createChart = async () => {
     ];
 
     Highcharts.mapChart('container', {
-        chart: {
-            margin: 0
-        },
 
         title: {
             text: 'Highcharts Map with Locator'
@@ -237,7 +234,7 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
     };
 
     // Locator chart frame logic
-    function getMapFrame(chart, plotLeft, plotHeight, plotWidth, plotTop) {
+    function getMapFrame(chart, plotHeight, plotWidth) {
         const steps = 20;
 
         function calculateEdge(xFunc, yFunc) {
@@ -255,23 +252,23 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
         }
 
         const topEdge = calculateEdge(
-                i => plotLeft + (i / steps) * plotWidth,
-                () => plotTop
+                i => (i / steps) * plotWidth,
+                () => 0
             ),
 
             bottomEdge = calculateEdge(
-                i => plotLeft + (i / steps) * plotWidth,
-                () => plotTop + plotHeight
+                i => (i / steps) * plotWidth,
+                () => plotHeight
             ),
 
             leftEdge = calculateEdge(
-                () => plotLeft,
-                i => plotTop + (i / steps) * plotHeight
+                () => 0,
+                i => (i / steps) * plotHeight
             ),
 
             rightEdge = calculateEdge(
-                () => plotLeft + plotWidth,
-                i => plotTop + (i / steps) * plotHeight
+                () => plotWidth,
+                i => (i / steps) * plotHeight
             ),
 
             rect = [
@@ -366,10 +363,8 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
                     type: 'LineString',
                     coordinates: getMapFrame(
                         mainChart,
-                        mainChart.plotLeft,
                         mainChart.plotHeight,
-                        mainChart.plotWidth,
-                        mainChart.plotTop
+                        mainChart.plotWidth
                     )
                 }
             }]
@@ -383,10 +378,8 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
                 type: 'LineString',
                 coordinates: getMapFrame(
                     mainChart,
-                    mainChart.plotLeft,
                     mainChart.plotHeight,
-                    mainChart.plotWidth,
-                    mainChart.plotTop
+                    mainChart.plotWidth
                 )
             }
         }]);
