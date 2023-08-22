@@ -1,13 +1,13 @@
 const
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
-    paneOpeningAngles = { startAngle: 23.5, endAngle: 336.5 },
+    paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
     toggleableGradient = {
         pattern: undefined,
         radialGradient: [1, 0.25, 0.1],
         stops: [
             [0, 'rgba(255,253,251, 1)'],
-            [1, 'rgba(199, 216, 225, 0.15)']
+            [1, 'rgba(199, 216, 225, 0.2)']
         ]
     },
     bubbleEvents =  {
@@ -62,29 +62,34 @@ const
         colorKey: 't',
         tooltip: {
             headerFormat: (
-                '<div style="display:grid; place-items: center; height:22vh; border-radius:20%; text-align: center;">' +
-                '<span style="margin-bottom:8rem;"><b style="font-size: 2rem; color:#FFFFFF; height:12vh;">Day: {point.x}</b></span>' +
-                '<span style="width:100%; position: absolute; margin:1.5rem; background: #FFFFFF; border-radius:50%;font-size: 1rem; padding: 0.5rem;' +
-                'border: 0.2rem outset {series.color}; border-block-end: 0.2rem outset {series.color};">' +
-                '<b style="color: {series.color};">●</b> <b>{series.name}</b></span>'
+                '<div style="display:grid; place-items: center; height:22vh;' +
+                ' border-radius:20%; text-align: center;">' +
+                '<span style="margin-bottom:8rem;"><b style="' +
+                'font-size: 2rem; color:#FFFFFF; height:12vh;">' +
+                'Day: {point.x}</b></span><span style="width:100%;' +
+                'position: absolute; margin:1.5rem; background: #FFFFFF; ' +
+                'border-radius:50%;font-size: 1rem; padding: 0.5rem;' +
+                'border: 0.2rem outset {series.color}; border-block-end:' +
+                '0.2rem outset {series.color};"><b style="color: ' +
+                '{series.color};">●</b> <b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="margin-top:8rem; position: absolute;font-size: 1.25rem;">' +
-                '<b style="width:100%;text-align:center;">Daily Sales:</b> {point.z}</span>'
+                '<span style="margin-top:8rem; position: absolute;' +
+                'font-size: 1.25rem;"><b style="width:100%;' +
+                'text-align:center;">Daily Sales:</b> {point.z}</span>'
             ),
             footerFormat: '</div>'
         }
-    }).map((seriesProps, i) => (
-        {
-            ...seriesProps,
-            name: countries[i],
-            data: data[i],
-            color: teamColors[i],
-            marker: {
-                fillColor: teamColors[i],
-                fillOpacity: 1
-            }
-        })),
+    }).map((seriesProps, i) => ({
+        ...seriesProps,
+        name: countries[i],
+        data: data[i],
+        color: teamColors[i],
+        marker: {
+            fillColor: teamColors[i],
+            fillOpacity: 1
+        }
+    })),
     weekLabels = Array(4)
         .fill(0)
         .map(
@@ -95,24 +100,18 @@ const
                     inside: true,
                     style: {
                         textOutline: undefined,
-                        color: '#707099',
-                        'letter-spacing': '0.02em',
-                        margin: '2rem',
-                        textAlign: 'center'
+                        color: '#707099'
                     },
                     textPath: {
                         enabled: true,
                         attributes: {
                             startOffset: index % 3 ? '75%' : '25%',
-                            dy: '1.8%'
-                        },
-                        style: {
-                            padding: '24rem'
+                            dy: '2.8%'
                         }
                     }
                 },
                 x: index + 1,
-                y: 3
+                y: 1.5
             })
         ),
     chart = Highcharts.chart('container', {
@@ -146,8 +145,7 @@ const
             maxColor: '#ACB7FA',
             showInLegend: false,
             ...monthExtremes
-        }
-        ],
+        }],
         pane: [{
             size: '95%',
             innerSize: '60%',
@@ -170,16 +168,17 @@ const
             }
         }, {
             size: '100%',
-            innerSize: '95%',
-            ...paneOpeningAngles,
+            innerSize: '90%',
+            startAngle: 16.5,
+            endAngle: 343.5,
             background: {
                 borderWidth: 16,
                 borderColor: '#F3DEF7',
                 backgroundColor: {
                     radialGradient: { cx: 0.5, cy: 0.5, r: 1.8 },
                     stops: [
-                        [0, 'rgba(148, 136, 191,1)'],
-                        [0.2, 'rgba(232, 231, 245, 1)'],
+                        [0, 'rgba(228, 236, 251,1)'],
+                        [0.2, 'rgba(242, 231, 255, 1)'],
                         [0.25, 'rgba(243,245, 240, 1)'],
                         [0.3, 'rgba(156, 245, 245,1)']
                     ]
@@ -219,11 +218,11 @@ const
             labels: { enabled: false }
         }, {
             pane: 2,
-            tickAmount: 5,
-            tickInterval: 1,
+            tickAmount: 4,
+            tickInterval: 0.5,
             gridLineWidth: 0,
             lineColor: '#B1E6FC',
-            lineWidth: 16,
+            lineWidth: 8,
             ...weekExtremes,
             labels: { enabled: false }
         }],
@@ -255,64 +254,56 @@ const
             enabled: true,
             backgroundColor: '#EAFAEF',
             borderColor: '#A8C4FF',
-            borderRadius: 32,
+            borderRadius: 16,
             floating: true,
             layout: 'vertical',
             verticalAlign: 'top',
             squareSymbol: true,
-            borderWidth: 4,
-
+            borderWidth: 1.5,
             itemStyle: {
                 color: '#333333',
-                fontSize: '0.86rem',
-                letterSpacing: '0.032rem'
+                fontSize: '0.8rem'
             },
             y: this.plotSizeY,
-            width: '10%',
-            padding: 16,
+            width: '30%',
+            padding: 12,
             maxHeight: '18%',
-
-            title:
-            {
-                style: {
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    letterSpacing: '0.1rem',
-                    color: '#444444'
-                },
-                text: 'Teams'
-            }
+            symbolPadding: 12,
+            symbolHeight: 16
         },
-
         series: [
-            ...teamSeries,
-            {
+            ...teamSeries, {
                 name: 'Month',
                 type: 'column',
                 data: weekLabels,
-                colorKey: 'x',
                 xAxis: 2,
                 yAxis: 2,
-                showInLegend: false,
-                pointPlacement: 'on',
-                pointPadding: 0,
+                pointPlacement: 'between',
                 groupping: false,
+
                 centerInCategory: true,
-                enableMouseTracking: false
+                showInLegend: false,
+                pointPadding: 0,
+                groupPadding: 0,
+
+                enableMouseTracking: false,
+                pointWidth: 1.2,
+                borderRadius: 50
             }, {
                 name: 'Total',
                 type: 'columnrange',
                 data: scoreData,
                 xAxis: 1,
                 yAxis: 1,
-
                 shadow: true,
-                showInLegend: false,
+
                 centerInCategory: true,
-                pointPlacement: 'on',
-                colorAxis: 1,
+                showInLegend: false,
                 groupPadding: 0,
                 pointPadding: 0,
+
+                pointPlacement: 'on',
+                colorAxis: 1,
                 colorKey: 'x',
                 pointStart: 1,
                 borderColor: 'blueviolet',
@@ -357,6 +348,6 @@ const
         ]
     }),
     resizeObserver = new ResizeObserver(() => {
-        chart.legend.update({ y: chart.chartHeight / 12 });
+        chart.legend.update({ y: chart.chartHeight / 10 });
     });
 resizeObserver.observe(chart.renderTo);
