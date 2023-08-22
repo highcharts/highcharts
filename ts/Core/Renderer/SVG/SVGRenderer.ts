@@ -212,7 +212,7 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#forExport
      * @type {boolean | undefined}
      */
-    public forExport?: boolean;
+    public forExport: boolean | undefined = void 0 as any;
     public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
