@@ -1336,6 +1336,21 @@ class SVGElement implements SVGElementLike {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.SVGElement#hrefSetter
+     * @param {Highcharts.ColorType} value
+     * @param {string} key
+     * @param {Highcharts.SVGDOMElement} element
+     */
+    public hrefSetter(
+        value: string,
+        key: string,
+        element: SVGDOMElement
+    ): void {
+        // Namespace is needed for offline export, #19106
+        element.setAttributeNS('http://www.w3.org/1999/xlink', key, value);
+    }
 
     /**
      * Get the bounding box (width, height, x and y) for the element. Generally

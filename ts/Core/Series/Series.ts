@@ -34,6 +34,7 @@ import type {
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
+    NonPlotOptions,
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
@@ -4073,6 +4074,13 @@ class Series {
                 'dataLabelsGroup',
                 'transformGroup'
             ],
+            optionsToCheck = [
+                'dataGrouping',
+                'pointStart',
+                'pointInterval',
+                'pointIntervalUnit',
+                'keys'
+            ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
             // directly after chart initialization, or when applying responsive
@@ -4103,14 +4111,13 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+
             options.joinBy ||
             options.mapData || // #11636
             // Changes to data grouping requires new points in new group
-            series.hasOptionChanged('dataGrouping') ||
-            series.hasOptionChanged('pointStart') ||
-            series.hasOptionChanged('pointInterval') ||
-            series.hasOptionChanged('pointIntervalUnit') ||
-            series.hasOptionChanged('keys')
+            optionsToCheck.some(
+                (option): boolean => series.hasOptionChanged(option)
+            )
         );
 
         newType = newType || initialType;
@@ -4338,24 +4345,26 @@ class Series {
      */
     public hasOptionChanged(optionName: string): boolean {
         const chart = this.chart,
-            option = (this.options as any)[optionName],
+            option = this.options[optionName as keyof SeriesOptions],
             plotOptions = chart.options.plotOptions,
-            oldOption = (this.userOptions as any)[optionName];
+            oldOption = this.userOptions[
+                optionName as keyof DeepPartial<SeriesOptions>
+            ],
+            plotOptionsOption = pick(
+                plotOptions?.[this.type]?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ],
+                plotOptions?.series?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ]
+            );
 
-        if (oldOption) {
+        // Check if `plotOptions` are defined already, #19203
+        if (oldOption && !defined(plotOptionsOption)) {
             return option !== oldOption;
         }
 
-        return option !==
-            pick(
-                plotOptions &&
-                    plotOptions[this.type] &&
-                    (plotOptions[this.type] as any)[optionName],
-                plotOptions &&
-                    plotOptions.series &&
-                    (plotOptions as any).series[optionName],
-                option
-            );
+        return option !== pick(plotOptionsOption, option);
     }
 
     /**
