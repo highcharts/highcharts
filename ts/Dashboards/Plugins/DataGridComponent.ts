@@ -232,8 +232,8 @@ class DataGridComponent extends Component {
     }
 
     public onTableChanged(): void {
-        if (!(this.dataGrid && this.dataGrid.cellInputEl)) {
-            this.dataGrid?.update({ dataTable: this.filterColumns() });
+        if (this.dataGrid && !this.dataGrid?.cellInputEl) {
+            this.dataGrid.update({ dataTable: this.filterColumns() });
         }
     }
 
@@ -256,7 +256,7 @@ class DataGridComponent extends Component {
     private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions> {
         const modifierOptions = connector.options.dataModifier;
 
-        if (!modifierOptions?.type === 'Math') {
+        if (!modifierOptions || modifierOptions.type !== 'Math') {
             return {};
         }
 
