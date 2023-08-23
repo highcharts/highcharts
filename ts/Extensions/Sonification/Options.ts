@@ -551,9 +551,12 @@ const Options: DeepPartial<OptionsType> = {
             /**
              * Type of track. Always `"instrument"` for instrument tracks, and
              * `"speech"` for speech tracks.
-             * @type {"instrument"|"speech"}
-             * @default instrument
-             * @apioption sonification.defaultInstrumentOptions.type
+             *
+             * @declare    Highcharts.SonifcationTypeValue
+             * @type       {string}
+             * @default    instrument
+             * @validvalue ["instrument","speech"]
+             * @apioption  sonification.defaultInstrumentOptions.type
              */
 
             /**
@@ -961,9 +964,12 @@ const Options: DeepPartial<OptionsType> = {
             /**
              * Type of track. Always `"instrument"` for instrument tracks, and
              * `"speech"` for speech tracks.
-             * @type {"instrument"|"speech"}
-             * @default speech
-             * @apioption sonification.defaultSpeechOptions.type
+             *
+             * @declare    Highcharts.SonifcationTypeValue
+             * @type       {string}
+             * @default    speech
+             * @validvalue ["instrument","speech"]
+             * @apioption  sonification.defaultSpeechOptions.type
              */
 
             /**

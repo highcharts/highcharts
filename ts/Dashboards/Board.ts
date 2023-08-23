@@ -285,6 +285,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * */
     public options: Board.Options;
 
+    /**
+     * Reference to ResizeObserver, which allows running 'unobserve'.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /* *
      *
      *  Functions
@@ -359,11 +365,18 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      */
     private initEvents(): void {
-        const board = this;
+        const board = this,
+            runReflow = (): void => {
+                board.reflow();
+            };
 
-        addEvent(window, 'resize', function (): void {
-            board.reflow();
-        });
+        if (typeof ResizeObserver === 'function') {
+            this.resizeObserver = new ResizeObserver(runReflow);
+            this.resizeObserver.observe(board.container);
+        } else {
+            const unbind = addEvent(window, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
+        }
     }
 
     /**
@@ -499,6 +512,9 @@ class Board implements Serializable<Board, Board.JSON> {
             board.layouts[i].destroy();
         }
 
+        // Remove resizeObserver from the board
+        this.resizeObserver?.unobserve(board.container);
+
         // Destroy container.
         board.container.remove();
 
@@ -623,6 +639,41 @@ class Board implements Serializable<Board, Board.JSON> {
         };
     }
 
+    /**
+     * Convert the current state of board's options into JSON. The function does
+     * not support converting functions or events into JSON object.
+     *
+     * @returns
+     * The JSON of boards's options.
+     */
+    public getOptions(): Globals.DeepPartial<Board.Options> {
+        const board = this,
+            layouts = [],
+            components = [];
+
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layouts.push(board.layouts[i].getOptions());
+        }
+
+        for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; ++i) {
+            if (
+                board.mountedComponents[i].cell &&
+                board.mountedComponents[i].cell.mountedComponent
+            ) {
+                components.push(
+                    board.mountedComponents[i].component.getOptions()
+                );
+            }
+        }
+
+        return {
+            ...this.options,
+            gui: {
+                layouts
+            },
+            components: components
+        };
+    }
 }
 
 /* *
@@ -662,15 +713,15 @@ namespace Board {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/component-highcharts/  | Highcharts component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html/ | HTML component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/component-kpi/ | KPI component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component/ | Custom component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options/ | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options | Datagrid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;
@@ -753,7 +804,7 @@ namespace Board {
          *
          * @default true
          **/
-        enabled: boolean;
+        enabled?: boolean;
         /**
          * General options for the layouts applied to all layouts.
          **/

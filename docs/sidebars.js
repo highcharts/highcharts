@@ -80,12 +80,16 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
+            'dashboards/dashboards-with-angular',
+            'dashboards/dashboards-with-react',
+            'dashboards/dashboards-with-vue',
             'dashboards/layout-description',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/custom-component',
+            'dashboards/installation-with-es-modules',
             'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [
