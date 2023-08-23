@@ -21,10 +21,10 @@ Highcharts.chart('container', {
             x: 1,
             y: 2,
             z: 3,
-            lightYears: 4,
-            planetMass: 5,
-            stellarMagnitude: 6,
-            discoveryDate: 7
+            'custom.lightYears': 4,
+            'custom.planetMass': 5,
+            'custom.stellarMagnitude': 6,
+            'custom.discoveryDate': 7
         }]
     },
     title: {
@@ -109,11 +109,11 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        colorKey: 'stellarMagnitude',
+        colorKey: 'custom.stellarMagnitude',
         maxSize: 14,
         minSize: 3,
         tooltip: {
-            pointFormat: '<span class="smaller">Name:</span> {point.name}<br><span class="smaller">Mass:</span> {point.planetMass}<br><span class="smaller">Distance:</span> {point.lightYears} Light Years<br><span class="smaller">Stellar Magnitude:</span> {point.stellarMagnitude}'
+            pointFormat: '<span class="smaller">Name:</span> {point.name}<br><span class="smaller">Mass:</span> {point.custom.planetMass}<br><span class="smaller">Distance:</span> {point.custom.lightYears} Light Years<br><span class="smaller">Stellar Magnitude:</span> {point.custom.stellarMagnitude}'
         }
     }, {
         type: 'pie',
@@ -137,8 +137,8 @@ Highcharts.chart('container', {
 
                     bubbleSeries.points.forEach(point => {
                         if (
-                            point.options.discoveryDate < minDate ||
-                            point.options.discoveryDate >= maxDate
+                            point.options.custom.discoveryDate < minDate ||
+                            point.options.custom.discoveryDate >= maxDate
                         ) {
                             point.graphic.attr({
                                 opacity: 0.2
@@ -147,7 +147,7 @@ Highcharts.chart('container', {
                     });
 
                     series.customLabel = fillCenter(point.percentage,
-                        point.options.info, chart, series.customLabel);
+                        point.options.custom.info, chart, series.customLabel);
                 },
                 mouseOut() {
                     const chart = this.series.chart,
@@ -168,30 +168,38 @@ Highcharts.chart('container', {
         data: [{
             y: 12,
             color: '#6CDDCA',
-            info: '1990s',
-            minDate: 1990,
-            maxDate: 2000
+            custom: {
+                info: '1990s',
+                minDate: 1990,
+                maxDate: 2000
+            }
         },
         {
             y: 47,
             color: '#C771F3',
-            info: '2000s',
-            minDate: 2000,
-            maxDate: 2010
+            custom: {
+                info: '2000s',
+                minDate: 2000,
+                maxDate: 2010
+            }
         },
         {
             y: 117,
             color: '#4D90DB',
-            info: '2010s',
-            minDate: 2010,
-            maxDate: 2020
+            custom: {
+                info: '2010s',
+                minDate: 2010,
+                maxDate: 2020
+            }
         },
         {
             y: 64,
             color: '#FAB776',
-            info: '2020s',
-            minDate: 2020,
-            maxDate: 2030
+            custom: {
+                info: '2020s',
+                minDate: 2020,
+                maxDate: 2030
+            }
         }
         ]
     }]
