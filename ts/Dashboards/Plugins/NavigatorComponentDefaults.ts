@@ -39,7 +39,7 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
         chart: {
             animation: false,
             height: 200,
-            styleMode: true,
+            styledMode: true,
             type: 'column',
             zooming: {
                 mouseWheel: {
@@ -57,6 +57,8 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
             enabled: true,
             outlineWidth: 0,
             series: [{
+                animation: false,
+                animationLimit: 0,
                 lineWidth: 0
             }],
             xAxis: {
