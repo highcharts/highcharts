@@ -4,19 +4,20 @@ Types of components
 Components are the building blocks of the dashboard layout. There are several types of components, which you can use out of the box. Some of them come with a default configuration (KPI, Highcharts, DataGrid), and some components are completely flexible, so that you can configure them all by yourself (HTMLComponent). You define which type of component you want to use by defining its `type` property in the configuration object.
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboards-plugin.js` module.
 
-Here is the overview of most important parameters, that can be defined for a component:
-* `Id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
-* `Cell` - id of the cell, in which the component should be placed
-* `Class` - CSS class
-* `Type` - the type of the component.
-* `Events` - object containing a pair of name of the event and callback function that should be called on a given event. The list of events can be found in the API Reference but the most common one is `mount`.
-* `Sync` - list of events, which should be synchronized between components.
+Here is the overview of the most important parameters, that can be defined for a component:
+* `id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
+* `cell` - id of the cell, in which the component should be placed
+* `class` - CSS class
+* `type` - the type of the component. It can be [`HTML`](#html-component), [`KPI`](#kpi-component), [`Highcharts`](#highcharts-component),
+[`DataGrid`](#datagrid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
+* `events` - object containing a pair of name of the event and callback function that should be called on a given event. The list of events can be found in the API Reference but the most common one is `mount`.
+* `sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
 The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
 
 Code snippet:
-``` JS
+```js
 {
     type: 'HTML',
     cell: 'dashboard-1',
@@ -72,7 +73,7 @@ You can define the threshold to change the style of the component, when one valu
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi)
 
 Code snippet:
-``` JS
+```js
 {
     cell: 'kpi-00',
     type: 'KPI',
@@ -82,6 +83,13 @@ Code snippet:
     thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
 },
 ```
+
+If you use KPIComponent with the chart, the component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.
+The set of CSS styles needs to be imported, so that the Highcharts displays correctly.
+```css
+@import url("https://code.highcharts.com/css/highcharts.css");
+```
+More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 ### Component groups
 

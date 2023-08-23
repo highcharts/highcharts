@@ -22089,5 +22089,134 @@ window.JSONSources = {
                     }
                 }
             ]
+        },
+    'https://code.highcharts.com/mapdata/custom/world-continents.topo.json':
+        {
+            type: 'Topology',
+            arcs: [[
+                [294, 241],
+                [71, -8],
+                [33, -55],
+                [-60, -120],
+                [-16, 99],
+                [-30, 2],
+                [-18, 24],
+                [20, 58]
+            ],
+            [
+                [292, 243],
+                [55, 89],
+                [40, -86],
+                [-95, -3]
+            ],
+            [
+                [356, 324],
+                [289, -2],
+                [-153, -144],
+                [-24, 31],
+                [-22, -42],
+                [-22, 47],
+                [-26, -31],
+                [-31, 50],
+                [22, 10],
+                [-33, 81]
+            ],
+            [
+                [561, 139],
+                [24, -58],
+                [-9, -50],
+                [-21, 27],
+                [-40, 0],
+                [-5, 33],
+                [51, 48]
+            ],
+            [
+                [181, 0],
+                [-13, 21],
+                [11, 81],
+                [-20, 37],
+                [11, 39],
+                [73, -42],
+                [-62, -136]
+            ],
+            [
+                [152, 175],
+                [-52, 37],
+                [-100, 110],
+                [190, 2],
+                [15, -50],
+                [-75, -54],
+                [22, -45]
+            ]],
+            transform: {
+                scale: [0.5472868217, 0.3825301204],
+                translate: [-167, -57]
+            },
+            objects: {
+                default: {
+                    type: 'GeometryCollection',
+                    geometries: [{
+                        arcs: [
+                            [0]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'Africa',
+                            'hc-key': 'af'
+                        },
+                        id: 0
+                    }, {
+                        arcs: [
+                            [1]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'Europe',
+                            'hc-key': 'eu'
+                        },
+                        id: 1
+                    }, {
+                        arcs: [
+                            [2]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'Asia',
+                            'hc-key': 'as'
+                        },
+                        id: 2
+                    }, {
+                        arcs: [
+                            [3]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'Oceania',
+                            'hc-key': 'oc'
+                        },
+                        id: 3
+                    }, {
+                        arcs: [
+                            [4]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'South America',
+                            'hc-key': 'sa'
+                        },
+                        id: 4
+                    }, {
+                        arcs: [
+                            [5]
+                        ],
+                        type: 'Polygon',
+                        properties: {
+                            name: 'North America',
+                            'hc-key': 'na'
+                        },
+                        id: 5
+                    }]
+                }
+            }
         }
 };

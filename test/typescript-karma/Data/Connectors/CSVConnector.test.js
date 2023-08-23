@@ -57,6 +57,34 @@ test('CSVConnector from string', async (assert) => {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 });
 
+test('CSVConnector from string, spaces in header', async (assert) =>{
+    const csv = `Number, Letter, Color
+1, B, Red`;
+
+    const connector = new CSVConnector({ csv });
+    await connector.load();
+
+    assert.deepEqual(
+        connector.table.getColumnNames(),
+        ['Number', 'Letter', 'Color'],
+        'DataTable headers are trimmed of whitespace'
+    );
+})
+
+test('CSVConnector from string, quoted spaces in header', async (assert) =>{
+    const csv = `" Number"," Letter"," Color"
+"1","B","Red"`;
+
+    const connector = new CSVConnector({ csv });
+    await connector.load();
+
+    assert.deepEqual(
+        connector.table.getColumnNames(),
+        [' Number', ' Letter', ' Color'],
+        'Quoted DataTable headers are not trimmed of whitespace'
+    );
+})
+
 test('CSVConnector from string, with decimalpoint option', async (assert) => {
     const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
 
