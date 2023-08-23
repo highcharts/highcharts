@@ -453,7 +453,10 @@ class NavigatorComponent extends Component {
     /** @private */
     private adjustNavigator(): void {
         const chart = this.chart,
-            height = this.contentElement.clientHeight,
+            height = pick(
+                chart.chartHeight,
+                this.contentElement.clientHeight
+            ),
             width = this.contentElement.clientWidth,
             chartUpdates: HighchartsOptions = {};
 
