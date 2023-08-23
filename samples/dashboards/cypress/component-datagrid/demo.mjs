@@ -47,11 +47,13 @@ Dashboards.board('container', {
             type: 'Highcharts',
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
             },
             columnAssignment: {
                 Food: 'x',
-                'Vitamin A': 'y'
+                'Vitamin A': 'y',
+                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
@@ -81,8 +83,10 @@ Dashboards.board('container', {
             editable: true,
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
-            }
+            },
+            visibleColumns: ['Food', 'Vitamin A']
         }
     ]
 }, true);

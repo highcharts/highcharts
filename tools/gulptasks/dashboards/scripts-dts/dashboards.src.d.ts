@@ -7,6 +7,16 @@
 import Board from "./es-modules/Dashboards/Board";
 import Globals from "./es-modules/Dashboards/Globals";
 
+import "./es-modules/Dashboards/Components/HTMLComponent";
+import "./es-modules/Dashboards/Components/KPIComponent";
+import "./es-modules/Data/Connectors/CSVConnector";
+import "./es-modules/Data/Connectors/GoogleSheetsConnector";
+import "./es-modules/Data/Connectors/HTMLTableConnector";
+import "./es-modules/Data/Modifiers/ChainModifier";
+import "./es-modules/Data/Modifiers/InvertModifier";
+import "./es-modules/Data/Modifiers/RangeModifier";
+import "./es-modules/Data/Modifiers/SortModifier";
+
 export * as Board from "./es-modules/Dashboards/Board";
 export * as Component from "./es-modules/Dashboards/Components/Component";
 export * as ComponentRegistry from "./es-modules/Dashboards/Components/ComponentRegistry";

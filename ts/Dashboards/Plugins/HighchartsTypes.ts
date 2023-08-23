@@ -64,6 +64,7 @@ export interface AxisOptions extends Globals.AnyRecord {
 }
 
 export interface Chart {
+    /* eslint-disable-next-line  @typescript-eslint/no-misused-new */
     new (
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
@@ -159,6 +160,7 @@ export type PointShortOptions = (
 );
 
 export interface Series {
+    /* eslint-disable-next-line  @typescript-eslint/no-misused-new */
     new (options: SeriesOptions): Series;
     options: SeriesOptions;
     points: Array<Point>;

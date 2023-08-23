@@ -149,11 +149,19 @@ const zoomBy = function (
             }
 
             if (startOnTick || endOnTick) {
-                yAxis.setOptions({ startOnTick: false, endOnTick: false });
+                yAxis.setOptions(
+                    // Merge with y-axis options so `yAxis.id` isn't
+                    // overwritten during wheel zoom, #19178
+                    merge(
+                        yAxis.options,
+                        { startOnTick: false, endOnTick: false }
+                    )
+                );
             }
             wheelTimer = setTimeout((): void => {
                 if (originalOptions) {
-                    yAxis.setOptions(originalOptions);
+                    // Repeat merge after the wheel zoom is finished, #19178
+                    yAxis.setOptions(merge(yAxis.options, originalOptions));
 
                     // Set the extremes to the same as they already are, but now
                     // with the original startOnTick and endOnTick. We need

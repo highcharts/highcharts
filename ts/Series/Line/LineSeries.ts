@@ -531,6 +531,7 @@ export default LineSeries;
  * chart's legend and tooltip.
  *
  * @sample {highcharts} highcharts/css/point-series-classname
+ *         Series and point class name
  *
  * @type      {string}
  * @since     5.0.0
@@ -592,6 +593,7 @@ export default LineSeries;
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
+ * @type      {*|Array<*>}
  * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
