@@ -18,6 +18,8 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
     <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
 
+    However, this is not the only way to import Dashboards packages. See other ways, e.g. install via npm, [here](https://www.highcharts.com/docs/dashboards/installation).
+
 3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
 If you want to use Highcharts charts, you should also import the charts styles, because the [styled mode](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode) is enabled by default in Dashboards.
 
