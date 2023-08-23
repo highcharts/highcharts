@@ -20,8 +20,9 @@
 
 .col-display-fieldwrap {
     font-size: 0.9rem;
-    padding: 0.3rem;
-    width: 5rem;
+    padding-inline: 2rem;
+    padding-block: 0.46rem;
+    width: 8rem;
     text-align: left;
 }
 
@@ -29,6 +30,11 @@
     padding: 0.4rem;
     font-size: 2.6rem;
     letter-spacing: 0.208rem;
+    text-align: center;
+}
+
+.col-display-footer {
+    width: 80%;
     text-align: center;
 }
 

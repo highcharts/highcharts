@@ -1,11 +1,248 @@
+Highcharts.theme = {
+    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    chart: {
+        backgroundColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+            stops: [
+                [0, '#1f1836'],
+                [1, '#45445d']
+            ]
+        },
+        style: {
+            fontFamily: 'IBM Plex Sans, sans-serif'
+        }
+    },
+    title: {
+        style: {
+            fontSize: '22px',
+            fontWeight: '500',
+            color: '#fff'
+        }
+    },
+    subtitle: {
+        style: {
+            fontSize: '16px',
+            fontWeight: '400',
+            color: '#fff'
+        }
+    },
+    credits: {
+        style: {
+            color: '#f0f0f0'
+        }
+    },
+    caption: {
+        style: {
+            color: '#f0f0f0'
+        }
+    },
+    tooltip: {
+        borderWidth: 0,
+        backgroundColor: '#f0f0f0',
+        shadow: true
+    },
+    legend: {
+        backgroundColor: 'transparent',
+        itemStyle: {
+            fontWeight: '400',
+            fontSize: '12px',
+            color: '#fff'
+        },
+        itemHoverStyle: {
+            fontWeight: '700',
+            color: '#fff'
+        }
+    },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                color: '#46465C',
+                style: {
+                    fontSize: '13px'
+                }
+            },
+            marker: {
+                lineColor: '#333'
+            }
+        },
+        boxplot: {
+            fillColor: '#505053'
+        },
+        candlestick: {
+            lineColor: null,
+            upColor: '#DA6D85',
+            upLineColor: '#DA6D85'
+        },
+        errorbar: {
+            color: 'white'
+        },
+        dumbbell: {
+            lowColor: '#f0f0f0'
+        },
+        map: {
+            borderColor: 'rgba(200, 200, 200, 1)',
+            nullColor: '#78758C'
+
+        }
+    },
+    drilldown: {
+        activeAxisLabelStyle: {
+            color: '#F0F0F3'
+        },
+        activeDataLabelStyle: {
+            color: '#F0F0F3'
+        },
+        drillUpButton: {
+            theme: {
+                fill: '#fff'
+            }
+        }
+    },
+    xAxis: {
+        gridLineColor: '#707073',
+        labels: {
+            style: {
+                color: '#fff',
+                fontSize: '12px'
+            }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        title: {
+            style: {
+                color: '#fff'
+            }
+        }
+    },
+    yAxis: {
+        gridLineColor: '#707073',
+        labels: {
+            style: {
+                color: '#fff',
+                fontSize: '12px'
+            }
+        },
+        lineColor: '#707073',
+        minorGridLineColor: '#505053',
+        tickColor: '#707073',
+        tickWidth: 1,
+        title: {
+            style: {
+                color: '#fff',
+                fontWeight: '300'
+            }
+        }
+    },
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            theme: {
+                fill: '#46465C',
+                'stroke-width': 1,
+                stroke: '#BBBAC5',
+                r: 2,
+                style: {
+                    color: '#fff'
+                },
+                states: {
+                    hover: {
+                        fill: '#000',
+                        'stroke-width': 1,
+                        stroke: '#f0f0f0',
+                        style: {
+                            color: '#fff'
+                        }
+                    },
+
+                    select: {
+                        fill: '#000',
+                        'stroke-width': 1,
+                        stroke: '#f0f0f0',
+                        style: {
+                            color: '#fff'
+                        }
+                    }
+                }
+            },
+            verticalAlign: 'bottom'
+        }
+    },
+    // scroll charts
+    rangeSelector: {
+        buttonTheme: {
+            fill: '#46465C',
+            stroke: '#BBBAC5',
+            'stroke-width': 1,
+            style: {
+                color: '#fff'
+            },
+            states: {
+                hover: {
+                    fill: '#1f1836',
+                    style: {
+                        color: '#fff'
+                    },
+                    'stroke-width': 1,
+                    stroke: 'white'
+                },
+                select: {
+                    fill: '#1f1836',
+                    style: {
+                        color: '#fff'
+                    },
+                    'stroke-width': 1,
+                    stroke: 'white'
+                }
+            }
+        },
+        inputBoxBorderColor: '#BBBAC5',
+        inputStyle: {
+            backgroundColor: '#2F2B38',
+            color: '#fff'
+        },
+        labelStyle: {
+            color: '#fff'
+        }
+    },
+    navigator: {
+        handles: {
+            backgroundColor: '#BBBAC5',
+            borderColor: '#2F2B38'
+        },
+        outlineColor: '#CCC',
+        maskFill: 'rgba(255,255,255,0.1)',
+        series: {
+            color: '#A3EDBA',
+            lineColor: '#A3EDBA'
+        },
+        xAxis: {
+            gridLineColor: '#505053'
+        }
+    },
+    scrollbar: {
+        barBackgroundColor: '#BBBAC5',
+        barBorderColor: '#808083',
+        buttonArrowColor: '#2F2B38',
+        buttonBackgroundColor: '#BBBAC5',
+        buttonBorderColor: '#2F2B38',
+        rifleColor: '#2F2B38',
+        trackBackgroundColor: '#78758C',
+        trackBorderColor: '#2F2B38'
+    }
+};
+Highcharts.setOptions(Highcharts.theme);
+
 const
+    colors = Highcharts.getOptions().colors,
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
     toggleableGradient = {
         pattern: undefined,
         radialGradient: [1, 0.25, 0.1],
         stops: [
-            [0, 'rgba(255,253,251, 1)'],
-            [1, 'rgba(199, 216, 225, 0.2)']
+            [0, colors[6]],
+            [1, colors[4]]
         ]
     },
     specialSeriesProps = {
@@ -15,7 +252,7 @@ const
     },
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
-    bubbleEvents =  {
+    bubbleEvents = {
         mouseOver: function () {
             const
                 { chartWidth, chartHeight } = this.series.chart,
@@ -28,7 +265,7 @@ const
                     backgroundColor: {
                         pattern: {
                             opacity: 1,
-                            backgroundColor: '#FFFFFF',
+                            backgroundColor: colors[8],
                             width,
                             height,
                             color: bgColor,
@@ -43,6 +280,7 @@ const
                     innerRadius: '0%'
                 }
             });
+
         },
         mouseOut: function () {
             this.series
@@ -62,7 +300,13 @@ const
     ),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
-    teamColors = ['#FF8076', '#4E94C9', '#ADFFA6'],
+    primaryTeamColor = new Highcharts.Color(colors[1]),
+    teamColors = [
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[4]), 0.5),
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[7]), 0.5),
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[3]), 0.5)
+
+    ],
     asColFieldStr = str => (
         '<span class=\"col-display-fieldwrap\">' +
         '<span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
@@ -79,16 +323,18 @@ const
             headerFormat: (
                 '<div class="team-day-display center">' +
                 '<span style="margin-bottom:8rem;"><b style="' +
-                'font-size: 2rem; color:#FFFFFF; height:12vh;">' +
+                'font-size: 2rem; color:' +
+                new Highcharts.Color(colors[7]).brighten(0.5).get('rgba') +
+                '; height:12vh;">' +
                 'Day: {point.x}</b></span><span style="width:100%;' +
                 'position: absolute; margin:1.5rem; background: #FFFFFF; ' +
-                'border-radius:50%;font-size: 1rem; padding: 0.5rem;' +
+                'border-radius:50%;font-size: 1rem; padding: 0.8rem;' +
                 'border: 0.2rem outset {series.color}; border-block-end:' +
                 '0.2rem outset {series.color};"><b style="color: ' +
                 '{series.color};">●</b> <b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="margin-top:8rem; position: absolute;' +
+                '<span style="margin-top:12rem; position: absolute;' +
                 'font-size: 1.25rem;"><b style="width:100%;' +
                 'text-align:center;">Daily Sales:</b> {point.z}</span>'
             ),
@@ -106,28 +352,25 @@ const
     })),
     weekLabels = Array(4)
         .fill(0)
-        .map(
-            (value, index) => ({
-                dataLabels: {
-                    format: 'Week {x}',
-                    enabled: true,
-                    inside: true,
-                    style: {
-                        textOutline: undefined,
-                        color: '#707099'
-                    },
-                    textPath: {
-                        enabled: true,
-                        attributes: {
-                            startOffset: index % 3 ? '75%' : '25%',
-                            dy: '2.8%'
-                        }
-                    }
+        .map((value, index) => ({
+            dataLabels: {
+                format: 'Week {x}',
+                enabled: true,
+                inside: true,
+                style: {
+                    textOutline: undefined
                 },
-                x: index + 1,
-                y: 1.5
-            })
-        ),
+                textPath: {
+                    enabled: true,
+                    attributes: {
+                        startOffset: index % 3 ? '75%' : '25%',
+                        dy: '2.8%'
+                    }
+                }
+            },
+            x: index + 1,
+            y: 1.5
+        })),
     chart = Highcharts.chart('container', {
         chart: {
             polar: true
@@ -139,7 +382,6 @@ const
             backgroundColor: undefined,
             useHTML: true,
             positioner: function (labelWidth, labelHeight) {
-                console.log(this);
                 const { chartWidth, chartHeight } = this.chart;
                 return {
                     x: (chartWidth / 2) - (labelWidth / 2),
@@ -148,14 +390,24 @@ const
             }
         },
         colorAxis: [{
-            minColor: 'rgb(226, 214, 255)',
-            maxColor: '#D9E0FF',
+            minColor: (
+                new Highcharts.Color(colors[6]).brighten(0.3).get('rgba')
+            ),
+            maxColor: (
+                new Highcharts.Color(colors[0]).brighten(0.3).get('rgba')
+            ),
             showInLegend: false,
             ...weekExtremes
         },
         {
-            minColor: '#A0FAB4',
-            maxColor: '#ACB7FA',
+            minColor: new Highcharts.Color(colors[6]).tweenTo(
+                new Highcharts.Color(colors[0]),
+                0.5
+            ),
+            maxColor: new Highcharts.Color(colors[3]).tweenTo(
+                new Highcharts.Color(colors[5]),
+                0.5
+            ),
             showInLegend: false,
             ...monthExtremes
         }],
@@ -164,7 +416,9 @@ const
             innerSize: '60%',
             ...paneOpeningAngles,
             background: {
-                backgroundColor: '#C8F9D3',
+                backgroundColor: (
+                    new Highcharts.Color(colors[4]).brighten(0.5).get('rgba')
+                ),
                 outerRadius: '60%'
             }
         }, {
@@ -173,7 +427,9 @@ const
             ...paneOpeningAngles,
             background: {
                 borderWidth: 16,
-                borderColor: '#A8C4FF',
+                borderColor: (
+                    new Highcharts.Color(colors[0]).brighten(-0.2).get('rgba')
+                ),
                 backgroundColor: toggleableGradient,
                 innerRadius: '95%'
             }
@@ -184,14 +440,13 @@ const
             endAngle: 343.5,
             background: {
                 borderWidth: 16,
-                borderColor: '#F3DEF7',
+                borderColor: colors[0],
                 backgroundColor: {
                     radialGradient: { cx: 0.5, cy: 0.5, r: 1.8 },
                     stops: [
-                        [0, 'rgba(228, 236, 251,1)'],
-                        [0.2, 'rgba(242, 231, 255, 1)'],
-                        [0.25, 'rgba(243,245, 240, 1)'],
-                        [0.3, 'rgba(156, 245, 245,1)']
+                        [0, colors[0]],
+                        [0.2, colors[5]],
+                        [0.3, colors[1]]
                     ]
                 },
                 innerRadius: '55%',
@@ -201,7 +456,9 @@ const
         xAxis: [{
             pane: 0,
             lineWidth: 8,
-            lineColor: '#A4B4FC',
+            lineColor: (
+                new Highcharts.Color(colors[0]).brighten(0.15).get('rgba')
+            ),
             tickInterval: 1,
             gridLineWidth: 0,
             min: 1,
@@ -211,7 +468,6 @@ const
             pane: 1,
             linkedTo: 0,
             gridLineWidth: 0,
-            lineColor: '#A8C4FF',
             plotBands: Array(3).fill(7).map(
                 (weekendOffset, week) => {
                     const
@@ -220,7 +476,7 @@ const
                     return {
                         from,
                         to,
-                        color: '#FF7A70'
+                        color: colors[6]
                     };
                 }
             ),
@@ -231,8 +487,10 @@ const
             tickAmount: 4,
             tickInterval: 0.5,
             gridLineWidth: 0,
-            lineColor: '#B1E6FC',
             lineWidth: 8,
+            lineColor: (
+                new Highcharts.Color(colors[5]).brighten(0.1).get('rgba')
+            ),
             ...weekExtremes,
             labels: { enabled: false }
         }],
@@ -255,15 +513,20 @@ const
             pane: 2,
             tickInterval: 0.25,
             gridLineWidth: 4,
-            gridLineColor: '#727EB0',
+            gridLineColor: (
+                new Highcharts.Color(colors[4]).brighten(0.25).get('rgba')
+            ),
             min: -3,
             max: 1,
             labels: { enabled: false }
         }],
         legend: {
+            align: 'center',
             enabled: true,
-            backgroundColor: '#EAFAEF',
-            borderColor: '#A8C4FF',
+            backgroundColor: colors[3],
+            borderColor: (
+                new Highcharts.Color(colors[6]).brighten(0.3).get('rgba')
+            ),
             borderRadius: 16,
             floating: true,
             layout: 'vertical',
@@ -271,7 +534,6 @@ const
             squareSymbol: true,
             borderWidth: 1.5,
             itemStyle: {
-                color: '#333333',
                 fontSize: '0.8rem'
             },
             y: legendHeight,
@@ -306,11 +568,11 @@ const
                 colorAxis: 1,
                 colorKey: 'x',
                 pointStart: 1,
-                borderColor: 'blueviolet',
+                borderColor: colors[0],
                 borderWidth: 0.35,
                 tooltip: {
                     headerFormat: (
-                        '<span class="center">' +
+                        '<span class="center"">' +
                         '<b class="col-display-header"' +
                         'style=\"text-decoration:' +
                         'underline solid {point.color} 0.2rem;\"' +
@@ -323,11 +585,12 @@ const
                         asColFieldStr('<b>Top earner: </b><span>{point.topEarner}</span>')
                     ),
                     footerFormat: (
-                        '<i class="col-display-footer" style=\"' +
+                        '<i class="col-display-footer center" style=\"' +
                         'border-top: 0.1rem solid {point.color};\">' +
                         'Week {point.week}</i></span>'
                     )
                 }
             }
         ]
+
     });
