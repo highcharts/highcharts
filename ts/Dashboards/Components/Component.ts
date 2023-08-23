@@ -32,7 +32,6 @@ import type {
 import type Globals from '../Globals';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
-
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
@@ -69,7 +68,6 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
-import ComponentRegistry from './ComponentRegistry.js';
 
 /* *
  *
@@ -146,7 +144,6 @@ abstract class Component {
      */
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
-        parentElement: document.body,
         id: '',
         title: false,
         caption: false,
@@ -182,6 +179,10 @@ abstract class Component {
      * @internal
      */
     public cell: Cell;
+    /**
+     * Defalut sync Handlers
+     */
+    public static syncHandlers: Sync.OptionsRecord = {};
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
@@ -273,7 +274,7 @@ abstract class Component {
     /**
      * @internal
      */
-    protected syncHandlers: Sync.OptionsRecord;
+    protected syncHandlers?: Sync.OptionsRecord;
 
     /**
      * DataModifier that is applied on top of modifiers set on the DataStore.
@@ -336,8 +337,7 @@ abstract class Component {
         this.board = cell.row.layout.board;
 
         this.cell = cell;
-        // TODO: Change the TS of cell.
-        this.parentElement = cell.container!;
+        this.parentElement = cell.container;
         this.attachCellListeneres();
 
 
@@ -365,7 +365,7 @@ abstract class Component {
         };
 
 
-        this.syncHandlers = this.handleSyncOptions();
+        this.filterAndAssignSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
         });
@@ -382,7 +382,7 @@ abstract class Component {
      * Inits connectors for the component and redraws it.
      *
      * @returns
-     * Promise resolviing to the component.
+     * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
         if (
@@ -406,23 +406,21 @@ abstract class Component {
      * */
 
     /**
-    * Handles the sync options. Applies the given defaults if no
-    * specific callback given.
+    * Filter the sync options that are declared in the component options.
+    * Assigns the sync options to the component and to the sync instance.
     *
     * @param defaultHandlers
     * Sync handlers on component.
     *
-    * @returns
-    * Sync component.
-    *
     * @internal
     */
-    protected handleSyncOptions(
-        defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
-    ): Component['syncHandlers'] {
+    protected filterAndAssignSyncOptions(
+        defaultHandlers: typeof Sync.defaultHandlers = (
+            this.constructor as typeof Component
+        ).syncHandlers
+    ): void {
         const sync = this.options.sync || {};
-
-        return Object.keys(sync)
+        const syncHandlers = Object.keys(sync)
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
@@ -443,6 +441,9 @@ abstract class Component {
                 },
                 {}
             );
+
+        this.sync ? this.sync.syncConfig = syncHandlers : void 0;
+        this.syncHandlers = syncHandlers;
     }
 
     /**
@@ -872,7 +873,7 @@ abstract class Component {
      */
     public load(): this {
 
-        // Set up the connector on inital load if it has not been done
+        // Set up the connector on initial load if it has not been done
         if (!this.hasLoaded && this.connector) {
             this.setConnector(this.connector);
         }
@@ -891,9 +892,11 @@ abstract class Component {
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
+
         if (events) {
             Object.keys(events).forEach((key): void => {
                 const eventCallback = (events as any)[key];
+
                 if (eventCallback) {
                     this.callbackRegistry.addCallback(key, {
                         type: 'component',
@@ -907,12 +910,6 @@ abstract class Component {
                 }
             });
         }
-
-        this.on('message', (e): void => {
-            if ('message' in e) {
-                this.onMessage(e.message);
-            }
-        });
 
         // TODO: should cleanup this event listener
         window.addEventListener(
@@ -979,8 +976,6 @@ abstract class Component {
         // Unregister events
         this.tableEvents.forEach((eventCallback): void => eventCallback());
         this.element.remove();
-
-        Component.removeInstance(this);
     }
 
     /** @internal */
@@ -999,36 +994,6 @@ abstract class Component {
             e.target = this;
         }
         fireEvent(this, e.type, e);
-    }
-
-    /** @internal */
-    public postMessage(
-        message: Component.MessageType,
-        target: Component.MessageTarget = {
-            type: 'componentType',
-            target: 'all'
-        }
-    ): void {
-        const component = Component.getInstanceById(this.id);
-
-        if (component) {
-            Component.relayMessage(component, message, target);
-        }
-    }
-
-    /** @internal */
-    public onMessage(message: Component.MessageType): void {
-        if (message && typeof message === 'string') {
-            // do something
-            return;
-        }
-
-        if (
-            typeof message === 'object' &&
-            typeof message.callback === 'function'
-        ) {
-            message.callback.apply(this);
-        }
     }
 
     /**
@@ -1153,7 +1118,6 @@ namespace Component {
         RenderEvent |
         RedrawEvent |
         JSONEvent |
-        MessageEvent |
         PresentationModifierEvent;
 
     export type SetConnectorEvent =
@@ -1177,14 +1141,6 @@ namespace Component {
     export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
     /** @internal */
     export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
-    /** @internal */
-    export type MessageEvent = Event<'message', {
-        message: MessageType;
-        detail?: {
-            sender: string;
-            target: string;
-        };
-    }>;
 
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
@@ -1226,14 +1182,6 @@ namespace Component {
         cell?: string;
 
         /**
-         * The HTML element or id of HTML element that is used for appending
-         * a component.
-         *
-         * @internal
-         */
-        parentElement: HTMLElement | string;
-
-        /**
          * The name of class that is applied to the component's container.
          */
         className?: string;
@@ -1248,7 +1196,7 @@ namespace Component {
          */
         navigationBindings?: Array<Globals.AnyRecord>;
         /**
-         * Events attached to the component : `mount`, `unmount`.
+         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *
          * Try it:
          *
@@ -1334,189 +1282,10 @@ namespace Component {
     /** @internal */
     export type ConnectorTypes = DataConnector;
 
+    /**
+     * Allowed types for the text.
+    */
     export type TextOptionsType = string | false | TextOptions | undefined;
-    /** @internal */
-    export interface MessageTarget {
-        type: 'group' | 'componentType' | 'componentID';
-        target: (
-            ComponentType['id'] |
-            ComponentType['type'] |
-            ComponentGroup['id']
-        );
-    }
-
-    /** @internal */
-    export type MessageType = string | {
-        callback: Function;
-    };
-
-    /* *
-    *
-    *  Constants
-    *
-    * */
-
-    /**
-     *
-     * Record of component instances
-     *
-     */
-    /** @internal */
-    export const instanceRegistry: Record<string, ComponentType> = {};
-    /* *
-    *
-    *  Functions
-    *
-    * */
-
-    /**
-     * Adds component to the registry.
-     *
-     * @internal
-     *
-     * @internal
-     * Adds a component instance to the registry.
-     * @param component
-     * The component to add.
-     * Returns the true when component was found and added properly to the
-     * registry, otherwise it is false.
-     *
-     * @internal
-     */
-    export function addInstance(component: ComponentType): void {
-        Component.instanceRegistry[component.id] = component;
-    }
-
-    /**
-     * Removes a component instance from the registry.
-     * @param component
-     * The component to remove.
-     *
-     * @internal
-     */
-    export function removeInstance(component: Component): void {
-        delete Component.instanceRegistry[component.id];
-    }
-
-    /**
-     * Retrieves the IDs of the registered component instances.
-     * @returns
-     * Array of component IDs.
-     *
-     * @internal
-     */
-    export function getAllInstanceIDs(): string[] {
-        return Object.keys(instanceRegistry);
-    }
-
-    /**
-     * Retrieves all registered component instances.
-     * @returns
-     * Array of components.
-     *
-     * @internal
-     */
-    export function getAllInstances(): Component[] {
-        const ids = getAllInstanceIDs();
-        return ids.map((id): Component => instanceRegistry[id]);
-    }
-    /**
-     * Gets instance of component from registry.
-     *
-     * @param id
-     * Component's id that exists in registry.
-     *
-     * @returns
-     * Returns the component.
-     * Gets instance of component from registry.
-     *
-     * @param id
-     * Component's id that exists in registry.
-     *
-     * @returns
-     * Returns the component type or undefined.
-     *
-     * @internal
-     */
-    export function getInstanceById(id: string): ComponentType | undefined {
-        return instanceRegistry[id];
-    }
-    /**
-     * Sends a message from the given sender to the target,
-     * with an optional callback.
-     *
-     * @param sender
-     * The sender of the message. Can be a Component or a ComponentGroup.
-     *
-     * @param message
-     * The message. It can be a string, or a an object containing a
-     * `callback` function.
-     *
-     * @param targetObj
-     * An object containing the `type` of target,
-     * which can be `group`, `componentID`, or `componentType`
-     * as well as the id of the recipient.
-     *
-     * @internal
-     */
-    export function relayMessage(
-        sender: ComponentType | ComponentGroup,
-        // Are there cases where a group should be the sender?
-        message: Component.MessageEvent['message'],
-        targetObj: Component.MessageTarget
-    ): void {
-        const emit = (component: ComponentType): void =>
-            component.emit({
-                type: 'message',
-                detail: {
-                    sender: sender.id,
-                    target: targetObj.target
-                },
-                message,
-                target: component
-            });
-
-        const handlers: Record<Component.MessageTarget['type'], Function> = {
-            'componentID': (
-                recipient: Component.MessageTarget['target']
-            ): void => {
-                const component = getInstanceById(recipient);
-                if (component) {
-                    emit(component);
-                }
-            },
-            'componentType': (
-                recipient: Component.MessageTarget['target']
-            ): void => {
-                getAllInstanceIDs()
-                    .forEach((instanceID): void => {
-                        const component = getInstanceById(instanceID);
-                        if (component && component.id !== sender.id) {
-                            if (
-                                component.type === recipient ||
-                                recipient === 'all'
-                            ) {
-                                emit(component);
-                            }
-                        }
-                    });
-            },
-            'group': (recipient: Component.MessageTarget['target']): void => {
-                // Send a message to a whole group
-                const group = ComponentGroup.getComponentGroup(recipient);
-                if (group) {
-                    group.components.forEach((id): void => {
-                        const component = getInstanceById(id);
-                        if (component && component.id !== sender.id) {
-                            emit(component);
-                        }
-                    });
-                }
-            }
-        };
-
-        handlers[targetObj.type](targetObj.target);
-    }
 
 }
 

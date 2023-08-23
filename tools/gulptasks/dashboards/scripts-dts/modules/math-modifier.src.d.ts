@@ -5,7 +5,10 @@
  *!*/
 
 import * as _Dashboards from "../dashboards.src";
+
 import _Formula from "../es-modules/Data/Formula/Formula";
+
+import "../es-modules/Data/Modifiers/MathModifier";
 
 declare module "../dashboards.src" {
     const Formula: typeof _Formula;
