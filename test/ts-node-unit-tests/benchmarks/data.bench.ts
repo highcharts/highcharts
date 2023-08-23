@@ -1,14 +1,14 @@
-import type { BenchResults, BenchmarkDetails } from "../bench";
+import type { BenchResults, BenchmarkDetails } from '../bench';
 
-const { describe } = require('../test-utils')
+const { describe } = require('../test-utils');
 const { performance } = require('perf_hooks');
 
 const ITERATIONS = 5;
 
 function getStandardDeviation (array: number[]) {
-  const n = array.length
-  const mean = array.reduce((a, b) => a + b) / n
-  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
 function generateCSV(rows:number, columns: number){
@@ -54,7 +54,7 @@ export function benchCSVConnector(): BenchResults {
                 results : [],
                 avg: 0,
                 stdDev: 0,
-            }
+            };
 
             let i = 0;
             while(i < ITERATIONS){
@@ -70,9 +70,9 @@ export function benchCSVConnector(): BenchResults {
                     }
                 ]);
 
-                performance.mark('End')
+                performance.mark('End');
 
-                const measure = performance.measure('Start to Now', 'Start', 'End')
+                const measure = performance.measure('Start to Now', 'Start', 'End');
 
                 if(measure.duration < details.min){
                     details.min = measure.duration;
@@ -82,15 +82,15 @@ export function benchCSVConnector(): BenchResults {
                     details.max = measure.duration;
                 }
 
-                details.results.push(measure.duration)
+                details.results.push(measure.duration);
             }
 
             details.avg = details.results.reduce((a, b) => a + b, 0) / details.results.length;
-            details.stdDev = getStandardDeviation(details.results)
+            details.stdDev = getStandardDeviation(details.results);
 
-            results.push(details)
+            results.push(details);
 
-        })()
+        })();
     }
 
     return results;
