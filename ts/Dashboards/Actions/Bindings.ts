@@ -95,7 +95,7 @@ namespace Bindings {
 
         cell = cell || Bindings.getCell(options.cell || '');
 
-        if (!cell || !cell.container || !options.type) {
+        if (!cell?.container || !options.type) {
             error(
                 `The component is misconfigured and is unable to find the
                 HTML cell element ${options.cell} to render the content.`
