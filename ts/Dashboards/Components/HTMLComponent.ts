@@ -323,7 +323,7 @@ class HTMLComponent extends Component {
      * @internal
      */
     public onTableChanged(e: Component.EventTypes): void {
-        if ('detail' in e && e.detail && e.detail.sender !== this.id) {
+        if (e.detail?.sender !== this.id) {
             this.render();
         }
     }
