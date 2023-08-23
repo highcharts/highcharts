@@ -159,7 +159,12 @@ class KPIComponent extends Component {
     public static defaultChartOptions: Types.DeepPartial<Options> = {
         chart: {
             type: 'spline',
-            styledMode: true
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
         },
         title: {
             text: void 0
@@ -232,12 +237,6 @@ class KPIComponent extends Component {
      * @internal
      */
     private prevValue?: number;
-    /**
-     * Flag used in resize method to avoid multi redraws.
-     *
-     * @internal
-     */
-    private updatingSize?: boolean;
 
     /* *
      *
@@ -300,7 +299,6 @@ class KPIComponent extends Component {
             );
         }
 
-        this.on('tableChanged', (): void => this.setValue());
     }
 
     /* *
@@ -310,14 +308,11 @@ class KPIComponent extends Component {
      * */
 
     /** @internal */
-    public load(): this {
-        super.load();
+    public async load(): Promise<this> {
+        await super.load();
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
-        this.parentElement.appendChild(this.element);
-
-        this.updateElements();
 
         return this;
     }
@@ -332,14 +327,14 @@ class KPIComponent extends Component {
             this.chart.reflow();
         }
 
-        this.updatingSize = false;
-
         return this;
     }
 
 
     public render(): this {
         super.render();
+        this.updateElements();
+
         const charter = KPIComponent.charter;
 
         if (
@@ -365,12 +360,6 @@ class KPIComponent extends Component {
         return this;
     }
 
-    public redraw(): this {
-        super.redraw();
-        this.updateElements();
-        return this;
-    }
-
     /**
      * Internal method for handling option updates.
      *
@@ -386,7 +375,7 @@ class KPIComponent extends Component {
      */
     public async update(
         options: Partial<KPIComponent.ComponentOptions>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
         this.setOptions();
@@ -394,7 +383,14 @@ class KPIComponent extends Component {
             this.chart.update(options.chartOptions);
         }
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
+    }
+
+    /**
+     * @internal
+     */
+    public onTableChanged(): void {
+        this.setValue();
     }
 
     /**
@@ -456,10 +452,6 @@ class KPIComponent extends Component {
             style,
             subtitle
         } = this.options;
-
-        if (this.options.title) {
-            this.setTitle(this.options.title);
-        }
 
         this.setValue();
 
