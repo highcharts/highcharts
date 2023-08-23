@@ -1,3 +1,6 @@
+Highcharts.Templating.helpers.addDegreeSymbol = value =>
+    value && `${value.toFixed(1)}°`;
+
 const data = [{
     date: '2017-05-01',
     temperature: 9.9
@@ -121,8 +124,7 @@ const data = [{
 {
     date: '2017-05-31',
     temperature: 11.7
-}
-];
+}];
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -145,7 +147,9 @@ function generateChartData(data) {
             y: 4,
             value: null,
             date: null,
-            id: null
+            custom: {
+                monthDay: null
+            }
         });
     }
 
@@ -164,7 +168,9 @@ function generateChartData(data) {
             y: 4 - yCoordinate,
             value: temperature,
             date: date,
-            id: id
+            custom: {
+                monthDay: id
+            }
         });
     }
 
@@ -176,7 +182,9 @@ function generateChartData(data) {
             y: 0,
             value: null,
             date: null,
-            id: null
+            custom: {
+                monthDay: null
+            }
         });
     }
     return chartData;
@@ -207,26 +215,25 @@ Highcharts.chart('container', {
         outside: true,
         zIndex: 20,
         formatter: function () {
-            const date = new Date(this.point.date);
-            if (this.point.value === null) {
+            if (!this.point.value) {
                 return false;
             }
-            return Highcharts.dateFormat('%A, %b %e, %Y', date);
+            return Highcharts.dateFormat('%A, %b %e, %Y', new Date(this.point.date));
         }
     },
 
     xAxis: {
         categories: weekdays,
         opposite: true,
-        lineWidth: 30,
+        lineWidth: 55,
         lineColor: '#BBBAC5',
         labels: {
             rotation: 0,
-            padding: 5,
             y: 6,
-            x: 0,
-            useHTML: true,
-            format: '<div class="day-label">{value}</div>'
+            style: {
+                textTransform: 'uppercase',
+                fontWeight: 'bold'
+            }
         },
         accessibility: {
             description: 'weekdays',
@@ -251,9 +258,7 @@ Highcharts.chart('container', {
     legend: {
         align: 'right',
         layout: 'vertical',
-        margin: 0,
-        verticalAlign: 'middle',
-        symbolHeight: 200
+        verticalAlign: 'middle'
     },
 
     colorAxis: {
@@ -265,36 +270,9 @@ Highcharts.chart('container', {
             [0.9, '#F9A05C']
         ],
         labels: {
-            formatter: function () {
-                return this.value + ' °C';
-            }
+            format: '{value} °C'
         }
     },
-
-    plotOptions: {
-        series: {
-            states: {
-                hover: {
-                    brightness: 0,
-                    borderColor: 'red'
-                }
-            },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const tile =  this.graphic.element;
-                        tile.style.stroke =
-                            Highcharts.color(this.color).brighten(-0.2).get();
-                    },
-                    mouseOut: function () {
-                        this.graphic.element.style.stroke =  'whitesmoke';
-                    }
-                }
-            }
-        }
-    },
-
-    styledMode: true,
 
     series: [{
         keys: ['x', 'y', 'value', 'date', 'id'],
@@ -303,23 +281,25 @@ Highcharts.chart('container', {
         borderWidth: 2,
         borderColor: 'whitesmoke',
         dataLabels: [{
-            useHTML: true,
             enabled: true,
-            y: 5,
-            formatter: function () {
-                if (this.point.value !== null) {
-                    return '<div class="temp-container"><p>' + this.point.value + '</p><p>°</p>';
-                }
-                return '';
+            format: '{addDegreeSymbol point.value}',
+            style: {
+                textOutline: 'none',
+                fontWeight: 'normal',
+                fontSize: '1rem'
             }
         }, {
-            useHTML: true,
             enabled: true,
-            format: '<p class="date">{point.id}</p>',
+            useHTML: true,
             align: 'left',
             verticalAlign: 'top',
-            x: 0,
-            y: 0
+            formatter: function () {
+                if (!this.point.value) {
+                // Return undefined if no value
+                    return void 0;
+                }
+                return `<p class="date">${this.point.custom.monthDay}</p>`;
+            }
         }]
     }]
 });
