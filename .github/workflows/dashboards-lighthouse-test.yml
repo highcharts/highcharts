@@ -80,6 +80,9 @@ jobs:
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils
+
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
