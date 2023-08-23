@@ -16,7 +16,6 @@ Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
 ];
 
 const MathModifier = Dashboards.DataModifier.types.Math;
-const RangeModifier = Dashboards.DataModifier.types.Range;
 
 const colorStopsDays = [
     [0.0, '#C2CAEB'],
@@ -44,7 +43,12 @@ async function setupBoard() {
         dataPool: {
             connectors: [{
                 id: 'Range Selection',
-                type: 'CSV'
+                type: 'CSV',
+                options: {
+                    dataModifier: {
+                        type: 'Range'
+                    }
+                }
             }, {
                 id: 'Cities',
                 type: 'CSV',
@@ -242,10 +246,13 @@ async function setupBoard() {
                                     activeTimeRange[1] !== e.max
                                 ) {
                                     activeTimeRange = [e.min, e.max];
-                                    await updateBoard(
+
+                                    const newColumn =
+                                        activeColumn[0] === 'T' ? activeColumn + activeScale : activeColumn;
+                                    await onNavigatorChange(
                                         board,
                                         activeCity,
-                                        activeColumn,
+                                        newColumn,
                                         activeScale
                                     );
                                 }
@@ -789,19 +796,7 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {
-                time: null,
-                FD: null,
-                ID: null,
-                RR1: null,
-                TN: null,
-                TX: null,
-                TNC: null,
-                TNF: null,
-                TXC: null,
-                TXF: null,
-                Date: null
-            },
+            columnAssignment: {},
             sync: {
                 highlight: true
             },
@@ -942,17 +937,19 @@ async function setupCity(board, city, column, scale) {
 
 }
 
-async function updateBoard(board, city, column, scale, newData) {
+async function onNavigatorChange(board, city, column, scale) {
+    const colorStopsDays = [
+        [0.0, '#C2CAEB'],
+        [1.0, '#162870']
+    ];
+    const colorStopsTemperature = [
+        [0.0, '#4CAFFE'],
+        [0.3, '#53BB6C'],
+        [0.5, '#DDCE16'],
+        [0.6, '#DF7642'],
+        [0.7, '#DD2323']
+    ];
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
-    const colorStops = (
-        column[0] !== 'T' ?
-            colorStopsDays :
-            colorStopsTemperature
-    );
-    const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const [
         timeRangeSelector,
         worldMap,
@@ -961,36 +958,36 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiMaxTemperature,
         kpiRain,
         kpiIce,
-        kpiFrost,
-        selectionGrid,
-        cityChart
+        kpiFrost
     ] = board.mountedComponents.map(c => c.component);
-
-    column = (column[0] === 'T' ? column + scale : column);
-
-    let cityTable = await dataPool.getConnectorTable(city);
-
-    if (newData) {
-        // Update time range selector
-        timeRangeSelector.chart.series[0].update({
-            type: column[0] === 'T' ? 'spline' : 'column',
-            data: cityTable.modified
-                .getRows(void 0, void 0, ['time', column])
-        });
-    }
-
     // Update range selection
-    selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorStops = (
+        column[0] !== 'T' ?
+            colorStopsDays :
+            colorStopsTemperature
+    );
+    const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const timeRangeMax = timeRangeSelector.chart.axes[0].max;
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
-    await selectionTable.setModifier(new RangeModifier({
-        modifier: 'Range',
-        ranges: [{
+    const selectionModifier = selectionTable.getModifier();
+
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+
+    if (
+        !selectionModifier.options.ranges[0] ||
+        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
+        selectionModifier.options.ranges[0].minValue !== timeRangeMin
+    ) {
+        selectionModifier.options.ranges = [{
             column: 'time',
             maxValue: timeRangeMax,
             minValue: timeRangeMin
-        }]
-    }));
+        }];
+        await selectionTable.setModifier(selectionModifier);
+    }
+
     const rangeTable = selectionTable.modified;
 
     // Update world map
@@ -1054,9 +1051,65 @@ async function updateBoard(board, city, column, scale, newData) {
         true,
         true
     );
+}
+
+async function updateBoard(board, city, column, scale, newData) {
+    const dataPool = board.dataPool;
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorStops = (
+        column[0] !== 'T' ?
+            colorStopsDays :
+            colorStopsTemperature
+    );
+    const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    const [
+        timeRangeSelector,
+        worldMap,
+        kpiData,
+        kpiTemperature,
+        kpiMaxTemperature,
+        kpiRain,
+        kpiIce,
+        kpiFrost,
+        selectionGrid,
+        cityChart
+    ] = board.mountedComponents.map(c => c.component);
+
+    column = (column[0] === 'T' ? column + scale : column);
+
+    let cityTable = await dataPool.getConnectorTable(city);
+
+    if (newData) {
+        // Update time range selector
+        timeRangeSelector.chart.series[0].update({
+            type: column[0] === 'T' ? 'spline' : 'column',
+            data: cityTable.modified
+                .getRows(void 0, void 0, ['time', column])
+        });
+
+        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+    }
+
+    onNavigatorChange(board, city, column, scale);
+
+    if (newData) {
+        await selectionTable.setModifier(selectionTable.getModifier());
+    }
 
     // Update city grid selection
     const showCelsius = scale === 'C';
+    const sharedColumnAssignment = {
+        time: 'x',
+        FD: column === 'FD' ? 'y' : null,
+        ID: column === 'ID' ? 'y' : null,
+        RR1: column === 'RR1' ? 'y' : null,
+        TNC: column === 'TNC' ? 'y' : null,
+        TNF: column === 'TNF' ? 'y' : null,
+        TXC: column === 'TXC' ? 'y' : null,
+        TXF: column === 'TXF' ? 'y' : null
+    };
+
     if (newData) {
         await selectionGrid.update({
             dataGridOptions: {
@@ -1075,50 +1128,29 @@ async function updateBoard(board, city, column, scale, newData) {
                     }
                 }
             },
-            columnAssignment: {
-                time: 'x',
-                FD: column === 'FD' ? 'y' : null,
-                ID: column === 'ID' ? 'y' : null,
-                RR1: column === 'RR1' ? 'y' : null,
-                TN: null,
-                TNC: column === 'TNC' ? 'y' : null,
-                TNF: column === 'TNF' ? 'y' : null,
-                TX: null,
-                TXC: column === 'TXC' ? 'y' : null,
-                TXF: column === 'TXF' ? 'y' : null,
-                Date: null
-            }
+            columnAssignment: sharedColumnAssignment
         });
     }
 
-    selectionGrid.dataGrid.scrollToRow(
-        selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
-    );
-
     // Update city chart selection
-    await cityChart.update({
-        columnAssignment: {
-            time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TN: null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TX: null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null,
-            Date: null
-        },
-        chartOptions: {
-            chart: {
-                type: column[0] === 'T' ? 'spline' : 'column'
-            },
-            colorAxis: {
-                min: colorMin,
-                max: colorMax,
-                stops: colorStops
+    if (newData) {
+        await cityChart.update({
+            columnAssignment: sharedColumnAssignment,
+            chartOptions: {
+                chart: {
+                    type: column[0] === 'T' ? 'spline' : 'column'
+                },
+                chartOptions: {
+                    chart: {
+                        type: column[0] === 'T' ? 'spline' : 'column'
+                    },
+                    colorAxis: {
+                        min: colorMin,
+                        max: colorMax,
+                        stops: colorStops
+                    }
+                }
             }
-        }
-    });
+        });
+    }
 }
