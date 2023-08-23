@@ -46,6 +46,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     pick,
@@ -1805,17 +1806,27 @@ class Tooltip {
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside && container) {
+            const shadowOptions = options.shadow;
+            let offsetY = 1,
+                offsetX = 1;
             // Corrects positions, occurs with tooltip positioner (#16944)
             if (options.positioner) {
                 pos.x += left - distance;
                 pos.y += top - distance;
             }
 
-            pad = (options.borderWidth || 0) + 2 * distance;
+            // Pick correct shadow offset
+            if (isObject(shadowOptions)) {
+                offsetX = pick(shadowOptions.offsetX, 1);
+                offsetY = pick(shadowOptions.offsetY, 1);
+            }
 
+            pad = (options.borderWidth || 0) + 2 * distance;
+            // Count in shadow offset to avoid cutting it off, #19314
+            // Offset is multiplied by 2 as a safe number for lower resolutions
             (this.renderer as any).setSize(
-                label.width + pad,
-                label.height + pad,
+                label.width + offsetX * 2 + pad,
+                label.height + offsetY * 2 + pad,
                 false
             );
 
