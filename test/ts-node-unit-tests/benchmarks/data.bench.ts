@@ -1,3 +1,5 @@
+import type { BenchResults, BenchmarkDetails } from "../bench";
+
 const { describe } = require('../test-utils')
 const { performance } = require('perf_hooks');
 
@@ -27,7 +29,7 @@ function generateCSV(rows:number, columns: number){
     return csv;
 }
 
-export function benchCSVConnector() {
+export function benchCSVConnector(): BenchResults {
     describe('Data benchmark v1');
 
     const hc = require('../../../code/highcharts.js')();
@@ -37,52 +39,60 @@ export function benchCSVConnector() {
 
     const sizes = [10, 100, 10_000, 1_000_000, 5_000_000];
 
+    const results: BenchResults = [];
 
     for (const size of sizes) {
-        let i = 0;
         const csv = generateCSV(size, 5);
 
-        const details = {
-            size,
-            min : Number.MAX_SAFE_INTEGER,
-            max : 0,
-            results : [],
-            avg: 0,
-            stdDev: 0,
-        }
+        // Doing a function here reduces run time, thanks mr garbage collector
+        (()=>{
+            const details: BenchmarkDetails = {
+                testName: 'CSVConnector loading',
+                sampleSize: size,
+                min : Number.MAX_SAFE_INTEGER,
+                max : 0,
+                results : [],
+                avg: 0,
+                stdDev: 0,
+            }
 
-        while(i < ITERATIONS){
-            i++;
-            const start = performance.mark('Start');
-            new DataPool([
-                {
-                    id: size,
-                    type: 'CSV',
-                    options: {
-                        csv
+            let i = 0;
+            while(i < ITERATIONS){
+                i++;
+                performance.mark('Start');
+                new DataPool([
+                    {
+                        id: size,
+                        type: 'CSV',
+                        options: {
+                            csv
+                        }
                     }
+                ]);
+
+                performance.mark('End')
+
+                const measure = performance.measure('Start to Now', 'Start', 'End')
+
+                if(measure.duration < details.min){
+                    details.min = measure.duration;
                 }
-            ]);
 
-            const measure = performance.measure('Start to Now', start)
+                if(measure.duration > details.max){
+                    details.max = measure.duration;
+                }
 
-            if(measure.duration < details.min){
-                details.min = measure.duration;
+                details.results.push(measure.duration)
             }
 
-            if(measure.duration > details.max){
-                details.max = measure.duration;
-            }
+            details.avg = details.results.reduce((a, b) => a + b, 0) / details.results.length;
+            details.stdDev = getStandardDeviation(details.results)
 
-            details.results.push(measure.duration)
-        }
+            results.push(details)
 
-        details.avg = details.results.reduce((a, b) => a + b, 0) / details.results.length;
-        details.stdDev = getStandardDeviation(details.results)
-
-        console.table(details)
+        })()
     }
 
-
-
+    return results;
 }
+
