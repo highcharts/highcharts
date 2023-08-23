@@ -638,7 +638,11 @@ class SankeySeries extends ColumnSeries {
             left = Math.floor(
                 this.colDistance * (node.column as any) +
                 borderWidth / 2
-            ) + relativeLength(node.options.offsetHorizontal || 0, nodeWidth) +
+            ) + relativeLength(node.options[
+                chart.inverted ?
+                    'offsetVertical' :
+                    'offsetHorizontal'
+            ] || 0, nodeWidth) +
             crisp,
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :

@@ -4,11 +4,12 @@ describe('Sync when new connector added to components.', () => {
     });
 
     it('Chart and DataGridComponent should have synced hover events.', () => {
-        const firstDataGridRow = cy.get('.highcharts-datagrid-cell').eq(0)
+        cy.get('.highcharts-datagrid-cell').eq(0).as('firstCell');
 
         // Hover over DataGridComponent.
-        firstDataGridRow.trigger('mouseover');
-        firstDataGridRow.parent().should('have.class', 'highcharts-datagrid-row hovered');
+        cy.get('@firstCell').trigger('mouseover');
+        cy.get('@firstCell').parent().should('have.class', 'highcharts-datagrid-row hovered');
+
         cy.chart().then(chart =>{
             assert.notOk(
                 chart.tooltip.isHidden,

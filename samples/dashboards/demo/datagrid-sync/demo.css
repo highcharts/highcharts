@@ -5,3 +5,8 @@
 #csv {
     display: none;
 }
+
+.highcharts-title {
+    font-size: 1em;
+    font-weight: normal;
+}
