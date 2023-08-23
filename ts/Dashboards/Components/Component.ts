@@ -852,38 +852,29 @@ abstract class Component {
                 titleOptions &&
                 (typeof titleOptions === 'string' || titleOptions.text);
 
-        if (!titleElement) {
-            if (shouldExist) {
-                this.titleElement =
-                    Component.createTextElement(
-                        'h1',
-                        'title',
-                        titleOptions
-                    );
+        if (shouldExist) {
+            const newTitle = Component.createTextElement(
+                'h1',
+                'title',
+                titleOptions
+            );
 
-                if (this.titleElement) {
-                    this.element.insertBefore(
-                        this.titleElement,
-                        this.element.firstChild
-                    );
-                }
-            }
-        } else {
-            if (shouldExist) {
-                const newTitle =
-                    Component.createTextElement('h1', 'title', titleOptions);
-
-                if (newTitle) {
+            if (newTitle) {
+                if (!titleElement) {
                     this.element.insertBefore(
                         newTitle,
                         this.element.firstChild
                     );
-
+                } else {
                     titleElement.replaceWith(newTitle);
-                    this.titleElement = newTitle;
                 }
-            } else {
+                this.titleElement = newTitle;
+            }
+        } else {
+            if (titleElement) {
                 titleElement.remove();
+                delete this.titleElement;
+
                 return;
             }
         }
@@ -901,34 +892,26 @@ abstract class Component {
                 captionOptions &&
                 (typeof captionOptions === 'string' || captionOptions.text);
 
-        if (!captionElement) {
-            if (shouldExist) {
-                this.captionElement =
-                    Component.createTextElement(
-                        'div',
-                        'caption',
-                        captionOptions
-                    );
+        if (shouldExist) {
+            const newCaption = Component.createTextElement(
+                'div',
+                'caption',
+                captionOptions
+            );
 
-                if (this.captionElement) {
-                    this.element.appendChild(this.captionElement);
+            if (newCaption) {
+                if (!captionElement) {
+                    this.element.appendChild(newCaption);
+                } else {
+                    captionElement.replaceWith(newCaption);
                 }
+                this.titleElement = newCaption;
             }
         } else {
-            if (shouldExist) {
-                const newTitle =
-                    Component.createTextElement(
-                        'div',
-                        'caption',
-                        captionOptions
-                    );
-
-                if (newTitle) {
-                    captionElement.replaceWith(newTitle);
-                    this.captionElement = newTitle;
-                }
-            } else {
+            if (captionElement) {
                 captionElement.remove();
+                delete this.captionElement;
+
                 return;
             }
         }
