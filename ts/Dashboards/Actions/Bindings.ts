@@ -168,7 +168,7 @@ namespace Bindings {
         }
 
         // states
-        if (optionsStates && optionsStates.hover) {
+        if (optionsStates?.hover) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
 
