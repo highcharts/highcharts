@@ -765,11 +765,7 @@ namespace OfflineExporting {
                 ++imagesEmbedded;
 
                 // Change image href in chart copy
-                callbackArgs.imageElement.setAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href',
-                    imageURL
-                );
+                callbackArgs.imageElement.setAttribute('href', imageURL);
 
                 checkDone();
             };
@@ -810,10 +806,8 @@ namespace OfflineExporting {
             // Go through the images we want to embed
             for (let i = 0; i < images.length; i++) {
                 el = images[i];
-                href = el.getAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href'
-                );
+                href = el.getAttribute('href');
+
                 if (href) {
                     OfflineExporting.imageToDataUrl(
                         href,
