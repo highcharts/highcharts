@@ -16,7 +16,7 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-  cypress_lighthouse_base:
+  cypress_lighthouse:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -61,50 +61,12 @@ jobs:
       - name: Rename report
         run: mv tmp/lighthouse.json tmp/lighthouse-master.json
 
-      - name: Store artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: lighthouse-reference
-          path: |
-            tmp/*.json
-
-
-  cypress_lighthouse_actual:
-    needs: cypress_lighthouse_base
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [lts/*]
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
       - name: Checkout current branch
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v5
-        with:
-          browser: chrome
-          runTests: false
-
-      - name: Download references
-        uses: actions/download-artifact@v3
-        with:
-          name: lighthouse-reference
-          path: tmp # this path is root relative, not based on the working-directory above
-
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
-
       - name: Build Highcharts
         run: npx gulp scripts
+
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
@@ -123,11 +85,4 @@ jobs:
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
           node test/cypress/lighthouseCompare.mjs  --reference ./tmp/lighthouse-master.json --proposed ./tmp/lighthouse.json >> $GITHUB_STEP_SUMMARY
-
-      - name: Store artifacts
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: post-tests
-          path: tmp/*.json
 
