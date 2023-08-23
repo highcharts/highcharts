@@ -70,7 +70,7 @@ const createChart = async () => {
             nullColor: 'rgba(196, 196, 196, 0.2)'
         },
         {
-            name: 'Italy',
+            name: topology.title || 'Map',
             mapData: topology,
             data
         }]
@@ -149,6 +149,64 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
         return data;
     };
 
+    // Render a circle filled with a radial gradient behind the globe to
+    // make it appear as the sea around the continents
+    const renderGlobe = e => {
+        const chart = e.target;
+        if (chart.mapView.projection.options.name === 'Orthographic') {
+            let verb = 'animate';
+            if (!chart.globe) {
+                chart.globe = chart.renderer
+                    .circle()
+                    .attr({
+                        fill: {
+                            radialGradient: {
+                                cx: 0.4,
+                                cy: 0.4,
+                                r: 1
+                            },
+                            stops: [
+                                [
+                                    0,
+                                    Highcharts.color(
+                                        mainChart.options.plotOptions.map
+                                            .nullColor
+                                    ).brighten(0.3).get()
+                                ],
+                                [
+                                    1,
+                                    mainChart.options.plotOptions.map
+                                        .nullColor
+                                ]
+                            ]
+                        },
+                        zIndex: -1
+                    })
+                    .add(chart.get('graticule').group)
+                    .shadow({});
+                verb = 'attr';
+            }
+
+            const bounds = chart.get('graticule').bounds,
+                p1 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x1,
+                    y: bounds.y1
+                }),
+                p2 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x2,
+                    y: bounds.y2
+                });
+            chart.globe.show()[verb]({
+                cx: (p1.x + p2.x) / 2,
+                cy: (p1.y + p2.y) / 2,
+                r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
+            });
+
+        } else if (chart.globe) {
+            chart.globe.hide();
+        }
+    };
+
     // Locator chart frame logic
     function getMapFrame(chart, plotHeight, plotWidth) {
         const steps = 20;
@@ -210,10 +268,11 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
     // Locator chart
     const locatorChart = Highcharts.mapChart(locatorContainer, {
         chart: {
-            backgroundColor: '#ffffffB3',
-            borderColor: '#e0e0e0',
-            borderWidth: 1,
-            margin: 15
+            backgroundColor: 'transparent',
+            margin: 15,
+            events: {
+                render: renderGlobe
+            }
         },
 
         credits: {
@@ -267,15 +326,15 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
             name: 'Map',
             mapData: locatorMap
         }, {
-            id: 'Graticule',
+            id: 'graticule',
             type: 'mapline',
             data: getGraticule(),
-            color: '#c4c4c422',
+            color: 'rgba(128,128,128,0.1)',
             zIndex: -1
         }, {
             name: 'Frame',
             type: 'mapline',
-            color: '#ff0000',
+            color: mainChart.options.legend.navigation.activeColor,
             data: [{
                 geometry: {
                     type: 'LineString',
@@ -315,7 +374,7 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
     document.getElementById('container').appendChild(btn);
 
     // Apply styles
-    setStyle(btn, {
+    Highcharts.css(btn, {
         position: 'absolute',
         bottom: '2%',
         left: '1%',
@@ -329,14 +388,14 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
     });
 
     btn.addEventListener('mouseover', () => {
-        setStyle(btn, {
+        Highcharts.css(btn, {
             backgroundColor: '#e6e6e6',
             color: '#8fa2c9'
         });
     });
 
     btn.addEventListener('mouseout', () => {
-        setStyle(btn, {
+        Highcharts.css(btn, {
             backgroundColor: '#f7f7f7',
             color: '#afbbd2'
         });
@@ -353,33 +412,44 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
             updateLocatorMap('Miller', 'none', 0);
             i++;
         } else if (i === 2) {
-            updateLocatorMap('Orthographic', '#c4c4c422', 15, rotation(lon, lat));
+            updateLocatorMap(
+                'Orthographic',
+                'rgba(128,128,128,0.1)',
+                15,
+                rotation(lon, lat)
+            );
             i = 1;
         }
     };
 
     document.getElementById('btn').onclick = toggleMap;
 
-    function updateLocatorMap(projectionType, graticuleColor, margin, mapRotation) {
-        locatorChart.get('Graticule').update({
-            color: graticuleColor
-        },
-        false
+    function updateLocatorMap(
+        projectionName,
+        graticuleColor,
+        margin,
+        rotation
+    ) {
+        locatorChart.get('graticule').update(
+            {
+                color: graticuleColor
+            },
+            false
         );
         locatorChart.redraw(false);
         locatorChart.update({
             chart: {
-                margin: margin
+                margin
             },
             mapView: {
                 projection: {
-                    name: projectionType,
-                    rotation: mapRotation
+                    name: projectionName,
+                    rotation
                 }
             }
         });
     }
-    */
+    // */
     /* OPTIONAL TOGGLE END */
 
 }, { order: 1 });
