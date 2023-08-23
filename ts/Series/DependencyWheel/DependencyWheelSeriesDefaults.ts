@@ -34,7 +34,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  *         Dependency wheel
  *
  * @extends      plotOptions.sankey
- * @exclude      dataSorting
+ * @exclude      dataSorting, nodeAlignment
  * @since        7.1.0
  * @product      highcharts
  * @requires     modules/dependency-wheel

@@ -3,6 +3,7 @@
  */
 
 const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -56,7 +57,7 @@ async function dashboardsScripts() {
         fsLib.deleteDirectory('js/Stock/', true);
 
         // Fix masters
-        fs.renameSync('js/masters-dashboards', 'js/masters');
+        fs.renameSync('js/masters-dashboards/', 'js/masters/');
 
         // Assemble bundle
         await buildTool
@@ -70,7 +71,7 @@ async function dashboardsScripts() {
                 ),
                 namespace: 'Dashboards',
                 output: bundleTargetFolder,
-                version: (argv.release || '0.9.9')
+                version: (argv.release || '1.0.1')
             })
             .fnFirstBuild();
 

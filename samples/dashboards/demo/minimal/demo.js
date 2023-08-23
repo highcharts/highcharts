@@ -82,8 +82,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': 'value',
-            Iron: null
+            'Vitamin A': 'value'
         },
         chartOptions: {
             xAxis: {
@@ -110,7 +109,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': null,
             Iron: 'y'
         },
         chartOptions: {
@@ -133,7 +131,8 @@ Dashboards.board('container', {
         type: 'DataGrid',
         editable: true,
         sync: {
-            highlight: true
+            highlight: true,
+            visibility: true
         }
     }]
 }, true);

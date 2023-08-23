@@ -19,7 +19,6 @@ import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
 import type { MarkerEndOptions } from './FlowMapPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import FlowMapPoint from './FlowMapPoint.js';
-import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import { LonLatArray } from '../..//Maps/MapViewOptions';
@@ -32,6 +31,7 @@ const {
     },
     seriesTypes: {
         column: ColumnSeries,
+        map: MapSeries,
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
