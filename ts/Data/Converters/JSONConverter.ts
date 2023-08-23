@@ -74,6 +74,7 @@ class JSONConverter extends DataConverter {
         super(mergedOptions);
 
         this.options = mergedOptions;
+        this.table = new DataTable();
     }
 
     /* *
@@ -85,10 +86,13 @@ class JSONConverter extends DataConverter {
     private columns: Array<DataTable.Column> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
+
     /**
      * Options for the DataConverter.
      */
     public readonly options: JSONConverter.Options;
+
+    private table: DataTable;
 
     /* *
      *
@@ -150,41 +154,59 @@ class JSONConverter extends DataConverter {
             return;
         }
 
+        data = data.slice();
+
         if (orientation === 'columns') {
             for (let i = 0, iEnd = data.length; i < iEnd; i++) {
+                const item = data[i];
+                if (!(item instanceof Array)) {
+                    return;
+                }
                 if (firstRowAsNames) {
-                    converter.headers.push(data[i][0] as string);
+                    converter.headers.push(`${item.shift()}`);
                 } else if (columnNames) {
                     converter.headers.push(columnNames[i]);
                 }
-                converter.columns.push(data[i].slice(firstRowAsNames ? 1 : 0));
+
+                converter.table.setColumn(
+                    converter.headers[i] || i.toString(),
+                    item
+                );
             }
         } else {
-            let startRow = 0;
             if (firstRowAsNames) {
-                converter.headers = data[0] as Array<string>;
-                startRow++;
+                converter.headers = data.shift() as Array<string>;
             } else if (columnNames) {
                 converter.headers = columnNames;
             }
 
             for (
-                let rowIndex = startRow, iEnd = data.length;
+                let rowIndex = 0, iEnd = data.length;
                 rowIndex < iEnd;
                 rowIndex++
             ) {
-                const row = data[rowIndex] as Array<string | number>;
-                for (
-                    let columnIndex = 0, jEnd = row.length;
-                    columnIndex < jEnd;
-                    columnIndex++
-                ) {
-                    if (converter.columns.length < columnIndex + 1) {
-                        converter.columns.push([]);
+                const row = data[rowIndex];
+                if (row instanceof Array) {
+                    for (
+                        let columnIndex = 0, jEnd = row.length;
+                        columnIndex < jEnd;
+                        columnIndex++
+                    ) {
+                        if (converter.columns.length < columnIndex + 1) {
+                            converter.columns.push([]);
+                        }
+                        converter.columns[columnIndex].push(
+                            row[columnIndex]
+                        );
+                        this.table.setCell(
+                            converter.headers[columnIndex] ||
+                                rowIndex.toString(),
+                            rowIndex,
+                            row[columnIndex]
+                        );
                     }
-                    converter.columns[columnIndex].push(
-                        data[rowIndex][columnIndex]
-                    );
+                } else {
+                    this.table.setRows([row], rowIndex);
                 }
             }
         }
@@ -198,7 +220,7 @@ class JSONConverter extends DataConverter {
      * Table from the parsed CSV.
      */
     public getTable(): DataTable {
-        return DataConverter.getTableFromColumns(this.columns, this.headers);
+        return this.table;
     }
 
 }
@@ -221,7 +243,7 @@ namespace JSONConverter {
      * Interface for the BeforeParse callback function
      */
     export interface DataBeforeParseCallbackFunction {
-        (data: Array<Array<string|number>>): Array<Array<string|number>>;
+        (data: Data): Data;
     }
 
     /**
@@ -229,10 +251,11 @@ namespace JSONConverter {
      */
     export interface Options extends DataConverter.Options {
         columnNames?: Array<string>;
-        data: Array<Array<number|string>>;
+        data: Data;
         orientation: 'columns'|'rows';
     }
 
+    type Data = Array<Array<number|string>|Record<string, number|string>>;
     /**
      * Options that are not compatible with ClassJSON
      */

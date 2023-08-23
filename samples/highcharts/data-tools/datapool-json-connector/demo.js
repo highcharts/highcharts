@@ -2,12 +2,34 @@ Dashboards.board('container', {
     dataPool: {
         connectors: [{
             type: 'JSON',
+            id: 'array-of-objects',
+            options: {
+                data: [{
+                    name: 'John',
+                    age: 23,
+                    weight: 70
+                }, {
+                    name: 'Jane',
+                    age: 25,
+                    weight: 65
+                }, {
+                    name: 'Joe',
+                    age: 21,
+                    weight: 68
+                }, {
+                    name: 'Jack',
+                    age: 26,
+                    weight: 72
+                }]
+            }
+        }, {
+            type: 'JSON',
             id: 'to-parse',
             options: {
                 orientation: 'columns',
                 beforeParse: function (data) {
-                    const res = [];
-                    const response = data[0].series;
+                    const res = [],
+                        response = data[0].series;
                     response.forEach(series => {
                         res.push([series.name].concat(series.data));
                     });
@@ -86,6 +108,12 @@ Dashboards.board('container', {
         connector: {
             id: 'to-parse'
         }
+    }, {
+        cell: 'dg-array-of-objects',
+        type: 'DataGrid',
+        connector: {
+            id: 'array-of-objects'
+        }
     }],
     gui: {
         layouts: [{
@@ -100,6 +128,10 @@ Dashboards.board('container', {
                     id: 'dg-no-first-names'
                 }, {
                     id: 'dg-to-parse'
+                }]
+            }, {
+                cells: [{
+                    id: 'dg-array-of-objects'
                 }]
             }]
         }]
