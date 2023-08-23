@@ -256,7 +256,7 @@ class DataGridComponent extends Component {
     private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions> {
         const modifierOptions = connector.options.dataModifier;
 
-        if (!modifierOptions || modifierOptions.type !== 'Math') {
+        if (!modifierOptions?.type === 'Math') {
             return {};
         }
 
