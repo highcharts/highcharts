@@ -60,6 +60,9 @@ jobs:
           config: specPattern=**/performance/*.cy.js
           install: false
 
+      - name: Stop server
+        run: kill $(lsof -t -i:3030)
+
       - name: Rename report
         run: mv tmp/lighthouse.json tmp/lighthouse-master.json
 
