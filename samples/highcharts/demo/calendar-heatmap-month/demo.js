@@ -1,6 +1,3 @@
-Highcharts.Templating.helpers.addDegreeSymbol = value =>
-    value && `${value.toFixed(1)}°`;
-
 const data = [{
     date: '2017-05-01',
     temperature: 9.9
@@ -148,7 +145,7 @@ function generateChartData(data) {
             value: null,
             date: null,
             custom: {
-                monthDay: null
+                empty: true
             }
         });
     }
@@ -183,7 +180,7 @@ function generateChartData(data) {
             value: null,
             date: null,
             custom: {
-                monthDay: null
+                empty: true
             }
         });
     }
@@ -282,7 +279,7 @@ Highcharts.chart('container', {
         borderColor: 'whitesmoke',
         dataLabels: [{
             enabled: true,
-            format: '{addDegreeSymbol point.value}',
+            format: '{#unless point.custom.empty}{point.value:.1f}°{/unless}',
             style: {
                 textOutline: 'none',
                 fontWeight: 'normal',
