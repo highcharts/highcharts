@@ -30,7 +30,7 @@ The dot can be customized by:
 *   **lowMarker** `series.marker` - marker options for the lower dot.
 
 _The demo below represents a temperature variation in January 2017._
-<iframe width="100%" height="600" style="null" src=https://www.highcharts.com/samples/embed/highcharts/demo/dumbbell-lowmarker allow="fullscreen"></iframe>
+<iframe width="100%" height="600" style="null" src=https://www.highcharts.com/samples/embed/highcharts/demo/series-dumbbell/lowmarker allow="fullscreen"></iframe>
 
 Alternatively, color of the dot can be changed via:
 *   **fillColor** `series.marker.fillColor` - color for the upper dot.

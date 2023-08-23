@@ -620,8 +620,8 @@ export default DumbbellSeries;
  * @apioption series.dumbbell.data
  */
 /**
- * Options for the lower markers of the dumbbell-like series. When lowMarker is
- * not defined, options inherit form the marker.
+ * Options for the lower markers of the dumbbell-like series. When `lowMarker`
+ * is not defined, options inherit form the marker.
  *
  * @see [marker](#series.arearange.marker)
  *
@@ -633,7 +633,7 @@ export default DumbbellSeries;
  */
 /**
  *
- * @sample {highcharts} highcharts/demo/arearange-lowmarker/
+ * @sample {highcharts} highcharts/series-dumbbell/lowmarker/
  *         Dumbbell chart with lowMarker option
  *
  * @declare   Highcharts.PointMarkerOptionsObject

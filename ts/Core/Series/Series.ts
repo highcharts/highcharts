@@ -665,7 +665,7 @@ class Series {
     }
 
     /**
-     * Determine whether a marker in a series has changed.
+     * Determine whether the marker in a series has changed.
      *
      * @private
      * @function Highcharts.Series#hasMarkerChanged

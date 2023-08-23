@@ -890,8 +890,8 @@ export default AreaRangeSeries;
  */
 
 /**
- * Options for the lower markers of the arearange-like series. When lowMarker is
- * not defined, options inherit form the marker.
+ * Options for the lower markers of the arearange-like series. When `lowMarker`
+ * is not defined, options inherit form the marker.
  *
  * @see [marker](#series.arearange.marker)
  *
@@ -904,8 +904,8 @@ export default AreaRangeSeries;
 
 /**
  *
- * @sample {highcharts} highcharts/demo/arearange-lowmarker/
- *         Area range chart with lowMarker option
+ * @sample {highcharts} highcharts/series-arearange/lowmarker/
+ *         Area range chart with `lowMarker` option
  *
  * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker.symbol
