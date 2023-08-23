@@ -87,7 +87,7 @@ class VectorSeries extends ScatterSeries {
          */
         lineWidth: 2,
 
-        marker: null as any,
+        marker: void 0,
 
         /**
          * What part of the vector it should be rotated around. Can be one of
