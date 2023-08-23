@@ -20,9 +20,6 @@ Highcharts.chart('container', {
         min: 1,
         max: 12,
         endOnTick: false,
-        labels: {
-            staggerLines: 2
-        },
         plotBands: [{
             color: 'rgba(255, 75, 66, 0.07)',
             from: 5.5,
@@ -53,6 +50,20 @@ Highcharts.chart('container', {
         shared: true,
         valueSuffix: '%',
         valuePrefix: '+'
+    },
+    responsive: {
+        rules: [{
+            chartOptions: {
+                xAxis: {
+                    labels: {
+                        staggerLines: 2
+                    }
+                }
+            },
+            condition: {
+                minWidth: 540
+            }
+        }]
     },
     plotOptions: {
         series: {
