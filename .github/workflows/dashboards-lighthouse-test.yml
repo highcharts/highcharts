@@ -34,8 +34,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - run: node --version
-
       - name: Install dependencies
         uses: cypress-io/github-action@v5
         with:
@@ -68,8 +66,8 @@ jobs:
 
       - name: Checkout current branch
         uses: actions/checkout@v3
-
-      - run: node --version ## do we need to setup-node again?
+        with:
+           clean: false # do not remove files from previous run
 
       - name: Install dependencies
         uses: cypress-io/github-action@v5
