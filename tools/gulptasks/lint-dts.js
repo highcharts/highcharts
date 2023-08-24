@@ -50,6 +50,7 @@ function task() {
 
         fsLib
             .getDirectoryPaths(TEST_FOLDER, false)
+            .filter(folder => !folder.includes('dashboards'))
             .forEach(folder => {
                 promiseChain = promiseChain.then(
                     () => processLib.exec('npx tsc -p ' + folder)

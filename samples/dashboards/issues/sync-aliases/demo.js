@@ -58,7 +58,9 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
-            Date: 'x'
+            Date: 'x',
+            air: 'y',
+            water: 'y'
         },
         chartOptions: {
             chart: {

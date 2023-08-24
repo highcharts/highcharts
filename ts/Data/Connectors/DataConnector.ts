@@ -22,10 +22,12 @@
  * */
 
 import type { DataConnectorTypes } from './DataConnectorType';
-import type DataEvent from '../DataEvent';
 import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
+import type DataEvent from '../DataEvent';
+import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
 import DataConverter from '../Converters/DataConverter.js';
+import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -252,6 +254,23 @@ abstract class DataConnector implements DataEvent.Emitter {
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
             connector.describeColumn(columnNames[i], { index: i });
         }
+    }
+
+    public setModifierOptions(
+        modifierOptions?: DataModifierTypeOptions
+    ): Promise<this> {
+        const ModifierClass = (
+            modifierOptions &&
+            DataModifier.types[modifierOptions.type]
+        );
+
+        return this.table
+            .setModifier(
+                ModifierClass ?
+                    new ModifierClass(modifierOptions as AnyRecord) :
+                    void 0
+            )
+            .then((): this => this);
     }
 
     /**

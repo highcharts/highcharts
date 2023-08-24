@@ -7,9 +7,9 @@
 'use strict';
 // import H from '../Core/Globals.js';
 // import '../Core/Utilities.js';
-var H = Highcharts;
+const H = Highcharts;
 
-var pick = H.pick,
+const pick = H.pick,
     isNumber = H.isNumber,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
@@ -235,7 +235,7 @@ seriesType('lineargauge', 'column',
         createUpdateGraphic: function (
             graphic, path, xPosition, yPosition, beginningAtrr, endAttr
         ) {
-            var series = this,
+            const series = this,
                 chart = series.chart,
                 seriesOptions = series.options,
                 updateGraphic = chart.pointCount < (
@@ -267,7 +267,7 @@ seriesType('lineargauge', 'column',
          * This method is based on column series drawPoints function.
          */
         drawPoints: function () {
-            var series = this,
+            const series = this,
                 points = series.points,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -289,15 +289,8 @@ seriesType('lineargauge', 'column',
             columnProto.drawPoints.apply(series);
 
             points.forEach(function (point) {
-                var targetSymGraphic = point.targetSymGraphic,
+                let targetSymGraphic = point.targetSymGraphic,
                     targetLinGraphic = point.targetLinGraphic,
-                    pointOptions = point.options,
-                    pointTargetOptions = pointOptions.targetOptions || {},
-                    dataLabel = point.dataLabel,
-                    valueX = point.x,
-                    valueY = point.y,
-                    target = point.target,
-                    targetEvents = [],
                     halfPointWidth,
                     dataLabelBox,
                     columnStart,
@@ -326,6 +319,14 @@ seriesType('lineargauge', 'column',
                     yPosition,
                     pixelX,
                     pixelY;
+
+                const pointOptions = point.options,
+                    pointTargetOptions = pointOptions.targetOptions || {},
+                    dataLabel = point.dataLabel,
+                    valueX = point.x,
+                    valueY = point.y,
+                    target = point.target,
+                    targetEvents = [];
 
                 if (isNumber(valueY) && valueY !== null) {
                     halfPointWidth = point.pointWidth / 2;
@@ -685,8 +686,8 @@ seriesType('lineargauge', 'column',
          * Destroys target symbol and line graphics.
          */
         destroy: function () {
-            var point = this,
-                targetSymGraphic = point.targetSymGraphic,
+            const point = this;
+            let targetSymGraphic = point.targetSymGraphic,
                 targetLinGraphic = point.targetLinGraphic;
 
             if (targetSymGraphic) {
@@ -876,7 +877,7 @@ seriesType('lineargauge', 'column',
 // //////////////////////////////////////////////////////////////////////////////
 
 // Common options options for all the gauges
-var commonOptions = {
+const commonOptions = {
     chart: {
         inverted: true,
         type: 'lineargauge',

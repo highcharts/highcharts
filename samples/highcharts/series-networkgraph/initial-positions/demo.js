@@ -15,7 +15,7 @@ Highcharts.chart('container', {
         layoutAlgorithm: {
             enableSimulation: true,
             initialPositions: function () {
-                var chart = this.series[0].chart,
+                const chart = this.series[0].chart,
                     width = chart.plotWidth,
                     height = chart.plotHeight;
 

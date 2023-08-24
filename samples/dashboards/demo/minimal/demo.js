@@ -21,18 +21,45 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'title'
-                }]
-            }, {
-                cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '30%'
+                        }
+                    },
                     layout: {
                         rows: [{
                             cells: [{
                                 id: 'kpi-vitamin-a',
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '100%'
+                                    }
+                                },
                                 height: 205
-                            }]
-                        }, {
-                            cells: [{
+                            }, {
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '100%'
+                                    }
+                                },
                                 id: 'kpi-iron',
                                 height: 205
                             }]
@@ -54,14 +81,16 @@ Dashboards.board('container', {
         type: 'KPI',
         cell: 'kpi-vitamin-a',
         value: 900,
-        valueFormat: '{value} mcg',
-        title: 'Recommended daily dose of Vitamin A'
+        valueFormat: '{value}',
+        title: 'Vitamin A',
+        subtitle: 'daily recommended dose'
     }, {
         type: 'KPI',
         cell: 'kpi-iron',
         value: 8,
-        title: 'Recommended daily dose of Iron',
-        valueFormat: '{value} mcg'
+        title: 'Iron',
+        valueFormat: '{value}',
+        subtitle: 'daily recommended dose'
     }, {
         cell: 'title',
         type: 'HTML',
@@ -82,18 +111,50 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': 'value',
-            Iron: null
+            'Vitamin A': 'value'
         },
         chartOptions: {
             xAxis: {
                 type: 'category'
             },
+            yAxis: {
+                title: {
+                    text: 'mcg'
+                },
+                plotLines: [{
+                    value: 900,
+                    zIndex: 7,
+                    dashStyle: 'shortDash',
+                    label: {
+                        text: 'RDA',
+                        align: 'right',
+                        style: {
+                            color: '#B73C28'
+                        }
+                    }
+                }]
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        radius: 6
+                    }
+                }
+            },
+            legend: {
+                enabled: true,
+                verticalAlign: 'top'
+            },
             chart: {
-                type: 'column'
+                animation: false,
+                type: 'column',
+                spacing: [30, 30, 30, 20]
             },
             title: {
-                text: 'Vitamin A'
+                text: ''
             }
         }
     },
@@ -110,19 +171,50 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': null,
             Iron: 'y'
         },
         chartOptions: {
             xAxis: {
                 type: 'category'
             },
+            yAxis: {
+                title: {
+                    text: 'mcg'
+                },
+                max: 8,
+                plotLines: [{
+                    value: 8,
+                    dashStyle: 'shortDash',
+                    label: {
+                        text: 'RDA',
+                        align: 'right',
+                        style: {
+                            color: '#B73C28'
+                        }
+                    }
+                }]
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        radius: 6
+                    }
+                }
+            },
             title: {
-                text: 'Iron'
+                text: ''
+            },
+            legend: {
+                enabled: true,
+                verticalAlign: 'top'
             },
             chart: {
                 animation: false,
-                type: 'column'
+                type: 'column',
+                spacing: [30, 30, 30, 20]
             }
         }
     }, {
@@ -133,7 +225,8 @@ Dashboards.board('container', {
         type: 'DataGrid',
         editable: true,
         sync: {
-            highlight: true
+            highlight: true,
+            visibility: true
         }
     }]
 }, true);

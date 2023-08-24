@@ -9,7 +9,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Wind speed during two days',
+        text: 'Wind speed during a day',
         align: 'left'
     },
     subtitle: {
@@ -89,12 +89,32 @@ Highcharts.chart('container', {
                     color: '#606060'
                 }
             }
-        }, { // High wind
+        }, { // Near Gale
             from: 14,
-            to: 15,
+            to: 17,
             color: 'rgba(68, 170, 213, 0.1)',
             label: {
-                text: 'High wind',
+                text: 'Near gale',
+                style: {
+                    color: '#606060'
+                }
+            }
+        }, { // Fresh Gale
+            from: 17,
+            to: 20.5,
+            color: 'rgba(0, 0, 0, 0)',
+            label: {
+                text: 'Fresh gale',
+                style: {
+                    color: '#606060'
+                }
+            }
+        }, { // Strong Gale
+            from: 20.5,
+            to: 24,
+            color: 'rgba(68, 170, 213, 0.1)',
+            label: {
+                text: 'Strong gale',
                 style: {
                     color: '#606060'
                 }
