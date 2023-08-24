@@ -28,19 +28,18 @@ function createChart() {
         },
         plotOptions: {
             areaspline: {
-                color: {
+                color: '#32CD32',
+                fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                     stops: [
-                        [0, 'lime'],
-                        [2, 'tomato'],
-                        [2.5, 'red']
+                        [0, '#32CD32'],
+                        [1, '#32CD3200']
                     ]
                 },
-                fillOpacity: 0.3,
                 threshold: null,
                 marker: {
                     lineWidth: 1,
-                    lineColor: 'blue',
+                    lineColor: null,
                     fillColor: 'white'
                 }
             }
