@@ -9,29 +9,6 @@ const onChartLoad = function () {
             y = Math.random();
 
         series.addPoint([x, y], true, true);
-
-        const point = series.points.at(-1);
-
-        // Add a pulsating marker
-        if (!series.pulse) {
-            series.pulse = chart.renderer.circle()
-                .add(series.markerGroup);
-        }
-        series.pulse
-            .attr({
-                x: point.plotX,
-                y: point.plotY,
-                r: 3,
-                opacity: 1,
-                fill: series.color
-            })
-            .animate({
-                r: 20,
-                opacity: 0
-            }, {
-                duration: 1000
-            });
-
     }, 1000);
 };
 
@@ -48,6 +25,34 @@ const data = (function () {
     }
     return data;
 }());
+
+// Plugin to add a pulsating marker on add point
+Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
+    const point = e.point,
+        series = e.target;
+
+    if (!series.pulse) {
+        series.pulse = series.chart.renderer.circle()
+            .add(series.markerGroup);
+    }
+
+    setTimeout(() => {
+        series.pulse
+            .attr({
+                x: series.xAxis.toPixels(point.x, true),
+                y: series.yAxis.toPixels(point.y, true),
+                r: series.options.marker.radius,
+                opacity: 1,
+                fill: series.color
+            })
+            .animate({
+                r: 20,
+                opacity: 0
+            }, {
+                duration: 1000
+            });
+    }, 1);
+});
 
 
 Highcharts.chart('container', {
