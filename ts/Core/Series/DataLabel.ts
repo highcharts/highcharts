@@ -544,7 +544,8 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
-                const dataLabels = point.dataLabels || [];
+                const dataLabels: (SVGLabel|SVGElement|undefined)[] =
+                    point.dataLabels || [];
 
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -803,7 +804,7 @@ namespace DataLabel {
 
                             dataLabel.isActive = true;
                             if (dataLabels[i] && dataLabels[i] !== dataLabel) {
-                                dataLabels[i].destroy();
+                                dataLabels[i]?.destroy();
                             }
                             dataLabels[i] = dataLabel;
                         }
@@ -815,16 +816,28 @@ namespace DataLabel {
                 let j = dataLabels.length;
                 while (j--) {
                     if (dataLabels[j]?.isActive) {
-                        dataLabels[j].isActive = false;
+                        dataLabels[j]!.isActive = false;
                     } else {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     }
                 }
 
-                // Write back
-                point.dataLabel = dataLabels[0];
-                point.dataLabels = dataLabels;
+                if (dataLabels.length > 0) {
+                    const tempDataLabels: (SVGLabel|SVGElement)[] = [];
+                    dataLabels.forEach(function (dataLabel): void {
+                        if (dataLabel) {
+                            tempDataLabels.push(dataLabel);
+                        }
+                    });
+
+                    // Write back
+                    point.dataLabel = dataLabels[0];
+                    point.dataLabels = tempDataLabels;
+                } else {
+                    delete point.dataLabel;
+                    delete point.dataLabels;
+                }
             });
         }
 
