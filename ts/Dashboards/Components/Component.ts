@@ -379,6 +379,14 @@ abstract class Component {
         this.setupEventListeners();
         this.attachCellListeneres();
         this.on('tableChanged', this.onTableChanged);
+
+        this.on('update', (): void => {
+            this.cell.setLoadingState();
+        });
+
+        this.on('afterRender', (): void => {
+            this.cell.setLoadingState(false);
+        });
     }
 
     /**
@@ -404,28 +412,14 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
-            // Show the loading indicator when there are no errors.
-            if (!this.titleElement?.classList.contains(
-                DG.classNamePrefix + 'component-title-error'
-            )) {
-                this.cell.setLoadingState();
-            }
 
-            try {
-                const connector = await this.board.dataPool
-                    .getConnector(this.options.connector.id);
+            const connector = await this.board.dataPool
+                .getConnector(this.options.connector.id);
 
-                this.setConnector(connector);
-            } catch (error) {
-                // Hide the loading indicator when catched an error.
-                this.cell.setLoadingState(false);
-                return Promise.reject(error);
-            }
+            this.setConnector(connector);
 
             this.render();
 
-            // Hide the loading indicator when finished loading the connector.
-            this.cell.setLoadingState(false);
         }
         return this;
     }
@@ -943,6 +937,8 @@ abstract class Component {
      * @internal
      */
     public async load(): Promise<this> {
+
+        this.cell.setLoadingState();
 
         await this.initConnector();
         this.render();
