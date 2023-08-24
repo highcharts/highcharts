@@ -23,8 +23,18 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-1'
                 }, {
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-2'
                 }]
             }]
@@ -46,20 +56,11 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            title: {
-                text: 'Chart',
-                style: {
-                    textAlign: 'center'
-                }
-            },
             chartOptions: {
                 chart: {
                     animation: false,
                     type: 'line',
                     zooming: false
-                },
-                title: {
-                    text: 'Drag points to update the data grid'
                 },
                 tooltip: {
                     shared: true,
@@ -77,14 +78,7 @@ Dashboards.board('container', {
             },
             sync: {
                 highlight: true
-            },
-            columns: {
-                // Disable Math column for editing
-                USD: {
-                    editable: false
-                }
-            },
-            editable: true
+            }
         }
     ]
 });

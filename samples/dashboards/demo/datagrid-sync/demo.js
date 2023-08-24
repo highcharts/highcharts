@@ -8,11 +8,26 @@ const chartOptions = {
         animation: false,
         type: 'column'
     },
+    credits: {
+        enabled: false
+    },
     title: {
+        text: 'allowConnectorUpdate: true'
+    },
+    subtitle: {
         text: 'Drag points to update the data grid'
+    },
+    yAxis: {
+        title: {
+            text: ''
+        }
+    },
+    legend: {
+        enabled: false
     },
     plotOptions: {
         series: {
+            colorByPoint: true,
             dragDrop: {
                 draggableY: true,
                 dragPrecisionY: 1
@@ -21,7 +36,7 @@ const chartOptions = {
     }
 };
 
-const board = Dashboards.board('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             type: 'CSV',
@@ -36,8 +51,18 @@ const board = Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-0'
                 }, {
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-1'
                 }, {
                     id: 'dashboard-col-2'
@@ -59,10 +84,7 @@ const board = Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            title: {
-                text: 'allowConnectorUpdate: true'
-            },
-            chartOptions
+            chartOptions: chartOptions
         }, {
             cell: 'dashboard-col-1',
             connector: {
@@ -76,11 +98,16 @@ const board = Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            title: {
-                text: 'allowConnectorUpdate: false'
-            },
             allowConnectorUpdate: false,
-            chartOptions
+            chartOptions: Highcharts.merge(chartOptions, {
+                title: {
+                    text: 'Dragging points does not affect other components'
+                },
+                subtitle: {
+                    useHTML: true,
+                    text: 'Dragging points <em>will not update</em> the grid'
+                }
+            })
         }, {
             cell: 'dashboard-col-2',
             connector: {

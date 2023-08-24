@@ -27,11 +27,13 @@ import type {
     AxisOptions,
     Chart,
     Options as ChartOptions,
-    Highcharts,
+    Highcharts as H,
     Point,
     Series,
     SeriesOptions
 } from './HighchartsTypes';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -47,7 +49,9 @@ const {
     merge,
     splat,
     uniqueKey,
-    error
+    error,
+    diffObjects,
+    isString
 } = U;
 
 /* *
@@ -58,10 +62,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof Highcharts.chart;
-        ganttChart: typeof Highcharts.chart;
-        mapChart: typeof Highcharts.chart;
-        stockChart: typeof Highcharts.chart;
+        chart: typeof H.chart;
+        ganttChart: typeof H.chart;
+        mapChart: typeof H.chart;
+        stockChart: typeof H.chart;
     }
 }
 
@@ -85,7 +89,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof Highcharts;
+    public static charter?: typeof H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -106,7 +110,12 @@ class HighchartsComponent extends Component {
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
                 chart: {
-                    styledMode: true
+                    styledMode: true,
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 series: []
             },
@@ -280,7 +289,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: {}
+            columnAssignment: void 0
         }
     );
 
@@ -437,10 +446,6 @@ class HighchartsComponent extends Component {
         }
 
         this.innerResizeTimeouts = [];
-
-        // Add the component instance to the registry
-        Component.addInstance(this);
-
     }
 
     /* *
@@ -535,8 +540,6 @@ class HighchartsComponent extends Component {
         if (this.options.chartID) {
             this.chartContainer.id = this.options.chartID;
         }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
@@ -550,7 +553,7 @@ class HighchartsComponent extends Component {
     ): void {
         const table = store.table,
             columnName = point.series.name,
-            rowNumber = point.x,
+            rowNumber = point.index,
             converter = new DataConverter(),
             valueToSet = converter.asNumber(point.y);
 
@@ -568,6 +571,7 @@ class HighchartsComponent extends Component {
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
+        this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
@@ -583,7 +587,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeries(): void {
-        // Heuristically create series from the store dataTable
+        // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
                 this.connector.table.modified.clone() :
@@ -592,16 +596,19 @@ class HighchartsComponent extends Component {
             const { id: storeTableID } = this.connector.table;
             const { chart } = this;
 
-            // Names/aliases that should be mapped to xAxis values
-            const columnAssignment = this.options.columnAssignment || {};
-            const xKeyMap: Record<string, string> = {};
-
             if (this.presentationModifier) {
                 this.presentationTable = this.presentationModifier
                     .modifyTable(this.presentationTable).modified;
             }
 
-            const table = this.presentationTable;
+            const table = this.presentationTable,
+                modifierOptions = table.getModifier()?.options;
+
+            // Names/aliases that should be mapped to xAxis values
+            const columnNames = table.modified.getColumnNames();
+            const columnAssignment = this.options.columnAssignment ||
+                this.getDefaultColumnAssignment(columnNames);
+            const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -614,11 +621,7 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnAssignment[name]) {
-                        return false;
-                    }
-
-                    if (columnAssignment[name] === null) {
+                    if (!isVisible || !columnAssignment[name]) {
                         return false;
                     }
 
@@ -655,9 +658,22 @@ class HighchartsComponent extends Component {
                     }
                 }
 
+                // Disable dragging on series, which were created out of a
+                // columns which are created by MathModifier.
+                const shouldBeDraggable = !(
+                    modifierOptions?.type === 'Math' &&
+                    (modifierOptions as MathModifierOptions)
+                        .columnFormulas?.some(
+                            (formula): boolean => formula.column === seriesName
+                        )
+                );
+
                 return chart.addSeries({
                     name: seriesName,
-                    id: `${storeTableID}-series-${index}`
+                    id: `${storeTableID}-series-${index}`,
+                    dragDrop: {
+                        draggableY: shouldBeDraggable
+                    }
                 }, false);
             });
 
@@ -702,6 +718,36 @@ class HighchartsComponent extends Component {
     }
 
     /**
+     * Creates default mapping when columnAssignment is not declared.
+     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     *
+     * @returns
+     * The record of mapping
+     *
+     * @private
+     *
+     */
+    private getDefaultColumnAssignment(
+        columnNames: Array<string> = []
+    ): Record<string, string | null> {
+        const defaultColumnAssignment:Record<string, string> = {};
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            defaultColumnAssignment[columnNames[i]] = 'y';
+            if (i === 0) {
+                const firstColumnValues =
+                    this.presentationTable?.getColumn(columnNames[i], true);
+
+                if (firstColumnValues && isString(firstColumnValues[0])) {
+                    defaultColumnAssignment[columnNames[i]] = 'x';
+                }
+            }
+        }
+
+        return defaultColumnAssignment;
+    }
+
+    /**
      * Creates chart.
      *
      * @returns
@@ -713,7 +759,7 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof Highcharts
+            Globals.win.Highcharts as unknown as typeof H
         );
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];
@@ -854,6 +900,20 @@ class HighchartsComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the HighchartsComponent component's options.
+     * @returns
+     * The JSON of HighchartsComponent component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<HighchartsComponent.Options> {
+        return {
+            ...diffObjects(this.options, HighchartsComponent.defaultOptions),
+            type: 'Highcharts'
+        };
+    }
 
     public getEditableOptions(): HighchartsComponent.Options {
         const component = this;
@@ -962,8 +1022,11 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * Names / aliases that should be mapped to xAxis values. You can
+         * declare which columns will be visible selectively on the chart.
+         *
+         * When the columnAssignment is not declared, all columns are visible.
+         *
          * ```
          * Example
          * columnAssignment: {

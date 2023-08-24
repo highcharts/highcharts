@@ -9,7 +9,11 @@ PluginHandler.addPlugin(HighchartsPlugin);
 
 Dashboards.board('container', {
     editMode: {
-        enabled: true
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            items: ['editMode']
+        }
     },
     dataPool: {
         connectors: [{
@@ -48,7 +52,20 @@ Dashboards.board('container', {
                 type: 'column'
             }
         },
-        events: {},
+        events: {
+            mount: function () {
+                document.getElementById('mount').value = 'mount';
+            },
+            unmount: function () {
+                document.getElementById('unmount').value = 'unmount';
+            },
+            resize: function () {
+                document.getElementById('resize').value = 'resize';
+            },
+            update: function () {
+                document.getElementById('update').value = 'update';
+            }
+        },
         connector: {
             id: 'connector-1'
         },
@@ -69,7 +86,6 @@ Dashboards.board('container', {
                 animation: false
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },

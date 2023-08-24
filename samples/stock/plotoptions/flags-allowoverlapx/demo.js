@@ -1,8 +1,7 @@
 (async () => {
 
-    // Load the dataset
-    const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     const year = 2021,
@@ -35,7 +34,7 @@
 
         series: [{
             name: 'USD to EUR',
-            data: data,
+            data: usdeur,
             id: 'dataseries'
 
             // the event marker flags

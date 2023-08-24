@@ -7,33 +7,23 @@ Highcharts.setOptions({
         type: 'area',
         zoomType: 'xy'
     },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        valueSuffix: '%'
+    },
     yAxis: {
-        max: 120,
+        max: 100,
         title: {
             text: null
+        },
+        labels: {
+            format: '{value}%'
         }
     },
     xAxis: {
         type: 'datetime'
-    },
-    colors: ['#37D5D6'],
-    plotOptions: {
-        area: {
-            pointStart: Date.UTC(2000, 0, 1),
-            pointIntervalUnit: 'year',
-            fillColor: {
-                linearGradient: {
-                    x1: 0,
-                    x2: 0,
-                    y1: 0,
-                    y2: 1
-                },
-                stops: [
-                    [0, '#37D5D6'],
-                    [1, '#37D5D600']
-                ]
-            }
-        }
     }
 });
 
@@ -67,6 +57,10 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    id: 'title'
+                }]
+            }, {
+                cells: [{
                     id: 'dashboard-col-1'
                 }]
             }, {
@@ -84,6 +78,24 @@ Dashboards.board('container', {
     },
     components: [
         {
+            cell: 'title',
+            type: 'HTML',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'Polio (Pol3) immunization coverage'
+            },
+            {
+                tagName: 'div',
+                children: [{
+                    tagName: 'a',
+                    href: 'https://apps.who.int/gho/data/',
+                    class: 'subtitle',
+                    textContent: 'Among 1-year-olds (%)'
+
+                }]
+            }]
+        },
+        {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
@@ -95,19 +107,20 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Europe: null,
-                Africa: null,
-                'South-East Asia': null
+                Global: 'y'
             },
             chartOptions: {
                 chart: {
                     zoomType: 'x'
                 },
                 title: {
-                    text: 'Polio (Pol3) immunization coverage among 1-year-olds (%) '
+                    text: 'Global'
                 },
-                subtitle: {
-                    text: 'Source: https://apps.who.int/gho/data/'
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {
@@ -122,9 +135,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Europe: null,
-                Africa: null
+                'South-East Asia': 'y'
             },
             chartOptions: {
                 chart: {
@@ -132,6 +143,17 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'South-East Asia'
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 1
+                    }
                 }
             }
         }, {
@@ -146,9 +168,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Europe: null,
-                'South-East Asia': null
+                Africa: 'y'
             },
             chartOptions: {
                 chart: {
@@ -156,6 +176,17 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'Africa'
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 2
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {
@@ -170,9 +201,7 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 x: 'x',
-                Global: null,
-                Africa: null,
-                'South-East Asia': null
+                Europe: 'y'
             },
             chartOptions: {
                 chart: {
@@ -180,6 +209,11 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'Europe'
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 3
+                    }
                 }
             }
         }

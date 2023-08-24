@@ -55,7 +55,8 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            lineWidth: 1,
+            stickyTracking: false,
+            lineWidth: 3,
             point: {
                 events: {
                     click: function () {
@@ -68,6 +69,11 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [[20, 20], [80, 80]]
+        data: [[20, 20], [80, 80]],
+        color: Highcharts.getOptions().colors[3],
+        marker: {
+            lineWidth: 2,
+            radius: 6
+        }
     }]
 });
