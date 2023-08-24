@@ -1,60 +1,60 @@
+// On chart load, start an interval that adds points to the chart and animate
+// the pulsating marker.
+const onChartLoad = function () {
+    const chart = this,
+        series = chart.series[0];
+
+    setInterval(function () {
+        const x = (new Date()).getTime(), // current time
+            y = Math.random();
+
+        series.addPoint([x, y], true, true);
+
+        const point = series.points.at(-1);
+
+        // Add a pulsating marker
+        if (!series.pulse) {
+            series.pulse = chart.renderer.circle()
+                .add(series.markerGroup);
+        }
+        series.pulse
+            .attr({
+                x: point.plotX,
+                y: point.plotY,
+                r: 3,
+                opacity: 1,
+                fill: series.color
+            })
+            .animate({
+                r: 20,
+                opacity: 0
+            }, {
+                duration: 1000
+            });
+
+    }, 1000);
+};
+
+// Create the initial data
+const data = (function () {
+    const data = [];
+    const time = new Date().getTime();
+
+    for (let i = -19; i <= 0; i += 1) {
+        data.push({
+            x: time + i * 1000,
+            y: Math.random()
+        });
+    }
+    return data;
+}());
+
+
 Highcharts.chart('container', {
     chart: {
         type: 'spline',
-        animation: Highcharts.svg, // don't animate in old IE
-        marginRight: 10,
         events: {
-            load: function () {
-                const series = this.series[0];
-                const chart = this;
-
-                setInterval(function () {
-                    const x = (new Date()).getTime(); // current time
-                    const y = Math.random();
-
-                    // Add the original data point
-                    series.addPoint({
-                        x,
-                        y,
-                        marker: { radius: 0.03 }
-                    },
-                    true, true);
-
-                    setTimeout(function () {
-                        series.points[series.points.length - 1].update(
-                            {
-                                marker: {
-                                    radius: 5,
-                                    fillColor: Highcharts.getOptions().colors[1]
-                                }
-                            }
-                        );
-                    }, 450);
-
-                    // Add the data point that grows and fades
-                    const point = chart.renderer
-                        .circle(
-                            series.xAxis.toPixels(x), series.yAxis.toPixels(y),
-                            0.03)
-                        .attr({ fill: Highcharts.getOptions().colors[1] })
-                        .add();
-
-                    // Animate the marker size to grow and fade away
-                    point.animate(
-                        {
-                            r: 20,
-                            opacity: 0
-                        },
-                        {
-                            duration: 1300,
-                            complete: function () {
-                                point.destroy();
-                            }
-                        }
-                    );
-
-                }, 1000);
-            }
+            load: onChartLoad
         }
     },
 
@@ -81,7 +81,8 @@ Highcharts.chart('container', {
 
     xAxis: {
         type: 'datetime',
-        tickPixelInterval: 150
+        tickPixelInterval: 150,
+        maxPadding: 0.1
     },
 
     yAxis: {
@@ -113,24 +114,9 @@ Highcharts.chart('container', {
     series: [
         {
             name: 'Random data',
-            color: Highcharts.getOptions().colors[7],
-            lineWidth: 3,
-            data: (function () {
-                const data = [];
-                const time = new Date().getTime();
-
-                for (let i = -19; i <= 0; i += 1) {
-                    data.push({
-                        x: time + i * 1000,
-                        y: Math.random()
-                    });
-                }
-                return data;
-            }()),
-            marker: {
-                fillColor: Highcharts.getOptions().colors[1],
-                radius: 5
-            }
+            lineWidth: 2,
+            color: Highcharts.getOptions().colors[2],
+            data
         }
     ]
 });
