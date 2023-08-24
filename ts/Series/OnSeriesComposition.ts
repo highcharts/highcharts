@@ -193,21 +193,27 @@ namespace OnSeriesComposition {
                                     leftPoint = leftPoint as SplinePoint;
                                     rightPoint = rightPoint as SplinePoint;
 
-                                    const p0 = {
-                                            plotX: leftPoint.plotX || 0,
-                                            plotY: leftPoint.plotY || 0
-                                        },
-                                        p3 = {
-                                            plotX: rightPoint.plotX || 0,
-                                            plotY: rightPoint.plotY || 0
-                                        },
-                                        p1 = leftPoint.rightCont || p0,
-                                        p2 = rightPoint.leftCont || p3,
+                                    const p0 = [
+                                            leftPoint.plotX || 0,
+                                            leftPoint.plotY || 0
+                                        ],
+                                        p3 = [
+                                            rightPoint.plotX || 0,
+                                            rightPoint.plotY || 0
+                                        ],
+                                        p1 = (
+                                            leftPoint.controlPoints?.high ||
+                                            p0
+                                        ),
+                                        p2 = (
+                                            rightPoint.controlPoints?.low ||
+                                            p3
+                                        ),
                                         pixelThreshold = 0.25,
                                         maxIterations = 100,
                                         calculateCoord = (
                                             t: number,
-                                            key: 'plotX'|'plotY'
+                                            key: 0 | 1
                                         ): number => (
                                             // The parametric formula for the
                                             // cubic Bezier curve.
@@ -226,7 +232,7 @@ namespace OnSeriesComposition {
                                     for (let i = 0; i < maxIterations; i++) {
                                         const tMid = (tMin + tMax) / 2;
                                         const xMid =
-                                            calculateCoord(tMid, 'plotX');
+                                            calculateCoord(tMid, 0);
 
                                         if (xMid === null) {
                                             break;
@@ -250,7 +256,7 @@ namespace OnSeriesComposition {
 
                                     if (defined(t)) {
                                         point.plotY =
-                                            calculateCoord(t, 'plotY');
+                                            calculateCoord(t, 1);
                                         point.y =
                                             yAxis.toValue(point.plotY, true);
                                     }
