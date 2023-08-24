@@ -235,14 +235,9 @@ class SplineSeries extends LineSeries {
             }
             // */
 
-            point.leftCont = {
-                plotX: leftContX,
-                plotY: leftContY
-            };
-
-            point.rightCont = {
-                plotX: rightContX,
-                plotY: rightContY
+            point.controlPoints = {
+                low: [leftContX, leftContY],
+                high: [rightContX, rightContY]
             };
         }
 
