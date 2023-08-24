@@ -57,7 +57,7 @@ Highcharts.chart('container', {
         labels: {
             distance: -23,
             style: {
-                fontSize: '18px' // Increase the font size for the tick labels
+                fontSize: '18px'
             }
         },
         min: 0,
