@@ -18,8 +18,8 @@ const desktopConfig = {
 };
 
 describe('Lighthouse tests', () => {
-    it('Climate demo', () => {
-        cy.visit('/dashboards/demo/climate');
+    it('Minimal demo', () => {
+        cy.visit('/dashboards/demo/minimal');
         cy.lighthouse(
             {
                 performance: 42

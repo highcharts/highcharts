@@ -28,6 +28,14 @@ jobs:
         with:
           ref: master
 
+      - name: Check out the test files from current branch
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            test/cypress/performance/minimal.cy.js
+          sparse-checkout-cone-mode: false
+          clean: false
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
