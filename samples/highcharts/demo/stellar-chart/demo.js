@@ -217,7 +217,7 @@ function fillCenter(percentage, info, chart, customLabel) {
         ).css({
             color: '#000',
             textAlign: 'center',
-            'pointer-events': 'none'
+            pointerEvents: 'none'
         }).add();
     } else {
         customLabel.attr({
