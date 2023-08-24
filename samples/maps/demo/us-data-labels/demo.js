@@ -58,9 +58,9 @@
                 format: '{value}%'
             },
             stops: [
-                [0, '#00FF00'], // Green
-                [0.5, '#FFFF00'], // Yellow
-                [1, '#FF0000'] // Red
+                [0.2, '#188e2a'], // Green
+                [0.5, '#fee401'], // Yellow
+                [1, '#df1309'] // Red
             ],
             min: 0,
             max: 8
