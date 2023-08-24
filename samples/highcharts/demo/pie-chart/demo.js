@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-    colors: ['#01BAF2', '#f6fa4b', '#FAA74B', '#baf201', '#f201ba'],
     chart: {
         type: 'pie'
     },
