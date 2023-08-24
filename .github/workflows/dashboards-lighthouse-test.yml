@@ -29,12 +29,7 @@ jobs:
           ref: master
 
       - name: Check out the test files from current branch
-        uses: actions/checkout@v3
-        with:
-          sparse-checkout: |
-            test/cypress/performance/minimal.cy.js
-          sparse-checkout-cone-mode: false
-          clean: false
+        run: git checkout ${{ github.event.pull_request.head.sha }} -- test/cypress/performance/*
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
