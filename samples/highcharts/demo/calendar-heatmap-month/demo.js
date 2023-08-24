@@ -1,134 +1,136 @@
 const data = [{
-    date: '2017-05-01',
-    temperature: 9.9
+    date: '2023-07-01',
+    temperature: 19.1
 },
 {
-    date: '2017-05-02',
-    temperature: 11.5
+    date: '2023-07-02',
+    temperature: 15.3
 },
 {
-    date: '2017-05-03',
-    temperature: 11.8
+    date: '2023-07-03',
+    temperature: 16.4
 },
 {
-    date: '2017-05-04',
-    temperature: 13.1
+    date: '2023-07-04',
+    temperature: 16.0
 },
 {
-    date: '2017-05-05',
-    temperature: 12.9
+    date: '2023-07-05',
+    temperature: 17.9
 },
 {
-    date: '2017-05-06',
-    temperature: 15.5
+    date: '2023-07-06',
+    temperature: 15.8
 },
 {
-    date: '2017-05-07',
-    temperature: 16.7
+    date: '2023-07-07',
+    temperature: 21.1
 },
 {
-    date: '2017-05-08',
-    temperature: 10.0
+    date: '2023-07-08',
+    temperature: 23.3
 },
 {
-    date: '2017-05-09',
-    temperature: 8.0
+    date: '2023-07-09',
+    temperature: 24.8
 },
 {
-    date: '2017-05-10',
-    temperature: 6.8
+    date: '2023-07-10',
+    temperature: 25.1
 },
 {
-    date: '2017-05-11',
-    temperature: 8.4
+    date: '2023-07-11',
+    temperature: 18.2
 },
 {
-    date: '2017-05-12',
-    temperature: 9.9
-},
-{
-    date: '2017-05-13',
-    temperature: 12.7
-},
-{
-    date: '2017-05-14',
-    temperature: 12.2
-},
-{
-    date: '2017-05-15',
-    temperature: 12.1
-},
-{
-    date: '2017-05-16',
-    temperature: 11.8
-},
-{
-    date: '2017-05-17',
-    temperature: 13.4
-},
-{
-    date: '2017-05-18',
-    temperature: 10.6
-},
-{
-    date: '2017-05-19',
+    date: '2023-07-12',
     temperature: 14.4
 },
 {
-    date: '2017-05-20',
-    temperature: 20.0
+    date: '2023-07-13',
+    temperature: 19.3
 },
 {
-    date: '2017-05-21',
-    temperature: 14.3
+    date: '2023-07-14',
+    temperature: 20.2
 },
 {
-    date: '2017-05-22',
-    temperature: 11.2
+    date: '2023-07-15',
+    temperature: 15.8
 },
 {
-    date: '2017-05-23',
-    temperature: 13.5
+    date: '2023-07-16',
+    temperature: 16.1
 },
 {
-    date: '2017-05-24',
-    temperature: 11.0
+    date: '2023-07-17',
+    temperature: 15.7
 },
 {
-    date: '2017-05-25',
-    temperature: 10.1
+    date: '2023-07-18',
+    temperature: 19.2
 },
 {
-    date: '2017-05-26',
-    temperature: 11.7
+    date: '2023-07-19',
+    temperature: 18.6
 },
 {
-    date: '2017-05-27',
-    temperature: 15.9
+    date: '2023-07-20',
+    temperature: 18.3
 },
 {
-    date: '2017-05-28',
-    temperature: 16.8
+    date: '2023-07-21',
+    temperature: 15.0
 },
 {
-    date: '2017-05-29',
-    temperature: 13.1
+    date: '2023-07-22',
+    temperature: 14.7
 },
 {
-    date: '2017-05-30',
-    temperature: 12.8
+    date: '2023-07-23',
+    temperature: 18.8
 },
 {
-    date: '2017-05-31',
-    temperature: 11.7
+    date: '2023-07-24',
+    temperature: 17.7
+},
+{
+    date: '2023-07-25',
+    temperature: 17.4
+},
+{
+    date: '2023-07-26',
+    temperature: 17.6
+},
+{
+    date: '2023-07-27',
+    temperature: 18.1
+},
+{
+    date: '2023-07-28',
+    temperature: 18.2
+},
+{
+    date: '2023-07-29',
+    temperature: 20.3
+},
+{
+    date: '2023-07-30',
+    temperature: 16.4
+},
+{
+    date: '2023-07-31',
+    temperature: 17.0
 }];
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// The function takes in a dataset and calculates how many empty tiles needed before and after the dataset is plotted.
+// The function takes in a dataset and calculates how many empty tiles needed
+// before and after the dataset is plotted.
 function generateChartData(data) {
 
-    // Calculate the starting weekday index (0-6 of the first date in the given array)
+    // Calculate the starting weekday index (0-6 of the first date in the given
+    // array)
     const firstWeekday = new Date(data[0].date).getDay(),
         monthLength = data.length,
         lastElement = data[monthLength - 1].date,
@@ -137,11 +139,12 @@ function generateChartData(data) {
         emptyTilesFirst = firstWeekday,
         chartData = [];
 
-    // Add the empty tiles before the first day of the month with null values to take up space in the chart
+    // Add the empty tiles before the first day of the month with null values to
+    // take up space in the chart
     for (let emptyDay = 0; emptyDay < emptyTilesFirst; emptyDay++) {
         chartData.push({
             x: emptyDay,
-            y: 4,
+            y: 5,
             value: null,
             date: null,
             custom: {
@@ -152,17 +155,20 @@ function generateChartData(data) {
 
     // Loop through and populate with temperature and dates from the dataset
     for (let day = 1; day <= monthLength; day++) {
-        const date = data[day - 1].date; // Get the date from the given data array
-        const xCoordinate = (emptyTilesFirst + day - 1) % 7; // Offset by the number of empty tiles
+        // Get date from the given data array
+        const date = data[day - 1].date;
+        // Offset by thenumber of empty tiles
+        const xCoordinate = (emptyTilesFirst + day - 1) % 7;
         const yCoordinate = Math.floor((firstWeekday + day - 1) / 7);
         const id = day;
 
-        // Get the corresponding temperature for the current day from the given array
+        // Get the corresponding temperature for the current day from the given
+        // array
         const temperature = data[day - 1].temperature;
-
+        console.log(day);
         chartData.push({
             x: xCoordinate,
-            y: 4 - yCoordinate,
+            y: 5 - yCoordinate,
             value: temperature,
             date: new Date(date).getTime(),
             custom: {
@@ -194,12 +200,12 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Mid-day temperature May 2017',
+        text: 'Day temperature in Oslo, Norway July 2023',
         align: 'center'
     },
 
     subtitle: {
-        text: 'Temperature variation at mid-day through May',
+        text: 'Temperature variation at day through July',
         align: 'center'
     },
 
@@ -219,11 +225,12 @@ Highcharts.chart('container', {
     xAxis: {
         categories: weekdays,
         opposite: true,
-        lineWidth: 55,
-        lineColor: '#BBBAC5',
+        lineWidth: 26,
+        offset: 13,
+        lineColor: 'rgba(27, 26, 37, 0.2)',
         labels: {
             rotation: 0,
-            y: 6,
+            y: 20,
             style: {
                 textTransform: 'uppercase',
                 fontWeight: 'bold'
@@ -243,10 +250,11 @@ Highcharts.chart('container', {
             enabled: false
         },
         min: 0,
-        max: 4,
+        max: 5,
         accessibility: {
             description: 'weeks'
-        }
+        },
+        gridLineWidth: 0
     },
 
     legend: {
@@ -271,9 +279,9 @@ Highcharts.chart('container', {
     series: [{
         keys: ['x', 'y', 'value', 'date', 'id'],
         data: chartData,
-        nullColor: 'whitesmoke',
+        nullColor: 'rgba(196, 196, 196, 0.2)',
         borderWidth: 2,
-        borderColor: 'whitesmoke',
+        borderColor: 'rgba(196, 196, 196, 0.2)',
         dataLabels: [{
             enabled: true,
             format: '{#unless point.custom.empty}{point.value:.1f}°{/unless}',
@@ -284,10 +292,18 @@ Highcharts.chart('container', {
             }
         }, {
             enabled: true,
-            useHTML: true,
             align: 'left',
             verticalAlign: 'top',
-            format: '{#unless point.custom.empty}<p class="date">{point.custom.monthDay}</p>{/unless}'
+            format: '{#unless point.custom.empty}{point.custom.monthDay}{/unless}',
+            backgroundColor: 'whitesmoke',
+            padding: 2,
+            style: {
+                textOutline: 'none',
+                color: 'rgba(70, 70, 92, 1)',
+                fontSize: '0.8rem',
+                fontWeight: 'bold',
+                opacity: 0.5
+            }
         }]
     }]
 });

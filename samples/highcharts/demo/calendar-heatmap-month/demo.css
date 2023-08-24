@@ -3,15 +3,3 @@
     max-width: 800px;
     margin: 1em auto;
 }
-
-.date {
-    text-align: center;
-    color: rgba(70, 70, 92, 1);
-    margin: 0;
-    padding: 2px 2px 0;
-    min-width: 14px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    background-color: whitesmoke;
-    opacity: 0.5;
-}
