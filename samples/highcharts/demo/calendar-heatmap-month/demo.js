@@ -165,7 +165,7 @@ function generateChartData(data) {
         // Get the corresponding temperature for the current day from the given
         // array
         const temperature = data[day - 1].temperature;
-        console.log(day);
+
         chartData.push({
             x: xCoordinate,
             y: 5 - yCoordinate,
