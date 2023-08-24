@@ -40,7 +40,8 @@ function getTrendLine(data) {
     const minX = Math.min(...data.map(([x]) => x));
     const maxX = Math.max(...data.map(([x]) => x));
 
-    // Calculate the corresponding y-values for the trend line using the slope and intercept
+    // Calculate the corresponding y-values for the trend line using the slope
+    // and intercept
     trendline.push([minX, minX * slope + intercept]);
     trendline.push([maxX, maxX * slope + intercept]);
 
