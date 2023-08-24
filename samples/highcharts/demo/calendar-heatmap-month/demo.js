@@ -164,7 +164,7 @@ function generateChartData(data) {
             x: xCoordinate,
             y: 4 - yCoordinate,
             value: temperature,
-            date: date,
+            date: new Date(date).getTime(),
             custom: {
                 monthDay: id
             }
@@ -211,12 +211,7 @@ Highcharts.chart('container', {
         enabled: true,
         outside: true,
         zIndex: 20,
-        formatter: function () {
-            if (!this.point.value) {
-                return false;
-            }
-            return Highcharts.dateFormat('%A, %b %e, %Y', new Date(this.point.date));
-        }
+        format: '{#unless point.custom.empty}{point.date:%A, %b %e, %Y}{/unless}'
     },
 
     xAxis: {
@@ -290,13 +285,7 @@ Highcharts.chart('container', {
             useHTML: true,
             align: 'left',
             verticalAlign: 'top',
-            formatter: function () {
-                if (!this.point.value) {
-                // Return undefined if no value
-                    return void 0;
-                }
-                return `<p class="date">${this.point.custom.monthDay}</p>`;
-            }
+            format: '{#unless point.custom.empty}<p class="date">{point.custom.monthDay}</p>{/unless}'
         }]
     }]
 });
