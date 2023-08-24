@@ -417,7 +417,7 @@ class HighchartsComponent extends Component {
             'figure',
             void 0,
             void 0,
-            void 0,
+            this.contentElement,
             true
         );
 
@@ -434,8 +434,6 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        this.on('tableChanged', (): void => this.updateSeries());
-
         if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
@@ -448,6 +446,9 @@ class HighchartsComponent extends Component {
         this.innerResizeTimeouts = [];
     }
 
+    public onTableChanged(): void {
+        this.updateSeries();
+    }
     /* *
      *
      *  Functions
@@ -455,12 +456,10 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
-        this.parentElement.appendChild(this.element);
-        this.contentElement.appendChild(this.chartContainer);
-        this.hasLoaded = true;
+
+        await super.load();
 
         this.emit({ type: 'afterLoad' });
 
@@ -567,7 +566,7 @@ class HighchartsComponent extends Component {
      */
     public async update(
         options: Partial<HighchartsComponent.Options>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
@@ -578,7 +577,7 @@ class HighchartsComponent extends Component {
         }
         this.emit({ type: 'afterUpdate' });
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
     }
 
     /**
@@ -586,7 +585,7 @@ class HighchartsComponent extends Component {
      *
      * @private
      */
-    private updateSeries(): void {
+    public updateSeries(): void {
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
@@ -699,8 +698,6 @@ class HighchartsComponent extends Component {
 
                 series.setData(seriesData);
             });
-
-            /* chart.redraw(); */
         }
     }
 

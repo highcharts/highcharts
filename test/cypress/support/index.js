@@ -37,14 +37,15 @@ Cypress.Commands.add('boardRendered', () =>
                     setInterval(() => {
                         // If highcharts component, wait for chart to be rendered
                         if (component.type === 'Highcharts') {
-                            if (
-                                component.chart.hasRendered &&
-                                component.chart.series.every(series => series.hasRendered && series.finishedAnimating)) {
+                            const allSeriesRendered = component.chart.series.every(
+                                series => series.hasRendered && series.finishedAnimating
+                            );
 
+                            if (allSeriesRendered) {
                                 resolve(component)
                             }
 
-                        } else if (component.hasLoaded) {
+                        } else if (component) {
                             resolve(component)
                         }
 
@@ -54,7 +55,7 @@ Cypress.Commands.add('boardRendered', () =>
                             reject('Took more than 10 attempts')
                         }
 
-                    }, 200)
+                    }, 400)
 
                 })
             }

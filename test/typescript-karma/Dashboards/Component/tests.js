@@ -17,8 +17,6 @@ const eventTypes = [
     'afterLoad',
     'beforeRender',
     'afterRender',
-    'redraw',
-    'afterRedraw',
     'tableChanged',
     'setConnector',
     'update',
@@ -45,7 +43,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         return;
     }
 
-    const board = Dashboards.board(parentElement, {
+    const board = await Dashboards.board(parentElement, {
         gui: {
             enabled: true,
             layouts: [
@@ -87,7 +85,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 ]
             }
         ]
-    });
+    }, true);
     // Test the HighchartsComponent
     const highchartsComponent = board.mountedComponents[0].component;
 
@@ -103,7 +101,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
 
     assert.deepEqual(
         registeredEvents,
-        ['update',  'afterUpdate', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
+        ['update',  'afterUpdate', 'beforeRender', 'afterRender'],
         'After updating the HighchartsComponent events should be fired in the correct order.'
     );
 
@@ -132,12 +130,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
         registeredEvents,
         [
             'update',
-            'redraw',
             'beforeRender',
-            'load',
-            'afterLoad',
-            'afterRender',
-            'afterRedraw'
+            'afterRender'
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
     );
@@ -238,10 +232,7 @@ test('Board with data connectors and HighchartsComponent update', async function
             'update',
             'setConnector',
             'afterUpdate',
-            'redraw',
             'beforeRender',
-            'load',
-            'afterLoad',
             'afterRender',
         ],
         'If connector is given in options, it will be attached during load'
