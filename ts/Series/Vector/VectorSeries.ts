@@ -87,6 +87,8 @@ class VectorSeries extends ScatterSeries {
          */
         lineWidth: 2,
 
+        marker: void 0,
+
         /**
          * What part of the vector it should be rotated around. Can be one of
          * `start`, `center` and `end`. When `start`, the vectors will start
@@ -126,9 +128,7 @@ class VectorSeries extends ScatterSeries {
          */
         vectorLength: 20
 
-    } as VectorSeriesOptions, {
-        marker: null as any
-    });
+    } as VectorSeriesOptions);
 
     /* *
      *

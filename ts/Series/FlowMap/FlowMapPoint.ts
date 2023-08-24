@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2023 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import ColorMapComposition from '../ColorMapComposition.js';
+import type ColorMapComposition from '../ColorMapComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { LonLatArray } from '../..//Maps/MapViewOptions';
 const {
