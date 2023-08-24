@@ -7,11 +7,9 @@ const createChart = async () => {
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    const countryCode = 'it',
-        topology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/' +
-            `${countryCode}/${countryCode}-all.topo.json`
-        ).then(response => response.json());
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/it/it-all.topo.json'
+    ).then(response => response.json());
 
     // Prepare random-like demo data
     const data = topology.objects.default.geometries.map((g, i) => [
