@@ -1,10 +1,14 @@
-// // Data retrieved from: https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport
 Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Domestic passenger transport, by mode of transport, in Norway 2019-2021'
+        text: 'Domestic passenger transport by mode of transport, Norway',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport">SSB</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['2019', '2020', '2021']
@@ -21,7 +25,11 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         column: {
-            stacking: 'percent'
+            stacking: 'percent',
+            dataLabels: {
+                enabled: true,
+                format: '{point.percentage:.0f}%'
+            }
         }
     },
     series: [{
