@@ -1,5 +1,5 @@
 Highcharts.addEvent(Highcharts.Chart, 'render', function () {
-    var table = this.dataTableDiv;
+    const table = this.dataTableDiv;
     if (table) {
 
         // Apply styles inline because stylesheets are not passed to the exported SVG

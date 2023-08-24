@@ -84,11 +84,10 @@ Highcharts.chart('container-line', {
 
 // Make monochrome colors and set them as default for all pies
 Highcharts.getOptions().plotOptions.pie.colors = (function () {
-    var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
+    const colors = [],
+        base = Highcharts.getOptions().colors[0];
 
-    for (i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
         // Start out with a darkened base color (negative brighten), and end
         // up with a much brighter color
         colors.push(Highcharts.color(base).brighten((i - 3) / 10).get());

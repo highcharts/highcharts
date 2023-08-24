@@ -30,4 +30,34 @@ describe('Remove the dashboard.', () => {
         cy.get('body').click();
         cy.get('.highcharts-datagrid-cell').eq(4).should('have.text', '300 kg');
     });
+
+    it('The grid should adjust its width dynamically to the container width.', () => {
+        let initialWidth,
+            finalWidth;
+
+        cy.get('.highcharts-datagrid-inner-container').should('exist').then(($el) => {
+            initialWidth = $el.width();
+        });
+
+        cy.get('#container').then(($el) => {
+            $el.css('width', '500px');
+
+            cy.get('.highcharts-datagrid-inner-container').should('exist').then(($el) => {
+                finalWidth = $el.width();
+
+                assert.notStrictEqual(
+                    initialWidth,
+                    finalWidth,
+                    'The width should change when resizing the container.'
+                );
+
+                assert.closeTo(
+                    finalWidth,
+                    500,
+                    10,
+                    'The width should be close to 500px.'
+                )
+            });
+        });
+    });
 });

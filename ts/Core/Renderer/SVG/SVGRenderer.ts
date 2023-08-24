@@ -205,6 +205,13 @@ class SVGRenderer implements SVGRendererLike {
      * @type {Highcharts.SVGElement}
      */
     public defs: SVGElement = void 0 as any;
+
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
     public forExport?: boolean;
     public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;

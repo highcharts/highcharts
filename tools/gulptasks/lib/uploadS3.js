@@ -70,6 +70,9 @@ async function putS3Object(key, body, config = {}) {
  */
 function getGitIgnoreMeProperties() {
     const properties = {};
+    if (!fs.existsSync('./git-ignore-me.properties')) {
+        return {};
+    }
     const lines = fs.readFileSync(
         './git-ignore-me.properties', 'utf8'
     );

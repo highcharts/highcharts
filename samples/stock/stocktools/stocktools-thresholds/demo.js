@@ -1,19 +1,24 @@
-Highcharts.setOptions({
-    lang: {
-        stockTools: {
-            gui: {
-                thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
-            }
-        },
-        navigation: {
-            popup: {
-                thresholds: 'Color threshold'
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
+
+    Highcharts.setOptions({
+        lang: {
+            stockTools: {
+                gui: {
+                    thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
+                }
+            },
+            navigation: {
+                popup: {
+                    thresholds: 'Color threshold'
+                }
             }
         }
-    }
-});
-
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    });
 
     // split the data set into ohlc and volume
     const ohlc = [],
@@ -166,4 +171,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }]
         }
     });
-});
+})();

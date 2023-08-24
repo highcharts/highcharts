@@ -166,13 +166,14 @@ const configs: {
             const { board } = this;
 
             const handleChangeExtremes = (e: DataCursor.Event): void => {
-                if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
-                    // Lasting cursor, so get last cursor
-                    const lastCursor = e.cursors[e.cursors.length - 1];
-                    if ('row' in lastCursor && typeof lastCursor.row === 'number') {
-                        const { row } = lastCursor;
-                        this.dataGrid.scrollToRow(row);
-                    }
+                const cursor = e.cursor;
+                if (
+                    cursor.type === 'position' &&
+                    this.dataGrid &&
+                    typeof cursor?.row === 'number'
+                ) {
+                    const { row } = cursor;
+                    this.dataGrid.scrollToRow(row);
                 }
 
             };
@@ -210,13 +211,72 @@ const configs: {
                 this.on('setConnector', (): void => unregisterCursorListeners());
                 this.on('afterSetConnector', (): void => registerCursorListeners());
             }
+        },
+        visibilityHandler: function (this: DataGridComponent): void {
+            const component = this,
+                { board } = component;
+
+            const handleVisibilityChange = (e: DataCursor.Event): void => {
+                const cursor = e.cursor,
+                    dataGrid = component.dataGrid;
+                if (!(dataGrid && cursor.type === 'position' && cursor.column)) {
+                    return;
+                }
+
+                const columnName = cursor.column;
+                dataGrid.update({
+                    columns: {
+                        [columnName]: {
+                            show: cursor.state !== 'series.hide'
+                        }
+                    }
+                });
+            };
+
+            const registerCursorListeners = (): void => {
+                const { dataCursor: cursor } = board;
+
+                if (!cursor) {
+                    return;
+                }
+                const table = this.connector && this.connector.table;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.addListener(table.id, 'series.show', handleVisibilityChange);
+                cursor.addListener(table.id, 'series.hide', handleVisibilityChange);
+            };
+
+            const unregisterCursorListeners = (): void => {
+                const table = this.connector && this.connector.table;
+                const { dataCursor: cursor } = board;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.removeListener(table.id, 'series.show', handleVisibilityChange);
+                cursor.removeListener(table.id, 'series.hide', handleVisibilityChange);
+            };
+
+
+            if (board) {
+                registerCursorListeners();
+
+                this.on('setConnector', (): void => unregisterCursorListeners());
+                this.on('afterSetConnector', (): void => registerCursorListeners());
+            }
+
         }
     }
 };
 
 const defaults: Sync.OptionsRecord = {
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
-    extremes: { handler: configs.handlers.extremesHandler }
+    extremes: { handler: configs.handlers.extremesHandler },
+    visibility: { handler: configs.handlers.visibilityHandler }
 };
 
 

@@ -61,7 +61,7 @@ function connectHighcharts(
 /**
  * Callback function of the Dashboard plugin.
  *
- * @param {Dashboard.DashboardPlugin.Event} e
+ * @param {Dashboards.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
@@ -112,9 +112,9 @@ const HighchartsCustom = {
     connectHighcharts
 };
 
-const HighchartsPlugin: PluginHandler.DashboardPlugin<typeof HighchartsCustom> = {
+const HighchartsPlugin: PluginHandler.DashboardsPlugin<typeof HighchartsCustom> = {
     custom: HighchartsCustom,
-    name: 'Highcharts.DashboardPlugin',
+    name: 'Highcharts.DashboardsPlugin',
     onRegister,
     onUnregister
 };

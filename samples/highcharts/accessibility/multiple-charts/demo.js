@@ -51,7 +51,7 @@ Highcharts.chart('container-column', {
 
 // Line chart
 function highlightSeries(series) {
-    var chart = series.chart;
+    const chart = series.chart;
     chart.series.forEach(function (s) {
         if (s !== series) {
             if (s.tt) {
@@ -72,7 +72,7 @@ function clearHighlight(chart) {
     });
 }
 
-var chart = Highcharts.chart('container-line', {
+const chart = Highcharts.chart('container-line', {
     caption: {
         text: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
     },
@@ -193,11 +193,10 @@ chart.legend.allItems.forEach(function (item) {
 
 // Make monochrome colors and set them as default for all pies
 Highcharts.getOptions().plotOptions.pie.colors = (function () {
-    var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
+    const colors = [],
+        base = Highcharts.getOptions().colors[0];
 
-    for (i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
         // Start out with a darkened base color (negative brighten), and end
         // up with a much brighter color
         colors.push(Highcharts.color(base).brighten((i - 3) / 10).get());

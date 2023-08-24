@@ -132,37 +132,33 @@ class Layout extends GUIElement {
         }
 
         // GUI structure
-        if (parentContainer) {
-            if (options.copyId) {
-                this.copyId = options.copyId;
-            }
+        if (options.copyId) {
+            this.copyId = options.copyId;
+        }
 
-            const layoutOptions = (this.options || {}),
-                layoutClassName = layoutOptions.rowClassName || '';
+        const layoutOptions = (this.options || {}),
+            layoutClassName = layoutOptions.rowClassName || '';
 
-            this.setElementContainer({
-                render: board.guiEnabled,
-                parentContainer: parentContainer,
-                attribs: {
-                    id: options.id + (this.copyId ? '_' + this.copyId : ''),
-                    className: Globals.classNames.layout + ' ' +
-                        layoutClassName
-                },
-                elementId: options.id,
-                style: this.options.style
-            });
+        this.container = this.getElementContainer({
+            render: board.guiEnabled,
+            parentContainer: parentContainer,
+            attribs: {
+                id: options.id + (this.copyId ? '_' + this.copyId : ''),
+                className: Globals.classNames.layout + ' ' +
+                    layoutClassName
+            },
+            elementId: options.id,
+            style: this.options.style
+        });
 
-            // Init rows from options.
-            if (this.options.rows) {
-                this.setRows();
-            }
+        // Init rows from options.
+        if (this.options.rows) {
+            this.setRows();
+        }
 
-            // Init rows from JSON.
-            if (options.rowsJSON && !this.rows.length) {
-                this.setRowsFromJSON(options.rowsJSON);
-            }
-        } else {
-            // Error
+        // Init rows from JSON.
+        if (options.rowsJSON && !this.rows.length) {
+            this.setRowsFromJSON(options.rowsJSON);
         }
     }
 
@@ -196,6 +192,11 @@ class Layout extends GUIElement {
     public level: number;
 
     public parentCell?: Cell;
+
+    /**
+     * HTML container of a GUIElement.
+     */
+    public container: HTMLElement;
 
     /* *
     *
@@ -416,6 +417,33 @@ class Layout extends GUIElement {
                 rows: rows,
                 style: layout.options.style
             }
+        };
+    }
+
+    /**
+     * Get the layout's options.
+     * @returns
+     * The JSON of layout's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Globals.DeepPartial<Layout.Options> {
+        const layout = this,
+            rows = [];
+
+        // Get rows JSON.
+        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+            rows.push(layout.rows[i].getOptions());
+        }
+
+        return {
+            id: this.options.id,
+            layoutClassName: this.options.layoutClassName,
+            rowClassName: this.options.rowClassName,
+            cellClassName: this.options.cellClassName,
+            style: this.options.style,
+            rows
         };
     }
 }

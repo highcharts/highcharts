@@ -299,7 +299,47 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
 });
 
 QUnit.test('Images (dummy images, not loaded)', function (assert) {
-    var chart = Highcharts.mapChart('container', {
+    const data = [
+            [
+                'no',
+                1,
+                {
+                    pattern: {
+                        image: 'base/test/test1x1b.png'
+                    }
+                }
+            ],
+            [
+                'dk',
+                1,
+                {
+                    pattern: {
+                        image: 'base/test/test1x1b.png'
+                    }
+                }
+            ],
+            [
+                'se',
+                1,
+                {
+                    pattern: {
+                        image: 'base/test/test1x1w.png'
+                    }
+                }
+            ],
+            [
+                'fi',
+                1,
+                {
+                    pattern: {
+                        image: 'base/test/test1x1w.png',
+                        width: 10,
+                        height: null // Autocompute
+                    }
+                }
+            ]
+        ],
+        chart = Highcharts.mapChart('container', {
             chart: {
                 map: 'custom/europe'
             },
@@ -312,54 +352,15 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
                             height: 100
                         }
                     },
-                    data: [
-                        [
-                            'no',
-                            1,
-                            {
-                                pattern: {
-                                    image: 'base/test/test1x1b.png'
-                                }
-                            }
-                        ],
-                        [
-                            'dk',
-                            1,
-                            {
-                                pattern: {
-                                    image: 'base/test/test1x1b.png'
-                                }
-                            }
-                        ],
-                        [
-                            'se',
-                            1,
-                            {
-                                pattern: {
-                                    image: 'base/test/test1x1w.png'
-                                }
-                            }
-                        ],
-                        [
-                            'fi',
-                            1,
-                            {
-                                pattern: {
-                                    image: 'base/test/test1x1w.png',
-                                    width: 10,
-                                    height: null // Autocompute
-                                }
-                            }
-                        ]
-                    ]
+                    data
                 }
             ]
         }),
         finlandPoint = chart.series[0].points[3],
         defs = chart.renderer.defs.element,
         patterns = defs.getElementsByTagName('pattern'),
-        ids = [],
-        customPattern;
+        ids = [];
+    let customPattern;
 
     assert.strictEqual(
         finlandPoint.name,
@@ -403,6 +404,13 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
         customPattern.firstChild.tagName.toLowerCase(),
         'image',
         'Pattern should have an image element.'
+    );
+
+    chart.series[0].setData(data);
+    assert.ok(
+        true,
+        `There shouldn't be any error in the console, after using setData method
+        (#19323).`
     );
 });
 
