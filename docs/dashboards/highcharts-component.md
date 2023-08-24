@@ -3,7 +3,7 @@ Highcharts Component
 
 The Highcharts Component allows the end-user to define a chart in the dashboard. Charts are most often used to visualize data that changes over time.
 
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts allow="fullscreen"></iframe>
 
 ### How to start
 To get started quickly we need to load the JavaScript and CSS files in the following order.
