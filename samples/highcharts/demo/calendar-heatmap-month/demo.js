@@ -211,7 +211,9 @@ Highcharts.chart('container', {
         enabled: true,
         outside: true,
         zIndex: 20,
-        format: '{#unless point.custom.empty}{point.date:%A, %b %e, %Y}{/unless}'
+        headerFormat: '',
+        pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, %Y}{/unless}',
+        nullFormat: 'No data'
     },
 
     xAxis: {
