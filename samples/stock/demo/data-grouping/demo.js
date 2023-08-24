@@ -6,7 +6,7 @@
     ).then(response => response.json());
 
     // Create a timer
-    var start = +new Date();
+    const start = +new Date();
 
     // Create the chart
     Highcharts.stockChart('container', {

@@ -41,14 +41,16 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
                 }
             },
             tooltip: {
-                outside: true
+                outside: true,
+                hideDelay: 0
             },
             series: [{
                 data: [1, 3, 2, 4]
             }]
         }),
         point = chart.series[0].points[0],
-        tooltip = chart.tooltip;
+        tooltip = chart.tooltip,
+        controller = new TestController(chart);
 
     // Set hoverPoint
     point.onMouseOver();
@@ -104,6 +106,20 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
         Math.round(pointX),
         'Tooltip position should appear at point with sets margin for chart and container'
     );
+
+    assert.strictEqual(
+        chart.tooltip.container.parentNode.nodeName,
+        'BODY',
+        'The outside tooltip should be part of the body'
+    );
+
+    controller.moveTo(-1, -1);
+    assert.strictEqual(
+        chart.tooltip.container.parentNode,
+        null,
+        'When hiding the tooltip, the container should be removed from DOM (#18490)'
+    );
+
 });
 
 QUnit.test('Tooltip when markers are outside, #17929.', function (assert) {

@@ -105,7 +105,8 @@ namespace SankeyColumnComposition {
                 while (i--) {
                     if (column[i].getSum() * factor < minLinkWidth) {
                         column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
+                        remainingHeight =
+                            Math.max(0, remainingHeight - minLinkWidth);
                         skipPoint = true;
                     }
                 }
@@ -150,7 +151,15 @@ namespace SankeyColumnComposition {
                 height += nodeHeight;
                 return height;
             }, 0);
-            return ((series.chart.plotSizeY || 0) - height) / 2;
+
+            // Node alignment option handling #19096
+            return {
+                top: 0,
+                center: 0.5,
+                bottom: 1
+            }[series.options.nodeAlignment || 'center'] * (
+                (series.chart.plotSizeY || 0) - height
+            );
         }
 
 

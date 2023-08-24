@@ -10,7 +10,7 @@
     // create the detail chart
     function createDetail(masterChart) {
         // prepare the detail chart
-        var detailData = [],
+        const detailData = [],
             detailStart = data[0][0];
 
         masterChart.series[0].data.forEach(point => {
@@ -101,7 +101,7 @@
                     // listen to the selection event on the master chart to
                     // update the extremes of the detail chart
                     selection: function (event) {
-                        var extremesObject = event.xAxis[0],
+                        const extremesObject = event.xAxis[0],
                             min = extremesObject.min,
                             max = extremesObject.max,
                             detailData = [],

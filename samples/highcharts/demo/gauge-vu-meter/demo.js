@@ -111,11 +111,13 @@ Highcharts.chart('container', {
 function (chart) {
     setInterval(function () {
         if (chart.series) { // the chart may be destroyed
-            var left = chart.series[0].points[0],
+
+            const left = chart.series[0].points[0],
                 right = chart.series[1].points[0],
-                leftVal,
-                rightVal,
                 inc = (Math.random() - 0.5) * 3;
+
+            let leftVal,
+                rightVal;
 
             leftVal = left.y + inc;
             rightVal = leftVal + inc / 3;

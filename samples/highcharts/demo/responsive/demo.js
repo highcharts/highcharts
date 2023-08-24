@@ -1,5 +1,5 @@
 // Data retrieved from https://www.ssb.no/statbank/table/10467/
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
 
     chart: {
         type: 'column'

@@ -1,7 +1,7 @@
 (async () => {
 
     function addPopupEvents(chart) {
-        var closePopupButtons = document.getElementsByClassName('highcharts-close-popup');
+        const closePopupButtons = document.getElementsByClassName('highcharts-close-popup');
         // Close popup button:
         Highcharts.addEvent(
             closePopupButtons[0],
@@ -24,7 +24,7 @@
             document.querySelectorAll('.highcharts-popup-indicators button')[0],
             'click',
             function () {
-                var typeSelect = document.querySelectorAll(
+                const typeSelect = document.querySelectorAll(
                         '.highcharts-popup-indicators select'
                     )[0],
                     type = typeSelect.options[typeSelect.selectedIndex].value,
@@ -49,7 +49,7 @@
             document.querySelectorAll('.highcharts-popup-annotations button')[0],
             'click',
             function () {
-                var strokeWidth = parseInt(
+                const strokeWidth = parseInt(
                         document.querySelectorAll(
                             '.highcharts-popup-annotations input[name="stroke-width"]'
                         )[0].value,
@@ -111,12 +111,11 @@
     ).then(response => response.json());
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
-        dataLength = data.length,
-        i = 0;
+        dataLength = data.length;
 
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -158,8 +157,8 @@
         navigationBindings: {
             events: {
                 selectButton: function (event) {
-                    var newClassName = event.button.className + ' highcharts-active',
-                        topButton = event.button.parentNode.parentNode;
+                    let newClassName = event.button.className + ' highcharts-active';
+                    const topButton = event.button.parentNode.parentNode;
 
                     if (topButton.classList.contains('right')) {
                         newClassName += ' right';

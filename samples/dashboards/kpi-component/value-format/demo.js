@@ -15,7 +15,6 @@ Dashboards.board('container', {
                 startAngle: -150,
                 endAngle: 150,
                 background: {
-                    backgroundColor: '#EEE',
                     innerRadius: '60%',
                     outerRadius: '100%',
                     shape: 'arc'
@@ -31,7 +30,6 @@ Dashboards.board('container', {
                 },
                 rounded: true,
                 data: [{
-                    color: Highcharts.getOptions().colors[0],
                     y: speed,
                     innerRadius: '60%',
                     outerRadius: '100%'

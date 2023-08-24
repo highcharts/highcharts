@@ -5,7 +5,7 @@ Highcharts.chart('container', {
         events: {
             click: function (e) {
                 // find the clicked values and the series
-                var x = Math.round(e.xAxis[0].value),
+                const x = Math.round(e.xAxis[0].value),
                     y = Math.round(e.yAxis[0].value),
                     series = this.series[0];
 
@@ -55,7 +55,8 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            lineWidth: 1,
+            stickyTracking: false,
+            lineWidth: 3,
             point: {
                 events: {
                     click: function () {
@@ -68,6 +69,11 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [[20, 20], [80, 80]]
+        data: [[20, 20], [80, 80]],
+        color: Highcharts.getOptions().colors[3],
+        marker: {
+            lineWidth: 2,
+            radius: 6
+        }
     }]
 });

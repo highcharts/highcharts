@@ -34,11 +34,11 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
      */
-    dataRefreshRate: number;
+    dataRefreshRate?: number;
     /**
      * Whether to enable polling for live data.
      */
-    enablePolling: boolean;
+    enablePolling?: boolean;
     /**
      * The number of the last column to load.
      */
@@ -50,7 +50,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
     /**
      * Whether to treat the first row of the data set as series names.
      */
-    firstRowAsNames: boolean;
+    firstRowAsNames?: boolean;
     /**
      * The key for a Google Spreadsheet to load. See [general information
      * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
