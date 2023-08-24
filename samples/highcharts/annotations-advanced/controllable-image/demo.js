@@ -28,7 +28,7 @@ Highcharts.chart('container', {
                 width: 5,
                 height: 5,
                 positioner: function (target) {
-                    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                    const xy = Highcharts.Annotation.MockPoint.pointToPixels(
                         target.points[0]
                     );
 
@@ -39,7 +39,7 @@ Highcharts.chart('container', {
                 },
                 events: {
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translate(0, translation.y);
                         target.redraw(false);

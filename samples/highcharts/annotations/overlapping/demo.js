@@ -1,4 +1,4 @@
-var labelsNumber = 40;
+const labelsNumber = 40;
 
 Highcharts.chart('container', {
     title: {
@@ -13,10 +13,9 @@ Highcharts.chart('container', {
         type: 'scatter',
         keys: ['x', 'y', 'id'],
         data: (function () {
-            var data = [],
-                i;
+            const data = [];
 
-            for (i = 0; i <= labelsNumber; i++) {
+            for (let i = 0; i <= labelsNumber; i++) {
                 data.push([i / labelsNumber * 2, i, 'id' + i]);
             }
 
@@ -31,10 +30,9 @@ Highcharts.chart('container', {
 
     annotations: [{
         labels: (function () {
-            var labels = [],
-                i;
+            const labels = [];
 
-            for (i = 0; i <= labelsNumber; i++) {
+            for (let i = 0; i <= labelsNumber; i++) {
                 labels.push({
                     point: 'id' + i
                 });
