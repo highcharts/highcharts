@@ -10,8 +10,18 @@ Dashboards.board('container', {
             id: 'dashboards-layout-1',
             rows: [{
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'highcharts-dashboards-cell-a0'
                 }, {
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'highcharts-dashboards-cell-b0'
                 }]
             }, {
@@ -38,15 +48,23 @@ Dashboards.board('container', {
     ]
 });
 
-// Build chart options for each HighchartsComponent
 function buildChartOptions(type, table, cursor) {
+
+    const typeString = type.charAt(0).toUpperCase() + type.slice(1);
+    const seriesOptions = type === 'pie' ? {
+        innerSize: '60%',
+        dataLabels: {
+            enabled: true
+        }
+    } :
+        {};
+
     return {
         chart: {
             events: {
                 load: function () {
                     const chart = this;
                     const series = chart.series[0];
-
                     // react to table cursor
                     cursor.addListener(table.id, 'point.mouseOver', function (e) {
                         const point = series.data[e.cursor.row];
@@ -63,6 +81,14 @@ function buildChartOptions(type, table, cursor) {
         },
         legend: {
             enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                colorByPoint: true
+            }
         },
         series: [{
             type,
@@ -86,10 +112,12 @@ function buildChartOptions(type, table, cursor) {
                         });
                     }
                 }
-            }
+            },
+            colorByPoint: type !== 'line',
+            ...seriesOptions
         }],
         title: {
-            text: table.id
+            text: table.id  + ' ' + typeString
         },
         xAxis: {
             categories: table.getColumn('name')
