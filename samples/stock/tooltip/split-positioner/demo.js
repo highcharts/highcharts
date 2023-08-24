@@ -13,8 +13,8 @@
             borderWidth: 0,
             shadow: false,
             positioner: function (width, height, point) {
-                var chart = this.chart,
-                    position;
+                const chart = this.chart;
+                let position;
 
                 if (point.isHeader) {
                     position = {

@@ -1,13 +1,11 @@
 (async () => {
 
-    var seriesOptions = [],
-        seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+    const names = ['MSFT', 'AAPL', 'GOOG'];
 
     /**
      * Create the chart when all data is loaded
      */
-    function createChart() {
+    function createChart(series) {
 
         Highcharts.stockChart('container', {
             title: {
@@ -46,41 +44,22 @@
                 valueDecimals: 2
             },
 
-            series: seriesOptions
+            series
         });
     }
 
-    function success(name, data) {
-        name = name.match(/(msft|aapl|goog)/)[0].toUpperCase();
-        const i = names.indexOf(name);
-        seriesOptions[i] = {
-            name: name,
-            data: data
-        };
-
-        // As we're loading the data asynchronously, we don't know what order it
-        // will arrive. So we keep a counter and create the chart when all the data is loaded.
-        seriesCounter += 1;
-
-        if (seriesCounter === names.length) {
-            createChart();
-        }
-    }
-
-    const promises = ['msft', 'aapl', 'goog'].map(name => new Promise((resolve, reject) => {
+    const promises = names.map(name => new Promise(resolve => {
         (async () => {
             const data = await fetch(
-                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/' + name + '-c.json'
+                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/' +
+                'samples/data/' + name.toLowerCase() + '-c.json'
             )
                 .then(response => response.json());
-            resolve({
-                name,
-                data
-            });
+            resolve({ name, data });
         })();
     }));
 
     const series = await Promise.all(promises);
-    series.forEach(obj => success(obj.name, obj.data));
+    createChart(series);
 
 })();

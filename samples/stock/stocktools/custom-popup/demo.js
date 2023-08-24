@@ -10,7 +10,7 @@
         chart: {
             events: {
                 load: function () {
-                    var chart = this;
+                    const chart = this;
 
                     // Select the save button of the popup and assign a click event
                     document
@@ -19,7 +19,7 @@
                             'click',
                             // Function which saves the new background color.
                             function () {
-                                var color = document.querySelectorAll(
+                                const color = document.querySelectorAll(
                                     '.highcharts-popup-annotations input[name="stroke"]'
                                 )[0].value;
 
@@ -44,7 +44,7 @@
             events: {
                 // On selecting the annotation the showPopup event is fired
                 showPopup: function (event) {
-                    var chart = this.chart;
+                    const chart = this.chart;
 
                     if (!chart.annotationsPopupContainer) {
                         // Get and store the popup annotations container

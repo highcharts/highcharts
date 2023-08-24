@@ -22,7 +22,7 @@
     );
 
     // create the chart
-    var chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1
@@ -40,7 +40,7 @@
         }]
     });
 
-    var enableMarkers = true,
+    let enableMarkers = true,
         color = false;
 
     // Toggle point markers
