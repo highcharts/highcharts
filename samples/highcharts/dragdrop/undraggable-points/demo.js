@@ -25,14 +25,10 @@ Highcharts.chart('container', {
         point: {
             events: {
                 drag: function () {
-                    if (this.x === 2) {
-                        return false;
-                    }
+                    return this.className !== 'undraggable';
                 },
                 drop: function () {
-                    if (this.x === 2) {
-                        return false;
-                    }
+                    return this.className !== 'undraggable';
                 }
             }
         },
@@ -40,9 +36,7 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             y: -6,
-            formatter: function () {
-                return this.x === 2 ? 'undraggable' : '';
-            }
+            format: '{point.className}'
         },
 
         cursor: 'ns-resize',
@@ -53,7 +47,8 @@ Highcharts.chart('container', {
         }, {
             x: 2,
             y: 1,
-            color: '#f33'
+            color: '#f33',
+            className: 'undraggable'
         }, {
             x: 3,
             y: 25
