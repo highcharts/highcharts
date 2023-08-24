@@ -54,6 +54,7 @@ Highcharts.chart('container', {
         borderRadius: 0,
         nodeWidth: 50,
         linkOpacity: 1,
+        linkColorMode: 'gradient',
         nodes: [{
             id: 'Total annual 2010 U.S. energy consumption',
             color: 'rgba(76, 175, 254,0.8)'
@@ -172,415 +173,127 @@ Highcharts.chart('container', {
                 y: -32
             }
         }],
-        keys: ['from', 'to', 'weight', 'color'],
+        keys: ['from', 'to', 'weight'],
         data: [
             [
                 'Total annual 2010 U.S. energy consumption',
                 'All non-water related energy consumption',
-                51564,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(76, 175, 254,0.8)'],
-                        [1, 'rgba(199, 113, 243, 0.8)']
-                    ]
-                }
+                51564
             ],
             [
                 'Total annual 2010 U.S. energy consumption',
                 'Water-related energy consumption',
-                46436,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(76, 175, 254,0.8)'],
-                        [1, 'rgba(83, 82, 190, 0.8)']
-                    ]
-                }
+                46436
             ],
             [
                 'Water-related energy consumption',
                 'Non-boiler water-related applications',
-                2854,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(83, 82, 190, 0.8)'],
-                        [1, 'rgba(199, 113, 243, 0.8)']
-                    ]
-                }
+                2854
             ],
             [
                 'Water-related energy consumption',
                 'Other power (non-steam)',
-                1314,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(83, 82, 190, 0.8)'],
-                        [1, 'rgba(108, 221, 202, 0.8)']
-                    ]
-                }
+                1314
             ],
             [
                 'Water-related energy consumption',
                 'Steam boilers',
-                42268,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(83, 82, 190, 0.8)'],
-                        [1, 'rgba(243, 172, 165, 0.8)']
-                    ]
-                }
+                42268
             ],
             [
                 'Non-boiler water-related applications',
                 'Other (2)',
-                854,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(199, 113, 243, 0.8)'],
-                        [1, 'rgba(112, 138, 185, 0.8)']
-                    ]
-                }
+                854
             ],
             [
                 'Non-boiler water-related applications',
                 'Non-electric water heating',
-                2000,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(199, 113, 243, 0.8)'],
-                        [1, 'rgba(108, 221, 202, 0.8)']
-                    ]
-                }
+                2000
             ],
             [
                 'Electric water-related applications',
                 'Electric water heating',
-                1670,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(255, 141, 100, 0.8)'],
-                        [1, 'rgba(250, 183, 118, 0.8)']
-                    ]
-                }
+                1670
             ],
             [
                 'Electric water-related applications',
                 'Other',
-                3694,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(255, 141, 100, 0.8)'],
-                        [1, 'rgba(149, 155, 236, 0.8)']
-                    ]
-                }
+                3694
             ],
             [
                 'Other power (non-steam)',
                 'Electric water-related applications',
-                1314,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(108, 221, 202, 0.8)'],
-                        [1, 'rgba(255, 141, 100, 0.8)']
-                    ]
-                }
+                1314
             ],
             [
                 'Steam boilers',
                 'Steam-driven power generation',
-                32334,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(243, 172, 165, 0.8)'],
-                        [1, 'rgba(232, 89, 75, 0.8)']
-                    ]
-                }
+                32334
             ],
             [
                 'To direct water services',
                 'Electric water-related applications',
-                4050,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(76, 175, 254, 0.8)'],
-                        [1, 'rgba(255, 141, 100, 0.8)']
-                    ]
-                }
+                4050
             ],
             [
                 'Steam-driven power generation',
                 'To direct water services',
-                4050,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(232, 89, 75, 0.8)'],
-                        [1, 'rgba(76, 175, 254, 0.8)']
-                    ]
-                }
+                4050
             ],
             [
                 'Steam-driven power generation',
                 'Other electric devices',
-                28284,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(232, 89, 75, 0.8)'],
-                        [1, 'rgba(250, 183, 118, 0.8)']
-                    ]
-                }
+                28284
             ],
             [
                 'Non-electric steam applications',
                 'Space and process heating',
-                5833,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(136, 157, 197, 0.8)'],
-                        [1, 'rgba(83, 82, 190, 0.8)']
-                    ]
-                }
+                5833
             ],
             [
                 'Non-electric steam applications',
                 'Direct steam injection in industrial processes',
-                4101,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(136, 157, 197, 0.8)'],
-                        [1, 'rgba(128, 135, 232, 0.8)']
-                    ]
-                }
+                4101
             ],
             [
                 'Steam boilers',
                 'Non-electric steam applications',
-                9934,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(243, 172, 165, 0.8)'],
-                        [1, 'rgba(136, 157, 197, 0.8)']
-                    ]
-                }
+                9934
             ],
             [
                 'Other electric devices',
                 'Indirect steam use',
-                28284,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(250, 183, 118, 0.8)'],
-                        [1, 'rgba(181, 238, 228, 0.8)']
-                    ]
-                }
+                28284
             ],
             [
                 'Space and process heating',
                 'Indirect steam use',
-                5833,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(83, 82, 190, 0.8)'],
-                        [1, 'rgba(181, 238, 228, 0.8)']
-                    ]
-                }
+                5833
             ],
             [
                 'Direct steam injection in industrial processes',
                 'Direct steam use',
-                4101,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(128, 135, 232, 0.8)'],
-                        [1, 'rgba(219, 239, 255, 0.8)']
-                    ]
-                }
+                4101
             ],
             [
                 'Other (2)',
                 'Direct water services',
-                854,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(112, 138, 185, 0.8)'],
-                        [1, 'rgba(76, 175, 254, 0.8)']
-                    ]
-                }
+                854
             ],
             [
                 'Non-electric water heating',
                 'Direct water services',
-                2000,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(108, 221, 202, 0.8)'],
-                        [1, 'rgba(76, 175, 254, 0.8)']
-                    ]
-                }
+                2000
             ],
             [
                 'Electric water heating',
                 'Direct water services',
-                1670,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(250, 183, 118, 0.8)'],
-                        [1, 'rgba(76, 175, 254, 0.8)']
-                    ]
-                }
+                1670
             ],
             [
                 'Other',
                 'Direct water services',
-                3694,
-                {
-                    linearGradient: {
-                        x1: 1,
-                        x2: 0,
-                        y1: 0,
-                        y2: 0
-                    },
-                    stops: [
-                        [0, 'rgba(149, 155, 236, 0.8)'],
-                        [1, 'rgba(76, 175, 254, 0.8)']
-                    ]
-                }
+                3694
             ]
         ]
     }]
