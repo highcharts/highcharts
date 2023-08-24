@@ -60,25 +60,25 @@ QUnit.test('DataPool events', async function (assert) {
             csv: 'A,B\n1,2'
         }
     };
-    const pool = new DataPool();
+    const dataPool = new DataPool();
 
     let eventLog = [];
 
     function logEvent (e) {
         assert.strictEqual(
             this,
-            pool,
+            dataPool,
             'Event scope should be the data pool.'
         );
         eventLog.push(e.type);
     };
 
-    pool.on('load', logEvent);
-    pool.on('afterLoad', logEvent);
-    pool.on('setConnectorOptions', logEvent);
-    pool.on('afterSetConnectorOptions', logEvent);
+    dataPool.on('load', logEvent);
+    dataPool.on('afterLoad', logEvent);
+    dataPool.on('setConnectorOptions', logEvent);
+    dataPool.on('afterSetConnectorOptions', logEvent);
 
-    pool.setConnectorOptions(connectorOptions);
+    dataPool.setConnectorOptions(connectorOptions);
 
     assert.deepEqual(
         eventLog,
@@ -88,7 +88,7 @@ QUnit.test('DataPool events', async function (assert) {
 
     eventLog.length = 0;
 
-    await pool.getConnector('my-connector');
+    await dataPool.getConnector('my-connector');
 
     assert.deepEqual(
         eventLog,
@@ -98,7 +98,7 @@ QUnit.test('DataPool events', async function (assert) {
 
     eventLog.length = 0;
 
-    pool.setConnectorOptions(connectorOptions);
+    dataPool.setConnectorOptions(connectorOptions);
 
     assert.deepEqual(
         eventLog,
@@ -106,4 +106,45 @@ QUnit.test('DataPool events', async function (assert) {
         'Data pool should emit new set events.'
     );
 
+});
+
+QUnit.test('DataPool promises', async function (assert) {
+    const dataPool = new DataPool({
+        connectors: [{
+            id: 'My Data',
+            type: 'CSV',
+            options: {
+                csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9',
+                dataModifier: {
+                    type: 'Chain',
+                    chain: [{
+                        type: 'Chain',
+                        chain: [{
+                            type: 'Range',
+                            ranges: [{
+                                column: 'a',
+                                minValue: 1,
+                                maxValue: 7
+                            }]
+                        }]
+                    }]
+                }
+            }
+        }]
+    });
+
+    let firstLoadingDone = false;
+
+    /* first no await */
+    dataPool
+        .getConnector('My Data')
+        .then(() => firstLoadingDone = true);
+
+    /* second time await */
+    await dataPool.getConnector('My Data');
+
+    assert.ok(
+        firstLoadingDone,
+        'DataPool should resolve second connector request after first one.'
+    );
 });

@@ -141,7 +141,7 @@ class Tooltip {
 
     public chart: Chart;
 
-    public container: globalThis.HTMLElement = void 0 as any;
+    public container?: globalThis.HTMLElement;
 
     public crosshairs: Array<null> = [];
 
@@ -410,7 +410,7 @@ class Tooltip {
             options = this.options,
             doSplit = this.split && this.allowShared;
 
-        let container: globalThis.HTMLElement,
+        let container = this.container,
             renderer: SVGRenderer = this.chart.renderer;
 
         // If changing from a split tooltip to a non-split tooltip, we must
@@ -453,8 +453,6 @@ class Tooltip {
                         (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
-
-                H.doc.body.appendChild(container);
 
                 /**
                  * Reference to the tooltip's renderer, when
@@ -522,13 +520,17 @@ class Tooltip {
                     value: string
                 ): void {
                     xSetter.call(label, tooltip.distance);
-                    container.style.left = value + 'px';
+                    if (container) {
+                        container.style.left = value + 'px';
+                    }
                 };
                 label.ySetter = function (
                     value: string
                 ): void {
                     ySetter.call(label, tooltip.distance);
-                    container.style.top = value + 'px';
+                    if (container) {
+                        container.style.top = value + 'px';
+                    }
                 };
             }
 
@@ -537,6 +539,11 @@ class Tooltip {
                 .shadow(options.shadow)
                 .add();
         }
+
+        if (container && !container.parentElement) {
+            H.doc.body.appendChild(container);
+        }
+
         return this.label;
     }
 
@@ -788,15 +795,28 @@ class Tooltip {
     public hide(delay?: number): void {
         const tooltip = this;
 
-        // disallow duplicate timers (#1728, #1766)
+        // Disallow duplicate timers (#1728, #1766)
         U.clearTimeout(this.hideTimer as any);
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
-                // If there is a delay, do fadeOut with the default duration. If
+                const label = tooltip.getLabel();
+                // If there is a delay, fade out with the default duration. If
                 // the hideDelay is 0, we assume no animation is wanted, so we
                 // pass 0 duration. #12994.
-                tooltip.getLabel().fadeOut(delay ? void 0 : delay);
+                tooltip.getLabel().animate({
+                    opacity: 0
+                }, {
+                    duration: delay ? 150 : delay,
+                    complete: (): void => {
+                        // #3088, assuming we're only using this for tooltips
+                        label.hide();
+                        // Clear the container for outside tooltip (#18490)
+                        if (tooltip.container) {
+                            tooltip.container.remove();
+                        }
+                    }
+                });
                 tooltip.isHidden = true;
             }, delay);
         }
@@ -1765,6 +1785,7 @@ class Tooltip {
     public updatePosition(point: Point): void {
         const {
                 chart,
+                container,
                 distance,
                 options
             } = this,
@@ -1783,7 +1804,7 @@ class Tooltip {
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
-        if (this.outside) {
+        if (this.outside && container) {
             // Corrects positions, occurs with tooltip positioner (#16944)
             if (options.positioner) {
                 pos.x += left - distance;
@@ -1801,7 +1822,7 @@ class Tooltip {
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
             if (scaleX !== 1 || scaleY !== 1) {
-                css(this.container, {
+                css(container, {
                     transform: `scale(${scaleX}, ${scaleY})`
                 });
                 anchorX *= scaleX;
@@ -1862,7 +1883,7 @@ namespace Tooltip {
         plotY: number;
     }
 
-    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+    export type ShapeValue = ('callout'|'circle'|'rect');
 
     /* *
      *
@@ -1995,7 +2016,7 @@ export default Tooltip;
  */
 
 /**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ * @typedef {"callout"|"circle"|"rect"} Highcharts.TooltipShapeValue
  */
 
 ''; // keeps doclets above in JS file

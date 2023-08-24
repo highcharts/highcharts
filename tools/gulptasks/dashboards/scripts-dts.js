@@ -3,6 +3,8 @@
  */
 
 
+const fs = require('fs');
+const fsLib = require('../lib/fs');
 const gulp = require('gulp');
 const path = require('path');
 
@@ -20,16 +22,19 @@ const DTS_FILES = [
     'Core/Color/GradientColor.d.ts',
     'Core/Renderer/AlignObject.d.ts',
     'Core/Renderer/CSSObject.d.ts',
+    'Core/Renderer/DashStyleValue.d.ts',
     'Core/Renderer/DOMElementType.d.ts',
-    'Core/Renderer/HTML/HTMLAttributes.d.ts'
-];
+    'Core/Renderer/HTML/HTMLAttributes.d.ts',
+    'Core/Renderer/SVG/SVGAttributes.d.ts',
+    'Core/Renderer/SVG/SVGPath.d.ts'
+].map(fsLib.path);
 
 
 const DTS_FOLDERS = [
     'Dashboards/',
     'Data/',
     'DataGrid/'
-];
+].map(fsLib.path);
 
 
 /* *
@@ -47,7 +52,6 @@ const DTS_FOLDERS = [
  */
 async function scriptsDTS() {
 
-    const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
     const {
@@ -73,11 +77,24 @@ async function scriptsDTS() {
 
     logLib.success('Copied stand-alone DTS');
 
-    fsLib.copyAllFiles(
-        path.join(__dirname, 'scripts-dts/'),
-        bundleTargetFolder,
-        true
-    );
+    const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
+
+    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolder, true);
+
+    const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
+
+    for (const bundleDtsFile of bundleDtsFiles) {
+        fs.writeFileSync(
+            path.join(
+                bundleTargetFolder,
+                path
+                    .relative(bundleDtsFolder, bundleDtsFile)
+                    .replace(/\.src\.d\.ts$/u, '.d.ts')
+            ),
+            fs.readFileSync(bundleDtsFile, 'utf8').replace(/\.src"/gu, '"')
+        );
+    }
+
     logLib.success('Created bundle DTS');
 
 }

@@ -91,7 +91,7 @@ const defaultOptions: Options = {
      *     "#2ee0ca",
      *     "#fa4b42",
      *     "#feb56a",
-     *     "#91e8e12
+     *     "#91e8e1"
      * ]
      */
     colors: Palettes.colors,
@@ -2355,7 +2355,7 @@ const defaultOptions: Options = {
          *         Different shapes for header and split boxes
          *
          * @type       {Highcharts.TooltipShapeValue}
-         * @validvalue ["callout", "square"]
+         * @validvalue ["callout", "rect"]
          * @since      7.0
          */
         headerShape: 'callout',

@@ -33,7 +33,7 @@ Highcharts.mapChart('container', {
     series: [{
         type: 'tiledwebmap',
         provider: {
-            url: 'https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png'
+            url: 'https://tile.openstreetmap.org/{zoom}/{x}/{y}.png'
         },
         showInLegend: false
     }]

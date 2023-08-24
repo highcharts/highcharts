@@ -14,20 +14,20 @@
             H.seriesTypes.column.prototype.drawPoints.apply(this, arguments);
 
             // Add a Marker
-            var series = this,
+            const series = this,
                 chart = this.chart,
                 inverted = chart.inverted,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
-                point = this.points[0], // we know there is only 1 point
-                markLine = this.markLine,
-                ani = markLine ? 'animate' : 'attr';
+                point = this.points[0]; // we know there is only 1 point
+            let markLine = this.markLine;
+            const ani = markLine ? 'animate' : 'attr';
 
             // Hide column
             point.graphic.hide();
 
             if (!markLine) {
-                var path = inverted ? ['M', 0, 0, 'L', -5, -5, 'L', 5, -5, 'L', 0, 0, 'L', 0, 0 + xAxis.len] : ['M', 0, 0, 'L', -5, -5, 'L', -5, 5, 'L', 0, 0, 'L', xAxis.len, 0];
+                const path = inverted ? ['M', 0, 0, 'L', -5, -5, 'L', 5, -5, 'L', 0, 0, 'L', 0, 0 + xAxis.len] : ['M', 0, 0, 'L', -5, -5, 'L', -5, 5, 'L', 0, 0, 'L', xAxis.len, 0];
                 markLine = this.markLine = chart.renderer.path(path)
                     .attr({
                         fill: series.color,
@@ -36,8 +36,10 @@
                     }).add();
             }
             markLine[ani]({
-                translateX: inverted ? xAxis.left + yAxis.translate(point.y) : xAxis.left,
-                translateY: inverted ? xAxis.top : yAxis.top + yAxis.len -  yAxis.translate(point.y)
+                translateX: inverted ? xAxis.left +
+                     yAxis.translate(point.y) : xAxis.left,
+                translateY: inverted ? xAxis.top : yAxis.top +
+                     yAxis.len -  yAxis.translate(point.y)
             });
         }
     });
@@ -108,11 +110,10 @@ Highcharts.chart('container', {
 function (chart) {
     setInterval(function () {
         Highcharts.each(chart.series, function (serie) {
-            var point = serie.points[0],
-                newVal,
+            const point = serie.points[0],
                 inc = (Math.random() - 0.5) * 20;
 
-            newVal = point.y + inc;
+            let newVal = point.y + inc;
             if (newVal < 0 || newVal > 100) {
                 newVal = point.y - inc;
             }

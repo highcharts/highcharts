@@ -1,7 +1,7 @@
 (async () => {
 
     // Prepare random data
-    var data = [
+    const data = [
         ['DE.SH', 728],
         ['DE.BE', 710],
         ['DE.MV', 963],

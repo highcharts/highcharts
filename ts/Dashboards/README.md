@@ -17,7 +17,7 @@ Then import the package in your project:
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
-To fully utilize the Dashboards potential, there might be a need to load additional modules.  
+To fully utilize the Dashboards potential, there might be a need to load additional modules.
 In the [installation documentation](https://highcharts.com/docs/dashboards/installation), you can find more information on how to do that and other ways of importing the Dashboards.
 
 ## Components
@@ -42,12 +42,12 @@ In the [component documentation](https://highcharts.com/docs/dashboards/types-of
 
 ## Working with Data
 
-You can import your data from multiple sources, for example CSV and Google Spreadsheet. They are going to be handled by the Connectors and distributed as DataTables.  
+You can import your data from multiple sources, for example CSV and Google Spreadsheet. They are going to be handled by the Connectors and distributed as DataTables.
 
-More about this concept in the [Data documentation](https://highcharts.com/docs/dashboards/data).
+More about this concept in the [Data Handling section](https://www.highcharts.com/docs/dashboards/data-handling).
 
 ## GUI
-The GUI is a part of the dashboard that allows you to create a layout of the dashboard. You can add rows and cells to the layout. The layout is a grid where you can place your components.  
+The GUI is a part of the dashboard that allows you to create a layout of the dashboard. You can add rows and cells to the layout. The layout is a grid where you can place your components.
 Below is an example of what a GUI configuration might look like:
 ``` JS
     gui: {
@@ -63,7 +63,7 @@ Below is an example of what a GUI configuration might look like:
         }]
     }
 ```
-More about the GUI in the [documentation](https://highcharts.com/docs/dashboards/gui).
+More about the GUI in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
 
 ## Edit Mode
@@ -72,7 +72,7 @@ Edit Mode allows the user to edit the dashboard by adding, removing and editing 
 Find more information in the [Edit Mode documentation](https://highcharts.com/docs/dashboards/edit-mode).
 
 ## Your first dashboard
-To create your dashboard, you first have to import the Dashboards package.  
+To create your dashboard, you first have to import the Dashboards package.
 You also need a placeholder for your dashboard. In this example we will use a div with the id `container`.
 ``` HTML
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>

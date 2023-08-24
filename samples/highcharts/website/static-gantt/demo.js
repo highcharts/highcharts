@@ -33,8 +33,9 @@ const ganttChart = function () {
     http://api.highcharts.com/gantt.
 */
 
-    var today = new Date(),
-        day = 1000 * 60 * 60 * 24,
+    let today = new Date(),
+        isAddingTask = false;
+    const day = 1000 * 60 * 60 * 24,
         each = Highcharts.each,
         reduce = Highcharts.reduce,
         btnShowDialog = document.getElementById('btnShowDialog'),
@@ -47,8 +48,7 @@ const ganttChart = function () {
         inputName = document.getElementById('inputName'),
         selectDepartment = document.getElementById('selectDepartment'),
         selectDependency = document.getElementById('selectDependency'),
-        chkMilestone = document.getElementById('chkMilestone'),
-        isAddingTask = false;
+        chkMilestone = document.getElementById('chkMilestone');
 
     // Set to 00:00:00:000 today
     today.setUTCHours(0);
@@ -60,7 +60,7 @@ const ganttChart = function () {
     // Update disabled status of the remove button, depending on whether or not we
     // have any selected points.
     function updateRemoveButtonStatus() {
-        var chart = this.series.chart;
+        const chart = this.series.chart;
         // Run in a timeout to allow the select to update
         setTimeout(function () {
             btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
@@ -440,7 +440,7 @@ const ganttChart = function () {
     }
 
     btnRemoveTask.onclick = function () {
-        var points = chart.getSelectedPoints();
+        const points = chart.getSelectedPoints();
         each(points, function (point) {
             point.remove();
         });
@@ -455,7 +455,7 @@ const ganttChart = function () {
     btnShowDialog.onclick = function () {
         // Update dependency list
 
-        var depInnerHTML = '<option value=""></option>';
+        let depInnerHTML = '<option value=""></option>';
         each(chart.series[0].points, function (point) {
             depInnerHTML += '<option value="' + point.id + '">' + point.name +
         ' </option>';
@@ -475,21 +475,23 @@ const ganttChart = function () {
 
     btnAddTask.onclick = function () {
         // Get values from dialog
-        var series = chart.series[0],
+        const series = chart.series[0],
             name = inputName.value,
-            undef,
             dependency = chart.get(
                 selectDependency.options[selectDependency.selectedIndex].value
             ),
             y = parseInt(
                 selectDepartment.options[selectDepartment.selectedIndex].value,
                 10
-            ),
+            );
+
+        let undef,
             maxEnd = reduce(series.points, function (acc, point) {
                 return point.y === y && point.end ?
                     Math.max(acc, point.end) : acc;
-            }, 0),
-            milestone = chkMilestone.checked || undef;
+            }, 0);
+
+        const milestone = chkMilestone.checked || undef;
 
         // Empty category
         if (maxEnd === 0) {

@@ -136,11 +136,6 @@ class EditContextMenu extends Menu {
                 this.setVisible(false);
             }
         });
-
-        // Hide the context menu on window resize.
-        addEvent(window, 'resize', (event): void => {
-            contextMenu.setVisible(false);
-        });
     }
 
     public setVisible(visible: boolean): void {

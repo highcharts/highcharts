@@ -63,6 +63,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     linkOpacity?: number;
     mass?: undefined;
     minLinkWidth?: number;
+    nodeAlignment?: ('top'|'center'|'bottom')
     nodePadding?: number;
     nodes?: Array<SankeySeriesNodeOptions>;
     nodeWidth?: number;

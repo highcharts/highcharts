@@ -15,6 +15,7 @@
         ]
     },
     "exclude": [
+        "../Dashboards/**/*.ts",
         "../masters-dashboards/**/*.ts"
     ],
     "include": [

@@ -9,7 +9,7 @@
     ).then(response => response.json());
 
     // Initialize the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Remove selected points'
