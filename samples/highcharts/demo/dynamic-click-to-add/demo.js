@@ -70,11 +70,10 @@ Highcharts.chart('container', {
     },
     series: [{
         data: [[20, 20], [80, 80]],
+        color: Highcharts.getOptions().colors[3],
         marker: {
-            lineColor: Highcharts.getOptions().colors[0],
-            lineWidth: 1,
-            fillColor: Highcharts.getOptions().colors[8],
-            radius: 5
+            lineWidth: 2,
+            radius: 6
         }
     }]
 });
