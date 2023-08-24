@@ -214,6 +214,28 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      */
 
     /**
+     * Determines color mode for sankey links. Available options:
+     *
+     * - `from` color of the sankey link will be the same as the 'from node'
+     *
+     * - `gradient` color of the sankey link will be set to gradient between
+     * colors of 'from node' and 'to node'
+     *
+     * - `to` color of the sankey link will be same as the 'to node'.
+     *
+     * @sample highcharts/demo/vertical-sankey
+     *         Vertical sankey diagram with gradients
+     * @sample highcharts/series-sankey/link-color-mode
+     *         Sankey diagram with gradients and explanation
+     *
+     * @type      {('from'|'gradient'|'to')}
+     * @since     @next
+     * @default   from
+     * @apioption plotOptions.sankey.levels.linkOpacity
+     */
+    linkColorMode: 'from',
+
+    /**
      * Opacity for the links between nodes in the sankey diagram.
      *
      * @private
