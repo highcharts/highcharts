@@ -13,23 +13,24 @@
 }
 
 .team-day-display {
-    height: 22vh;
     border-radius: 20%;
     text-align: center;
+    min-height: 16vh;
+    width: 100%;
 }
 
 .col-display-fieldwrap {
     font-size: 0.9rem;
     padding-inline: 2rem;
-    padding-block: 0.46rem;
+    padding-block: 0.2rem;
     width: 8rem;
     text-align: left;
 }
 
 .col-display-header {
     padding: 0.4rem;
-    font-size: 2.6rem;
-    letter-spacing: 0.208rem;
+    font-size: 2rem;
+    letter-spacing: 0.12rem;
     text-align: center;
 }
 
@@ -41,4 +42,5 @@
 .center {
     display: grid;
     place-items: center;
+    position: sticky;
 }

@@ -1,250 +1,6 @@
-Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
-    chart: {
-        backgroundColor: {
-            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-            stops: [
-                [0, '#1f1836'],
-                [1, '#45445d']
-            ]
-        },
-        style: {
-            fontFamily: 'IBM Plex Sans, sans-serif'
-        }
-    },
-    title: {
-        style: {
-            fontSize: '22px',
-            fontWeight: '500',
-            color: '#fff'
-        }
-    },
-    subtitle: {
-        style: {
-            fontSize: '16px',
-            fontWeight: '400',
-            color: '#fff'
-        }
-    },
-    credits: {
-        style: {
-            color: '#f0f0f0'
-        }
-    },
-    caption: {
-        style: {
-            color: '#f0f0f0'
-        }
-    },
-    tooltip: {
-        borderWidth: 0,
-        backgroundColor: '#f0f0f0',
-        shadow: true
-    },
-    legend: {
-        backgroundColor: 'transparent',
-        itemStyle: {
-            fontWeight: '400',
-            fontSize: '12px',
-            color: '#fff'
-        },
-        itemHoverStyle: {
-            fontWeight: '700',
-            color: '#fff'
-        }
-    },
-    plotOptions: {
-        series: {
-            dataLabels: {
-                color: '#46465C',
-                style: {
-                    fontSize: '13px'
-                }
-            },
-            marker: {
-                lineColor: '#333'
-            }
-        },
-        boxplot: {
-            fillColor: '#505053'
-        },
-        candlestick: {
-            lineColor: null,
-            upColor: '#DA6D85',
-            upLineColor: '#DA6D85'
-        },
-        errorbar: {
-            color: 'white'
-        },
-        dumbbell: {
-            lowColor: '#f0f0f0'
-        },
-        map: {
-            borderColor: 'rgba(200, 200, 200, 1)',
-            nullColor: '#78758C'
-
-        }
-    },
-    drilldown: {
-        activeAxisLabelStyle: {
-            color: '#F0F0F3'
-        },
-        activeDataLabelStyle: {
-            color: '#F0F0F3'
-        },
-        drillUpButton: {
-            theme: {
-                fill: '#fff'
-            }
-        }
-    },
-    xAxis: {
-        gridLineColor: '#707073',
-        labels: {
-            style: {
-                color: '#fff',
-                fontSize: '12px'
-            }
-        },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
-        title: {
-            style: {
-                color: '#fff'
-            }
-        }
-    },
-    yAxis: {
-        gridLineColor: '#707073',
-        labels: {
-            style: {
-                color: '#fff',
-                fontSize: '12px'
-            }
-        },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
-        tickWidth: 1,
-        title: {
-            style: {
-                color: '#fff',
-                fontWeight: '300'
-            }
-        }
-    },
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            theme: {
-                fill: '#46465C',
-                'stroke-width': 1,
-                stroke: '#BBBAC5',
-                r: 2,
-                style: {
-                    color: '#fff'
-                },
-                states: {
-                    hover: {
-                        fill: '#000',
-                        'stroke-width': 1,
-                        stroke: '#f0f0f0',
-                        style: {
-                            color: '#fff'
-                        }
-                    },
-
-                    select: {
-                        fill: '#000',
-                        'stroke-width': 1,
-                        stroke: '#f0f0f0',
-                        style: {
-                            color: '#fff'
-                        }
-                    }
-                }
-            },
-            verticalAlign: 'bottom'
-        }
-    },
-    // scroll charts
-    rangeSelector: {
-        buttonTheme: {
-            fill: '#46465C',
-            stroke: '#BBBAC5',
-            'stroke-width': 1,
-            style: {
-                color: '#fff'
-            },
-            states: {
-                hover: {
-                    fill: '#1f1836',
-                    style: {
-                        color: '#fff'
-                    },
-                    'stroke-width': 1,
-                    stroke: 'white'
-                },
-                select: {
-                    fill: '#1f1836',
-                    style: {
-                        color: '#fff'
-                    },
-                    'stroke-width': 1,
-                    stroke: 'white'
-                }
-            }
-        },
-        inputBoxBorderColor: '#BBBAC5',
-        inputStyle: {
-            backgroundColor: '#2F2B38',
-            color: '#fff'
-        },
-        labelStyle: {
-            color: '#fff'
-        }
-    },
-    navigator: {
-        handles: {
-            backgroundColor: '#BBBAC5',
-            borderColor: '#2F2B38'
-        },
-        outlineColor: '#CCC',
-        maskFill: 'rgba(255,255,255,0.1)',
-        series: {
-            color: '#A3EDBA',
-            lineColor: '#A3EDBA'
-        },
-        xAxis: {
-            gridLineColor: '#505053'
-        }
-    },
-    scrollbar: {
-        barBackgroundColor: '#BBBAC5',
-        barBorderColor: '#808083',
-        buttonArrowColor: '#2F2B38',
-        buttonBackgroundColor: '#BBBAC5',
-        buttonBorderColor: '#2F2B38',
-        rifleColor: '#2F2B38',
-        trackBackgroundColor: '#78758C',
-        trackBorderColor: '#2F2B38'
-    }
-};
-Highcharts.setOptions(Highcharts.theme);
-
 const
     colors = Highcharts.getOptions().colors,
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
-    toggleableGradient = {
-        pattern: undefined,
-        radialGradient: [1, 0.25, 0.1],
-        stops: [
-            [0, colors[6]],
-            [1, colors[4]]
-        ]
-    },
     specialSeriesProps = {
         showInLegend: false,
         groupPadding: 0,
@@ -252,80 +8,74 @@ const
     },
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
-    bubbleEvents = {
-        mouseOver: function () {
-            const
-                { chartWidth, chartHeight } = this.series.chart,
-                width = chartWidth / 10,
-                height = chartHeight / 2,
-                bgColor = this.series.color;
-
-            this.series.chart.pane[1].update({
-                background: {
-                    backgroundColor: {
-                        pattern: {
-                            opacity: 1,
-                            backgroundColor: colors[8],
-                            width,
-                            height,
-                            color: bgColor,
-                            path: {
-                                fill: bgColor,
-                                d: `M 0 ${width} H ${width} V ${
-                                    (height * (width % height))
-                                } H 0 L 0 ${height} Z`
-                            }
-                        }
-                    },
-                    innerRadius: '0%'
-                }
-            });
-
-        },
-        mouseOut: function () {
-            this.series
-                .chart.pane[1].update({
-                    background: {
-                        backgroundColor: toggleableGradient,
-                        innerRadius: '100%'
-                    }
-                });
-        }
+    toggleableGradient = {
+        pattern: undefined,
+        radialGradient: [1, 0.25, 0.1],
+        stops: [
+            [0, colors[2]],
+            [1, colors[6]]
+        ]
+    },
+    mouseOut = function () {
+        this.series.chart.setMidPaneBg({
+            backgroundColor: toggleableGradient,
+            outerRadius: '75%'
+        });
     },
     data = JSON.parse(document.getElementById('data').innerHTML),
-    legendHeight = (document
-        .getElementById('container')
-        .getBoundingClientRect()
-        .height / 12
-    ),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
-    primaryTeamColor = new Highcharts.Color(colors[1]),
+    primaryTeamColor = new Highcharts.Color(colors[6]),
     teamColors = [
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[4]), 0.5),
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[7]), 0.5),
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[3]), 0.5)
-
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[0]), 0.25),
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[5]), 0.65),
+        primaryTeamColor.tweenTo(new Highcharts.Color(colors[4]), 0.85)
     ],
-    asColFieldStr = str => (
-        '<span class=\"col-display-fieldwrap\">' +
-        '<span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
-        str + '</span>'
-    ),
     teamSeries = Array(3).fill({
         type: 'bubble',
         shadow: true,
         maxSize: '4%',
         minSize: '1%',
-        point: { events: bubbleEvents },
+        point: {
+            events: {
+                mouseOver: function () {
+                    const {
+                            color: bgColor,
+                            chart: { chartWidth, chartHeight, setMidPaneBg }
+                        } = this.series,
+                        width = chartWidth / 10,
+                        height = chartHeight / 2;
+
+                    setMidPaneBg({
+                        backgroundColor: {
+                            pattern: {
+                                opacity: 1,
+                                backgroundColor: colors[1],
+                                width,
+                                height,
+                                color: bgColor,
+                                path: {
+                                    fill: bgColor,
+                                    d: `M 0 ${width} H ${width} V ${
+                                        (height * (width % height))
+                                    } H 0 L 0 ${height} Z`
+                                }
+                            }
+                        },
+                        innerRadius: '0%'
+                    });
+                },
+                mouseOut
+            }
+        },
         colorKey: 't',
         tooltip: {
             headerFormat: (
                 '<div class="team-day-display center">' +
-                '<span style="margin-bottom:8rem;"><b style="' +
-                'font-size: 2rem; color:' +
+                '<span style="margin-bottom: 8rem;">' +
+                '<b style="font-size: 2rem; letter-spacing: 0.12rem; color:' +
                 new Highcharts.Color(colors[7]).brighten(0.5).get('rgba') +
-                '; height:12vh;">' +
+                ';">' +
                 'Day: {point.x}</b></span><span style="width:100%;' +
                 'position: absolute; margin:1.5rem; background: #FFFFFF; ' +
                 'border-radius:50%;font-size: 1rem; padding: 0.8rem;' +
@@ -334,7 +84,7 @@ const
                 '{series.color};">●</b> <b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="margin-top:12rem; position: absolute;' +
+                '<span style="margin-top:10rem; position: absolute;' +
                 'font-size: 1.25rem;"><b style="width:100%;' +
                 'text-align:center;">Daily Sales:</b> {point.z}</span>'
             ),
@@ -358,7 +108,11 @@ const
                 enabled: true,
                 inside: true,
                 style: {
-                    textOutline: undefined
+                    textOutline: undefined,
+                    fontSize: '0.7rem',
+                    fontWeight: '500',
+                    fontStyle: 'normal',
+                    letterSpacing: '0.01rem'
                 },
                 textPath: {
                     enabled: true,
@@ -371,9 +125,23 @@ const
             x: index + 1,
             y: 1.5
         })),
+    asColFieldStr = str => (
+        '<span class=\"col-display-fieldwrap\">' +
+        '<span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
+        str + '</span>'
+    ),
     chart = Highcharts.chart('container', {
         chart: {
-            polar: true
+            polar: true,
+            events: {
+                load: function () {
+                    const midPane = this.pane[1];
+
+                    this.setMidPaneBg = function (bg) {
+                        midPane.update({ background: bg });
+                    };
+                }
+            }
         },
         title: {
             text: 'Advanced Polar Chart'
@@ -391,10 +159,14 @@ const
         },
         colorAxis: [{
             minColor: (
-                new Highcharts.Color(colors[6]).brighten(0.3).get('rgba')
+                new Highcharts.Color(colors[0])
+                    .brighten(0.05)
+                    .get('rgba')
             ),
             maxColor: (
-                new Highcharts.Color(colors[0]).brighten(0.3).get('rgba')
+                new Highcharts.Color(colors[5])
+                    .brighten(0.05)
+                    .get('rgba')
             ),
             showInLegend: false,
             ...weekExtremes
@@ -417,7 +189,7 @@ const
             ...paneOpeningAngles,
             background: {
                 backgroundColor: (
-                    new Highcharts.Color(colors[4]).brighten(0.5).get('rgba')
+                    new Highcharts.Color(colors[7]).brighten(0.2).get('rgba')
                 ),
                 outerRadius: '60%'
             }
@@ -426,27 +198,30 @@ const
             innerSize: '25%',
             ...paneOpeningAngles,
             background: {
-                borderWidth: 16,
+                borderWidth: 4,
                 borderColor: (
-                    new Highcharts.Color(colors[0]).brighten(-0.2).get('rgba')
+                    new Highcharts.Color(colors[6]).brighten(0.35).get('rgba')
                 ),
                 backgroundColor: toggleableGradient,
-                innerRadius: '95%'
+                outerRadius: '75%'
             }
         }, {
             size: '100%',
-            innerSize: '90%',
+            innerSize: '88%',
             startAngle: 16.5,
             endAngle: 343.5,
             background: {
                 borderWidth: 16,
-                borderColor: colors[0],
+                borderColor: (
+                    new Highcharts.Color(colors[5])
+                        .brighten(0.25)
+                        .get('rgba')
+                ),
                 backgroundColor: {
                     radialGradient: { cx: 0.5, cy: 0.5, r: 1.8 },
                     stops: [
-                        [0, colors[0]],
-                        [0.2, colors[5]],
-                        [0.3, colors[1]]
+                        [0, colors[3]],
+                        [1, colors[0]]
                     ]
                 },
                 innerRadius: '55%',
@@ -455,10 +230,7 @@ const
         }],
         xAxis: [{
             pane: 0,
-            lineWidth: 8,
-            lineColor: (
-                new Highcharts.Color(colors[0]).brighten(0.15).get('rgba')
-            ),
+            lineWidth: 0,
             tickInterval: 1,
             gridLineWidth: 0,
             min: 1,
@@ -489,7 +261,7 @@ const
             gridLineWidth: 0,
             lineWidth: 8,
             lineColor: (
-                new Highcharts.Color(colors[5]).brighten(0.1).get('rgba')
+                new Highcharts.Color(colors[1]).brighten(-0.1).get('rgba')
             ),
             ...weekExtremes,
             labels: { enabled: false }
@@ -514,7 +286,7 @@ const
             tickInterval: 0.25,
             gridLineWidth: 4,
             gridLineColor: (
-                new Highcharts.Color(colors[4]).brighten(0.25).get('rgba')
+                new Highcharts.Color(colors[1]).brighten(0.05).get('rgba')
             ),
             min: -3,
             max: 1,
@@ -523,25 +295,34 @@ const
         legend: {
             align: 'center',
             enabled: true,
-            backgroundColor: colors[3],
-            borderColor: (
-                new Highcharts.Color(colors[6]).brighten(0.3).get('rgba')
+            backgroundColor: (
+                new Highcharts.Color(colors[7])
+                    .brighten(-0.25)
+                    .get('rgba')
             ),
+            borderColor: (
+                colors[1]
+            ),
+            itemStyle: {
+                fontSize: '0.8rem'
+            },
             borderRadius: 16,
             floating: true,
             layout: 'vertical',
             verticalAlign: 'top',
             squareSymbol: true,
             borderWidth: 1.5,
-            itemStyle: {
-                fontSize: '0.8rem'
-            },
-            y: legendHeight,
-            width: '30%',
-            padding: 12,
-            maxHeight: '18%',
+            y: (
+                document
+                    .getElementById('container')
+                    .getBoundingClientRect()
+                    .height / 12
+            ),
+            width: '24%',
+            padding: 10,
+            maxHeight: '14%',
             symbolPadding: 12,
-            symbolHeight: 16
+            symbolHeight: 12
         },
         series: [
             ...teamSeries, {
@@ -568,29 +349,56 @@ const
                 colorAxis: 1,
                 colorKey: 'x',
                 pointStart: 1,
-                borderColor: colors[0],
+                borderColor: (
+                    new Highcharts
+                        .Color(colors[6])
+                        .brighten(0.25)
+                        .get('rgba')
+                ),
                 borderWidth: 0.35,
+                point: {
+                    events: {
+                        mouseOver: function () {
+                            this.series.chart.setMidPaneBg({
+                                backgroundColor: colors[3],
+                                outerRadius: '75%'
+                            });
+                        },
+                        mouseOut
+                    }
+                },
                 tooltip: {
                     headerFormat: (
-                        '<span class="center"">' +
-                        '<b class="col-display-header"' +
-                        'style=\"text-decoration:' +
-                        'underline solid {point.color} 0.2rem;\"' +
-                        '>Day {point.x}</b>'
+                        '<span class="team-day-display center">' +
+                        '<span style="margin-bottom:1.1rem;"><b style="' +
+                        'font-size: 2rem; letter-spacing: 0.12rem; color:' +
+                        (
+                            new Highcharts.Color(colors[7])
+                                .brighten(0.5)
+                                .get('rgba')
+                        ) +
+                        ';">Day: {point.x}</b></span>'
                     ),
                     pointFormat: (
-                        asColFieldStr('<b>Sales: </b><span>{point.high}</span>') +
-                        asColFieldStr('<b>Average: </b><span>{point.avg}</span>') +
-                        asColFieldStr('<b>Highscore: </b><span>{point.highscore}</span>') +
-                        asColFieldStr('<b>Top earner: </b><span>{point.topEarner}</span>')
+                        asColFieldStr(
+                            '<b>Sales: </b><span>{point.high}</span>'
+                        ) +
+                        asColFieldStr(
+                            '<b>Average: </b><span>{point.avg}</span>'
+                        ) +
+                        asColFieldStr(
+                            '<b>Highscore: </b><span>{point.highscore}</span>'
+                        ) +
+                        asColFieldStr(
+                            '<b>Top earner: </b><span>{point.topEarner}</span>'
+                        )
                     ),
                     footerFormat: (
                         '<i class="col-display-footer center" style=\"' +
-                        'border-top: 0.1rem solid {point.color};\">' +
+                        'border-top: 0.15rem solid {point.color};\">' +
                         'Week {point.week}</i></span>'
                     )
                 }
             }
         ]
-
     });
