@@ -25,6 +25,7 @@ More information about styling charts, you can find in our [docs](https://www.hi
 3. Now you have loaded all required files, so you should define the cell `cell: 'dashboard-col-0'`, where the component should be created.
 
 4. Declare the all of the charts options in the `chartOptions` object.
+For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
 ```js
 chartOptions: {
