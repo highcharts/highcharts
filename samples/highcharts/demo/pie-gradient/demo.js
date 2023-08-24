@@ -42,9 +42,7 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                connectorShape: 'fixedOffset',
-                connectorWidth: 2
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
             }
         }
     },
