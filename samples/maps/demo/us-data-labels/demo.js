@@ -52,7 +52,7 @@
                 enabled: false
             }
         },
-        // Add custom color stops to the chart
+
         colorAxis: {
             labels: {
                 format: '{value}%'
