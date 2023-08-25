@@ -59,12 +59,39 @@ components: [{
 ```
 
 ### Nested elements
+If more than one element is required, the `children` property can be used. The `children` property is an array of elements that will be nested inside the parent element. Each element can have its own children elements and is configured in the same way as the parent element.
 
+```js
+elements: [{
+    tagName: 'div',
+    children: [{
+        tagName: 'h1',
+        textContent: 'Title',
+        attributes: {
+            id: 'main-title',
+        }
+    }, {
+        tagName: 'p',
+        textContent: 'Description',
+        attributes: {
+            id: 'description',
+        }
+    }]
+}]
+```
 
 
 ### Styling the HTML component
 
 The most common way to style the HTML component is to use the CSS and utilize the `className` or `id` attributes.
+```css
+#main-title {
+  color: #4b4b4b;
+}
+#description {
+  text-decoration: underline;
+}
+```
 
 
 ### Extending the HTML component
