@@ -230,7 +230,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *
      * @type      {('from'|'gradient'|'to')}
      * @since     @next
-     * @default   from
      * @apioption plotOptions.sankey.levels.linkOpacity
      */
     linkColorMode: 'from',

@@ -1,6 +1,3 @@
-// Define a helper to return the formated text
-Highcharts.Templating.helpers.addBR = value => value.split(' ').join('<br/>').toUpperCase();
-
 Highcharts.chart('container', {
     chart: {
         type: 'sankey',
@@ -8,7 +5,7 @@ Highcharts.chart('container', {
         height: 1000
     },
     title: {
-        text: 'Evaluating the energy consumed for water use in the United States in 2010'
+        text: 'Evaluating the energy consumed for water use in the United States'
     },
     subtitle: {
         text: 'Data source: <a href="https://iopscience.iop.org/article/10.1088/1748-9326/7/3/034034/pdf">The University of Texas at Austin</a>'
@@ -34,7 +31,7 @@ Highcharts.chart('container', {
         valueSuffix: ' quads'
     },
     series: [{
-        name: 'Energy consumed for water use in U.S. in 2010',
+        name: 'Energy consumed for water use in U.S.',
         dataLabels: {
             nodeFormatter() {
                 const maxLetters = this.point.shapeArgs.height / 8,
@@ -56,7 +53,7 @@ Highcharts.chart('container', {
         linkOpacity: 1,
         linkColorMode: 'gradient',
         nodes: [{
-            id: 'Total annual 2010 U.S. energy consumption',
+            id: 'Total annual U.S. energy consumption',
             color: 'rgba(76, 175, 254,0.8)'
         }, {
             id: 'All non-water related energy consumption',
@@ -134,7 +131,9 @@ Highcharts.chart('container', {
             dataLabels: {
                 rotation: -90,
                 x: -10,
-                format: '{addBR point.name}'
+                style: {
+                    width: '110px'
+                }
             }
         }, {
             id: 'Electric water heating',
@@ -152,10 +151,10 @@ Highcharts.chart('container', {
             offsetHorizontal: '-80%',
             color: 'rgba(76, 175, 254, 0.8)',
             dataLabels: {
-                format: '{addBR point.name}',
-                x: 28,
+                x: 43,
                 style: {
-                    textAnchor: 'middle'
+                    textAnchor: 'middle',
+                    width: '90px'
                 }
             }
         }, {
@@ -176,12 +175,12 @@ Highcharts.chart('container', {
         keys: ['from', 'to', 'weight'],
         data: [
             [
-                'Total annual 2010 U.S. energy consumption',
+                'Total annual U.S. energy consumption',
                 'All non-water related energy consumption',
                 51564
             ],
             [
-                'Total annual 2010 U.S. energy consumption',
+                'Total annual U.S. energy consumption',
                 'Water-related energy consumption',
                 46436
             ],
