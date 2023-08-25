@@ -101,25 +101,6 @@ class JSONConverter extends DataConverter {
      * */
 
     /**
-     * Creates a CSV string from the datatable on the connector instance.
-     *
-     * @param {DataConnector} connector
-     * Connector instance to export from.
-     *
-     * @param {JSONConverter.Options} [options]
-     * Options used for the export.
-     *
-     * @return {string}
-     * CSV string from the connector table.
-     */
-    public export(
-        connector: DataConnector,
-        options: JSONConverter.Options = this.options
-    ): string {
-        return '';
-    }
-
-    /**
      * Initiates parsing of JSON structure.
      *
      * @param {JSONConverter.UserOptions}[options]
@@ -255,7 +236,7 @@ namespace JSONConverter {
         orientation: 'columns'|'rows';
     }
 
-    type Data = Array<Array<number|string>|Record<string, number|string>>;
+    export type Data = Array<Array<number|string>|Record<string, number|string>>;
     /**
      * Options that are not compatible with ClassJSON
      */

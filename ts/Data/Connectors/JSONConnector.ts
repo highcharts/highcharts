@@ -90,7 +90,7 @@ class JSONConnector extends DataConnector {
      * */
 
     /**
-     * Options related to the handling of the CSV DataConnector,
+     * Options related to the handling of the JSON DataConnector,
      * i.e. source, fetching, polling
      */
     public readonly options: JSONConnectorOptions;
@@ -117,7 +117,7 @@ class JSONConnector extends DataConnector {
      * */
 
     /**
-     * Initiates the loading of the CSV source to the connector
+     * Initiates the loading of the JSON source to the connector
      *
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
@@ -201,24 +201,24 @@ namespace JSONConnector {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * @todo move this to the dataparser?
+     * Parse the data before passing it to the JSON parser.
      */
     export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
+        (data: JSONConverter.Data): JSONConverter.Data;
     }
 
     /**
      * The event object that is provided on errors within JSONConnector.
      */
     export interface ErrorEvent extends DataConnector.ErrorEvent {
-        csv?: string;
+        data?: JSONConverter.Data;
     }
 
     /**
      * The event object that is provided on load events within JSONConnector.
      */
     export interface LoadEvent extends DataConnector.LoadEvent {
-        data?: Array<Array<string|number>>;
+        data?: JSONConverter.Data
     }
 
     /**
