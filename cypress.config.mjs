@@ -23,11 +23,17 @@ export default defineConfig({
             });
             on('task', {
                 lighthouse: lighthouse(lighthouseReport => {
-                    mkdirSync('tmp', { recursive: true });
+                    const outputDir = join('tmp', 'lighthouseReports', config.env.type);
+                    mkdirSync(outputDir, { recursive: true });
+
+                    const demo = lighthouseReport.lhr.requestedUrl
+                        .replace(config.baseUrl, '')
+                        .replaceAll('/', '-');
+
                     writeFile(
                         join(
-                            'tmp',
-                            'lighthouse.json'
+                            outputDir,
+                            `${demo}.json`
                         ),
                         lighthouseReport.report
                     );
