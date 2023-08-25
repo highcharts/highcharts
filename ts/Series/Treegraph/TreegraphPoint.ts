@@ -195,6 +195,11 @@ class TreegraphPoint extends TreemapPoint {
             this.collapseButton = void 0;
         }
 
+        if (this.linkToParent) {
+            this.linkToParent.destroy();
+            delete this.linkToParent;
+        }
+
         super.destroy.apply(this, arguments);
     }
 
