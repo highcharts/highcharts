@@ -824,16 +824,9 @@ namespace DataLabel {
                 }
 
                 if (dataLabels.length > 0) {
-                    const tempDataLabels: (SVGLabel|SVGElement)[] = [];
-                    dataLabels.forEach(function (dataLabel): void {
-                        if (dataLabel) {
-                            tempDataLabels.push(dataLabel);
-                        }
-                    });
-
                     // Write back
                     point.dataLabel = dataLabels[0];
-                    point.dataLabels = tempDataLabels;
+                    point.dataLabels = dataLabels.filter(defined);
                 } else {
                     delete point.dataLabel;
                     delete point.dataLabels;
