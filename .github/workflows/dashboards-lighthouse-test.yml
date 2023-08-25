@@ -53,6 +53,7 @@ jobs:
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
+        continue-on-error: true
         with:
           browser: chrome
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
@@ -60,7 +61,6 @@ jobs:
           env: type=base
           config: specPattern=**/performance/*.cy.js
           install: false
-          continue-on-error: true
 
       - name: Stop server
         run: kill $(lsof -t -i:3030)
