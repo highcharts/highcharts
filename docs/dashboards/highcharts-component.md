@@ -8,7 +8,7 @@ The Highcharts Component allows the end-user to define a chart in the dashboard.
 ### How to start
 To get started quickly we need to load the JavaScript and CSS files in the following order.
 
-1. To be able to use Highcharts Component you first have to load Highcharts [Highcharts](https://code.highcharts.com/highcharts.js) as usual and load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
+1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
 
 ```html
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
@@ -16,7 +16,7 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
 <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
-Alternatively, you can also use package, loaded via NPM.
+Alternatively, you can also use the NPM package.
 
 ```bash
 npm install highcharts
