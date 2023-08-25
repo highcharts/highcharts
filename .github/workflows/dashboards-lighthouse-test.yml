@@ -28,17 +28,6 @@ jobs:
         with:
           ref: master
 
-      - uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.PR_COMMENT_TOKEN}}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 test comment please ignore'
-            })
-
       - name: Check out the test files from current branch
         run: git pull && git checkout origin/${{ github.head_ref }} -- test/cypress/performance/minimal.cy.js
 
