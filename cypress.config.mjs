@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin.js';
 import { lighthouse, prepareAudit } from '@cypress-audit/lighthouse';
 
-import { writeFile, mkdirSync } from 'node:fs';
+import { writeFile, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export default defineConfig({
@@ -23,7 +23,8 @@ export default defineConfig({
             });
             on('task', {
                 lighthouse: lighthouse(lighthouseReport => {
-                    const outputDir = join('tmp', 'lighthouseReports', config.env.type);
+                    const reportsDir = join('tmp', 'lighthouseReports');
+                    const outputDir = join(reportsDir, config.env.type);
                     mkdirSync(outputDir, { recursive: true });
 
                     const demo = lighthouseReport.lhr.requestedUrl
@@ -37,6 +38,28 @@ export default defineConfig({
                         ),
                         lighthouseReport.report
                     );
+
+                    if (config.env.type === 'actual') {
+                        const baseLocation = join(reportsDir, 'base', `${demo}.json`);
+                        if (existsSync(baseLocation)) {
+                            const baseReport = JSON.parse(readFileSync(baseLocation, 'utf-8'));
+                            const basePerformanceScore = baseReport.categories.performance.score;
+                            const actualPerformanceScore = lighthouseReport.lhr.categories.performance.score;
+                            const wiggleRoom = 0.03;
+
+                            if (
+                                actualPerformanceScore + wiggleRoom <
+                                basePerformanceScore
+                            ) {
+                                throw new Error(`Performance score has decreased by more than ${wiggleRoom}.
+(From ${basePerformanceScore} to ${actualPerformanceScore})`);
+                            }
+
+
+                        }
+
+
+                    }
                 })
             });
         },

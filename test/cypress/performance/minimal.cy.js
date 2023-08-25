@@ -22,7 +22,7 @@ describe('Lighthouse tests', () => {
         cy.visit('/dashboards/demo/minimal');
         cy.lighthouse(
             {
-                performance: 42
+                performance: 0
             },
             desktopConfig
         )
