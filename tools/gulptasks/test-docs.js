@@ -16,7 +16,7 @@ async function checkDocsConsistency() {
 
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');
-    glob.sync(process.cwd() + '/ts/**/*.ts').forEach(file => {
+    glob.sync('*/ts/**/*.ts').forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             samplePattern = /@sample[ ]*(\{(highcharts|highstock|highmaps|gantt)\})? ([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
@@ -48,7 +48,7 @@ async function checkDocsConsistency() {
 
     });
     LogLib.message('Checking links to samples in *.md files...');
-    glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
+    glob.sync('./docs/**/*.md').forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             docsPattern = /https:\/\/(www\.)?highcharts.com\/docs\/([a-zA-Z\-]+\/[a-zA-Z\-]+)/gu,
