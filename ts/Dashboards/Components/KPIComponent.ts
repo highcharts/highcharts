@@ -159,7 +159,12 @@ class KPIComponent extends Component {
     public static defaultChartOptions: Types.DeepPartial<Options> = {
         chart: {
             type: 'spline',
-            styledMode: true
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
         },
         title: {
             text: void 0
