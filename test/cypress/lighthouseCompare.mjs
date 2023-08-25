@@ -39,7 +39,7 @@ async function loadJSON(path) {
  */
 function printReport(outPutColumns, reportName = undefined) {
     if (reportName) {
-        console.log(`## ${reportName}`);
+        console.log(`### ${reportName}`);
     }
 
     const tableHeader =

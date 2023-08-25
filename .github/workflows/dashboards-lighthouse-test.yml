@@ -101,5 +101,5 @@ jobs:
         if: ${{ always() }}
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-          node test/cypress/lighthouseCompare.mjs  --reference ./tmp/lighthouse-master.json --proposed ./tmp/lighthouse.json >> $GITHUB_STEP_SUMMARY
+          node test/cypress/lighthouseCompare.mjs  --reportsDir ./tmp/lighthouseReports >> $GITHUB_STEP_SUMMARY
 
