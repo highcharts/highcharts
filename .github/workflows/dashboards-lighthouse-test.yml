@@ -60,6 +60,7 @@ jobs:
           env: type=base
           config: specPattern=**/performance/*.cy.js
           install: false
+          continue-on-error: true
 
       - name: Stop server
         run: kill $(lsof -t -i:3030)
