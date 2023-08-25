@@ -66,6 +66,8 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
 Then you need to specify the component type with `type: 'DataGrid'`.
 If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options). By default, some columns have this option disabled, if the data was created by [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier).
 
+You can read more about the DataGrid Component [here](https://www.highcharts.com/docs/dashboards/datagrid-component).
+
 ### KPI Component
 Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
 You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
