@@ -422,7 +422,7 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
         labelYPos = [];
 
     for (var i = 0; i < seriesData.length; i++) {
-        labelYPos.push(seriesData[i].labelPosition.computed.y);
+        labelYPos.push(seriesData[i].dataLabel.dataLabelPosition.computed.y);
     }
 
     function isLabelInsidePlot() {
@@ -481,8 +481,9 @@ QUnit.test(
 
         Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
             which: 1,
-            pageX: offset.left + points[0].labelPosition.natural.x,
-            pageY: offset.top + points[0].labelPosition.natural.y
+            pageX: offset.left +
+                points[0].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[0].dataLabel.dataLabelPosition.natural.y
         });
 
         assert.strictEqual(
@@ -493,8 +494,9 @@ QUnit.test(
 
         Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
             which: 1,
-            pageX: offset.left + points[4].labelPosition.natural.x,
-            pageY: offset.top + points[4].labelPosition.natural.y
+            pageX: offset.left +
+                points[4].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[4].dataLabel.dataLabelPosition.natural.y
         });
 
         assert.strictEqual(
@@ -504,8 +506,9 @@ QUnit.test(
         );
 
         chart.pointer.onContainerClick({
-            pageX: offset.left + points[4].labelPosition.natural.x,
-            pageY: offset.top + points[4].labelPosition.y,
+            pageX: offset.left +
+                points[4].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[4].dataLabel.dataLabelPosition.y,
             target: points[4].dataLabel.div
         });
 

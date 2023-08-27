@@ -371,6 +371,7 @@ class FunnelSeries extends PieSeries {
 
             // set the anchor point for data labels
             point.labelPosition = {
+                distance: 0,
                 // initial position of the data label - it's utilized for
                 // finding the final position for the label
                 natural: {

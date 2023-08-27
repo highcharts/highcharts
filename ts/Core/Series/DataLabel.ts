@@ -63,11 +63,10 @@ declare module './PointLike' {
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
+        dataLabelsOptions?: Array<DataLabelOptions>;
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
-        /** @deprecated */
-        positionIndex?: unknown;
         top?: number;
         getDataLabelPath(dataLabel: SVGElement): SVGElement;
     }
@@ -83,8 +82,9 @@ declare module './PointOptions' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointLabels?: boolean;
-        dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
+        dataLabelsGroup?: SVGElement;
+        dataLabelsOptions?: DataLabelOptions[];
         initDataLabelsGroup(): SVGElement;
         initDataLabels(
             animationConfig?: Partial<AnimationOptions>
@@ -161,9 +161,13 @@ namespace DataLabel {
             series: Series,
             point: Point,
             y: number,
-            naturalY: number
+            naturalY: number,
+            dataLabel: SVGElement
         ): number;
-        radialDistributionY(point: Point): number;
+        radialDistributionY(
+            point: Point,
+            dataLabel: SVGElement
+        ): number;
     }
 
     /* *
@@ -532,6 +536,8 @@ namespace DataLabel {
             seriesDlOptions
         );
 
+        series.dataLabelsOptions = splat(seriesDlOptions);
+
         fireEvent(this, 'drawDataLabels');
 
         if (
@@ -552,10 +558,12 @@ namespace DataLabel {
                 pointOptions = splat(
                     mergeArrays(
                         seriesDlOptions,
-                        // dlOptions is used in treemaps
+                        // The dlOptions prop is used in treemaps
                         point.dlOptions || point.options?.dataLabels
                     )
                 );
+
+                point.dataLabelsOptions = pointOptions;
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
