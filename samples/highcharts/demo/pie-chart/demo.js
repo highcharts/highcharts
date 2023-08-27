@@ -13,14 +13,27 @@ Highcharts.chart('container', {
         'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
     },
     plotOptions: {
-        pie: {
+        series: {
             allowPointSelect: true,
             cursor: 'pointer',
-            dataLabels: {
+            dataLabels: [{
                 enabled: true,
-                format: '{point.name}: {point.percentage:.1f}%'
-            },
-            showInLegend: true
+                distance: 20
+            }, {
+                enabled: true,
+                distance: -40,
+                format: '{point.percentage:.1f}%',
+                style: {
+                    fontSize: '1.2em',
+                    textOutline: 'none',
+                    opacity: 0.7
+                },
+                filter: {
+                    operator: '>',
+                    property: 'percentage',
+                    value: 10
+                }
+            }]
         }
     },
     series: [

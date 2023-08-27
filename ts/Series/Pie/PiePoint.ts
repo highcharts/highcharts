@@ -47,6 +47,7 @@ const {
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
+        /** @deprecated */
         labelDistance?: number;
     }
 }
@@ -67,12 +68,16 @@ class PiePoint extends Point {
 
     public angle?: number;
 
+    public dataLabelsOptions?: PieDataLabelOptions[];
+
     public delayedRendering?: boolean;
 
-    public half?: number;
+    public half: number = 0;
 
+    /** @deprecated */
     public labelDistance: number = void 0 as any;
 
+    /** @deprecated */
     public labelPosition?: PiePoint.LabelPositionObject;
 
     public options: PiePointOptions = void 0 as any;
@@ -98,9 +103,9 @@ class PiePoint extends Point {
      * data label and the pie slice.
      * @private
      */
-    public getConnectorPath(): void {
-        const labelPosition = this.labelPosition,
-            options = this.series.options.dataLabels,
+    public getConnectorPath(dataLabel: SVGElement): void {
+        const labelPosition = dataLabel.dataLabelPosition,
+            options = (this.series as any).dataLabelsOptions[0],
             predefinedShapes = this.connectorShapes;
 
         let connectorShape = (options as any).connectorShape;
@@ -426,9 +431,12 @@ namespace PiePoint {
 
     export interface LabelPositionObject {
         alignment: AlignValue;
+        bottom?: number;
         connectorPosition: LabelConnectorPositionObject;
-        computed: Record<string, undefined>;
+        computed: Record<string, undefined|number>;
+        distance: number;
         natural: CorePositionObject;
+        top?: number;
     }
 
     export interface PositionObject extends CorePositionObject {

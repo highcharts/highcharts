@@ -34,7 +34,8 @@ const {
     extend,
     fireEvent,
     merge,
-    pick
+    pick,
+    splat
 } = U;
 
 declare module '../../Core/Series/SeriesLike' {
@@ -362,8 +363,7 @@ class VariablePieSeries extends PieSeries {
 
             // Used for distance calculation for specific point.
             point.labelDistance = pick(
-                point.options.dataLabels &&
-                point.options.dataLabels.distance,
+                splat(point.options.dataLabels)[0]?.distance,
                 labelDistance
             );
 
@@ -429,6 +429,7 @@ class VariablePieSeries extends PieSeries {
             ); // #1678
 
             point.labelPosition = {
+                distance: 0,
                 natural: {
                     // initial position of the data label - it's utilized
                     // for finding the final position for the label
