@@ -212,9 +212,17 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         'Second data label should be disabled (#17589}.'
     );
 
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: false
+        }, {
+            enabled: true
+        }]
+    });
+
     assert.ok(
         true,
-        'No console error should be displayed (#19457).'
+        'There shouldn\'t be any error in the browser console (#19457).'
     );
 
     assert.strictEqual(
