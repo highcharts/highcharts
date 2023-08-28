@@ -8,11 +8,11 @@ The KPIComponent allows you to visualize key performance indicators.
 ## How to start
 1. The KPIComponent is included in the Dashboard package, so nothing apart from the basic dashboards package needs to be imported.
 
-2. Define a cell using a unique identifier for example cell: `dashboard-col-0`.
+2. Define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
 
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
-3. The last thing that you have to do is to specify the `type: 'KPI'` in the component’s config and that’s it. See the full example below.
+3. The last thing that you have to do is to specify the `type: 'KPI'` and `value: <value>` in the component’s config. See the full example below.
 
 ```js
 Dashboards.board('container', {
@@ -84,6 +84,47 @@ Dashboards.board('container', {
           }]
         }
     }]
+});
+```
+
+## Working with data
+You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnName` option to map correct value from the connector to reflect it in the KPI's value.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
+
+Example of working with connector.
+```js
+Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'value',
+            type: 'CSV',
+            options: {
+                csv: `Date,Value
+                2019-01-01,100
+                2019-01-02,200
+                2019-01-03,300
+                2019-01-04,400`
+            }
+        }]
+    },
+    components: [{
+        cell: 'kpi',
+        type: 'KPI',
+        title: 'Last day\'s value',
+        columnName: 'Value',
+        connector: {
+            id: 'value'
+        }
+    }],
+    gui: {
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'kpi'
+                }]
+            }]
+        }]
+    }
 });
 ```
 
