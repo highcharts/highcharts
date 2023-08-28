@@ -531,7 +531,6 @@ class LegendComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
-
         const keys = this.keyCodes,
             response = keyboardNavigationHandler.response,
             chart = this.chart,
@@ -543,17 +542,19 @@ class LegendComponent extends AccessibilityComponent {
             ) ? -1 : 1,
             highlightedLegendItemIx = this.highlightedLegendItemIx,
             rawDirectionalInput = highlightedLegendItemIx + direction,
-            adjustedDirection = (
+            adjustedDirection = ((
                 rawDirectionalInput > -1 &&
                 rawDirectionalInput < numItems
             ) ? direction : (
-                wrapAround ? ((numItems - 1) * (direction > 0 ? -1 : 1)) : 0
+                    wrapAround && (
+                        (numItems - 1) * (direction > 0 ? -1 : 1)
+                    ) || 0
+                )
             ),
             res = chart.highlightLegendItem(
                 highlightedLegendItemIx + adjustedDirection
             ) || void 0;
 
-            console.log(adjustedDirection);
         if (res) {
             this.highlightedLegendItemIx += adjustedDirection;
             return response.success;
@@ -686,8 +687,6 @@ namespace LegendComponent {
 
         const itemToHighlight = items[ix],
             legendItem = itemToHighlight.legendItem || {};
-
-        console.log(ix, this?.accessibility?.components.legend || {}, oldIx, );
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
