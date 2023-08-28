@@ -346,9 +346,6 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = this.isValid && !this.isValid();
-
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         // The point is initially selected by options (#5777)
         if (point.selected) {
@@ -380,6 +377,10 @@ class Point {
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
+
+        point.isNull = this.isValid && !this.isValid();
+
+        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         return point;
     }
@@ -739,7 +740,13 @@ class Point {
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
-        return this.x !== null && isNumber(this.y);
+        return (
+            (
+                isNumber(this.x) ||
+                Object.prototype.toString.call(this.x) === '[object Date]'
+            ) &&
+            isNumber(this.y)
+        );
     }
 
     /**
