@@ -8,7 +8,7 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 ## How to start
 
-1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) of course, but also [Dashboards Plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js) and [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) ([API Reference](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGrid.DataGrid)).
+1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) of course, but also [Dashboards Plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js) and [Datagrid](https://code.highcharts.com/dashboards/datagrid.js).
     ```html
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
@@ -115,7 +115,7 @@ Dashboards.board('container', {
 
 ## DataGrid options
 
-In the DataGrid Component, you can define some specific options for the DataGrid itself. These options can be set in the [`dataGridOptions` option](https://api.highcharts.com/dashboards/typedoc/interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions.html#dataGridOptions).
+In the [DataGrid Component](https://api.highcharts.com/dashboards/#modules/Dashboards_Plugins_DataGridComponent.DataGridComponent), you can define some specific options for the [DataGrid](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGrid.DataGrid) itself. These options can be set in the [`dataGridOptions` option](https://api.highcharts.com/dashboards/typedoc/interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions.html#dataGridOptions).
 
 For example, using the [`editable` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
 
@@ -199,7 +199,7 @@ One of the many available options for the DataGrid Component is the [`sync` opti
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
 
-The sync can be an object configuration containing: `highlight`, `visibility` or `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
+The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
 
 See demos of `sync` types below:
 * [Extremes Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
