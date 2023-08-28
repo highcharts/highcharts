@@ -89,8 +89,7 @@ Dashboards.board('container', {
 
 ## Working with data
 You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnName` option to map correct value from the connector to reflect it in the KPI's value.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
-
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector)
 Example of working with connector.
 ```js
 Dashboards.board('container', {
