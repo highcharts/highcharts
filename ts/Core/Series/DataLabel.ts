@@ -544,8 +544,6 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
-                // In the local array, items can be undefined if a data label is
-                // disabled, followed by an enabled one (#19457)
                 const dataLabels = point.dataLabels || [];
 
                 // Merge in series options for the point.
