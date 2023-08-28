@@ -88,6 +88,7 @@ module.exports = {
             'dashboards/types-of-components',
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
+            'dashboards/navigator-component',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/frequently-asked-questions',

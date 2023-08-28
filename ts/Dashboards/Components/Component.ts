@@ -225,9 +225,6 @@ abstract class Component {
      * */
     public options: Component.ComponentOptions;
     /**
-     * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
-     */
-    /**
      * Sets an ID for the component's `div`.
      */
     public id: string;
@@ -1188,9 +1185,11 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;
+
         /**
          * Allow overwriting gui elements.
          * @internal
