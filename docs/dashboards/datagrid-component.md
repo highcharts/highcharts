@@ -145,3 +145,21 @@ connectors: [{
 }]
 ```
 In this example, a column named `Sum` is created with data that is the sum of the numbers in the previous columns in the row.
+
+Note that you also need to import modules to use the appropriate modifiers. For example:
+```html
+<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+```
+
+## Sync
+
+One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#sync), which allows you to set the synchronization of component states with each other.
+
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
+
+The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
+
+See demos of `sync` types below:
+* [Extremes Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
+* [Highlight Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
+* [Visibility Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
