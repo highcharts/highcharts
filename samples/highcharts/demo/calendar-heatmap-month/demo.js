@@ -243,18 +243,12 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        labels: {
-            enabled: false
-        },
-        title: {
-            enabled: false
-        },
         min: 0,
         max: 5,
         accessibility: {
             description: 'weeks'
         },
-        gridLineWidth: 0
+        visible: false
     },
 
     legend: {
@@ -303,7 +297,9 @@ Highcharts.chart('container', {
                 fontSize: '0.8rem',
                 fontWeight: 'bold',
                 opacity: 0.5
-            }
+            },
+            x: 1,
+            y: 1
         }]
     }]
 });
