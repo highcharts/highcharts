@@ -15,7 +15,7 @@ To use it through the CDN, you need to load the following files
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
-Alternatively, you can download the package from npm like:
+Alternatively, you can download the NPM package like:
 ```bash
 npm install @highcharts/dashboards
 ```
@@ -98,3 +98,6 @@ The most common way to style the HTML component is to use the CSS and utilize th
 
 If some of the HTML elements are used frequently or requires to be more customable, it is possible to create a custom component that will simplify the configuration. The custom component can be created by extending the basic HTML component.  
 More in the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section.
+
+### API options
+For the full set of available options, see [the API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HTMLComponent.HTMLComponent.HTMLComponentOptions).

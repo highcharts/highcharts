@@ -31,6 +31,8 @@ Code snippet:
 ```
 Also please check the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 
+You can find more information about HTML Component [here.](https://www.highcharts.com/docs/dashboards/html-component)
+
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. 
 Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.
