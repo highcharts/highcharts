@@ -308,7 +308,7 @@ class Legend {
      * Update the legend with new options. Equivalent to running `chart.update`
      * with a legend configuration option.
      *
-     * @sample highcharts/legend/legen...-wait-for-it-...-dary-update/
+     * @sample highcharts/legend/legend-update/
      *         Legend update
      *
      * @function Highcharts.Legend#update

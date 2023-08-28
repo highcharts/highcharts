@@ -35,4 +35,4 @@ There are some additional modules that you might want to include in your webpage
 
 ### Get started
 
-Now you are ready to use Dashboards. Check out [Your first Dashboard](https://highcharts.com/docs/dashboards/your-first-dashboard) to get started.
+Now you are ready to use Dashboards. Check out [Your first Dashboard](https://highcharts.com/docs/dashboards/your-last-dashboard) to get started.
