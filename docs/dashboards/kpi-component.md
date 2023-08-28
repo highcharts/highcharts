@@ -6,7 +6,7 @@ The KPIComponent allows you to visualize key performance indicators.
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-kpi allow="fullscreen"></iframe>
 
 ## How to start
-1. The KPIComponent is included in the Dashboard package, so nothing apart from the basic dashboards package needs to be imported.
+1. To be able to use KPIComponent you first have to load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
 
 2. Define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
 
@@ -88,8 +88,9 @@ Dashboards.board('container', {
 ```
 
 ## Working with data
-You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnName` option to map correct value from the connector to reflect it in the KPI's value.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector)
+You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnName` param) as a value itself.
+
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector).
 Example of working with connector.
 ```js
 Dashboards.board('container', {
