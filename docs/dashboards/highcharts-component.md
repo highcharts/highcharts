@@ -39,11 +39,11 @@ Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-3. After loading the necessary files, define a cell using a unique identifier for example cell: `dashboard-col-0`.
+3. After loading the necessary files, define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
 
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
-4. Declare the [type of chart](https://www.highcharts.com/docs/chart-and-series-types/chart-types) and all of the charts options in the `chartOptions` object. 
+4. Declare all of the chart options in the `chartOptions` object.
 For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
 ```js
