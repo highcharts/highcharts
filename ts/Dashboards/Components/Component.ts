@@ -375,6 +375,14 @@ abstract class Component {
         this.setupEventListeners();
         this.attachCellListeneres();
         this.on('tableChanged', this.onTableChanged);
+
+        this.on('update', (): void => {
+            this.cell.setLoadingState();
+        });
+
+        this.on('afterRender', (): void => {
+            this.cell.setLoadingState(false);
+        });
     }
 
     /**
@@ -400,11 +408,14 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
+
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
+
             this.render();
+
         }
         return this;
     }
@@ -922,6 +933,8 @@ abstract class Component {
      * @internal
      */
     public async load(): Promise<this> {
+
+        this.cell.setLoadingState();
 
         await this.initConnector();
         this.render();
