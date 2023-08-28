@@ -484,14 +484,16 @@ class NavigatorComponent extends Component {
                 };
             }
 
-            chart.update(chartUpdates, false);
+            if (Object.keys(chartUpdates).length) {
+                chart.update(chartUpdates, false);
+            }
 
             if (navigator.series && navigator.series[0]) {
                 navigator.series[0].update({
                     type: chart.series[0].type
                 }, false);
             }
-        } else {
+        } else if (Object.keys(chartUpdates).length) {
             chart.update(chartUpdates, false);
         }
     }
@@ -542,18 +544,23 @@ class NavigatorComponent extends Component {
 
 
     /** @private */
-    public load(): this {
-
-        super.load();
+    public async load(): Promise<this> {
+        await super.load();
 
         this.contentElement.appendChild(this.chartContainer);
         this.parentElement.appendChild(this.element);
+
         this.adjustNavigator();
-        this.hasLoaded = true;
+
+        this.emit({ type: 'afterLoad' });
 
         return this;
     }
 
+
+    public onTableChanged(): void {
+        this.renderNavigator();
+    }
 
     /** @private */
     private redrawNavigator(): void {
@@ -574,13 +581,15 @@ class NavigatorComponent extends Component {
 
     /** @private */
     public render(): this {
+        const component = this;
 
         super.render();
+        component.renderNavigator();
+        component.sync.start();
 
-        this.renderNavigator();
-        this.sync.start();
+        component.emit({ type: 'afterRender' });
 
-        return this;
+        return component;
     }
 
 
@@ -666,7 +675,7 @@ class NavigatorComponent extends Component {
      */
     public async update(
         options: Partial<NavigatorComponentOptions>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         const chart = this.chart;
 
@@ -682,8 +691,8 @@ class NavigatorComponent extends Component {
 
         this.emit({ type: 'afterUpdate' });
 
-        if (redraw) {
-            this.redraw();
+        if (shouldRerender) {
+            this.render();
         }
     }
 

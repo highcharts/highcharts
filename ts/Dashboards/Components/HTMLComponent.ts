@@ -183,12 +183,6 @@ class HTMLComponent extends Component {
             this,
             this.syncHandlers
         );
-
-        this.on('tableChanged', (e: Component.EventTypes): void => {
-            if ('detail' in e && e.detail && e.detail.sender !== this.id) {
-                this.redraw();
-            }
-        });
     }
 
 
@@ -199,11 +193,11 @@ class HTMLComponent extends Component {
      * */
 
     /** @internal */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({
             type: 'load'
         });
-        super.load();
+        await super.load();
         const options = this.options;
         let isError = false;
 
@@ -228,8 +222,6 @@ class HTMLComponent extends Component {
 
         this.constructTree();
 
-        this.parentElement.appendChild(this.element);
-
         this.emit({ type: 'afterLoad' });
 
         if (isError) {
@@ -244,16 +236,9 @@ class HTMLComponent extends Component {
 
     public render(): this {
         this.emit({ type: 'beforeRender' });
-        super.render(); // Fires the render event and calls load
-        this.emit({ type: 'afterRender' });
-        return this;
-    }
-
-    public redraw(): this {
-        super.redraw();
+        super.render();
         this.constructTree();
-
-        this.emit({ type: 'afterRedraw' });
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -269,9 +254,6 @@ class HTMLComponent extends Component {
      * Handles updating via options.
      * @param options
      * The options to apply.
-     *
-     * @returns
-     * The component for chaining.
      */
     public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
         await super.update(options);
@@ -279,13 +261,13 @@ class HTMLComponent extends Component {
     }
 
     /**
-     * Could probably use the serialize function moved on
+     * TODO: Could probably use the serialize function moved on
      * the exportdata branch
      *
      * @internal
      */
     private constructTree(): void {
-        // Remove old tree if redrawing
+        // Remove old tree if rerendering.
         while (this.contentElement.firstChild) {
             this.contentElement.firstChild.remove();
         }
@@ -335,6 +317,15 @@ class HTMLComponent extends Component {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
             type: 'HTML'
         };
+    }
+
+    /**
+     * @internal
+     */
+    public onTableChanged(e: Component.EventTypes): void {
+        if (e.detail?.sender !== this.id) {
+            this.render();
+        }
     }
 }
 

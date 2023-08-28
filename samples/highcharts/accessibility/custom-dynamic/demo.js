@@ -29,7 +29,7 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 // Set up the updating of the chart each second
-                var series = this.series[0];
+                const series = this.series[0];
                 setInterval(function () {
                     series.addPoint(
                         Math.round(Math.random() * 110) / 10,

@@ -1,15 +1,22 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    rangeSelector: {
-        selected: 1
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    xAxis: {
-        lineWidth: 2
-    },
+    Highcharts.stockChart('container', {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        rangeSelector: {
+            selected: 1
+        },
+
+        xAxis: {
+            lineWidth: 2
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();
