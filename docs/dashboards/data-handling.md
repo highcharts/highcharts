@@ -67,6 +67,6 @@ changes are available on a clone in the `DataTable.modified` property.
 ## DataCursor
 
 The DataCursor provides a system to synchronize status data on cells of
-DataTables.  This can be for example highlights, markers, or selections.  It
+DataTables. This can be for example highlights, markers, or selections.  It
 supports multiple tables and statuses simultaneously.  Each Board has a DataCursor
 that is accessible via the `Board.dataCursor` property. [DataCursor sync demo](https://www.highcharts.com/demo/dashboards/datacursor-sync)
