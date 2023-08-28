@@ -8,7 +8,7 @@ The HTML Component serves as a fundamental building block in dashboards. It offe
 
 ### How to setup basic HTML component.
 
-1. The HTML component is the most basic component available in the Highcharts Dashboard. You can find it in the main Highcharts Dashboard package.  
+1. The HTML component is the most basic component available in the Highcharts Dashboards. You can find it in the main Highcharts Dashboards package.  
 To use it through the CDN, you need to load the following files
 
 ```html
