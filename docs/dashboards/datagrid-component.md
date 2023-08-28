@@ -69,8 +69,7 @@ The DataGrid Component can be placed inside a data cell to allow the data visual
         type: 'DataGrid'
     }]
     ```
-    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#modules/DataGrid_DataGridOptions#DataGridOptions). \
-    You can also check the basic options common to all types of components, [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions).
+    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions).
 
 See the summarized JS code needed to create a simple DataGrid:
 ```js
