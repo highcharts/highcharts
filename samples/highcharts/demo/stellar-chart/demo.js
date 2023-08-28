@@ -9,8 +9,12 @@ Highcharts.chart('container', {
             render() {
                 const chart = this,
                     pieSeries = chart.series[1];
-                pieSeries.customLabel = fillCenter(100, '1990s-2020s', chart,
-                    pieSeries.customLabel);
+                pieSeries.customLabel = fillCenter(
+                    100,
+                    '1990-2020',
+                    chart,
+                    pieSeries.customLabel
+                );
             }
         }
     },
@@ -75,7 +79,8 @@ Highcharts.chart('container', {
         },
         gridLineWidth: 0.5,
         gridLineColor: '#BBBAC5',
-        gridLineDashStyle: 'longdash'
+        gridLineDashStyle: 'longdash',
+        endOnTick: false
     },
     tooltip: {
         borderWidth: 1,
@@ -83,8 +88,9 @@ Highcharts.chart('container', {
         shadow: false,
         outside: true,
         hideDelay: 20,
+        useHTML: true,
         formatter: function (tooltip) {
-        // Hide tooltip for pie series
+            // Hide tooltip for pie series
             if (this.series.options.type === 'pie') {
                 return false;
             }
@@ -113,7 +119,32 @@ Highcharts.chart('container', {
         maxSize: 14,
         minSize: 3,
         tooltip: {
-            pointFormat: '<span class="smaller">Name:</span> {point.name}<br><span class="smaller">Mass:</span> {point.custom.planetMass}<br><span class="smaller">Distance:</span> {point.custom.lightYears} Light Years<br><span class="smaller">Stellar Magnitude:</span> {point.custom.stellarMagnitude}'
+            pointFormat: `<table>
+                <tr>
+                    <td style='padding:0'>
+                        <span class="smallerLabel">Name:</span>
+                        {point.name}
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding:0'>
+                        <span class="smallerLabel">Mass:</span>
+                        {point.custom.planetMass}
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding:0'>
+                        <span class="smallerLabel">Distance:</span>
+                        {point.custom.lightYears} Light Years
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding:0'>
+                        <span class="smallerLabel">Stellar Magnitude:</span>
+                        {point.custom.stellarMagnitude}
+                    </td>
+                </tr>
+            </table>`
         }
     }, {
         type: 'pie',
@@ -129,7 +160,7 @@ Highcharts.chart('container', {
                     const {
                             minDate,
                             maxDate
-                        } = this.options,
+                        } = this.options.custom,
                         point = this,
                         series = this.series,
                         chart = series.chart,
@@ -146,8 +177,12 @@ Highcharts.chart('container', {
                         }
                     });
 
-                    series.customLabel = fillCenter(point.percentage,
-                        point.options.custom.info, chart, series.customLabel);
+                    series.customLabel = fillCenter(
+                        point.percentage,
+                        point.options.custom.minDate,
+                        chart,
+                        series.customLabel
+                    );
                 },
                 mouseOut() {
                     const chart = this.series.chart,
@@ -159,8 +194,12 @@ Highcharts.chart('container', {
                             opacity: 1
                         });
                     });
-                    series.customLabel = fillCenter(100, '1990s-2020s', chart,
-                        series.customLabel);
+                    series.customLabel = fillCenter(
+                        100,
+                        '1990-2020',
+                        chart,
+                        series.customLabel
+                    );
                 }
             }
         },
@@ -169,47 +208,69 @@ Highcharts.chart('container', {
             y: 12,
             color: '#6CDDCA',
             custom: {
-                info: '1990s',
                 minDate: 1990,
                 maxDate: 2000
             }
-        },
-        {
+        }, {
             y: 47,
             color: '#C771F3',
             custom: {
-                info: '2000s',
                 minDate: 2000,
                 maxDate: 2010
             }
-        },
-        {
+        }, {
             y: 117,
             color: '#4D90DB',
             custom: {
-                info: '2010s',
                 minDate: 2010,
                 maxDate: 2020
             }
-        },
-        {
+        }, {
             y: 64,
             color: '#FAB776',
             custom: {
-                info: '2020s',
                 minDate: 2020,
                 maxDate: 2030
             }
-        }
-        ]
-    }]
+        }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                pane: {
+                    innerSize: '47%'
+                },
+                series: [{
+                    maxSize: 8
+                }, {
+                    size: '45%'
+                }]
+            }
+        }]
+    }
 });
 
-function fillCenter(percentage, info, chart, customLabel) {
-    const labelText = `<span style='font-size: 2em'>☉</span><span
-    class='uppercase'><br><span class='decade'>${info}</span><br>
-    Planets discovered</span><br><span class='percentage'>
-    ${percentage.toFixed(2)}<sup style='font-size: 0.5em;'>%</sup></span>`;
+function fillCenter(percentage, decade, chart, customLabel) {
+    const labelText = `<table class='innerTable'>
+        <tr>
+            <td class='symbol'>☉</td>
+        </tr>
+        <tr>
+            <td class='uppercase'>${decade}<small>s</small></td>
+        </tr>
+        <tr>
+            <td class='label'>Planets discovered</td>
+        </tr>
+        <tr>
+            <td class='percentage'>
+                ${percentage.toFixed(2)}
+                <sup style='font-size: 0.5em;'>%</sup>
+            </td>
+        </tr>
+    </table>`;
 
     if (!customLabel) {
         customLabel = chart.renderer.label(labelText, 0, 0, void 0, void 0,
@@ -225,8 +286,10 @@ function fillCenter(percentage, info, chart, customLabel) {
         });
     }
     customLabel.attr({
-        x: (chart.chartWidth / 2) - customLabel.attr('width') / 2,
-        y: (chart.chartHeight / 2) - (customLabel.attr('height') / 2) + 10
+        x: (chart.pane[0].center[0] + chart.plotLeft) -
+            customLabel.attr('width') / 2,
+        y: (chart.pane[0].center[1] + chart.plotTop) -
+            customLabel.attr('height') / 2 - 10
     });
     return customLabel;
 }
