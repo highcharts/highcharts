@@ -46,6 +46,7 @@ const {
     isArray,
     merge,
     pick,
+    pInt,
     relativeLength
 } = U;
 
@@ -357,11 +358,11 @@ class FunnelSeries extends PieSeries {
             leftSide = point.half;
             sign = leftSide ? 1 : -1;
             y = point.plotY;
-            point.labelDistance = pick(
+            point.labelDistance = pInt(pick(
                 point.options.dataLabels &&
                 point.options.dataLabels.distance,
                 labelDistance
-            );
+            ));
 
             series.maxLabelDistance = Math.max(
                 point.labelDistance,

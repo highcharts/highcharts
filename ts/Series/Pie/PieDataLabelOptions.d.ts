@@ -30,7 +30,6 @@ export interface PieDataLabelOptions extends DataLabelOptions {
     connectorShape?: (string|Function);
     connectorWidth?: number;
     crookDistance?: string;
-    distance?: number;
     softConnector?: boolean;
 }
 

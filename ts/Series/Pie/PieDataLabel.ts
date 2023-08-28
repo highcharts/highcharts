@@ -250,10 +250,14 @@ namespace ColumnDataLabel {
                 if (point.visible) { // #407, #2510
 
                     const angle = point.angle || 0,
-                        radiusX = Math.cos(angle) * seriesCenter[2] / 2,
-                        radiusY = Math.sin(angle) * seriesCenter[2] / 2,
+                        r = seriesCenter[2] / 2,
+                        radiusX = Math.cos(angle) * r,
+                        radiusY = Math.sin(angle) * r,
                         dataLabelOptions = point.dataLabelsOptions?.[i],
-                        distance = dataLabelOptions?.distance || 0,
+                        distance = relativeLength(
+                            dataLabelOptions?.distance || 0,
+                            r
+                        ),
                         finalConnectorOffset = Math.min(
                             (series.options.slicedOffset || 0) +
                                 (series.options.borderWidth || 0),

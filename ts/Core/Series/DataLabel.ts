@@ -44,6 +44,7 @@ const {
     merge,
     objectEach,
     pick,
+    pInt,
     splat
 } = U;
 
@@ -634,7 +635,7 @@ namespace DataLabel {
                                         !defined(labelDistance) &&
                                         labelOptions.inside
                                     ) ||
-                                    (labelDistance || 0) < 0 ||
+                                    pInt(labelDistance || 0) < 0 ||
                                     seriesOptions.stacking
                                 ) ?
                                     point.contrastColor :
