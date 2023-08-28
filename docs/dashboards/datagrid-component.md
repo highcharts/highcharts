@@ -113,7 +113,49 @@ Dashboards.board('container', {
 });
 ```
 
-## Data Modifiers
+## DataGrid options
+
+In the DataGrid Component, you can define some specific options for the DataGrid itself. These options can be set in the [`dataGridOptions` option](https://api.highcharts.com/dashboards/typedoc/interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions.html#dataGridOptions).
+
+For example, using the [`editable` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
+
+Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, e.g. adding units to them. The key is the column name and the value is the object with the column-specific options.
+
+Example:
+```js
+components: [{
+    cell: 'dashboard-col-1',
+    type: 'DataGrid'
+    connector: {
+        id: 'data'
+    },
+    dataGridOptions: {
+        editable: false,
+        columns: {
+            product: {
+                cellFormat: '{text} No. 1',
+                headerFormat: '{text} name'
+            },
+            weight: {
+                cellFormat: '{value} kg',
+                headerFormat: '{text} (kg)'
+            },
+            price: {
+                cellFormat: '{value} $',
+                headerFormat: '($) {text}'
+            },
+            metaData: {
+                show: false
+            }
+        }
+    }
+}]
+```
+
+There are more DataGrid-specific options that can be found in the [Dashboards API](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1).
+
+
+## Data modifiers
 
 Data modifiers allow manipulation of data provided to connectors to be placed in a modified version, e.g. in the DataGrid Component.
 
@@ -151,13 +193,13 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 <script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
 ```
 
-## Sync
+## Components synchronization
 
-One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#sync), which allows you to set the synchronization of component states with each other.
+One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#sync), which allows setting the synchronization of component states with each other.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
 
-The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
+The sync can be an object configuration containing: `highlight`, `visibility` or `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
 
 See demos of `sync` types below:
 * [Extremes Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
