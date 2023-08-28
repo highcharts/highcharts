@@ -176,13 +176,15 @@ function callout(
 
         // Simple connector
         } else {
+            const isTopCorner = anchorY < y + safeDistance,
+                cornerY = isTopCorner ? y : y + h,
+                sliceStart = isTopCorner ? 2 : 5;
+
             path.splice(
-                3,
-                1,
-                ['L', x + w, h / 2],
+                sliceStart,
+                0,
                 ['L', anchorX, anchorY],
-                ['L', x + w, h / 2],
-                ['L', x + w, y + h - r]
+                ['L', x + w - r, cornerY]
             );
         }
 
@@ -205,13 +207,15 @@ function callout(
 
         // Simple connector
         } else {
+            const isTopCorner = anchorY < y + safeDistance,
+                cornerY = isTopCorner ? y : y + h,
+                sliceStart = isTopCorner ? 1 : 6;
+
             path.splice(
-                7,
-                1,
-                ['L', x, h / 2],
+                sliceStart,
+                0,
                 ['L', anchorX, anchorY],
-                ['L', x, h / 2],
-                ['L', x, y + r]
+                ['L', x + r, cornerY]
             );
         }
 
