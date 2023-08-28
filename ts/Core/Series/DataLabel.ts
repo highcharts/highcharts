@@ -544,8 +544,9 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
-                const dataLabels: (SVGLabel|SVGElement|undefined)[] =
-                    point.dataLabels || [];
+                // In the local array, items can be undefined if a data label is
+                // disabled, followed by an enabled one (#19457)
+                const dataLabels = point.dataLabels || [];
 
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -804,7 +805,7 @@ namespace DataLabel {
 
                             dataLabel.isActive = true;
                             if (dataLabels[i] && dataLabels[i] !== dataLabel) {
-                                dataLabels[i]?.destroy();
+                                dataLabels[i].destroy();
                             }
                             dataLabels[i] = dataLabel;
                         }
@@ -815,22 +816,19 @@ namespace DataLabel {
                 // Destroy and remove the inactive ones
                 let j = dataLabels.length;
                 while (j--) {
-                    if (dataLabels[j]?.isActive) {
-                        dataLabels[j]!.isActive = false;
-                    } else {
+                    // The item can be undefined if a disabled data label is
+                    // succeeded by an enabled one (#19457)
+                    if (!dataLabels[j] || !dataLabels[j].isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
+                    } else {
+                        dataLabels[j].isActive = false;
                     }
                 }
 
-                if (dataLabels.length > 0) {
-                    // Write back
-                    point.dataLabel = dataLabels[0];
-                    point.dataLabels = dataLabels.filter(defined);
-                } else {
-                    delete point.dataLabel;
-                    delete point.dataLabels;
-                }
+                // Write back
+                point.dataLabel = dataLabels[0];
+                point.dataLabels = dataLabels;
             });
         }
 
