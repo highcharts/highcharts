@@ -531,25 +531,35 @@ class LegendComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
+
         const keys = this.keyCodes,
             response = keyboardNavigationHandler.response,
             chart = this.chart,
             a11yOptions = chart.options.accessibility,
+            wrapAround = a11yOptions.keyboardNavigation.wrapAround,
             numItems = chart.legend.allItems.length,
-            direction = (keyCode === keys.left || keyCode === keys.up) ? -1 : 1;
+            direction = (
+                keyCode === keys.left || keyCode === keys.up
+            ) ? -1 : 1,
+            highlightedLegendItemIx = this.highlightedLegendItemIx,
+            rawDirectionalInput = highlightedLegendItemIx + direction,
+            adjustedDirection = (
+                rawDirectionalInput > -1 &&
+                rawDirectionalInput < numItems
+            ) ? direction : (
+                wrapAround ? ((numItems - 1) * (direction > 0 ? -1 : 1)) : 0
+            ),
+            res = chart.highlightLegendItem(
+                highlightedLegendItemIx + adjustedDirection
+            ) || void 0;
 
-        const res = chart.highlightLegendItem(
-            this.highlightedLegendItemIx + direction
-        );
+            console.log(adjustedDirection);
         if (res) {
-            this.highlightedLegendItemIx += direction;
+            this.highlightedLegendItemIx += adjustedDirection;
             return response.success;
         }
 
-        if (
-            numItems > 1 &&
-            a11yOptions.keyboardNavigation.wrapAround
-        ) {
+        if (wrapAround && numItems > 1) {
             keyboardNavigationHandler.init(direction);
             return response.success;
         }
@@ -673,8 +683,11 @@ namespace LegendComponent {
         const items = this.legend.allItems;
         const oldIx = this.accessibility &&
                 this.accessibility.components.legend.highlightedLegendItemIx;
+
         const itemToHighlight = items[ix],
             legendItem = itemToHighlight.legendItem || {};
+
+        console.log(ix, this?.accessibility?.components.legend || {}, oldIx, );
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
@@ -686,6 +699,7 @@ namespace LegendComponent {
             const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
                 itemToHighlight.a11yProxyElement.buttonElement;
+
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }
