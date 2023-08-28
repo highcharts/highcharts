@@ -158,7 +158,7 @@ function callout(
     }
 
     // Anchor on right side
-    if (x + anchorX > w - safeDistance) {
+    if (x + anchorX >= w - safeDistance) {
 
         // Chevron
         if (
@@ -189,7 +189,7 @@ function callout(
         }
 
     // Anchor on left side
-    } else if (x + anchorX < safeDistance) {
+    } else if (x + anchorX <= safeDistance) {
 
         // Chevron
         if (
