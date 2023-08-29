@@ -532,12 +532,6 @@ namespace DataLabel {
             pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
 
-        const firstDLOptions = splat(seriesDlOptions)[0],
-            dataLabelAnim = firstDLOptions.animation,
-            animationConfig = firstDLOptions.defer ?
-                getDeferredAnimation(chart, dataLabelAnim, series) :
-                { defer: 0, duration: 0 };
-
         // Merge in plotOptions.dataLabels for series
         seriesDlOptions = mergeArrays(
             mergeArrays(
@@ -546,6 +540,13 @@ namespace DataLabel {
             ),
             seriesDlOptions
         );
+
+        // Resolve the animation
+        const { animation, defer } = splat(seriesDlOptions)[0],
+            animationConfig = defer ?
+                getDeferredAnimation(chart, animation, series) :
+                { defer: 0, duration: 0 };
+
 
         fireEvent(this, 'drawDataLabels');
 
