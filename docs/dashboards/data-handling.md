@@ -27,6 +27,7 @@ There are several types of the DataConnectors, depending on the data source.
 
 | Name                                                                                                                                                               | `connector.type` option |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html)                         | `'JSON'`           |
 | [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)                            | `'CSV'`                 |
 | [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'`        |
 | [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html)          | `'HTMLTable'`           |

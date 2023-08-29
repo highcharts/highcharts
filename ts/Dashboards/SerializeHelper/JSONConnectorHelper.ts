@@ -121,7 +121,6 @@ const JSONConnectorHelper: Serializable.Helper<JSONConnector, JSONConnectorHelpe
     toJSON
 };
 
-Serializable.registerHelper(JSONConnectorHelper);
 
 /* *
  *
