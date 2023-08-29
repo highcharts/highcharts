@@ -8,8 +8,8 @@
     // It builds the options for the fibonacc retracements annotation
     // which starts from (x1, y1) and stops on (x2, y2)
     function fibonacciRetracements(x1, y1, x2, y2) {
-        var levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-        var colors = [
+        const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+        const colors = [
             'rgba(130, 170, 255, 0.4)',
             'rgba(139, 191, 216, 0.4)',
             'rgba(150, 216, 192, 0.4)',
@@ -18,7 +18,7 @@
             'rgba(169, 255, 101, 0.4)'
         ];
 
-        var point = function (x, y) {
+        const point = function (x, y) {
             return {
                 x: x,
                 y: y,
@@ -27,17 +27,17 @@
             };
         };
 
-        var diff = y2 - y1;
+        const diff = y2 - y1;
 
-        var lines = [];
-        var backgrounds = [];
-        var labels = [];
+        const lines = [];
+        const backgrounds = [];
+        const labels = [];
 
         // building options for the annotation
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff * level;
-            var p1 = point(x1, retracement);
-            var p2 = point(x2, retracement);
+            const retracement = y2 - diff * level;
+            const p1 = point(x1, retracement);
+            const p2 = point(x2, retracement);
 
             // defining horizontal lines
             lines.push({
@@ -69,7 +69,7 @@
         });
 
         // defining the trend line
-        var trendLine = [{
+        const trendLine = [{
             type: 'path',
             dashStyle: 'Dash',
             points: [point(x1, y1), point(x2, y2)],

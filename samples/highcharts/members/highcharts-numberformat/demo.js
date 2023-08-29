@@ -1,4 +1,4 @@
-var converters = {
+const converters = {
     // Latin to Farsi
     fa: function (number) {
         return number.toString().replace(/\d/g, function (d) {
@@ -24,7 +24,7 @@ Highcharts.chart('container', {
 
     chart: {
         numberFormatter: function () {
-            var ret = Highcharts.numberFormat.apply(0, arguments);
+            const ret = Highcharts.numberFormat.apply(0, arguments);
             return converters.ar(ret);
         },
         type: 'column'

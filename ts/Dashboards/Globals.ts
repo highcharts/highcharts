@@ -79,6 +79,7 @@ namespace Globals {
         cell: classNamePrefix + 'cell',
         cellHover: classNamePrefix + 'cell-state-hover',
         cellActive: classNamePrefix + 'cell-state-active',
+        cellLoading: classNamePrefix + 'cell-state-loading',
         row: classNamePrefix + 'row',
         layoutsWrapper: classNamePrefix + 'layouts-wrapper',
         boardContainer: classNamePrefix + 'wrapper'

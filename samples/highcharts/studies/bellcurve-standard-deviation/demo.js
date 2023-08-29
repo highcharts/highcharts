@@ -1,23 +1,26 @@
 (function (H) {
     function normalDensity(x, mean, standardDeviation) {
-        var translation = x - mean;
+        const translation = x - mean;
         return Math.exp(
             -(translation * translation) /
             (2 * standardDeviation * standardDeviation)
         ) / (standardDeviation * Math.sqrt(2 * Math.PI));
     }
-    H.seriesTypes.bellcurve.prototype.derivedData = function (mean, standardDeviation) {
-        var intervals = this.options.intervals,
+    H.seriesTypes.bellcurve.prototype.derivedData = function (
+        mean,
+        standardDeviation) {
+
+        const intervals = this.options.intervals,
             pointsInInterval = this.options.pointsInInterval,
-            x = mean - intervals * standardDeviation,
             stop = intervals * pointsInInterval * 2 + 1,
             increment = standardDeviation / pointsInInterval,
             data = [],
-            zoneStops = [],
-            point,
-            i;
+            zoneStops = [];
 
-        for (i = 0; i < stop; i++) {
+        let x = mean - intervals * standardDeviation,
+            point;
+
+        for (let i = 0; i < stop; i++) {
 
             point = [x, normalDensity(x, mean, standardDeviation)];
             data.push(point);
@@ -35,7 +38,7 @@
     };
 }(Highcharts));
 
-var data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -48,26 +51,32 @@ var data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
 ];
 
 Highcharts.setOptions({
-    colors: [Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.15).get()]
+    colors: [Highcharts.color(
+        Highcharts.getOptions().colors[0]).brighten(-0.15).get()]
 });
 
 Highcharts.chart('container', {
     chart: {
         events: {
             render: function () {
-                var chart = this,
+
+                const chart = this,
+                    zones = [],
                     renderer = chart.renderer,
                     sdColors = [
-                        Highcharts.color(Highcharts.getOptions().colors[0]).brighten(0.3).get(),
-                        Highcharts.color(Highcharts.getOptions().colors[0]).brighten(0.15).get(),
+                        Highcharts.color(
+                            Highcharts.getOptions().colors[0]
+                        ).brighten(0.3).get(),
+                        Highcharts.color(
+                            Highcharts.getOptions().colors[0]
+                        ).brighten(0.15).get(),
                         Highcharts.getOptions().colors[0]
-                    ],
-                    zoneStops,
+                    ];
+
+                let zoneStops,
                     zoneStopsLen,
-                    zones = [],
                     xAxis,
-                    base,
-                    i;
+                    base;
 
                 chart.series.forEach(function (s) {
                     if (s.type === 'bellcurve') {
@@ -78,10 +87,12 @@ Highcharts.chart('container', {
                         zoneStopsLen = zoneStops.length;
 
                         if (!s.options.zones) {
-                            for (i = 0; i < zoneStopsLen; i++) {
+                            for (let i = 0; i < zoneStopsLen; i++) {
                                 zones.push({
                                     value: zoneStops[i],
-                                    color: i < zoneStopsLen / 2 ? sdColors[i] : sdColors[(zoneStopsLen - 1) - i]
+                                    color: i < zoneStopsLen / 2 ?
+                                        sdColors[i] : sdColors[(
+                                            zoneStopsLen - 1) - i]
                                 });
                             }
 
@@ -93,28 +104,33 @@ Highcharts.chart('container', {
                         if (s.stDevLabelsGroup) {
                             s.stDevLabels.forEach(function (label, i) {
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] - (base / 2)) - (label.width / 2),
-                                    y: chart.plotBox.y + s.yAxis.len - label.height
+                                    x: xAxis.toPixels(zoneStops[i] -
+                                         (base / 2)) - (label.width / 2),
+                                    y: chart.plotBox.y +
+                                         s.yAxis.len - label.height
                                 });
                             });
                         } else {
-                            var percents = ['2.35%', '13.5%', '34.0%'];
+                            const percents = ['2.35%', '13.5%', '34.0%'];
 
                             s.stDevLabelsGroup = renderer.g('st-dev-labels').attr({
                                 zIndex: 5
                             }).add();
                             s.stDevLabels = [];
 
-                            for (i = 0; i < zoneStopsLen; i++) {
-                                var label = renderer.label(
-                                    i < zoneStopsLen / 2 ? percents[i] : percents[(zoneStopsLen - 1) - i],
+                            for (let i = 0; i < zoneStopsLen; i++) {
+                                const label = renderer.label(
+                                    i < zoneStopsLen / 2 ? percents[i] :
+                                        percents[(zoneStopsLen - 1) - i],
                                     0,
                                     0
                                 ).add(s.stDevLabelsGroup);
 
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] - (base / 2)) - (label.width / 2),
-                                    y: chart.plotBox.y + s.yAxis.len - label.height
+                                    x: xAxis.toPixels(zoneStops[i] -
+                                         (base / 2)) - (label.width / 2),
+                                    y: chart.plotBox.y +
+                                         s.yAxis.len - label.height
                                 });
                                 s.stDevLabels.push(label);
                             }

@@ -10,7 +10,6 @@
     // Create the chart
     Highcharts.stockChart('container', {
 
-
         rangeSelector: {
             selected: 0
         },
