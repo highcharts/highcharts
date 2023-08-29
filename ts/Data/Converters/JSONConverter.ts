@@ -34,7 +34,7 @@ const { merge } = U;
  * */
 
 /**
- * Handles parsing and transforming CSV to a table.
+ * Handles parsing and transforming JSON to a table.
  *
  * @private
  */
