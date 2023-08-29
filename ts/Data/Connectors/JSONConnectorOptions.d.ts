@@ -39,7 +39,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      */
     dataUrl?: string;
     /**
-     * Should polling be enabled.
+     * Whether polling should be enabled.
      */
     enablePolling?: boolean;
     /**
