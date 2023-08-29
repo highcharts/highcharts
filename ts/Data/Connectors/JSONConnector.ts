@@ -99,17 +99,6 @@ class JSONConnector extends DataConnector {
      * The attached parser, which can be replaced in the constructor
      */
     public readonly converter: JSONConverter;
-
-    /**
-     * The URL to fetch if the source is external
-     */
-    private liveDataURL?: string;
-
-    /**
-     * The current timeout ID if polling is enabled
-     */
-    private liveDataTimeout?: number;
-
     /* *
      *
      *  Functions
