@@ -95,6 +95,8 @@ The set of CSS styles needs to be imported, so that the Highcharts displays corr
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
+You can find more information about KPIComponent [here](https://www.highcharts.com/docs/dashboards/kpi-component);
+
 ### Component groups
 
 Components can be assigned to groups. Groups are used to synchronize the state of components.
