@@ -61,7 +61,7 @@ class JSONConverter extends DataConverter {
      * */
 
     /**
-     * Constructs an instance of the CSV parser.
+     * Constructs an instance of the JSON parser.
      *
      * @param {JSONConverter.UserOptions} [options]
      * Options for the JSON parser.
