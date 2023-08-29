@@ -351,7 +351,8 @@ class VariablePieSeries extends PieSeries {
                     x: center[0] + pointRadiusX,
                     y: center[1] + pointRadiusY
                 }
-            }
+            },
+            posAttribs: {}
         };
     }
 

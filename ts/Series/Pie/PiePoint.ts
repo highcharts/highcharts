@@ -410,11 +410,14 @@ namespace PiePoint {
 
     export interface LabelPositionObject {
         alignment: AlignValue;
+        attribs: SVGAttributes;
         bottom?: number;
         connectorPosition: LabelConnectorPositionObject;
         computed: Record<string, undefined|number>;
         distance: number;
         natural: CorePositionObject;
+        posAttribs: SVGAttributes;
+        sideOverflow?: number;
         top?: number;
     }
 

@@ -228,7 +228,9 @@ namespace ColumnDataLabel {
                     y: center[1] + radiusY
                 }
             },
-            distance
+            distance,
+            posAttribs: {},
+            attribs: {}
         };
     }
 
@@ -256,11 +258,9 @@ namespace ColumnDataLabel {
             overflow = [0, 0, 0, 0], // Top, right, bottom, left
             dataLabelPositioners = series.dataLabelPositioners;
 
-        let connectorWidth,
-            connector,
+        let connector,
             dataLabelWidth,
             labelHeight: number,
-            x,
             visibility,
             maxLabelDistance = 0;
 
@@ -317,9 +317,6 @@ namespace ColumnDataLabel {
                         halves[point.half].push(point);
                     }
 
-                    // Reset positions (#4905)
-                    dataLabel._pos = null;
-
                     // Avoid long labels squeezing the pie size too far down
                     if (!defined(dataLabelOptions?.style?.width)) {
                         if (dataLabel.getBBox().width > maxWidth) {
@@ -359,7 +356,6 @@ namespace ColumnDataLabel {
 
             let top,
                 bottom,
-                sideOverflow,
                 size = 0,
                 distributionLength;
 
@@ -435,148 +431,157 @@ namespace ColumnDataLabel {
                         ) as PieDataLabelOptions,
                         distributeBox = point.distributeBox,
                         labelPosition = dataLabel.dataLabelPosition,
-                        naturalY = labelPosition?.natural.y || 0;
+                        naturalY = labelPosition?.natural.y || 0,
+                        connectorPadding = dataLabelOptions
+                            .connectorPadding || 0;
 
-                    let y = naturalY,
-                        visibility = point.visible === false ?
-                            'hidden' : 'inherit';
+                    let x = 0,
+                        y = naturalY,
+                        visibility: 'hidden'|'inherit' =
+                            point.visible === false ? 'hidden' : 'inherit';
 
-                    if (
-                        positions &&
-                        defined(distributeBox) &&
-                        (labelPosition?.distance || 0) > 0
-                    ) {
-                        if (typeof distributeBox.pos === 'undefined') {
-                            visibility = 'hidden';
+
+                    if (labelPosition) {
+                        if (
+                            positions &&
+                            defined(distributeBox) &&
+                            labelPosition.distance > 0
+                        ) {
+                            if (typeof distributeBox.pos === 'undefined') {
+                                visibility = 'hidden';
+                            } else {
+                                labelHeight = distributeBox.size;
+                                // Find label's y position
+                                y = (dataLabelPositioners as any)
+                                    .radialDistributionY(point, dataLabel);
+
+                            }
+                        }
+
+                        // Find label's x position. The justify option is
+                        // undocumented in the API - preserve support for it
+                        if ((dataLabelOptions as any).justify) {
+                            x = (dataLabelPositioners as any).justify(
+                                point,
+                                dataLabel,
+                                radius,
+                                seriesCenter
+                            );
                         } else {
-                            labelHeight = distributeBox.size;
-                            // Find label's y position
-                            y = (dataLabelPositioners as any)
-                                .radialDistributionY(point, dataLabel);
-
+                            switch (dataLabelOptions.alignTo) {
+                                case 'connectors':
+                                    x = (
+                                        dataLabelPositioners as any
+                                    ).alignToConnectors(
+                                        points,
+                                        halfIdx as any,
+                                        plotWidth,
+                                        plotLeft
+                                    );
+                                    break;
+                                case 'plotEdges':
+                                    x = (
+                                        dataLabelPositioners as any
+                                    ).alignToPlotEdges(
+                                        dataLabel as any,
+                                        halfIdx as any,
+                                        plotWidth,
+                                        plotLeft
+                                    );
+                                    break;
+                                default:
+                                    x = (
+                                        dataLabelPositioners as any
+                                    ).radialDistributionX(
+                                        series,
+                                        point,
+                                        y,
+                                        naturalY,
+                                        dataLabel
+                                    );
+                            }
                         }
-                    }
 
-                    // Find label's x position. The justify option is
-                    // undocumented in the API - preserve support for it
-                    if ((dataLabelOptions as any).justify) {
-                        x = (dataLabelPositioners as any).justify(
-                            point,
-                            dataLabel,
-                            radius,
-                            seriesCenter
-                        );
-                    } else {
-                        switch (dataLabelOptions.alignTo) {
-                            case 'connectors':
-                                x = (
-                                    dataLabelPositioners as any
-                                ).alignToConnectors(
-                                    points,
-                                    halfIdx as any,
-                                    plotWidth,
-                                    plotLeft
-                                );
-                                break;
-                            case 'plotEdges':
-                                x = (
-                                    dataLabelPositioners as any
-                                ).alignToPlotEdges(
-                                    dataLabel as any,
-                                    halfIdx as any,
-                                    plotWidth,
-                                    plotLeft
-                                );
-                                break;
-                            default:
-                                x = (
-                                    dataLabelPositioners as any
-                                ).radialDistributionX(
-                                    series,
-                                    point,
-                                    y,
-                                    naturalY,
-                                    dataLabel
-                                );
-                        }
-                    }
+                        // Record the placement and visibility
+                        labelPosition.attribs = {
+                            visibility,
+                            align: labelPosition.alignment
+                        };
 
-                    // Record the placement and visibility
-                    (dataLabel as any)._attr = {
-                        visibility: visibility,
-                        align: (labelPosition as any).alignment
-                    };
-
-                    const connectorPadding = dataLabelOptions
-                        .connectorPadding || 0;
-
-                    dataLabel._pos = {
-                        x: (
+                        labelPosition.posAttribs.x = (
                             x +
-                            dataLabelOptions.x + // (#12985)
+                            (dataLabelOptions.x || 0) + // (#12985)
                             (({
                                 left: connectorPadding,
                                 right: -connectorPadding
-                            } as any)[(labelPosition as any).alignment] || 0)
-                        ),
+                            } as any)[labelPosition.alignment] || 0)
+                        );
 
-                        y: (
+                        labelPosition.posAttribs.y = (
                             y +
                             (dataLabelOptions.y || 0) - // (#12985)
                             // Vertically center
-                            (dataLabel as any).getBBox().height / 2
-                        )
-                    };
+                            dataLabel.getBBox().height / 2
+                        );
 
-                    if (labelPosition) {
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y;
-                    }
 
-                    // Detect overflowing data labels
-                    if (pick(dataLabelOptions.crop, true)) {
-                        dataLabelWidth = dataLabel.getBBox().width;
+                        // Detect overflowing data labels
+                        if (pick(dataLabelOptions.crop, true)) {
+                            dataLabelWidth = dataLabel.getBBox().width;
 
-                        sideOverflow = null;
-                        // Overflow left
-                        if (
-                            x - dataLabelWidth < connectorPadding &&
-                            halfIdx === 1 // Left half
-                        ) {
-                            sideOverflow = Math.round(
-                                dataLabelWidth - x + connectorPadding
-                            );
-                            overflow[3] = Math.max(sideOverflow, overflow[3]);
+                            let sideOverflow: number|undefined;
 
-                        // Overflow right
-                        } else if (
-                            x + dataLabelWidth > plotWidth - connectorPadding &&
-                            halfIdx === 0 // Right half
-                        ) {
-                            sideOverflow = Math.round(
-                                x +
-                                dataLabelWidth -
-                                plotWidth +
-                                connectorPadding
-                            );
-                            overflow[1] = Math.max(sideOverflow, overflow[1]);
+                            // Overflow left
+                            if (
+                                x - dataLabelWidth < connectorPadding &&
+                                halfIdx === 1 // Left half
+                            ) {
+                                sideOverflow = Math.round(
+                                    dataLabelWidth - x + connectorPadding
+                                );
+                                overflow[3] = Math.max(
+                                    sideOverflow,
+                                    overflow[3]
+                                );
+
+                            // Overflow right
+                            } else if (
+                                x + dataLabelWidth >
+                                    plotWidth - connectorPadding &&
+                                halfIdx === 0 // Right half
+                            ) {
+                                sideOverflow = Math.round(
+                                    x +
+                                    dataLabelWidth -
+                                    plotWidth +
+                                    connectorPadding
+                                );
+                                overflow[1] = Math.max(
+                                    sideOverflow,
+                                    overflow[1]
+                                );
+                            }
+
+                            // Overflow top
+                            if (y - labelHeight / 2 < 0) {
+                                overflow[0] = Math.max(
+                                    Math.round(-y + labelHeight / 2),
+                                    overflow[0]
+                                );
+
+                            // Overflow left
+                            } else if (y + labelHeight / 2 > plotHeight) {
+                                overflow[2] = Math.max(
+                                    Math.round(
+                                        y + labelHeight / 2 - plotHeight
+                                    ),
+                                    overflow[2]
+                                );
+                            }
+                            labelPosition.sideOverflow = sideOverflow;
                         }
-
-                        // Overflow top
-                        if (y - labelHeight / 2 < 0) {
-                            overflow[0] = Math.max(
-                                Math.round(-y + labelHeight / 2),
-                                overflow[0]
-                            );
-
-                        // Overflow left
-                        } else if (y + labelHeight / 2 > plotHeight) {
-                            overflow[2] = Math.max(
-                                Math.round(y + labelHeight / 2 - plotHeight),
-                                overflow[2]
-                            );
-                        }
-                        dataLabel.sideOverflow = sideOverflow;
                     }
                 }); // For each data label of the point
             }); // For each point
@@ -596,9 +601,10 @@ namespace ColumnDataLabel {
                 (point.dataLabels || []).forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
                     const {
-                        connectorColor,
-                        connectorWidth = 1
-                    } = (dataLabel.options || {}) as PieDataLabelOptions;
+                            connectorColor,
+                            connectorWidth = 1
+                        } = (dataLabel.options || {}) as PieDataLabelOptions,
+                        labelPosition = dataLabel.dataLabelPosition;
 
                     if (i > 0) {
                         // @todo: second set of data labels destroy connector.
@@ -613,12 +619,12 @@ namespace ColumnDataLabel {
 
                         connector = point.connector;
 
-                        if (dataLabel &&
-                            dataLabel._pos &&
+                        if (
                             point.visible &&
-                            (dataLabel.dataLabelPosition?.distance || 0) > 0
+                            labelPosition &&
+                            labelPosition.distance > 0
                         ) {
-                            visibility = dataLabel._attr.visibility;
+                            visibility = labelPosition.attribs.visibility;
 
                             isNew = !connector;
 
@@ -676,20 +682,22 @@ namespace ColumnDataLabel {
                 point.visible && point.dataLabels ||
                 []
             ).forEach((dataLabel): void => {
-                const _pos = dataLabel._pos;
-                if (_pos) {
+                const labelPosition = dataLabel.dataLabelPosition;
+                if (labelPosition) {
 
                     // Shorten data labels with ellipsis if they still overflow
                     // after the pie has reached minSize (#223).
-                    if (dataLabel.sideOverflow) {
-                        dataLabel._attr.width =
-                            Math.max(dataLabel.getBBox().width -
-                            dataLabel.sideOverflow, 0);
-
+                    if (labelPosition.sideOverflow) {
                         dataLabel.css({
-                            width: dataLabel._attr.width + 'px',
+                            width: (
+                                Math.max(
+                                    dataLabel.getBBox().width -
+                                        labelPosition.sideOverflow,
+                                    0
+                                )
+                            ) + 'px',
                             textOverflow: (
-                                ((this.options.dataLabels as any).style || {})
+                                (dataLabel.options?.style || {})
                                     .textOverflow ||
                                 'ellipsis'
                             )
@@ -697,10 +705,10 @@ namespace ColumnDataLabel {
                         dataLabel.shortened = true;
                     }
 
-                    dataLabel.attr(dataLabel._attr);
+                    dataLabel.attr(labelPosition.attribs);
                     (dataLabel as any)[
                         dataLabel.moved ? 'animate' : 'attr'
-                    ](_pos);
+                    ](labelPosition.posAttribs);
                     dataLabel.moved = true;
                 } else if (dataLabel) {
                     dataLabel.attr({ y: -9999 });

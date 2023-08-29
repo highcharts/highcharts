@@ -374,7 +374,8 @@ class FunnelSeries extends PieSeries {
                     x,
                     y
                 }
-            }
+            },
+            posAttribs: {}
         };
     }
 
