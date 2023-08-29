@@ -75,28 +75,3 @@ Dashboards.board('container', {
 });
 ```
 
-## Component groups
-
-Components can be assigned to groups, which are used to synchronize the state of components.
-
-via
-```js
-group.addComponents(...componentIDs);
-```
-
-or
-```js
-component.setActiveGroup(groupOrGroupIDOrNull)
-```
-
-Groups which have shared state can be accessible via
-```js
-component.activeGroup.getSharedState()
-```
-
-Also you can post data between components in the same group via `postMessage` method.
-```js
-component.postMessage('hello world');
-```
-
-
