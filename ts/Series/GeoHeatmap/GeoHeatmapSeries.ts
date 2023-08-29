@@ -52,6 +52,7 @@ const {
     addEvent,
     extend,
     isNumber,
+    isObject,
     merge,
     pick
 } = U;
@@ -216,21 +217,15 @@ class GeoHeatmapSeries extends MapSeries {
              *         Advanced demo of GeoHeatmap interpolation with multiple
              *         datasets
              *
-             * @type      {boolean}
-             * @default   false
+             * @type      {boolean|Highcharts.InterpolationOptionsObject}
              * @since     @next
              * @product   highmaps
-             * @apioption plotOptions.geoheatmap.interpolation
              */
             interpolation: {
                 /**
                  * Enable or disable the interpolation of the geoheatmap series.
                  *
-                 * @type      {boolean}
-                 * @default   false
                  * @since     @next
-                 * @product   highmaps
-                 * @apioption plotOptions.geoheatmap.interpolation.enabled
                  */
                 enabled: false,
                 /**
@@ -245,11 +240,7 @@ class GeoHeatmapSeries extends MapSeries {
                  * @sample maps/series-geoheatmap/turkey-fire-areas
                  *         Simple demo of GeoHeatmap interpolation
                  *
-                 * @type      {number}
-                 * @default   1
                  * @since     @next
-                 * @product   highmaps
-                 * @apioption plotOptions.geoheatmap.interpolation.blur
                  */
                 blur: 1
             }
@@ -684,6 +675,24 @@ addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.drawPoints();
 });
 
+// Modify final series options.
+addEvent(GeoHeatmapSeries, 'afterSetOptions', function (
+    e: { options: GeoHeatmapSeriesOptions }
+): void {
+    const options = e.options;
+
+    if (!isObject(options.interpolation)) {
+        // Create the extended object out of the boolean
+        options.interpolation = merge(
+            true,
+            GeoHeatmapSeries.defaultOptions.interpolation,
+            {
+                enabled: options.interpolation
+            }
+        );
+    }
+});
+
 /* *
  *
  *  Class Prototype
@@ -803,6 +812,25 @@ export default GeoHeatmapSeries;
  * @type      {number|null}
  * @product   highmaps
  * @apioption series.geoheatmap.data.value
+ */
+
+/**
+ * Detailed options for interpolation object.
+ *
+ * @interface Highcharts.InterpolationOptionsObject
+ *//**
+ *  Enable or disable the interpolation.
+ *
+ * @name Highcharts.InterpolationOptionsObject#enabled
+ * @type {boolean}
+ *//**
+ * Represents how much blur should be added to the interpolated
+ * image. Works best in the range of 0-1, all higher values
+ * would need a lot more perfomance of the machine to calculate
+ * more detailed interpolation.
+ *
+ * @name Highcharts.InterpolationOptionsObject#blur
+ * @type {number}
  */
 
 ''; // adds doclets above to the transpiled file

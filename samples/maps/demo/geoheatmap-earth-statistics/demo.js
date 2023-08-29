@@ -97,53 +97,10 @@
         }];
 
     // Create the chart
-    Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            backgroundColor: '#000',
-            events: {
-                load() {
-                    const chart = this,
-                        geoheatmap = chart.series[0],
-                        datasetSelect = document.getElementById('dataset');
-
-                    datasets.forEach(el => {
-                        const option = document.createElement('option');
-                        option.value = el.type;
-                        option.innerHTML = el.type;
-                        datasetSelect.appendChild(option);
-                    });
-
-                    // Show the Font Awesome spinner
-                    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
-
-                    async function getDataset(type) {
-                        const dataset = datasets.find(el => el.type === type);
-
-                        if (typeof dataset.data === 'undefined') {
-                            const apiData = await fetch(dataset.url)
-                                .then(response => response.json());
-                            dataset.data = apiData;
-                        }
-
-                        // Hide loading
-                        chart.hideLoading();
-                        chart.title.update({
-                            text: dataset.title
-                        }, false);
-                        chart.colorAxis[0].update(dataset.colorAxis, false);
-                        geoheatmap.setData(dataset.data);
-                    }
-
-                    datasetSelect.addEventListener('change', function () {
-                        // Show the Font Awesome spinner
-                        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
-                        getDataset(datasetSelect.value);
-                    });
-
-                    getDataset(datasetSelect.value);
-                }
-            }
+            backgroundColor: '#000'
         },
 
         title: {
@@ -189,9 +146,7 @@
 
         tooltip: {
             headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon}° Lat: {point.point.lat}°</span><br/>',
-            pointFormatter() {
-                return `Value: ${this.options.value.toFixed(2)}`;
-            }
+            pointFormat: 'Value: {point.value:.2f}'
         },
 
         plotOptions: {
@@ -220,5 +175,44 @@
             data: Highcharts.geojson(topology)
         }]
     });
+
+    const geoheatmap = chart.series[0],
+        datasetSelect = document.getElementById('dataset');
+
+    datasets.forEach(el => {
+        const option = document.createElement('option');
+        option.value = el.type;
+        option.innerHTML = el.type;
+        datasetSelect.appendChild(option);
+    });
+
+    // Show the Font Awesome spinner
+    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
+
+    async function getDataset(type) {
+        const dataset = datasets.find(el => el.type === type);
+
+        if (typeof dataset.data === 'undefined') {
+            const apiData = await fetch(dataset.url)
+                .then(response => response.json());
+            dataset.data = apiData;
+        }
+
+        // Hide loading
+        chart.hideLoading();
+        chart.title.update({
+            text: dataset.title
+        }, false);
+        chart.colorAxis[0].update(dataset.colorAxis, false);
+        geoheatmap.setData(dataset.data);
+    }
+
+    datasetSelect.addEventListener('change', function () {
+        // Show the Font Awesome spinner
+        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
+        getDataset(datasetSelect.value);
+    });
+
+    getDataset(datasetSelect.value);
 
 })();
