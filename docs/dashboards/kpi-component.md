@@ -128,6 +128,25 @@ Dashboards.board('container', {
 });
 ```
 
+## Configuring options
+The `value` can be customized by:
+- valueFormat - a format string for the value text.
+Example:
+    ```
+        valueFormat: '{value} km/h',
+    ```
+- valueFormatter - a function to format the text of the value from scratch.
+Example
+    ```
+        valueFormatter: function () {
+            return this.options.value + ' km/h';
+        },
+    ```
+
+## Sync with other components
+The KPI Component allows user to sync the component with other components in dashboard or group.
+You can find more information about it in the [sync chapter](https://www.highcharts.com/docs/dashboards/synchronize-components).
+
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions).
 
