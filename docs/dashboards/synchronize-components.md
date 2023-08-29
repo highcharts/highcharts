@@ -1,9 +1,8 @@
 Synchronizing components
 ===
 
-Components might need to work together to accomplish a specific task.
-Synchronization involves making sure that these components interact seamlessly,
-exchanging information at the right time.
+Components may require synchronization that aids in visualizing, navigating
+and highlighting specific data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
 
@@ -15,6 +14,14 @@ The events, that can be synchronized between components are:
 * [extremes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
 * [highlight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
 
+## Components sync compatibility
+
+|Component's type|highlight|extremes|visibility
+|---|---|---|---|
+|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no
+|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes
+|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes
+|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no
 
 ### Sync declaration
 ```
