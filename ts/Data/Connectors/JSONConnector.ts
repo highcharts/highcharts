@@ -96,7 +96,7 @@ class JSONConnector extends DataConnector {
     public readonly options: JSONConnectorOptions;
 
     /**
-     * The attached parser, which can be replaced in the constructor
+     * The attached parser that converts the data format to the table.
      */
     public readonly converter: JSONConverter;
     /* *

@@ -32,6 +32,7 @@ import type DataConnectorOptions from './DataConnectorOptions';
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
      * Should first row be treated as names of columns.
+     * @default true
      */
     firstRowAsNames?: boolean,
     /**
@@ -47,11 +48,12 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      */
     data?: Array<Array<number|string>>;
     /**
-     * Data refresh rate in milliseconds.
+     * Data refresh rate in seconds.
      */
     dataRefreshRate?: number;
     /**
      * Whether data is in columns or rows.
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector/ | Chart options}
      */
     orientation?: 'columns'|'rows';
 }
