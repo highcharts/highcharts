@@ -336,74 +336,53 @@ class FunnelSeries extends PieSeries {
      * @private
      */
     public drawDataLabels(): void {
-        let series = this,
-            data = series.data,
-            labelDistance: number =
-                (series.options.dataLabels as any).distance,
-            leftSide,
-            sign,
-            point,
-            i = data.length,
-            x,
-            y;
 
         // In the original pie label anticollision logic, the slots are
         // distributed from one labelDistance above to one labelDistance
         // below the pie. In funnels we don't want this.
-        series.center[2] -= 2 * labelDistance;
-
-        // Set the label position array for each point.
-        while (i--) {
-            point = data[i];
-            leftSide = point.half;
-            sign = leftSide ? 1 : -1;
-            y = point.plotY;
-            point.labelDistance = pInt(pick(
-                point.options.dataLabels &&
-                point.options.dataLabels.distance,
-                labelDistance
-            ));
-
-            series.maxLabelDistance = Math.max(
-                point.labelDistance,
-                series.maxLabelDistance || 0
-            );
-            x = series.getX(y as any, leftSide as any, point);
-
-            // set the anchor point for data labels
-            point.labelPosition = {
-                distance: 0,
-                // initial position of the data label - it's utilized for
-                // finding the final position for the label
-                natural: {
-                    x: 0,
-                    y: y as any
-                },
-                computed: {
-                    // used for generating connector path -
-                    // initialized later in drawDataLabels function
-                    // x: undefined,
-                    // y: undefined
-                },
-                // left - funnel on the left side of the data label
-                // right - funnel on the right side of the data label
-                alignment: leftSide ? 'right' : 'left',
-                connectorPosition: {
-                    breakAt: { // used in connectorShapes.fixedOffset
-                        x: x + (point.labelDistance - 5) * sign,
-                        y: y as any
-                    },
-                    touchingSliceAt: {
-                        x: x + point.labelDistance * sign,
-                        y: y as any
-                    }
-                }
-            };
-        }
+        // series.center[2] -= 2 * labelDistance;
 
         SeriesRegistry.seriesTypes[
-            (series.options.dataLabels as any).inside ? 'column' : 'pie'
+            (this.options.dataLabels as any).inside ? 'column' : 'pie'
         ].prototype.drawDataLabels.call(this);
+    }
+
+    /** @private */
+    getDataLabelPosition(
+        point: FunnelPoint,
+        distance: number
+    ): any {
+
+        const y = point.plotY || 0,
+            x = this.getX(y, !!point.half, point),
+            sign = point.half ? 1 : -1;
+
+        return {
+            distance,
+            // Initial position of the data label - it's utilized for finding
+            // the final position for the label
+            natural: {
+                x: 0,
+                y
+            },
+            computed: {
+                // Used for generating connector path - initialized later in
+                // drawDataLabels function x: undefined, y: undefined
+            },
+            // Left - funnel on the left side of the data label
+            // Right - funnel on the right side of the data label
+            alignment: point.half ? 'right' : 'left',
+            connectorPosition: {
+                breakAt: { // Used in connectorShapes.fixedOffset
+                    x: x + (distance - 5) * sign,
+                    y
+                },
+                touchingSliceAt: {
+                    x: x + distance * sign,
+                    y
+                }
+            }
+        };
     }
 
     /**
@@ -519,7 +498,7 @@ class FunnelSeries extends PieSeries {
         ): number {
             return centerX + (half ? -1 : 1) *
                 ((series.getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
-                (point.labelDistance as any));
+                (point.dataLabel?.dataLabelPosition?.distance || 0));
         };
 
         // Expose

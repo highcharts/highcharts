@@ -16,7 +16,6 @@
  *
  * */
 
-import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PieSeriesOptions from './PieSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -101,9 +100,6 @@ class PieSeries extends Series {
     public data: Array<PiePoint> = void 0 as any;
 
     public endAngleRad?: number;
-
-    /** @deprecated */
-    public maxLabelDistance: number = void 0 as any;
 
     public options: PieSeriesOptions = void 0 as any;
 
@@ -401,14 +397,12 @@ class PieSeries extends Series {
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
             points = series.points,
-            labelDistance: number = splat(options.dataLabels)[0]?.distance || 0,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             len = points.length;
-        let finalConnectorOffset,
-            start,
+        let start,
             end,
             angle,
-            // the x component of the radius vector for a given point
+            // The x component of the radius vector for a given point
             radiusX,
             radiusY,
             i,
@@ -427,7 +421,7 @@ class PieSeries extends Series {
 
             point = points[i];
 
-            // set start and end angle
+            // Set start and end angle
             start = startAngleRad + (cumulative * circ);
             if (
                 point.isValid() &&
@@ -437,7 +431,7 @@ class PieSeries extends Series {
             }
             end = startAngleRad + (cumulative * circ);
 
-            // set the shape
+            // Set the shape
             const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
@@ -448,25 +442,6 @@ class PieSeries extends Series {
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
-
-            // Used for distance calculation for specific point.
-            point.labelDistance = pick(
-                splat(point.options.dataLabels)[0]?.distance,
-                labelDistance
-            );
-
-            // Compute point.labelDistance if it's defined as percentage
-            // of slice radius (#8854)
-            point.labelDistance = relativeLength(
-                point.labelDistance,
-                shapeArgs.r
-            );
-
-            // Saved for later dataLabels distance calculation.
-            series.maxLabelDistance = Math.max(
-                series.maxLabelDistance || 0,
-                point.labelDistance
-            );
 
             // The angle must stay within -90 and 270 (#2645)
             angle = (end + start) / 2;

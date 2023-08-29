@@ -102,14 +102,15 @@ namespace ColumnDataLabel {
             );
         },
 
-        // dataLabels.distance determines the x position of the label
+        // The dataLabels.distance determines the x position of the label
         justify: function (
             point: PiePoint,
+            dataLabel: SVGElement,
             radius: number,
             seriesCenter: Array<number>
         ): number {
             return seriesCenter[0] + (point.half ? -1 : 1) *
-            (radius + (point.labelDistance as any));
+            (radius + (dataLabel.dataLabelPosition?.distance || 0));
         },
 
         // Left edges of the left-half labels touch the left edge of the plot
@@ -171,10 +172,64 @@ namespace ColumnDataLabel {
             pieProto.dataLabelPositioners = dataLabelPositioners;
             pieProto.alignDataLabel = noop;
             pieProto.drawDataLabels = drawDataLabels;
+            pieProto.getDataLabelPosition = getDataLabelPosition;
             pieProto.placeDataLabels = placeDataLabels;
             pieProto.verifyDataLabelOverflow = verifyDataLabelOverflow;
         }
 
+    }
+
+    /** @private */
+    function getDataLabelPosition(
+        this: PieSeries,
+        point: PiePoint,
+        distance: number
+    ): PiePoint.LabelPositionObject {
+        const center = this.center,
+            r = center[2] / 2,
+            angle = point.angle || 0,
+            radiusX = Math.cos(angle) * r,
+            radiusY = Math.sin(angle) * r,
+            finalConnectorOffset = Math.min(
+                (this.options.slicedOffset || 0) +
+                    (this.options.borderWidth || 0),
+                distance / 5
+            ); // #1678
+        return {
+            natural: {
+                // Initial position of the data label - it's
+                // utilized for finding the final position for the
+                // label
+                x: center[0] + radiusX + Math.cos(angle) *
+                    distance,
+                y: center[1] + radiusY + Math.sin(angle) *
+                    distance
+            },
+            computed: {
+                // Used for generating connector path -
+                // initialized later in drawDataLabels function
+                // x: undefined,
+                // y: undefined
+            },
+            // Left - pie on the left side of the data label
+            // Right - pie on the right side of the data label
+            // Center - data label overlaps the pie
+            alignment: distance < 0 ?
+                'center' : point.half ? 'right' : 'left',
+            connectorPosition: {
+                breakAt: { // Used in connectorShapes.fixedOffset
+                    x: center[0] + radiusX + Math.cos(angle) *
+                        finalConnectorOffset,
+                    y: center[1] + radiusY + Math.sin(angle) *
+                        finalConnectorOffset
+                },
+                touchingSliceAt: { // Middle of the arc
+                    x: center[0] + radiusX,
+                    y: center[1] + radiusY
+                }
+            },
+            distance
+        };
     }
 
     /**
@@ -250,24 +305,16 @@ namespace ColumnDataLabel {
 
                 if (point.visible) { // #407, #2510
 
-                    const angle = point.angle || 0,
-                        r = seriesCenter[2] / 2,
-                        radiusX = Math.cos(angle) * r,
-                        radiusY = Math.sin(angle) * r,
+                    const r = seriesCenter[2] / 2,
                         dataLabelOptions = dataLabel.options,
                         distance = relativeLength(
                             dataLabelOptions?.distance || 0,
                             r
-                        ),
-                        finalConnectorOffset = Math.min(
-                            (series.options.slicedOffset || 0) +
-                                (series.options.borderWidth || 0),
-                            distance / 5
-                        ); // #1678
+                        );
 
                     // Arrange points for collision detection
                     if (i === 0) {
-                        halves[point.half as any].push(point);
+                        halves[point.half].push(point);
                     }
 
                     // Reset positions (#4905)
@@ -285,41 +332,10 @@ namespace ColumnDataLabel {
                         }
                     }
 
-                    dataLabel.dataLabelPosition = {
-                        natural: {
-                            // Initial position of the data label - it's
-                            // utilized for finding the final position for the
-                            // label
-                            x: seriesCenter[0] + radiusX + Math.cos(angle) *
-                                distance,
-                            y: seriesCenter[1] + radiusY + Math.sin(angle) *
-                                distance
-                        },
-                        computed: {
-                            // Used for generating connector path -
-                            // initialized later in drawDataLabels function
-                            // x: undefined,
-                            // y: undefined
-                        },
-                        // Left - pie on the left side of the data label
-                        // Right - pie on the right side of the data label
-                        // Center - data label overlaps the pie
-                        alignment: distance < 0 ?
-                            'center' : point.half ? 'right' : 'left',
-                        connectorPosition: {
-                            breakAt: { // Used in connectorShapes.fixedOffset
-                                x: seriesCenter[0] + radiusX + Math.cos(angle) *
-                                    finalConnectorOffset,
-                                y: seriesCenter[1] + radiusY + Math.sin(angle) *
-                                    finalConnectorOffset
-                            },
-                            touchingSliceAt: { // Middle of the arc
-                                x: seriesCenter[0] + radiusX,
-                                y: seriesCenter[1] + radiusY
-                            }
-                        },
+                    dataLabel.dataLabelPosition = this.getDataLabelPosition(
+                        point,
                         distance
-                    };
+                    );
                     maxLabelDistance = Math.max(maxLabelDistance, distance);
 
                 } else {
@@ -446,6 +462,7 @@ namespace ColumnDataLabel {
                     if ((dataLabelOptions as any).justify) {
                         x = (dataLabelPositioners as any).justify(
                             point,
+                            dataLabel,
                             radius,
                             seriesCenter
                         );

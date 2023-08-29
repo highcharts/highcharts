@@ -21,6 +21,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
+import type PiePoint from '../../Series/Pie/PiePoint';
 import type Point from './Point';
 import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -96,6 +97,10 @@ declare module './SeriesLike' {
             isNew?: boolean
         ): void;
         drawDataLabels(points?:Array<Point>): void;
+        getDataLabelPosition(
+            point: PiePoint,
+            distance: number
+        ): PiePoint.LabelPositionObject;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -159,6 +164,7 @@ namespace DataLabel {
         ): number;
         justify(
             point: Point,
+            dataLabel: SVGElement,
             radius: number,
             seriesCenter: Array<number>
         ): number;
@@ -578,7 +584,8 @@ namespace DataLabel {
                         connector = point.connectors ?
                             point.connectors[i] :
                             point.connector,
-                        style = labelOptions.style || {};
+                        style = labelOptions.style || {},
+                        labelDistance = labelOptions.distance;
 
                     let labelConfig,
                         formatString,
@@ -588,11 +595,6 @@ namespace DataLabel {
                         dataLabel: SVGLabel|SVGElement|undefined =
                             dataLabels[i],
                         isNew = !dataLabel;
-
-                    const labelDistance = pick(
-                        labelOptions.distance,
-                        point.labelDistance
-                    );
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
