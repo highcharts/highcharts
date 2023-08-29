@@ -83,25 +83,23 @@ class TimelinePoint extends Series.prototype.pointClass {
         let point = this,
             series = point.series,
             connector: SVGElement = point.connector as any,
-            dl: SVGElement = point.dataLabel as any,
-            dlOptions = (point.dataLabel as any).options = merge(
-                series.options.dataLabels,
-                point.options.dataLabels
-            ),
+            dataLabel: SVGElement = point.dataLabel as any,
+            dlOptions = (dataLabel.options || {}) as TimelineDataLabelOptions,
+            connectorWidth = dlOptions.connectorWidth || 0,
             chart = point.series.chart,
             bBox = connector.getBBox(),
             plotPos = {
-                x: bBox.x + dl.translateX,
-                y: bBox.y + dl.translateY
+                x: bBox.x + dataLabel.translateX,
+                y: bBox.y + dataLabel.translateY
             },
             isVisible;
 
         // Include a half of connector width in order to run animation,
         // when connectors are aligned to the plot area edge.
         if (chart.inverted) {
-            plotPos.y -= dl.options.connectorWidth / 2;
+            plotPos.y -= connectorWidth / 2;
         } else {
-            plotPos.x += dl.options.connectorWidth / 2;
+            plotPos.x += connectorWidth / 2;
         }
 
         isVisible = chart.isInsidePlot(
@@ -118,8 +116,8 @@ class TimelinePoint extends Series.prototype.pointClass {
             connector.attr({
                 stroke: dlOptions.connectorColor || point.color,
                 'stroke-width': dlOptions.connectorWidth,
-                opacity: dl[
-                    defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
+                opacity: dataLabel[
+                    defined(dataLabel.newOpacity) ? 'newOpacity' : 'opacity'
                 ]
             });
         }
@@ -194,7 +192,7 @@ class TimelinePoint extends Series.prototype.pointClass {
                 ['M', coords.x1, coords.y1],
                 ['L', coords.x2, coords.y2]
             ] as SVGPath,
-            dl.options.connectorWidth
+            (dl.options as TimelineDataLabelOptions)?.connectorWidth || 0
         );
 
         return path;

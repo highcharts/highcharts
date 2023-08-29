@@ -100,10 +100,9 @@ class PieSeries extends Series {
 
     public data: Array<PiePoint> = void 0 as any;
 
-    public dataLabelsOptions?: Array<PieDataLabelOptions>;
-
     public endAngleRad?: number;
 
+    /** @deprecated */
     public maxLabelDistance: number = void 0 as any;
 
     public options: PieSeriesOptions = void 0 as any;
