@@ -30,6 +30,7 @@
         "../../../ts/Dashboards/Plugins/DataGridComponent.ts",
         "../../../ts/Dashboards/Plugins/HighchartsComponent.ts",
         "../../../ts/Data/Connectors/CSVConnectorOptions.d.ts",
+        "../../../ts/Data/Connectors/JSONConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/DataConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/HTMLTableConnectorOptions.d.ts",
