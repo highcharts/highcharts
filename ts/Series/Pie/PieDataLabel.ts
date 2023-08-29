@@ -16,6 +16,7 @@
  *
  * */
 
+import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePoint from './PiePoint';
 import type PieSeries from './PieSeries';
 import type Point from '../../Core/Series/Point';
@@ -253,7 +254,7 @@ namespace ColumnDataLabel {
                         r = seriesCenter[2] / 2,
                         radiusX = Math.cos(angle) * r,
                         radiusY = Math.sin(angle) * r,
-                        dataLabelOptions = point.dataLabelsOptions?.[i],
+                        dataLabelOptions = dataLabel.options,
                         distance = relativeLength(
                             dataLabelOptions?.distance || 0,
                             r
@@ -411,11 +412,11 @@ namespace ColumnDataLabel {
 
             // Now the used slots are sorted, fill them up sequentially
             points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel, dlIdx): void => {
+                (point.dataLabels || []).forEach((dataLabel): void => {
 
                     const dataLabelOptions = (
-                            point.dataLabelsOptions?.[dlIdx] || {}
-                        ),
+                            dataLabel.options || {}
+                        ) as PieDataLabelOptions,
                         distributeBox = point.distributeBox,
                         labelPosition = dataLabel.dataLabelPosition,
                         naturalY = labelPosition?.natural.y || 0;
@@ -577,8 +578,10 @@ namespace ColumnDataLabel {
             this.points.forEach((point): void => {
                 (point.dataLabels || []).forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
-                    const dataLabelOptions = point.dataLabelsOptions?.[i];
-                    connectorWidth = pick(dataLabelOptions?.connectorWidth, 1);
+                    const {
+                        connectorColor,
+                        connectorWidth = 1
+                    } = (dataLabel.options || {}) as PieDataLabelOptions;
 
                     if (i > 0) {
                         // @todo: second set of data labels destroy connector.
@@ -622,7 +625,7 @@ namespace ColumnDataLabel {
                                     connector.attr({
                                         'stroke-width': connectorWidth,
                                         'stroke': (
-                                            dataLabelOptions?.connectorColor ||
+                                            connectorColor ||
                                             point.color ||
                                             Palette.neutralColor60
                                         )

@@ -100,7 +100,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                         dataLabels.forEach(function (
                             label: SVGElement
                         ): void {
-                            const options = label.options;
+                            const options = label.options || {};
 
                             label.labelrank = pick(
                                 options.labelrank,

@@ -68,8 +68,6 @@ class PiePoint extends Point {
 
     public angle?: number;
 
-    public dataLabelsOptions?: PieDataLabelOptions[];
-
     public delayedRendering?: boolean;
 
     public half: number = 0;
@@ -105,18 +103,18 @@ class PiePoint extends Point {
      */
     public getConnectorPath(dataLabel: SVGElement): void {
         const labelPosition = dataLabel.dataLabelPosition,
-            options = (this.series as any).dataLabelsOptions[0],
+            options = dataLabel.options || {},
             predefinedShapes = this.connectorShapes;
 
         let connectorShape = (options as any).connectorShape;
 
-        // find out whether to use the predefined shape
-        if ((predefinedShapes as any)[connectorShape]) {
-            connectorShape = (predefinedShapes as any)[connectorShape];
+        // Find out whether to use the predefined shape
+        if (predefinedShapes[connectorShape]) {
+            connectorShape = predefinedShapes[connectorShape];
         }
 
         return connectorShape.call(this, {
-            // pass simplified label position object for user's convenience
+            // Pass simplified label position object for user's convenience
             x: (labelPosition as any).computed.x,
             y: (labelPosition as any).computed.y,
             alignment: (labelPosition as any).alignment

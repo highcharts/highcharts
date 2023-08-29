@@ -69,6 +69,7 @@ export interface DataLabelOptions {
     format?: string;
     formatter?: DataLabelFormatterCallback;
     inside?: boolean;
+    labelrank?: number;
     nullFormat?: (boolean|string);
     overflow?: DataLabelOverflowValue;
     padding?: number;

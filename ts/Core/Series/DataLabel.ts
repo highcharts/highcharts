@@ -64,7 +64,6 @@ declare module './PointLike' {
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
-        dataLabelsOptions?: Array<DataLabelOptions>;
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
@@ -85,7 +84,6 @@ declare module './SeriesLike' {
         _hasPointLabels?: boolean;
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
-        dataLabelsOptions?: DataLabelOptions[];
         initDataLabelsGroup(): SVGElement;
         initDataLabels(
             animationConfig?: Partial<AnimationOptions>
@@ -121,6 +119,12 @@ declare module './SeriesLike' {
 declare module './SeriesOptions' {
     interface SeriesOptions {
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    }
+}
+
+declare module '../../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        options?: DataLabelOptions;
     }
 }
 
@@ -537,8 +541,6 @@ namespace DataLabel {
             seriesDlOptions
         );
 
-        series.dataLabelsOptions = splat(seriesDlOptions);
-
         fireEvent(this, 'drawDataLabels');
 
         if (
@@ -563,8 +565,6 @@ namespace DataLabel {
                         point.dlOptions || point.options?.dataLabels
                     )
                 );
-
-                point.dataLabelsOptions = pointOptions;
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
