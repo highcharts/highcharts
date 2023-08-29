@@ -155,10 +155,6 @@ abstract class Component {
         id: '',
         title: false,
         caption: false,
-        style: {
-            display: 'flex',
-            'flex-direction': 'column'
-        },
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
@@ -379,6 +375,14 @@ abstract class Component {
         this.setupEventListeners();
         this.attachCellListeneres();
         this.on('tableChanged', this.onTableChanged);
+
+        this.on('update', (): void => {
+            this.cell.setLoadingState();
+        });
+
+        this.on('afterRender', (): void => {
+            this.cell.setLoadingState(false);
+        });
     }
 
     /**
@@ -404,11 +408,14 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
+
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
+
             this.render();
+
         }
         return this;
     }
@@ -927,6 +934,8 @@ abstract class Component {
      */
     public async load(): Promise<this> {
 
+        this.cell.setLoadingState();
+
         await this.initConnector();
         this.render();
 
@@ -1220,10 +1229,6 @@ namespace Component {
          * Sets an ID for the component's container.
          */
         id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
         /**
          * The component's title, which will render at the top.
          *
