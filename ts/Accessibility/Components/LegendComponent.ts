@@ -529,43 +529,31 @@ class LegendComponent extends AccessibilityComponent {
      */
     public onKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
-        keyCode: number
+        key: number
     ): number {
-        const keys = this.keyCodes,
-            response = keyboardNavigationHandler.response,
-            chart = this.chart,
-            a11yOptions = chart.options.accessibility,
-            wrapAround = a11yOptions.keyboardNavigation.wrapAround,
+        const
+            { keyCodes: { left, up }, highlightedLegendItemIx, chart } = this,
             numItems = chart.legend.allItems.length,
-            direction = (
-                keyCode === keys.left || keyCode === keys.up
-            ) ? -1 : 1,
-            highlightedLegendItemIx = this.highlightedLegendItemIx,
-            rawDirectionalInput = highlightedLegendItemIx + direction,
-            adjustedDirection = ((
-                rawDirectionalInput > -1 &&
-                rawDirectionalInput < numItems
-            ) ? direction : (
-                    wrapAround && (
-                        (numItems - 1) * (direction > 0 ? -1 : 1)
-                    ) || 0
-                )
+            wrapAround = (
+                chart.options.accessibility.keyboardNavigation.wrapAround
             ),
+            success = keyboardNavigationHandler.response.success,
+            input = (key === left || key === up) ? -1 : 1,
+            rawDirection = highlightedLegendItemIx + input,
+            adjustedDirection = (
+                rawDirection > -1 && rawDirection < numItems
+            ) ? input : (wrapAround && ((numItems - 1) * -input) || 0),
             res = chart.highlightLegendItem(
                 highlightedLegendItemIx + adjustedDirection
-            ) || void 0;
+            );
 
         if (res) {
             this.highlightedLegendItemIx += adjustedDirection;
-            return response.success;
+        } else if (wrapAround && numItems > 1) {
+            keyboardNavigationHandler.init(input);
         }
 
-        if (wrapAround && numItems > 1) {
-            keyboardNavigationHandler.init(direction);
-            return response.success;
-        }
-
-        return response.success;
+        return success;
     }
 
 
