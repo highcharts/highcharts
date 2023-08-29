@@ -53,7 +53,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     dataRefreshRate?: number;
     /**
      * Whether data is in columns or rows.
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector/ | JSON Connector options }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
      */
     orientation?: 'columns'|'rows';
 }
