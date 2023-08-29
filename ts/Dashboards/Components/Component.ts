@@ -155,10 +155,6 @@ abstract class Component {
         id: '',
         title: false,
         caption: false,
-        style: {
-            display: 'flex',
-            'flex-direction': 'column'
-        },
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
@@ -1233,10 +1229,6 @@ namespace Component {
          * Sets an ID for the component's container.
          */
         id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
         /**
          * The component's title, which will render at the top.
          *
