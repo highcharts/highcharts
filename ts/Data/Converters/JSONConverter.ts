@@ -228,7 +228,7 @@ namespace JSONConverter {
     }
 
     /**
-     * Options for the CSV parser that are compatible with ClassJSON
+     * Options for the JSON parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
         columnNames?: Array<string>;
