@@ -245,7 +245,7 @@ namespace JSONConverter {
     }
 
     /**
-     * Avaliable options of the JSONConverter.
+     * Available options of the JSONConverter.
      */
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 
