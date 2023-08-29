@@ -130,15 +130,15 @@ Dashboards.board('container', {
 
 ## Configuring options
 The `value` can be customized by:
-- valueFormat - a format string for the value text.
+- `valueFormat` - a format string for the value text.
 Example:
     ```
-        *valueFormat*: '{value} km/h',
+        valueFormat: '{value} km/h',
     ```
-- valueFormatter - a function to format the text of the value from scratch.
+- `valueFormatter` - a function to format the text of the value from scratch.
 Example
     ```
-        *valueFormatter*: function () {
+        valueFormatter: function () {
             return this.options.value + ' km/h';
         },
     ```
