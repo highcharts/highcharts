@@ -41,19 +41,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        /** @deprecated */
-        labelDistance?: number;
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -71,12 +58,6 @@ class PiePoint extends Point {
     public delayedRendering?: boolean;
 
     public half: number = 0;
-
-    /** @deprecated */
-    public labelDistance: number = void 0 as any;
-
-    /** @deprecated */
-    public labelPosition?: PiePoint.LabelPositionObject;
 
     public options: PiePointOptions = void 0 as any;
 
