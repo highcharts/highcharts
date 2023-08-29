@@ -14,15 +14,6 @@ The events, that can be synchronized between components are:
 * [extremes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
 * [highlight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
 
-## Components sync compatibility
-
-|Component's type|highlight|extremes|visibility
-|---|---|---|---|
-|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no
-|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes
-|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes
-|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no
-
 ### Sync declaration
 ```
 sync: {
@@ -82,3 +73,11 @@ Dashboards.board('container', {
 });
 ```
 
+## Components sync compatibility
+
+|Component's type|highlight|extremes|visibility
+|---|---|---|---|
+|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no
+|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes
+|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes
+|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no
