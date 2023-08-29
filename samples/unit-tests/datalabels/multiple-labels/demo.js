@@ -211,4 +211,25 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         void 0,
         'Second data label should be disabled (#17589}.'
     );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: false
+        }, {
+            enabled: true
+        }]
+    });
+
+    assert.ok(
+        true,
+        'There shouldn\'t be any error in the browser console (#19457).'
+    );
+
+    assert.strictEqual(
+        chart.options.series[0].dataLabels.filter(({ enabled }) =>
+            enabled
+        ).length,
+        chart.series[0].points[0].dataLabels.length,
+        'Only the second point\'s data label should be rendered (#19457).'
+    );
 });
