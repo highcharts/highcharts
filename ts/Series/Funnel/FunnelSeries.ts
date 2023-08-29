@@ -46,8 +46,8 @@ const {
     isArray,
     merge,
     pick,
-    pInt,
-    relativeLength
+    relativeLength,
+    splat
 } = U;
 
 /* *
@@ -332,18 +332,12 @@ class FunnelSeries extends PieSeries {
 
 
     /**
-     * Extend the pie data label method.
+     * Extend the data label method.
      * @private
      */
     public drawDataLabels(): void {
-
-        // In the original pie label anticollision logic, the slots are
-        // distributed from one labelDistance above to one labelDistance
-        // below the pie. In funnels we don't want this.
-        // series.center[2] -= 2 * labelDistance;
-
         SeriesRegistry.seriesTypes[
-            (this.options.dataLabels as any).inside ? 'column' : 'pie'
+            splat(this.options.dataLabels)[0].inside ? 'column' : 'pie'
         ].prototype.drawDataLabels.call(this);
     }
 
@@ -354,8 +348,7 @@ class FunnelSeries extends PieSeries {
     ): any {
 
         const y = point.plotY || 0,
-            x = this.getX(y, !!point.half, point),
-            sign = point.half ? 1 : -1;
+            x = this.getX(y, !!point.half, point);
 
         return {
             distance,
@@ -374,11 +367,11 @@ class FunnelSeries extends PieSeries {
             alignment: point.half ? 'right' : 'left',
             connectorPosition: {
                 breakAt: { // Used in connectorShapes.fixedOffset
-                    x: x + (distance - 5) * sign,
+                    x: x - 5 * (point.half ? 1 : -1),
                     y
                 },
                 touchingSliceAt: {
-                    x: x + distance * sign,
+                    x,
                     y
                 }
             }
