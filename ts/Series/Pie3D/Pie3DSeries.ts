@@ -144,52 +144,40 @@ class Pie3DSeries extends PieSeries {
     /**
      * @private
      */
-    public drawDataLabels(): void {
+    public getDataLabelPosition(
+        point: Pie3DPoint,
+        distance: number
+    ): any {
+        const labelPosition = super.getDataLabelPosition(point, distance);
         if (this.chart.is3d()) {
-            const series = this,
-                chart = series.chart,
-                options3d = chart.options.chart.options3d as any;
+            const options3d = this.chart.options.chart.options3d,
+                shapeArgs = point.shapeArgs,
+                r = (shapeArgs as any).r,
+                // #3240 issue with datalabels for 0 and null values
+                a1 = (
+                    ((shapeArgs as any).alpha || options3d?.alpha) *
+                    deg2rad
+                ),
+                b1 = (
+                    ((shapeArgs as any).beta || options3d?.beta) *
+                    deg2rad
+                ),
+                a2 = ((shapeArgs as any).start + (shapeArgs as any).end) / 2,
+                connectorPosition = labelPosition.connectorPosition,
+                yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
+                xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
-            series.points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel): void => {
-                    const shapeArgs = point.shapeArgs,
-                        r = (shapeArgs as any).r,
-                        // #3240 issue with datalabels for 0 and null values
-                        a1 = (
-                            ((shapeArgs as any).alpha || options3d.alpha) *
-                            deg2rad
-                        ),
-                        b1 = (
-                            ((shapeArgs as any).beta || options3d.beta) *
-                            deg2rad
-                        ),
-                        a2 = (
-                            (
-                                (shapeArgs as any).start +
-                                (shapeArgs as any).end
-                            ) / 2
-                        ),
-                        labelPosition = dataLabel.dataLabelPosition,
-                        connectorPosition = (
-                            (labelPosition as any).connectorPosition
-                        ),
-                        yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
-                        xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
-
-                    // Apply perspective on label positions
-                    [
-                        labelPosition?.natural,
-                        connectorPosition.breakAt,
-                        connectorPosition.touchingSliceAt
-                    ].forEach(function (coordinates: PositionObject): void {
-                        coordinates.x += xOffset;
-                        coordinates.y += yOffset;
-                    });
-                });
+            // Apply perspective on label positions
+            [
+                labelPosition?.natural,
+                connectorPosition.breakAt,
+                connectorPosition.touchingSliceAt
+            ].forEach(function (coordinates: PositionObject): void {
+                coordinates.x += xOffset;
+                coordinates.y += yOffset;
             });
         }
-
-        super.drawDataLabels.apply(this, arguments);
+        return labelPosition;
     }
 
     /**
