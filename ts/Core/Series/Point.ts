@@ -743,7 +743,7 @@ class Point {
         return (
             (
                 isNumber(this.x) ||
-                Object.prototype.toString.call(this.x) === '[object Date]'
+                (this.x as number | Date) instanceof Date
             ) &&
             isNumber(this.y)
         );
