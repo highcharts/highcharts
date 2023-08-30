@@ -74,6 +74,7 @@ dataModifier: {
 }
 ```
 
+### Example demos
 You can check the modifiers in work in given demos:
 * [DataGrid with MathModifier](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-mathmodifier/)
 * [Parsing the data in CSV using different modifiers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/csv-modifiers)
