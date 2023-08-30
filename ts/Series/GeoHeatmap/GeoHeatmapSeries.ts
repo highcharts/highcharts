@@ -324,7 +324,7 @@ class GeoHeatmapSeries extends MapSeries {
                 }
             );
         }
-        return GeoHeatmapSeries.defaultOptions.interpolation;
+        return this.options.interpolation;
     }
 
     /**
