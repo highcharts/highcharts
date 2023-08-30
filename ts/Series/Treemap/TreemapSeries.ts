@@ -1405,11 +1405,9 @@ class TreemapSeries extends ScatterSeries {
                 addEvent(series, 'destroy',
                     function destroyEvents(e: any): void {
                         const chart = this.chart;
-                        if (chart.breadcrumbs) {
+                        if (chart.breadcrumbs && !e.keepEventsForUpdate) {
                             chart.breadcrumbs.destroy();
-                            if (!e.keepEventsForUpdate) {
-                                chart.breadcrumbs = void 0;
-                            }
+                            chart.breadcrumbs = void 0;
                         }
                     }
                 )
