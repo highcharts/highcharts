@@ -131,12 +131,12 @@ class JSONConnector extends DataConnector {
         table.deleteRows();
 
         return Promise.resolve(
-            data ?
-                data :
-                dataUrl ?
-                    fetch(dataUrl).then(
-                        (json): Promise<any> => json.json()
-                    ) :
+            dataUrl ?
+                fetch(dataUrl).then(
+                    (json): Promise<any> => json.json()
+                ) :
+                data ?
+                    data :
                     []
         )
             .then((data): Promise<Array<Array<number|string>>> => {
