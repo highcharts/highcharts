@@ -339,7 +339,7 @@ namespace OfflineExporting {
          */
         const downloadPDF = (): void => {
             // Need to add this exception for PDF exports (#19253).
-            if (!AST.allowedTags.includes('fedropshadow')) {
+            if (AST.allowedTags.indexOf('fedropshadow') === -1) {
                 AST.allowedTags.push('fedropshadow');
             }
 
