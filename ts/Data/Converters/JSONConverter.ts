@@ -20,12 +20,11 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, isArray } = U;
 
 /* *
  *
@@ -127,13 +126,14 @@ class JSONConverter extends DataConverter {
         } = options;
         let data = options.data;
 
-        if (data && beforeParse) {
-            data = beforeParse(data);
-        }
-
         if (!data) {
             return;
         }
+
+        if (beforeParse) {
+            data = beforeParse(data);
+        }
+
 
         data = data.slice();
 
@@ -154,7 +154,7 @@ class JSONConverter extends DataConverter {
                     item
                 );
             }
-        } else {
+        } else if (orientation === 'rows') {
             if (firstRowAsNames) {
                 converter.headers = data.shift() as Array<string>;
             } else if (columnNames) {
@@ -167,7 +167,7 @@ class JSONConverter extends DataConverter {
                 rowIndex++
             ) {
                 const row = data[rowIndex];
-                if (row instanceof Array) {
+                if (isArray(row)) {
                     for (
                         let columnIndex = 0, jEnd = row.length;
                         columnIndex < jEnd;
@@ -191,7 +191,6 @@ class JSONConverter extends DataConverter {
                 }
             }
         }
-
     }
 
     /**

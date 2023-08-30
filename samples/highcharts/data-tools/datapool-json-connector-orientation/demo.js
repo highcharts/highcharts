@@ -4,7 +4,7 @@ Dashboards.board('container', {
             type: 'JSON',
             id: 'rows',
             options: {
-                orientation: 'rows',
+                // orientation: 'rows', Default value
                 data: [
                     ['a', 'b', 'c'],
                     [1, 2, 3],

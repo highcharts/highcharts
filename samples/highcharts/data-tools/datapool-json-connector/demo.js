@@ -61,7 +61,6 @@ Dashboards.board('container', {
             type: 'JSON',
             id: 'rows',
             options: {
-                orientation: 'rows',
                 data: [
                     ['a', 'b', 'c'],
                     [1, 2, 3],

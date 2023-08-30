@@ -134,7 +134,9 @@ class JSONConnector extends DataConnector {
             data ?
                 data :
                 dataUrl ?
-                    fetch(dataUrl).then((json): Promise<any> => json.json()) :
+                    fetch(dataUrl).then(
+                        (json): Promise<any> => json.json()
+                    ) :
                     []
         )
             .then((data): Promise<Array<Array<number|string>>> => {
