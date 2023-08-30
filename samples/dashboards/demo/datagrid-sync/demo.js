@@ -1,4 +1,11 @@
-const csvData = document.getElementById('csv').innerText;
+const data = [
+    ['Food', 'Vitamin A'],
+    ['Beef Liver', 6421],
+    ['Lamb Liver', 2122],
+    ['Cod Liver Oil', 1350],
+    ['Mackerel', 388],
+    ['Tuna', 214]
+];
 
 const chartOptions = {
     xAxis: {
@@ -38,37 +45,47 @@ const chartOptions = {
 
 Dashboards.board('container', {
     dataPool: {
-        connectors: [{
-            type: 'CSV',
-            id: 'synchro-data',
-            options: {
-                csv: csvData
+        connectors: [
+            {
+                type: 'JSON',
+                id: 'synchro-data',
+                options: {
+                    data
+                }
             }
-        }]
+        ]
     },
     gui: {
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    },
-                    id: 'dashboard-col-0'
-                }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    },
-                    id: 'dashboard-col-1'
-                }, {
-                    id: 'dashboard-col-2'
-                }]
-            }]
-        }]
+        layouts: [
+            {
+                id: 'layout-1',
+                rows: [
+                    {
+                        cells: [
+                            {
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    }
+                                },
+                                id: 'dashboard-col-0'
+                            },
+                            {
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    }
+                                },
+                                id: 'dashboard-col-1'
+                            },
+                            {
+                                id: 'dashboard-col-2'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     },
     components: [
         {
@@ -85,7 +102,8 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             chartOptions: chartOptions
-        }, {
+        },
+        {
             cell: 'dashboard-col-1',
             connector: {
                 id: 'synchro-data'
@@ -108,7 +126,8 @@ Dashboards.board('container', {
                     text: 'Dragging points <em>will not update</em> the grid'
                 }
             })
-        }, {
+        },
+        {
             cell: 'dashboard-col-2',
             connector: {
                 id: 'synchro-data'
@@ -120,4 +139,4 @@ Dashboards.board('container', {
             }
         }
     ]
-}, true);
+});
