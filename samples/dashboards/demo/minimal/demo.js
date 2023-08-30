@@ -1,12 +1,18 @@
-const csvData = document.getElementById('csv').innerText;
-
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            id: 'Vitamin',
-            type: 'CSV',
+            id: 'micro-element',
+            type: 'JSON',
             options: {
-                csv: csvData
+                firstRowAsNames: false,
+                columnNames: ['Food', 'Vitamin A',  'Iron'],
+                data: [
+                    ['Beef Liver', 6421, 6.5],
+                    ['Lamb Liver', 2122, 6.5],
+                    ['Cod Liver Oil', 1350, 0.9],
+                    ['Mackerel', 388, 1],
+                    ['Tuna', 214, 0.6]
+                ]
             }
         }]
     },
@@ -105,7 +111,7 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Vitamin'
+            id: 'micro-element'
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
@@ -166,7 +172,7 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Vitamin'
+            id: 'micro-element'
         },
         type: 'Highcharts',
         columnAssignment: {
@@ -220,7 +226,7 @@ Dashboards.board('container', {
     }, {
         cell: 'dashboard-col-2',
         connector: {
-            id: 'Vitamin'
+            id: 'micro-element'
         },
         type: 'DataGrid',
         editable: true,
