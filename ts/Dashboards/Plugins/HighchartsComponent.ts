@@ -469,7 +469,6 @@ class HighchartsComponent extends Component {
     public render(): this {
         const hcComponent = this;
 
-        hcComponent.emit({ type: 'beforeRender' });
         super.render();
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();

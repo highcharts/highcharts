@@ -951,6 +951,7 @@ abstract class Component {
      * @internal
      */
     public render(): this {
+        this.emit({ type: 'render' });
         this.resizeTo(this.parentElement);
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
@@ -1133,7 +1134,7 @@ namespace Component {
     /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
     /** @internal */
-    export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    export type RenderEvent = Event<'render' | 'afterRender', {}>;
 
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
