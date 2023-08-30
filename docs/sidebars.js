@@ -87,6 +87,7 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/datagrid-component',
+            'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
             'dashboards/light-dark-theme',

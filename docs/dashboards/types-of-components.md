@@ -97,33 +97,4 @@ The set of CSS styles needs to be imported, so that the Highcharts displays corr
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-### Component groups
-
-Components can be assigned to groups. Groups are used to synchronize the state of components.
-
-via
-```js
-group.addComponents(...componentIDs);
-```
-
-or
-```js
-component.setActiveGroup(groupOrGroupIDOrNull)
-```
-
-Groups which have shared state can be accessible via
-```js
-component.activeGroup.getSharedState()
-```
-Also you can post data between components in the same group via `postMessage` method.
-```js
-component.postMessage('hello world');
-```
-
-### Component errors
-Components have built-in error handling that displays "Something went wrong" as a component title. In the developer's console, you have error details.
-
-The error title has also a specific class that allows you to customize styles.
-```css
-.highcharts-dashboards-component-title-error
-```
+You can find more information about KPIComponent [here](https://www.highcharts.com/docs/dashboards/kpi-component);
