@@ -317,12 +317,10 @@ class GeoHeatmapSeries extends MapSeries {
      */
     public getInterpolation(): InterpolationObject {
         if (!isObject(this.options.interpolation)) {
-            return merge(
-                GeoHeatmapSeries.defaultOptions.interpolation,
-                {
-                    enabled: this.options.interpolation
-                }
-            );
+            return {
+                blur: 1,
+                enabled: this.options.interpolation
+            };
         }
         return this.options.interpolation;
     }
@@ -404,7 +402,7 @@ class GeoHeatmapSeries extends MapSeries {
                         }
                     }
 
-                    const blur = pick(series.options.interpolation.blur, 1),
+                    const blur = series.getInterpolation().blur,
                         blurFactor = blur === 0 ? 1 : blur * 11,
                         upscaledWidth = ~~(canvasWidth * blurFactor),
                         upscaledHeight = ~~(canvasHeight * blurFactor),

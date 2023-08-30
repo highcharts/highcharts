@@ -32,7 +32,7 @@ export interface InterpolationObject {
 interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
     colsize?: number;
     rowsize?: number;
-    interpolation: InterpolationObject;
+    interpolation: boolean|InterpolationObject;
 }
 
 /* *

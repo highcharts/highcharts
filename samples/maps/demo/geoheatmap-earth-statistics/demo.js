@@ -142,7 +142,9 @@
             }
         },
 
-        colorAxis: {},
+        colorAxis: {
+            gridLineColor: '#000'
+        },
 
         tooltip: {
             headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon}° Lat: {point.point.lat}°</span><br/>',
