@@ -65,7 +65,6 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
                 endOnTick: true,
                 gridZIndex: 4,
                 labels: {
-                    format: '{value}',
                     x: 1,
                     y: 22
                 },
@@ -81,7 +80,15 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
         },
         plotOptions: {
             series: {
-                borderRadius: 0
+                borderRadius: 0,
+                marker: {
+                    enabled: false
+                },
+                states: {
+                    hover: {
+                        enabled: false
+                    }
+                }
             }
         },
         scrollbar: {

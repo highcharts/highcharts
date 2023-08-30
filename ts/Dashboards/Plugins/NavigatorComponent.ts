@@ -61,6 +61,7 @@ const navigatorComponentSync = {
         emitter: crossfilterEmitter
     },
     extremes: {
+        emitter: extremesEmitter,
         handler: extremesReceiver
     }
 };
@@ -138,7 +139,62 @@ function crossfilterEmitter(
 
 
 /** @internal */
-function extremesReceiver(this: Component): void {
+function extremesEmitter(
+    this: Component
+): (Function|undefined) {
+    const component = this as NavigatorComponent;
+
+    const afterSetExtremes = (
+        axis: Axis,
+        extremes: AxisExtremesObject
+    ): void => {
+        if (component.connector) {
+            const table = component.connector.table,
+                dataCursor = component.board.dataCursor,
+                filterColumn = component.getColumnAssignment()[0],
+                [min, max] = getAxisExtremes(axis, extremes);
+
+            dataCursor.emitCursor(
+                table,
+                {
+                    type: 'position',
+                    column: filterColumn,
+                    row: table.getRowIndexBy(filterColumn, min),
+                    state: 'xAxis.extremes.min'
+                },
+                extremes as unknown as Event
+            );
+
+            dataCursor.emitCursor(
+                table,
+                {
+                    type: 'position',
+                    column: filterColumn,
+                    row: table.getRowIndexBy(filterColumn, max),
+                    state: 'xAxis.extremes.max'
+                },
+                extremes as unknown as Event
+            );
+        }
+    };
+
+    let delay: number;
+
+    return addEvent(
+        component.chart.xAxis[0],
+        'afterSetExtremes',
+        function (extremes: AxisExtremesObject): void {
+            clearTimeout(delay);
+            delay = setTimeout(afterSetExtremes, 50, this, extremes);
+        }
+    );
+}
+
+
+/** @internal */
+function extremesReceiver(
+    this: Component
+): void {
     const component = this as NavigatorComponent,
         dataCursor = component.board.dataCursor;
 
@@ -408,6 +464,13 @@ class NavigatorComponent extends Component {
 
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
+
+        if (this.options.sync.crossfilter) {
+            this.chart.update(
+                { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                false
+            );
+        }
     }
 
 
@@ -562,6 +625,7 @@ class NavigatorComponent extends Component {
         this.renderNavigator();
     }
 
+
     /** @private */
     private redrawNavigator(): void {
         const timeouts = this.resizeTimeouts;
@@ -686,7 +750,25 @@ class NavigatorComponent extends Component {
         }
 
         if (options.chartOptions) {
-            chart.update(merge(options.chartOptions), false);
+            chart.update(
+                merge(
+                    (
+                        this.options.sync.crossfilter ?
+                            {
+                                navigator: {
+                                    xAxis: {
+                                        labels: {
+                                            format: '{value}'
+                                        }
+                                    }
+                                }
+                            } :
+                            {}
+                    ),
+                    options.chartOptions
+                ),
+                false
+            );
         }
 
         this.emit({ type: 'afterUpdate' });
