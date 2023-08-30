@@ -36,7 +36,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      */
     firstRowAsNames?: boolean,
     /**
-     * URL to the JSON data.
+     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
      */
     dataUrl?: string;
     /**
