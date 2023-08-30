@@ -259,82 +259,28 @@ async function setupBoard() {
         },
         components: [{
             cell: 'time-range-selector',
-            type: 'Highcharts',
+            type: 'Navigator',
             chartOptions: {
                 chart: {
                     height: '80px',
                     type: 'spline'
                 },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    enabled: false
+                navigator: {
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    }
                 },
                 series: [{
                     name: 'Timeline',
                     data: [
                         [Date.UTC(1951, 0, 5), 0],
                         [Date.UTC(2010, 11, 25), 0]
-                    ],
-                    marker: {
-                        enabled: false
-                    },
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    }
+                    ]
                 }],
-                navigator: {
-                    enabled: true,
-                    handles: {
-                        symbols: ['leftarrow', 'rightarrow'],
-                        lineWidth: 0,
-                        width: 8,
-                        height: 14
-                    },
-                    series: [{
-                        name: activeCity,
-                        data: [],
-                        animation: false,
-                        animationLimit: 0
-                    }],
-                    xAxis: {
-                        endOnTick: true,
-                        gridZIndex: 4,
-                        labels: {
-                            x: 1,
-                            y: 22
-                        },
-                        opposite: true,
-                        showFirstLabel: true,
-                        showLastLabel: true,
-                        startOnTick: true,
-                        tickPosition: 'inside'
-                    },
-                    yAxis: {
-                        maxPadding: 0.5
-                    }
-                },
-                scrollbar: {
-                    enabled: true,
-                    barBorderRadius: 0,
-                    barBorderWidth: 0,
-                    buttonBorderWidth: 0,
-                    buttonBorderRadius: 0,
-                    height: 14,
-                    trackBorderWidth: 0,
-                    trackBorderRadius: 0
-                },
                 xAxis: {
-                    visible: false,
                     min: activeTimeRange[0],
                     max: activeTimeRange[1],
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
@@ -361,9 +307,6 @@ async function setupBoard() {
                             }, 50);
                         }
                     }
-                },
-                yAxis: {
-                    visible: false
                 }
             }
         }, {
