@@ -251,7 +251,6 @@ class AST {
         'em',
         'feComponentTransfer',
         'feDropShadow',
-        'fedropshadow',
         'feFuncA',
         'feFuncB',
         'feFuncG',
