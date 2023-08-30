@@ -51,21 +51,6 @@ const
 
                     setMidPaneBg({
                         backgroundColor: teamColors[this.series.index],
-                        // backgroundColor: {
-                        //     pattern: {
-                        //         opacity: 1,
-                        //         backgroundColor: colors[1],
-                        //         width,
-                        //         height,
-                        //         color: bgColor,
-                        //         path: {
-                        //             fill: bgColor,
-                        //             d: `M 0 ${width} H ${width} V ${
-                        //                 (height * (width % height))
-                        //             } H 0 L 0 ${height} Z`
-                        //         }
-                        //     }
-                        // },
                         innerRadius: '0%'
                     });
                 },
@@ -78,14 +63,12 @@ const
                 '<div class="team-day-display center">' +
                 '<span style="margin-bottom: 6rem;">' +
                 '<b style="font-size: 1.4rem; color:#000' +
-                // new Highcharts.Color(colors[7]).brighten(0.5).get('rgba') +
                 ';">' +
                 'Day {point.x}</b></span><span style="width:100%;' +
                 'margin-top:-130px;background: transparent; ' +
                 'font-size: 2rem; padding: 0.8rem;' +
                 'border: 0 outset {series.color}; border-block-end:' +
                 '0 outset {series.color};"><b>{series.name}</b></span>'
-                // <b style="color: ' +'{series.color};">●</b>
             ),
             pointFormat: (
                 '<span style="margin-top:7rem; position: absolute;' +
@@ -168,6 +151,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
+        animation: false,
         backgroundColor: undefined,
         hideDelay: 0,
         useHTML: true,
@@ -211,9 +195,6 @@ Highcharts.chart('container', {
         ...paneOpeningAngles,
         background: {
             backgroundColor: toggleableGradient,
-            // backgroundColor: (
-            //     new Highcharts.Color(colors[7]).brighten(0.2).get('rgba')
-            // ),
             outerRadius: '60%'
 
         }
@@ -224,7 +205,6 @@ Highcharts.chart('container', {
         background: {
             borderWidth: 0,
             borderColor: (
-                // new Highcharts.Color(colors[4]).brighten(0.35).get('rgba')
                 new Highcharts.Color(colors[4]).get('rgba')
             ),
             backgroundColor: toggleableGradient,
@@ -237,19 +217,7 @@ Highcharts.chart('container', {
         endAngle: 343.5,
         background: {
             borderWidth: 1,
-            // borderColor: (
-            //     new Highcharts.Color(colors[4])
-            //         //.brighten(0.25)
-            //         .get('rgba')
-            // ),
             backgroundColor: '#46465C',
-            // {
-            //     radialGradient: { cx: 0.5, cy: 0.5, r: 1.8 },
-            //     stops: [
-            //         [0, colors[3]],
-            //         [1, colors[0]]
-            //     ]
-            // },
             innerRadius: '55%',
             outerRadius: '100%'
         }
@@ -288,9 +256,6 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         lineWidth: 0,
         lineColor: '#BBBAC5',
-        // lineColor: (
-        //     new Highcharts.Color(colors[1]).brighten(-0.1).get('rgba')
-        // ),
         ...weekExtremes,
         labels: { enabled: false }
     }],
@@ -331,11 +296,6 @@ Highcharts.chart('container', {
         align: 'center',
         enabled: true,
         backgroundColor: '#1f1836',
-        // backgroundColor: (
-        //     new Highcharts.Color(colors[7])
-        //         .brighten(-0.25)
-        //         .get('rgba')
-        // ),
         borderColor: (
             'transparent'
         ),
@@ -389,12 +349,6 @@ Highcharts.chart('container', {
             colorKey: 'x',
             pointStart: 1,
             borderColor: '#46465C',
-            // borderColor: (
-            //     new Highcharts
-            //         .Color(colors[4])
-            //        // .brighten(0.25)
-            //         .get('rgba')
-            // ),
             borderWidth: 2,
             point: {
                 events: {
@@ -404,7 +358,6 @@ Highcharts.chart('container', {
                             outerRadius: '75%'
                         });
                         this.series.chart.subtitle.element.style.opacity = 0;
-
                     },
                     mouseOut
                 }
@@ -414,7 +367,6 @@ Highcharts.chart('container', {
                     '<span style="color:#fff;" class="team-day-display center">' +
                     '<span style="margin-bottom:1.1rem;"><b style="' +
                     'font-size: 1.4rem; color:{point.color};">Day {point.x}</b></span>'
-
                 ),
                 hideDelay: 0,
                 pointFormat: (
