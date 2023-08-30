@@ -1,0 +1,14 @@
+---
+name: Basic column
+authors:
+  - Kent Wincent Holt
+js_wrap: b
+alt_text: >-
+  Highcharts vertical basic column chart JavaScript example graph compares
+  the height of the tallest buildings in Olso.
+tags:
+  - Highcharts demo
+categories:
+  - Column and bar charts:
+      priority: 2
+...
