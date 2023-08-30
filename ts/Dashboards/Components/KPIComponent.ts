@@ -332,6 +332,7 @@ class KPIComponent extends Component {
 
 
     public render(): this {
+        this.emit({ type: 'beforeRender' });
         super.render();
         this.updateElements();
 
@@ -357,6 +358,7 @@ class KPIComponent extends Component {
         }
 
         this.sync.start();
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
