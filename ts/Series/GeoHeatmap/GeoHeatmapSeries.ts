@@ -22,6 +22,7 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
+import type { InterpolationObject } from './GeoHeatmapSeriesOptions.js';
 import type MapView from '../../Maps/MapView.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -281,7 +282,7 @@ class GeoHeatmapSeries extends MapSeries {
         const series = this;
 
         series.options = merge(series.options, arguments[0]);
-        if (series.options.interpolation.enabled) {
+        if (series.getInterpolation().enabled) {
             series.isDirtyCanvas = true;
 
             series.points.forEach((point): void => {
@@ -300,7 +301,7 @@ class GeoHeatmapSeries extends MapSeries {
      */
     public translate(): void {
         if (
-            this.options.interpolation.enabled &&
+            this.getInterpolation().enabled &&
             this.image &&
             !this.isDirty &&
             !this.isDirtyData
@@ -308,6 +309,22 @@ class GeoHeatmapSeries extends MapSeries {
             return;
         }
         super.translate.apply(this, arguments);
+    }
+
+    /**
+     * Create the extended object out of the boolean
+     * @private
+     */
+    public getInterpolation(): InterpolationObject {
+        if (!isObject(this.options.interpolation)) {
+            return merge(
+                GeoHeatmapSeries.defaultOptions.interpolation,
+                {
+                    enabled: this.options.interpolation
+                }
+            );
+        }
+        return GeoHeatmapSeries.defaultOptions.interpolation;
     }
 
     /**
@@ -322,7 +339,7 @@ class GeoHeatmapSeries extends MapSeries {
             seriesOptions = series.options,
             interpolation = seriesOptions.interpolation;
 
-        if (interpolation.enabled && mapView && series.bounds) {
+        if (series.getInterpolation().enabled && mapView && series.bounds) {
             const ctx = series.context || getContext(series),
                 {
                     canvas,
@@ -673,24 +690,6 @@ class GeoHeatmapSeries extends MapSeries {
 addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.isDirtyCanvas = true;
     this.drawPoints();
-});
-
-// Modify final series options.
-addEvent(GeoHeatmapSeries, 'afterSetOptions', function (
-    e: { options: GeoHeatmapSeriesOptions }
-): void {
-    const options = e.options;
-
-    if (!isObject(options.interpolation)) {
-        // Create the extended object out of the boolean
-        options.interpolation = merge(
-            true,
-            GeoHeatmapSeries.defaultOptions.interpolation,
-            {
-                enabled: options.interpolation
-            }
-        );
-    }
 });
 
 /* *
