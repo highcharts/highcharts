@@ -46,12 +46,12 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    merge,
-    splat,
-    uniqueKey,
     error,
     diffObjects,
-    isString
+    isString,
+    merge,
+    splat,
+    uniqueKey
 } = U;
 
 /* *
@@ -62,10 +62,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof H.chart;
-        ganttChart: typeof H.chart;
-        mapChart: typeof H.chart;
-        stockChart: typeof H.chart;
+        chart: typeof Chart.chart;
+        ganttChart: typeof Chart.chart;
+        mapChart: typeof Chart.chart;
+        stockChart: typeof Chart.chart;
     }
 }
 
@@ -89,7 +89,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof H;
+    public static charter?: H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -756,7 +756,7 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof H
+            Globals.win.Highcharts as H
         );
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];

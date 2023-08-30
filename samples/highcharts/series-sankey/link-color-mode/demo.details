@@ -1,0 +1,6 @@
+---
+ name: Highcharts Sankey with linkColorMode explanation
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

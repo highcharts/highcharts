@@ -20,7 +20,7 @@
  * */
 
 import type PluginHandler from '../PluginHandler';
-import type { Highcharts } from './HighchartsTypes';
+import type { Highcharts as H } from './HighchartsTypes';
 
 import HighchartsComponent from './HighchartsComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
@@ -54,7 +54,7 @@ declare module '../Components/ComponentType' {
  * Highcharts core to connect.
  */
 function connectHighcharts(
-    highcharts: typeof Highcharts
+    highcharts: H
 ): void {
     HighchartsComponent.charter = highcharts;
     KPIComponent.charter = highcharts;
