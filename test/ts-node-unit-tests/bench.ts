@@ -1,24 +1,22 @@
 import { readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { reportError } from './test-utils';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join, relative } from 'node:path';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 
+import { Worker } from 'node:worker_threads';
+import { argv } from 'node:process';
+import yargs from 'yargs';
 
-export type BenchmarkDetails = {
-    testName: string;
-    sampleSize: number;
-    min: number;
-    max: number;
-    results: number[];
-    avg: number;
-    stdDev: number;
+import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmark.d.ts';
+
+
+function getStandardDeviation (array: number[]) {
+  const n = array.length;
+  const mean = array.reduce((a, b) => a + b) / n;
+  return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
 }
 
-export type BenchResults = BenchmarkDetails[];
-export type BenchmarkFunction = ()=> BenchResults;
-
-function createReport(results: BenchResults, show = 'largest'){
-
+function createReport (results: BenchResults, show = 'largest') {
     const outputRows = [];
 
     const resultsToInclude = show === 'largest' ? [
@@ -26,58 +24,153 @@ function createReport(results: BenchResults, show = 'largest'){
     ] : results;
 
     resultsToInclude.forEach((result, i) =>{
-
         if(i === 0){
-            outputRows.push(`Test Name, Sample Size, Min, Max, Standard Deviation, Average`);
+            outputRows.push(`Test Name, Min, Max, Standard Deviation, Average`);
         }
 
-        outputRows.push(`${result.testName}, ${result.sampleSize}, ${result.min}, ${result.max}, ${result.stdDev}, ${result.avg}`);
+        outputRows.push(`${result.test}, ${result.min}, ${result.max}, ${result.stdDev}, ${result.avg}`);
 
     });
 
-    return outputRows;
+    return outputRows.join('\n');
 
 }
 
 const BENCH_PATH = join(__dirname, './benchmarks');
 const CODE_PATH = join(__dirname, '../../code');
 
+const OUTPUT_PATH = join(__dirname, '../../tmp/benchmarks');
+
+const TEST_TIMEOUT_SECONDS = 30;
+
 const errors = [];
 let testCounter: number = 0;
 
-starting('Benchmarks');
+async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult> {
+    const worker = new Worker(join(__dirname, './bench-worker.ts'), {
+        stdout: false // pipe to main
+    });
 
-if (!existsSync(CODE_PATH)) {
-    warn('Code has not been compiled. Run npx gulp scripts first');
-    process.exit();
-}
+    const promise = new Promise((resolve, reject) =>{
+        worker.on('message', value =>{
+            if(value.error){
+                worker.terminate();
+                reject(value.error);
+            }
 
-if (existsSync(BENCH_PATH)) {
-    const testFiles = readdirSync(BENCH_PATH)
-        .filter(file => file.includes('.bench.ts'));
-
-    testFiles.forEach(testFile => {
-        const tests = require(join(BENCH_PATH, testFile));
-        Object.values(tests).forEach(test => {
-            try {
-                if (typeof test === 'function') {
-                    testCounter++;
-                    const result = (test as BenchmarkFunction)();
-                    const csv = createReport(result, 'all')
-
-                    console.log(csv)
-                }
-            } catch (error) {
-                reportError(error);
-                errors.push(error.code);
+            if(value.result){
+                worker.terminate();
+                resolve(value.result);
             }
         });
-    });
+
+        setTimeout(()=>{
+            worker.terminate();
+            reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
+        }, TEST_TIMEOUT_SECONDS * 1000);
+    })
+
+    worker.postMessage({ testFile, size });
+
+    const result = await promise;
+    return result as BenchmarkResult;
 }
 
-if (errors.length) {
-    throw new Error(`Failed ${errors.length}/${testCounter} tests`);
+const ITERATIONS = 15;
+
+async function runRest(testFile: string) : Promise <BenchResults>{
+    const { config } = await import(testFile);
+
+    const results = [];
+
+    for (const size  of config.sizes){
+        const details: BenchmarkDetails = {
+            test: relative(__dirname, testFile),
+            sampleSize: size,
+            min: Number.MAX_SAFE_INTEGER,
+            max: 0,
+            results: [],
+            avg: 0,
+            stdDev: 0
+        }
+
+        console.log(`Running ${details.test} with samplesize ${size}`);
+
+        let i = 0;
+        while (i < ITERATIONS) {
+            i++;
+
+            const result = await runTestInWorker(testFile, size);
+            details.results.push(result);
+
+            if (result > details.max) {
+                details.max = result;
+            }
+
+            if (result < details.min) {
+                details.min = result
+            }
+        }
+
+        details.avg = details.results.reduce((acc, result) => acc + result, 0) / ITERATIONS;
+        details.stdDev = getStandardDeviation(details.results);
+
+        results.push(details);
+
+        console.log(`Done`);
+    }
+
+    return results;
 }
 
-success(`Ran ${testCounter} successful benches`);
-finished('Benchmarks');
+
+async function benchmark(){
+    starting('Benchmarks');
+
+    const { pattern, context } = await yargs(argv).argv;
+
+    if (!existsSync(CODE_PATH)) {
+        warn('Code has not been compiled. Run npx gulp scripts first');
+        process.exit();
+    }
+
+    const reportDir = join(OUTPUT_PATH, typeof context === 'string' ? context : 'actual');
+
+    if(!existsSync(reportDir)){
+        await mkdir(reportDir, { recursive: true });
+    }
+
+    if (existsSync(BENCH_PATH)) {
+        const testFiles = readdirSync(BENCH_PATH)
+        .filter(file => {
+            if (pattern && typeof pattern === 'string') {
+                return new RegExp(pattern).test(file);
+            }
+
+            return file.includes('.bench.ts')
+        });
+
+        for (const testFile of testFiles){
+            const testFilePath = join(BENCH_PATH, testFile);
+            const data = await runRest(testFilePath);
+
+
+            await writeFile(
+                join(reportDir, `${testFile.replace('.bench.ts', '')}.json`),
+                JSON.stringify(data, undefined, 2)
+            );
+
+            testCounter++;
+        };
+    }
+
+    if (errors.length) {
+        throw new Error(`Failed ${errors.length}/${testCounter} tests`);
+    }
+
+    success(`Ran ${testCounter} successful benches`);
+    finished('Benchmarks');
+
+}
+
+benchmark().catch(console.error);
