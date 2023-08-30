@@ -148,7 +148,8 @@ jobs:
         default: false
     steps:
       - << : *load_workspace
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           name: Check Chrome
@@ -174,7 +175,8 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -206,7 +208,8 @@ jobs:
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           background: true
       - run: npx cypress info
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           name: Check Chrome
@@ -278,7 +281,8 @@ jobs:
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -322,7 +326,8 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -378,7 +383,8 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
