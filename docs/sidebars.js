@@ -90,6 +90,7 @@ module.exports = {
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
+            'dashboards/synchronize-components',
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/custom-component',
