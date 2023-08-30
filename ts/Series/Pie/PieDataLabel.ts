@@ -275,10 +275,7 @@ namespace ColumnDataLabel {
 
         // Reset all labels that have been shortened
         points.forEach((point): void => {
-            (
-                point.visible && point.dataLabels ||
-                []
-            ).forEach((dataLabel): void => {
+            (point.dataLabels || []).forEach((dataLabel): void => {
                 if (dataLabel.shortened) {
                     dataLabel
                         .attr({
@@ -299,47 +296,35 @@ namespace ColumnDataLabel {
         points.forEach((point): void => {
             (point.dataLabels || []).forEach((dataLabel, i): void => {
 
-                if (point.visible) { // #407, #2510
-
-                    const r = seriesCenter[2] / 2,
-                        dataLabelOptions = dataLabel.options,
-                        distance = relativeLength(
-                            dataLabelOptions?.distance || 0,
-                            r
-                        );
-
-                    // Arrange points for collision detection
-                    if (i === 0) {
-                        halves[point.half].push(point);
-                    }
-
-                    // Avoid long labels squeezing the pie size too far down
-                    if (!defined(dataLabelOptions?.style?.width)) {
-                        if (dataLabel.getBBox().width > maxWidth) {
-                            dataLabel.css({
-                                // Use a fraction of the maxWidth to avoid
-                                // wrapping close to the end of the string.
-                                width: Math.round(maxWidth * 0.7) + 'px'
-                            });
-                            dataLabel.shortened = true;
-                        }
-                    }
-
-                    dataLabel.dataLabelPosition = this.getDataLabelPosition(
-                        point,
-                        distance
+                const r = seriesCenter[2] / 2,
+                    dataLabelOptions = dataLabel.options,
+                    distance = relativeLength(
+                        dataLabelOptions?.distance || 0,
+                        r
                     );
-                    maxLabelDistance = Math.max(maxLabelDistance, distance);
 
-                } else {
-                    point.dataLabel = dataLabel.destroy();
-                    // Workaround to make pies destroy multiple datalabels
-                    // correctly. This logic needs rewriting to support multiple
-                    // datalabels fully. @todo
-                    if (point.dataLabels && point.dataLabels.length === 1) {
-                        delete point.dataLabels;
+                // Arrange points for collision detection
+                if (i === 0) {
+                    halves[point.half].push(point);
+                }
+
+                // Avoid long labels squeezing the pie size too far down
+                if (!defined(dataLabelOptions?.style?.width)) {
+                    if (dataLabel.getBBox().width > maxWidth) {
+                        dataLabel.css({
+                            // Use a fraction of the maxWidth to avoid wrapping
+                            // close to the end of the string.
+                            width: Math.round(maxWidth * 0.7) + 'px'
+                        });
+                        dataLabel.shortened = true;
                     }
                 }
+
+                dataLabel.dataLabelPosition = this.getDataLabelPosition(
+                    point,
+                    distance
+                );
+                maxLabelDistance = Math.max(maxLabelDistance, distance);
             });
         });
 
@@ -433,8 +418,7 @@ namespace ColumnDataLabel {
 
                     let x = 0,
                         y = naturalY,
-                        visibility: 'hidden'|'inherit' =
-                            point.visible === false ? 'hidden' : 'inherit';
+                        visibility: 'hidden'|'inherit' = 'inherit';
 
 
                     if (labelPosition) {
@@ -606,11 +590,7 @@ namespace ColumnDataLabel {
 
                         connector = point.connector;
 
-                        if (
-                            point.visible &&
-                            labelPosition &&
-                            labelPosition.distance > 0
-                        ) {
+                        if (labelPosition && labelPosition.distance > 0) {
                             isNew = !connector;
 
                             if (!connector) {
@@ -664,11 +644,8 @@ namespace ColumnDataLabel {
     function placeDataLabels(
         this: PieSeries
     ): void {
-        this.points.forEach(function (point: Point): void {
-            (
-                point.visible && point.dataLabels ||
-                []
-            ).forEach((dataLabel): void => {
+        this.points.forEach((point: Point): void => {
+            (point.dataLabels || []).forEach((dataLabel): void => {
                 const labelPosition = dataLabel.dataLabelPosition;
                 if (labelPosition) {
 
