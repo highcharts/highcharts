@@ -326,6 +326,7 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
+      - run: sudo apt-get update
       - browser-tools/install-chrome:
           chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
