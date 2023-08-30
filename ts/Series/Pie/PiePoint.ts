@@ -16,9 +16,8 @@
  *
  * */
 
-import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type CorePositionObject from '../../Core/Renderer/PositionObject';
+import type DataLabel from '../../Core/Series/DataLabel';
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePointOptions from './PiePointOptions';
 import type PieSeries from './PieSeries';
@@ -82,7 +81,7 @@ class PiePoint extends Point {
      * data label and the pie slice.
      * @private
      */
-    public getConnectorPath(dataLabel: SVGElement): void {
+    public getConnectorPath(dataLabel: SVGElement): SVGPath {
         const labelPosition = dataLabel.dataLabelPosition,
             options = dataLabel.options || {},
             predefinedShapes = this.connectorShapes;
@@ -279,14 +278,14 @@ class PiePoint extends Point {
  * */
 
 interface PiePoint {
-    connectorShapes: Record<string, PiePoint.ConnectorShapeFunction>;
+    connectorShapes: Record<string, DataLabel.ConnectorShapeFunction>;
 }
 extend(PiePoint.prototype, {
     connectorShapes: {
         // only one available before v7.0.0
         fixedOffset: function (
-            labelPosition: PiePoint.PositionObject,
-            connectorPosition: PiePoint.LabelConnectorPositionObject,
+            labelPosition: DataLabel.PositionObject,
+            connectorPosition: DataLabel.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
             const breakAt = connectorPosition.breakAt,
@@ -317,8 +316,8 @@ extend(PiePoint.prototype, {
         },
 
         straight: function (
-            labelPosition: PiePoint.PositionObject,
-            connectorPosition: PiePoint.LabelConnectorPositionObject
+            labelPosition: DataLabel.PositionObject,
+            connectorPosition: DataLabel.LabelConnectorPositionObject
         ): SVGPath {
             const touchingSliceAt = connectorPosition.touchingSliceAt;
 
@@ -331,8 +330,8 @@ extend(PiePoint.prototype, {
 
         crookedLine: function (
             this: PiePoint,
-            labelPosition: PiePoint.PositionObject,
-            connectorPosition: PiePoint.LabelConnectorPositionObject,
+            labelPosition: DataLabel.PositionObject,
+            connectorPosition: DataLabel.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
             const { breakAt, touchingSliceAt } = connectorPosition,
@@ -398,32 +397,6 @@ namespace PiePoint {
      *  Declarations
      *
      * */
-
-    export interface ConnectorShapeFunction {
-        (...args: Array<any>): SVGPath;
-    }
-
-    export interface LabelConnectorPositionObject {
-        breakAt: CorePositionObject;
-        touchingSliceAt: CorePositionObject;
-    }
-
-    export interface LabelPositionObject {
-        alignment: AlignValue;
-        attribs: SVGAttributes;
-        bottom?: number;
-        connectorPosition: LabelConnectorPositionObject;
-        computed: Record<string, undefined|number>;
-        distance: number;
-        natural: CorePositionObject;
-        posAttribs: SVGAttributes;
-        sideOverflow?: number;
-        top?: number;
-    }
-
-    export interface PositionObject extends CorePositionObject {
-        alignment: AlignValue;
-    }
 
     export interface TranslationAttributes extends SVGAttributes {
         translateX: number;

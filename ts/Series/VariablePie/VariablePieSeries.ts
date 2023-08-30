@@ -17,7 +17,7 @@
  *  Imports
  *
  * */
-
+import type DataLabel from '../../Core/Series/DataLabel';
 import type VariablePiePoint from './VariablePiePoint';
 import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -27,7 +27,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import PiePoint from '../Pie/PiePoint';
 const {
     arrayMax,
     arrayMin,
@@ -309,7 +308,7 @@ class VariablePieSeries extends PieSeries {
     getDataLabelPosition(
         point: VariablePiePoint,
         distance: number
-    ): any {
+    ): DataLabel.LabelPositionObject {
         const { center, options } = this,
             angle = point.angle || 0,
             pointRadius = this.radii[point.index],
@@ -351,8 +350,7 @@ class VariablePieSeries extends PieSeries {
                     x: center[0] + pointRadiusX,
                     y: center[1] + pointRadiusY
                 }
-            },
-            posAttribs: {}
+            }
         };
     }
 

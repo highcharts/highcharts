@@ -15,7 +15,6 @@
  *  Imports
  *
  * */
-
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePoint from './PiePoint';
 import type PieSeries from './PieSeries';
@@ -49,7 +48,7 @@ const {
 
 declare module '../../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
-        dataLabelPosition?: PiePoint.LabelPositionObject;
+        dataLabelPosition?: DataLabel.LabelPositionObject;
     }
 }
 
@@ -184,7 +183,7 @@ namespace ColumnDataLabel {
         this: PieSeries,
         point: PiePoint,
         distance: number
-    ): PiePoint.LabelPositionObject {
+    ): DataLabel.LabelPositionObject {
         const center = this.center,
             r = center[2] / 2,
             angle = point.angle || 0,
@@ -228,9 +227,7 @@ namespace ColumnDataLabel {
                     y: center[1] + radiusY
                 }
             },
-            distance,
-            posAttribs: {},
-            attribs: {}
+            distance
         };
     }
 
@@ -261,7 +258,6 @@ namespace ColumnDataLabel {
         let connector,
             dataLabelWidth,
             labelHeight: number,
-            visibility,
             maxLabelDistance = 0;
 
         // Get out if not enabled
@@ -508,21 +504,19 @@ namespace ColumnDataLabel {
                             align: labelPosition.alignment
                         };
 
-                        labelPosition.posAttribs.x = (
-                            x +
-                            (dataLabelOptions.x || 0) + // (#12985)
-                            (({
-                                left: connectorPadding,
-                                right: -connectorPadding
-                            } as any)[labelPosition.alignment] || 0)
-                        );
+                        labelPosition.posAttribs = {
+                            x: x +
+                                (dataLabelOptions.x || 0) + // (#12985)
+                                (({
+                                    left: connectorPadding,
+                                    right: -connectorPadding
+                                } as any)[labelPosition.alignment] || 0),
 
-                        labelPosition.posAttribs.y = (
-                            y +
-                            (dataLabelOptions.y || 0) - // (#12985)
-                            // Vertically center
-                            dataLabel.getBBox().height / 2
-                        );
+                            y: y +
+                                (dataLabelOptions.y || 0) - // (#12985)
+                                // Vertically center
+                                dataLabel.getBBox().height / 2
+                        };
 
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y;
@@ -598,20 +592,13 @@ namespace ColumnDataLabel {
 
 
             this.points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel, i): void => {
+                (point.dataLabels || []).forEach((dataLabel): void => {
                     // #8864: every connector can have individual options
                     const {
                             connectorColor,
                             connectorWidth = 1
                         } = (dataLabel.options || {}) as PieDataLabelOptions,
                         labelPosition = dataLabel.dataLabelPosition;
-
-                    if (i > 0) {
-                        // @todo: second set of data labels destroy connector.
-                        // The connector prop must sit on the label itself, not
-                        // the point.
-                        return;
-                    }
 
                     // Draw the connector
                     if (connectorWidth) {
@@ -624,11 +611,9 @@ namespace ColumnDataLabel {
                             labelPosition &&
                             labelPosition.distance > 0
                         ) {
-                            visibility = labelPosition.attribs.visibility;
-
                             isNew = !connector;
 
-                            if (isNew) {
+                            if (!connector) {
                                 point.connector = connector = chart.renderer
                                     .path()
                                     .addClass(
@@ -655,10 +640,12 @@ namespace ColumnDataLabel {
                                     });
                                 }
                             }
-                            (connector as any)[isNew ? 'attr' : 'animate']({
+                            connector[isNew ? 'attr' : 'animate']({
                                 d: point.getConnectorPath(dataLabel)
                             });
-                            (connector as any).attr('visibility', visibility);
+                            connector.attr({
+                                visibility: labelPosition.attribs?.visibility
+                            });
 
                         } else if (connector) {
                             point.connector = connector.destroy();

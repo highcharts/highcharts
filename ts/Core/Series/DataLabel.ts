@@ -16,10 +16,11 @@
  *
  * */
 
-import type AlignObject from '../Renderer/AlignObject';
+import type { AlignObject, AlignValue } from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
+import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type PiePoint from '../../Series/Pie/PiePoint';
 import type Point from './Point';
@@ -27,6 +28,7 @@ import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -100,7 +102,7 @@ declare module './SeriesLike' {
         getDataLabelPosition(
             point: PiePoint,
             distance: number
-        ): PiePoint.LabelPositionObject;
+        ): DataLabel.LabelPositionObject;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -179,6 +181,32 @@ namespace DataLabel {
             point: Point,
             dataLabel: SVGElement
         ): number;
+    }
+
+    export interface ConnectorShapeFunction {
+        (...args: Array<any>): SVGPath;
+    }
+
+    export interface LabelConnectorPositionObject {
+        breakAt: CorePositionObject;
+        touchingSliceAt: CorePositionObject;
+    }
+
+    export interface LabelPositionObject {
+        alignment: AlignValue;
+        attribs?: SVGAttributes;
+        bottom?: number;
+        connectorPosition: LabelConnectorPositionObject;
+        computed: Record<string, undefined|number>;
+        distance: number;
+        natural: CorePositionObject;
+        posAttribs?: SVGAttributes;
+        sideOverflow?: number;
+        top?: number;
+    }
+
+    export interface PositionObject extends CorePositionObject {
+        alignment: AlignValue;
     }
 
     /* *
