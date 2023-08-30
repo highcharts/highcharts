@@ -20,6 +20,7 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorType from '../../Core/Color/ColorType';
+import type DataLabel from '../../Core/Series/DataLabel';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
@@ -345,7 +346,7 @@ class FunnelSeries extends PieSeries {
     getDataLabelPosition(
         point: FunnelPoint,
         distance: number
-    ): any {
+    ): DataLabel.LabelPositionObject {
 
         const y = point.plotY || 0,
             x = this.getX(y, !!point.half, point);
@@ -374,8 +375,7 @@ class FunnelSeries extends PieSeries {
                     x,
                     y
                 }
-            },
-            posAttribs: {}
+            }
         };
     }
 
