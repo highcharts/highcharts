@@ -29,7 +29,7 @@ connector: {
     }
 }
 ```
-The modifier is modifing the `table.modified` property of the connector, which leaves the original data unchanged, so that there is a way of restoring the original data if needed.
+The modifier modifies the `table.modified` property of the connector, which leaves the original data unchanged so that there is a way of restoring the original data if needed.
 
 ### What does each of the modifiers do?
 
