@@ -4,12 +4,12 @@ describe('KPI Component test', () => {
     });
 
     it('KPI Component should have a last value of the point when connector attached.', () => {
-        cy.get('#kpi  .highcharts-dashboards-component-kpi-value').as('kpiConnector');
-        cy.get('#kpi-2  .highcharts-dashboards-component-kpi-value').as('kpi-val');
-            cy.get('@kpiConnector').should('be.visible')
+        cy.get('#kpi .highcharts-dashboards-component-kpi-value')
+            .should('be.visible')
             .should('have.text', 1200);
 
-            cy.get('@kpi-val').should('be.visible')
+        cy.get('#kpi-2 .highcharts-dashboards-component-kpi-value')
+            .should('be.visible')
             .should('have.text', 'OTHER_VALUE');
     });
 
