@@ -1,29 +1,24 @@
-// Substring template helper for the responsive labels
-//Highcharts.Templating.helpers.substr = (s, from, length) =>
-//    s.substr(from, length);
-
 // Create the chart
 Highcharts.chart('container', {
 
     title: {
-        text: 'Days with rain and temperature combinations',
+        text: 'Riskmap',
         style: {
             fontSize: '1em'
         }
     },
 
     xAxis: {
-        categories: ['0mm', '1-5mm', '5-10mm', '10-20mm', '>20mm'],
+        categories: ['Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'],
         min: 0,
         max: 4
     },
 
     yAxis: {
-        categories: ['>25°C', '15-25°C', '5-15°C', '<5°C'],
+        categories: ['Insignificant', 'Minor', 'Moderate', 'Major', 'Critical'],
         title: null,
-        reversed: true,
         min: 0,
-        max: 3
+        max: 4
     },
 
     chart: {
@@ -32,18 +27,8 @@ Highcharts.chart('container', {
         plotBorderWidth: 1
     },
 
-    accessibility: {
-        point: {
-            descriptionFormat: '{(add index 1)}. ' +
-                '{series.xAxis.categories.(x)} sales ' +
-                '{series.yAxis.categories.(y)}, {value}.'
-        }
-    },
-
     tooltip: {
-        format: '<b>{point.z}</b> days with<br>' +
-            '<b>{series.xAxis.categories.(point.x)}</b> rain and<br>' +
-            '<b>{series.yAxis.categories.(point.y)}</b> temperature'
+        format: '<b>{point.z}</b> Vulnerabilities'
     },
     colorAxis: {
         stops: [
@@ -68,15 +53,16 @@ Highcharts.chart('container', {
     },
 
     series: [{
+        // Heatmap
         type: 'heatmap',
-        name: 'Sales per employee',
+        name: 'Criticality of data',
         borderWidth: 1,
         color: '#FFFFFF',
-        data: [[0, 0, 8], [0, 1, 10], [0, 2, 8], [0, 3, 6],
-            [1, 0, 7], [1, 1, 8], [1, 2, 7], [1, 3, 3],
-            [2, 0, 6], [2, 1, 6], [2, 2, 5], [2, 3, 2],
-            [3, 0, 5], [3, 1, 4], [3, 2, 3], [3, 3, 1],
-            [4, 0, 4], [4, 1, 2], [4, 2, 1], [4, 3, 0]],
+        data: [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0], [4, 4, 0],
+            [0, 3, 4], [1, 3, 3], [2, 3, 2], [3, 3, 1], [4, 3, 0],
+            [0, 2, 6], [1, 2, 5], [2, 2, 4], [3, 2, 2], [4, 2, 1],
+            [0, 1, 8], [1, 1, 7], [2, 1, 6], [3, 1, 5], [4, 1, 3],
+            [0, 0, 10], [1, 0, 10], [2, 0, 8], [3, 0, 6], [4, 0, 5]],
         dataLabels: {
             enabled: false
         },
@@ -88,12 +74,12 @@ Highcharts.chart('container', {
 
     {
         type: 'bubble',
-        name: 'Sales per employee',
-        data: [[0, 0, 7], [0, 1, 15], [0, 2, 12], [0, 3, 23],
-            [1, 0, 2], [1, 1, 21], [1, 2, 31], [1, 3, 7],
-            [2, 0, 3], [2, 1, 21], [2, 2, 15], [2, 3, 3],
-            [3, 0, 4], [3, 1, 32], [3, 2, 44], [3, 3, 13],
-            [4, 0, 5], [4, 1, 20], [4, 2, 35], [4, 3, 23]],
+        name: 'Vulnerabilities',
+        data: [[0, 4, 2], [1, 4, 1], [2, 4, null], [3, 4, null], [4, 4, 1],
+            [0, 3, 3], [1, 3, null], [2, 3, 5], [3, 3, 7], [4, 3, null],
+            [0, 2, 8], [1, 2, 2], [2, 2, 3], [3, 2, null], [4, 2, 1],
+            [0, 1, 3], [1, 1, 3], [2, 1, 12], [3, 1, null], [4, 1, null],
+            [0, 0, 5], [1, 0, null], [2, 0, 2], [3, 0, 6], [4, 0, 8]],
         minSize: 12,
         colorAxis: false,
         color: '#000000',
