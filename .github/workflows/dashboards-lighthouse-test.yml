@@ -32,12 +32,34 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            github.rest.issues.createComment({
+            const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'test comment please ignore'
-            })
+              repo: context.repo.repo
+            });
+
+            const commentToUpdate = comments.find((comment) =>
+              comment.body.startsWith('## Benchmark report')
+            );
+
+            if (commentToUpdate) {
+              github.rest.issues.updateComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: `## Benchmark report
+                  This has ~~not~~ been replaced`
+              });
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## Benchmark report
+                  This has not been replaced`
+              });
+            }
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
