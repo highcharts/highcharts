@@ -47,7 +47,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: comment.id,
+                comment_id: commentToUpdate.id,
                 body: `## Benchmark report
                 This has ~~not~~ been replaced`
               });
