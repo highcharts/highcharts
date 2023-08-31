@@ -46,7 +46,6 @@ const {
     fireEvent,
     isArray,
     isNumber,
-    isObject,
     isString,
     merge,
     pick,
@@ -1799,34 +1798,29 @@ class Tooltip {
                 label.width,
                 label.height,
                 point
-            );
+            ),
+            renderer = this.renderer;
+
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
-        // Set the renderer size dynamically to prevent document size to change
-        if (this.outside && container) {
-            const shadowOptions = options.shadow;
-            let offsetY = 1,
-                offsetX = 1;
+        // Set the renderer size dynamically to prevent document size to change.
+        // Renderer only exists when tooltip is outside.
+        if (renderer && container) {
             // Corrects positions, occurs with tooltip positioner (#16944)
             if (options.positioner) {
                 pos.x += left - distance;
                 pos.y += top - distance;
             }
 
-            // Pick correct shadow offset
-            if (isObject(shadowOptions)) {
-                offsetX = pick(shadowOptions.offsetX, 1);
-                offsetY = pick(shadowOptions.offsetY, 1);
-            }
+            // Pad it by the border width and distance. Add 2 to make room for
+            // the default shadow (#19314).
+            pad = (options.borderWidth || 0) + 2 * distance + 2;
 
-            pad = (options.borderWidth || 0) + 2 * distance;
-            // Count in shadow offset to avoid cutting it off, #19314
-            // Offset is multiplied by 2 as a safe number for lower resolutions
-            (this.renderer as any).setSize(
-                label.width + offsetX * 2 + pad,
-                label.height + offsetY * 2 + pad,
+            renderer.setSize(
+                label.width + pad,
+                label.height + pad,
                 false
             );
 
@@ -1843,10 +1837,10 @@ class Tooltip {
             anchorY += top - pos.y;
         }
 
-        // do the move
+        // Do the move
         this.move(
             Math.round(pos.x),
-            Math.round(pos.y || 0), // can be undefined (#3977)
+            Math.round(pos.y || 0), // Can be undefined (#3977)
             anchorX,
             anchorY
         );
