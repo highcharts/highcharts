@@ -311,9 +311,9 @@ class VariablePieSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const { center, options } = this,
             angle = point.angle || 0,
-            pointRadius = this.radii[point.index],
-            pointRadiusX = Math.cos(angle) * pointRadius,
-            pointRadiusY = Math.sin(angle) * pointRadius,
+            r = this.radii[point.index],
+            x = center[0] + Math.cos(angle) * r,
+            y = center[1] + Math.sin(angle) * r,
             connectorOffset = (options.slicedOffset || 0) +
                 (options.borderWidth || 0),
             // Set the anchor point for data labels. Use point.labelDistance
@@ -329,8 +329,8 @@ class VariablePieSeries extends PieSeries {
             natural: {
                 // Initial position of the data label - it's utilized for
                 // finding the final position for the label
-                x: center[0] + pointRadiusX + Math.cos(angle) * distance,
-                y: center[1] + pointRadiusY + Math.sin(angle) * distance
+                x: x + Math.cos(angle) * distance,
+                y: y + Math.sin(angle) * distance
             },
             computed: {
                 // Used for generating connector path - initialized later in
@@ -341,14 +341,12 @@ class VariablePieSeries extends PieSeries {
             alignment: point.half ? 'right' : 'left',
             connectorPosition: {
                 breakAt: { // Used in connectorShapes.fixedOffset
-                    x: center[0] + pointRadiusX +
-                        Math.cos(angle) * finalConnectorOffset,
-                    y: center[1] + pointRadiusY +
-                        Math.sin(angle) * finalConnectorOffset
+                    x: x + Math.cos(angle) * finalConnectorOffset,
+                    y: y + Math.sin(angle) * finalConnectorOffset
                 },
                 touchingSliceAt: { // Middle of the arc
-                    x: center[0] + pointRadiusX,
-                    y: center[1] + pointRadiusY
+                    x,
+                    y
                 }
             }
         };
