@@ -62,7 +62,7 @@ dataModifier: {
     type: 'Invert'
 }
 ```
-* Math - This is the only modifier, that comes in the seperate module. It allows to perform the complex math calculations, and add columns of values that are calculated based on the existing values. It uses the commands similar to the those, that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](<link to mathmodifier article>).
+* Math - This is the only modifier, that comes in the separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those, that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](<link to mathmodifier article>).
 Example:
 ```javascript
 dataModifier: {
