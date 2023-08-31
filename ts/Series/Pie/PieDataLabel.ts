@@ -184,47 +184,40 @@ namespace ColumnDataLabel {
         point: PiePoint,
         distance: number
     ): DataLabel.LabelPositionObject {
-        const center = this.center,
+        const { center, options } = this,
             r = center[2] / 2,
             angle = point.angle || 0,
-            radiusX = Math.cos(angle) * r,
-            radiusY = Math.sin(angle) * r,
+            cosAngle = Math.cos(angle),
+            sinAngle = Math.sin(angle),
+            x = center[0] + cosAngle * r,
+            y = center[1] + sinAngle * r,
             finalConnectorOffset = Math.min(
-                (this.options.slicedOffset || 0) +
-                    (this.options.borderWidth || 0),
+                (options.slicedOffset || 0) + (options.borderWidth || 0),
                 distance / 5
             ); // #1678
         return {
             natural: {
-                // Initial position of the data label - it's
-                // utilized for finding the final position for the
-                // label
-                x: center[0] + radiusX + Math.cos(angle) *
-                    distance,
-                y: center[1] + radiusY + Math.sin(angle) *
-                    distance
+                // Initial position of the data label - it's utilized for
+                // finding the final position for the label
+                x: x + cosAngle * distance,
+                y: y + sinAngle * distance
             },
             computed: {
-                // Used for generating connector path -
-                // initialized later in drawDataLabels function
-                // x: undefined,
-                // y: undefined
+                // Used for generating connector path - initialized later in
+                // drawDataLabels function x: undefined, y: undefined
             },
             // Left - pie on the left side of the data label
             // Right - pie on the right side of the data label
             // Center - data label overlaps the pie
-            alignment: distance < 0 ?
-                'center' : point.half ? 'right' : 'left',
+            alignment: distance < 0 ? 'center' : point.half ? 'right' : 'left',
             connectorPosition: {
                 breakAt: { // Used in connectorShapes.fixedOffset
-                    x: center[0] + radiusX + Math.cos(angle) *
-                        finalConnectorOffset,
-                    y: center[1] + radiusY + Math.sin(angle) *
-                        finalConnectorOffset
+                    x: x + cosAngle * finalConnectorOffset,
+                    y: y + sinAngle * finalConnectorOffset
                 },
                 touchingSliceAt: { // Middle of the arc
-                    x: center[0] + radiusX,
-                    y: center[1] + radiusY
+                    x,
+                    y
                 }
             },
             distance

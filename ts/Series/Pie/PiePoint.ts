@@ -34,6 +34,7 @@ const {
     defined,
     extend,
     isNumber,
+    isString,
     pick,
     relativeLength
 } = U;
@@ -83,29 +84,24 @@ class PiePoint extends Point {
      */
     public getConnectorPath(dataLabel: SVGElement): SVGPath {
         const labelPosition = dataLabel.dataLabelPosition,
-            options = dataLabel.options || {},
-            predefinedShapes = this.connectorShapes;
+            options = (dataLabel.options || {}) as PieDataLabelOptions,
+            connectorShape = options.connectorShape,
+            shapeFunc = (
+                this.connectorShapes[connectorShape as string] || connectorShape
+            );
 
-        let connectorShape = (options as any).connectorShape;
-
-        // Find out whether to use the predefined shape
-        if (predefinedShapes[connectorShape]) {
-            connectorShape = predefinedShapes[connectorShape];
-        }
-
-        return connectorShape.call(this, {
+        return labelPosition && shapeFunc.call(this, {
             // Pass simplified label position object for user's convenience
-            x: (labelPosition as any).computed.x,
-            y: (labelPosition as any).computed.y,
-            alignment: (labelPosition as any).alignment
-        }, (labelPosition as any).connectorPosition, options);
+            ...labelPosition.computed,
+            alignment: labelPosition.alignment
+        }, labelPosition.connectorPosition, options) || [];
     }
 
     /**
      * @private
      */
     public getTranslate(): PiePoint.TranslationAttributes {
-        return this.sliced ? (this.slicedTranslation as any) : {
+        return this.sliced && this.slicedTranslation || {
             translateX: 0,
             translateY: 0
         };
@@ -338,8 +334,7 @@ extend(PiePoint.prototype, {
                 { series } = this,
                 [cx, cy, diameter] = series.center,
                 r = diameter / 2,
-                plotWidth = series.chart.plotWidth,
-                plotLeft = series.chart.plotLeft,
+                { plotLeft, plotWidth } = series.chart,
                 leftAligned = labelPosition.alignment === 'left',
                 { x, y } = labelPosition;
 
