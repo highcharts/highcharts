@@ -38,7 +38,7 @@ jobs:
               repo: context.repo.repo
             });
 
-            const commentToUpdate = comments.find((comment) =>
+            const commentToUpdate = Array.from(comments).find((comment) =>
               comment.body.startsWith('## Benchmark report')
             );
 
