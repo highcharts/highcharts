@@ -1,12 +1,19 @@
 // Create Dashboard
+const data = [
+    ['Day', 'EUR', 'Rate'],
+    [15, 11, 1.0876],
+    [16, 23, 1.0881],
+    [17, 15, 1.0829],
+    [18, 27, 1.0813],
+    [19, 13, 1.0808]
+];
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'EUR-USD',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: document.getElementById('csv').innerText,
-                firstRowAsNames: true,
+                data,
                 // Add MathModifier to create USD column with exchange valuta
                 dataModifier: {
                     type: 'Math',

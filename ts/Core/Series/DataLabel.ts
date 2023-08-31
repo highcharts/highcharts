@@ -838,11 +838,13 @@ namespace DataLabel {
                 // Destroy and remove the inactive ones
                 let j = dataLabels.length;
                 while (j--) {
-                    if (dataLabels[j].isActive) {
-                        dataLabels[j].isActive = false;
-                    } else {
-                        dataLabels[j].destroy();
+                    // The item can be undefined if a disabled data label is
+                    // succeeded by an enabled one (#19457)
+                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                        dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
+                    } else {
+                        dataLabels[j].isActive = false;
                     }
                 }
 

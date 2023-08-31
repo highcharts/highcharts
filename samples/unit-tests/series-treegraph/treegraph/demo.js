@@ -61,6 +61,29 @@ QUnit.test('Treegraph series',
             'The SVG element of the second point should be an image (#19173)'
         );
 
+        series.setData([{
+            id: 'A'
+        },  {
+            parent: 'A',
+            id: 'CCC'
+        }, {
+            parent: 'A',
+            id: 'DDD'
+        }]);
+
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-treegraph-series>.highcharts-point').length,
+            2,
+            'Correct amount of links after setData (#19524)'
+        );
+
+        assert.notOk(
+            series.links.find(
+                link => link.options.parent === 'A' && link.options.id === 'BBB'
+            ),
+            'Removed the link from A to BBB (#19524)'
+        );
+
         series.update({
             marker: {
                 radius: 20
