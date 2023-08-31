@@ -53,7 +53,10 @@ const createChart = async () => {
             align: 'right'
         },
 
-        colorAxis: {},
+        colorAxis: {
+            minColor: '#87c1c3',
+            maxColor: '#4ba5a6'
+        },
 
         series: [{
             states: {
