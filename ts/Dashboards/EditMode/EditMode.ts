@@ -42,7 +42,8 @@ const {
     addEvent,
     createElement,
     css,
-    merge
+    merge,
+    fireEvent
 } = U;
 
 /* *
@@ -342,6 +343,7 @@ class EditMode {
         }
 
         editMode.isInitialized = true;
+
     }
 
     /**
@@ -532,7 +534,8 @@ class EditMode {
      * @internal
      */
     public activate(): void {
-        const editMode = this;
+        const editMode = this,
+            eventsOptions = this.options.events;
 
         // Init edit mode.
         if (!editMode.isInitialized) {
@@ -558,6 +561,8 @@ class EditMode {
 
         editMode.active = true;
         editMode.isContextDetectionActive = true;
+
+        eventsOptions?.activate.call(editMode);
     }
 
     /**
@@ -566,7 +571,8 @@ class EditMode {
      */
     public deactivate(): void {
         const editMode = this,
-            dashboardCnt = editMode.board.container;
+            dashboardCnt = editMode.board.container,
+            eventsOptions = this.options.events;
 
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
@@ -602,6 +608,8 @@ class EditMode {
 
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
+
+        eventsOptions?.deactivate.call(editMode);
     }
 
     /**
@@ -1061,6 +1069,14 @@ namespace EditMode {
          * @internal
          */
         tools?: Tools;
+         /**
+         * Events attached to the component : `activated`, `deactivated`.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/ | Activated / Deactivated event }
+         */
+         events?: Record<string, Function>;
     }
 
     /**
