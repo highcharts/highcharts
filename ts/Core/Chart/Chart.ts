@@ -3519,7 +3519,7 @@ class Chart {
             });
             pointer.initiated = false; // #6804
 
-        } else { // else, zoom in on all axes
+        } else { // Else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (
                 axisData: Pointer.SelectDataObject
             ): void {
@@ -3527,7 +3527,7 @@ class Chart {
                     isXAxis = axis.isXAxis;
 
 
-                // don't zoom more than minRange
+                // Don't zoom more than minRange
                 if (
                     pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
                     (
@@ -3536,7 +3536,13 @@ class Chart {
                         chart.isInsidePlot(
                             pointer.mouseDownX - chart.plotLeft,
                             pointer.mouseDownY - chart.plotTop,
-                            { axis }
+                            {
+                                axis,
+                                // Ignore touch positions if pinched on mobile
+                                // #18062
+                                ignoreX: pointer.hasPinched,
+                                ignoreY: pointer.hasPinched
+                            }
                         )
                     ) || !defined(
                         chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
