@@ -10,10 +10,6 @@
     margin-top: 1em;
 }
 
-#csv {
-    display: none;
-}
-
 .highcharts-point {
     fill-opacity: 0.5;
 }
