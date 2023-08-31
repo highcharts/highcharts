@@ -96,6 +96,7 @@ module.exports = {
             'dashboards/data-mathmodifier',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
+            'dashboards/synchronize-components',
             'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [
