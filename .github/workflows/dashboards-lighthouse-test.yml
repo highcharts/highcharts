@@ -32,15 +32,13 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const comments = await github.rest.issues.listComments({
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo
             });
 
-            console.log(comments)
-
-            const commentToUpdate = Array.from(comments).find((comment) =>
+            const commentToUpdate = comments.find((comment) =>
               comment.body.startsWith('## Benchmark report')
             );
 
