@@ -6,11 +6,6 @@ Dashboards.board('container', {
             id: 'Population',
             type: 'CSV',
             options: {
-                dataTable: {
-                    aliases: {
-                        Town: 'City'
-                    }
-                },
                 csv,
                 firstRowAsNames: true
             }
