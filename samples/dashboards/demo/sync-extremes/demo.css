@@ -6,10 +6,6 @@
     fill: #f0f0f0;
 }
 
-#csv {
-    display: none;
-}
-
 #dashboard-col-2 .highcharts-line-series path {
     stroke-width: 0;
 }
