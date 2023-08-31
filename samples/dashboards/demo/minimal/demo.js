@@ -72,7 +72,8 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-2'
+                    id: 'dashboard-col-2',
+                    height: 323
                 }]
             }]
         }]
