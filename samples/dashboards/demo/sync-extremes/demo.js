@@ -1,16 +1,3 @@
-const chartOptions = {
-    xAxis: {
-        type: 'category'
-    },
-    chart: {
-        type: 'column',
-        zoomType: 'x'
-    },
-    title: {
-        text: ''
-    }
-};
-
 const csv = document.getElementById('csv').innerText;
 
 Dashboards.board('container', {
@@ -19,6 +6,11 @@ Dashboards.board('container', {
             id: 'Population',
             type: 'CSV',
             options: {
+                dataTable: {
+                    aliases: {
+                        Town: 'City'
+                    }
+                },
                 csv,
                 firstRowAsNames: true
             }
@@ -27,15 +19,33 @@ Dashboards.board('container', {
     gui: {
         layouts: [{
             rows: [{
-                cells: [
-                    { id: 'dashboard-col-0' },
-                    { id: 'dashboard-col-1' },
-                    { id: 'dashboard-col-2' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-0',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
+                }, {
+                    id: 'dashboard-col-1',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+
+                    }
+                }, {
+                    id: 'dashboard-col-2',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
+                }]
             }, {
-                cells: [
-                    { id: 'dashboard-col-3' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-3'
+                }]
             }]
         }]
     },
@@ -52,10 +62,42 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             Population: 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Millions',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
+            }
+        }
     },
     {
         cell: 'dashboard-col-1',
@@ -70,10 +112,42 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             'Metro Area(km2)': 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'km2',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
+            }
+        }
     },
     {
         cell: 'dashboard-col-2',
@@ -88,10 +162,46 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
+            City: 'x',
             'Highest Elevation(m)': 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                },
+                tooltip: {
+                    headerFormat: '{point.key}',
+                    format: '{y}'
+                }
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Meters',
+                align: 'left',
+                y: 0
+            },
+            legend: {
+                enabled: false
+            }
+        }
     },
     {
         cell: 'dashboard-col-3',

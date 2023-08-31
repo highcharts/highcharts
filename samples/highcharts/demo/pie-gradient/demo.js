@@ -1,4 +1,4 @@
-// Data retrieved from https://netmarketshare.com/
+// Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
 Highcharts.setOptions({
     colors: Highcharts.map(Highcharts.getOptions().colors, function (color) {
@@ -25,7 +25,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in April, 2022',
+        text: 'Registered private vehicles in Norway, by type of fuel, 2020',
         align: 'left'
     },
     tooltip: {
@@ -43,19 +43,17 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                connectorColor: 'silver'
+                connectorColor: 'rgba(128,128,128,0.5)'
             }
         }
     },
     series: [{
         name: 'Share',
         data: [
-            { name: 'Chrome', y: 73.24 },
-            { name: 'Edge', y: 12.93 },
-            { name: 'Firefox', y: 4.73 },
-            { name: 'Safari', y: 2.50 },
-            { name: 'Internet Explorer', y: 1.65 },
-            { name: 'Other', y: 4.93 }
+            { name: 'Petrol', y: 938899 },
+            { name: 'Diesel', y: 1229600 },
+            { name: 'Electricity', y: 325251 },
+            { name: 'Other', y: 238751 }
         ]
     }]
 });

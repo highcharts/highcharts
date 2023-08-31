@@ -37,12 +37,12 @@ Highcharts.chart('container', {
         }]
     }]
 }, function (chart) {
-    var treeGrid = chart.yAxis[0],
+    const treeGrid = chart.yAxis[0],
         ticks = treeGrid.ticks,
         // Nodes to collapse.
         ticksToCollapse = ['Node 1', 'Node 2'];
     Highcharts.objectEach(ticks, function (tick) {
-        var textStr = tick.label && tick.label.textStr,
+        const textStr = tick.label && tick.label.textStr,
             doCollapse = (Highcharts.inArray(textStr, ticksToCollapse) > -1);
         if (doCollapse) {
             // Pass in false to avoid a redraw.

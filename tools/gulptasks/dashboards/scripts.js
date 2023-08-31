@@ -59,6 +59,8 @@ async function dashboardsScripts() {
         // Fix masters
         fs.renameSync('js/masters-dashboards/', 'js/masters/');
 
+        const { release } = argv;
+
         // Assemble bundle
         await buildTool
             .getBuildScripts({
@@ -70,8 +72,12 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
+                product: 'Dashboards',
                 output: bundleTargetFolder,
-                version: (argv.release || '1.0.1')
+                version: (release || ''),
+                assetPrefix: release ?
+                    `https://code.highcharts.com/dashboards/${release}` :
+                    '/code'
             })
             .fnFirstBuild();
 

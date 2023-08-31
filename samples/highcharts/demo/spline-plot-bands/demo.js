@@ -1,4 +1,4 @@
-// Data retrieved from https://www.vikjavev.no/ver/#2022-06-13,2022-06-14
+// Data retrieved from https://www.vikjavev.no/ver/#2020-04-15,2020-04-16
 
 Highcharts.chart('container', {
     chart: {
@@ -13,7 +13,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: '30th of December, 2015 at two locations in Vik i Sogn, Norway',
+        text: '15th & 16th of April, 2020 at two locations in Vik i Sogn, Norway',
         align: 'left'
     },
     xAxis: {
@@ -136,23 +136,22 @@ Highcharts.chart('container', {
                 enabled: false
             },
             pointInterval: 3600000, // one hour
-            pointStart: Date.UTC(2015, 12, 30, 0, 0, 0)
+            pointStart: Date.UTC(2020, 3, 15, 0, 0, 0)
         }
     },
     series: [{
         name: 'Hestavollane',
-        data: [
-            11.1, 11.3, 11.7, 10.5, 13.5, 15.9, 18,
-            16.8, 17.7, 14.7, 15.0, 15.3, 15.5, 15.8,
-            15.9, 14.6, 13.2, 15.6, 19.9, 17.3, 16.4,
-            15, 13.4, 13.1, 12.5]
+        data: [5.4, 5.2, 5.7, 6.3, 5.2, 5.6, 6.1,
+            5.6, 5.9, 7.1, 8.6, 7.8, 8.6,
+            8.0, 9.7, 11.2, 12.5, 13.1, 10.6,
+            10.9, 8.9, 9.5, 7.5, 3.5, 4.2]
 
     }, {
         name: 'Vik',
-        data: [
-            0.7, 0.2, 0.1, 0.2, 0.3, 0.7, 0.3, 0.9,
-            1.2, 2.9, 2.2, 1.8, 1.7, 1.8, 1.7, 0.8,
-            2.3, 1.7, 0.9, 1, 0.9, 1.3, 1.4, 1.4, 1.3]
+        data: [0.2, 0.1, 0.1, 0.5, 0.3, 0.2, 0.1,
+            0.1, 0.1, 0.1, 0.2, 1.1, 1.3,
+            2.0, 1.5, 1.5, 1.5, 1.4, 1.7,
+            2.0, 2.9, 2.1, 2.1, 3.5, 2.9]
     }],
     navigation: {
         menuItemStyle: {

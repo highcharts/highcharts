@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             descriptionFormatter: function (point) {
-                var nodeName = point.toNode.name,
+                const nodeName = point.toNode.name,
                     nodeId = point.toNode.id,
                     nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
                     parentDesc = point.fromNode.id;
