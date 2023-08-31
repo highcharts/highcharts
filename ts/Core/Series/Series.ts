@@ -3537,10 +3537,10 @@ class Series {
             p2: Point
         ): void {
             const p1kdX = p1[kdX],
-                p2kdX = p2[kdX],
+                p2kdX = (p2 as any)[kdX],
                 x = (defined(p1kdX) && defined(p2kdX)) ? p1kdX - p2kdX : null,
                 p1kdY = p1[kdY],
-                p2kdY = p2[kdY],
+                p2kdY = (p2 as any)[kdY],
                 y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
                 radius = useRadius ? (p2.marker?.radius || 0) : 0;
 
@@ -3566,7 +3566,7 @@ class Series {
             setDistance(search, point);
 
             // Pick side based on distance to splitting point
-            const tdist = (search[axis] || 0) - (point[axis] || 0) +
+            const tdist = (search[axis] || 0) - ((point as any)[axis] || 0) +
                     (useRadius ? (point.marker?.radius || 0) : 0),
                 sideA = tdist < 0 ? 'left' : 'right',
                 sideB = tdist < 0 ? 'right' : 'left';
