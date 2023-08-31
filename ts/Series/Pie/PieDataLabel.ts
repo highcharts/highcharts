@@ -48,6 +48,7 @@ const {
 
 declare module '../../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
+        connector?: SVGElement;
         dataLabelPosition?: DataLabel.LabelPositionObject;
     }
 }
@@ -581,13 +582,13 @@ namespace ColumnDataLabel {
                     if (connectorWidth) {
                         let isNew;
 
-                        connector = point.connector;
+                        connector = dataLabel.connector;
 
                         if (labelPosition && labelPosition.distance > 0) {
                             isNew = !connector;
 
                             if (!connector) {
-                                point.connector = connector = chart.renderer
+                                dataLabel.connector = connector = chart.renderer
                                     .path()
                                     .addClass(
                                         'highcharts-data-label-connector ' +
@@ -600,19 +601,19 @@ namespace ColumnDataLabel {
                                         )
                                     )
                                     .add(series.dataLabelsGroup);
-
-
-                                if (!chart.styledMode) {
-                                    connector.attr({
-                                        'stroke-width': connectorWidth,
-                                        'stroke': (
-                                            connectorColor ||
-                                            point.color ||
-                                            Palette.neutralColor60
-                                        )
-                                    });
-                                }
                             }
+
+                            if (!chart.styledMode) {
+                                connector.attr({
+                                    'stroke-width': connectorWidth,
+                                    'stroke': (
+                                        connectorColor ||
+                                        point.color ||
+                                        Palette.neutralColor60
+                                    )
+                                });
+                            }
+
                             connector[isNew ? 'attr' : 'animate']({
                                 d: point.getConnectorPath(dataLabel)
                             });
@@ -621,7 +622,7 @@ namespace ColumnDataLabel {
                             });
 
                         } else if (connector) {
-                            point.connector = connector.destroy();
+                            dataLabel.connector = connector.destroy();
                         }
                     }
                 });

@@ -622,7 +622,8 @@ QUnit.test('Connector color of individual point (#8864).', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].connector.attr('stroke') === '#bada55',
+        chart.series[0].points[0].dataLabel.connector
+            .attr('stroke') === '#bada55',
         'Color applied to indiviudal connector.'
     );
 });
