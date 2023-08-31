@@ -1,8 +1,12 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/new-intraday.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/new-intraday.json'
+    ).then(response => response.json());
 
     // create the chart
     Highcharts.stockChart('container1', {
-
 
         title: {
             text: 'AAPL stock price by minute'
@@ -115,4 +119,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             threshold: null
         }]
     });
-});
+})();

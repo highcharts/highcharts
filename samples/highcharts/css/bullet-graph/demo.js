@@ -1,4 +1,4 @@
-var commonBulletOptions = {
+const commonBulletOptions = {
     chart: {
         inverted: true,
         marginLeft: 135,

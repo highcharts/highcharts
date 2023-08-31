@@ -1,5 +1,5 @@
 // Prepare demo data
-var data = [{
+const data = [{
     'hc-key': 'ca-5682',
     color: 'red'
 },

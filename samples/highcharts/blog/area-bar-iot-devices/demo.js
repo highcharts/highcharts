@@ -64,9 +64,9 @@ Highcharts.setOptions({
 });
 
 
-var years = ['', '`13', '`14', '`15', '`16'];
+const years = ['', '`13', '`14', '`15', '`16'];
 
-var optionsOne = {
+const optionsOne = {
     xAxis: {
         categories: [{
             name: 'Bluetooth Headset',
@@ -112,7 +112,7 @@ var optionsOne = {
     }
 };
 
-var chartOne = {
+let chartOne = {
     chart: {
         renderTo: 'chartspace',
         type: 'area'
@@ -140,7 +140,7 @@ var chartOne = {
     series: []
 };
 
-var optionsTwo = {
+const optionsTwo = {
     xAxis: {
         name: '',
         categories: ['Bluetooth Headset', 'Body Camera', 'Chest Strap', 'Head Mounted Display', 'Other', 'Smart Glasses', 'Smart Watch', 'Sports Watch', 'Wristband'],
@@ -160,7 +160,7 @@ var optionsTwo = {
     }
 };
 
-var chartTwo = {
+let chartTwo = {
     chart: {
         renderTo: 'dtschart',
         type: 'column'
@@ -213,17 +213,17 @@ var chartTwo = {
 fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv').then(function (response) {
     return response.text();
 }).then(function (result) {
-    var lines = result.split('\n');
-    var salesNumbers = [];
-    var averageDaysToShip = [];
-    var percReturned = [];
+    const lines = result.split('\n');
+    const salesNumbers = [];
+    const averageDaysToShip = [];
+    const percReturned = [];
 
     lines.forEach(function (line, lineNo) {
-        var items = line.split(',');
+        const items = line.split(',');
         if (lineNo === 0) {
             return true;
         }
-        var totalReturned = parseFloat(items[1] * parseFloat(items[4]) / 100);
+        const totalReturned = parseFloat(items[1] * parseFloat(items[4]) / 100);
 
         if ((lineNo + 3) % 4 === 0) {
             salesNumbers.push(parseFloat(null));
@@ -242,17 +242,17 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-device
     });
 
 
-    var salesObject = {
+    const salesObject = {
         name: 'total devices sold',
         data: salesNumbers
     };
 
-    var returnsObject = {
+    const returnsObject = {
         name: 'devices returned',
         data: percReturned
     };
 
-    var dtsObject = {
+    const dtsObject = {
         name: 'Days to ship',
         data: averageDaysToShip,
         color: '#FED001',
@@ -270,10 +270,10 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-device
     chartTwo.series.push(dtsObject);
 
     chartOne = Highcharts.merge(optionsOne, chartOne);
-    var chartOneRendered = new Highcharts.Chart(chartOne);
+    const chartOneRendered = new Highcharts.Chart(chartOne);
 
     chartTwo = Highcharts.merge(optionsTwo, chartTwo);
-    var chartTwoRendere = new Highcharts.Chart(chartTwo);
+    const chartTwoRendere = new Highcharts.Chart(chartTwo);
 
     console.log(chartOne);
     console.log(chartTwo);

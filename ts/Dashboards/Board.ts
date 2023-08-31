@@ -336,23 +336,11 @@ class Board implements Serializable<Board, Board.JSON> {
         if (options.layoutsJSON && !this.layouts.length) {
             this.setLayoutsFromJSON(options.layoutsJSON);
         }
-
-        // Init components from options.
-        if (options.components) {
-            this.setComponents(options.components);
-        }
+        let componentPromises = (options.components) ?
+            this.setComponents(options.components) : [];
 
         // Init events.
         this.initEvents();
-
-        const componentPromises: Array<Promise<Component>> = [],
-            mountedComponents = this.mountedComponents;
-
-        for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
-            componentPromises.push(
-                mountedComponents[i].component.initConnector()
-            );
-        }
 
         if (async) {
             return Promise.all(componentPromises).then((): Board => this);
@@ -467,10 +455,12 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public setComponents(
         components: Array<Partial<ComponentType['options']>>
-    ): void {
+    ): Array<Promise<Component|void>> {
+        const promises = [];
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            Bindings.addComponent(components[i]);
+            promises.push(Bindings.addComponent(components[i]));
         }
+        return promises;
     }
 
     /**

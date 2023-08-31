@@ -1,11 +1,13 @@
 fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2d63d6eef882260cb6/samples/data/worldbank-norway.json').then(function (response) {
     return response.json();
 }).then(function (result) {
+
     // set some variable to host data
-    var arrayString = [],
+    const arrayString = [],
         yearList = [],
-        arrayFinal = [],
-        countryName,
+        arrayFinal = [];
+
+    let countryName,
         indicatorName;
 
     result[1].forEach(function (data) {
@@ -20,7 +22,7 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
     });
 
     // querry send string that we need to convert into numbers
-    for (var i = 0; i < arrayString.length; i++) {
+    for (let i = 0; i < arrayString.length; i++) {
         if (arrayString[i] !== null) {
             arrayFinal.push(parseFloat(arrayString[i]));
         } else {

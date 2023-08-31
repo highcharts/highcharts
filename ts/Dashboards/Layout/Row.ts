@@ -377,17 +377,6 @@ class Row extends GUIElement {
             this.container as HTMLDOMElement,
             height
         );
-
-        // redraw component inside the cell
-        if (cells) {
-            /* for (let i = 0, iEnd = cells.length; i < iEnd; ++i) { */
-            /*     if (cells[i] && cells[i].mountedComponent) { */
-            /*         (cells[i] as any).mountedComponent.resize(null); */
-            /*     } */
-            /* } */
-        } else {
-            // nested layouts
-        }
     }
 
     // Get cell index from the row.cells array.

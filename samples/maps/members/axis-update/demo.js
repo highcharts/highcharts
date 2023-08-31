@@ -8,10 +8,8 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
     ).then(response => response.json());
 
-    var chart;
-
     // Initialize the chart
-    chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Update the color axis'
