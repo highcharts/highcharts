@@ -38,12 +38,13 @@ jobs:
               repo: context.repo.repo
             });
 
+            console.log(comments)
+
             const commentToUpdate = Array.from(comments).find((comment) =>
               comment.body.startsWith('## Benchmark report')
             );
 
             if (commentToUpdate) {
-              console.log(commentToUpdate);
               github.rest.issues.updateComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
