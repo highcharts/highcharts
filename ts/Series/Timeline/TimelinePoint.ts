@@ -82,8 +82,8 @@ class TimelinePoint extends Series.prototype.pointClass {
     public alignConnector(): void {
         let point = this,
             series = point.series,
-            connector: SVGElement = point.connector as any,
             dataLabel: SVGElement = point.dataLabel as any,
+            connector: SVGElement = dataLabel.connector as any,
             dlOptions = (dataLabel.options || {}) as TimelineDataLabelOptions,
             connectorWidth = dlOptions.connectorWidth || 0,
             chart = point.series.chart,
@@ -125,21 +125,23 @@ class TimelinePoint extends Series.prototype.pointClass {
 
     public drawConnector(): void {
         const point = this,
-            series = point.series;
+            { dataLabel, series } = point;
 
-        if (!point.connector) {
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .attr({
-                    zIndex: -1
-                })
-                .add(point.dataLabel);
-        }
+        if (dataLabel) {
+            if (!dataLabel.connector) {
+                dataLabel.connector = series.chart.renderer
+                    .path(point.getConnectorPath())
+                    .attr({
+                        zIndex: -1
+                    })
+                    .add(dataLabel);
+            }
 
-        if (point.series.chart.isInsidePlot( // #10507
-            (point.dataLabel as any).x, (point.dataLabel as any).y
-        )) {
-            point.alignConnector();
+            if (point.series.chart.isInsidePlot( // #10507
+                dataLabel.x || 0, dataLabel.y || 0
+            )) {
+                point.alignConnector();
+            }
         }
     }
 

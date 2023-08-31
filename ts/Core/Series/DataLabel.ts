@@ -60,8 +60,6 @@ const {
 declare module './PointLike' {
     interface PointLike {
         bottom?: number;
-        connector?: SVGElement;
-        connectors?: Array<SVGElement>;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
         dataLabelOnNull?: boolean;
@@ -611,9 +609,6 @@ namespace DataLabel {
                             (!point.isNull || point.dataLabelOnNull) &&
                             applyFilter(point, labelOptions)
                         ),
-                        connector = point.connectors ?
-                            point.connectors[i] :
-                            point.connector,
                         style = labelOptions.style || {},
                         labelDistance = labelOptions.distance;
 
@@ -731,18 +726,6 @@ namespace DataLabel {
                     ) {
                         dataLabel = void 0;
                         isNew = true;
-                        if (connector && point.connector) {
-                            point.connector = point.connector.destroy();
-                            if (point.connectors) {
-                                // Remove point.connectors if this was the last
-                                // one
-                                if (point.connectors.length === 1) {
-                                    delete point.connectors;
-                                } else {
-                                    delete point.connectors[i];
-                                }
-                            }
-                        }
                     }
 
                     // Individual labels are disabled if the are explicitly
