@@ -45,7 +45,7 @@ dataModifier: {
     }]
 }
 ```
-* Range - Allows to filter the data, which are exeeding the min and max properties. It works both for numbers as well as alphanumerical values. the `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is the example:
+* Range - Allows filtering the data, which are exceeding the min and max properties. It works both for numbers as well as alphanumerical values. the `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
 ```javascript
 dataModifier: {
     type: 'Range',
