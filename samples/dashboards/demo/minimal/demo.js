@@ -1,232 +1,219 @@
-const csvData = document.getElementById('csv').innerText;
-
 Dashboards.board('container', {
-    dataPool: {
-        connectors: [{
-            id: 'Vitamin',
-            type: 'CSV',
-            options: {
-                csv: csvData
-            }
-        }]
-    },
-    editMode: {
-        enabled: true,
-        contextMenu: {
-            enabled: true,
-            items: ['editMode']
-        }
-    },
     gui: {
-        layouts: [{
-            rows: [{
-                cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '30%'
-                        }
+        layouts: [
+            {
+                rows: [
+                    {
+                        id: 'row-1',
+                        cells: [
+                            {
+                                id: 'dashboard-row-1-cell-1',
+                                height: '160px'
+                            },
+                            {
+                                id: 'dashboard-row-1-cell-2',
+                                height: '160px'
+                            },
+                            {
+                                id: 'dashboard-row-1-cell-3',
+                                height: '160px'
+                            }
+                        ]
                     },
-                    layout: {
-                        rows: [{
-                            cells: [{
-                                id: 'kpi-vitamin-a',
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '100%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                height: 205
-                            }, {
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '100%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                id: 'kpi-iron',
-                                height: 205
-                            }]
-                        }]
+                    {
+                        cells: [
+                            {
+                                id: 'dashboard-row-2-cell-1'
+                            }
+                        ]
+                    },
+                    {
+                        cells: [
+                            {
+                                id: 'dashboard-row-3-cell-1',
+                                width: '2/3',
+                                height: '200px'
+                            },
+                            {
+                                id: 'dashboard-row-3-cell-2',
+                                height: '200px'
+                            }
+                        ]
                     }
-                }, {
-                    id: 'dashboard-col-0'
-                }, {
-                    id: 'dashboard-col-1'
-                }]
-            }, {
-                cells: [{
-                    id: 'dashboard-col-2'
-                }]
-            }]
-        }]
+                ]
+            }
+        ]
     },
-    components: [{
-        type: 'KPI',
-        cell: 'kpi-vitamin-a',
-        value: 900,
-        valueFormat: '{value}',
-        title: 'Vitamin A',
-        subtitle: 'daily recommended dose'
-    }, {
-        type: 'KPI',
-        cell: 'kpi-iron',
-        value: 8,
-        title: 'Iron',
-        valueFormat: '{value}',
-        subtitle: 'daily recommended dose'
-    }, {
-        cell: 'title',
-        type: 'HTML',
-        elements: [{
-            tagName: 'h1',
-            textContent: 'MicroElement amount in Foods'
-        }]
-    }, {
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        connector: {
-            id: 'Vitamin'
-        },
-        cell: 'dashboard-col-0',
-        type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
-        chartOptions: {
-            xAxis: {
-                type: 'category'
-            },
-            yAxis: {
-                title: {
-                    text: 'mcg'
+    components: [
+        {
+            type: 'KPI',
+            cell: 'dashboard-row-1-cell-1',
+            title: 'Total balance',
+            value: 1430,
+            valueFormat: '$ {value}',
+            subtitle: '43%',
+            chartOptions: {
+                chart: {
+                    styledMode: true
                 },
-                plotLines: [{
-                    value: 900,
-                    zIndex: 7,
-                    dashStyle: 'shortDash',
-                    label: {
-                        text: 'RDA',
-                        align: 'right',
-                        style: {
-                            color: '#B73C28'
+                series: [
+                    {
+                        type: 'spline',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        data: [1870, 1210, 1500, 1900, 1430]
+                    }
+                ]
+            }
+        },
+        {
+            type: 'KPI',
+            cell: 'dashboard-row-1-cell-2',
+            title: 'Savings',
+            value: 6500,
+            valueFormat: '$ {value}',
+            subtitle: '22%',
+            chartOptions: {
+                chart: {
+                    styledMode: true
+                },
+                series: [
+                    {
+                        type: 'spline',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        data: [0, 1000, 1000, 4500, 5300, 6500]
+                    }
+                ]
+            }
+        },
+        {
+            type: 'HTML',
+            cell: 'dashboard-row-1-cell-3',
+            elements: [
+                {
+                    tagName: 'div',
+                    children: [
+                        {
+                            tagName: 'h4',
+                            textContent: 'Check how you can save more!',
+                            attributes: {
+                                id: 'main-title'
+                            }
+                        },
+                        {
+                            tagName: 'button',
+                            textContent: 'Go to the saving account',
+                            attributes: {
+                                id: 'saving-button'
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 'Highcharts',
+            cell: 'dashboard-row-2-cell-1',
+            chartOptions: {
+                chart: {
+                    marginTop: 50
+                },
+                defs: {
+                    gradient0: {
+                        tagName: 'linearGradient',
+                        id: 'gradient-0',
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1,
+                        children: [
+                            {
+                                tagName: 'stop',
+                                offset: 0
+                            },
+                            {
+                                tagName: 'stop',
+                                offset: 1
+                            }
+                        ]
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                legend: {
+                    enabled: false
+                },
+                yAxis: [
+                    {
+                        title: '',
+                        labels: {
+                            format: '{value} k'
                         }
                     }
-                }]
-            },
-            credits: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    marker: {
-                        radius: 6
+                ],
+                series: [
+                    {
+                        type: 'areaspline',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        marker: {
+                            enabled: false
+                        },
+                        data: [10, 20, 10, 30, 40, 12, 11, 10, 23, 40, 34, 50]
                     }
-                }
-            },
-            legend: {
-                enabled: true,
-                verticalAlign: 'top'
-            },
-            chart: {
-                animation: false,
-                type: 'column',
-                spacing: [30, 30, 30, 20]
-            },
-            title: {
-                text: ''
+                ]
             }
-        }
-    },
-    {
-        cell: 'dashboard-col-1',
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
         },
-        connector: {
-            id: 'Vitamin'
+        {
+            type: 'KPI',
+            cell: 'dashboard-row-3-cell-1',
+            title: 'Spendings',
+            value: 350,
+            valueFormat: '$ {value}',
+            chartOptions: {
+                series: [
+                    {
+                        type: 'column',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        data: [45, 30, 50, 80, 10, 45, 30, 59, 39, 15, 62]
+                    }
+                ]
+            }
         },
-        type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            Iron: 'y'
-        },
-        chartOptions: {
-            xAxis: {
-                type: 'category'
-            },
-            yAxis: {
+        {
+            type: 'KPI',
+            cell: 'dashboard-row-3-cell-2',
+            title: 'Your wallet condition',
+            value: '',
+            subtitle: 'You saved 1450$ this month',
+            chartOptions: {
                 title: {
-                    text: 'mcg'
+                    verticalAlign: 'middle',
+                    floating: true,
+                    text: '58%'
                 },
-                max: 8,
-                plotLines: [{
-                    value: 8,
-                    dashStyle: 'shortDash',
-                    label: {
-                        text: 'RDA',
-                        align: 'right',
-                        style: {
-                            color: '#B73C28'
+                series: [
+                    {
+                        type: 'pie',
+                        data: [58, 42],
+                        size: '100%',
+                        innerSize: '75%',
+                        dataLabels: {
+                            enabled: false
                         }
                     }
-                }]
-            },
-            credits: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    marker: {
-                        radius: 6
-                    }
-                }
-            },
-            title: {
-                text: ''
-            },
-            legend: {
-                enabled: true,
-                verticalAlign: 'top'
-            },
-            chart: {
-                animation: false,
-                type: 'column',
-                spacing: [30, 30, 30, 20]
+                ]
             }
         }
-    }, {
-        cell: 'dashboard-col-2',
-        connector: {
-            id: 'Vitamin'
-        },
-        type: 'DataGrid',
-        editable: true,
-        sync: {
-            highlight: true,
-            visibility: true
-        }
-    }]
-}, true);
+    ]
+});
