@@ -1,7 +1,7 @@
 Data Modifiers
 ===
 
-The data comes in different shapes and sizes from all over the internet, so there needs to be a way of adjusting its format so that it is accessible to the Dashboards. Instead of manually parsing the data, there is an option to use the `DataModifiers`. Those modifiers allow the user to modify the data on the initial load, as well as the end user to modify visible data through the GUI. Each of the modifiers is accessible through the main Dashboards package, except for the `MathModifier` which is the most complex one, and requires loading a separate module from `https://code.highcharts.com/dashboards/modules/math-modifier.js`
+The data comes in different shapes and sizes from all over the internet, so there needs to be a way of adjusting its format so that it is accessible to the Dashboards. Instead of manually parsing the data, there is an option to use the `DataModifiers`. Those modifiers allow the user to modify the data on the initial load, as well as the end user to modify visible data through the GUI. Each of the modifiers is accessible through the main Dashboards package, except for the `MathModifier` which is the most complex one, and requires loading a separate module from `https://code.highcharts.com/dashboards/modules/math-modifier.js`. Each of the modifiers is available to connect to every type of connector.
 
 ### Where the modifier is defined?
 The modifier is attached to the connector that is defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling), in its options.
@@ -9,7 +9,7 @@ The modifier is attached to the connector that is defined in the [dataPool](http
 ### Types of modifiers
 The types of modifiers that are available are:
 
-* Chain (Allows to combine multiple modifiers in the same connector)
+* Chain
 * Range
 * Invert
 * Math
@@ -34,7 +34,7 @@ The modifier modifies the `table.modified` property of the connector, which leav
 ### What does each of the modifiers do?
 
 Here is a brief description of each of the modifiers:
-* Chain - Allows to combine multiple modifiers in the same connector. This is useful, if you need to perform multiple operations on the same dataset. In the `chain` property the user can define the order and configuration objects of the modifiers, that should be applied to the modifier. Here is an example usage of this modifier:
+* Chain - Allows to combine multiple modifiers in the same connector. This is useful, if you need to perform multiple operations on the same dataset. In the `chain` property you can define the order and configuration objects of the modifiers, that should be applied to the modifier. Here is an example usage of this modifier:
 ```javascript
 dataModifier: {
     type: 'Chain',
@@ -45,7 +45,7 @@ dataModifier: {
     }]
 }
 ```
-* Range - Allows filtering the data, which are exceeding the min and max properties. It works both for numbers as well as alphanumerical values. the `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
+* Range - Can be used to filter the data by minimal and maximal value. It works both for numbers as well as alphanumerical values. The `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
 ```javascript
 dataModifier: {
     type: 'Range',
@@ -56,7 +56,7 @@ dataModifier: {
     }]
 }
 ```
-* Invert - Allows to flip the data, and replace the columns with rows. This comes in handy, when your data is structured in a wrong way, and you want to adjust the data to the format acceptable by Dashboards. No other options need to be specified here. Example:
+* Invert - Allows to flip the data, and replace the columns with rows. This comes in handy, when you data is structured by rows and you want to present it by columns. No other options need to be specified here. Example:
 ```javascript
 dataModifier: {
     type: 'Invert'
@@ -75,6 +75,6 @@ dataModifier: {
 ```
 
 ### Example demos
-You can check the modifiers in work in given demos:
+ou can check the modifiers at work in the following demos:
 * [DataGrid with MathModifier](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-mathmodifier/)
 * [Parsing the data in CSV using different modifiers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/csv-modifiers)
