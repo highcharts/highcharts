@@ -49,7 +49,7 @@ jobs:
                 repo: context.repo.repo,
                 comment_id: comment.id,
                 body: `## Benchmark report
-                  This has ~~not~~ been replaced`
+                This has ~~not~~ been replaced`
               });
             } else {
               github.rest.issues.createComment({
@@ -57,7 +57,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: `## Benchmark report
-                  This has not been replaced`
+                This has not been replaced`
               });
             }
 
