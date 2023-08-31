@@ -68,6 +68,9 @@ jobs:
       - name: Rename report
         run: mv tmp/lighthouse.json tmp/lighthouse-master.json
 
+      - name: Benchmark
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
+
       - name: Checkout current branch
         uses: actions/checkout@v3
         with:
@@ -97,6 +100,19 @@ jobs:
           env: type=actual
           config: specPattern=**/performance/*.cy.js
           install: false
+
+      - name: Benchmark
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual
+
+      - name: Benchmark comparison
+        run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: tmp-files
+          path: |
+            tmp
 
       - name: Add to summary
         if: ${{ always() }}
