@@ -42,8 +42,7 @@ const {
     addEvent,
     createElement,
     css,
-    merge,
-    fireEvent
+    merge
 } = U;
 
 /* *
