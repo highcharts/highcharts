@@ -7,6 +7,8 @@ export type BenchmarkDetails = {
     max: number;
     results: BenchmarkResult[];
     avg: number;
+    Q1: number;
+    Q3: number;
     stdDev: number;
 }
 

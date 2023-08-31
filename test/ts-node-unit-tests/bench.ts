@@ -78,6 +78,20 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
 
 const ITERATIONS = 15;
 
+function quartile (arr: number[], q:number) {
+    const sorted = arr.sort((a, b) => a - b);
+
+    const pos = (sorted.length - 1) * q;
+    const base = Math.floor(pos);
+    const rest = pos - base;
+
+    if (sorted[base + 1] !== undefined) {
+        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+    }
+
+    return sorted[base];
+};
+
 async function runRest(testFile: string) : Promise <BenchResults>{
     const { config } = await import(testFile);
 
@@ -89,6 +103,8 @@ async function runRest(testFile: string) : Promise <BenchResults>{
             sampleSize: size,
             min: Number.MAX_SAFE_INTEGER,
             max: 0,
+            Q1: 0,
+            Q3: 0,
             results: [],
             avg: 0,
             stdDev: 0
@@ -111,6 +127,9 @@ async function runRest(testFile: string) : Promise <BenchResults>{
                 details.min = result
             }
         }
+
+        details.Q1 = quartile(details.results, 0.25);
+        details.Q3 = quartile(details.results, 0.75);
 
         details.avg = details.results.reduce((acc, result) => acc + result, 0) / ITERATIONS;
         details.stdDev = getStandardDeviation(details.results);

@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { opendir, readFile, appendFile, rm} from 'node:fs/promises';
+import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
 import type { BenchResults } from './benchmark.d.ts';
@@ -49,17 +49,20 @@ function getSeriesData(
     xValues: number[],
     yValues: number[],
     slope: number,
-    intercept: number
+    intercept: number,
+    visible = true
 ){
     return [{
         name: `${seriesName} - Benchmark data`,
         type: 'scatter',
-        data: xValues.map((x, i) => [x, yValues[i]])
+        data: xValues.map((x, i) => [x, yValues[i]]),
+        visible
     },
     {
         name: `${seriesName} - Regression`,
         type: 'line',
-        data: xValues.map(x => [x, predict(x, slope, intercept)])
+        data: xValues.map(x => [x, predict(x, slope, intercept)]),
+        visible
     }];
 }
 
@@ -91,19 +94,46 @@ async function exportChart(chartConfig: any){
 
 }
 
+function getOutliers(array: number[], Q1:number, Q3: number){
+    const IQR = Q3 - Q1;
+    return array.filter(r => r < Q1 - 1.5 * IQR || r > Q3 + 1.5 * IQR);
+}
+
 async function compare(base: BenchResults, actual: BenchResults){
     console.log(`Comparing ${actual[0].test}`);
-    console.log(`Sample Size, Base avg, Actual avg, Diff, Percentage`)
-    actual.forEach(entry =>{
+
+    // Remove outliers by sample size
+    const filtered: Record<'base'|'actual', BenchResults> = actual.reduce((carry,entry) =>{
         const baseEntry = base.find(b => b.sampleSize === entry.sampleSize);
 
         if(baseEntry){
             // Compare
             const diff = baseEntry.avg - entry.avg;
             const percentage = (diff / baseEntry.avg) * 100;
-            console.log(`${entry.sampleSize.toString().padEnd(10)}, ${baseEntry.avg.toFixed(2)}, ${entry.avg.toFixed(2)}, ${diff.toFixed(2)}, ${percentage.toFixed(3)}%`);
+
+
+            const baseOutliers = getOutliers(baseEntry.results, baseEntry.Q1, baseEntry.Q3);
+            const actualOutliers = getOutliers(entry.results, entry.Q1, entry.Q3);
+            console.log({baseOutliers, actualOutliers})
+
+            carry['base'].push({
+                ...baseEntry,
+                results: baseEntry.results.filter(r => !baseOutliers.includes(r))
+            })
+            carry['actual'].push({
+                ...entry,
+                results: entry.results.filter(r => !actualOutliers.includes(r))
+            })
+
+            return carry;
+
+            // console.log(`${entry.sampleSize.toString().padEnd(10)}, ${baseEntry.avg.toFixed(2)}, ${entry.avg.toFixed(2)}, ${diff.toFixed(2)}, ${percentage.toFixed(3)}%`);
         }
-    })
+    },
+    {
+        base: [],
+        actual: []
+    });
 
 
     function getXYValues (data: BenchResults){
@@ -132,19 +162,34 @@ async function compare(base: BenchResults, actual: BenchResults){
     const actRegression = regression(actXy.y, actXy.x);
     console.log(`actual, ${actRegression.slope}, ${actRegression.intercept}, ${actRegression.r2}`);
 
+
+    // also do regression on filtered data
+
+    const filteredBaseXy = getXYValues(filtered.base);
+    const filteredBaseRegression = regression(filteredBaseXy.y, filteredBaseXy.x);
+
+    const filteredActualXy = getXYValues(filtered.actual);
+    const filteredActualRegression = regression(filteredActualXy.y, filteredActualXy.x);
+
     console.log('\n')
 
     const series = [
-        ...getSeriesData('base', baseXy.x, baseXy.y, baseRegression.slope, baseRegression.intercept),
-        ...getSeriesData('actual', actXy.x, actXy.y, actRegression.slope, actRegression.intercept)
+        ...getSeriesData('Base - 95% quantile', filteredBaseXy.x, filteredBaseXy.y, filteredBaseRegression.slope, filteredBaseRegression.intercept),
+        ...getSeriesData('Actual - 95% quantile', filteredActualXy.x, filteredActualXy.y, filteredActualRegression.slope, filteredActualRegression.intercept),
+        ...getSeriesData('Base - raw', baseXy.x, baseXy.y, baseRegression.slope, baseRegression.intercept, false),
+        ...getSeriesData('Actual - raw', actXy.x, actXy.y, actRegression.slope, actRegression.intercept, false),
     ];
 
-    const chartConfig = {
+    const chartConfig = (title: string, series: {}) => ({
         chart: {
-            height: 800
+            height: 800,
+            width: 1000,
+            zooming: {
+                type: "xy"
+            }
         },
         title: {
-            text: actual[0].test.replace('.bench.ts', '')
+            text:title
         },
         subtitle: {
             text: 'Base vs actual'
@@ -161,15 +206,21 @@ async function compare(base: BenchResults, actual: BenchResults){
             },
             min: 0,
             softMax: 1
+        },
+        accessibility: {
+            enabled: false
         }
-    }
+    })
 
+    const chartName = actual[0].test.replace('.bench.ts', '');
 
-        const chart = await exportChart(chartConfig);
-
-    // console.log(reportTemplate(chartLinks[0], chartLinks[1]));
-
-    await appendFile(join(TMP_FILE_PATH, 'report.html'), reportTemplate(chart))
+    await appendFile(
+        join(TMP_FILE_PATH, 'report.html'), `
+        <div id="${chartName}"></div>
+        <script type="text/javascript">
+        Highcharts.chart("${chartName}", ${JSON.stringify(chartConfig(chartName, series))});
+        </script>`
+    );
 
     console.log('See report at ', resolve(__dirname,TMP_FILE_PATH, 'report.html'));
 
@@ -184,7 +235,8 @@ async function compareBenchmarks(){
         throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist`);
     })
 
-    await rm(join(TMP_FILE_PATH, 'report.html'))
+    await writeFile(join(TMP_FILE_PATH, 'report.html'), `
+        <script src="https://code.highcharts.com/highcharts.js"></script>`)
 
     for await (const dirent of data){
         if(dirent.isFile() && dirent.name.endsWith('.json')){
@@ -200,17 +252,8 @@ async function compareBenchmarks(){
                 // They should be arrays of objects
                 if(Array.isArray(base) && Array.isArray(act)){
                     await compare(base, act);
-
-
-                    // console.log(JSON.stringify(chartConfigs, undefined, 2))
                 }
-
-
-
-
-
             }
-
         }
     }
 
