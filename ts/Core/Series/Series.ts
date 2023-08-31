@@ -75,6 +75,7 @@ import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
+import KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -145,9 +146,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject {
-    clientX: number;
-    plotY?: number;
+interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
 /* *
@@ -4126,6 +4125,8 @@ class Series {
             preserve.push(
                 'data',
                 'isDirtyData',
+                // GeoHeatMap interpolation
+                'isDirtyCanvas',
                 'points',
 
                 'processedData', // #17057
