@@ -1030,6 +1030,8 @@ function chartToggleDataTable(
                 element: this.dataTableDiv,
                 wasHidden: createContainer || oldDisplay !== style.display
             });
+        } else {
+            fireEvent(this, 'afterHideData');
         }
     }
 

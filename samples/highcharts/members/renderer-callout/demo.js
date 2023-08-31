@@ -26,7 +26,7 @@ const liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout'
     })
     .on('click', () => {
         setInterval(() => {
-            var anchorX = Math.cos(angle) * 100 + 200,
+            const anchorX = Math.cos(angle) * 100 + 200,
                 anchorY = Math.sin(angle) * 100 + 140;
 
             liveDot.attr({

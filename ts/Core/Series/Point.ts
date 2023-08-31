@@ -346,9 +346,6 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = this.isValid && !this.isValid();
-
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         // The point is initially selected by options (#5777)
         if (point.selected) {
@@ -380,6 +377,10 @@ class Point {
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
+
+        point.isNull = this.isValid && !this.isValid();
+
+        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         return point;
     }
@@ -739,7 +740,13 @@ class Point {
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
-        return this.x !== null && isNumber(this.y);
+        return (
+            (
+                isNumber(this.x) ||
+                (this.x as number | Date) instanceof Date
+            ) &&
+            isNumber(this.y)
+        );
     }
 
     /**
@@ -820,8 +827,22 @@ class Point {
 
     /**
      * Get the pixel position of the point relative to the plot area.
-     * @private
      * @function Highcharts.Point#pos
+     *
+     * @sample highcharts/point/position
+     *         Get point's position in pixels.
+     *
+     * @param {boolean} chartCoordinates
+     * If true, the returned position is relative to the full chart area.
+     * If false, it is relative to the plot area determined by the axes.
+     *
+     * @param {number|undefined} plotY
+     * A custom plot y position to be computed. Used internally for some
+     * series types that have multiple `y` positions, like area range (low
+     * and high values).
+     *
+     * @return {Array<number>|undefined}
+     * Coordinates of the point if the point exists.
      */
     public pos(
         chartCoordinates?: boolean,
@@ -1643,7 +1664,7 @@ namespace Point {
         total?: number;
     }
     export interface SeriesPointsOptions {
-        events?: Highcharts.PointEventsOptionsObject;
+        events?: PointEventsOptions;
     }
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;

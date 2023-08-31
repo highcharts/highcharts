@@ -210,8 +210,7 @@ namespace BrandDarkTheme {
                             }
                         }
                     }
-                },
-                verticalAlign: 'bottom'
+                }
             }
         },
         // scroll charts

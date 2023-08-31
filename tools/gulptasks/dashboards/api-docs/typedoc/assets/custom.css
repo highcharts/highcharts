@@ -1,0 +1,17 @@
+.col-content iframe {
+    height: 100%;
+    min-height: 240px;
+    width: 100%;
+}
+
+.site-menu a > span {
+    white-space: nowrap;
+}
+
+.tsd-navigation.primary .tsd-kind-namespace.tsd-parent-kind-module {
+    display: none;
+}
+
+.tsd-member .tsd-anchor + h3 {
+    padding-top: 2.5em;
+}

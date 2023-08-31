@@ -1126,6 +1126,9 @@ if (seriesTypes.xrange) {
  * @sample {highcharts|highstock}
  *         highcharts/dragdrop/drag-xrange
  *         Draggable X range series
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  * @sample {highmaps}
  *         maps/series/draggable-mappoint
  *         Draggable Map Point series
@@ -1446,6 +1449,8 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
+ * @sample {highcharts|highstock} highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  *
  * @type      {Highcharts.PointDragCallbackFunction}
  * @since     6.2.0
@@ -1461,6 +1466,8 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
+ * @sample {highcharts|highstock} highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  *
  * @type      {Highcharts.PointDropCallbackFunction}
  * @since     6.2.0

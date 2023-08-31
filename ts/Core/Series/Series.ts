@@ -34,6 +34,7 @@ import type {
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
+    NonPlotOptions,
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
@@ -74,6 +75,7 @@ import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
+import KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -144,9 +146,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject {
-    clientX: number;
-    plotY?: number;
+interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
 /* *
@@ -1972,10 +1972,13 @@ class Series {
 
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
-            validValue = (
-                (isNumber(y) || isArray(y)) &&
-                (((y as any).length || y > 0) || !positiveValuesOnly)
-            );
+            validValue = ((
+                isNumber(y) ||
+                isArray(y)
+            ) && (
+                (isNumber(y) ? y > 0 : y.length) ||
+                !positiveValuesOnly
+            ));
             withinRange = (
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
@@ -2139,6 +2142,12 @@ class Series {
              * to the X axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the x-axis is going from the bottom to the
+             * top so the `plotX` value is the number of pixels from the bottom
+             * of the axis.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
@@ -2231,6 +2240,12 @@ class Series {
              * to the Y axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the y-axis is going from right to left
+             * so the `plotY` value is the number of pixels from the right
+             * of the `yAxis`.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
@@ -3507,11 +3522,11 @@ class Series {
         e?: PointerEvent
     ): (Point|undefined) {
         const series = this,
-            kdX = this.kdAxisArray[0],
-            kdY = this.kdAxisArray[1],
+            [kdX, kdY] = this.kdAxisArray,
             kdComparer = compareX ? 'distX' : 'dist',
-            kdDimensions = (series.options.findNearestPointBy as any)
-                .indexOf('y') > -1 ? 2 : 1;
+            kdDimensions = (series.options.findNearestPointBy || '')
+                .indexOf('y') > -1 ? 2 : 1,
+            useRadius = !!series.isBubble;
 
         /**
          * Set the one and two dimensional distance on the point object.
@@ -3521,18 +3536,16 @@ class Series {
             p1: KDPointSearchObject,
             p2: Point
         ): void {
-            const x = (defined((p1 as any)[kdX]) &&
-                    defined((p2 as any)[kdX])) ?
-                    Math.pow((p1 as any)[kdX] - (p2 as any)[kdX], 2) :
-                    null,
-                y = (defined((p1 as any)[kdY]) &&
-                    defined((p2 as any)[kdY])) ?
-                    Math.pow((p1 as any)[kdY] - (p2 as any)[kdY], 2) :
-                    null,
-                r = (x || 0) + (y || 0);
+            const p1kdX = p1[kdX],
+                p2kdX = p2[kdX],
+                x = (defined(p1kdX) && defined(p2kdX)) ? p1kdX - p2kdX : null,
+                p1kdY = p1[kdY],
+                p2kdY = p2[kdY],
+                y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
+                radius = useRadius ? (p2.marker?.radius || 0) : 0;
 
-            p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
-            p2.distX = defined(x) ? Math.sqrt(x as any) : Number.MAX_VALUE;
+            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
+            p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
         }
 
         /**
@@ -3553,7 +3566,8 @@ class Series {
             setDistance(search, point);
 
             // Pick side based on distance to splitting point
-            const tdist = (search as any)[axis] - (point as any)[axis],
+            const tdist = (search[axis] || 0) - (point[axis] || 0) +
+                    (useRadius ? (point.marker?.radius || 0) : 0),
                 sideA = tdist < 0 ? 'left' : 'right',
                 sideB = tdist < 0 ? 'right' : 'left';
 
@@ -3857,7 +3871,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && (data[0].remove)) {
+            if (data[0] && !!data[0].remove) {
                 data[0].remove(false);
             } else {
                 data.shift();
@@ -4059,6 +4073,13 @@ class Series {
                 'dataLabelsGroup',
                 'transformGroup'
             ],
+            optionsToCheck = [
+                'dataGrouping',
+                'pointStart',
+                'pointInterval',
+                'pointIntervalUnit',
+                'keys'
+            ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
             // directly after chart initialization, or when applying responsive
@@ -4089,14 +4110,13 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+
             options.joinBy ||
             options.mapData || // #11636
             // Changes to data grouping requires new points in new group
-            series.hasOptionChanged('dataGrouping') ||
-            series.hasOptionChanged('pointStart') ||
-            series.hasOptionChanged('pointInterval') ||
-            series.hasOptionChanged('pointIntervalUnit') ||
-            series.hasOptionChanged('keys')
+            optionsToCheck.some(
+                (option): boolean => series.hasOptionChanged(option)
+            )
         );
 
         newType = newType || initialType;
@@ -4105,6 +4125,8 @@ class Series {
             preserve.push(
                 'data',
                 'isDirtyData',
+                // GeoHeatMap interpolation
+                'isDirtyCanvas',
                 'points',
 
                 'processedData', // #17057
@@ -4324,24 +4346,26 @@ class Series {
      */
     public hasOptionChanged(optionName: string): boolean {
         const chart = this.chart,
-            option = (this.options as any)[optionName],
+            option = this.options[optionName as keyof SeriesOptions],
             plotOptions = chart.options.plotOptions,
-            oldOption = (this.userOptions as any)[optionName];
+            oldOption = this.userOptions[
+                optionName as keyof DeepPartial<SeriesOptions>
+            ],
+            plotOptionsOption = pick(
+                plotOptions?.[this.type]?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ],
+                plotOptions?.series?.[
+                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+                ]
+            );
 
-        if (oldOption) {
+        // Check if `plotOptions` are defined already, #19203
+        if (oldOption && !defined(plotOptionsOption)) {
             return option !== oldOption;
         }
 
-        return option !==
-            pick(
-                plotOptions &&
-                    plotOptions[this.type] &&
-                    (plotOptions[this.type] as any)[optionName],
-                plotOptions &&
-                    plotOptions.series &&
-                    (plotOptions as any).series[optionName],
-                option
-            );
+        return option !== pick(plotOptionsOption, option);
     }
 
     /**
@@ -4777,7 +4801,7 @@ interface Series extends SeriesLike {
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
-    kdAxisArray: Array<string>;
+    kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
     pointClass: typeof Point;
     requireSorting: boolean;

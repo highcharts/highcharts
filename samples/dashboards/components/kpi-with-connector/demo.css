@@ -1,0 +1,6 @@
+@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#csv {
+    display: none;
+}

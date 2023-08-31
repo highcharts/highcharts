@@ -215,8 +215,11 @@ function isChartSeriesBoosting(
 
     boost.forceChartBoost = allowBoostForce && (
         (
+            // Even when the series that need a boost are less than or equal
+            // to 5, force a chart boost when all series are to be boosted.
+            // See #18815
             canBoostCount === allSeries.length &&
-            needBoostCount > 0
+            needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5
     );

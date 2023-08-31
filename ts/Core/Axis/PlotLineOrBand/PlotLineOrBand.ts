@@ -298,7 +298,7 @@ class PlotLineOrBand {
 
         let label = plotLine.label;
 
-        // add the SVG element
+        // Add the SVG element
         if (!label) {
             /**
              * SVG element of the label.
@@ -319,8 +319,7 @@ class PlotLineOrBand {
                     'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
                         '-label ' + ((optionsLabel as any).className || ''),
                     zIndex
-                })
-                .add();
+                });
 
             if (!axis.chart.styledMode) {
                 label.css(merge({
@@ -328,9 +327,11 @@ class PlotLineOrBand {
                     textOverflow: 'ellipsis'
                 }, optionsLabel.style));
             }
+
+            label.add();
         }
 
-        // get the bounding box and align the label
+        // Get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
         const xBounds = (path as any).xBounds ||
             [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];

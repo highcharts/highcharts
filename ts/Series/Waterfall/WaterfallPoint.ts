@@ -14,13 +14,14 @@
  *
  * */
 
-import BBoxObject from '../../Core/Renderer/BBoxObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type WaterfallPointOptions from './WaterfallPointOptions';
+import type WaterfallSeries from './WaterfallSeries';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
-import WaterfallSeries from './WaterfallSeries';
-const { isNumber } = U;
 import U from '../../Core/Utilities.js';
+const { isNumber } = U;
 
 
 /* *

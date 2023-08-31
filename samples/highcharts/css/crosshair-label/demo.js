@@ -1,49 +1,51 @@
-Highcharts.getJSON(
-    'https://demo-live-data.highcharts.com/aapl-c.json',
-    function (data) {
-        // Create the chart
-        Highcharts.stockChart('container', {
+(async () => {
 
-            chart: {
-                marginRight: 50,
-                styledMode: true
-            },
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
 
-            rangeSelector: {
-                selected: 1
-            },
+    // Create the chart
+    Highcharts.stockChart('container', {
 
-            title: {
-                text: 'AAPL Stock Price'
-            },
+        chart: {
+            marginRight: 50,
+            styledMode: true
+        },
 
-            xAxis: {
-                crosshair: true
-            },
+        rangeSelector: {
+            selected: 1
+        },
 
-            yAxis: {
-                opposite: true,
-                crosshair: {
-                    label: {
-                        enabled: true,
-                        format: '{value:.2f}'
-                    }
-                },
-                labels: {
-                    align: 'left',
-                    format: '{value:.2f}',
-                    y: 6,
-                    x: 2
+        title: {
+            text: 'AAPL Stock Price'
+        },
+
+        xAxis: {
+            crosshair: true
+        },
+
+        yAxis: {
+            opposite: true,
+            crosshair: {
+                label: {
+                    enabled: true,
+                    format: '{value:.2f}'
                 }
             },
+            labels: {
+                align: 'left',
+                format: '{value:.2f}',
+                y: 6,
+                x: 2
+            }
+        },
 
-            series: [{
-                name: 'AAPL',
-                data: data,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            }]
-        });
-    }
-);
+        series: [{
+            name: 'AAPL',
+            data: data,
+            tooltip: {
+                valueDecimals: 2
+            }
+        }]
+    });
+})();

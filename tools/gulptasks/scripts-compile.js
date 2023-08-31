@@ -3,108 +3,112 @@
  */
 
 const gulp = require('gulp');
-const {
-    Worker, parentPort, workerData
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-} = require('worker_threads');
-const os = require('os');
-const argv = require('yargs').argv;
 
-const SOURCE_DIRECTORY = 'code';
-
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
 /**
- * Split an array into multiple new arrays/chuncks
+ * Creates minified versions of `.src.js` bundles in `/code` folder.
  *
- * @param {Array} arr to split
- * @param {Number} numParts to split array in
- * @return {Array} Array of arrays/chunks
+ * @return {Promise}
+ * Promise to keep
  */
-function chunk(arr, numParts) {
-    const result = [];
-    for (let p = 0; p < numParts; p++) {
-        result[p] = [];
-    }
+function scriptsCompile(filePathes) {
+    const fs = require('fs'),
+        fsLib = require('./lib/fs'),
+        logLib = require('./lib/log'),
+        path = require('path'),
+        processLib = require('./lib/process'),
+        argv = require('yargs').argv;
 
-    for (let i = arr.length - 1; i >= 0; i--) {
-        const arrIndex = Math.floor(i % numParts);
-        result[arrIndex].push(arr[i]);
-    }
-    return result;
-}
+    filePathes = filePathes instanceof Array ?
+        filePathes :
+        typeof argv.files === 'string' ?
+            argv.files.split(',').map(filePath => path.join('code', filePath)) :
+            fsLib.getFilePaths('code', true);
 
-/**
- * Compile the JS files in the /code folder
- *
- * @return {Promise<void>}
- *         Promise to keep
- */
-async function task() {
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    let promiseChain1 = Promise.resolve(),
+        promiseChain2 = Promise.resolve();
 
-    const fileBatches = [];
+    for (
+        let i = 0,
+            iEnd = filePathes.length,
+            inputPath,
+            promise;
+        i < iEnd;
+        ++i
+    ) {
+        inputPath = filePathes[i];
 
-    if (workerData) {
-        const compileTool = require('../compile');
+        if (
+            inputPath.includes('/dashboards/') ||
+            inputPath.includes('/es-modules/') ||
+            !inputPath.endsWith('.src.js')
+        ) {
+            continue;
+        }
 
-        fileBatches.push(
-            compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'))
-        );
 
-        parentPort.postMessage({ done: true });
+        const target = (
+                argv.target ||
+                inputPath.includes('/es5/') ?
+                    'ECMASCRIPT5_STRICT' :
+                    'ECMASCRIPT6_STRICT'
+            ),
+            outputPath = inputPath.replace('.src.js', '.js'),
+            outputMapPath = outputPath + '.map';
 
-        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
-    } else {
-        logLib.warn('Warning: This task may take a few minutes.');
+        // Compile file
+        // See https://github.com/google/closure-compiler/wiki/Flags-and-Options
+        promise = processLib.exec(
+            'npx google-closure-compiler' +
+            ' --assume_function_wrapper' +
+            ' --compilation_level SIMPLE' +
+            ` --create_source_map "${outputMapPath}"` +
+            // ' --emit_use_strict' + // not supported in GCC 2022
+            ' --env CUSTOM' +
+            ` --js "${inputPath}"` +
+            ` --js_output_file "${outputPath}"` +
+            ` --language_in ${target}` +
+            ` --language_out ${target}`,
+            // ' --platform native', // use native compiler // not GCC 2022
+            { silent: 2 }
 
-        const files = (
-            (argv.files) ?
-                argv.files.split(',') :
-                fsLib
-                    .getFilePaths(SOURCE_DIRECTORY, true)
-                    .filter(path => (
-                        path.endsWith('.src.js') &&
-                        !path.includes('es-modules')
-                    ))
-                    .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
-        );
+        // Fix source map reference
+        ).then(result => {
+            const outputMapFileName = path.basename(outputMapPath);
 
-        const numThreads = argv.numThreads ?
-            argv.numThreads :
-            Math.min(
-                files.length,
-                Math.max(2, os.cpus().length - 2)
+            // Still no option for it
+            fs.appendFileSync(
+                outputPath,
+                `//# sourceMappingURL=${outputMapFileName}`
             );
-        const batches = chunk(files, numThreads);
 
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
-        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
+            logLib.success(
+                `Compiled ${inputPath} => ${outputPath}`,
+                `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+            );
 
-        batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
-
-                const worker = new Worker(
-                    __filename,
-                    { workerData: { files: batch, batchNum: (index + 1) } }
-                );
-                worker.on('message', resolve);
-                worker.on('error', reject);
-                worker.on('exit', code => {
-                    if (code !== 0) {
-                        reject(new Error(`Worker stopped with exit code ${code}`));
-                    }
-                });
-
-            }));
+            return result;
         });
+
+        if (i % 2) {
+            promiseChain1 = promiseChain1.then(() => promise);
+        } else {
+            promiseChain2 = promiseChain2.then(() => promise);
+        }
     }
 
-    return Promise.all(fileBatches);
+    // not too many in parallel because of IO
+    return Promise.all([
+        promiseChain1,
+        promiseChain2
+    ]);
 }
 
-gulp.task('scripts-compile', task);
+gulp.task('scripts-compile', scriptsCompile);
 
-if (workerData) {
-    task();
-}
+module.exports = scriptsCompile;

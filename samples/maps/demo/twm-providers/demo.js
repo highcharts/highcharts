@@ -91,7 +91,6 @@
             name: 'TWM Tiles',
             provider: {
                 type: 'OpenStreetMap',
-                subdomain: 'a',
                 theme: 'Standard'
             },
             color: 'rgba(128,128,128,0.3)'
