@@ -357,6 +357,7 @@ class KPIComponent extends Component {
         }
 
         this.sync.start();
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
