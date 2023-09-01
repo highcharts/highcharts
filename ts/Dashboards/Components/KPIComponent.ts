@@ -401,6 +401,10 @@ class KPIComponent extends Component {
      * The value that should be displayed in the KPI.
      */
     private getValue(): string|number|undefined {
+        if (this.options.value) {
+            return this.options.value;
+        }
+
         if (this.connector && this.options.columnName) {
             const table = this.connector?.table.modified,
                 column = table.getColumn(this.options.columnName),
@@ -408,8 +412,6 @@ class KPIComponent extends Component {
 
             return table.getCellAsString(this.options.columnName, length - 1);
         }
-
-        return this.options.value;
     }
 
     /**
