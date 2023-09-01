@@ -24,7 +24,7 @@
  * @return {Array<string>}
  *         Array of detected products.
  */
-function getProds(logPaths) {
+function getProducts(logPaths) {
     const ChildProcess = require('child_process');
 
     const paths = ChildProcess
@@ -46,18 +46,18 @@ function getProds(logPaths) {
         console.log('paths: ', paths);
     }
 
-    function mark(prod) {
-        if (affectedProducts.indexOf(prod) !== -1) {
-            affectedProducts.push(prod);
+    function mark(product) {
+        if (affectedProducts.indexOf(product) !== -1) {
+            affectedProducts.push(product);
         }
     }
 
     paths.forEach(path => {
         // Any path part check
-        products.forEach(prodName => {
-            const regex = new RegExp(prodName, 'iu');
-            if (regex.test(path)) {
-                mark(prodName);
+        products.forEach(productName => {
+            const productNameRegex = new RegExp(productName, 'iu');
+            if (productNameRegex.test(path)) {
+                mark(productName);
             }
         });
 
@@ -84,5 +84,5 @@ function getProds(logPaths) {
  * */
 
 module.exports = {
-    getProds
+    getProducts
 };
