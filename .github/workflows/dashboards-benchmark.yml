@@ -30,6 +30,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - run: npm i
+
       - name: Build Highcharts
         run: npx gulp scripts
       - name: Build Dashboards
@@ -46,6 +48,7 @@ jobs:
         uses: actions/checkout@v3
         with:
            clean: false # do not remove files from previous run
+      - run: npm i
 
       - name: Build Highcharts
         run: npx gulp scripts
