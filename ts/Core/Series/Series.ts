@@ -68,6 +68,7 @@ const {
     win
 } = H;
 import type Legend from '../Legend/Legend';
+import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -75,7 +76,6 @@ import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
-import KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import U from '../Utilities.js';
 const {
     addEvent,

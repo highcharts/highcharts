@@ -235,7 +235,6 @@ class HTMLComponent extends Component {
     }
 
     public render(): this {
-        this.emit({ type: 'beforeRender' });
         super.render();
         this.constructTree();
         this.emit({ type: 'afterRender' });
