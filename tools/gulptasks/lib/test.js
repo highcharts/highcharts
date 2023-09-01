@@ -16,6 +16,21 @@
  * */
 
 /**
+ * Fails if the product is not affected in the files staged for commit.
+ *
+ * @throws Will throw an error if the product is not affected.
+ *
+ * @param {string} product
+ *        The product name that should be checked.
+ */
+function checkProduct(product) {
+    const products = getProducts();
+    if (products.indexOf(product) === -1) {
+        throw new Error(`${product} is not affected`);
+    }
+}
+
+/**
  * Returns list of products affected by modified files staged for commit.
  *
  * @param {Boolean} logPaths
@@ -84,5 +99,6 @@ function getProducts(logPaths) {
  * */
 
 module.exports = {
+    checkProduct,
     getProducts
 };
