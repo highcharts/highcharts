@@ -1,5 +1,6 @@
 import type { BenchmarkResult } from '../benchmark';
 import { performance } from 'node:perf_hooks';
+import { join } from 'node:path';
 
 function generateColumnData(rows: number, columns: number){
     const data = [];
@@ -17,9 +18,12 @@ export const config = {
     sizes: [100, 1000, 10_000, 1_000_000, 3_000_000, 5_000_000]
 }
 
-export default async function benchmarkTest(size: number): Promise<BenchmarkResult> {
-    const hc = require('../../../code/highcharts.js')();
-    require('../../../code/modules/data-tools.js')(hc);
+export default async function benchmarkTest(
+    size: number,
+    CODE_PATH: string
+): Promise<BenchmarkResult> {
+    const hc = require(join(CODE_PATH, '/highcharts.js'))();
+    require(join(CODE_PATH, '/modules/data-tools.js'))(hc);
 
     const { DataTable } = hc;
 

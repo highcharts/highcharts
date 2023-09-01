@@ -1,6 +1,6 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 
 import { Worker } from 'node:worker_threads';
@@ -37,7 +37,7 @@ function createReport (results: BenchResults, show = 'largest') {
 }
 
 const BENCH_PATH = join(__dirname, './benchmarks');
-const CODE_PATH = join(__dirname, '../../code');
+const CODE_PATH = resolve(__dirname, '../../code');
 
 const OUTPUT_PATH = join(__dirname, '../../tmp/benchmarks');
 
@@ -46,7 +46,7 @@ const TEST_TIMEOUT_SECONDS = 30;
 const errors = [];
 let testCounter: number = 0;
 
-async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult> {
+async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
     const worker = new Worker(join(__dirname, './bench-worker.ts'), {
         stdout: false // pipe to main
     });
@@ -70,10 +70,15 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
         }, TEST_TIMEOUT_SECONDS * 1000);
     })
 
-    worker.postMessage({ testFile, size });
+    worker.postMessage({ testFile, size, CODE_PATH });
 
-    const result = await promise;
-    return result as BenchmarkResult;
+    const result = await promise
+        .catch(error =>{
+            console.error(error);
+            return undefined;
+        });
+
+    return result as BenchmarkResult | undefined;
 }
 
 const ITERATIONS = 15;
