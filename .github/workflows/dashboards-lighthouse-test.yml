@@ -32,34 +32,8 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { data: comments } = await github.rest.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-
-            const commentToUpdate = comments.find((comment) =>
-              comment.body.startsWith('## Benchmark report')
-            );
-
-            if (commentToUpdate) {
-              github.rest.issues.updateComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: commentToUpdate.id,
-                body: `## Benchmark report
-                This has ~~not~~ been replaced`
-              });
-            } else {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `## Benchmark report
-                This has not been replaced`
-              });
-            }
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.mjs');
+            await createOrUpdateComment(github, context, 'Benchmark report', 'This is updated');
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -94,9 +68,6 @@ jobs:
 
       - name: Stop server
         run: kill $(lsof -t -i:3030)
-
-      - name: Rename report
-        run: mv tmp/lighthouse.json tmp/lighthouse-master.json
 
       - name: Benchmark
         run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
