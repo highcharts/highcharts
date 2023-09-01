@@ -66,34 +66,6 @@ function getSeriesData(
     }];
 }
 
-async function exportChart(chartConfig: any){
-    const url = 'https://export.highcharts.com';
-        const pngDataUrlPrefix = 'data:image/svg+xml;base64,';
-
-    const response = await fetch(
-        url,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                infile: chartConfig,
-                b64: true,
-                type: 'image/svg+xml'
-            })
-        }).then((res ) =>
-            res.text()
-        ).catch(()=> null);
-
-        if(response){
-            const buf = Buffer.from(response, 'base64');
-
-            return pngDataUrlPrefix + buf.toString('base64')
-        }
-
-}
-
 function getOutliers(array: number[], Q1:number, Q3: number){
     const IQR = Q3 - Q1;
     return array.filter(r => r < Q1 - 1.5 * IQR || r > Q3 + 1.5 * IQR);
@@ -126,8 +98,6 @@ async function compare(base: BenchResults, actual: BenchResults){
             })
 
             return carry;
-
-            // console.log(`${entry.sampleSize.toString().padEnd(10)}, ${baseEntry.avg.toFixed(2)}, ${entry.avg.toFixed(2)}, ${diff.toFixed(2)}, ${percentage.toFixed(3)}%`);
         }
     },
     {
@@ -210,7 +180,18 @@ async function compare(base: BenchResults, actual: BenchResults){
         accessibility: {
             enabled: false
         }
-    })
+    });
+
+
+    // test, averages, diff
+    const markdownTableRows = actual.map((entry, i) =>{
+      return `| \`${entry.test}\` | ${entry.sampleSize} | ${base[i].avg} | ${entry.avg} | ${entry.avg - base[i].avg} |`;
+    });
+
+    await appendFile(
+        join(TMP_FILE_PATH, 'table.md'),
+        '\n' + markdownTableRows.join('\n')
+    );
 
     const chartName = actual[0].test.replace('.bench.ts', '');
 
@@ -235,6 +216,10 @@ async function compareBenchmarks(){
         throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist`);
     })
 
+    const markdownTableHeader = `| Test | Sample size | Base avg (ms) | Actual avg (ms) | Diff |
+| --- | --- | --- | --- | --- |`;
+
+    await writeFile(join(TMP_FILE_PATH, 'table.md'), markdownTableHeader);
     await writeFile(join(TMP_FILE_PATH, 'report.html'), `
         <script src="https://code.highcharts.com/highcharts.js"></script>`)
 

@@ -115,7 +115,12 @@ jobs:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
-            await createOrUpdateComment(github, context, 'Benchmark report', 'This is updated');
+            const { readFileSync } = require('node:fs')
+
+            const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
+
+            await createOrUpdateComment(github, context, 'Benchmark report', benchmarkMD || 'No table to show');
+
 
       - name: Add to summary
         if: ${{ always() }}
