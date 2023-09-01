@@ -92,7 +92,7 @@ Highcharts.chart('container', {
             color: 'white',
             nodeFormatter: function () {
                 // Call the default renderer
-                var html = Highcharts.defaultOptions
+                let html = Highcharts.defaultOptions
                     .plotOptions
                     .organization
                     .dataLabels

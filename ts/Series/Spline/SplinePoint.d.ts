@@ -25,6 +25,10 @@ import type SplineSeries from './SplineSeries';
  * */
 
 declare class SplinePoint extends LinePoint {
+    public controlPoints?: {
+        low: [number, number];
+        high: [number, number];
+    };
     public doCurve?: boolean;
     public options: SplinePointOptions;
     public rightContX?: number;

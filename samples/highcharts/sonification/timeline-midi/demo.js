@@ -1,14 +1,14 @@
-var Instrument = Highcharts.sonification.SonificationInstrument,
+const Instrument = Highcharts.sonification.SonificationInstrument,
     Timeline = Highcharts.sonification.SonificationTimeline,
     el = function (id) {
         return document.getElementById(id);
-    },
-    timeline1,
+    };
+let    timeline1,
     timeline2,
     timeline3;
 
 function makeTimeline1() {
-    var ctx = new AudioContext(),
+    const ctx = new AudioContext(),
         instr = new Instrument(ctx, ctx.destination, {
             synthPatch: 'piano',
             capabilities: { pan: false },
@@ -51,7 +51,7 @@ function makeTimeline1() {
 
 
 function makeTimeline2() {
-    var ctx = new AudioContext(),
+    const ctx = new AudioContext(),
         instr1 = new Instrument(ctx, ctx.destination, {
             synthPatch: 'piano',
             capabilities: { pan: false },
@@ -117,7 +117,7 @@ function makeTimeline2() {
 
 
 function makeTimeline3() {
-    var ctx = new AudioContext(),
+    const ctx = new AudioContext(),
         instr1 = new Instrument(ctx, ctx.destination, {
             synthPatch: 'piano',
             capabilities: {

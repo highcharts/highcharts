@@ -795,3 +795,24 @@ QUnit.test('#14623: colorIndex Series.update()', assert => {
         'Point.colorIndex should be correct'
     );
 });
+
+QUnit.test('NaN x value (#19148).', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'area',
+                data: [1, 2, [NaN, 3], 4, 5]
+            }
+        ]
+    });
+
+    chart.series[0].points.forEach(point => {
+        if (Number.isInteger(point.x)) {
+            assert.strictEqual(
+                typeof point.graphic,
+                'object',
+                'The graphic should be created.'
+            );
+        }
+    });
+});

@@ -1,8 +1,8 @@
 // Prepare the data
-var data = [],
-    n = 800,
-    i;
-for (i = 0; i < n; i += 1) {
+const data = [],
+    n = 800;
+
+for (let i = 0; i < n; i += 1) {
     data.push([
         Math.pow(Math.random(), 2) * 90 + 5,
         Math.pow(Math.random(), 2) * 90 + 5

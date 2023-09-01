@@ -10,7 +10,6 @@ const norwegianEditMode = {
     chartOptions: 'Graf alternativer',
     chartType: 'Graf type',
     pointFormat: 'Punkt format',
-    scaleElements: 'Skaler elementer',
     confirmDestroyRow: 'Vil du ødelegge raden?',
     confirmDestroyCell: 'Vil du ødelegge cellen?',
     confirmButton: 'Bekreft',
@@ -85,8 +84,8 @@ describe('Editable component options', () => {
             .should('have.text', norwegianEditMode.off);
         cy.get('.highcharts-dashboards-edit-toggle-labels').eq(1)
             .should('have.text', norwegianEditMode.on);
-        
-        // datalabels
+
+        // Data labels
         cy.get('.highcharts-dashboards-edit-accordion-nested:nth-child(6) .highcharts-dashboards-edit-accordion-header-btn')
             .should('have.text', norwegianEditMode.dataLabels);
     });
@@ -94,20 +93,20 @@ describe('Editable component options', () => {
     it('Lang should be applied on confirmation popup (delete cell)', function() {
         cy.get('.highcharts-dashboards-component').first().click();
 
-        // delete cell
+        // Delete cell
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-content > .highcharts-dashboards-edit-label-text')
             .should('have.text', norwegianEditMode.confirmDestroyCell);
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-content button').eq(0).click();
+        cy.get('.highcharts-dashboards-edit-popup-close').eq(0).click();
     });
 
-    it('Lang should be applied on confirmation popup (delete row)', function() {        
+    it('Lang should be applied on confirmation popup (delete row)', function() {
         cy.get('.highcharts-dashboards-component').first().click();
 
-        // delete row
+        // Delete row
         cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-content > .highcharts-dashboards-edit-label-text')
             .should('have.text', norwegianEditMode.confirmDestroyRow);
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-content button').eq(0).click();
+        cy.get('.highcharts-dashboards-edit-popup-close').eq(0).click();
     });
 });

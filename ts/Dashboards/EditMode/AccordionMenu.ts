@@ -122,6 +122,7 @@ class AccordionMenu {
             {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.confirmButton,
+                className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -143,6 +144,7 @@ class AccordionMenu {
             {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
+                className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};

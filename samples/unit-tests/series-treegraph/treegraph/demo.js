@@ -8,7 +8,7 @@ QUnit.test('Treegraph series',
                         collapsed: true
                     }, {
                         parent: 'A',
-                        id: 'BBB'
+                        id: 'B'
                     }],
                     dataLabels: {
                         pointFormat: '{point.id}'
@@ -59,6 +59,80 @@ QUnit.test('Treegraph series',
             series.points[1].graphic.element.nodeName,
             'image',
             'The SVG element of the second point should be an image (#19173)'
+        );
+
+        series.setData([{
+            id: 'A'
+        },  {
+            parent: 'A',
+            id: 'CCC'
+        }, {
+            parent: 'A',
+            id: 'DDD'
+        }]);
+
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-treegraph-series>.highcharts-point').length,
+            2,
+            'Correct amount of links after setData (#19524)'
+        );
+
+        assert.notOk(
+            series.links.find(
+                link => link.options.parent === 'A' && link.options.id === 'BBB'
+            ),
+            'Removed the link from A to BBB (#19524)'
+        );
+
+        series.update({
+            marker: {
+                radius: 20
+            },
+            levels: [
+                {
+                    level: 1
+                }, {
+                    level: 2,
+                    collapsed: true
+                },
+                {
+                    level: 3,
+                    collapsed: true
+                }
+            ],
+            type: 'treegraph',
+            keys: ['id', 'parent'],
+            data: [
+                ['A'],
+                ['B', 'A'],
+                ['C', 'B'],
+                ['D', 'C']
+            ],
+            dataLabels: {
+                format: '{point.id}'
+            }
+        });
+
+        let collapseButtonOpacity =
+            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+
+        assert.strictEqual(
+            collapseButtonOpacity,
+            0,
+            'CollapseButton should be hidden when point is collapsed (#19368).'
+        );
+
+        series.data[1].update({
+            collapsed: false
+        });
+
+        collapseButtonOpacity =
+            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+
+        assert.strictEqual(
+            collapseButtonOpacity,
+            1,
+            'CollapseButton should be visible when point is expanded (#19368).'
         );
     }
 );

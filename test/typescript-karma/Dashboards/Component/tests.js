@@ -15,15 +15,12 @@ const HighchartsComponent = Dashboards.ComponentRegistry.types.Highcharts;
 const eventTypes = [
     'load',
     'afterLoad',
-    'beforeRender',
+    'render',
     'afterRender',
-    'redraw',
-    'afterRedraw',
     'tableChanged',
     'setConnector',
     'update',
-    'afterUpdate',
-    'message'
+    'afterUpdate'
 ];
 
 const registeredEvents = [];
@@ -46,7 +43,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         return;
     }
 
-    const board = Dashboards.board(parentElement, {
+    const board = await Dashboards.board(parentElement, {
         gui: {
             enabled: true,
             layouts: [
@@ -88,7 +85,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 ]
             }
         ]
-    });
+    }, true);
     // Test the HighchartsComponent
     const highchartsComponent = board.mountedComponents[0].component;
 
@@ -104,7 +101,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
 
     assert.deepEqual(
         registeredEvents,
-        ['update',  'afterUpdate', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
+        ['update',  'afterUpdate', 'render', 'afterRender'],
         'After updating the HighchartsComponent events should be fired in the correct order.'
     );
 
@@ -133,12 +130,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
         registeredEvents,
         [
             'update',
-            'redraw',
-            'beforeRender',
-            'load',
-            'afterLoad',
-            'afterRender',
-            'afterRedraw'
+            'render',
+            'afterRender'
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
     );
@@ -156,7 +149,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
     // expectedEvents.push(
     //       "update",
     //       "redraw",
-    //       "beforeRender",
+    //       "render",
     //       "load",
     //       "afterLoad",
     //       "afterRender",
@@ -239,10 +232,7 @@ test('Board with data connectors and HighchartsComponent update', async function
             'update',
             'setConnector',
             'afterUpdate',
-            'redraw',
-            'beforeRender',
-            'load',
-            'afterLoad',
+            'render',
             'afterRender',
         ],
         'If connector is given in options, it will be attached during load'
@@ -270,8 +260,6 @@ test('Board with data connectors and HighchartsComponent update', async function
     // expectedEvents.push('message', 'message');
 
     // assert.deepEqual(registeredEvents, expectedEvents);
-
-    Component.removeInstance(componentWithConnector);
 });
 
 test('component resizing', function (assert) {

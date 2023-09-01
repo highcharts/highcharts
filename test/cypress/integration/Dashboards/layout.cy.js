@@ -17,6 +17,20 @@ describe('Components in layout', () => {
         });
     });
 
+    it('components should reflow when width of board is changing ', () => {
+        cy.board().then((board) => {
+            const componentContainer = board.mountedComponents[0].cell.container,
+                componentInitWidth = componentContainer.offsetWidth;
+    
+            board.container.style.width = '500px';
+
+            assert.ok(
+                componentContainer.offsetWidth < componentInitWidth,
+                'The width of cell is smaller than on init.'
+              );
+        });
+    });
+
 });
 
 describe('Chart synchronized series state', () => {

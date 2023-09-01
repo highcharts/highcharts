@@ -36,6 +36,10 @@
                     title: {
                         text: null
                     },
+                    legend: {
+                        enabled: true,
+                        reversed: true
+                    },
                     series: [{
                         name: 'Votes',
                         data: [{
@@ -48,8 +52,9 @@
                             y: parseInt(columns[2][row], 10)
                         }],
                         dataLabels: {
-                            format: '<b>{point.name}</b> {point.percentage:.1f}%'
-                        }
+                            format: '{point.percentage:.1f}%'
+                        },
+                        showInLegend: true
                     }]
                 });
             }
