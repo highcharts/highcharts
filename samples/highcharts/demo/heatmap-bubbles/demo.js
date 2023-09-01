@@ -10,6 +10,7 @@ Highcharts.chart('container', {
 
     xAxis: {
         categories: ['Rare', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'],
+        lineWidth: 0,
         min: 0,
         max: 4
     },
@@ -18,7 +19,8 @@ Highcharts.chart('container', {
         categories: ['Insignificant', 'Minor', 'Moderate', 'Major', 'Critical'],
         title: null,
         min: 0,
-        max: 4
+        max: 4,
+        tickWidth: 0
     },
 
     chart: {
