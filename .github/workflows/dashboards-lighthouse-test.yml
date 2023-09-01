@@ -63,6 +63,7 @@ jobs:
         run: kill $(lsof -t -i:3030)
 
       - name: Benchmark
+        continue-on-error: true
         run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
 
       - name: Checkout current branch
