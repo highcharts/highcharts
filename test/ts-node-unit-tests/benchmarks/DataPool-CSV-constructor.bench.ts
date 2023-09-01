@@ -21,7 +21,7 @@ function generateCSV(rows:number, columns: number){
 }
 
 export const config = {
-    sizes: [100, 1000, 10_000, 1_000_000, 3_000_000, 5_000_000]
+    sizes: [100, 1000, 10_000, 1_000_000, 2_500_000]
 }
 
 export default async function benchmarkTest(
