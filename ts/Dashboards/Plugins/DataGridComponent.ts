@@ -352,7 +352,6 @@ class DataGridComponent extends Component {
 
     /** @private */
     public render(): this {
-        this.emit({ type: 'beforeRender' });
         super.render();
         if (!this.dataGrid) {
             this.dataGrid = this.constructDataGrid();
