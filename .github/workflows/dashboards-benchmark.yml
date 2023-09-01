@@ -37,9 +37,6 @@ jobs:
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
-
       - name: Benchmark
         continue-on-error: true
         run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
@@ -55,9 +52,6 @@ jobs:
 
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
-
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
 
       - name: Benchmark
         run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual
@@ -89,5 +83,5 @@ jobs:
         if: ${{ always() }}
         run: |
           echo "## Benchmark metrics" >> $GITHUB_STEP_SUMMARY
-          cat ./tmp/benchmarks/table.md
+          cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY
 
