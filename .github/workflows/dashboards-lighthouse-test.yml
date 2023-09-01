@@ -114,7 +114,7 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.mjs');
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
             await createOrUpdateComment(github, context, 'Benchmark report', 'This is updated');
 
       - name: Add to summary
