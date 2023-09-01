@@ -17,7 +17,6 @@ permissions:
 
 jobs:
   cypress_lighthouse:
-    timeout-minutes: 10
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:
