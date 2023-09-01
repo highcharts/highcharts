@@ -608,7 +608,7 @@ class EditMode {
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
 
-        eventsOptions?.deactivate.call(editMode);
+        eventsOptions?.deactivate?.call(editMode);
     }
 
     /**
