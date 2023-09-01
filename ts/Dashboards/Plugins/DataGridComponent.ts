@@ -379,7 +379,6 @@ class DataGridComponent extends Component {
     ): void {
         if (this.dataGrid) {
             super.resize(width, height);
-            this.dataGrid.setSize(width, height);
         }
     }
 
