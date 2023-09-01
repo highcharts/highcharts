@@ -61,7 +61,61 @@ To style the dashboard's component:
 ```
 
 ### Component classes
+Each component has the generic component CSS class `highcharts-dashboards-component` and its own CSS class.
 
+To style the dashboard's component title:
+```css
+.highcharts-dashboards-component-title {
+    font-size: 12px;
+}
+```
+
+## KPI Component
+To style the dashboard's KPI component:
+```css
+.highcharts-dashboards-component-kpi {
+    border-radius: 10px;
+}
+```
+
+To style the dashboard's KPI value:
+```css
+.highcharts-dashboards-component-kpi-value {
+    color: red;
+}
+```
+
+## Highcharts Component
+To style the dashboard's Highcharts component:
+```css
+.chart-container {
+    background-color: gray;
+}
+```
+
+You can find more information about the classes in Highcharts [here](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+## DataGrid Component
+To style the dashboard's DataGrid component:
+```css
+.highcharts-datagrid-container {
+    border-radius: 10px;
+}
+```
+
+To style the dashboard's DataGrid header:
+```css
+.highcharts-datagrid-column-header {
+    background-color: gray;
+}
+```
+
+To style the dashboard's DataGrid row:
+```css
+.highcharts-datagrid-row {
+    background-color: gray;
+}
+```
+### Edit Mode classes
 
 ### Custom classes
 
