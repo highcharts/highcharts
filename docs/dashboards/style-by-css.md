@@ -116,6 +116,67 @@ To style the dashboard's DataGrid row:
 }
 ```
 ### Edit Mode classes
+## Confirmation popup
+To style the dashboard's popup:
+```css
+.highcharts-dashboards-confirmation-popup {
+    border-radius: 10px;
+}
+```
+
+To style the dashboard's overlay:
+```css
+.highcharts-dashboards-overlay {
+    background-color: gray;
+}
+```
+
+To style the dashboard's popup close button:
+```css
+.highcharts-dashboards-popup-close {
+    background-color: gray;
+}
+```
+
+## Sidebar (Accordion menu)
+
+To style the dashboard's accordion menu in the sidebar:
+```css
+.highcharts-dashboards-accordion-menu {
+    background-color: gray;
+}
+```
+
+To style the dashboard's sidebar header in the accordion menu:
+```css
+.highcharts-dashboards-accordion-header {
+    font-size: 12px;
+}
+```
+## Toolbars
+
+To style the dashboard's toolbar in the Edit Mode:
+```css
+.highcharts-dashboards-toolbar {
+    background-color: gray;
+}
+```
+
+## Highlights
+
+To style the highlights of edited cell:
+```css
+.highcharts-dashboards-toolbar-cell-outline {
+    border-color: red;
+}
+```
+
+To style the highlights of edited row:
+```css
+.highcharts-dashboards-toolbar-row-outline {
+    border-color: blue;
+}
+```
 
 ### Custom classes
 
