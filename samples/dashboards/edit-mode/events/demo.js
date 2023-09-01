@@ -5,10 +5,10 @@ Dashboards.board('container', {
             enabled: true
         },
         events: {
-            activated: function () {
+            activate: function () {
                 console.log('Activated Edit Mode');
             },
-            deactivated: function () {
+            deactivate: function () {
                 console.log('Deactivated Edit Mode');
             }
         }
