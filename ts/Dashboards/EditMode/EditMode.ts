@@ -561,7 +561,7 @@ class EditMode {
         editMode.active = true;
         editMode.isContextDetectionActive = true;
 
-        eventsOptions?.activate.call(editMode);
+        eventsOptions?.activate?.call(editMode);
     }
 
     /**
