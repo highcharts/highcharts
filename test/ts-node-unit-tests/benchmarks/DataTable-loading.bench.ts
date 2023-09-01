@@ -22,8 +22,8 @@ export default async function benchmarkTest(
     size: number,
     CODE_PATH: string
 ): Promise<BenchmarkResult> {
-    const hc = require(join(CODE_PATH, '/highcharts.js'))();
-    require(join(CODE_PATH, '/modules/data-tools.js'))(hc);
+    const hc = require(join(CODE_PATH, '/highcharts.src.js'))();
+    require(join(CODE_PATH, '/modules/data-tools.src.js'))(hc);
 
     const { DataTable } = hc;
 
