@@ -1068,14 +1068,14 @@ namespace EditMode {
          * @internal
          */
         tools?: Tools;
-         /**
-         * Events attached to the component : `activated`, `deactivated`.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/ | Activated / Deactivated event }
-         */
-         events?: Record<string, Function>;
+        /**
+        * Events attached to the component: `activate`, `deactivate`.
+        *
+        * Try it:
+        *
+        * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/ | Activated / Deactivated event }
+        */
+        events?: Record<string, Function>;
     }
 
     /**
