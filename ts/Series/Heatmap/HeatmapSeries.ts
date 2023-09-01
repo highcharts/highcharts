@@ -46,6 +46,7 @@ const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 
 const {
+    addEvent,
     clamp,
     extend,
     fireEvent,
@@ -54,6 +55,13 @@ const {
     pick,
     defined
 } = U;
+
+import IU from '../InterpolationUtilities.js';
+
+const {
+    colorFromPoint,
+    getContext
+} = IU;
 
 /* *
  *
@@ -436,6 +444,8 @@ class HeatmapSeries extends ScatterSeries {
 
     public valueMin: number = NaN;
 
+    public isDirtyCanvas: boolean = true;
+
     /* *
      *
      *  Functions
@@ -461,9 +471,9 @@ class HeatmapSeries extends ScatterSeries {
                 { reversed: yRev = false, len: height } = yAxis,
                 dimensions = { width, height };
 
-            if (!image || series.isDirtyData) {
+            if (!image || series.isDirtyData || series.isDirtyCanvas) {
                 const
-                    ctx = series.getContext(),
+                    ctx = getContext(series),
                     {
                         canvas,
                         options: { colsize = 1, rowsize = 1 },
@@ -512,26 +522,6 @@ class HeatmapSeries extends ScatterSeries {
                         pixelToPointScale = pointsLen / canvasArea,
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
 
-                        colorFromPoint = (point: HeatmapPoint): number[] => {
-                            const rgba = ((
-                                colorAxis.toColor(
-                                    point.value || 0,
-                                    point
-                                ) as string)
-                                .split(')')[0]
-                                .split('(')[1]
-                                .split(',')
-                                .map((s): number => pick(
-                                    parseFloat(s),
-                                    parseInt(s, 10)
-                                ))
-                            );
-
-                            rgba[3] = pick(rgba[3], 1.0) * 255;
-
-                            return rgba;
-                        },
-
                         pointInPixels = (x: number, y: number): number => (
                             Math.ceil(
                                 (canvasWidth * transformY(y - yMin)) +
@@ -549,7 +539,7 @@ class HeatmapSeries extends ScatterSeries {
                             { x, y } = point;
 
                         pixelData.set(
-                            colorFromPoint(point),
+                            colorFromPoint(point.value, point),
                             pointInPixels(x, y)
                         );
                     }
@@ -572,6 +562,7 @@ class HeatmapSeries extends ScatterSeries {
                             .add(series.group);
                     }
                 }
+                series.isDirtyCanvas = false;
             } else if (
                 image.width !== width || image.height !== height
             ) {
@@ -596,25 +587,6 @@ class HeatmapSeries extends ScatterSeries {
                 }
             });
         }
-    }
-
-    /**
-     * @private
-     */
-    public getContext(): CanvasRenderingContext2D | undefined {
-        const series = this,
-            { canvas, context } = series;
-
-        if (canvas && context) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        } else {
-            series.canvas = doc.createElement('canvas');
-
-            series.context = series.canvas.getContext('2d') || void 0;
-            return series.context;
-        }
-
-        return context;
     }
 
     /**
@@ -890,6 +862,11 @@ class HeatmapSeries extends ScatterSeries {
     /* eslint-enable valid-jsdoc */
 
 }
+
+addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
+    this.isDirtyCanvas = true;
+    this.drawPoints();
+});
 
 /* *
  *
