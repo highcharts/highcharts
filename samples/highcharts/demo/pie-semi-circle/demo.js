@@ -27,11 +27,6 @@ Highcharts.chart('container', {
                 style: {
                     fontWeight: 'bold',
                     color: 'white'
-                },
-                filter: {
-                    property: 'percentage',
-                    operator: '>',
-                    value: 2
                 }
             },
             startAngle: -90,
