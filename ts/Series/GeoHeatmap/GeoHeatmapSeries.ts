@@ -86,19 +86,6 @@ function scaledPointPos(
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
-        lon?: number;
-        lat?: number;
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
