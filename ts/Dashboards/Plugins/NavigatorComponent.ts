@@ -23,7 +23,6 @@
 
 import type {
     Axis,
-    AxisExtremesObject,
     Chart,
     Highcharts as H,
     Options as HighchartsOptions
@@ -82,7 +81,7 @@ function crossfilterEmitter(
 
     const afterSetExtremes = async (
         axis: Axis,
-        extremes: AxisExtremesObject
+        extremes: Axis.ExtremesObject
     ): Promise<void> => {
         if (component.connector) {
             const table = component.connector.table,
@@ -130,7 +129,7 @@ function crossfilterEmitter(
     return addEvent(
         component.chart.xAxis[0],
         'afterSetExtremes',
-        function (extremes: AxisExtremesObject): void {
+        function (extremes: Axis.ExtremesObject): void {
             clearTimeout(delay);
             delay = setTimeout(afterSetExtremes, 50, this, extremes);
         }
@@ -146,7 +145,7 @@ function extremesEmitter(
 
     const afterSetExtremes = (
         axis: Axis,
-        extremes: AxisExtremesObject
+        extremes: Axis.ExtremesObject
     ): void => {
         if (component.connector) {
             const table = component.connector.table,
@@ -183,7 +182,7 @@ function extremesEmitter(
     return addEvent(
         component.chart.xAxis[0],
         'afterSetExtremes',
-        function (extremes: AxisExtremesObject): void {
+        function (extremes: Axis.ExtremesObject): void {
             clearTimeout(delay);
             delay = setTimeout(afterSetExtremes, 50, this, extremes);
         }
@@ -306,7 +305,7 @@ function extremesReceiver(
 /** @internal */
 function getAxisExtremes(
     axis: Axis,
-    extremes: AxisExtremesObject
+    extremes: Axis.ExtremesObject
 ): ([number, number]|[string, string]) {
     let max: (number|string) = (
             typeof extremes.max === 'number' ?
@@ -388,14 +387,15 @@ class NavigatorComponent extends Component {
 
 
     /** @private */
-    public static charter: typeof H;
+    public static charter: H;
 
 
     /**
      * Default options of the Navigator component.
      */
     public static defaultOptions: Partial<NavigatorComponentOptions> = merge(
-        Component.defaultOptions, NavigatorComponentDefaults
+        Component.defaultOptions,
+        NavigatorComponentDefaults as Partial<NavigatorComponentOptions>
     );
 
 
@@ -453,7 +453,7 @@ class NavigatorComponent extends Component {
 
         const charter = (
             NavigatorComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof H
+            Globals.win.Highcharts as H
         );
 
         this.chartContainer = Globals.win.document.createElement('div');
@@ -521,7 +521,7 @@ class NavigatorComponent extends Component {
                 this.contentElement.clientHeight
             ),
             width = this.contentElement.clientWidth,
-            chartUpdates: HighchartsOptions = {};
+            chartUpdates: Globals.DeepPartial<HighchartsOptions> = {};
 
         if (
             chart.chartHeight !== height ||
@@ -548,7 +548,7 @@ class NavigatorComponent extends Component {
             }
 
             if (Object.keys(chartUpdates).length) {
-                chart.update(chartUpdates, false);
+                chart.update(chartUpdates as Partial<HighchartsOptions>, false);
             }
 
             if (navigator.series && navigator.series[0]) {
@@ -557,7 +557,7 @@ class NavigatorComponent extends Component {
                 }, false);
             }
         } else if (Object.keys(chartUpdates).length) {
-            chart.update(chartUpdates, false);
+            chart.update(chartUpdates as Partial<HighchartsOptions>, false);
         }
     }
 

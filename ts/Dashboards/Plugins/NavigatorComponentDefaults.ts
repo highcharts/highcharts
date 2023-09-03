@@ -21,6 +21,7 @@
  * */
 
 
+import type Globals from '../Globals';
 import type NavigatorComponentOptions from './NavigatorComponentOptions';
 
 import Component from '../Components/Component.js';
@@ -33,7 +34,8 @@ import Component from '../Components/Component.js';
  * */
 
 
-const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
+const NavigatorComponentDefaults:
+Globals.DeepPartial<NavigatorComponentOptions> = {
     type: 'Navigator',
     chartOptions: {
         chart: {
@@ -56,11 +58,10 @@ const NavigatorComponentDefaults: Partial<NavigatorComponentOptions> = {
         navigator: {
             enabled: true,
             outlineWidth: 0,
-            series: [{
+            series: {
                 animation: false,
-                animationLimit: 0,
                 lineWidth: 0
-            }],
+            },
             xAxis: {
                 endOnTick: true,
                 gridZIndex: 4,
