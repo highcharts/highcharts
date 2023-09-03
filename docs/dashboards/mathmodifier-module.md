@@ -1,4 +1,4 @@
-Data's MathModifier
+MathModifier module
 ===================
 
 The MathModifier provides different functions to run pre-defined formulas on a
@@ -6,11 +6,11 @@ table, or to calculate the pre-filled formulas loaded into the table cells.
 MathModifier's integrated formula system supports a subset of known spreadsheet
 functions, but more can be defined by your needs.
 
-As in spreadsheets you can use cell and range references.  The MathModifier
+As in spreadsheets you can use cell and range references. The MathModifier
 supports the following reference syntaxes:
 
 * `A1`: One or more capital letters are the index for the column, while one or 
-  more digits are the index for the row.  The `$` syntax for fixed indexes is
+  more digits are the index for the row. The `$` syntax for fixed indexes is
   also supported.
 
 * `A1:Z9`: Capital letters are the start index and end index for the columns of
@@ -18,8 +18,8 @@ supports the following reference syntaxes:
   range.
 
 * `R1C1`: __R__ followed by one or more digits is the index for the row, while
-  __C__ followed by one ore more digits is the index for the column.  This
-  syntax also supports negative values for back-references.
+  __C__ followed by one ore more digits is the index for the column. This syntax
+  also supports negative values for back-references.
 
 * `R1C1:R9C9`: __R__ followed by digits is the start index and end index for the
   rows of the range, while __C__ followed by digits is the start index and end
@@ -39,12 +39,12 @@ values.
 
 
 
-Pre-defined Column Calculation
-------------------------------
+Pre-defined Column Calculations
+-------------------------------
 
 You can pre-define formulas in the options of the MathModifier to create new
-columns with calculations based on existing columns.  You can also replace an
-existing column with calculations, e.g. replace metric values.  References in
+columns with calculations based on existing columns. You can also replace an
+existing column with calculations, e.g. replace metric values. References in
 your formulas will be adjusted accordingly to each row.
 
 ``` JavaScript
@@ -59,12 +59,13 @@ your formulas will be adjusted accordingly to each row.
 
 
 
-Pre-filled Column Calculation
------------------------------
+Pre-filled Column Calculations
+------------------------------
 
 If the table already contains cells pre-filled with formulas, then these will be
-automatically processed by the MathModifier.  A formula in a cell has to start
-with a equal sign as the first character, to get calculated by the MathModifier.
+automatically processed by the MathModifier. A formula in a cell has to start
+with a equal sign (`=`) as the first character, to get calculated by the
+MathModifier.
 
 ``` JavaScript
 {
@@ -79,10 +80,17 @@ with a equal sign as the first character, to get calculated by the MathModifier.
 
 
 
-Supported Operators & Function
-------------------------------
+Supported Calculations & Functions
+----------------------------------
 
-The following operators are supported:
+The formula system of the MathModifier support infinite combinations of
+calculations and function calls. Additionally custom functions can be added
+as described in a later section.
+
+
+### Operators
+
+For calculations the following operators are supported:
 
 * `+`: Addition, e.g. `=1+2`.
 
@@ -105,7 +113,9 @@ The following operators are supported:
 * `>=`: Higher-or-equal Comparison, e.g. `=9>=3`.
 
 
-The following functions are available:
+### Functions
+
+The following functions are already included:
 
 * `ABS(value)`:
   Returns positive numbers.
@@ -169,9 +179,6 @@ The following functions are available:
   tests.
 
 
-You can add additional functions as specified in the following section.
-
-
 
 Custom-defined Functions
 ------------------------
@@ -197,7 +204,7 @@ function MYFUNC(args, table): number {
                     result += value * 2;
                 }
                 break;
-            case 'object': // = Range array of values
+            case 'object': // Calculate with range array of values
                 result += MYFUNC(value, table);
                 break;
         }
