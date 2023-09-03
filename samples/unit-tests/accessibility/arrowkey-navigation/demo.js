@@ -13,18 +13,6 @@ QUnit.test('Navigating legend with arrow-keys', function (assert) {
             const event = new KeyboardEvent('keydown', { keyCode });
             keyboardNavigation.onKeydown(event);
         };
-    keyboardNavigation
-        .components
-        .legend
-        .onKbdArrowKey(
-            keyboardNavigation
-                .components
-                .legend
-                .getKeyboardNavigation(),
-            39
-        );
-
-    console.log(keyboardNavigation.components.legend.highlightedIx);
 
     eventDispatcher(9);
     eventDispatcher(37);
@@ -33,7 +21,7 @@ QUnit.test('Navigating legend with arrow-keys', function (assert) {
         keyboardNavigation
             .components
             .legend
-            .highlightedIx === 2,
+            .highlightedLegendItemIx, 2,
         'Last legend item should be highlighted.'
     );
 
@@ -43,7 +31,18 @@ QUnit.test('Navigating legend with arrow-keys', function (assert) {
         keyboardNavigation
             .components
             .legend
-            .highlightedIx === 0,
+            .highlightedLegendItemIx, 0,
         'First legend item should be highlighted.'
+    );
+
+    keyboardNavigation.update({ wrapAround: false });
+
+    eventDispatcher(37);
+    assert.strictEqual(
+        keyboardNavigation
+            .components
+            .legend
+            .highlightedLegendItemIx, 0,
+        'First legend item should still be highlighted when wrapAround is off.'
     );
 });
