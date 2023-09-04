@@ -871,14 +871,16 @@ async function setupBoard() {
                         show: false
                     },
                     TNC: {
-                        headerFormat: 'Average Temperature °C'
+                        headerFormat: 'Average Temperature °C',
+                        cellFormat: '{value:.2f}'
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
                         show: false
                     },
                     TXC: {
-                        headerFormat: 'Maximal Temperature °C'
+                        headerFormat: 'Maximal Temperature °C',
+                        cellFormat: '{value:.2f}'
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
@@ -978,9 +980,6 @@ async function setupBoard() {
             await setupCity(board, row.city, activeColumn, activeScale);
         }
     }
-
-    // Done
-    console.log(board);
 }
 
 async function setupCity(board, city, column, scale) {

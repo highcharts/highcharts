@@ -10,6 +10,7 @@ import Globals from "./es-modules/Dashboards/Globals";
 import "./es-modules/Dashboards/Components/HTMLComponent";
 import "./es-modules/Dashboards/Components/KPIComponent";
 import "./es-modules/Data/Connectors/CSVConnector";
+import "./es-modules/Data/Connectors/JSONConnector";
 import "./es-modules/Data/Connectors/GoogleSheetsConnector";
 import "./es-modules/Data/Connectors/HTMLTableConnector";
 import "./es-modules/Data/Modifiers/ChainModifier";

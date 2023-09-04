@@ -357,6 +357,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     const axis = {
         transA: 0.04,
         min: 3.24,
+        max: 7,
         len: 500,
         translationSlope: 0.2,
         minPixelPadding: 0,
@@ -367,11 +368,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         },
         series: [{
             points: [{
-                isInside: true, // #18459
                 x: 3,
                 plotX: -20
             }, {
-                isInside: true, // #18459
                 x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
@@ -727,7 +726,7 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 });
 
-QUnit.test('Annotations on ordinal axis.', assert => {
+QUnit.test('Moving annotations on ordinal axis.', assert => {
     const data = [
         [
             1622640600000,
