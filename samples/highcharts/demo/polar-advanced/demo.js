@@ -128,10 +128,11 @@ const
 Highcharts.chart('container', {
     chart: {
         polar: true,
+        height: '100%',
         events: {
             load: function () {
                 const midPane = this.pane[1];
-                console.log(this);
+
                 this.setMidPaneBg = function (background) {
                     midPane.update({
                         background: background
@@ -139,16 +140,16 @@ Highcharts.chart('container', {
                 };
             },
             render: function () {
-                console.log(this);
                 if (this.legend.group) {
                     const
-                        { plotTop, chartWidth, legend } = this,
+                        { chartWidth, legend } = this,
                         { legendWidth, legendHeight } = legend;
 
                     legend.group.translate(
                         (chartWidth - legendWidth) / 2,
-                        plotTop + (legendHeight / 3)
+                        legendHeight * 1.25
                     );
+
                 }
             }
         }
@@ -326,15 +327,28 @@ Highcharts.chart('container', {
         title: null
     }],
     legend: {
+        floating: true,
+        layout: 'vertical',
+        verticalAlign: 'center',
         align: 'center',
         enabled: true,
         backgroundColor: '#1f1836',
         borderColor: (
             'transparent'
         ),
-        floating: true,
-        layout: 'vertical',
-        verticalAlign: 'center'
+        itemStyle: {
+            color: '#FFF',
+            fontSize: '1rem'
+        },
+        width: '26%',
+        borderRadius: 8,
+        borderWidth: 1.5,
+        padding: 8,
+        maxHeight: '14%',
+        symbolPadding: 12,
+        symbolHeight: 12,
+        itemMarginBottom: 2,
+        itemMarginTop: 1
     },
     plotOptions: {
         columnrange: {
@@ -352,17 +366,16 @@ Highcharts.chart('container', {
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            fontSize: '0.6rem'
+                            color: '#FFF',
+                            fontSize: '0.6em'
                         },
-                        itemMarginBottom: 1,
-                        itemMarginTop: 1,
-                        borderRadius: 16,
-                        borderWidth: 0.7,
-                        padding: 6,
                         width: '26%',
-                        maxHeight: '7%',
-                        symbolPadding: 6,
-                        symbolHeight: 6
+                        borderRadius: 8,
+                        borderWidth: 1.5,
+                        padding: 4,
+                        maxHeight: '14%',
+                        symbolPadding: 8,
+                        symbolHeight: 8
                     },
                     plotOptions: {
                         columnrange: {
@@ -374,19 +387,21 @@ Highcharts.chart('container', {
                 }
             }, {
                 condition: {
-                    minWidth: 450
+                    minWidth: 520
                 },
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            fontSize: '0.86rem'
+                            color: '#FFF',
+                            fontSize: '0.8em'
                         },
-                        borderRadius: 12,
-                        borderWidth: 1,
-                        padding: 8,
-                        maxHeight: '10%',
-                        symbolPadding: 9,
-                        symbolHeight: 9
+                        width: '26%',
+                        borderRadius: 8,
+                        borderWidth: 1.3,
+                        padding: 6,
+                        maxHeight: '14%',
+                        symbolPadding: 10,
+                        symbolHeight: 10
                     },
                     plotOptions: {
                         columnrange: {
@@ -411,21 +426,21 @@ Highcharts.chart('container', {
             },
             {
                 condition: {
-                    minWidth: 580
+                    minWidth: 600
                 },
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            fontSize: '1rem'
+                            color: '#FFF',
+                            fontSize: '0.9em'
                         },
+                        width: '26%',
                         borderRadius: 8,
                         borderWidth: 1.5,
-                        padding: 10,
+                        padding: 8,
                         maxHeight: '14%',
                         symbolPadding: 12,
-                        symbolHeight: 12,
-                        itemMarginBottom: 3,
-                        itemMarginTop: 2
+                        symbolHeight: 12
                     },
                     plotOptions: {
                         columnrange: {
@@ -445,16 +460,6 @@ Highcharts.chart('container', {
                             textAlign: 'center',
                             fontSize: '2rem'
                         }
-                    }
-                }
-            }, {
-                condition: {
-                    minWidth: 800
-                },
-                chartOptions: {
-                    legend: {
-                        itemMarginBottom: 8,
-                        itemMarginTop: 8
                     }
                 }
             }
