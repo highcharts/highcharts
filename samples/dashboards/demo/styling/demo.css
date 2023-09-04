@@ -1,5 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
 
 /* Colors */
 :root {
@@ -11,6 +12,20 @@
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
   background-color: #f2f9fd;
+}
+
+.highcharts-background {
+    fill: #fcfcfd;
+}
+
+.highcharts-color-0 {
+    stroke: var(--highcharts-dashboards-green);
+    fill: var(--highcharts-dashboards-green);
+}
+
+.highcharts-color-1 {
+    stroke: var(--highcharts-dashboards-orange);
+    fill: var(--highcharts-dashboards-orange);
 }
 
 /* Rows and cells */
@@ -26,17 +41,18 @@
   text-align: left;
 }
 
+/* Components general */
 .highcharts-dashboards-component-title {
   padding-left: 10px;
-  font-size: 0.8rem !important;
+  font-size: 0.8rem;
   font-weight: 100;
 }
 
-.highcharts-dashboards-component-kpi-subtitle {
-  padding-left: 10px;
-  font-size: 0.8rem !important;
+.highcharts-dashboards-component-subtitle {
+  font-size: 0.8rem;
   font-weight: 100;
-
+  padding-left: 20px;
+  color: var(--highcharts-dashboards-green);
 }
 
 .highcharts-dashboards-component-kpi-value {
@@ -44,16 +60,9 @@
   font-weight: bold;
 }
 
-.highcharts-dashboards-component-kpi-subtitle {
-  padding-left: 20px;
-  color: var(--highcharts-dashboards-green);
-}
-
-
-/* Components */
-#dashboard-row-1-cell-2 .highcharts-dashboards-component-kpi-subtitle {
+/* Components specific */
+#dashboard-row-1-cell-2 .highcharts-dashboards-component-subtitle {
   color: var(--highcharts-dashboards-orange);
-
 }
 
 #dashboard-row-1-cell-2 .highcharts-color-0 {
@@ -65,16 +74,40 @@
   text-align: center;
 }
 
+#dashboard-row-2-cell-1 .highcharts-color-0 .highcharts-area {
+    fill-opacity: 1;
+    fill: url(#gradient-0);
+}
+
 #dashboard-row-3-cell-1 .highcharts-color-0 {
   stroke: var(--highcharts-dashboards-orange);
   fill: var(--highcharts-dashboards-orange);
 }
 
-.highcharts-background {
-  fill: #fcfcfd;
+#dashboard-row-3-cell-3 .highcharts-dashboards-component-content {
+    padding: 10px 0px !important;
+    height: 165px !important;
 }
 
-/* Define the stop colors */
+#dashboard-row-3-cell-3 .highcharts-datagrid-container {
+    border: none;
+    font-weight: 100;
+}
+
+#dashboard-row-3-cell-3 .highcharts-datagrid-column-header {
+    background-color: white;
+}
+
+/* Custom classes and ids */
+#saving-button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background: var(--highcharts-dashboards-orange);
+    cursor: pointer;
+}
+
+/* Gradient  */
 #gradient-0 stop {
   stop-color: var(--highcharts-dashboards-green);
 }
@@ -85,27 +118,4 @@
 
 #gradient-0 stop[offset="1"] {
   stop-opacity: 0;
-}
-
-.highcharts-color-0 {
-  stroke: var(--highcharts-dashboards-green);
-  fill: var(--highcharts-dashboards-green);
-}
-
-.highcharts-color-1 {
-  stroke: var(--highcharts-dashboards-orange);
-  fill: var(--highcharts-dashboards-orange);
-}
-
-.highcharts-color-0 .highcharts-area {
-  fill-opacity: 1;
-  fill: url(#gradient-0);
-}
-
-#saving-button {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  background: var(--highcharts-dashboards-orange);
-  cursor: pointer;
 }

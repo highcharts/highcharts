@@ -1,4 +1,20 @@
 Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'transactions',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                columnNames: ['id', 'Receiver', 'Amount', 'Balance'],
+                data: [
+                    ['rsf934fds', 'John Doe', 100, 1000],
+                    ['f0efnakr', 'Anna Smith', 200, 800],
+                    ['mfaiks12', 'Robert Johnson', 300, 500],
+                    ['15fqmfk', 'Susan Williams', 400, 100]
+                ]
+            }
+        }]
+    },
     gui: {
         layouts: [
             {
@@ -31,12 +47,17 @@ Dashboards.board('container', {
                         cells: [
                             {
                                 id: 'dashboard-row-3-cell-1',
-                                width: '2/3',
-                                height: '200px'
+                                height: '260px',
+                                width: '20%'
                             },
                             {
                                 id: 'dashboard-row-3-cell-2',
-                                height: '200px'
+                                height: '260px',
+                                width: '20%'
+                            }, {
+                                id: 'dashboard-row-3-cell-3',
+                                height: '260px',
+                                width: '60%'
                             }
                         ]
                     }
@@ -59,6 +80,7 @@ Dashboards.board('container', {
                 series: [
                     {
                         type: 'spline',
+                        enableMouseTracking: false,
                         dataLabels: {
                             enabled: false
                         },
@@ -81,6 +103,7 @@ Dashboards.board('container', {
                 series: [
                     {
                         type: 'spline',
+                        enableMouseTracking: false,
                         dataLabels: {
                             enabled: false
                         },
@@ -150,6 +173,10 @@ Dashboards.board('container', {
                 legend: {
                     enabled: false
                 },
+                xAxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                },
                 yAxis: [
                     {
                         title: '',
@@ -167,7 +194,8 @@ Dashboards.board('container', {
                         marker: {
                             enabled: false
                         },
-                        data: [10, 20, 10, 30, 40, 12, 11, 10, 23, 40, 34, 50]
+                        name: 'Balance',
+                        data: [10, 20, 30, 40, 12, 11, 10, 23, 4, 34, 50, 20]
                     }
                 ]
             }
@@ -185,6 +213,7 @@ Dashboards.board('container', {
                         dataLabels: {
                             enabled: false
                         },
+                        name: 'Spendings',
                         data: [45, 30, 50, 80, 10, 45, 30, 59, 39, 15, 62]
                     }
                 ]
@@ -205,6 +234,7 @@ Dashboards.board('container', {
                 series: [
                     {
                         type: 'pie',
+                        enableMouseTracking: false,
                         data: [58, 42],
                         size: '100%',
                         innerSize: '75%',
@@ -214,6 +244,19 @@ Dashboards.board('container', {
                     }
                 ]
             }
+        }, {
+            cell: 'dashboard-row-3-cell-3',
+            connector: {
+                id: 'transactions'
+            },
+            title: 'Transactions',
+            type: 'DataGrid',
+            editable: false,
+            dataGridOptions: {
+                cellHeight: 37
+            }
         }
     ]
+}, true).then(function (dashboard) {
+    console.log(dashboard);
 });

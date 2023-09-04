@@ -7,7 +7,7 @@ have classes that you can use to style them. You can also add your own classes
 or ids to the elements.
 
 
-### Importing the CSS
+## Importing the CSS
 The CSS is not included in the library but you can import it from the CDN like:
 ```css
 @import url("https://code.highcharts.com/css/dashboards.css");
@@ -18,7 +18,7 @@ The CSS is not included in the library but you can import it from the CDN like:
 Note that each component has its own CSS file. You can import only the CSS
 files that you need.
 
-### General classes
+## General classes
 Each of the class name contains a prefix `highcharts-dashboards` and a suffix that
 describes the element.   
 For example, the class name for the dashboard's row is `highcharts-dashboards-row`.
@@ -60,7 +60,7 @@ To style the dashboard's component:
 }
 ```
 
-### Component classes
+## Component classes
 Each component has the generic component CSS class `highcharts-dashboards-component` and its own CSS class.
 
 To style the dashboard's component title:
@@ -70,7 +70,7 @@ To style the dashboard's component title:
 }
 ```
 
-## KPI Component
+### KPI Component
 To style the dashboard's KPI component:
 ```css
 .highcharts-dashboards-component-kpi {
@@ -85,7 +85,7 @@ To style the dashboard's KPI value:
 }
 ```
 
-## Highcharts Component
+### Highcharts Component
 To style the dashboard's Highcharts component:
 ```css
 .chart-container {
