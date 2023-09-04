@@ -1,22 +1,42 @@
 #container {
-    height: 600px;
+    height: 60vw;
+    width: 60vw;
 }
 
-#data {
+pre {
     display: none;
 }
 
-.highcharts-figure {
-    min-width: 460px;
-    max-width: 800px;
-    margin: 1rem auto;
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 320px;
+    margin: 1em auto;
+}
+
+.large-size {
+    font-size: 1.4rem;
+    margin-bottom: 1.1rem;
+}
+
+.mid-size {
+    font-size: 1.2rem;
+    margin-bottom: 0.85rem;
+}
+
+.small-size {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+.center {
+    display: grid;
+    place-items: center;
+    position: sticky;
 }
 
 .team-day-display {
-    border-radius: 20%;
-    text-align: center;
-    min-height: 16vh;
     width: 100%;
+    text-align: center;
 }
 
 .col-display-fieldwrap {
@@ -37,10 +57,4 @@
 .col-display-footer {
     width: 80%;
     text-align: center;
-}
-
-.center {
-    display: grid;
-    place-items: center;
-    position: sticky;
 }
