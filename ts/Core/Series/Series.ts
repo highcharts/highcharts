@@ -1713,39 +1713,35 @@ class Series {
         xData: Array<number>,
         yData: (Array<(number|null)>|Array<Array<(number|null)>>),
         min: number,
-        max: number,
-        cropShoulder?: number
+        max: number
     ): Series.CropDataObject {
         const dataLength = xData.length;
         let i,
             j,
-            cropStart = 0,
-            cropEnd = dataLength;
+            start = 0,
+            end = dataLength;
 
-        // line-type series need one point outside
-        cropShoulder = pick(cropShoulder, this.cropShoulder);
-
-        // iterate up to find slice start
+        // Iterate up to find slice start
         for (i = 0; i < dataLength; i++) {
             if (xData[i] >= min) {
-                cropStart = Math.max(0, i - (cropShoulder as any));
+                start = Math.max(0, i - 1);
                 break;
             }
         }
 
-        // proceed to find slice end
+        // Proceed to find slice end
         for (j = i; j < dataLength; j++) {
             if (xData[j] > max) {
-                cropEnd = j + (cropShoulder as any);
+                end = j + 1;
                 break;
             }
         }
 
         return {
-            xData: xData.slice(cropStart, cropEnd),
-            yData: yData.slice(cropStart, cropEnd),
-            start: cropStart,
-            end: cropEnd
+            xData: xData.slice(start, end),
+            yData: yData.slice(start, end),
+            start,
+            end
         };
     }
 
@@ -1942,9 +1938,10 @@ class Series {
             activeYData = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
-            shoulder = this.requireSorting ? this.cropShoulder : 0,
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
+            shoulder = this.requireSorting && !this.is('column') ?
+                1 : 0,
             // #2117, need to compensate for log X axis
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
         let xExtremes,
             validValue,
             withinRange,
@@ -4797,7 +4794,6 @@ interface Series extends SeriesLike {
     axisTypes: Array<string>;
     coll: 'series';
     colorCounter: number;
-    cropShoulder: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
@@ -4812,15 +4808,14 @@ extend(Series.prototype, {
     axisTypes: ['xAxis', 'yAxis'],
     coll: 'series',
     colorCounter: 0,
-    cropShoulder: 1,
     directTouch: false,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
-    // each point's x and y values are stored in this.xData and this.yData:
+    // Each point's x and y values are stored in this.xData and this.yData:
     parallelArrays: ['x', 'y'],
     pointClass: Point,
     requireSorting: true,
-    // requires the data to be sorted:
+    // Requires the data to be sorted:
     sorted: true
 });
 
