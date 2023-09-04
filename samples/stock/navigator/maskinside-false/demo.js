@@ -1,19 +1,26 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    title: {
-        text: 'Navigator mask is outside zoomed range'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    navigator: {
-        maskInside: false
-    },
+    Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 1
-    },
+        title: {
+            text: 'Navigator mask is outside zoomed range'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        navigator: {
+            maskInside: false
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

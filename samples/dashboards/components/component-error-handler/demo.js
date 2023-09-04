@@ -52,6 +52,9 @@ Dashboards.board('container', {
             }]
         }
     }, {
+        connector: {
+            id: 'wrong-id'
+        },
         cell: 'dashboard-col-3',
         type: 'Highcharts',
         chartOptions: {

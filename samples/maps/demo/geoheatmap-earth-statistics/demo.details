@@ -1,0 +1,16 @@
+---
+name: GeoHeatmap with interpolation
+authors:
+  - Hubert Kozik
+js_wrap: b
+alt_text: >-
+  Highcharts Maps GeoHeatmap series interpolation example showing the
+  possibility of using multiple datasets about Earth Statistics from August
+  2022.
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+resources:
+   - https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css
+...

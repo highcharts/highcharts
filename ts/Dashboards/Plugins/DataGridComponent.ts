@@ -212,7 +212,6 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
-        this.filterAndAssignSyncOptions(DataGridSyncHandlers);
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers
@@ -230,12 +229,12 @@ class DataGridComponent extends Component {
             this.disableEditingModifiedColumns(e.connector);
         });
 
-        this.on('tableChanged', (): void => {
-            this.dataGrid?.update({ dataTable: this.filterColumns() });
-        });
+    }
 
-        // Add the component instance to the registry
-        Component.addInstance(this);
+    public onTableChanged(): void {
+        if (this.dataGrid && !this.dataGrid?.cellInputEl) {
+            this.dataGrid.update({ dataTable: this.filterColumns() });
+        }
     }
 
     /**
@@ -246,17 +245,26 @@ class DataGridComponent extends Component {
      * Attached connector
      */
     private disableEditingModifiedColumns(connector: DataConnectorType): void {
+        const options = this.getColumnOptions(connector);
+        this.dataGrid?.update({ columns: options });
+    }
+
+    /**
+     * Get the column options for the data grid.
+     * @internal
+     */
+    private getColumnOptions(connector: DataConnectorType): Record<string, ColumnOptions> {
         const modifierOptions = connector.options.dataModifier;
 
         if (!modifierOptions || modifierOptions.type !== 'Math') {
-            return;
+            return {};
         }
 
         const modifierColumns =
             (modifierOptions as MathModifierOptions).columnFormulas;
 
         if (!modifierColumns) {
-            return;
+            return {};
         }
 
         const options = {} as Record<string, ColumnOptions>;
@@ -268,7 +276,7 @@ class DataGridComponent extends Component {
             };
         }
 
-        this.dataGrid?.update({ columns: options });
+        return options;
     }
 
     /* *
@@ -281,11 +289,9 @@ class DataGridComponent extends Component {
      * Triggered on component initialization.
      * @private
      */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
-        this.parentElement.appendChild(this.element);
-        this.hasLoaded = true;
+        await super.load();
 
         if (
             this.connector &&
@@ -346,7 +352,6 @@ class DataGridComponent extends Component {
 
     /** @private */
     public render(): this {
-        this.emit({ type: 'beforeRender' });
         super.render();
         if (!this.dataGrid) {
             this.dataGrid = this.constructDataGrid();
@@ -368,19 +373,12 @@ class DataGridComponent extends Component {
     }
 
     /** @private */
-    public redraw(): this {
-        super.redraw();
-        return this.render();
-    }
-
-    /** @private */
     public resize(
         width?: number|null,
         height?: number|null
     ): void {
         if (this.dataGrid) {
             super.resize(width, height);
-            this.dataGrid.setSize(width, height);
         }
     }
 
@@ -405,11 +403,18 @@ class DataGridComponent extends Component {
     /** @private */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
+            const columnOptions = this.connector ?
+                this.getColumnOptions(
+                    this.connector as DataConnectorType
+                ) :
+                {};
+
             this.dataGrid = new DataGridComponent.DataGridConstructor(
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.connector && this.connector.table.modified
+                    dataTable: this.filterColumns(),
+                    columns: columnOptions
                 }
             );
             return this.dataGrid;

@@ -1,4 +1,4 @@
-var colorLessThan10 = '#1E8449',
+const colorLessThan10 = '#1E8449',
     colorMoreThan10 = '#F9E79F',
     colorMoreThan50 = '#ec0000';
 (async () => {
@@ -9,7 +9,7 @@ var colorLessThan10 = '#1E8449',
 
 
     // Initialize the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'South Korea domestic flight routes'
@@ -176,7 +176,7 @@ var colorLessThan10 = '#1E8449',
         ];
     }
 
-    var seoulICNPoint = chart.get('Seoul ICN'),
+    const seoulICNPoint = chart.get('Seoul ICN'),
         seoulGMPPoint = chart.get('Seoul GMP'),
         busanPoint = chart.get('Busan'),
         jejuPoint = chart.get('Jeju');

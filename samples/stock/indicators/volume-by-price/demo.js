@@ -5,7 +5,7 @@
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
 
-    var ohlc = [],
+    const ohlc = [],
         volume = [];
 
     data.forEach(function (point) {

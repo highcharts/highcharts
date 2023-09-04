@@ -125,73 +125,69 @@ class Cell extends GUIElement {
             document.getElementById(options.parentContainerId || '') ||
             row.container;
 
-        if (parentContainer) {
-            const layoutOptions = row.layout.options || {},
-                rowOptions = row.options || {},
-                cellClassName = layoutOptions.cellClassName || '';
+        const layoutOptions = row.layout.options || {},
+            rowOptions = row.options || {},
+            cellClassName = layoutOptions.cellClassName || '';
 
-            let cellHeight;
+        let cellHeight;
 
-            if (options.height) {
-                if (typeof options.height === 'number') {
-                    cellHeight = options.height + 'px';
-                } else {
-                    cellHeight = options.height;
+        if (options.height) {
+            if (typeof options.height === 'number') {
+                cellHeight = options.height + 'px';
+            } else {
+                cellHeight = options.height;
+            }
+        }
+
+        this.container = this.getElementContainer({
+            render: row.layout.board.guiEnabled,
+            parentContainer: parentContainer,
+            attribs: {
+                id: options.id,
+                className: Globals.classNames.cell + ' ' +
+                    cellClassName
+            },
+            element: cellElement,
+            elementId: options.id,
+            style: merge(
+                layoutOptions.style,
+                rowOptions.style,
+                options.style,
+                {
+                    height: cellHeight
                 }
-            }
+            )
+        });
 
-            this.setElementContainer({
-                render: row.layout.board.guiEnabled,
-                parentContainer: parentContainer,
-                attribs: {
-                    id: options.id,
-                    className: Globals.classNames.cell + ' ' +
-                        cellClassName
-                },
-                element: cellElement,
-                elementId: options.id,
-                style: merge(
-                    layoutOptions.style,
-                    rowOptions.style,
-                    options.style,
-                    {
-                        height: cellHeight
-                    }
-                )
-            });
+        // Set cell width respecting responsive options.
+        this.reflow();
 
-            // Set cell width respecting responsive options.
-            this.reflow();
+        // Mount component from JSON.
+        if (this.options.mountedComponentJSON) {
+            this.mountComponentFromJSON(
+                this.options.mountedComponentJSON,
+                this.container
+            );
+        }
 
-            // Mount component from JSON.
-            if (this.options.mountedComponentJSON) {
-                this.mountComponentFromJSON(
-                    this.options.mountedComponentJSON,
-                    this.container
-                );
-            }
+        // nested layout
+        if (this.options.layout) {
+            this.setNestedLayout();
+        }
+        if (this.options.layoutJSON) {
+            const layout = this.row.layout,
+                board = layout.board,
+                layoutFromJSON = (
+                    layout.constructor as typeof LayoutType
+                ).fromJSON;
 
-            // nested layout
-            if (this.options.layout) {
-                this.setNestedLayout();
-            }
-            if (this.options.layoutJSON) {
-                const layout = this.row.layout,
-                    board = layout.board,
-                    layoutFromJSON = (
-                        layout.constructor as typeof LayoutType
-                    ).fromJSON;
-
-                this.nestedLayout = layoutFromJSON(
-                    merge(this.options.layoutJSON, {
-                        parentContainerId: this.options.id
-                    }),
-                    board,
-                    this
-                );
-            }
-        } else {
-            // Error
+            this.nestedLayout = layoutFromJSON(
+                merge(this.options.layoutJSON, {
+                    parentContainerId: this.options.id
+                }),
+                board,
+                this
+            );
         }
     }
 
@@ -236,6 +232,10 @@ class Cell extends GUIElement {
      */
     public isHighlighted?: boolean;
 
+    /**
+     * HTML container of a GUIElement.
+     */
+    public container: HTMLElement;
     /* *
      *
      *  Functions
@@ -588,6 +588,18 @@ class Cell extends GUIElement {
                 Globals.classNames.cellActive
             );
         }
+    }
+
+    /**
+     * Enables or disables the loading indicator in the cell.
+     *
+     * @internal
+     */
+    public setLoadingState(enabled: boolean = true): void {
+        this.container?.classList?.toggle(
+            Globals.classNames.cellLoading,
+            enabled
+        );
     }
 
     private convertWidthToValue(

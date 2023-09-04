@@ -168,7 +168,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -889,6 +889,10 @@ class EditMode {
      */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
+        if (this.dragDrop) {
+            this.dragDrop.mouseCellContext = void 0;
+        }
+        this.mouseCellContext = void 0;
         this.hideContextPointer();
     }
 
@@ -1030,7 +1034,7 @@ namespace EditMode {
          * The URL prefix for the icons used in the edit mode like the context
          * menu icons, the row and cell edit toolbar icons, etc.
          *
-         * @default https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/
+         * @default @product.assetPrefix@/gfx/dashboards-icons/
          */
         iconsURLPrefix?: string;
         /**

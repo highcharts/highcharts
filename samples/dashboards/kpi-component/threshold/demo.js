@@ -9,7 +9,6 @@ const board = Dashboards.board('container', {
         value: speed,
         valueFormat: '{value} km/h',
         threshold: speedLimit,
-        thresholdColors: ['#03fcca', '#a82025'],
         chartOptions: {
             chart: {
                 type: 'solidgauge'
@@ -18,7 +17,6 @@ const board = Dashboards.board('container', {
                 startAngle: -150,
                 endAngle: 150,
                 background: {
-                    backgroundColor: '#EEE',
                     innerRadius: '60%',
                     outerRadius: '100%',
                     shape: 'arc'
@@ -32,9 +30,11 @@ const board = Dashboards.board('container', {
                 dataLabels: {
                     enabled: false
                 },
+                animation: {
+                    duration: 900
+                },
                 rounded: true,
                 data: [{
-                    color: Highcharts.getOptions().colors[0],
                     y: speed,
                     innerRadius: '60%',
                     outerRadius: '100%'
