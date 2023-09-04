@@ -1,7 +1,7 @@
-var minMax = {};
+let minMax = {};
 
 function getMinMax(chart) {
-    var yMin = Math.min.apply(
+    const yMin = Math.min.apply(
             null,
             chart.series[0].processedYData.slice(1, -1)
         ),

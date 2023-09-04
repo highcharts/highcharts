@@ -2,18 +2,18 @@
  *Function to draw the path
  */
 function getPath(width, height) {
-    var path = [],
+    const path = [],
         centerX = width * 0.5,
         centerY = height * 0.56,
-        r = width * 0.35,
-        rFraction,
+        r = width * 0.35;
+
+    let rFraction,
         x,
         y,
-        i,
         angle;
 
     // loop to add points to the path
-    for (i = 0; i < 32; i = i + 1) {
+    for (let i = 0; i < 32; i = i + 1) {
         angle = i * Math.PI / 16;
         if (i === 0) {
             path.push('M');
@@ -38,7 +38,7 @@ function getPath(width, height) {
  * Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
  */
 function onDraw() {
-    var path = getPath(this.chartWidth, this.chartHeight);
+    const path = getPath(this.chartWidth, this.chartHeight);
     if (this.compassrose) {
         this.compassrose.animate({
             d: path
@@ -97,8 +97,8 @@ Highcharts.chart('container', {
             distance: 10,
             useHTML: true,
             formatter: function () {
-                var style = '',
-                    scale = document.getElementById('container').offsetWidth * 0.005;
+                let style = '';
+                const scale = document.getElementById('container').offsetWidth * 0.005;
                 if (this.value.length === 1) {
                     style = 'font-size:' + (scale * 1.3) + 'em';
                 } else if (this.value.length === 2) {

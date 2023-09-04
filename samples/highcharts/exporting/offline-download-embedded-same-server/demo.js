@@ -1,10 +1,10 @@
-var nav = Highcharts.win.navigator,
+const nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
 function addText(text) {
-    var heading = document.createElement('h2');
+    const heading = document.createElement('h2');
     heading.innerHTML = text;
     parentEl.appendChild(heading);
 }
