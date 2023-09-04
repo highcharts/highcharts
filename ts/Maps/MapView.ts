@@ -1002,7 +1002,10 @@ class MapView {
                             (mouseDownY - chartY) / scale * flipFactor
                     ]);
 
-                    this.setView(newCenter, void 0, true, false);
+                    // #19190 Skip NaN coords
+                    if (!isNaN(newCenter[0] + newCenter[1])) {
+                        this.setView(newCenter, void 0, true, false);
+                    }
                 }
 
                 e.preventDefault();
@@ -1419,7 +1422,7 @@ addEvent(MapChart, 'afterInit', function (): void {
      * @type {Highcharts.MapView|undefined}
      */
     this.mapView = new MapView(this, this.options.mapView);
-});
+}, { order: 0 });
 
 
 export default MapView;

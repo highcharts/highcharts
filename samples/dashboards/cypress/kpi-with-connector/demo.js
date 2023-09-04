@@ -9,6 +9,18 @@ Dashboards.board('container', {
         }]
     },
     components: [{
+        cell: 'kpi-2',
+        type: 'KPI',
+        title: 'Mixed values',
+        columnName: 'Value',
+        sync: {
+            extremes: true
+        },
+        connector: {
+            id: 'value'
+        },
+        value: 'OTHER_VALUE'
+    }, {
         cell: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
@@ -43,6 +55,8 @@ Dashboards.board('container', {
         connector: {
             id: 'value'
         }
+    }, {
+        cell: 'kpi-2'
     }],
     gui: {
         layouts: [{
@@ -50,6 +64,10 @@ Dashboards.board('container', {
                 cells: [{
                     id: 'kpi'
                 }, {
+                    id: 'kpi-2'
+                }]
+            }, {
+                cells: [{
                     id: 'chart'
                 }]
             }]

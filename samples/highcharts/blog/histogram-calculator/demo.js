@@ -195,9 +195,9 @@ const randomData = (points, positive, multiplier) => {
             Math.random()
         ) - 3) / 3;
     }
-    var rData = [];
-    for (var i = 0; i < points; i++) {
-        var val = rnd();
+    const rData = [];
+    for (let i = 0; i < points; i++) {
+        let val = rnd();
         val = positive === true ? Math.abs(val) : val;
         val = multiplier > 1 ? (val * multiplier) : val;
         rData.push(val);
@@ -206,19 +206,23 @@ const randomData = (points, positive, multiplier) => {
 };
 
 const binData = data => {
-    var hData = [], // the output array
-        size = data.length, // how many data points
-        bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+    const hData = [], // the output array
+        size = data.length; // how many data points
+
+    let bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+
     bins = bins > 50 ? 50 : bins; // adjust if more than 50 cells
-    var max = Math.max.apply(null, data), // lowest data value
+
+    const max = Math.max.apply(null, data), // lowest data value
         min = Math.min.apply(null, data), // highest data value
         range = max - min, // total range of the data
-        width = range / bins, // size of the bins
-        binBottom, // place holders for the bounds of each bin
+        width = range / bins; // size of the bins
+
+    let binBottom, // place holders for the bounds of each bin
         binTop;
 
     // loop through the number of cells
-    for (var i = 0; i < bins; i++) {
+    for (let i = 0; i < bins; i++) {
 
         // set the upper and lower limits of the current cell
         binBottom = min + (i * width);
@@ -231,8 +235,8 @@ const binData = data => {
         }
 
         // loop through the data to see if it fits in this bin
-        for (var j = 0; j < size; j++) {
-            var x = data[j];
+        for (let j = 0; j < size; j++) {
+            const x = data[j];
 
             // adjust if it's the first pass
             binBottom = i === 0 && j === 0 ? binBottom -= 1 : binBottom;
@@ -257,8 +261,8 @@ const numSort = (a, b) => a - b;
 // get any percentile from an array
 const getPercentile = (data, percentile) => {
     data.sort(numSort);
-    var index = (percentile / 100) * data.length;
-    var result;
+    const index = (percentile / 100) * data.length;
+    let result;
     if (Math.floor(index) === index) {
         result = (data[(index - 1)] + data[index]) / 2;
     } else {
@@ -268,25 +272,23 @@ const getPercentile = (data, percentile) => {
 };
 // get the median absolute deviation
 const getMad = data => {
-    var median = getPercentile(data, 50);
-    var devs = [];
+    const median = getPercentile(data, 50);
+    const devs = [];
     data.forEach(point => {
         devs.push(Math.abs(point - median));
     });
-    var mad = getPercentile(devs, 50);
-    var output = {};
+    const mad = getPercentile(devs, 50);
+    const output = {};
     output.median = median;
     output.mad = mad;
     return output;
 };
 
-var chart, mad, binnedData, rawData;
+const rawData = randomData(10000); // generate random normal data points
+const binnedData = binData(rawData); // bin the data
+const mad = getMad(rawData); // return the median, and the median absolute deviation
 
-rawData = randomData(10000); // generate random normal data points
-binnedData = binData(rawData); // bin the data
-mad = getMad(rawData); // return the median, and the median absolute deviation
-
-chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column',
         margin: [100, 25, 100, 50]

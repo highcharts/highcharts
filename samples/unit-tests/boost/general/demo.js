@@ -166,8 +166,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(
             chart.series[3].points.length,
-            4,
-            'array length should include values with null'
+            2,
+            'Null points should not be added to the series\' kd-tree (#19341)'
         );
     }
 );

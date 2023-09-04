@@ -797,31 +797,30 @@ QUnit.test('Test null data in sankey #12666', function (assert) {
 });
 
 QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            height: 200
-        },
+    const chart = Highcharts.chart('container', {
+            chart: {
+                height: 200
+            },
 
-        series: [
-            {
-                keys: ['from', 'to', 'weight'],
-                nodePadding: 50,
-                minLinkWidth: 0,
-                data: [
-                    ['Brazil', 'Portugal', 5],
-                    ['Brazil', 'France', 1],
-                    ['Canada', 'Portugal', 1],
-                    ['Canada', 'France', 1000],
-                    ['Portugal', 'Angola', 2],
-                    ['Portugal', 'Senegal', 1],
-                    ['Portugal', 'Morocco', 1]
-                ],
-                type: 'sankey'
-            }
-        ]
-    });
-
-    const nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
+            series: [
+                {
+                    keys: ['from', 'to', 'weight'],
+                    nodePadding: 50,
+                    minLinkWidth: 0,
+                    data: [
+                        ['Brazil', 'Portugal', 5],
+                        ['Brazil', 'France', 1],
+                        ['Canada', 'Portugal', 1],
+                        ['Canada', 'France', 1000],
+                        ['Portugal', 'Angola', 2],
+                        ['Portugal', 'Senegal', 1],
+                        ['Portugal', 'Morocco', 1]
+                    ],
+                    type: 'sankey'
+                }
+            ]
+        }),
+        nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
         factorBeforeUpdate = chart.series[0].translationFactor,
         newMinLinkWidth = 5;
 
@@ -846,6 +845,35 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
         0.02,
         'The translate-factor value should not be changed significantly ' +
             'while changing the minLinkWidth (#13308)'
+    );
+
+    const node = chart.series[0].nodes[4],
+        hor = -100,
+        ver = -100;
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    const posBefore = node.shapeArgs;
+
+    node.update({
+        offsetHorizontal: hor,
+        offsetVertical: ver
+    });
+
+    assert.strictEqual(
+        posBefore.x - ver,
+        node.shapeArgs.x,
+        'Point should be moved to the left (#18988 and #17594).'
+    );
+
+    assert.strictEqual(
+        posBefore.y - hor,
+        node.shapeArgs.y,
+        'Point should be moved to the bottom (#18988 and #17594).'
     );
 
     const series = chart.addSeries({

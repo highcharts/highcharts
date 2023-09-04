@@ -57,4 +57,4 @@ Use the following setting to set up a histogram chart with a column chart:
         }
     }
 
-<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/mushigh/18b1vun9/5/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-histogram/column allow="fullscreen"></iframe>
