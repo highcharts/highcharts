@@ -46,14 +46,28 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
                         }
+
                     }
                 }, {
                     id: 'dashboard-col-1',
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
                         }
+
 
                     }
                 }, {
@@ -61,6 +75,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
                         }
                     }
                 }]
