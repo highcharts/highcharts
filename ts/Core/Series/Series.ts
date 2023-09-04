@@ -68,6 +68,7 @@ const {
     win
 } = H;
 import type Legend from '../Legend/Legend';
+import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -145,9 +146,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject {
-    clientX: number;
-    plotY?: number;
+interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
 /* *
@@ -3523,11 +3522,11 @@ class Series {
         e?: PointerEvent
     ): (Point|undefined) {
         const series = this,
-            kdX = this.kdAxisArray[0],
-            kdY = this.kdAxisArray[1],
+            [kdX, kdY] = this.kdAxisArray,
             kdComparer = compareX ? 'distX' : 'dist',
-            kdDimensions = (series.options.findNearestPointBy as any)
-                .indexOf('y') > -1 ? 2 : 1;
+            kdDimensions = (series.options.findNearestPointBy || '')
+                .indexOf('y') > -1 ? 2 : 1,
+            useRadius = !!series.isBubble;
 
         /**
          * Set the one and two dimensional distance on the point object.
@@ -3537,18 +3536,16 @@ class Series {
             p1: KDPointSearchObject,
             p2: Point
         ): void {
-            const x = (defined((p1 as any)[kdX]) &&
-                    defined((p2 as any)[kdX])) ?
-                    Math.pow((p1 as any)[kdX] - (p2 as any)[kdX], 2) :
-                    null,
-                y = (defined((p1 as any)[kdY]) &&
-                    defined((p2 as any)[kdY])) ?
-                    Math.pow((p1 as any)[kdY] - (p2 as any)[kdY], 2) :
-                    null,
-                r = (x || 0) + (y || 0);
+            const p1kdX = p1[kdX],
+                p2kdX = p2[kdX],
+                x = (defined(p1kdX) && defined(p2kdX)) ? p1kdX - p2kdX : null,
+                p1kdY = p1[kdY],
+                p2kdY = p2[kdY],
+                y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
+                radius = useRadius ? (p2.marker?.radius || 0) : 0;
 
-            p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
-            p2.distX = defined(x) ? Math.sqrt(x as any) : Number.MAX_VALUE;
+            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
+            p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
         }
 
         /**
@@ -3569,7 +3566,8 @@ class Series {
             setDistance(search, point);
 
             // Pick side based on distance to splitting point
-            const tdist = (search as any)[axis] - (point as any)[axis],
+            const tdist = (search[axis] || 0) - (point[axis] || 0) +
+                    (useRadius ? (point.marker?.radius || 0) : 0),
                 sideA = tdist < 0 ? 'left' : 'right',
                 sideB = tdist < 0 ? 'right' : 'left';
 
@@ -4127,6 +4125,8 @@ class Series {
             preserve.push(
                 'data',
                 'isDirtyData',
+                // GeoHeatMap interpolation
+                'isDirtyCanvas',
                 'points',
 
                 'processedData', // #17057
@@ -4801,7 +4801,7 @@ interface Series extends SeriesLike {
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     isCartesian: boolean;
-    kdAxisArray: Array<string>;
+    kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
     pointClass: typeof Point;
     requireSorting: boolean;

@@ -1,12 +1,19 @@
-const csvData = document.getElementById('csv').innerText;
+const data = [
+    ['Food', 'Vitamin A'],
+    ['Beef Liver', 6421],
+    ['Lamb Liver', 2122],
+    ['Cod Liver Oil', 1350],
+    ['Mackerel', 388],
+    ['Tuna', 214]
+];
 
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'sample',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: csvData
+                data
             }
         }]
     },

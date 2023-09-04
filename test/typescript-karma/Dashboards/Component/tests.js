@@ -15,7 +15,7 @@ const HighchartsComponent = Dashboards.ComponentRegistry.types.Highcharts;
 const eventTypes = [
     'load',
     'afterLoad',
-    'beforeRender',
+    'render',
     'afterRender',
     'tableChanged',
     'setConnector',
@@ -101,7 +101,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
 
     assert.deepEqual(
         registeredEvents,
-        ['update',  'afterUpdate', 'beforeRender', 'afterRender'],
+        ['update',  'afterUpdate', 'render', 'afterRender'],
         'After updating the HighchartsComponent events should be fired in the correct order.'
     );
 
@@ -130,7 +130,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         registeredEvents,
         [
             'update',
-            'beforeRender',
+            'render',
             'afterRender'
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
@@ -149,7 +149,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
     // expectedEvents.push(
     //       "update",
     //       "redraw",
-    //       "beforeRender",
+    //       "render",
     //       "load",
     //       "afterLoad",
     //       "afterRender",
@@ -232,7 +232,7 @@ test('Board with data connectors and HighchartsComponent update', async function
             'update',
             'setConnector',
             'afterUpdate',
-            'beforeRender',
+            'render',
             'afterRender',
         ],
         'If connector is given in options, it will be attached during load'
