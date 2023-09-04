@@ -15,6 +15,7 @@
  * */
 
 import type { AlignValue } from '../Renderer/AlignObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
@@ -59,6 +60,7 @@ export interface AxisCrosshairLabelOptions {
 }
 
 export interface AxisCrosshairOptions {
+    animation?: (boolean|Partial<AnimationOptions>);
     className?: string;
     color?: ColorType;
     dashStyle?: DashStyleValue;
