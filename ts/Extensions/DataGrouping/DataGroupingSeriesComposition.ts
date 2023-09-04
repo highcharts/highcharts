@@ -436,8 +436,7 @@ function applyGrouping(
                     groupedXData,
                     groupedYData as any,
                     xAxis.min as any,
-                    xAxis.max as any,
-                    1 // Ordinal xAxis will remove left-most points otherwise
+                    xAxis.max as any
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
