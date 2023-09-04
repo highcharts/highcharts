@@ -508,8 +508,9 @@ Highcharts.prepareShot = function (chart) {
         const series = chart.series[0],
             points = series.nodes || // Network graphs, sankey etc
                 series.points,
-            min = series.xAxis ? series.xAxis.min : -Infinity,
-            max = series.xAxis ? series.xAxis.max : Infinity;
+            xAxis = series.isCartesian && series.xAxis,
+            min = xAxis ? xAxis.min : -Infinity,
+            max = xAxis ? xAxis.max : Infinity;
 
         if (points) {
             for (var i = 0; i < points.length; i++) {
@@ -517,9 +518,10 @@ Highcharts.prepareShot = function (chart) {
                 if (
                     points[i] &&
                     !points[i].isNull &&
-                    typeof x === 'number' &&
-                    x >= min &&
-                    x <= max &&
+                    (
+                        typeof x !== 'number' ||
+                        (x >= min && x <= max)
+                    ) &&
                     !( // Map point with no extent, like Aruba
                         points[i].shapeArgs &&
                         points[i].shapeArgs.d &&
