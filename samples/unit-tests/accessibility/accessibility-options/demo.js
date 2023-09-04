@@ -79,15 +79,20 @@ QUnit.test('Point hidden from AT', function (assert) {
     assert.ok(isPointAriaHidden(pointB), 'Point B should be ARIA hidden');
 });
 
-QUnit.test('Navigating legend with arrow-keys', function (assert) {
-    const chart = Highcharts.chart('container', {
-            series: [{
-                data: [1]
-            }, {
-                data: [2]
-            }, {
-                data: [3]
-            }]
+QUnit.test('Keyboard navigation', function (assert) {
+    const
+        chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [0]
+                },
+                {
+                    data: [0]
+                },
+                {
+                    data: [0]
+                }
+            ]
         }),
         keyboardNavigation = chart.accessibility.keyboardNavigation,
         eventDispatcher = keyCode => {
@@ -119,6 +124,7 @@ QUnit.test('Navigating legend with arrow-keys', function (assert) {
     keyboardNavigation.update({ wrapAround: false });
 
     eventDispatcher(37);
+
     assert.strictEqual(
         keyboardNavigation
             .components
@@ -126,20 +132,13 @@ QUnit.test('Navigating legend with arrow-keys', function (assert) {
             .highlightedLegendItemIx, 0,
         'First legend item should still be highlighted when wrapAround is off.'
     );
-});
 
-QUnit.test('Keyboard nav disabled', function (assert) {
-    const chart = Highcharts.chart('container', {
+    chart.update({
         accessibility: {
             keyboardNavigation: {
                 enabled: false
             }
-        },
-        series: [
-            {
-                data: [1]
-            }
-        ]
+        }
     });
 
     assert.notOk(
