@@ -123,7 +123,7 @@ Dashboards.board('container', {
                             tagName: 'h4',
                             textContent: 'Check how you can save more!',
                             attributes: {
-                                id: 'main-title'
+                                class: 'main-title'
                             }
                         },
                         {
@@ -140,6 +140,7 @@ Dashboards.board('container', {
         {
             type: 'Highcharts',
             cell: 'dashboard-row-2-cell-1',
+            title: 'Earnings',
             chartOptions: {
                 chart: {
                     marginTop: 50
@@ -251,12 +252,10 @@ Dashboards.board('container', {
             },
             title: 'Transactions',
             type: 'DataGrid',
-            editable: false,
             dataGridOptions: {
-                cellHeight: 37
+                cellHeight: 37,
+                editable: false
             }
         }
     ]
-}, true).then(function (dashboard) {
-    console.log(dashboard);
-});
+}, true);

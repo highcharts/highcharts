@@ -61,12 +61,21 @@ To style the dashboard's component:
 ```
 
 ## Component classes
-Each component has the generic component CSS class `highcharts-dashboards-component` and its own CSS class.
+Each component has the generic component CSS class `highcharts-dashboards-component`
+and its own CSS class specific for the component. For example, the KPI component
+has the class `highcharts-dashboards-component-kpi`.
 
 To style the dashboard's component title:
 ```css
 .highcharts-dashboards-component-title {
     font-size: 12px;
+}
+```
+
+To style the dashboard's component subtitle:
+```css
+.highcharts-dashboards-component-subtitle {
+    font-size: 10px;
 }
 ```
 
@@ -88,13 +97,14 @@ To style the dashboard's KPI value:
 ### Highcharts Component
 To style the dashboard's Highcharts component:
 ```css
-.chart-container {
+.highcharts-dashboards-component-highcharts {
     background-color: gray;
 }
 ```
 
-You can find more information about the classes in Highcharts [here](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
-## DataGrid Component
+To individually style the dashboard's Highcharts chart please find more information on how to [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+
+### DataGrid Component
 To style the dashboard's DataGrid component:
 ```css
 .highcharts-datagrid-container {
@@ -115,8 +125,70 @@ To style the dashboard's DataGrid row:
     background-color: gray;
 }
 ```
-### Edit Mode classes
-## Confirmation popup
+
+Note that you can use the child selector to style even and odd rows:
+```css
+.highcharts-datagrid-row:nth-child(even) {
+    background-color: white;
+}
+```
+
+### HTML Component
+Since this component is based on the HTML element and can be very different
+it is recommended to use the custom classes and ids to style it. More information
+in the section below.
+
+## Custom classes
+In the dashboard config each component or its element can have a custom class or id.
+You can use it to define better CSS selectors and style the dashboard.
+
+See how the HTML component was configured and how the `id` and `class` were used:
+```ts
+{
+    type: 'HTML',
+    cell: 'dashboard-row-1-cell-3',
+    elements: [
+        {
+            tagName: 'div',
+            children: [
+                {
+                    tagName: 'h4',
+                    textContent: 'Check how you can save more!',
+                    attributes: {
+                        class: 'main-title'
+                    }
+                },
+                {
+                    tagName: 'button',
+                    textContent: 'Go to the saving account',
+                    attributes: {
+                        id: 'saving-button'
+                    }
+                }
+            ]
+        }
+    ]
+},
+```
+
+These custom classes and ids can be used to style the dashboard:
+```css
+#saving-button {
+    border: none;
+    cursor: pointer;
+}
+```
+
+The final result might look like:
+
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/styling"></iframe>
+
+## Edit Mode classes
+You can also change how the Edit Mode looks like. The Edit mode is based on the
+elements like the sidebar, toolbar, popup, etc. Each of them has its own class
+that you can use to style it.
+
+### Confirmation popup
 To style the dashboard's popup:
 ```css
 .highcharts-dashboards-confirmation-popup {
@@ -138,7 +210,7 @@ To style the dashboard's popup close button:
 }
 ```
 
-## Sidebar (Accordion menu)
+### Sidebar (Accordion menu)
 
 To style the dashboard's accordion menu in the sidebar:
 ```css
@@ -153,7 +225,7 @@ To style the dashboard's sidebar header in the accordion menu:
     font-size: 12px;
 }
 ```
-## Toolbars
+### Toolbars
 
 To style the dashboard's toolbar in the Edit Mode:
 ```css
@@ -162,7 +234,7 @@ To style the dashboard's toolbar in the Edit Mode:
 }
 ```
 
-## Highlights
+### Highlights
 
 To style the highlights of edited cell:
 ```css
@@ -177,8 +249,3 @@ To style the highlights of edited row:
     border-color: blue;
 }
 ```
-
-### Custom classes
-
-
-
