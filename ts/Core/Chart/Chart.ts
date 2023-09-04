@@ -3524,28 +3524,29 @@ class Chart {
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    isXAxis = axis.isXAxis;
+                    isXAxis = axis.isXAxis,
+                    { hasPinched, mouseDownX, mouseDownY } = pointer;
 
 
                 // Don't zoom more than minRange
                 if (
                     pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
                     (
-                        defined(pointer.mouseDownX) &&
-                        defined(pointer.mouseDownY) &&
+                        defined(mouseDownX) &&
+                        defined(mouseDownY) &&
                         chart.isInsidePlot(
-                            pointer.mouseDownX - chart.plotLeft,
-                            pointer.mouseDownY - chart.plotTop,
+                            mouseDownX - chart.plotLeft,
+                            mouseDownY - chart.plotTop,
                             {
                                 axis,
                                 // Ignore touch positions if pinched on mobile
                                 // #18062
-                                ignoreX: pointer.hasPinched,
-                                ignoreY: pointer.hasPinched
+                                ignoreX: hasPinched,
+                                ignoreY: hasPinched
                             }
                         )
                     ) || !defined(
-                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
+                        chart.inverted ? mouseDownX : mouseDownY
                     )
                 ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
