@@ -27,7 +27,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
     Options,
-    Highcharts
+    Highcharts as H
 } from '../Plugins/HighchartsTypes';
 import type TextOptions from './TextOptions';
 import type Types from '../../Shared/Types';
@@ -113,7 +113,7 @@ class KPIComponent extends Component {
      * */
 
     /** @internal */
-    public static charter?: typeof Highcharts;
+    public static charter?: H;
     /**
      * Default options of the KPI component.
      */
@@ -357,6 +357,7 @@ class KPIComponent extends Component {
         }
 
         this.sync.start();
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -400,6 +401,10 @@ class KPIComponent extends Component {
      * The value that should be displayed in the KPI.
      */
     private getValue(): string|number|undefined {
+        if (this.options.value) {
+            return this.options.value;
+        }
+
         if (this.connector && this.options.columnName) {
             const table = this.connector?.table.modified,
                 column = table.getColumn(this.options.columnName),
@@ -407,8 +412,6 @@ class KPIComponent extends Component {
 
             return table.getCellAsString(this.options.columnName, length - 1);
         }
-
-        return this.options.value;
     }
 
     /**
@@ -436,7 +439,7 @@ class KPIComponent extends Component {
                 value = value.toLocaleString();
             }
 
-            AST.setElementHTML(this.value, value);
+            AST.setElementHTML(this.value, '' + value);
 
             this.prevValue = prevValue;
         }

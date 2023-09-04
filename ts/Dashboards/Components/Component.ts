@@ -29,7 +29,6 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type Globals from '../Globals';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -39,12 +38,10 @@ import type Row from '../Layout/Row';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
-import DG from '../Globals.js';
-const {
-    classNamePrefix
-} = DG;
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Globals from '../Globals.js';
+const { classNamePrefix } = Globals;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -155,10 +152,6 @@ abstract class Component {
         id: '',
         title: false,
         caption: false,
-        style: {
-            display: 'flex',
-            'flex-direction': 'column'
-        },
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
@@ -548,13 +541,16 @@ abstract class Component {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
                             clearInterval(this.tableEventTimeout);
-                            this.tableEventTimeout = setTimeout((): void => {
-                                this.emit({
-                                    ...e,
-                                    type: 'tableChanged'
-                                });
-                                this.tableEventTimeout = void 0;
-                            }, 0);
+                            this.tableEventTimeout = Globals.win.setTimeout(
+                                (): void => {
+                                    this.emit({
+                                        ...e,
+                                        type: 'tableChanged'
+                                    });
+                                    this.tableEventTimeout = void 0;
+                                },
+                                0
+                            );
                         }));
                 });
             }
@@ -955,6 +951,7 @@ abstract class Component {
      * @internal
      */
     public render(): this {
+        this.emit({ type: 'render' });
         this.resizeTo(this.parentElement);
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
@@ -1137,7 +1134,7 @@ namespace Component {
     /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
     /** @internal */
-    export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    export type RenderEvent = Event<'render' | 'afterRender', {}>;
 
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
@@ -1233,10 +1230,6 @@ namespace Component {
          * Sets an ID for the component's container.
          */
         id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
         /**
          * The component's title, which will render at the top.
          *

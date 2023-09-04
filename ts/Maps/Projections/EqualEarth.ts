@@ -84,6 +84,11 @@ class EqualEarth implements ProjectionDefinition {
         ) / Math.cos(paramLat);
         const lat = d * Math.asin(Math.sin(paramLat) / M);
 
+        // If lons are beyond the border of a map -> resolve via break
+        if (Math.abs(lon) > 180) {
+            return [NaN, NaN];
+        }
+
         return [lon, lat];
     }
 

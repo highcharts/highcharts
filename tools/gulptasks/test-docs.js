@@ -16,7 +16,13 @@ async function checkDocsConsistency() {
 
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');
-    glob.sync(process.cwd() + '/ts/**/*.ts').forEach(file => {
+    const tsFiles = glob.sync('./ts/**/*.ts');
+    if (!tsFiles.length) {
+        throw new Error(
+            'No .ts files found!'
+        );
+    }
+    tsFiles.forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             samplePattern = /@sample[ ]*(\{(highcharts|highstock|highmaps|gantt)\})? ([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
@@ -45,10 +51,16 @@ async function checkDocsConsistency() {
                 'Rotten links\n' + JSON.stringify(error404s, null, '  ')
             );
         }
-
     });
+
     LogLib.message('Checking links to samples in *.md files...');
-    glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
+    const mdFiles = glob.sync('./docs/**/*.md');
+    if (!mdFiles.length) {
+        throw new Error(
+            'No .md files found!'
+        );
+    }
+    mdFiles.forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             docsPattern = /https:\/\/(www\.)?highcharts.com\/docs\/([a-zA-Z\-]+\/[a-zA-Z\-]+)/gu,
@@ -78,7 +90,6 @@ async function checkDocsConsistency() {
                 'Rotten links\n' + JSON.stringify(error404s, null, '  ')
             );
         }
-
     });
 }
 
