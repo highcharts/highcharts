@@ -814,12 +814,14 @@ class Point {
             // This is the fastest way to detect if there are individual point
             // dataLabels that need to be considered in drawDataLabels. These
             // can only occur in object configs.
-            if ((options as any).dataLabels) {
-                series._hasPointLabels = true;
+            if (options.dataLabels) {
+                // Override the prototype function to always return true,
+                // regardless of whether data labels are enabled series-wide
+                series.hasDataLabels = (): boolean => true;
             }
 
             // Same approach as above for markers
-            if ((options as any).marker) {
+            if (options.marker) {
                 series._hasPointMarkers = true;
             }
         }
