@@ -255,15 +255,7 @@ namespace ColumnDataLabel {
             maxLabelDistance = 0;
 
         // Get out if not enabled
-        if (
-            !series.visible ||
-            (
-                !splat(
-                    series.options.dataLabels || {}
-                ).some((o): boolean|undefined => o.enabled) &&
-                !series._hasPointLabels
-            )
-        ) {
+        if (!series.visible || !series.hasDataLabels?.()) {
             return;
         }
 

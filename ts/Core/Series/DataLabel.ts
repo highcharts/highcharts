@@ -82,9 +82,9 @@ declare module './PointOptions' {
 
 declare module './SeriesLike' {
     interface SeriesLike {
-        _hasPointLabels?: boolean;
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
+        hasDataLabels?(): boolean;
         initDataLabelsGroup(): SVGElement;
         initDataLabels(
             animationConfig?: Partial<AnimationOptions>
@@ -222,6 +222,20 @@ namespace DataLabel {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * Check if this series has data labels, either a series-level setting, or
+     * individual. In case of individual point labels, this method is overridden
+     * to always return true.
+     * @private
+     */
+    function hasDataLabels(this: Series): boolean {
+        return splat(
+            this.options.dataLabels || {}
+        ).some((o: DataLabelOptions|undefined): boolean|undefined =>
+            o?.enabled
+        );
+    }
 
     /**
      * Align each individual data label.
@@ -488,6 +502,7 @@ namespace DataLabel {
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
+            seriesProto.hasDataLabels = hasDataLabels;
         }
 
     }
@@ -576,11 +591,7 @@ namespace DataLabel {
 
         fireEvent(this, 'drawDataLabels');
 
-        if (
-            isArray(seriesDlOptions) ||
-            seriesDlOptions.enabled ||
-            series._hasPointLabels
-        ) {
+        if (series.hasDataLabels?.()) {
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point

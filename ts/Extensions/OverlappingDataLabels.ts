@@ -76,7 +76,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
     });
 
     (this.series || []).forEach((series): void => {
-        if (series.visible) { // #3866
+        if (series.visible && series.hasDataLabels?.()) { // #3866
             const push = (points: Point[]): void =>
                 points.forEach((point: Point): void => {
                     if (point.visible) {
