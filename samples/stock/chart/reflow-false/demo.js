@@ -1,23 +1,30 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    chart: {
-        reflow: false
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Chart reflow is set to false'
-    },
+    Highcharts.stockChart('container', {
 
-    subtitle: {
-        text: 'When resizing the window or the frame, the chart should not resize'
-    },
+        chart: {
+            reflow: false
+        },
 
-    rangeSelector: {
-        selected: 1
-    },
+        title: {
+            text: 'Chart reflow is set to false'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        subtitle: {
+            text: 'When resizing the window or the frame, the chart should not resize'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

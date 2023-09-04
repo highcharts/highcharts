@@ -184,6 +184,10 @@ class XRangePoint extends ColumnPoint {
         cfg.x2 = this.x2;
         cfg.yCategory = this.yCategory = yCats && yCats[this.y as any];
 
+        // Use 'category' as 'key' to ensure tooltip datetime formatting.
+        // Use 'name' only when 'category' is undefined.
+        cfg.key = this.category || this.name;
+
         return cfg;
     }
 

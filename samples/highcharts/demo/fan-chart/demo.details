@@ -1,0 +1,14 @@
+---
+name: Fan chart
+authors:
+  - Kacper Madej
+js_wrap: b
+alt_text: >-
+  Highcharts fan chart JavaScript example graph shows historical and
+  predicition quarterly data of the Europen Union's gross domestic product (GDP)
+  yearly change over time.
+tags:
+  - Highcharts demo
+categories:
+  - Area charts
+...

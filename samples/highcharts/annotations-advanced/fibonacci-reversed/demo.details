@@ -1,0 +1,6 @@
+---
+ name: Fibonacci annotation reversed
+ authors:
+   - Jakub Szumiński
+ js_wrap: b
+...

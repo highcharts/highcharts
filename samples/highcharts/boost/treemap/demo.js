@@ -1,4 +1,4 @@
-var data = {
+const data = {
         'South-East Asia': {
             'Sri Lanka': {
                 'Communicable & other Group I': '75.5',
@@ -872,8 +872,9 @@ var data = {
             }
         }
     },
-    points = [],
-    regionP,
+    points = [];
+
+let regionP,
     regionVal,
     regionI = 0,
     countryP,
@@ -882,15 +883,16 @@ var data = {
     causeI,
     region,
     country,
-    cause,
-    causeName = {
-        'Communicable & other Group I': 'Communicable diseases',
-        'Noncommunicable diseases': 'Non-communicable diseases',
-        Injuries: 'Injuries'
-    };
+    cause;
+
+const causeName = {
+    'Communicable & other Group I': 'Communicable diseases',
+    'Noncommunicable diseases': 'Non-communicable diseases',
+    Injuries: 'Injuries'
+};
 
 for (region in data) {
-    if (data.hasOwnProperty(region)) {
+    if ({}.hasOwnProperty.call(data, region)) {
         regionVal = 0;
         regionP = {
             id: 'id_' + regionI,
@@ -899,7 +901,7 @@ for (region in data) {
         };
         countryI = 0;
         for (country in data[region]) {
-            if (data[region].hasOwnProperty(country)) {
+            if ({}.hasOwnProperty.call(data[region], country)) {
                 countryP = {
                     id: regionP.id + '_' + countryI,
                     name: country,
@@ -908,7 +910,9 @@ for (region in data) {
                 points.push(countryP);
                 causeI = 0;
                 for (cause in data[region][country]) {
-                    if (data[region][country].hasOwnProperty(cause)) {
+                    if ({}.hasOwnProperty.call(data[region][country],
+                        cause)) {
+
                         causeP = {
                             id: countryP.id + '_' + causeI,
                             name: causeName[cause],

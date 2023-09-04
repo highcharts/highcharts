@@ -1,4 +1,4 @@
-var start;
+let start;
 
 Highcharts.chart('container', {
 
