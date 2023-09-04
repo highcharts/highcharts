@@ -75,6 +75,6 @@ dataModifier: {
 ```
 
 ### Example demos
-ou can check the modifiers at work in the following demos:
+ou can check the modifiers in action with the following demos:
 * [DataGrid with MathModifier](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-mathmodifier/)
 * [Parsing the data in CSV using different modifiers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/csv-modifiers)
