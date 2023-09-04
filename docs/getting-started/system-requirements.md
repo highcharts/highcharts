@@ -29,3 +29,5 @@ Beginning with Highcharts v11, legacy browsers must load Highcharts from the `es
 <script src="https://code.highcharts.com/es5/highcharts.js"></script>
 <script src="https://code.highcharts.com/es5/modules/exporting.js"></script>
 ```
+
+One of the legacy browsers requiring the files from the `es5` folder is QtWeb (wkhtmltopdf's QT Webkit rendering engine is based on this browser).

@@ -2,10 +2,6 @@
 @import url("https://code.highcharts.com/css/datagrid.css");
 @import url("https://code.highcharts.com/css/dashboards.css");
 
-#csv {
-    display: none;
-}
-
 h1,
 a {
     text-align: center;

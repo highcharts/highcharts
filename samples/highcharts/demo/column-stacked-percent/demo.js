@@ -1,18 +1,22 @@
-// // Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
 Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'UEFA CL most assists by season'
+        text: 'Domestic passenger transport by mode of transport, Norway',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport">SSB</a>',
+        align: 'left'
     },
     xAxis: {
-        categories: ['2021/22', '2020/21', '2019/20', '2018/19', '2017/18']
+        categories: ['2019', '2020', '2021']
     },
     yAxis: {
         min: 0,
         title: {
-            text: 'Assists'
+            text: 'Percent'
         }
     },
     tooltip: {
@@ -21,17 +25,24 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         column: {
-            stacking: 'percent'
+            stacking: 'percent',
+            dataLabels: {
+                enabled: true,
+                format: '{point.percentage:.0f}%'
+            }
         }
     },
     series: [{
-        name: 'Kevin De Bruyne',
-        data: [4, 4, 2, 4, 4]
+        name: 'Road',
+        data: [434, 290, 307]
     }, {
-        name: 'Joshua Kimmich',
-        data: [0, 4, 3, 2, 3]
+        name: 'Rail',
+        data: [272, 153, 156]
     }, {
-        name: 'Sadio Mané',
-        data: [1, 2, 2, 1, 2]
+        name: 'Air',
+        data: [13, 7, 8]
+    }, {
+        name: 'Sea',
+        data: [55, 35, 41]
     }]
 });

@@ -27,9 +27,10 @@ QUnit.test('GeoHeatMap Series', assert => {
 
     // Testing colors, borders, rowsize, colsize
 
-    const bBox = chart.series[0].points[0].graphic.getBBox(),
-        colsize = chart.series[0].options.colsize,
-        rowsize = chart.series[0].options.rowsize;
+    const series = chart.series[0],
+        bBox = series.points[0].graphic.getBBox(),
+        colsize = series.options.colsize,
+        rowsize = series.options.rowsize;
 
     assert.strictEqual(
         bBox.width - colsize,
@@ -43,28 +44,28 @@ QUnit.test('GeoHeatMap Series', assert => {
         'GeoHeatMap point fixed height should set correctly through rowsize options.'
     );
 
-    chart.series[0].points[0].setState('hover', false);
+    series.points[0].setState('hover', false);
 
     assert.ok(
-        chart.series[0].points[0].graphic['stroke-width'] > 0,
+        series.points[0].graphic['stroke-width'] > 0,
         'GeoHeatMap point border should be set to hover after changing state to hover.'
     );
 
     assert.strictEqual(
-        chart.series[0].data[0].graphic.attr('fill'),
+        series.data[0].graphic.attr('fill'),
         '#a4edba',
         'Point use hover color.'
     );
 
-    chart.series[0].points[0].setState('normal', false);
+    series.points[0].setState('normal', false);
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic['stroke-width'],
+        series.points[0].graphic['stroke-width'],
         undefined,
         'GeoHeatMap border should be set to initial after changing state to normal.'
     );
 
-    chart.series[0].update({
+    series.update({
         data: [{
             lon: 0,
             lat: 20,
@@ -75,23 +76,63 @@ QUnit.test('GeoHeatMap Series', assert => {
     });
 
     assert.notOk(
-        chart.series[0].points[0].isNull,
+        series.points[0].isNull,
         'Point with data is not a null point.'
     );
 
     assert.notOk(
-        chart.series[0].points[0].graphic.hasClass('highcharts-null-point'),
+        series.points[0].graphic.hasClass('highcharts-null-point'),
         'Point with data doesn\'t have null point class.'
     );
 
-    chart.series[0].update({
+    series.update({
         borderWidth: 0
     });
 
     assert.strictEqual(
-        chart.series[0].transformGroups[0].element.getAttribute('stroke-width'),
+        series.transformGroups[0].element.getAttribute('stroke-width'),
         '0',
         'The stroke width should be 0.'
     );
 
+    series.update({
+        interpolation: {
+            enabled: true
+        }
+    });
+
+    const
+        controller = new TestController(chart),
+        point = series.points[0],
+        { plotX, plotY } = point,
+        { container, plotLeft, plotTop } = chart;
+
+    controller.moveTo(plotLeft + plotX, plotTop + plotY);
+
+    assert.ok(
+        container.getElementsByClassName('highcharts-tooltip') !== undefined,
+        'Tooltip should be visible, when intepolated image is hovered.'
+    );
+
+    assert.deepEqual(
+        [chart.hoverPoint.lon, chart.hoverPoint.lat],
+        [point.lon, point.lat],
+        'Hovered point should be correct.'
+    );
+
+    series.setData([{
+        lon: 0,
+        lat: 20,
+        value: 5
+    }, [0, 30, 0]]);
+
+    // Move mouse a little bit to refresh tooltip
+    controller.moveTo(plotLeft + plotX + 5, plotTop + plotY);
+
+    assert.strictEqual(
+        chart.hoverPoint.value,
+        5,
+        `Hovered point value should be changed be correct after changing the
+        data.`
+    );
 });

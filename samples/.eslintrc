@@ -31,7 +31,6 @@ rules:
     max-len: [
         "error",
         {
-            "ignoreComments": true,
             "ignoreStrings": true
         }
     ]
