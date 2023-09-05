@@ -497,6 +497,15 @@ class DataGrid {
         this.updateScrollingLength();
         this.updateVisibleCells();
 
+        // Header columns alignment when scrollbar is shown.
+        if (this.columnHeadersContainer?.lastChild) {
+            (this.columnHeadersContainer?.lastChild as HTMLElement)
+                .style.marginRight = (
+                    this.outerContainer.offsetWidth -
+                    this.outerContainer.clientWidth
+                ) + 'px';
+        }
+
         if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
         }
@@ -518,8 +527,8 @@ class DataGrid {
             this.handleMouseOver(e);
         });
 
-        new ResizeObserver((entries): void => {
-            this.onContainerResize(entries);
+        new ResizeObserver((): void => {
+            this.onContainerResize();
         }).observe(this.container);
     }
 
@@ -651,11 +660,8 @@ class DataGrid {
      * Handle the DataGrid resizing.
      *
      * @internal
-     *
-     * @param entries
-     * Array of observed element size changes.
      */
-    private onContainerResize(entries: ResizeObserverEntry[]): void {
+    private onContainerResize(): void {
         this.outerContainer.style.top = (
             this.columnHeadersContainer?.clientHeight ||
             this.options.cellHeight
