@@ -505,23 +505,15 @@ Highcharts.prepareShot = function (chart) {
         chart.series &&
         chart.series[0]
     ) {
-        const series = chart.series[0],
-            points = series.nodes || // Network graphs, sankey etc
-                series.points,
-            xAxis = series.isCartesian && series.xAxis,
-            min = xAxis ? xAxis.min : -Infinity,
-            max = xAxis ? xAxis.max : Infinity;
+        var points = chart.series[0].nodes || // Network graphs, sankey etc
+                chart.series[0].points,
+            i = points.length;
 
         if (points) {
-            for (var i = 0; i < points.length; i++) {
-                const x = points[i].x;
+            while (i--) {
                 if (
                     points[i] &&
                     !points[i].isNull &&
-                    (
-                        typeof x !== 'number' ||
-                        (x >= min && x <= max)
-                    ) &&
                     !( // Map point with no extent, like Aruba
                         points[i].shapeArgs &&
                         points[i].shapeArgs.d &&
