@@ -24,7 +24,6 @@ Highcharts.chart('container', {
     },
 
     chart: {
-        marginTop: 40,
         marginBottom: 80,
         plotBorderWidth: 1
     },
@@ -65,16 +64,11 @@ Highcharts.chart('container', {
             [0, 2, 6], [1, 2, 5], [2, 2, 4], [3, 2, 2], [4, 2, 1],
             [0, 1, 8], [1, 1, 7], [2, 1, 6], [3, 1, 5], [4, 1, 3],
             [0, 0, 10], [1, 0, 10], [2, 0, 8], [3, 0, 6], [4, 0, 5]],
-        dataLabels: {
-            enabled: false
-        },
-        tooltip: {
-            enabled: false
-        },
         enableMouseTracking: false
     },
 
     {
+        // bubbles inside heatmap cells
         type: 'bubble',
         name: 'Vulnerabilities',
         data: [[0, 4, 2], [1, 4, 1], [2, 4, null], [3, 4, null], [4, 4, 1],
@@ -88,21 +82,5 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true
         }
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                yAxis: {
-                    labels: {
-                        format: '{substr value 0 1}'
-                    }
-                }
-            }
-        }]
-    }
-
+    }]
 });
