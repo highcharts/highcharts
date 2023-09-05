@@ -33,6 +33,19 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
+      # set system env variables
+      - name: 'BrowserStack Env Setup'
+        uses: 'browserstack/github-actions/setup-env@master'
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_KEY }}
+          build-name: BUILD_INFO
+          project-name: REPO_NAME
+      - name: 'BrowserStackLocal Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: random
       # setup
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
