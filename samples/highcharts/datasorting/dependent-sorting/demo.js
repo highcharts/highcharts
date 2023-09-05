@@ -1,9 +1,9 @@
-var names = ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
+const names = ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
 
 function getRandomData(row) {
-    var data = [];
+    const data = [];
 
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         if (!row) {
             data.push([names[i], row, Math.random() * 30 + 10]);
         } else {
@@ -13,7 +13,7 @@ function getRandomData(row) {
     return data;
 }
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',

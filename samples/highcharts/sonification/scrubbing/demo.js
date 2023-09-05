@@ -1,6 +1,6 @@
 // Create some data
-var data = [];
-for (var i = 0; i < 1000; ++i) {
+let data = [];
+for (let i = 0; i < 1000; ++i) {
     data.push([
         i / 100,
         Math.sin(i / 200) * 6 + Math.random() - 0.5
@@ -16,7 +16,7 @@ data = data.concat([
     [18, -5],
     [19, 1]
 ]);
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Drag slider to sonify'
     },

@@ -1,21 +1,28 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    chart: {
-        type: 'area'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    rangeSelector: {
-        selected: 1
-    },
+    Highcharts.stockChart('container', {
 
-    plotOptions: {
-        series: {
-            gapSize: 1
-        }
-    },
+        chart: {
+            type: 'area'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        rangeSelector: {
+            selected: 1
+        },
+
+        plotOptions: {
+            series: {
+                gapSize: 1
+            }
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

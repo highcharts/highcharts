@@ -226,11 +226,43 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     assert.close(
         chart.yAxis[0].toPixels(point.y),
-        tooltipClient.y + tooltipClient.height -
+        tooltipClient.y + tooltipClient.height - 2 -
             pointBox.height - (pointBox.height / 2),
         4,
         `Tooltip with outside and split properties set to true should be
         rendered properly - y position (#17720).`
+    );
+    chart.update({
+        tooltip: {
+            shadow: false
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    const tooltipClientRect = chart.tooltip.container.getBoundingClientRect();
+
+    chart.update({
+        tooltip: {
+            shadow: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.close(
+        tooltipClientRect.width,
+        chart.tooltip.container.getBoundingClientRect().width,
+        1,
+        `Tooltip's shadow offsetX should be evaluated in container width
+        to avoid cutting it off (#19314).`
+    );
+
+    assert.close(
+        tooltipClientRect.height,
+        chart.tooltip.container.getBoundingClientRect().height,
+        1,
+        `Tooltip's shadow offsetY should be evaluated in container height
+        to avoid cutting it off (#19314).`
     );
 });
 

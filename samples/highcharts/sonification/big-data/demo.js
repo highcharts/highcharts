@@ -1,11 +1,11 @@
 // Create some data
-var data = [];
-for (var i = 0; i < 1000; ++i) {
+const data = [];
+for (let i = 0; i < 1000; ++i) {
     data.push(Math.sin(i / 50) * 3 + Math.random() - 0.5);
 }
 
 // Show the chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Large dataset sonified',
         align: 'left',
@@ -53,7 +53,7 @@ var chart = Highcharts.chart('container', {
 
 // Play/Stop button
 document.getElementById('btn').onclick = function () {
-    var btn = this;
+    const btn = this;
     chart.toggleSonify(true, function () {
         btn.textContent = 'Play';
     });

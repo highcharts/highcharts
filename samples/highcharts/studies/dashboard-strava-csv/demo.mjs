@@ -62,19 +62,19 @@ const gui = {
     },
     layouts: [
         {
-            id: "layout-1",
+            id: 'layout-1',
             // rowClassName: "custom-row", // optional
             // cellClassName: "custom-cell", // optional
             style: {
                 // fontSize: '1.5em',
                 // color: 'blue'
-                height: "100%"
+                height: '100%'
             },
             rows: [
                 {
                     cells: [
                         {
-                            id: "datasource",
+                            id: 'datasource',
                             style: {
                                 ...defaultstyle
                             }
@@ -84,18 +84,7 @@ const gui = {
                 {
                     cells: [
                         {
-                            id: "selectors",
-                            style: {
-                                ...defaultstyle
-                            }
-                        }
-                    ]
-                },
-                {
-                    // id: 'dashboard-row-0',
-                    cells: [
-                        {
-                            id: "columnchart",
+                            id: 'selectors',
                             style: {
                                 ...defaultstyle
                             }
@@ -106,13 +95,24 @@ const gui = {
                     // id: 'dashboard-row-0',
                     cells: [
                         {
-                            id: "piechart",
+                            id: 'columnchart',
+                            style: {
+                                ...defaultstyle
+                            }
+                        }
+                    ]
+                },
+                {
+                    // id: 'dashboard-row-0',
+                    cells: [
+                        {
+                            id: 'piechart',
                             style: {
                                 ...defaultstyle
                             }
                         },
                         {
-                            id: "totals",
+                            id: 'totals',
                             style: {
                                 ...defaultstyle
                             }
@@ -122,7 +122,7 @@ const gui = {
                 {
                     cells: [
                         {
-                            id: "table",
+                            id: 'table',
                             style: {
                                 ...defaultstyle,
                                 border: 'none',
@@ -143,7 +143,7 @@ const state = {
     activityTypes: ['Run', 'Ride', 'Walk', 'Nordic Ski'],
     loaded: false,
     rangeFilter: {
-        column: "Distance",
+        column: 'Distance',
         minValue: 0,
         maxValue: Number.MAX_SAFE_INTEGER
     }
@@ -202,15 +202,15 @@ const connector = new CSVConnector({
 function generateChecks() {
     return [...state.activityTypes].flatMap(activityType => [
         {
-            tagName: "input",
+            tagName: 'input',
             attributes: {
                 id: `${activityType}check`,
-                type: "checkbox",
+                type: 'checkbox',
                 checked: true
             }
         },
         {
-            tagName: "label",
+            tagName: 'label',
             textContent: activityType,
             attributes: {
                 for: `${activityType}check`
@@ -222,24 +222,23 @@ function generateChecks() {
 // Is a function as we have to get state after loading the connector
 const components = state => [
     {
-        cell: "datasource",
-        type: "html",
+        cell: 'datasource',
+        type: 'html',
         connector,
         title: "Datasource",
-        scaleElements: false,
         elements: [
             {
-                tagName: "label",
+                tagName: 'label',
                 textContent: 'Data URL:',
                 attributes: {
-                    for: `dataurl`
+                    for: 'dataurl'
                 }
             },
             {
-                tagName: "input",
+                tagName: 'input',
                 attributes: {
                     id: 'dataurl',
-                    type: "text",
+                    type: 'text',
                     value: connector.options.csvURL,
                     style: 'width: 100%;'
                 }
@@ -257,17 +256,16 @@ const components = state => [
         }
     },
     {
-        cell: "selectors",
-        type: "html",
+        cell: 'selectors',
+        type: 'html',
         connector,
         title: "Filters",
-        scaleElements: false,
         elements: [
             ...generateChecks(),
             { tagName: 'br' },
             {
                 tagName: 'button',
-                textContent: "Deselect all",
+                textContent: 'Deselect all',
                 id: 'unselectall'
             },
             { tagName: 'br' },
@@ -279,7 +277,7 @@ const components = state => [
                 }
             },
             {
-                tagName: "select",
+                tagName: 'select',
                 attributes: {
                     id: 'sortselect'
                 },
@@ -321,7 +319,7 @@ const components = state => [
                         }
                     },
                     {
-                        tagName: "select",
+                        tagName: 'select',
                         attributes: {
                             id: 'filterselect',
                             selected: state.rangeFilter.column
@@ -374,7 +372,7 @@ const components = state => [
             },
             { tagName: 'br' },
             {
-                tagName: "button",
+                tagName: 'button',
                 textContent: 'Apply',
                 attributes: {
                     id: 'filterButton'
@@ -388,7 +386,7 @@ const components = state => [
                     // Might be more user-friendly (and perhaps better performance?)
                     // with a separate modifier for this
                     const ranges = checked.map(value => ({
-                        column: "Activity Type",
+                        column: 'Activity Type',
                         minValue: value,
                         maxValue: value
                     }));
@@ -411,27 +409,27 @@ const components = state => [
                         .querySelectorAll('#container input[type="checkbox"]');
                     for (const checkbox of checkboxes) {
                         if (checkbox.checked) {
-                            checked.push(checkbox.id.replace(/check/, ""));
+                            checked.push(checkbox.id.replace(/check/, ''));
                         }
                     }
                     return checked;
                 }
-                document.querySelector('#unselectall').addEventListener("click", () => {
+                document.querySelector('#unselectall').addEventListener('click', () => {
                     const checkboxes = document
                         .querySelectorAll('#container input[type="checkbox"]');
                     checkboxes.forEach(el => el.checked && el.click());
                 });
-                document.querySelector('#filterButton').addEventListener("click", () => {
+                document.querySelector('#filterButton').addEventListener('click', () => {
                     doModify(getChecked());
                 });
-                document.querySelector('#sortselect').addEventListener("change", function (e) {
+                document.querySelector('#sortselect').addEventListener('change', function (e) {
                     if (!e.target.defaultSelected) {
 
                         state.sortColumn = e.target.value;
                     }
                 });
                 document.querySelectorAll('#filterselect, #filterminval, #filtermaxval').forEach(el => {
-                    el.addEventListener("change", function (e) {
+                    el.addEventListener('change', function (e) {
 
                         const idKeyMap = {
                             filterselect: 'column',
@@ -446,7 +444,7 @@ const components = state => [
                     });
                 });
                 document.querySelectorAll('input[type="radio"]').forEach(radioButton => {
-                    radioButton.addEventListener("change", function (e) {
+                    radioButton.addEventListener('change', function (e) {
                         state.sortDirection = e.target.value;
                     });
                 });
@@ -472,7 +470,7 @@ const components = state => [
         chartOptions: {
             chart: {
                 animation: false,
-                type: "column",
+                type: 'column',
                 zoomType: 'x'
             },
             xAxis: {
@@ -570,10 +568,9 @@ const components = state => [
         }
     },
     {
-        cell: "table",
-        type: "html",
+        cell: 'table',
+        type: 'html',
         connector,
-        scaleElements: false,
         title: 'Activities',
         style: {
             boxShadow: 'none',
@@ -583,7 +580,7 @@ const components = state => [
         },
         elements: [
             {
-                tagName: "div"
+                tagName: 'div'
             }
         ],
         events: {
@@ -602,13 +599,13 @@ const components = state => [
 ];
 
 function initDashBoard() {
-    return new Board("container", {
+    return new Board('container', {
         gui: gui,
         components: components(state)
     });
 }
 
-connector.on("afterLoad", function () {
+connector.on('afterLoad', function () {
     // Only keep numeric data, except for `Activity Type`
     // Could potentially add `includeColumns` and `excludeColumns` options on the connector
     const [row] = this.table.getRowObjects(1, 1);

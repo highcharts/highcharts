@@ -18,13 +18,13 @@
  *  Imports
  *
  * */
-import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
-import type Row from '../Layout/Row';
 import type DataGridComponent from '../Plugins/DataGridComponent';
-import type KPIComponent from '../Components/KPIComponent';
+import type EditMode from './EditMode';
 import type HighchartsComponent from '../Plugins/HighchartsComponent';
+import type KPIComponent from '../Components/KPIComponent';
+import type Row from '../Layout/Row';
 
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -138,7 +138,8 @@ class SidebarPopup extends BaseForm {
                         chartOptions: {
                             chart: {
                                 animation: false,
-                                type: 'column'
+                                type: 'column',
+                                zooming: {}
                             }
                         }
                     };
@@ -188,11 +189,22 @@ class SidebarPopup extends BaseForm {
                 dropContext: Cell | Row
             ): Cell|void {
                 if (sidebar && dropContext) {
-                    const options: Partial<KPIComponent.ComponentOptions> = {
+                    const connectorsIds =
+                        sidebar.editMode.board.dataPool.getConnectorIds();
+                    let options: Partial<KPIComponent.ComponentOptions> = {
                         cell: '',
-                        type: 'KPI',
-                        title: 'Example KPI'
+                        type: 'KPI'
                     };
+
+                    if (connectorsIds.length) {
+                        options = {
+                            ...options,
+                            connector: {
+                                id: connectorsIds[0]
+                            }
+                        };
+                    }
+
                     return sidebar.onDropNewComponent(dropContext, options);
                 }
             }

@@ -76,7 +76,6 @@ class HTMLComponent extends Component {
         Component.defaultOptions,
         {
             type: 'HTML',
-            scaleElements: false,
             elements: []
         }
     );
@@ -147,12 +146,6 @@ class HTMLComponent extends Component {
      */
     private elements: AST.Node[];
     /**
-     * Enables auto-scaling of the elements inside the component.
-     *
-     * @internal
-     */
-    private scaleElements: boolean;
-    /**
      * HTML component's options.
      */
     public options: HTMLComponent.HTMLComponentOptions;
@@ -186,19 +179,10 @@ class HTMLComponent extends Component {
 
         this.type = 'HTML';
         this.elements = [];
-        this.scaleElements = !!this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
         );
-
-        this.on('tableChanged', (e: Component.EventTypes): void => {
-            if ('detail' in e && e.detail && e.detail.sender !== this.id) {
-                this.redraw();
-            }
-        });
-
-        Component.addInstance(this);
     }
 
 
@@ -209,11 +193,11 @@ class HTMLComponent extends Component {
      * */
 
     /** @internal */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({
             type: 'load'
         });
-        super.load();
+        await super.load();
         const options = this.options;
         let isError = false;
 
@@ -238,12 +222,6 @@ class HTMLComponent extends Component {
 
         this.constructTree();
 
-        this.parentElement.appendChild(this.element);
-
-        if (this.scaleElements) {
-            this.autoScale();
-        }
-
         this.emit({ type: 'afterLoad' });
 
         if (isError) {
@@ -256,57 +234,10 @@ class HTMLComponent extends Component {
         return this;
     }
 
-    /**
-     * Handle scaling inner elements.
-     *
-     * @internal
-     */
-    public autoScale(): void {
-        this.element.style.display = 'flex';
-        this.element.style.flexDirection = 'column';
-
-        this.contentElement.childNodes.forEach((element): void => {
-            if (element && element instanceof HTMLElement) {
-                element.style.width = 'auto';
-                element.style.maxWidth = '100%';
-                element.style.maxHeight = '100%';
-                element.style.flexBasis = 'auto';
-                element.style.overflow = 'auto';
-            }
-        });
-
-        if (this.options.scaleElements) {
-            this.scaleText();
-        }
-    }
-
-    /**
-     * Basic font size scaling
-     *
-     * @internal
-     */
-    public scaleText(): void {
-        this.contentElement.childNodes.forEach((element): void => {
-            if (element instanceof HTMLElement) {
-                element.style.fontSize = Math.max(
-                    Math.min(element.clientWidth / (1 * 10), 200), 20
-                ) + 'px';
-            }
-        });
-    }
-
     public render(): this {
-        this.emit({ type: 'beforeRender' });
-        super.render(); // Fires the render event and calls load
-        this.emit({ type: 'afterRender' });
-        return this;
-    }
-
-    public redraw(): this {
-        super.redraw();
+        super.render();
         this.constructTree();
-
-        this.emit({ type: 'afterRedraw' });
+        this.emit({ type: 'afterRender' });
         return this;
     }
 
@@ -314,9 +245,6 @@ class HTMLComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        if (this.scaleElements) {
-            this.scaleText();
-        }
         super.resize(width, height);
         return this;
     }
@@ -325,9 +253,6 @@ class HTMLComponent extends Component {
      * Handles updating via options.
      * @param options
      * The options to apply.
-     *
-     * @returns
-     * The component for chaining.
      */
     public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
         await super.update(options);
@@ -335,13 +260,13 @@ class HTMLComponent extends Component {
     }
 
     /**
-     * Could probably use the serialize function moved on
+     * TODO: Could probably use the serialize function moved on
      * the exportdata branch
      *
      * @internal
      */
     private constructTree(): void {
-        // Remove old tree if redrawing
+        // Remove old tree if rerendering.
         while (this.contentElement.firstChild) {
             this.contentElement.firstChild.remove();
         }
@@ -392,6 +317,15 @@ class HTMLComponent extends Component {
             type: 'HTML'
         };
     }
+
+    /**
+     * @internal
+     */
+    public onTableChanged(e: Component.EventTypes): void {
+        if (e.detail?.sender !== this.id) {
+            this.render();
+        }
+    }
 }
 
 
@@ -435,16 +369,9 @@ namespace HTMLComponent {
          */
         elements?: (AST.Node | string)[];
         type: 'HTML';
-        /**
-         * Enables auto-scaling of the elements inside the component.
-         *
-         * @internal
-         */
-        scaleElements?: boolean;
     }
     /** @internal */
     export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
-        scaleElements?: boolean;
         type: 'HTML'
     }
 
