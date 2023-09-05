@@ -48,7 +48,7 @@ QUnit.test(
         });
 
         assert.notStrictEqual(
-            chart.series[0].a11yProxyElement.buttonElement.getAttribute('aria-label').indexOf('Bean'),
+            chart.series[0].a11yProxyElement.innerElement.getAttribute('aria-label').indexOf('Bean'),
             -1,
             '#15902: Proxy button aria-label should have been updated'
         );
@@ -56,7 +56,7 @@ QUnit.test(
         const added = chart.addSeries({ data: [1, 2, 3] });
 
         assert.ok(
-            added.a11yProxyElement.buttonElement,
+            added.a11yProxyElement.innerElement,
             '#15902: New legend item should have proxy button'
         );
 

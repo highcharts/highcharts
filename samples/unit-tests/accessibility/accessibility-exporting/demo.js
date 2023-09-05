@@ -8,12 +8,12 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
             .exportButtonProxy;
 
     assert.ok(
-        exportProxy.buttonElement.getAttribute('aria-label'),
+        exportProxy.innerElement.getAttribute('aria-label'),
         'There is aria label on the exporting button'
     );
 
     assert.strictEqual(
-        exportProxy.buttonElement.getAttribute('aria-expanded'),
+        exportProxy.innerElement.getAttribute('aria-expanded'),
         'false',
         'Exporting button should have aria-expanded on it'
     );
@@ -21,7 +21,7 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
     exportProxy.click();
 
     assert.strictEqual(
-        exportProxy.buttonElement.getAttribute('aria-expanded'),
+        exportProxy.innerElement.getAttribute('aria-expanded'),
         'true',
         'Exporting button should update aria-expanded on click'
     );
