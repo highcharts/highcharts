@@ -36,7 +36,7 @@
     ).then(response => response.json());
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
         dataLength = data.length,
         // set the allowed units for data grouping
@@ -46,11 +46,9 @@
         ], [
             'month',
             [1, 2, 3, 4, 6]
-        ]],
+        ]];
 
-        i = 0;
-
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open

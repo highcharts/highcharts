@@ -1529,9 +1529,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
                 if (!dataLabel.hidden) {
                     dataLabel.hide();
-                    if (point.connector) {
-                        point.connector.hide();
-                    }
+                    dataLabel.connector?.hide();
                 }
             }
         });
@@ -1568,9 +1566,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
                     if (dataLabel && !dataLabel.hidden) { // #6127
                         dataLabel.fadeIn(); // #7384
-                        if (point.connector) {
-                            point.connector.fadeIn();
-                        }
+                        dataLabel.connector?.fadeIn();
                     }
                 });
             }
@@ -1777,14 +1773,20 @@ if (MapSeries) {
                 chart = this.chart,
                 group = this.group;
 
-            if (chart && group && series.options) {
+            if (
+                chart &&
+                group &&
+                series.options &&
+                chart.options.drilldown &&
+                chart.options.drilldown.animation
+            ) {
                 // Initialize the animation
                 if (init && chart.mapView) {
                     group.attr({
                         opacity: 0.01
                     });
                     chart.mapView.allowTransformAnimation = false;
-                    // stop duplicating and overriding animations
+                    // Stop duplicating and overriding animations
                     series.options.inactiveOtherPoints = true;
                     series.options.enableMouseTracking = false;
 
@@ -1792,7 +1794,8 @@ if (MapSeries) {
                 } else {
                     group.animate({
                         opacity: 1
-                    }, (chart.options.drilldown as any).animation,
+                    },
+                    chart.options.drilldown.animation,
                     function (): void {
                         if (series.options) {
                             series.options.inactiveOtherPoints = false;

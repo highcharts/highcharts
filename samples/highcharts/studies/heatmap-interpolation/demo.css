@@ -8,9 +8,14 @@
     display: none;
 }
 
-#toolbar {
+#toolwrap {
+    flex-direction: column;
+}
+
+.toolbar {
     display: flex;
     justify-content: space-around;
+    align-items: center;
 }
 
 #col-slider-wrapper {

@@ -54,9 +54,9 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 console.log('ready');
-                var duration = 16 * 1000;
-                var delta = duration / this.series.length;
-                var delay = 2000;
+                const duration = 16 * 1000;
+                const delta = duration / this.series.length;
+                let delay = 2000;
 
                 this.series.map(function (e) {
                     setTimeout(function () {

@@ -1,11 +1,11 @@
 // Create modal
 function infoFunction() {
-    var modal = document.createElement('div');
-    var flex = document.createElement('div');
-    var textContainer = document.createElement('div');
-    var title = document.createElement('p');
-    var btn = document.createElement('button');
-    var container = document.getElementById('container');
+    const modal = document.createElement('div');
+    const flex = document.createElement('div');
+    const textContainer = document.createElement('div');
+    const title = document.createElement('p');
+    const btn = document.createElement('button');
+    const container = document.getElementById('container');
 
     modal.classList.add('modal');
     flex.classList.add('flex');

@@ -80,7 +80,7 @@ In the following example A and B will be named as Apples and Bananas, while the 
 
 The final visualization should now display a venn diagram of the relation between Apples and Bananas.
 
-<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-venn/basic/embedded/result/ allow="fullscreen"></iframe>
+<iframe width="100%" height="450" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-venn/basic allow="fullscreen"></iframe>
 
 Its configuration should in full look as the following.
 

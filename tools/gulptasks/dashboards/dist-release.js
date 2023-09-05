@@ -73,7 +73,7 @@ async function distRelease() {
     fsLib.deleteDirectory(path.join(distRepository, 'examples'), true);
 
     fsLib.deleteDirectory(
-        path.join(distRepository, 'gfx', 'dashboard-icons'),
+        path.join(distRepository, 'gfx', 'dashboards-icons'),
         true
     );
 

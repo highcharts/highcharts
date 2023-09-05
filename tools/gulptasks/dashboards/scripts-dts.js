@@ -3,6 +3,8 @@
  */
 
 
+const fs = require('fs');
+const fsLib = require('../lib/fs');
 const gulp = require('gulp');
 const path = require('path');
 
@@ -25,14 +27,14 @@ const DTS_FILES = [
     'Core/Renderer/HTML/HTMLAttributes.d.ts',
     'Core/Renderer/SVG/SVGAttributes.d.ts',
     'Core/Renderer/SVG/SVGPath.d.ts'
-];
+].map(fsLib.path);
 
 
 const DTS_FOLDERS = [
     'Dashboards/',
     'Data/',
     'DataGrid/'
-];
+].map(fsLib.path);
 
 
 /* *
@@ -50,8 +52,6 @@ const DTS_FOLDERS = [
  */
 async function scriptsDTS() {
 
-    const fs = require('fs');
-    const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
     const {

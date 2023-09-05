@@ -6,7 +6,7 @@ Highcharts.chart('container', {
             drilldown: function (e) {
                 if (!e.seriesOptions) {
 
-                    var chart = this,
+                    const chart = this,
                         drilldowns = {
                             Animals: {
                                 name: 'Animals',
