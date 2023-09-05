@@ -141,7 +141,7 @@ class DataGrid {
      * The input element of a cell after mouse focus.
      * @internal
      */
-    private cellInputEl?: HTMLInputElement;
+    public cellInputEl?: HTMLInputElement;
 
     /**
      * The container for the column headers.
@@ -226,7 +226,10 @@ class DataGrid {
      * @param options
      * Options to create the grid structure.
      */
-    constructor(container: (string | HTMLElement), options: DeepPartial<DataGridOptions>) {
+    constructor(
+        container: (string | HTMLElement),
+        options: Globals.DeepPartial<DataGridOptions>
+    ) {
         // Initialize containers
         if (typeof container === 'string') {
             const existingContainer = doc.getElementById(container);
@@ -267,7 +270,7 @@ class DataGrid {
      * @param options
      * An object with new options.
      */
-    public update(options: DeepPartial<DataGridOptions>): void {
+    public update(options: Globals.DeepPartial<DataGridOptions>): void {
         this.options = merge(this.options, options);
         if (this.options.dataTable !== this.dataTable) {
             this.dataTable = this.initDataTable();
@@ -412,7 +415,7 @@ class DataGrid {
      */
     private getColumnsToDisplay(): Array<string> {
         const columnsOptions = this.options.columns,
-            tableColumns = this.dataTable.getColumnNames(),
+            tableColumns = this.dataTable.modified.getColumnNames(),
             filteredColumns = [];
 
         for (let i = 0; i < tableColumns.length; i++) {
@@ -486,7 +489,6 @@ class DataGrid {
             this.outerContainer.style.top = '0';
         }
 
-        this.updateInnerContainerWidth();
         this.renderInitialRows();
         this.addEvents();
         this.updateScrollingLength();
@@ -541,7 +543,7 @@ class DataGrid {
         this.prevTop = i;
 
         const columnsInPresentationOrder = this.columnNames;
-        const rowCount = this.dataTable.getRowCount();
+        const rowCount = this.dataTable.modified.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
@@ -557,7 +559,7 @@ class DataGrid {
             ) {
                 const cell = cellElements[k] as HTMLElement,
                     column = columnsInPresentationOrder[k],
-                    value = this.dataTable
+                    value = this.dataTable.modified
                         .getCell(columnsInPresentationOrder[k], i);
 
                 cell.textContent = this.formatCell(value, column);
@@ -709,24 +711,13 @@ class DataGrid {
         }
     }
 
-
-    /**
-     * Inherits the inner width from the scroll container.
-     * @internal
-     */
-    private updateInnerContainerWidth(): void {
-        const newWidth = this.scrollContainer.offsetWidth;
-        this.innerContainer.style.width = newWidth + 'px';
-    }
-
-
     /**
      * Updates the scroll container to reflect the data size.
      * @internal
      */
     private updateScrollingLength(): void {
         const columnsInPresentationOrder = this.columnNames;
-        let i = this.dataTable.getRowCount() - 1;
+        let i = this.dataTable.modified.getRowCount() - 1;
         let height = 0;
         const top = i - this.getNumRowsToDraw();
         const outerHeight = this.outerContainer.clientHeight;
@@ -743,7 +734,8 @@ class DataGrid {
             const cellElements = this.rowElements[j].childNodes;
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
                 cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.getCell(columnsInPresentationOrder[k], i - j)
+                    this.dataTable.modified
+                        .getCell(columnsInPresentationOrder[k], i - j)
                 );
             }
         }
@@ -765,7 +757,7 @@ class DataGrid {
         this.scrollEndTop = height - outerHeight;
 
         const scrollHeight =
-            (this.dataTable.getRowCount() + extraRows) *
+            (this.dataTable.modified.getRowCount() + extraRows) *
             this.options.cellHeight;
         this.scrollContainer.style.height = scrollHeight + 'px';
     }
@@ -781,7 +773,7 @@ class DataGrid {
      */
     private getNumRowsToDraw(): number {
         return Math.min(
-            this.dataTable.getRowCount(),
+            this.dataTable.modified.getRowCount(),
             Math.ceil(
                 this.outerContainer.offsetHeight / this.options.cellHeight
             )
@@ -888,7 +880,7 @@ class DataGrid {
         const options = this.options,
             columnOptions = options.columns[column],
             cellFormat = columnOptions && columnOptions.cellFormat;
-        let formattedCell = cellValue || '';
+        let formattedCell = defined(cellValue) ? cellValue : '';
 
         if (cellFormat) {
             if (

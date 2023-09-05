@@ -107,7 +107,8 @@ const fitToBox = function (
 };
 
 let wheelTimer: number,
-    originalOptions: Partial<YAxisOptions>|undefined;
+    startOnTick: boolean|undefined,
+    endOnTick: boolean|undefined;
 
 /**
  * @private
@@ -123,6 +124,7 @@ const zoomBy = function (
 ): void {
     const xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0],
+        yOptions = yAxis.options,
         type = pick(
             options.type,
             chart.options.chart.zooming.type,
@@ -143,17 +145,22 @@ const zoomBy = function (
                 clearTimeout(wheelTimer);
             }
 
-            const { startOnTick, endOnTick } = yAxis.options;
-            if (!originalOptions) {
-                originalOptions = { startOnTick, endOnTick };
+            if (!defined(startOnTick)) {
+                startOnTick = yOptions.startOnTick;
+                endOnTick = yOptions.endOnTick;
             }
 
+            // Temporarily disable start and end on tick, because they would
+            // prevent small increments of zooming.
             if (startOnTick || endOnTick) {
-                yAxis.setOptions({ startOnTick: false, endOnTick: false });
+                yOptions.startOnTick = false;
+                yOptions.endOnTick = false;
             }
             wheelTimer = setTimeout((): void => {
-                if (originalOptions) {
-                    yAxis.setOptions(originalOptions);
+                if (defined(startOnTick) && defined(endOnTick)) {
+                    // Repeat merge after the wheel zoom is finished, #19178
+                    yOptions.startOnTick = startOnTick;
+                    yOptions.endOnTick = endOnTick;
 
                     // Set the extremes to the same as they already are, but now
                     // with the original startOnTick and endOnTick. We need
@@ -163,7 +170,7 @@ const zoomBy = function (
                     const { min, max } = yAxis.getExtremes();
                     yAxis.forceRedraw = true;
                     yAxis.setExtremes(min, max);
-                    originalOptions = void 0;
+                    startOnTick = endOnTick = void 0;
                 }
             }, 400);
         }

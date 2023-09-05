@@ -278,7 +278,7 @@ class CSVConverter extends DataConverter {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                    headers[i] = headers[i].trim().replace(/^["']|["']$/g, '');
                 }
 
                 converter.headers = headers;
@@ -452,13 +452,11 @@ class CSVConverter extends DataConverter {
                 read(++i);
 
                 while (i < columnStr.length) {
-                    if (c === '"' && cl !== '"' && cn !== '"') {
+                    if (c === '"') {
                         break;
                     }
 
-                    if (c !== '"' || (c === '"' && cl !== '"')) {
-                        token += c;
-                    }
+                    token += c;
 
                     read(++i);
                 }

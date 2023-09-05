@@ -3,10 +3,15 @@
     "compilerOptions": {
         "composite": false,
         "declaration": true,
+        "baseUrl": "./",
         "moduleResolution": "node",
         "outDir": "../../js/",
         "rootDir": "../",
-
+        "paths": {
+            "highcharts/es-modules/*": [
+                "../*"
+            ]
+        }
     },
     "exclude": [
         "../masters/**/*.ts",
@@ -15,5 +20,4 @@
     "include": [
         "../**/*.ts"
     ]
-
 }

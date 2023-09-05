@@ -22,29 +22,36 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type ChartOptions from '../../Core/Options';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type Point from '../../Core/Series/Point';
 import type Cell from '../Layout/Cell';
+import type {
+    AxisOptions,
+    Chart,
+    Options as ChartOptions,
+    Highcharts as H,
+    Point,
+    Series,
+    SeriesOptions
+} from './HighchartsTypes';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataTable from '../../Data/DataTable.js';
-import G from '../../Core/Globals.js';
+import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 
 const {
     addEvent,
     createElement,
+    error,
+    diffObjects,
+    isString,
     merge,
     splat,
-    uniqueKey,
-    error
+    uniqueKey
 } = U;
 
 /* *
@@ -81,10 +88,10 @@ class HighchartsComponent extends Component {
      *
      * */
 
-    /** @internal */
-    public static charter?: typeof G;
+    /** @private */
+    public static charter?: H;
 
-    /** @internal */
+    /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
 
     /**
@@ -103,7 +110,12 @@ class HighchartsComponent extends Component {
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
                 chart: {
-                    styledMode: true
+                    styledMode: true,
+                    zooming: {
+                        mouseWheel: {
+                            enabled: false
+                        }
+                    }
                 },
                 series: []
             },
@@ -277,7 +289,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnAssignment: {}
+            columnAssignment: void 0
         }
     );
 
@@ -296,7 +308,7 @@ class HighchartsComponent extends Component {
      * @returns
      * Highcharts component based on config from JSON.
      *
-     * @internal
+     * @private
      */
     public static fromJSON(
         json: HighchartsComponent.ClassJSON,
@@ -338,6 +350,11 @@ class HighchartsComponent extends Component {
     /**
      * A full set of chart options used by the chart.
      * [Highcharts API](https://api.highcharts.com/highcharts/)
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/highcharts/  | Chart options}
+     *
      */
     public chartOptions: Partial<ChartOptions>;
     /**
@@ -355,12 +372,21 @@ class HighchartsComponent extends Component {
     /**
      * Type of constructor used for creating proper chart like: chart, stock,
      * gantt or map.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-maps/ | Map constructor}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-gantt/ | Gantt constructor}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-and-stock-constructors/ | Chart and Stock constructors}
+     *
      */
     public chartConstructor: HighchartsComponent.ConstructorType;
     /**
      * Reference to sync component that allows to sync i.e tooltips.
      *
-     * @internal
+     * @private
      */
     public sync: Component['sync'];
 
@@ -391,7 +417,7 @@ class HighchartsComponent extends Component {
             'figure',
             void 0,
             void 0,
-            void 0,
+            this.contentElement,
             true
         );
 
@@ -408,8 +434,6 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        this.on('tableChanged', (): void => this.updateSeries());
-
         if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
@@ -420,25 +444,22 @@ class HighchartsComponent extends Component {
         }
 
         this.innerResizeTimeouts = [];
-
-        // Add the component instance to the registry
-        Component.addInstance(this);
-
     }
 
+    public onTableChanged(): void {
+        this.updateSeries();
+    }
     /* *
      *
      *  Functions
      *
      * */
 
-    /** @internal */
-    public load(): this {
+    /** @private */
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
-        this.parentElement.appendChild(this.element);
-        this.contentElement.appendChild(this.chartContainer);
-        this.hasLoaded = true;
+
+        await super.load();
 
         this.emit({ type: 'afterLoad' });
 
@@ -448,7 +469,6 @@ class HighchartsComponent extends Component {
     public render(): this {
         const hcComponent = this;
 
-        hcComponent.emit({ type: 'beforeRender' });
         super.render();
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
@@ -489,7 +509,7 @@ class HighchartsComponent extends Component {
     /**
      * Adds call update value in store, when chart's point is updated.
      *
-     * @internal
+     * @private
      * */
     private setupConnectorUpdate(): void {
         const { connector: store, chart } = this;
@@ -508,7 +528,7 @@ class HighchartsComponent extends Component {
     /**
      * Internal method for handling option updates.
      *
-     * @internal
+     * @private
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -518,8 +538,6 @@ class HighchartsComponent extends Component {
         if (this.options.chartID) {
             this.chartContainer.id = this.options.chartID;
         }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
@@ -533,7 +551,7 @@ class HighchartsComponent extends Component {
     ): void {
         const table = store.table,
             columnName = point.series.name,
-            rowNumber = point.x,
+            rowNumber = point.index,
             converter = new DataConverter(),
             valueToSet = converter.asNumber(point.y);
 
@@ -547,26 +565,27 @@ class HighchartsComponent extends Component {
      */
     public async update(
         options: Partial<HighchartsComponent.Options>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
+        this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
     }
 
     /**
      * Updates chart's series when the data table is changed.
      *
-     * @internal
+     * @private
      */
-    private updateSeries(): void {
-        // Heuristically create series from the store dataTable
+    public updateSeries(): void {
+        // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
                 this.connector.table.modified.clone() :
@@ -575,16 +594,19 @@ class HighchartsComponent extends Component {
             const { id: storeTableID } = this.connector.table;
             const { chart } = this;
 
-            // Names/aliases that should be mapped to xAxis values
-            const columnAssignment = this.options.columnAssignment || {};
-            const xKeyMap: Record<string, string> = {};
-
             if (this.presentationModifier) {
                 this.presentationTable = this.presentationModifier
                     .modifyTable(this.presentationTable).modified;
             }
 
-            const table = this.presentationTable;
+            const table = this.presentationTable,
+                modifierOptions = table.getModifier()?.options;
+
+            // Names/aliases that should be mapped to xAxis values
+            const columnNames = table.modified.getColumnNames();
+            const columnAssignment = this.options.columnAssignment ||
+                this.getDefaultColumnAssignment(columnNames);
+            const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -597,11 +619,7 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnAssignment[name]) {
-                        return false;
-                    }
-
-                    if (columnAssignment[name] === null) {
+                    if (!isVisible || !columnAssignment[name]) {
                         return false;
                     }
 
@@ -638,9 +656,22 @@ class HighchartsComponent extends Component {
                     }
                 }
 
+                // Disable dragging on series, which were created out of a
+                // columns which are created by MathModifier.
+                const shouldBeDraggable = !(
+                    modifierOptions?.type === 'Math' &&
+                    (modifierOptions as MathModifierOptions)
+                        .columnFormulas?.some(
+                            (formula): boolean => formula.column === seriesName
+                        )
+                );
+
                 return chart.addSeries({
                     name: seriesName,
-                    id: `${storeTableID}-series-${index}`
+                    id: `${storeTableID}-series-${index}`,
+                    dragDrop: {
+                        draggableY: shouldBeDraggable
+                    }
                 }, false);
             });
 
@@ -666,8 +697,6 @@ class HighchartsComponent extends Component {
 
                 series.setData(seriesData);
             });
-
-            /* chart.redraw(); */
         }
     }
 
@@ -677,11 +706,41 @@ class HighchartsComponent extends Component {
      * @returns
      * The chart.
      *
-     * @internal
+     * @private
      *
      */
     private getChart(): Chart {
         return this.chart || this.createChart();
+    }
+
+    /**
+     * Creates default mapping when columnAssignment is not declared.
+     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     *
+     * @returns
+     * The record of mapping
+     *
+     * @private
+     *
+     */
+    private getDefaultColumnAssignment(
+        columnNames: Array<string> = []
+    ): Record<string, string | null> {
+        const defaultColumnAssignment:Record<string, string> = {};
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            defaultColumnAssignment[columnNames[i]] = 'y';
+            if (i === 0) {
+                const firstColumnValues =
+                    this.presentationTable?.getColumn(columnNames[i], true);
+
+                if (firstColumnValues && isString(firstColumnValues[0])) {
+                    defaultColumnAssignment[columnNames[i]] = 'x';
+                }
+            }
+        }
+
+        return defaultColumnAssignment;
     }
 
     /**
@@ -690,13 +749,16 @@ class HighchartsComponent extends Component {
      * @returns
      * The chart.
      *
-     * @internal
+     * @private
      *
      */
     private createChart(): Chart {
-        const charter = (HighchartsComponent.charter || G);
+        const charter = (
+            HighchartsComponent.charter ||
+            Globals.win.Highcharts as H
+        );
         if (this.chartConstructor !== 'chart') {
-            const factory = charter[this.chartConstructor] || G.chart;
+            const factory = charter[this.chartConstructor];
             if (factory) {
                 try {
                     return factory(this.chartContainer, this.chartOptions);
@@ -720,7 +782,7 @@ class HighchartsComponent extends Component {
     /**
      * Registers events from the chart options to the callback register.
      *
-     * @internal
+     * @private
      */
     private registerChartEvents(): void {
         if (this.chart && this.chart.options) {
@@ -806,7 +868,7 @@ class HighchartsComponent extends Component {
      * @returns
      * Class JSON of this Component instance.
      *
-     * @internal
+     * @private
      */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
@@ -834,13 +896,27 @@ class HighchartsComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the HighchartsComponent component's options.
+     * @returns
+     * The JSON of HighchartsComponent component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<HighchartsComponent.Options> {
+        return {
+            ...diffObjects(this.options, HighchartsComponent.defaultOptions),
+            type: 'Highcharts'
+        };
+    }
 
     public getEditableOptions(): HighchartsComponent.Options {
         const component = this;
         const componentOptions = component.options;
         const chart = component.chart;
         const chartOptions = chart && chart.options;
-        const chartType = chartOptions && chartOptions.chart.type || 'line';
+        const chartType = chartOptions && chartOptions.chart?.type || 'line';
 
         return merge(componentOptions, {
             chartOptions
@@ -887,20 +963,20 @@ namespace HighchartsComponent {
     *
     * */
 
-    /** @internal */
+    /** @private */
     export type ComponentType = HighchartsComponent;
 
-    /** @internal */
+    /** @private */
     export type ConstructorType = (
         'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
     );
 
-    /** @internal */
+    /** @private */
     export type ChartComponentEvents =
         JSONEvent |
         Component.EventTypes;
 
-    /** @internal */
+    /** @private */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
@@ -909,6 +985,11 @@ namespace HighchartsComponent {
         /**
          * Whether to allow the component to edit the store to which it is
          * attached.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
+         *
          */
         allowConnectorUpdate?: boolean,
         /**
@@ -937,8 +1018,11 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * Names / aliases that should be mapped to xAxis values. You can
+         * declare which columns will be visible selectively on the chart.
+         *
+         * When the columnAssignment is not declared, all columns are visible.
+         *
          * ```
          * Example
          * columnAssignment: {
@@ -949,7 +1033,7 @@ namespace HighchartsComponent {
          */
         columnAssignment?: Record<string, string | null>;
     }
-    /** @internal */
+    /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
@@ -957,7 +1041,7 @@ namespace HighchartsComponent {
         chartConstructor: ConstructorType;
         type: 'Highcharts'
     }
-    /** @internal */
+    /** @private */
     export interface ClassJSON extends Component.JSON {
         options: OptionsJSON;
     }

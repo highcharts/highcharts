@@ -1,0 +1,12 @@
+@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+
+#csv {
+    display: none;
+}
+
+#dashboard-col-0 h1,
+#dashboard-col-1 h1 {
+    text-align: center;
+}

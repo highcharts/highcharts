@@ -44,6 +44,7 @@ function scriptsCompile(filePathes) {
         inputPath = filePathes[i];
 
         if (
+            inputPath.includes('/dashboards/') ||
             inputPath.includes('/es-modules/') ||
             !inputPath.endsWith('.src.js')
         ) {
@@ -94,7 +95,7 @@ function scriptsCompile(filePathes) {
             return result;
         });
 
-        if (i % 2) {
+        if (i % 2 || argv.CI) {
             promiseChain1 = promiseChain1.then(() => promise);
         } else {
             promiseChain2 = promiseChain2.then(() => promise);

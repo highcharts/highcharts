@@ -1410,7 +1410,15 @@ namespace OrdinalAxis {
 
             // Check whether the series has at least one point inside the chart
             const hasPointsInside = function (series: Series): boolean {
-                return series.points.some((point): boolean => !!point.isInside);
+                const { min, max } = axis;
+
+                if (defined(min) && defined(max)) {
+                    return series.points.some((point): boolean =>
+                        point.x >= min && point.x <= max
+                    );
+                }
+
+                return false;
             };
 
             let firstPointX: number;

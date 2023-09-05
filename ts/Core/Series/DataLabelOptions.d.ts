@@ -63,12 +63,13 @@ export interface DataLabelOptions {
     color?: ColorString;
     crop?: boolean;
     defer?: boolean;
-    distance?: number;
+    distance?: number|string;
     enabled?: boolean;
     filter?: DataLabelFilterOptions;
     format?: string;
     formatter?: DataLabelFormatterCallback;
     inside?: boolean;
+    labelrank?: number;
     nullFormat?: (boolean|string);
     overflow?: DataLabelOverflowValue;
     padding?: number;

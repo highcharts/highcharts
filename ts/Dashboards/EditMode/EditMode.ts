@@ -101,6 +101,14 @@ class EditMode {
                     close: {
                         icon: this.iconsURLPrefix + 'close.svg'
                     }
+                },
+                toolbars: {
+                    cell: {
+                        enabled: true
+                    },
+                    row: {
+                        enabled: true
+                    }
                 }
             },
             options || {});
@@ -160,7 +168,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -315,12 +323,12 @@ class EditMode {
         );
 
         // Init rowToolbar.
-        if (!editMode.rowToolbar) {
+        if (editMode.options.toolbars?.row?.enabled && !editMode.rowToolbar) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
         }
 
         // Init cellToolbar.
-        if (!editMode.cellToolbar) {
+        if (editMode.options.toolbars?.cell?.enabled && !editMode.cellToolbar) {
             editMode.cellToolbar = new CellEditToolbar(editMode);
         }
 
@@ -881,6 +889,10 @@ class EditMode {
      */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
+        if (this.dragDrop) {
+            this.dragDrop.mouseCellContext = void 0;
+        }
+        this.mouseCellContext = void 0;
         this.hideContextPointer();
     }
 
@@ -1006,11 +1018,11 @@ namespace EditMode {
         /**
          * Whether the edit mode should be enabled for the dashboards.
          *
-         * @default false
-         *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled }
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
+         *
+         * @default false
          *
          */
         enabled?: boolean;
@@ -1022,7 +1034,7 @@ namespace EditMode {
          * The URL prefix for the icons used in the edit mode like the context
          * menu icons, the row and cell edit toolbar icons, etc.
          *
-         * @default https://code.highcharts.com/@product.version@/gfx/dashboard-icons/
+         * @default @product.assetPrefix@/gfx/dashboards-icons/
          */
         iconsURLPrefix?: string;
         /**
@@ -1039,6 +1051,10 @@ namespace EditMode {
         resize?: Resizer.Options;
         /**
          * Toolbar options.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
          */
         toolbars?: Toolbars;
         /**

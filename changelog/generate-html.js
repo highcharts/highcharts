@@ -39,7 +39,7 @@ function generateHTML() {
         }, {
             header: 'Highcharts Dashboards',
             name: 'highcharts-dashboards',
-            cangelogId: 'hd-changelog',
+            changelogId: 'hd-changelog',
             offset: 'hd-'
         }];
 

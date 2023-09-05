@@ -23,8 +23,7 @@ Dashboards.board('container', {
             id: 'connector-1',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },
@@ -48,11 +47,13 @@ Dashboards.board('container', {
             type: 'Highcharts',
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
             },
             columnAssignment: {
                 Food: 'x',
-                'Vitamin A': 'y'
+                'Vitamin A': 'y',
+                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
@@ -82,7 +83,16 @@ Dashboards.board('container', {
             editable: true,
             sync: {
                 highlight: true,
+                visibility: true,
                 extremes: true
+            },
+            visibleColumns: ['Food', 'Vitamin A'],
+            dataGridOptions: {
+                columns: {
+                    'Vitamin A': {
+                        headerFormat: '{text} (IU)'
+                    }
+                }
             }
         }
     ]

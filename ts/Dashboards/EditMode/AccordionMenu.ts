@@ -22,6 +22,7 @@
 
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
+import type Globals from '../Globals';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -121,6 +122,7 @@ class AccordionMenu {
             {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.confirmButton,
+                className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -142,6 +144,7 @@ class AccordionMenu {
             {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
+                className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -168,7 +171,7 @@ class AccordionMenu {
     ): void {
         const pathLength = propertyPath.length - 1;
 
-        let currentLevel = this.changedOptions as AnyRecord;
+        let currentLevel = this.changedOptions as Globals.AnyRecord;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {

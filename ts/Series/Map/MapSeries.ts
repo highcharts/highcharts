@@ -578,14 +578,6 @@ class MapSeries extends ScatterSeries {
                 if (graphic && graphic.parentGroup !== point.group) {
                     graphic.add(point.group);
                 }
-
-                // Restore state color on update/redraw (#3529)
-                if (shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    shapeArgs.fill = this.pointAttribs(
-                        point,
-                        point.state
-                    ).fill;
-                }
             });
 
             // Draw the points
