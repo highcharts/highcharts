@@ -107,4 +107,8 @@ describe('layout resize on window changes', () => {
             )
         });
     });
+
+    it('The dataGridOptions should be applied to the component.', () => {
+        cy.get('.highcharts-datagrid-column-header').eq(1).should('have.text', 'Vitamin A (IU)');
+    });
 });
