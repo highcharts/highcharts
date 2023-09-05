@@ -5,10 +5,16 @@ name: Firefox CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
-  # push:
-  #   branches: [ $default-branch ]
-  # pull_request:
-  #   branches: [ $default-branch ]
+  push:
+    branches: [ 'master' ]
+  pull_request:
+    branches: [ 'master' ]
+    paths:
+      - 'css/**'
+      - 'samples/**'
+      - 'test/**'
+      - 'ts/**'
+      - '.github/workflows/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,7 +31,7 @@ jobs:
     environment: browserstack
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [lts/*]
     steps:
       # setup
       - uses: actions/checkout@v3
@@ -48,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [lts/*]
     steps:
       # setup
       - uses: actions/checkout@v3
@@ -61,7 +67,7 @@ jobs:
       - uses: browser-actions/setup-geckodriver@latest
       - name: Install Dependencies
         run: |
-          npm i cypress @highcharts/highcharts-utils
+          npm i cypress github:highcharts/highcharts-utils
           npx cypress install && npx cypress info
       # tasks
       - name: Build Highcharts
