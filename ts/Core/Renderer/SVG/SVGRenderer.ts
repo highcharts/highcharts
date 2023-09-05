@@ -206,13 +206,7 @@ class SVGRenderer implements SVGRendererLike {
      */
     public defs: SVGElement = void 0 as any;
 
-    /**
-     * Whether the rendered content is intended for export.
-     *
-     * @name Highcharts.SVGRenderer#forExport
-     * @type {boolean | undefined}
-     */
-    public forExport: boolean | undefined = void 0 as any;
+    public forExport?: boolean;
     public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
@@ -316,6 +310,13 @@ class SVGRenderer implements SVGRendererLike {
 
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
+
+        /**
+         * Whether the rendered content is intended for export.
+         *
+         * @name Highcharts.SVGRenderer#forExport
+         * @type {boolean | undefined}
+         */
         renderer.forExport = forExport;
         renderer.styledMode = styledMode;
         renderer.gradients = {}; // Object where gradient SvgElements are stored
