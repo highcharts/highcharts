@@ -357,6 +357,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     const axis = {
         transA: -0.04,
         min: 3.24,
+        max: 7,
         len: 500,
         translationSlope: 0.2,
         minPixelPadding: 0,
@@ -367,11 +368,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         },
         series: [{
             points: [{
-                isInside: true, // #18459
                 x: 3,
                 plotX: -20
             }, {
-                isInside: true, // #18459
                 x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
@@ -719,7 +718,7 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 });
 
-QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
+QUnit.test('Moving annotations on ordinal axis.', assert => {
     const data = [
         [
             1622640600000,
@@ -804,6 +803,45 @@ QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
         x - 50,
         chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
         0.1,
-        'Annotation dragged on ordinal axis charts should follow mouse pointer.'
+        'Annotation dragged on ordinal axis charts should follow mouse pointer, #18459.'
     );
+
+    // #19233
+    chart.series[0].update({
+        type: 'line',
+        data: Array.from({ length: 50 }, (_, i) => [10 + i * 36e5, i])
+    }, false);
+    chart.series[1].update({
+        type: 'line',
+        data: Array.from({ length: 10 }, (_, i) => [i * 36e5, null])
+    }, false);
+
+    circle.update({
+        shapes: [{
+            type: 'circle',
+            point: {
+                x: 36000010,
+                y: 20,
+                xAxis: 0,
+                yAxis: 0
+            },
+            r: 20
+        }]
+    }, false);
+
+    chart.xAxis[0].setExtremes(null, null);
+
+    const circleX = chart.xAxis[0].toPixels(36000010),
+        circleY = chart.yAxis[0].toPixels(20);
+
+    controller.pan([circleX, circleY], [circleX - 50, circleY]);
+
+    assert.close(
+        circleX - 50,
+        chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
+        0.1,
+        `Annotation dragged on ordinal axis charts, that have a series with null
+        points only, should follow mouse pointer, #19233.`
+    );
+
 });

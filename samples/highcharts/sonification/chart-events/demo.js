@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'spline'
     },
@@ -31,7 +31,7 @@ var chart = Highcharts.chart('container', {
             },
             // Play notes and then announce end
             onEnd: function (e) {
-                var playNote = function (note, time) {
+                const playNote = function (note, time) {
                     e.chart.sonification.playNote('vibraphone', {
                         note: note,
                         noteDuration: 400,

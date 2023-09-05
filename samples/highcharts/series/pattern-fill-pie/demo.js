@@ -71,7 +71,7 @@ Highcharts.chart('container', {
         dataLabels: {
             connectorColor: Highcharts.getOptions().colors[0],
             formatter: function () {
-                var i = this.point.index;
+                const i = this.point.index;
                 return i > 9 ?
                     'Custom pattern' : // For the last one, show custom label
                     'default-pattern-' + i; // Show default pattern label

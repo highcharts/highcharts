@@ -1235,7 +1235,7 @@ class Tooltip {
             let anchorY;
             if (isHeader) {
                 // Set anchorX to plotX
-                anchorX = plotLeft + plotX;
+                anchorX = Math.max(plotLeft + plotX, plotLeft);
                 // Set anchorY to center of visible plot area.
                 anchorY = plotTop + plotHeight / 2;
             } else {
@@ -1798,22 +1798,27 @@ class Tooltip {
                 label.width,
                 label.height,
                 point
-            );
+            ),
+            renderer = this.renderer;
+
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
-        // Set the renderer size dynamically to prevent document size to change
-        if (this.outside && container) {
+        // Set the renderer size dynamically to prevent document size to change.
+        // Renderer only exists when tooltip is outside.
+        if (renderer && container) {
             // Corrects positions, occurs with tooltip positioner (#16944)
             if (options.positioner) {
                 pos.x += left - distance;
                 pos.y += top - distance;
             }
 
-            pad = (options.borderWidth || 0) + 2 * distance;
+            // Pad it by the border width and distance. Add 2 to make room for
+            // the default shadow (#19314).
+            pad = (options.borderWidth || 0) + 2 * distance + 2;
 
-            (this.renderer as any).setSize(
+            renderer.setSize(
                 label.width + pad,
                 label.height + pad,
                 false
@@ -1832,10 +1837,10 @@ class Tooltip {
             anchorY += top - pos.y;
         }
 
-        // do the move
+        // Do the move
         this.move(
             Math.round(pos.x),
-            Math.round(pos.y || 0), // can be undefined (#3977)
+            Math.round(pos.y || 0), // Can be undefined (#3977)
             anchorX,
             anchorY
         );

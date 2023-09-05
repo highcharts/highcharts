@@ -1,17 +1,24 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    subtitle: {
-        text: '* Footnote',
-        align: 'right',
-        x: -10
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    rangeSelector: {
-        selected: 1
-    },
+    Highcharts.stockChart('container', {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        subtitle: {
+            text: '* Footnote',
+            align: 'right',
+            x: -10
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();
