@@ -79,7 +79,7 @@ jobs:
       - uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
-      - uses: nanasess/setup-chromedriver@v1
+      - uses: nanasess/setup-chromedriver@v2
       - name: Install Dependencies
         run: |
           npm i cypress github:highcharts/highcharts-utils
