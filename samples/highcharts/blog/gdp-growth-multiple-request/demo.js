@@ -1,12 +1,12 @@
 // Set up URL request
 
-var urlCountry = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-country.json';
-var urlRegion = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-region.json';
-var urlIncome = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-income.json';
-var urlWorld = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-indicator.json';
+const urlCountry = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-country.json';
+const urlRegion = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-region.json';
+const urlIncome = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-income.json';
+const urlWorld = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-indicator.json';
 
 
-var date = [],
+const date = [],
     arrayCountry = [],
     arrayRegion = [],
     arrayIncome = [],
@@ -14,8 +14,9 @@ var date = [],
     arrayStringCountry = [],
     arrayStringRegion = [],
     arrayStringIncome = [],
-    arrayStringWorld = [],
-    countryName,
+    arrayStringWorld = [];
+
+let countryName,
     regionName,
     incomeName,
     indicatorName;
@@ -55,7 +56,7 @@ fetch(urlCountry).then(function (response) {
                 });
 
                 // querry send string that we need to convert into numbers or null
-                for (var i = 0;
+                for (let i = 0;
                     i < arrayStringWorld.length; i++) { // we use world lenght since the world serie is supposed to be  the longer (the one with no missing values)
                     if (arrayStringCountry[i] !== null) {
                         arrayCountry.push(parseFloat(
@@ -87,7 +88,7 @@ fetch(urlCountry).then(function (response) {
                 }
 
                 // Create the Chart
-                var chart = new Highcharts.Chart({
+                const chart = new Highcharts.Chart({
 
                     chart: {
                         type: 'spline',

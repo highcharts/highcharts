@@ -68,7 +68,7 @@ function drawChart(mapData, data) {
         parsed: function (columns) {
 
             // Read the columns into the data array
-            var data = [];
+            const data = [];
             columns[0].forEach((code, i) => {
                 data.push({
                     code: code.toUpperCase(),

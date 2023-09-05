@@ -1,4 +1,10 @@
 #container {
     height: 300px;
     width: 400px;
+    margin: 0 auto;
+}
+
+#buttons {
+    width: 400px;
+    margin: 1em auto;
 }

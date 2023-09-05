@@ -6,7 +6,7 @@
 
     function setPointsValue(prop, init) {
         return periodicTable.map(function (element) {
-            var point;
+            let point;
             if (init) {
                 // On init, provide all data
                 element.value = element.z = element[prop];
@@ -24,7 +24,7 @@
         });
     }
 
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
 
         title: {
             text: 'Periodic Table',
@@ -109,7 +109,7 @@
         document.getElementById('dataset'),
         'change',
         function () {
-            var selectedOption = this.options[this.selectedIndex];
+            const selectedOption = this.options[this.selectedIndex];
 
             chart.update({
                 subtitle: {
@@ -131,7 +131,7 @@
         document.getElementById('seriestype'),
         'change',
         function () {
-            var isHeatmap = this.value === 'heatmap';
+            const isHeatmap = this.value === 'heatmap';
 
             chart.update({
                 legend: {

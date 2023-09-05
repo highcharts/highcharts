@@ -44,6 +44,9 @@ export interface DataPoolOptions {
      * {@link GoogleSheetsConnectorOptions | GoogleSheetsConnector}
      *
      * {@link HTMLTableConnectorOptions | HTMLTableConnector}
+     *
+     * {@link JSONConnectorOptions | JSONConnector}
+     *
      **/
     connectors: Array<DataPoolConnectorOptions>;
 
@@ -84,6 +87,7 @@ export interface DataPoolConnectorOptions
      * - `CSV`
      * - `GoogleSheets`
      * - `HTMLTable`
+     * - `JSON`
      **/
     type: T;
 

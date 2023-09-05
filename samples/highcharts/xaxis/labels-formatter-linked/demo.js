@@ -1,4 +1,4 @@
-var categoryLinks = {
+const categoryLinks = {
     Foo: 'http://www.bing.com/search?q=foo',
     Bar: 'http://www.bing.com/search?q=foo+bar',
     Foobar: 'http://www.bing.com/serach?q=foobar'

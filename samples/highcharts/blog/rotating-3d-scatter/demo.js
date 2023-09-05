@@ -13,7 +13,7 @@ Highcharts.getOptions().colors = Highcharts.getOptions().colors.map(
             ]
         };
     });
-var left = Highcharts.chart('left', {
+const left = Highcharts.chart('left', {
     chart: {
         renderTo: 'container',
         margin: 100,
@@ -70,7 +70,7 @@ var left = Highcharts.chart('left', {
     }]
 });
 
-var right = Highcharts.chart('right', {
+const right = Highcharts.chart('right', {
     chart: {
         renderTo: 'container',
         margin: 100,

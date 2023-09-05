@@ -314,6 +314,12 @@ namespace ForcedMarkersComposition {
             const originalOpactiy = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
+
+            // Temporarily set the old marker options to enabled in order to
+            // trigger destruction of the markers in Series.update.
+            if (series.userOptions && series.userOptions.marker) {
+                series.userOptions.marker.enabled = true;
+            }
             series.update({
                 marker: {
                     enabled: resetMarkerOptions.enabled,

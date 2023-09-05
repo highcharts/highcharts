@@ -166,13 +166,14 @@ const configs: {
             const { board } = this;
 
             const handleChangeExtremes = (e: DataCursor.Event): void => {
-                if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
-                    // Lasting cursor, so get last cursor
-                    const lastCursor = e.cursors[e.cursors.length - 1];
-                    if ('row' in lastCursor && typeof lastCursor.row === 'number') {
-                        const { row } = lastCursor;
-                        this.dataGrid.scrollToRow(row);
-                    }
+                const cursor = e.cursor;
+                if (
+                    cursor.type === 'position' &&
+                    this.dataGrid &&
+                    typeof cursor?.row === 'number'
+                ) {
+                    const { row } = cursor;
+                    this.dataGrid.scrollToRow(row);
                 }
 
             };

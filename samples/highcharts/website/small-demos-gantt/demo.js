@@ -225,7 +225,7 @@ function inverted() {
 
 
 function subtasks() {
-    var today = new Date(),
+    const today = new Date(),
         day = 1000 * 60 * 60 * 24;
 
     // Set to 00:00:00:000 today
@@ -286,7 +286,7 @@ function subtasks() {
             },
             point: {
                 descriptionFormatter: function (point) {
-                    var dependency = point.dependency &&
+                    const dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
                         dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
 
@@ -617,7 +617,7 @@ function nav() {
         accessibility: {
             point: {
                 descriptionFormatter: function (point) {
-                    var completedValue = point.completed ?
+                    const completedValue = point.completed ?
                             point.completed.amount || point.completed : null,
                         completed = completedValue ?
                             ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
@@ -735,8 +735,8 @@ function drag() {
     http://api.highcharts.com/gantt.
 */
 
-    var today = new Date(),
-        day = 1000 * 60 * 60 * 24;
+    let today = new Date();
+    const day = 1000 * 60 * 60 * 24;
 
     // Set to 00:00:00:000 today
     today.setUTCHours(0);
