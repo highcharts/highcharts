@@ -210,6 +210,13 @@ class DataGrid {
      */
     private bottom = false;
 
+    /**
+     * An array of the max column width for which the text in headers is
+     * overflown.
+     * @internal
+     */
+    private overflownHeaderWidths: Array<number | null> = [];
+
 
     /* *
      *
@@ -484,10 +491,6 @@ class DataGrid {
         if (options.columnHeaders.enabled) {
             this.columnNames = this.getColumnsToDisplay();
             this.renderColumnHeaders();
-            this.outerContainer.style.top = (
-                this.columnHeadersContainer?.clientHeight ||
-                this.options.cellHeight
-            ) + 'px';
         } else {
             this.outerContainer.style.top = '0';
         }
@@ -496,6 +499,8 @@ class DataGrid {
         this.addEvents();
         this.updateScrollingLength();
         this.updateVisibleCells();
+
+        this.onContainerResize();
 
         // Header columns alignment when scrollbar is shown.
         if (this.columnHeadersContainer?.lastChild) {
@@ -662,10 +667,34 @@ class DataGrid {
      * @internal
      */
     private onContainerResize(): void {
-        this.outerContainer.style.top = (
-            this.columnHeadersContainer?.clientHeight ||
-            this.options.cellHeight
-        ) + 'px';
+        const headersContainer = this.columnHeadersContainer;
+        if (!headersContainer) {
+            return;
+        }
+
+        this.outerContainer.style.top = headersContainer.clientHeight + 'px';
+
+        this.columnNames.forEach((columnName, i): void => {
+            const child = headersContainer.children[i] as HTMLElement;
+            const lastOverflowWidth = this.overflownHeaderWidths[i];
+
+            if (
+                !isNumber(lastOverflowWidth) &&
+                child.scrollWidth > child.clientWidth
+            ) {
+                this.overflownHeaderWidths[i] = child.clientWidth + 1;
+                child.textContent = this.formatHeaderCell(columnName)
+                    .split(' ').map((word): string => (
+                        word.length < 3 ? word : word.slice(0, 2) + '...'
+                    )).join(' ');
+            } else if (
+                isNumber(lastOverflowWidth) &&
+                lastOverflowWidth < child.clientWidth
+            ) {
+                this.overflownHeaderWidths[i] = null;
+                child.textContent = this.formatHeaderCell(columnName);
+            }
+        });
     }
 
 
