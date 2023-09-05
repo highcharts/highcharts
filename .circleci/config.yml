@@ -454,7 +454,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Compile build
-          command: npm run build -- --num-threads 2
+          command: npm run build -- --CI true
       - <<: *persist_workspace
 
   deploy_code:
@@ -558,7 +558,7 @@ workflows:
           requires: [lint]
           filters:
             branches:
-              ignore: 
+              ignore:
                 - master
                 - /db\/.*/
           context: highcharts-staging

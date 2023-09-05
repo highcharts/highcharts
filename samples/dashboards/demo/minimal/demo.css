@@ -66,3 +66,7 @@ h1#title {
 .highcharts-plot-line-label {
     fill: var(--highcharts-color-3);
 }
+
+.highcharts-description {
+    padding: 0 20px;
+}

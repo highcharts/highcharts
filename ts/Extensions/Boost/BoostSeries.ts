@@ -472,7 +472,16 @@ function createAndAttachRenderer(
 
         boost.clipRect = chart.renderer.clipRect();
 
-        (boost.targetFo || boost.target).clip(boost.clipRect);
+        (boost.targetFo || boost.target)
+            .attr({
+                // Set the z index of the boost target to that of the last
+                // series using it. This logic is not perfect, as it will not
+                // handle interleaved series with boost enabled or disabled. But
+                // it will cover the most common use case of one or more
+                // successive boosted or non-boosted series (#9819).
+                zIndex: series.options.zIndex
+            })
+            .clip(boost.clipRect);
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
