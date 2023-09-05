@@ -23,10 +23,10 @@ function getProperties() {
 
     try {
         // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER || process.env.BROWSERSTACK_USERNAME;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY || process.env.BROWSERSTACK_ACCESS_KEY;
 
-        if (!process.env.BROWSERSTACK_USER) {
+        if (!properties['browserstack.username']) {
             // fallback to good old property file
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
