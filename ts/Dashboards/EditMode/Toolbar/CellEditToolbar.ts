@@ -22,10 +22,11 @@ import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 
 const {
     merge,
-    fireEvent,
     objectEach
 } = U;
 

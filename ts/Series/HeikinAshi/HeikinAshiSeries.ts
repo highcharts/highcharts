@@ -27,8 +27,9 @@ const {
     candlestick: CandlestickSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     merge
 } = U;
 

@@ -16,8 +16,9 @@ import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     isArray,
     merge
 } = U;

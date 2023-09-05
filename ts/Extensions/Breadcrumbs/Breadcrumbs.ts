@@ -31,11 +31,11 @@ import D from '../../Core/Defaults.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     defined,
     extend,
-    fireEvent,
     isString,
     merge,
     objectEach,

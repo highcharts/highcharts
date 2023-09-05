@@ -28,9 +28,9 @@ import type Series from './Series';
 
 import DataTable from '../../Data/DataTable.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
-    fireEvent,
     isNumber,
     merge,
     wrap

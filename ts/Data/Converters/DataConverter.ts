@@ -28,9 +28,9 @@ import type DataConnector from '../Connectors/DataConnector';
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
-    fireEvent,
     isNumber,
     merge
 } = U;

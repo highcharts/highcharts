@@ -46,14 +46,14 @@ import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     createElement,
     css,
     defined,
     discardElement,
     find,
-    fireEvent,
     isNumber,
     merge,
     pick,

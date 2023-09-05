@@ -55,16 +55,16 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     error,
     extend,
-    fireEvent,
     isArray,
     isNumber,
     pick,
     wrap
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 /* *
  *

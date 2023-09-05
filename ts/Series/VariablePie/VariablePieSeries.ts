@@ -27,12 +27,13 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     arrayMax,
     arrayMin,
     clamp,
     extend,
-    fireEvent,
     merge,
     pick
 } = U;

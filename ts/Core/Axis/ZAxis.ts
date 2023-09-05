@@ -22,8 +22,9 @@ import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     merge,
     pick,
     splat

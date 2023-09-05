@@ -51,19 +51,18 @@ const {
 import HU from '../../Core/HttpUtilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    addEvent,
     css,
     createElement,
     discardElement,
     extend,
     find,
-    fireEvent,
     isObject,
     merge,
     objectEach,
     pick,
-    removeEvent,
     uniqueKey
 } = U;
 

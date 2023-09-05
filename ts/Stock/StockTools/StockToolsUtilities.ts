@@ -40,9 +40,10 @@ const {
 } = NBU;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     defined,
-    fireEvent,
     isNumber,
     uniqueKey
 } = U;

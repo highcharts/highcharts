@@ -38,8 +38,9 @@ const {
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     defined,

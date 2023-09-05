@@ -21,7 +21,8 @@
 
 import Axis from '../../Core/Axis/Axis.js';
 import U from '../../Core/Utilities.js';
-const { addEvent } = U;
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

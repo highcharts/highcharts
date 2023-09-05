@@ -34,8 +34,9 @@ import type {
 
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     isObject,
     isNumber,
     pick,

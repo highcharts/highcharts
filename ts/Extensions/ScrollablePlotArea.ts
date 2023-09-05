@@ -43,8 +43,9 @@ import Chart from '../Core/Chart/Chart.js';
 import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     createElement,
     defined,
     merge,

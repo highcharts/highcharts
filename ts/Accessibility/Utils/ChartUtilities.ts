@@ -32,10 +32,11 @@ const { doc } = H;
 import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     defined,
-    find,
-    fireEvent
+    find
 } = U;
 
 /* *

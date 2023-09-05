@@ -30,8 +30,9 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend,
     merge,
     pick,

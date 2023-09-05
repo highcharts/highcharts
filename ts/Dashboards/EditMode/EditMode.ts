@@ -37,9 +37,10 @@ import Resizer from '../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
 import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const {
-    addEvent,
     createElement,
     css,
     merge

@@ -31,7 +31,6 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     extend,
     isNumber,
     merge,
@@ -40,6 +39,8 @@ const {
 } = U;
 import './MapNavigationDefaults.js';
 import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

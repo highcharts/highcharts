@@ -46,7 +46,6 @@ import Series from '../Series/Series.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
     clamp,
     defined,
     extend,
@@ -59,6 +58,8 @@ const {
 } = U;
 
 import '../Pointer.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

@@ -36,8 +36,9 @@ import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     defined,

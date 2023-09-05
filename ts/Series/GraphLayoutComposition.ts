@@ -25,9 +25,8 @@ import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import U from '../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

@@ -28,7 +28,6 @@ import type Series from '../../../Core/Series/Series';
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 const {
-    addEvent,
     defined
 } = U;
 
@@ -37,6 +36,8 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter

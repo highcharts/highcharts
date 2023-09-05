@@ -48,8 +48,9 @@ const {
 } = STU;
 import U from '../../Core/Utilities.js';
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
-    fireEvent,
     merge
 } = U;
 

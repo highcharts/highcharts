@@ -44,11 +44,11 @@ import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
 const { getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     attr,
     defined,
-    fireEvent,
     isArray,
     isFunction,
     isNumber,

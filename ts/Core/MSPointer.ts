@@ -29,12 +29,12 @@ const {
 } = H;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, removeEvent } = EH;
 const {
-    addEvent,
     css,
     objectEach,
-    pick,
-    removeEvent
+    pick
 } = U;
 
 /* *

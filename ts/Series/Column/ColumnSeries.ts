@@ -42,11 +42,12 @@ const {
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     clamp,
     defined,
     extend,
-    fireEvent,
     isArray,
     isNumber,
     merge,

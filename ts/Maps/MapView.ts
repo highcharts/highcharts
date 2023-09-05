@@ -48,10 +48,10 @@ const {
 
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     clamp,
-    fireEvent,
     isArray,
     isNumber,
     isObject,

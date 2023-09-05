@@ -28,11 +28,11 @@ import type {
 } from './StockToolsOptions';
 
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     createElement,
     css,
-    fireEvent,
     getStyle,
     isArray,
     merge,

@@ -24,8 +24,9 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     isObject,
     pick,
     defined,

@@ -42,10 +42,10 @@ import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     find,
-    fireEvent,
     isArray,
     isObject,
     isString,

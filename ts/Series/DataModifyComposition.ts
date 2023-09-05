@@ -29,8 +29,9 @@ const {
 } = Point;
 
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,

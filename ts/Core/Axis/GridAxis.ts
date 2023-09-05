@@ -39,8 +39,9 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     defined,
     erase,
     find,

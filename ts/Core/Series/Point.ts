@@ -44,12 +44,12 @@ const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    addEvent,
     defined,
     erase,
     extend,
-    fireEvent,
     getNestedProperty,
     isArray,
     isFunction,
@@ -59,7 +59,6 @@ const {
     objectEach,
     pick,
     syncTimeout,
-    removeEvent,
     uniqueKey
 } = U;
 

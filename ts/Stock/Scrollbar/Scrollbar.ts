@@ -30,15 +30,14 @@ import H from '../../Core/Globals.js';
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    addEvent,
     correctFloat,
     defined,
     destroyObjectProperties,
-    fireEvent,
     merge,
-    pick,
-    removeEvent
+    pick
 } = U;
 
 /* *

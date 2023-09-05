@@ -19,8 +19,9 @@
 import type Axis from './Axis';
 
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     normalizeTickInterval,
     pick
 } = U;

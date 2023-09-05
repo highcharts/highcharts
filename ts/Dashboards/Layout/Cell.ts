@@ -36,9 +36,10 @@ import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
-    merge,
-    fireEvent
+    merge
 } = U;
 
 /* *

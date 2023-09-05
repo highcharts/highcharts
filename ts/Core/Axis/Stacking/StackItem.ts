@@ -38,9 +38,10 @@ const { format } = T;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     destroyObjectProperties,
-    fireEvent,
     isNumber,
     merge,
     pick

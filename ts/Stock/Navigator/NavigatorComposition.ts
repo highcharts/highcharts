@@ -35,8 +35,9 @@ import NavigatorSymbols from './NavigatorSymbols.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend,
     merge,
     pick

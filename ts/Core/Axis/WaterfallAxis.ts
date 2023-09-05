@@ -23,8 +23,9 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     objectEach
 } = U;
 

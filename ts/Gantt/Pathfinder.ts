@@ -33,7 +33,6 @@ import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     defined,
     error,
     extend,
@@ -213,6 +212,8 @@ declare global {
 ''; // detach doclets above
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const max = Math.max,
     min = Math.min;

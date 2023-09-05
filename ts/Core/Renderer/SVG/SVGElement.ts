@@ -55,15 +55,15 @@ const {
 } = H;
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     attr,
     createElement,
     css,
     defined,
     erase,
     extend,
-    fireEvent,
     isArray,
     isFunction,
     isObject,

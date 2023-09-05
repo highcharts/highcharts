@@ -56,11 +56,9 @@ const {
 } = D;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
     defined,
     extend,
-    fireEvent,
     isArray,
     isNumber,
     merge,
@@ -68,6 +66,8 @@ const {
     syncTimeout
 } = U;
 import A from '../../Core/Animation/AnimationUtilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const { animObject } = A;
 
 /* *

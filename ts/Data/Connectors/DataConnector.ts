@@ -30,9 +30,9 @@ import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
-    fireEvent,
     merge,
     pick
 } = U;

@@ -28,11 +28,11 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     erase,
     find,
-    fireEvent,
     pick,
     wrap
 } = U;

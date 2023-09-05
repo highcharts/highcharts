@@ -25,8 +25,9 @@ import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     pick
 } = U;
 

@@ -36,13 +36,14 @@ import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
     extend,
-    fireEvent,
     isNumber,
     merge,
     objectEach,

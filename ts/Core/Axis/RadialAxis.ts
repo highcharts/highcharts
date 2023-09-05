@@ -35,12 +35,12 @@ const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     correctFloat,
     defined,
     extend,
-    fireEvent,
     merge,
     pick,
     relativeLength,

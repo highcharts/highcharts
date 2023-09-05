@@ -32,10 +32,11 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     attr,
     extend,
-    fireEvent,
     isString,
     objectEach,
     pick

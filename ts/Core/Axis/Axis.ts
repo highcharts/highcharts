@@ -60,6 +60,8 @@ const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent, removeEvent } = EH;
 const {
     arrayMax,
     arrayMin,
@@ -70,7 +72,6 @@ const {
     erase,
     error,
     extend,
-    fireEvent,
     getClosestDistance,
     insertItem,
     isArray,
@@ -81,7 +82,6 @@ const {
     objectEach,
     pick,
     relativeLength,
-    removeEvent,
     splat,
     syncTimeout
 } = U;

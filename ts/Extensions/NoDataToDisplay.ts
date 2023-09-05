@@ -23,8 +23,9 @@ import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend
 } = U;
 

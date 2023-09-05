@@ -22,8 +22,9 @@ import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend,
     merge,
     pick

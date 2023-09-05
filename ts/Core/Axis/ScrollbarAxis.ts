@@ -21,8 +21,9 @@ import type Scrollbar from '../../Stock/Scrollbar/Scrollbar';
 import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     defined,
     pick
 } = U;

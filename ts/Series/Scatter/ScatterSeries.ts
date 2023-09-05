@@ -26,8 +26,9 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend,
     merge
 } = U;

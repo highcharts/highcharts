@@ -46,8 +46,9 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,

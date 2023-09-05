@@ -40,7 +40,6 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    fireEvent,
     isNumber,
     merge,
     pick
@@ -48,6 +47,8 @@ const {
 
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 
 /* *
  *

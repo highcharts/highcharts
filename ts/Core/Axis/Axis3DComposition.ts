@@ -37,8 +37,9 @@ const {
 } = Math3D;
 import Tick3D from './Tick3DComposition.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     merge,
     pick,
     wrap

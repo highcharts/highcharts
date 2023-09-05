@@ -36,10 +36,11 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     defined,
     extend,
-    fireEvent,
     isNumber,
     merge,
     objectEach,

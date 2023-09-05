@@ -21,8 +21,9 @@ import H from '../Core/Globals.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     correctFloat,
     defined,
     extend,

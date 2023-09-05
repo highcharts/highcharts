@@ -36,8 +36,9 @@ import Axis from '../Core/Axis/Axis.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     merge,
     wrap
 } = U;

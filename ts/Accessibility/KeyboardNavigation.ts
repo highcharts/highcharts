@@ -33,13 +33,11 @@ const {
 } = H;
 import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const { getElement, simulatedEventTarget } = HTMLUtilities;
 
 /* *

@@ -47,8 +47,6 @@ const {
     createElement,
     isArray,
     merge,
-    fireEvent,
-    addEvent,
     objectEach,
     isFunction,
     getStyle,
@@ -65,6 +63,8 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 /* *
  *

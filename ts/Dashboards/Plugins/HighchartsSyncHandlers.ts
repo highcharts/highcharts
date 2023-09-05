@@ -34,7 +34,8 @@ import type DataTable from '../../Data/DataTable';
 import ComponentType from '../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
-const { addEvent } = U;
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 
 /**

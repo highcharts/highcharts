@@ -42,9 +42,10 @@ import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
 import HTMLComponent from './Components/HTMLComponent.js';
 import ComponentType from './Components/ComponentType';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
     merge,
-    addEvent,
     error,
     objectEach,
     uniqueKey,

@@ -28,8 +28,9 @@ const {
     arearange: AreaRangeSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     merge,
     extend
 } = U;

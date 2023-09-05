@@ -37,13 +37,13 @@ import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     clamp,
     css,
     discardElement,
     extend,
-    fireEvent,
     isArray,
     isNumber,
     isString,

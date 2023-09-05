@@ -30,10 +30,10 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     find,
-    fireEvent,
     isArray,
     isNumber,
     pick

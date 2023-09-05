@@ -25,8 +25,9 @@ import H from '../../Core/Globals.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     find,
     isNumber
 } = U;

@@ -26,8 +26,9 @@ import type Tick from '../../Core/Axis/Tick';
 
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     wrap
 } = U;
 

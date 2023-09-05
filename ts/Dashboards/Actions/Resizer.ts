@@ -26,14 +26,13 @@ import U from '../../Core/Utilities.js';
 
 const {
     merge,
-    addEvent,
     createElement,
-    fireEvent,
-    removeEvent,
     pick
 } = U;
 
 import EditMode from '../EditMode/EditMode';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 
 /**
  * Class providing a resizing functionality.

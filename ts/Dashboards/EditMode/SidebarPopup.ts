@@ -36,7 +36,6 @@ import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    addEvent,
     createElement,
     merge
 } = U;

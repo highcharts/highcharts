@@ -30,7 +30,6 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
@@ -42,6 +41,8 @@ const {
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

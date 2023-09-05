@@ -22,8 +22,9 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import H from '../Globals.js';
 const { isTouchDevice } = H;
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     correctFloat,
     defined,
     isNumber,

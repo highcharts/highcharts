@@ -89,8 +89,9 @@ import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    addEvent,
     attr,
     createElement,
     css,
@@ -101,7 +102,6 @@ const {
     error,
     extend,
     find,
-    fireEvent,
     getStyle,
     isArray,
     isNumber,
@@ -112,7 +112,6 @@ const {
     pick,
     pInt,
     relativeLength,
-    removeEvent,
     splat,
     syncTimeout,
     uniqueKey

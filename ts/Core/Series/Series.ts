@@ -77,8 +77,9 @@ import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent, removeEvent } = EH;
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -89,17 +90,15 @@ const {
     error,
     extend,
     find,
-    fireEvent,
-    getClosestDistance,
     getNestedProperty,
     insertItem,
     isArray,
+    getClosestDistance,
     isNumber,
     isString,
     merge,
     objectEach,
     pick,
-    removeEvent,
     splat,
     syncTimeout
 } = U;

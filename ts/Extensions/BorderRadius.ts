@@ -30,8 +30,9 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     extend,
     isObject,
     merge,

@@ -37,9 +37,7 @@ const {
 } = D;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     extend,
-    fireEvent,
     merge,
     pick
 } = U;
@@ -55,6 +53,8 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 
 declare module '../../Core/Chart/ChartLike' {

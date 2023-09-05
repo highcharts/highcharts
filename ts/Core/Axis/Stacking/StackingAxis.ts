@@ -29,12 +29,12 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     correctFloat,
     defined,
     destroyObjectProperties,
-    fireEvent,
     isArray,
     isNumber,
     objectEach,

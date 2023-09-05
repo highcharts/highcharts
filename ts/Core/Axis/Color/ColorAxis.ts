@@ -42,9 +42,10 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     extend,
-    fireEvent,
     isArray,
     isNumber,
     merge,

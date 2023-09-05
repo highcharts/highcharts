@@ -56,10 +56,11 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     extend,
     find,
-    fireEvent,
     getNestedProperty,
     isArray,
     defined,

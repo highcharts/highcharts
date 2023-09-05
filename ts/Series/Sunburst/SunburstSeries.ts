@@ -54,11 +54,12 @@ const {
 } = TU;
 import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     defined,
     error,
     extend,
-    fireEvent,
     isNumber,
     isObject,
     isString,

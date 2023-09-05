@@ -27,10 +27,8 @@
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 /* *
  *

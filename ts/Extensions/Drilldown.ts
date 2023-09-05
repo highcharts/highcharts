@@ -61,17 +61,16 @@ import '../Series/Column/ColumnSeries.js';
 import type MapPointType from '../Series/Map/MapPoint.js';
 import type MapSeriesType from '../Series/Map/MapSeries.js';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent, removeEvent } = EH;
 
 const {
-    addEvent,
     defined,
     diffObjects,
     extend,
-    fireEvent,
     merge,
     objectEach,
     pick,
-    removeEvent,
     syncTimeout
 } = U;
 

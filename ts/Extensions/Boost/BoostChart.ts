@@ -30,8 +30,9 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     pick
 } = U;
 

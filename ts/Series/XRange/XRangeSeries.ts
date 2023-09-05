@@ -44,7 +44,6 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
     defined,
     extend,
@@ -57,6 +56,8 @@ const {
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 /* *
  *

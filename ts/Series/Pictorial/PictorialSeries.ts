@@ -33,6 +33,8 @@ import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
@@ -47,7 +49,6 @@ const {
 } = PictorialUtilities;
 
 const {
-    addEvent,
     defined,
     merge,
     objectEach,

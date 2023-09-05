@@ -24,11 +24,11 @@ import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Series from './Series/Series.js';
 import U from './Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, removeEvent } = EH;
 const {
-    addEvent,
     isFunction,
-    objectEach,
-    removeEvent
+    objectEach
 } = U;
 
 /* *

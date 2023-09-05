@@ -29,8 +29,9 @@ import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     pick
 } = U;
 

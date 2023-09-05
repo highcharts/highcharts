@@ -63,12 +63,10 @@ const {
 } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     correctFloat,
     defined,
     error,
     extend,
-    fireEvent,
     isArray,
     isNumber,
     isObject,
@@ -79,6 +77,8 @@ const {
 } = U;
 import './TreemapComposition.js';
 import TreemapNode from './TreemapNode.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 /* *
  *

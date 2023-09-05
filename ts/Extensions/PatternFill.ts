@@ -38,13 +38,13 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, removeEvent } = EH;
 const {
-    addEvent,
     defined,
     erase,
     merge,
     pick,
-    removeEvent,
     wrap
 } = U;
 

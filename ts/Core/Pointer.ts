@@ -40,14 +40,14 @@ import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     attr,
     css,
     defined,
     extend,
     find,
-    fireEvent,
     isNumber,
     isObject,
     objectEach,

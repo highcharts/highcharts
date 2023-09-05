@@ -50,7 +50,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     defined,
     error,
     isArray,
@@ -305,6 +304,8 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import Axis from '../Core/Axis/Axis.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const Scatter = seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints;

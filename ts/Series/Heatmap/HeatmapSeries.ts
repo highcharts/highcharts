@@ -46,10 +46,8 @@ const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 
 const {
-    addEvent,
     clamp,
     extend,
-    fireEvent,
     isNumber,
     merge,
     pick,
@@ -57,6 +55,8 @@ const {
 } = U;
 
 import IU from '../InterpolationUtilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 
 const {
     colorFromPoint,

@@ -25,13 +25,14 @@ import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { removeEvent } = EH;
 const {
     defined,
     extend,
     isNumber,
     merge,
-    pick,
-    removeEvent
+    pick
 } = U;
 
 /* *

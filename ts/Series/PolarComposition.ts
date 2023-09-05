@@ -50,8 +50,9 @@ import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     defined,
     find,
     isNumber,

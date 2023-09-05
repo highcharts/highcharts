@@ -35,10 +35,11 @@ const {
     clamp,
     defined,
     isFunction,
-    fireEvent,
     pick
 } = U;
 import VerletIntegration from './VerletIntegration.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 
 /* *
  *

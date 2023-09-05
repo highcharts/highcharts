@@ -36,15 +36,15 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     createElement,
     css,
     defined,
     destroyObjectProperties,
     discardElement,
     extend,
-    fireEvent,
     isNumber,
     merge,
     objectEach,

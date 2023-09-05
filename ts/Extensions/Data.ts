@@ -34,11 +34,11 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     defined,
     extend,
-    fireEvent,
     isNumber,
     merge,
     objectEach,
@@ -971,6 +971,7 @@ class Data {
                     !(options.dateFormats || self.dateFormats)[calculatedFormat]
                 ) {
                     // This should emit an event instead
+                    // TODO: Will it event fire the event?
                     (fireEvent as any)('deduceDateFailed');
                     return format;
                 }

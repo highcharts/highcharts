@@ -42,9 +42,10 @@ import DataTable from '../../Data/DataTable.js';
 import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const {
-    addEvent,
     createElement,
     error,
     diffObjects,

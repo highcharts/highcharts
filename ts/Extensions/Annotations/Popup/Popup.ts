@@ -32,11 +32,11 @@ import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
 import U from '../../../Core/Utilities.js';
+import EH from '../../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     createElement,
     extend,
-    fireEvent,
     pick
 } = U;
 

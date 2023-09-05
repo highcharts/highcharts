@@ -22,8 +22,9 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 const {
-    addEvent,
     getMagnitude,
     normalizeTickInterval,
     timeUnits

@@ -46,11 +46,11 @@ const {
 } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     error,
     extend,
-    fireEvent,
     merge
 } = U;
 

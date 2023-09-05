@@ -25,9 +25,10 @@ import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
 import Row from './Row';
 import Cell from './Cell';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent } = EH;
 
 const {
-    addEvent,
     createElement,
     uniqueKey,
     objectEach,

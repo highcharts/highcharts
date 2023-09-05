@@ -35,10 +35,11 @@ const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
     defined,
     extend,
-    fireEvent,
     isArray,
     isString,
     merge,

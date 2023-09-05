@@ -43,8 +43,9 @@ import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js'
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, removeEvent } = EH;
 const {
-    addEvent,
     clamp,
     correctFloat,
     defined,
@@ -56,7 +57,6 @@ const {
     isNumber,
     merge,
     pick,
-    removeEvent,
     splat
 } = U;
 

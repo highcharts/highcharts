@@ -23,9 +23,9 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
-    fireEvent,
     isArray,
     isNumber,
     objectEach,

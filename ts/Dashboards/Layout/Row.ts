@@ -25,16 +25,16 @@ import Globals from '../Globals.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
-import EditGlobals from '../EditMode/EditGlobals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-
 const {
     pick,
     defined,
     merge,
-    objectEach,
-    fireEvent
+    objectEach
 } = U;
+import EditGlobals from '../EditMode/EditGlobals.js';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 
 /**
  * @internal

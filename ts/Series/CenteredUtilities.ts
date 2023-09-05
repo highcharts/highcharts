@@ -22,8 +22,9 @@ import H from '../Core/Globals.js';
 const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import EH from '../Shared/Helpers/EventHelper.js';
+const { fireEvent } = EH;
 const {
-    fireEvent,
     isNumber,
     pick,
     relativeLength

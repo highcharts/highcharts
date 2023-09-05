@@ -61,10 +61,10 @@ const {
 } = SLU;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
+import EH from '../../Shared/Helpers/EventHelper.js';
+const { addEvent, fireEvent } = EH;
 const {
-    addEvent,
     extend,
-    fireEvent,
     isNumber,
     pick,
     syncTimeout
