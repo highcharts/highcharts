@@ -102,7 +102,7 @@ class Announcer {
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
             this.announceRegion.innerHTML = AST.emptyHTML;
             delete this.clearAnnouncementRegionTimer;
-        }, 1000);
+        }, 3000);
     }
 
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
