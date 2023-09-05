@@ -1,4 +1,4 @@
-const handler = function () {
+const highlightMarkerHandler = function () {
     const { chart, board } = this;
 
     const handleCursor = e => {
@@ -66,7 +66,7 @@ const handler = function () {
     }
 };
 
-const emitter = function () {
+const highlightMarkerEmitter = function () {
     if (this.type === 'Highcharts') {
         const { chart, board } = this;
 
@@ -157,8 +157,8 @@ Dashboards.board('container', {
     components: [{
         sync: {
             highlightMarker: {
-                handler: handler,
-                emitter: emitter
+                handler: highlightMarkerHandler,
+                emitter: highlightMarkerEmitter
             }
         },
         connector: {
@@ -181,13 +181,12 @@ Dashboards.board('container', {
                 type: 'category'
             }
         }
-    },
-    {
+    }, {
         cell: 'dashboard-col-1',
         sync: {
             highlightMarker: {
-                handler: handler,
-                emitter: emitter
+                handler: highlightMarkerHandler,
+                emitter: highlightMarkerEmitter
             }
         },
         connector: {
