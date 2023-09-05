@@ -60,7 +60,8 @@ const {
         gantt: GanttSeries,
         map: MapSeries,
         mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries
+        treemap: TreemapSeries,
+        xrange: XRangeSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -400,32 +401,22 @@ function chartGetDataRows(
             series: Series,
             xAxis: Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
-            );
+            const pointArrayMap = series.pointArrayMap || ['y'],
+                namedPoints = series.data.some((d): string | false =>
+                    (typeof d.y !== 'undefined') && d.name
+                );
 
-            // If series type is 'xrange' include 'x2' in the point array map.
-            if (series.type === 'xrange') {
-                return ['x', 'x2', 'y'];
-            }
-
+            // If there are points with a name, we also want the x value in the
+            // table
             if (
-                namedPoints.length &&
+                namedPoints &&
                 xAxis &&
                 !xAxis.categories &&
-                !series.keyToAxis
+                series.exportKey !== 'name'
             ) {
-                if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap
-                        .filter((p): boolean => p === 'x');
-                    if (pointArrayMapCheck.length) {
-                        series.pointArrayMap.unshift('x');
-                        return series.pointArrayMap;
-                    }
-                }
-                return ['x', 'y'];
+                return ['x', ...pointArrayMap];
             }
-            return series.pointArrayMap || ['y'];
+            return pointArrayMap;
         },
         xAxisIndices: Array<Array<number>> = [];
 
@@ -529,11 +520,6 @@ function chartGetDataRows(
                 );
                 key = mockPoint.x as any;
 
-                // Handle 'x2' for 'xrange' series.
-                if (series.type === 'xrange') {
-                    key = mockPoint.x + ',' + mockPoint.x2;
-                }
-
                 if (defined(rows[key]) &&
                     rows[key].seriesIndices.includes(mockSeries.index)
                 ) {
@@ -592,29 +578,16 @@ function chartGetDataRows(
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = (mockPoint as any)[prop];
-                    let formattedTime = time.dateFormat(
-                            csvOptions.dateFormat as any,
-                            val
-                        ),
-                        isDateTimeAxis =
-                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop];
-                    // x2 support for xrange series
-                    if (prop === 'x2') {
-                        if (xAxis.options.type === 'datetime') {
-                            rows[key as any][i + j] = formattedTime;
-                        } else {
-                            rows[key as any][i + j] = val;
-                        }
-                    } else {
-                        rows[key as any][i + j] = pick(
-                            // Y axis category if present
-                            categoryAndDatetimeMap.categoryMap[prop][val],
-                            // datetime yAxis
-                            isDateTimeAxis ? formattedTime : null,
-                            // linear/log yAxis
-                            val
-                        );
-                    }
+                    rows[key as any][i + j] = pick(
+                        // Y axis category if present
+                        categoryAndDatetimeMap.categoryMap[prop][val],
+                        // datetime yAxis
+                        categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
+                            time.dateFormat(csvOptions.dateFormat as any, val) :
+                            null,
+                        // linear/log yAxis
+                        val
+                    );
                     j++;
                 }
 
@@ -1182,9 +1155,16 @@ function compose(
     }
 
     if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
+        GanttSeries.prototype.exportKey = 'name';
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
+        };
+    }
+
+    if (XRangeSeries && U.pushUnique(composedMembers, XRangeSeries)) {
+        XRangeSeries.prototype.keyToAxis = {
+            x2: 'x'
         };
     }
 

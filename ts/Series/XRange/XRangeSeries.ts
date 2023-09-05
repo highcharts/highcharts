@@ -688,6 +688,7 @@ interface XRangeSeries {
 
 extend(XRangeSeries.prototype, {
     pointClass: XRangePoint,
+    pointArrayMap: ['x2', 'y'],
     cropShoulder: 1,
     getExtremesFromAll: true,
     parallelArrays: ['x', 'x2', 'y'],
