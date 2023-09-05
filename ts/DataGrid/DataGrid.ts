@@ -483,8 +483,11 @@ class DataGrid {
 
         if (options.columnHeaders.enabled) {
             this.columnNames = this.getColumnsToDisplay();
-            this.outerContainer.style.top = this.options.cellHeight + 'px';
             this.renderColumnHeaders();
+            this.outerContainer.style.top = (
+                this.columnHeadersContainer?.clientHeight ||
+                this.options.cellHeight
+            ) + 'px';
         } else {
             this.outerContainer.style.top = '0';
         }
@@ -514,6 +517,10 @@ class DataGrid {
         this.container.addEventListener('mouseover', (e): void => {
             this.handleMouseOver(e);
         });
+
+        new ResizeObserver((entries): void => {
+            this.onContainerResize(entries);
+        }).observe(this.container);
     }
 
 
@@ -638,6 +645,21 @@ class DataGrid {
             // Emit for use in extensions
             this.emit({ type: 'cellClick', input });
         }
+    }
+
+    /**
+     * Handle the DataGrid resizing.
+     *
+     * @internal
+     *
+     * @param entries
+     * Array of observed element size changes.
+     */
+    private onContainerResize(entries: ResizeObserverEntry[]): void {
+        this.outerContainer.style.top = (
+            this.columnHeadersContainer?.clientHeight ||
+            this.options.cellHeight
+        ) + 'px';
     }
 
 
@@ -923,7 +945,7 @@ class DataGrid {
         }
 
         const headerEl = makeDiv(className);
-        headerEl.style.height = this.options.cellHeight + 'px';
+        headerEl.style.minHeight = this.options.cellHeight + 'px';
 
         headerEl.textContent = this.formatHeaderCell(columnName);
         parentEl.appendChild(headerEl);
