@@ -38,7 +38,6 @@ const handler = function () {
     const registerCursorListeners = () => {
         const { dataCursor: cursor } = board;
 
-        // @todo wrap in a listener on component.update with
         // connector change
         if (cursor) {
             const table = this.connector && this.connector.table;
