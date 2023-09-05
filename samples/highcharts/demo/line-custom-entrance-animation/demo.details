@@ -1,5 +1,5 @@
 ---
-name: Basic line with custom entrance animation
+name: Line chart with custom entrance animation
 authors:
   - Hubert Kozik
 js_wrap: b
