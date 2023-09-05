@@ -24,26 +24,50 @@
             chart = axis.chart,
             animation = H.animObject(chart.renderer.globalAnimation);
 
-        if (axis.isXAxis) {
+        axis.axisGroup
             // Init
-            axis.labelGroup.attr({
-                scaleY: 0
-            });
+            .attr({
+                opacity: 0,
+                rotation: -3,
+                scaleY: 0.9
+            })
 
             // Animate
-            axis.labelGroup.animate({
+            .animate({
+                opacity: 1,
+                rotation: 0,
                 scaleY: 1
             }, animation);
-        } else {
-            // Init
-            axis.labelGroup.attr({
-                scaleX: -1
-            });
+        if (axis.horiz) {
+            axis.labelGroup
+                // Init
+                .attr({
+                    opacity: 0,
+                    rotation: 3,
+                    scaleY: 0.5
+                })
 
-            // Animate
-            axis.labelGroup.animate({
-                scaleX: 1
-            }, animation);
+                // Animate
+                .animate({
+                    opacity: 1,
+                    rotation: 0,
+                    scaleY: 1
+                }, animation);
+        } else {
+            axis.labelGroup
+                // Init
+                .attr({
+                    opacity: 0,
+                    rotation: 3,
+                    scaleX: -0.5
+                })
+
+                // Animate
+                .animate({
+                    opacity: 1,
+                    rotation: 0,
+                    scaleX: 1
+                }, animation);
         }
 
         if (axis.plotLinesAndBands) {
@@ -76,11 +100,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'United States of America\'s Inflation-related statistics'
+        text: 'United States of America\'s Inflation-related statistics',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: <a href="https://www.worldbank.org/en/home">The World Bank</a>'
+        text: 'Source: <a href="https://www.worldbank.org/en/home">The World Bank</a>',
+        align: 'left'
     },
 
     data: {
@@ -96,8 +122,8 @@ Highcharts.chart('container', {
             width: 2,
             value: 13.5492019749684,
             animation: {
-                duration: 2000,
-                defer: 8000
+                duration: 1000,
+                defer: 4000
             },
             label: {
                 text: 'Max Inflation',
@@ -124,7 +150,7 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             animation: {
-                duration: 2000
+                duration: 1000
             },
             marker: {
                 enabled: false
@@ -138,17 +164,51 @@ Highcharts.chart('container', {
     }, {
         yAxis: 1,
         animation: {
-            defer: 2000
+            defer: 1000
         }
     }, {
         yAxis: 2,
         animation: {
-            defer: 4000
+            defer: 2000
         }
     }, {
         yAxis: 3,
         animation: {
-            defer: 6000
+            defer: 3000
         }
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                yAxis: [{
+                    tickAmount: 2,
+                    title: {
+                        x: 15,
+                        reserveSpace: false
+                    }
+                }, {
+                    tickAmount: 2,
+                    title: {
+                        x: 20,
+                        reserveSpace: false
+                    }
+                }, {
+                    tickAmount: 2,
+                    title: {
+                        x: -20,
+                        reserveSpace: false
+                    }
+                }, {
+                    tickAmount: 2,
+                    title: {
+                        x: -20,
+                        reserveSpace: false
+                    }
+                }]
+            }
+        }]
+    }
 });

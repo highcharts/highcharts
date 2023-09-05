@@ -15,45 +15,50 @@
                 args = point.shapeArgs;
 
             if (graphic && args) {
-                // Set inital animation values
-                point.graphic.attr({
-                    start: startAngleRad,
-                    end: startAngleRad,
-                    opacity: 1
-                });
-                // Animate
-                graphic.animate({
-                    start: args.start,
-                    end: args.end
-                }, {
-                    duration: animation.duration / points.length
-                }, function () {
-                    if (points[point.index + 1]) {
-                        fanAnimate(points[point.index + 1], args.end);
-                    }
-                    if (point.index === series.points.length - 1) {
-                        series.dataLabelsGroup.animate({
-                            opacity: 1
-                        },
-                        void 0,
-                        function () {
-                            points.forEach(point => {
-                                point.opacity = 1;
-                            });
-                            series.update({
-                                enableMouseTracking: true
-                            }, false);
-                            chart.update({
-                                plotOptions: {
-                                    pie: {
-                                        innerSize: '40%',
-                                        borderRadius: 8
+
+                graphic
+                    // Set inital animation values
+                    .attr({
+                        start: startAngleRad,
+                        end: startAngleRad,
+                        opacity: 1
+                    })
+                    // Animate to the final position
+                    .animate({
+                        start: args.start,
+                        end: args.end
+                    }, {
+                        duration: animation.duration / points.length
+                    }, function () {
+                        // On complete, start animating the next point
+                        if (points[point.index + 1]) {
+                            fanAnimate(points[point.index + 1], args.end);
+                        }
+                        // On the last point, fade in the data labels, then
+                        // apply the inner size
+                        if (point.index === series.points.length - 1) {
+                            series.dataLabelsGroup.animate({
+                                opacity: 1
+                            },
+                            void 0,
+                            function () {
+                                points.forEach(point => {
+                                    point.opacity = 1;
+                                });
+                                series.update({
+                                    enableMouseTracking: true
+                                }, false);
+                                chart.update({
+                                    plotOptions: {
+                                        pie: {
+                                            innerSize: '40%',
+                                            borderRadius: 8
+                                        }
                                     }
-                                }
+                                });
                             });
-                        });
-                    }
-                });
+                        }
+                    });
             }
         }
 
