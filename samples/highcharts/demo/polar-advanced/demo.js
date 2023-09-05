@@ -365,7 +365,7 @@ Highcharts.chart('container', {
             },
             {
                 condition: {
-                    minWidth: 600
+                    minWidth: 650
                 },
                 chartOptions: {
                     legend: {
