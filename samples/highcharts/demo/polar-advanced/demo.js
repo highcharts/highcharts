@@ -1,21 +1,12 @@
 const
-    colors = Highcharts.getOptions().colors,
-    paneOpeningAngles = {
-        startAngle: 40.5,
-        endAngle: 319.5
-    },
+    monthExtremes = { min: 0, max: 26 },
+    weekExtremes = { min: 1, max: 5 },
+    paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
+    noLabelProp = { labels: { enabled: false } },
     specialSeriesProps = {
         showInLegend: false,
         groupPadding: 0,
         pointPadding: 0
-    },
-    monthExtremes = {
-        min: 0,
-        max: 26
-    },
-    weekExtremes = {
-        min: 1,
-        max: 5
     },
     toggleableGradient = {
         pattern: undefined,
@@ -33,14 +24,21 @@ const
         });
         chart.subtitle.element.style.opacity = 1;
     },
+    colors = Highcharts.getOptions().colors,
+    asHcColor = hexval => new Highcharts.Color(hexval),
+    // Declaring colors used more than once
+    hcColor0 = asHcColor(colors[0]),
+    hcColor1 = asHcColor(colors[1]),
+    hcColor5 = asHcColor(colors[5]),
+    hcColor8 = asHcColor(colors[8]),
+    hcColor9 = asHcColor(colors[9]),
     data = JSON.parse(document.getElementById('data').innerHTML),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
-    primaryTeamColor = new Highcharts.Color(colors[9]),
     teamColors = [
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[0]), 0.25),
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[8]), 0.65),
-        primaryTeamColor.tweenTo(new Highcharts.Color(colors[3]), 0.85)
+        hcColor9.tweenTo(hcColor0, 0.25),
+        hcColor9.tweenTo(hcColor8, 0.65),
+        hcColor9.tweenTo(asHcColor(colors[3]), 0.85)
     ],
     teamSeries = Array(3).fill({
         type: 'bubble',
@@ -64,19 +62,19 @@ const
         tooltip: {
             headerFormat: (
                 '<div class="team-day-display center">' +
-                '<span style="margin-bottom: 6rem;">' +
-                '<b style="font-size: 1.4rem; color:#000;">Day {point.x}</b>' +
+                '<span style="margin-bottom: 6em;">' +
+                '<b style="font-size: 1.4em; color:#000;">Day {point.x}</b>' +
                 '</span><span style="width:100%;' +
                 'margin-top:-130px;background: transparent; ' +
-                'font-size: 2rem; padding: 0.8rem;' +
+                'font-size: 2em; padding: 0.8rem;' +
                 'border: 0 outset {series.color}; border-block-end:' +
                 '0 outset {series.color};"><b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="margin-top:7rem; position: absolute;' +
-                'font-size: 1rem;"><span style="width:100%;' +
-                'text-align:center;">Daily Sales:</span><br>' +
-                '<span style="line-height:3rem;width:100%;font-size:2rem;' +
+                '<span style="margin-top:11em; position: absolute;' +
+                'font-size: 1em;"><span style="width:100%;' +
+                'text-align:center;">Daily Sales:</span></br>' +
+                '<span style="line-height:3em;width:100%;font-size:2em;' +
                 'text-align:center;">{point.z}</span>'
             ),
             footerFormat: '</div>'
@@ -95,18 +93,18 @@ const
     })),
     weekLabels = Array(4)
         .fill(0)
-        .map((value, index) => ({
+        .map((_value, index) => ({
             dataLabels: {
                 format: 'Week {x}',
                 enabled: true,
                 inside: true,
                 style: {
                     textOutline: undefined,
-                    fontSize: '0.7rem',
+                    fontSize: '0.7em',
                     fontWeight: '700',
                     textTransform: 'uppercase',
                     fontStyle: 'normal',
-                    letterSpacing: '0.01rem'
+                    letterSpacing: '0.01em'
                 },
                 textPath: {
                     enabled: true,
@@ -121,7 +119,7 @@ const
         })),
     asColFieldStr = str => (
         '<span class=\"col-display-fieldwrap\">' +
-        '<span style=\"color:{point.color}; font-size: 1rem;\">●</span> ' +
+        '<span style=\"color:{point.color}; font-size: 1em;\">●</span> ' +
         str + '</span>'
     );
 
@@ -134,9 +132,7 @@ Highcharts.chart('container', {
                 const midPane = this.pane[1];
 
                 this.setMidPaneBg = function (background) {
-                    midPane.update({
-                        background: background
-                    });
+                    midPane.update({ background: background });
                 };
             },
             render: function () {
@@ -144,12 +140,10 @@ Highcharts.chart('container', {
                     const
                         { chartWidth, legend } = this,
                         { legendWidth, legendHeight } = legend;
-
                     legend.group.translate(
                         (chartWidth - legendWidth) / 2,
                         legendHeight * 1.25
                     );
-
                 }
             }
         }
@@ -186,28 +180,13 @@ Highcharts.chart('container', {
         }
     },
     colorAxis: [{
-        minColor: (
-            new Highcharts.Color(colors[0])
-                .brighten(0.05)
-                .get('rgba')
-        ),
-        maxColor: (
-            new Highcharts.Color(colors[5])
-                .brighten(0.05)
-                .get('rgba')
-        ),
+        minColor: hcColor0.brighten(0.05).get('rgba'),
+        maxColor: hcColor5.brighten(0.05).get('rgba'),
         showInLegend: false,
         ...weekExtremes
-    },
-    {
-        minColor: new Highcharts.Color(colors[1]).tweenTo(
-            new Highcharts.Color(colors[5]),
-            0.5
-        ),
-        maxColor: new Highcharts.Color(colors[8]).tweenTo(
-            new Highcharts.Color(colors[8]),
-            0.5
-        ),
+    }, {
+        minColor: hcColor1.tweenTo(hcColor5, 0.5),
+        maxColor: asHcColor(colors[8]).tweenTo(asHcColor(colors[8]), 0.5),
         showInLegend: false,
         ...monthExtremes
     }
@@ -217,6 +196,7 @@ Highcharts.chart('container', {
         innerSize: '60%',
         ...paneOpeningAngles,
         background: {
+            borderColor: asHcColor(colors[4]).get('rgba'),
             backgroundColor: toggleableGradient,
             outerRadius: '60%'
         }
@@ -226,9 +206,6 @@ Highcharts.chart('container', {
         ...paneOpeningAngles,
         background: {
             borderWidth: 0,
-            borderColor: (
-                new Highcharts.Color(colors[4]).get('rgba')
-            ),
             backgroundColor: toggleableGradient,
             outerRadius: '75%'
         }
@@ -239,6 +216,7 @@ Highcharts.chart('container', {
         endAngle: 343.5,
         background: {
             borderWidth: 1,
+            borderColor: asHcColor(colors[4]).get('rgba'),
             backgroundColor: '#46465C',
             innerRadius: '55%',
             outerRadius: '100%'
@@ -251,9 +229,7 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         min: 1,
         max: 26,
-        labels: {
-            enabled: false
-        }
+        ...noLabelProp
     }, {
         pane: 1,
         linkedTo: 0,
@@ -264,28 +240,19 @@ Highcharts.chart('container', {
                 const
                     from = weekendOffset * (week + 1),
                     to = from - 1;
-                return {
-                    from,
-                    to,
-                    color: '#BBBAC5'
-                };
+                return { from, to, color: '#BBBAC5' };
             }
         ),
         ...monthExtremes,
-        labels: {
-            enabled: false
-        }
+        ...noLabelProp
     }, {
         pane: 2,
         tickAmount: 4,
         tickInterval: 0.5,
         gridLineWidth: 0,
         lineWidth: 0,
-        lineColor: '#BBBAC5',
         ...weekExtremes,
-        labels: {
-            enabled: false
-        }
+        ...noLabelProp
     }],
     yAxis: [{
         pane: 0,
@@ -295,61 +262,50 @@ Highcharts.chart('container', {
         gridLineColor: '#BBBAC5',
         max: 1800,
         min: -8,
-        labels: {
-            enabled: false
-        },
-        title: null
+        title: null,
+        ...noLabelProp
     }, {
         pane: 1,
         reversed: true,
         gridLineWidth: 0,
-        gridLineDashStyle: 'dash',
-        gridLineColor: '#e6e6e6',
         tickInterval: 100,
         min: 0,
         max: 400,
-        labels: {
-            enabled: false
-        },
-        title: null
+        title: null,
+        ...noLabelProp
     }, {
         pane: 2,
         tickInterval: 0.25,
         gridLineWidth: 0,
-        gridLineColor: (
-            new Highcharts.Color(colors[1]).brighten(0.05).get('rgba')
-        ),
+        gridLineColor: hcColor1.brighten(0.05).get('rgba'),
         min: -3,
         max: 1,
-        labels: {
-            enabled: false
-        },
-        title: null
+        title: null,
+        ...noLabelProp
     }],
     legend: {
+        enabled: true,
         floating: true,
         layout: 'vertical',
         verticalAlign: 'center',
         align: 'center',
-        enabled: true,
         backgroundColor: '#1f1836',
-        borderColor: (
-            'transparent'
-        ),
+        borderColor: 'transparent',
+        borderRadius: 8,
+        borderWidth: 1.5,
         itemStyle: {
             color: '#FFF',
             fontSize: '1rem'
         },
-        width: '26%',
-        borderRadius: 8,
-        borderWidth: 1.5,
+        itemMarginBottom: 2,
+        itemMarginTop: 1,
         padding: 8,
-        maxHeight: '14%',
         symbolPadding: 12,
         symbolHeight: 12,
-        itemMarginBottom: 2,
-        itemMarginTop: 1
+        width: '26%',
+        maxHeight: '14%'
     },
+
     plotOptions: {
         columnrange: {
             custom: {
@@ -366,14 +322,11 @@ Highcharts.chart('container', {
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            color: '#FFF',
                             fontSize: '0.6em'
                         },
-                        width: '26%',
-                        borderRadius: 8,
-                        borderWidth: 1.5,
+                        borderRadius: 12,
+                        borderWidth: 1,
                         padding: 4,
-                        maxHeight: '14%',
                         symbolPadding: 8,
                         symbolHeight: 8
                     },
@@ -392,16 +345,9 @@ Highcharts.chart('container', {
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            color: '#FFF',
                             fontSize: '0.8em'
                         },
-                        width: '26%',
-                        borderRadius: 8,
-                        borderWidth: 1.3,
-                        padding: 6,
-                        maxHeight: '14%',
-                        symbolPadding: 10,
-                        symbolHeight: 10
+                        padding: 6
                     },
                     plotOptions: {
                         columnrange: {
@@ -411,15 +357,8 @@ Highcharts.chart('container', {
                         }
                     },
                     subtitle: {
-                        text: 'Sales Team<br>Performance',
-                        useHTML: 'true',
-                        align: 'center',
-                        y: 35,
-                        verticalAlign: 'middle',
                         style: {
-                            color: 'white',
-                            textAlign: 'center',
-                            fontSize: '1.2rem'
+                            fontSize: '1.2em'
                         }
                     }
                 }
@@ -431,16 +370,9 @@ Highcharts.chart('container', {
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            color: '#FFF',
-                            fontSize: '0.9em'
+                            fontSize: '1em'
                         },
-                        width: '26%',
-                        borderRadius: 8,
-                        borderWidth: 1.5,
-                        padding: 8,
-                        maxHeight: '14%',
-                        symbolPadding: 12,
-                        symbolHeight: 12
+                        padding: 8
                     },
                     plotOptions: {
                         columnrange: {
@@ -450,15 +382,8 @@ Highcharts.chart('container', {
                         }
                     },
                     subtitle: {
-                        text: 'Sales Team<br>Performance',
-                        useHTML: 'true',
-                        align: 'center',
-                        y: 35,
-                        verticalAlign: 'middle',
                         style: {
-                            color: 'white',
-                            textAlign: 'center',
-                            fontSize: '2rem'
+                            fontSize: '2em'
                         }
                     }
                 }
@@ -474,11 +399,11 @@ Highcharts.chart('container', {
             data: weekLabels,
             xAxis: 2,
             yAxis: 2,
+            borderRadius: 50,
             colorKey: 'x',
-            pointPlacement: 'between',
-            enableMouseTracking: false,
             pointWidth: 1.2,
-            borderRadius: 50
+            pointPlacement: 'between',
+            enableMouseTracking: false
         }, {
             ...specialSeriesProps,
             animation: false,
@@ -488,12 +413,12 @@ Highcharts.chart('container', {
             xAxis: 1,
             yAxis: 1,
             shadow: false,
-            pointPlacement: 'on',
             colorAxis: 1,
             colorKey: 'x',
-            pointStart: 1,
             borderColor: '#46465C',
             borderWidth: 2,
+            pointPlacement: 'on',
+            pointStart: 1,
             point: {
                 events: {
                     mouseOver: function () {
@@ -508,28 +433,29 @@ Highcharts.chart('container', {
             },
             tooltip: {
                 headerFormat: (
-                    '<span style="color:#fff;" class="team-day-display center">' +
-          '<span class="{series.options.custom.textSizeClass}">' +
-          '<b style="color:{point.color};">Day {point.x}</b></span>'
+                    '<span style="color:#fff;" ' +
+                    'class="team-day-display center">' +
+                    '<span class="{series.options.custom.textSizeClass}">' +
+                    '<b style="color:{point.color};">Day {point.x}</b></span>'
                 ),
                 hideDelay: 0,
                 pointFormat: (
                     asColFieldStr(
                         '<b>Sales: </b><span>{point.high}</span>'
                     ) +
-          asColFieldStr(
-              '<b>Average: </b><span>{point.avg}</span>'
-          ) +
-          asColFieldStr(
-              '<b>Highscore: </b><span>{point.highscore}</span>'
-          ) +
-          asColFieldStr(
-              '<b>Top earner: </b><span>{point.topEarner}</span>'
-          )
+                    asColFieldStr(
+                        '<b>Average: </b><span>{point.avg}</span>'
+                    ) +
+                    asColFieldStr(
+                        '<b>Highscore: </b><span>{point.highscore}</span>'
+                    ) +
+                    asColFieldStr(
+                        '<b>Top earner: </b><span>{point.topEarner}</span>'
+                    )
                 ),
                 footerFormat: (
                     '<i class="col-display-footer center">' +
-          'Week {point.week}</i></span>'
+                    'Week {point.week}</i></span>'
                 )
             }
         }
