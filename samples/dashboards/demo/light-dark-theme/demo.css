@@ -10,6 +10,31 @@
     margin-top: 1em;
 }
 
-#csv {
-    display: none;
+.highcharts-point {
+    fill-opacity: 0.5;
+}
+
+.highcharts-dark .highcharts-point {
+    fill-opacity: 0.9;
+}
+
+.datagrid {
+    height: 100%;
+}
+
+#dashboard-col-0 h1 {
+    margin-bottom: 0;
+}
+
+.inputs-wrapper {
+    padding: 12px;
+    background-color: white;
+    box-shadow: none;
+    margin: 1em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-point {
+        fill-opacity: 0.9;
+    }
 }

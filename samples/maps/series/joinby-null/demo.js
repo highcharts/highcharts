@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
     ).then(response => response.json());
 
-    var data = [1, 3, 5, 2, 4, 1, 3];
+    const data = [1, 3, 5, 2, 4, 1, 3];
 
 
     // Initialize the chart

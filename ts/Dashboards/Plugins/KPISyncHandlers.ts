@@ -50,7 +50,8 @@ const configs: {
                         cursor.type === 'position' &&
                         typeof cursor?.row === 'number' &&
                         defined(cursor.column) &&
-                        this.connector
+                        this.connector &&
+                        !defined(this.options.value)
                     ) {
                         const value =
                             this.connector.table.modified.getCellAsString(

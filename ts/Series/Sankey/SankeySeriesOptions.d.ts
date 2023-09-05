@@ -60,6 +60,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     height?: number;
     inactiveOtherPoints?: boolean;
     levels?: Array<SankeySeriesLevelOptions>;
+    linkColorMode?: ('from'|'gradient'|'to');
     linkOpacity?: number;
     mass?: undefined;
     minLinkWidth?: number;

@@ -261,9 +261,10 @@ namespace Exporting {
     const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
-        /^font$/, // more specific props are set
+        /^font$/, // More specific props are set
         /[lL]ogical(Width|Height)$/,
         /^parentRule$/,
+        /^(cssRules|ownerRules)$/, // #19516 read-only properties
         /perspective/,
         /TapHighlightColor/,
         /^transition/,

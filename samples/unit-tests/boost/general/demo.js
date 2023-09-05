@@ -166,8 +166,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(
             chart.series[3].points.length,
-            4,
-            'array length should include values with null'
+            2,
+            'Null points should not be added to the series\' kd-tree (#19341)'
         );
     }
 );
@@ -349,7 +349,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                     [8, 0]
                 ]
             }, {
-                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                data: [1, 0, 3, 4, 5, 6, 7, 8, 9, 10],
+                zIndex: 2
             }]
         });
 
@@ -370,6 +371,15 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[1].boosted,
             true,
             'The second series should be boosted. (#18815)'
+        );
+
+        assert.strictEqual(
+            chart.container.querySelector('image.highcharts-boost-canvas')
+                .dataset
+                .zIndex,
+            '2',
+            'The chart-level boost target should take the z-index of the ' +
+            'series (#9819)'
         );
     }
 );
