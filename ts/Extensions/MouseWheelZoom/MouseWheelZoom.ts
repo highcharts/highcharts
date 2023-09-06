@@ -21,7 +21,6 @@ import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -121,17 +120,15 @@ const zoomBy = function (
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
-): void {
+): boolean {
     const xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0],
         yOptions = yAxis.options,
-        type = pick(
-            options.type,
-            chart.options.chart.zooming.type,
-            'x'
-        ),
+        type = pick(options.type, chart.zooming.type, ''),
         zoomX = /x/.test(type),
         zoomY = /y/.test(type);
+
+    let hasZoomed = false;
 
     if (defined(xAxis.max) && defined(xAxis.min) &&
         defined(yAxis.max) && defined(yAxis.min) &&
@@ -240,12 +237,14 @@ const zoomBy = function (
         if (defined(howMuch) && !zoomOut) {
             if (zoomX) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
+                hasZoomed = true;
             }
             if (zoomY) {
                 yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
+                hasZoomed = true;
             }
 
-            // Reset zoom
+        // Reset zoom
         } else {
             if (zoomX) {
                 xAxis.setExtremes(void 0, void 0, false);
@@ -255,8 +254,11 @@ const zoomBy = function (
             }
         }
 
-        chart.redraw(false);
+        if (hasZoomed) {
+            chart.redraw(false);
+        }
     }
+    return hasZoomed;
 };
 
 
@@ -265,8 +267,7 @@ const zoomBy = function (
  */
 function onAfterGetContainer(this: Chart): void {
     const chart = this,
-        wheelZoomOptions =
-            optionsToObject(chart.options.chart.zooming.mouseWheel);
+        wheelZoomOptions = optionsToObject(chart.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
 
@@ -277,13 +278,10 @@ function onAfterGetContainer(this: Chart): void {
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop
             )) {
-                const wheelSensitivity = pick(
-                        wheelZoomOptions.sensitivity,
-                        1.1
-                    ),
+                const wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
                     delta = e.detail || ((e.deltaY || 0) / 120);
 
-                zoomBy(
+                const hasZoomed = zoomBy(
                     chart,
                     Math.pow(
                         wheelSensitivity,
@@ -295,11 +293,11 @@ function onAfterGetContainer(this: Chart): void {
                     e.chartY,
                     wheelZoomOptions
                 );
-            }
 
-            // prevent page scroll
-            if (e.preventDefault) {
-                e.preventDefault();
+                // Prevent page scroll
+                if (hasZoomed && e.preventDefault) {
+                    e.preventDefault();
+                }
             }
         });
     }
@@ -339,18 +337,17 @@ export default MouseWheelZoomComposition;
  * */
 
 /**
- * The mouse wheel zoom is a feature included in Highcharts Stock, but is
- * also available for Highcharts Core as a module. Zooming with the mouse wheel
- * is enabled by default. It can be disabled by setting this option to
- * `false`.
+ * The mouse wheel zoom is a feature included in Highcharts Stock, but is also
+ * available for Highcharts Core as a module. Zooming with the mouse wheel is
+ * enabled by default in Highcharts Stock. In Highcharts Core it is enabled if
+ * [chart.zooming.type](chart.zooming.type) is set. It can be disabled by
+ * setting this option to `false`.
  *
  * @type      {boolean|object}
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
- * @sample    {highcharts} highcharts/mouse-wheel-zoom/enabled
- *            Enable or disable
- * @sample    {highstock} stock/mouse-wheel-zoom/enabled
- *            Enable or disable
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/enabled Enable or disable
+ * @sample    {highstock} stock/mouse-wheel-zoom/enabled Enable or disable
  * @apioption chart.zooming.mouseWheel
  */
 
@@ -382,9 +379,10 @@ export default MouseWheelZoomComposition;
  */
 
 /**
- * Decides in what dimensions the user can zoom scrolling the wheel.
- * Can be one of `x`, `y` or `xy`. If not specified here, it will inherit the
- * type from [chart.zooming.type](chart.zooming.type).
+ * Decides in what dimensions the user can zoom scrolling the wheel. Can be one
+ * of `x`, `y` or `xy`. In Highcharts Core, if not specified here, it will
+ * inherit the type from [chart.zooming.type](chart.zooming.type). In Highcharts
+ * Stock, it defaults to `x`.
  *
  * Note that particularly with mouse wheel in the y direction, the zoom is
  * affected by the default [yAxis.startOnTick](#yAxis.startOnTick) and
@@ -393,7 +391,8 @@ export default MouseWheelZoomComposition;
  * this, consider setting `startOnTick` and `endOnTick` to `false`.
  *
  * @type      {string}
- * @default   x
+ * @default   {highcharts} undefined
+ * @default   {highstock} x
  * @validvalue ["x", "y", "xy"]
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
