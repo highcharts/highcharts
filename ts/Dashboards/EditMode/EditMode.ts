@@ -1079,7 +1079,7 @@ namespace EditMode {
          */
         tools?: Tools;
         /**
-        * Events attached to the component: `activate`, `deactivate`.
+        * Events attached to the board: `activate`, `deactivate`.
         *
         * Try it:
         *
