@@ -1,12 +1,11 @@
 /// <reference lib="dom" />
+import type { BenchResults } from './benchmark.d.ts';
 import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
-import type { BenchResults } from './benchmark.d.ts';
-
 const TMP_FILE_PATH = '../../tmp/benchmarks';
 
-function regression(yValues: number[], xValues: number[]){
+function regression (yValues: number[], xValues: number[]){
     const yMean = yValues.reduce((a, b) => a + b) / yValues.length;
     const xMean = xValues.reduce((a, b) => a + b) / xValues.length;
 
@@ -15,7 +14,7 @@ function regression(yValues: number[], xValues: number[]){
     let slopeDenominator = 0;
 
 
-    for(let i = 0; i< yValues.length; i++){
+    for (let i = 0; i< yValues.length; i++){
         numerator += (xValues[i] - xMean) * (yValues[i] - yMean);
         slopeDenominator += Math.pow(xValues[i] - xMean, 2);
     }
@@ -28,7 +27,7 @@ function regression(yValues: number[], xValues: number[]){
     let totalSumOfSquares = 0;
     let r2 = 0;
 
-    for(let i = 0; i< yValues.length; i++){
+    for (let i = 0; i< yValues.length; i++){
         const prediction = predict(xValues[i], slope, intercept);
         residualSumOfSquares += Math.pow(prediction - yValues[i], 2);
         totalSumOfSquares += Math.pow(prediction - yMean, 2);
@@ -37,14 +36,14 @@ function regression(yValues: number[], xValues: number[]){
     r2 = 1 - (residualSumOfSquares / totalSumOfSquares);
 
 
-    return {slope, intercept, r2};
+    return { slope, intercept, r2 };
 }
 
-function predict(x: number, slope: number, intercept: number){
+function predict (x: number, slope: number, intercept: number){
     return slope * x + intercept;
 }
 
-function getSeriesData(
+function getSeriesData (
     seriesName: string,
     xValues: number[],
     yValues: number[],
@@ -66,19 +65,19 @@ function getSeriesData(
     }];
 }
 
-function getOutliers(array: number[], Q1:number, Q3: number){
+function getOutliers (array: number[], Q1:number, Q3: number){
     const IQR = Q3 - Q1;
     return array.filter(r => r < Q1 - 1.5 * IQR || r > Q3 + 1.5 * IQR);
 }
 
-async function compare(base: BenchResults, actual: BenchResults){
+async function compare (base: BenchResults, actual: BenchResults){
     console.log(`Comparing ${actual[0].test}`);
 
     // Remove outliers by sample size
     const filtered: Record<'base'|'actual', BenchResults> = actual.reduce((carry,entry) =>{
         const baseEntry = base.find(b => b.sampleSize === entry.sampleSize);
 
-        if(baseEntry){
+        if (baseEntry){
             // Compare
             const diff = baseEntry.avg - entry.avg;
             const percentage = (diff / baseEntry.avg) * 100;
@@ -86,16 +85,15 @@ async function compare(base: BenchResults, actual: BenchResults){
 
             const baseOutliers = getOutliers(baseEntry.results, baseEntry.Q1, baseEntry.Q3);
             const actualOutliers = getOutliers(entry.results, entry.Q1, entry.Q3);
-            console.log({baseOutliers, actualOutliers})
 
             carry['base'].push({
                 ...baseEntry,
                 results: baseEntry.results.filter(r => !baseOutliers.includes(r))
-            })
+            });
             carry['actual'].push({
                 ...entry,
                 results: entry.results.filter(r => !actualOutliers.includes(r))
-            })
+            });
 
             return carry;
         }
@@ -114,24 +112,20 @@ async function compare(base: BenchResults, actual: BenchResults){
             entry.results.forEach((result)=>{
                 x.push(entry.sampleSize);
                 y.push(result);
-            })
-        })
+            });
+        });
 
-        return { x, y };
+        return {
+            x,
+            y
+        };
     }
 
     const baseXy = getXYValues(base);
     const actXy = getXYValues(actual);
 
-    console.log('\n')
-
-    console.log(`Context, slope, intercept, r2`);
     const baseRegression = regression(baseXy.y, baseXy.x);
-    console.log(`base, ${baseRegression.slope}, ${baseRegression.intercept}, ${baseRegression.r2}`)
-
     const actRegression = regression(actXy.y, actXy.x);
-    console.log(`actual, ${actRegression.slope}, ${actRegression.intercept}, ${actRegression.r2}`);
-
 
     // also do regression on filtered data
 
@@ -140,8 +134,6 @@ async function compare(base: BenchResults, actual: BenchResults){
 
     const filteredActualXy = getXYValues(filtered.actual);
     const filteredActualRegression = regression(filteredActualXy.y, filteredActualXy.x);
-
-    console.log('\n')
 
     const series = [
         ...getSeriesData('Base - 95% quantile', filteredBaseXy.x, filteredBaseXy.y, filteredBaseRegression.slope, filteredBaseRegression.intercept),
@@ -155,7 +147,7 @@ async function compare(base: BenchResults, actual: BenchResults){
             height: 800,
             width: 1000,
             zooming: {
-                type: "xy"
+                type: 'xy'
             }
         },
         title: {
@@ -202,47 +194,53 @@ async function compare(base: BenchResults, actual: BenchResults){
         Highcharts.chart("${chartName}", ${JSON.stringify(chartConfig(chartName, series))});
         </script>`
     );
-
-    console.log('See report at ', resolve(__dirname,TMP_FILE_PATH, 'report.html'));
-
 }
 
-const reportTemplate = (chart) => `
-<embed src="${chart}"></embed>
-`;
-
-async function compareBenchmarks(){
-    const data = await opendir(join(TMP_FILE_PATH, 'actual')).catch(error =>{
-        throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist`);
-    })
+async function compareBenchmarks (){
+    const data = await opendir(join(TMP_FILE_PATH, 'actual')).catch(()=>{
+        throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist. Try running \`npm run benchmark\``);
+    });
 
     const markdownTableHeader = `| Test | Sample size | Base avg (ms) | Actual avg (ms) | Diff |
 | --- | --- | --- | --- | --- |`;
 
     await writeFile(join(TMP_FILE_PATH, 'table.md'), markdownTableHeader);
     await writeFile(join(TMP_FILE_PATH, 'report.html'), `
-        <script src="https://code.highcharts.com/highcharts.js"></script>`)
+        <script src="https://code.highcharts.com/highcharts.js"></script>`);
+
+    let comparisonsMade = 0;
 
     for await (const dirent of data){
-        if(dirent.isFile() && dirent.name.endsWith('.json')){
-            const baseFileContent = await readFile(join(TMP_FILE_PATH, 'base', dirent.name), 'utf-8').catch( ()=> undefined);
+        if (dirent.isFile() && dirent.name.endsWith('.json')){
+            const baseFileContent = await readFile(
+                join(TMP_FILE_PATH, 'base', dirent.name),
+                'utf-8'
+            ).catch(()=> undefined);
 
-            if(baseFileContent){
+            if (baseFileContent) {
                 // Do a compare
-                const actual = await readFile(join(TMP_FILE_PATH, 'actual', dirent.name), 'utf-8').catch(() => {throw new Error('File vanished')});
+                const actual = await readFile(
+                    join(TMP_FILE_PATH, 'actual', dirent.name),
+                    'utf-8'
+                ).catch(() => {throw new Error('File vanished');});
 
                 const base = JSON.parse(baseFileContent);
                 const act = JSON.parse(actual);
 
                 // They should be arrays of objects
-                if(Array.isArray(base) && Array.isArray(act)){
+                if (Array.isArray(base) && Array.isArray(act)){
                     await compare(base, act);
+                    comparisonsMade++;
                 }
             }
         }
     }
 
-    // await data.close()
+    if (comparisonsMade > 0){
+        console.log('Report saved at', resolve(__dirname,TMP_FILE_PATH, 'report.html'));
+    } else {
+        console.log('Was not able to make any comparisons');
+    }
 }
 
 compareBenchmarks()
