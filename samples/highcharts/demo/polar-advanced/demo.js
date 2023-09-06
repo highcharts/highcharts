@@ -162,7 +162,7 @@ Highcharts.chart('container', {
         style: {
             color: 'white',
             textAlign: 'center',
-            fontSize: '1.8rem'
+            fontSize: '1.2em'
         }
     },
 
@@ -291,17 +291,11 @@ Highcharts.chart('container', {
         align: 'center',
         backgroundColor: '#1f1836',
         borderColor: 'transparent',
-        borderRadius: 8,
-        borderWidth: 1.5,
+        borderRadius: 12,
         itemStyle: {
-            color: '#FFF',
-            fontSize: '1rem'
+            color: '#FFF'
         },
-        itemMarginBottom: 2,
-        itemMarginTop: 1,
-        padding: 8,
-        symbolPadding: 12,
-        symbolHeight: 12,
+        itemMarginBottom: 1,
         width: '26%',
         maxHeight: '14%'
     },
@@ -309,7 +303,7 @@ Highcharts.chart('container', {
     plotOptions: {
         columnrange: {
             custom: {
-                textSizeClass: 'large-size'
+                textSizeClass: 'small-size'
             }
         }
     },
@@ -321,24 +315,43 @@ Highcharts.chart('container', {
                 },
                 chartOptions: {
                     legend: {
-                        itemStyle: {
-                            fontSize: '0.6em'
-                        },
-                        borderRadius: 12,
-                        borderWidth: 1,
+                        borderWidth: 0.7,
                         padding: 4,
-                        symbolPadding: 8,
-                        symbolHeight: 8
+                        symbolPadding: 6,
+                        symbolHeight: 6,
+                        itemStyle: {
+                            fontSize: '0.5em'
+                        }
                     },
-                    plotOptions: {
-                        columnrange: {
-                            custom: {
-                                textSizeClass: 'small-size'
-                            }
+                    subtitle: {
+                        style: {
+                            fontSize: '1em'
                         }
                     }
                 }
-            }, {
+            },
+            {
+                condition: {
+                    minWidth: 420
+                },
+                chartOptions: {
+                    legend: {
+                        borderWidth: 1,
+                        padding: 5,
+                        symbolPadding: 8,
+                        symbolHeight: 8,
+                        itemStyle: {
+                            fontSize: '0.7em'
+                        }
+                    },
+                    subtitle: {
+                        style: {
+                            fontSize: '1.2em'
+                        }
+                    }
+                }
+            },
+            {
                 condition: {
                     minWidth: 520
                 },
@@ -347,7 +360,10 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '0.8em'
                         },
-                        padding: 6
+                        borderWidth: 1.5,
+                        padding: 6,
+                        symbolPadding: 12,
+                        symbolHeight: 12
                     },
                     plotOptions: {
                         columnrange: {
@@ -358,7 +374,7 @@ Highcharts.chart('container', {
                     },
                     subtitle: {
                         style: {
-                            fontSize: '1.2em'
+                            fontSize: '1.8rem'
                         }
                     }
                 }
@@ -372,7 +388,7 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '1em'
                         },
-                        padding: 8
+                        padding: 6
                     },
                     plotOptions: {
                         columnrange: {

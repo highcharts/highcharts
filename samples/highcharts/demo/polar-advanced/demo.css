@@ -9,18 +9,18 @@ pre {
 }
 
 .large-size {
-    font-size: 1.4rem;
-    margin-bottom: 1.1rem;
+    font-size: 1.4em;
+    margin-bottom: 1.1em;
 }
 
 .mid-size {
-    font-size: 1.2rem;
-    margin-bottom: 0.85rem;
+    font-size: 1.2em;
+    margin-bottom: 0.85em;
 }
 
 .small-size {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
+    font-size: 1em;
+    margin-bottom: 0.6em;
 }
 
 .center {
@@ -35,17 +35,17 @@ pre {
 }
 
 .col-display-fieldwrap {
-    font-size: 0.9rem;
-    padding-inline: 2rem;
-    padding-block: 0.2rem;
+    font-size: 0.9em;
+    padding-inline: 2em;
+    padding-block: 0.2em;
     width: 8rem;
     text-align: left;
 }
 
 .col-display-header {
-    padding: 0.4rem;
-    font-size: 2rem;
-    letter-spacing: 0.12rem;
+    padding: 0.4em;
+    font-size: 2em;
+    letter-spacing: 0.12em;
     text-align: center;
 }
 
