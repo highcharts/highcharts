@@ -4,3 +4,8 @@
 .highcharts-description {
     padding: 0 20px;
 }
+
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    min-height: 400px;
+}
