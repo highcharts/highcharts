@@ -1558,6 +1558,7 @@ class Navigator {
                 showInLegend: false,
                 stacking: void 0, // #4823
                 isInternal: true,
+                isNavigator: true, // #17212
                 states: {
                     inactive: {
                         opacity: 1
