@@ -211,7 +211,7 @@ class DataGrid {
     private bottom = false;
 
     /**
-     * An array of the max column width for which the text in headers is
+     * An array of the min column widths for which the text in headers is not
      * overflown.
      * @internal
      */
@@ -499,15 +499,6 @@ class DataGrid {
         this.addEvents();
         this.updateScrollingLength();
         this.updateVisibleCells();
-
-        // Header columns alignment when scrollbar is shown.
-        if (this.columnHeadersContainer?.lastChild) {
-            (this.columnHeadersContainer?.lastChild as HTMLElement)
-                .style.marginRight = (
-                    this.outerContainer.offsetWidth -
-                    this.outerContainer.clientWidth
-                ) + 'px';
-        }
 
         if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
@@ -952,6 +943,7 @@ class DataGrid {
 
         const headerEl = makeDiv(className);
         headerEl.style.minHeight = this.options.cellHeight + 'px';
+        headerEl.style.maxHeight = this.options.cellHeight * 2 + 'px';
 
         headerEl.textContent = this.formatHeaderCell(columnName);
         parentEl.appendChild(headerEl);
@@ -984,6 +976,8 @@ class DataGrid {
             this.headerContainer,
             this.outerContainer
         );
+
+        this.updateColumnHeaders();
     }
 
 
@@ -1011,7 +1005,7 @@ class DataGrid {
                     )).join(' ');
             } else if (
                 isNumber(overflowWidth) &&
-                overflowWidth < header.clientWidth
+                overflowWidth <= header.clientWidth
             ) {
                 this.overflowHeaderWidths[i] = null;
                 header.textContent = this.formatHeaderCell(columnName);
@@ -1019,6 +1013,19 @@ class DataGrid {
         });
 
         this.outerContainer.style.top = headersContainer.clientHeight + 'px';
+
+        if (this.rowElements.length) {
+            this.updateScrollingLength();
+        }
+
+        // Header columns alignment when scrollbar is shown.
+        if (this.columnHeadersContainer?.lastChild) {
+            (this.columnHeadersContainer?.lastChild as HTMLElement)
+                .style.marginRight = (
+                    this.outerContainer.offsetWidth -
+                    this.outerContainer.clientWidth
+                ) + 'px';
+        }
 
         if (!handlesContainer) {
             return;
