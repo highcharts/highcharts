@@ -413,11 +413,11 @@ class EditMode {
 
         if (eventsOptions) {
             if (eventsOptions.activate) {
-                addEvent(board, 'activate', eventsOptions.activate);
+                addEvent(board, 'activateEditMode', eventsOptions.activate);
             }
 
             if (eventsOptions.deactivate) {
-                addEvent(board, 'deactivate', eventsOptions.deactivate);
+                addEvent(board, 'deactivateEditMode', eventsOptions.deactivate);
             }
         }
     }
@@ -572,7 +572,7 @@ class EditMode {
         editMode.active = true;
         editMode.isContextDetectionActive = true;
 
-        fireEvent(editMode.board, 'activate');
+        fireEvent(editMode.board, 'activateEditMode');
     }
 
     /**
@@ -618,7 +618,7 @@ class EditMode {
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
 
-        fireEvent(editMode.board, 'deactivate');
+        fireEvent(editMode.board, 'deactivateEditMode');
     }
 
     /**
