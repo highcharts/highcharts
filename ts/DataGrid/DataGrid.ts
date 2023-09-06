@@ -215,7 +215,7 @@ class DataGrid {
      * overflown.
      * @internal
      */
-    private overflownHeaderWidths: Array<number | null> = [];
+    private overflowHeaderWidths: Array<number | null> = [];
 
 
     /* *
@@ -500,8 +500,6 @@ class DataGrid {
         this.updateScrollingLength();
         this.updateVisibleCells();
 
-        this.onContainerResize();
-
         // Header columns alignment when scrollbar is shown.
         if (this.columnHeadersContainer?.lastChild) {
             (this.columnHeadersContainer?.lastChild as HTMLElement)
@@ -667,34 +665,7 @@ class DataGrid {
      * @internal
      */
     private onContainerResize(): void {
-        const headersContainer = this.columnHeadersContainer;
-        if (!headersContainer) {
-            return;
-        }
-
-        this.outerContainer.style.top = headersContainer.clientHeight + 'px';
-
-        this.columnNames.forEach((columnName, i): void => {
-            const child = headersContainer.children[i] as HTMLElement;
-            const lastOverflowWidth = this.overflownHeaderWidths[i];
-
-            if (
-                !isNumber(lastOverflowWidth) &&
-                child.scrollWidth > child.clientWidth
-            ) {
-                this.overflownHeaderWidths[i] = child.clientWidth + 1;
-                child.textContent = this.formatHeaderCell(columnName)
-                    .split(' ').map((word): string => (
-                        word.length < 3 ? word : word.slice(0, 2) + '...'
-                    )).join(' ');
-            } else if (
-                isNumber(lastOverflowWidth) &&
-                lastOverflowWidth < child.clientWidth
-            ) {
-                this.overflownHeaderWidths[i] = null;
-                child.textContent = this.formatHeaderCell(columnName);
-            }
-        });
+        this.updateColumnHeaders();
     }
 
 
@@ -1017,6 +988,53 @@ class DataGrid {
 
 
     /**
+     * Updates the column headers of the table.
+     * @internal
+     */
+    private updateColumnHeaders(): void {
+        const headersContainer = this.columnHeadersContainer,
+            handlesContainer = this.columnDragHandlesContainer;
+
+        if (!headersContainer) {
+            return;
+        }
+
+        this.columnNames.forEach((columnName, i): void => {
+            const header = headersContainer.children[i] as HTMLElement,
+                overflowWidth = this.overflowHeaderWidths[i];
+
+            if (header.scrollWidth > header.clientWidth) {
+                this.overflowHeaderWidths[i] = header.scrollWidth;
+                header.textContent = this.formatHeaderCell(columnName)
+                    .split(' ').map((word): string => (
+                        word.length < 4 ? word : word.slice(0, 2) + '...'
+                    )).join(' ');
+            } else if (
+                isNumber(overflowWidth) &&
+                overflowWidth < header.clientWidth
+            ) {
+                this.overflowHeaderWidths[i] = null;
+                header.textContent = this.formatHeaderCell(columnName);
+            }
+        });
+
+        this.outerContainer.style.top = headersContainer.clientHeight + 'px';
+
+        if (!handlesContainer) {
+            return;
+        }
+
+        for (let i = 0; i < handlesContainer.childElementCount - 1; i++) {
+            const handle = handlesContainer.children[i] as HTMLElement,
+                header = headersContainer.children[i + 1] as HTMLElement;
+
+            handle.style.height = headersContainer.clientHeight + 'px';
+            handle.style.left = header.offsetLeft - 2 + 'px';
+        }
+    }
+
+
+    /**
      * Render initial rows before the user starts scrolling.
      * @internal
      */
@@ -1220,6 +1238,8 @@ class DataGrid {
 
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
+
+        this.updateColumnHeaders();
     }
 
     /**
