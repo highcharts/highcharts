@@ -108,10 +108,8 @@ Dashboards.board('container', {
             connector: {
                 id: 'sample'
             },
+            className: 'datagrid',
             editable: true,
-            title: {
-                text: 'Data Grid Component'
-            },
             sync: {
                 highlight: true
             }

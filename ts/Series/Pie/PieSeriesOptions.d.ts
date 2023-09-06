@@ -30,7 +30,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     endAngle?: number;
     center?: [(number|string|null), (number|string|null)];
     colorByPoint?: boolean;
-    dataLabels?: PieDataLabelOptions;
+    dataLabels?: PieDataLabelOptions|PieDataLabelOptions[];
     fillColor?: ColorType;
     ignoreHiddenPoint?: boolean;
     inactiveOtherPoints?: boolean;
