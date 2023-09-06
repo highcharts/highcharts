@@ -32,12 +32,12 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
 
     const promise = new Promise((resolve, reject) =>{
         worker.on('message', value =>{
-            if(value.error){
+            if (value.error){
                 worker.terminate();
                 reject(value.error);
             }
 
-            if(value.result){
+            if (value.result){
                 worker.terminate();
                 resolve(value.result);
             }
@@ -47,7 +47,7 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
             worker.terminate();
             reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
         }, TEST_TIMEOUT_SECONDS * 1000);
-    })
+    });
 
     worker.postMessage({ testFile, size, CODE_PATH });
 
@@ -94,7 +94,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
             results: [],
             avg: 0,
             stdDev: 0
-        }
+        };
 
         console.log(`Running ${details.test} with samplesize ${size}`);
 
@@ -110,7 +110,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
             }
 
             if (result < details.min) {
-                details.min = result
+                details.min = result;
             }
         }
 
@@ -122,7 +122,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
 
         results.push(details);
 
-        console.log(`Done`);
+        console.log('Done');
     }
 
     await rm(join(__dirname, 'test-data'), { force: true, recursive: true });
@@ -143,7 +143,7 @@ async function benchmark(){
 
     const reportDir = join(OUTPUT_PATH, typeof context === 'string' ? context : 'actual');
 
-    if(!existsSync(reportDir)){
+    if (!existsSync(reportDir)){
         await mkdir(reportDir, { recursive: true });
     }
 
@@ -154,7 +154,7 @@ async function benchmark(){
                 return new RegExp(pattern).test(file);
             }
 
-            return file.includes('.bench.ts')
+            return file.includes('.bench.ts');
         });
 
         for (const testFile of testFiles) {

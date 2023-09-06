@@ -16,13 +16,13 @@ function generateColumnData(rows: number, columns: number){
 
 export const config = {
     sizes: [100, 1000, 10_000, 100_000, 1_000_000, 2_500_000]
-}
+};
 
 export function before(size: number) {
     return {
         fileName: `data-${size}.json`,
         func: () => generateColumnData(size, 5)
-    }
+    };
 }
 
 export default async function benchmarkTest(
