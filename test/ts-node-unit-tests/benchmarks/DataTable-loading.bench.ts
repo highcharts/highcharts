@@ -1,6 +1,6 @@
-import type { BenchmarkResult } from '../benchmark';
+import type { BenchmarkContext, BenchmarkResult } from '../benchmark';
 import { performance } from 'node:perf_hooks';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 
 function generateColumnData(rows: number, columns: number){
     const data = [];
@@ -15,7 +15,7 @@ function generateColumnData(rows: number, columns: number){
 }
 
 export const config = {
-    sizes: [100, 1000, 10_000, 1_000_000, 2_500_000]
+    sizes: [100, 1000, 10_000, 100_000, 1_000_000, 2_500_000]
 }
 
 export function before(size: number) {
@@ -26,9 +26,10 @@ export function before(size: number) {
 }
 
 export default async function benchmarkTest(
-    size: number,
-    CODE_PATH: string,
-    data
+    {
+        CODE_PATH,
+        data
+    }: BenchmarkContext
 ): Promise<BenchmarkResult> {
     const hc = require(join(CODE_PATH, '/highcharts.src.js'))();
     require(join(CODE_PATH, '/modules/data-tools.src.js'))(hc);

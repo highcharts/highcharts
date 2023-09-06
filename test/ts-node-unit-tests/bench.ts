@@ -9,31 +9,10 @@ import yargs from 'yargs';
 
 import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmark.d.ts';
 
-
 function getStandardDeviation (array: number[]) {
   const n = array.length;
   const mean = array.reduce((a, b) => a + b) / n;
   return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-}
-
-function createReport (results: BenchResults, show = 'largest') {
-    const outputRows = [];
-
-    const resultsToInclude = show === 'largest' ? [
-        results[results.length - 1]
-    ] : results;
-
-    resultsToInclude.forEach((result, i) =>{
-        if(i === 0){
-            outputRows.push(`Test Name, Min, Max, Standard Deviation, Average`);
-        }
-
-        outputRows.push(`${result.test}, ${result.min}, ${result.max}, ${result.stdDev}, ${result.avg}`);
-
-    });
-
-    return outputRows.join('\n');
-
 }
 
 const BENCH_PATH = join(__dirname, './benchmarks');
@@ -84,7 +63,8 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
 const ITERATIONS = 15;
 
 function quartile (arr: number[], q:number) {
-    const sorted = arr.sort((a, b) => a - b);
+    // Avoid mutating the original array
+    const sorted = Array.from(arr).sort((a, b) => a - b);
 
     const pos = (sorted.length - 1) * q;
     const base = Math.floor(pos);
@@ -97,7 +77,7 @@ function quartile (arr: number[], q:number) {
     return sorted[base];
 };
 
-async function runRest(testFile: string) : Promise <BenchResults>{
+async function runRest(testFile: string) : Promise<BenchResults>{
     const { config } = await import(testFile);
 
     const results = [];
@@ -142,9 +122,9 @@ async function runRest(testFile: string) : Promise <BenchResults>{
 
         results.push(details);
 
-
         console.log(`Done`);
     }
+
     await rm(join(__dirname, 'test-data'), { force: true, recursive: true });
 
     return results;
@@ -177,10 +157,9 @@ async function benchmark(){
             return file.includes('.bench.ts')
         });
 
-        for (const testFile of testFiles){
+        for (const testFile of testFiles) {
             const testFilePath = join(BENCH_PATH, testFile);
             const data = await runRest(testFilePath);
-
 
             await writeFile(
                 join(reportDir, `${testFile.replace('.bench.ts', '')}.json`),

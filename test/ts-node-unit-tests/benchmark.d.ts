@@ -13,4 +13,12 @@ export type BenchmarkDetails = {
 }
 
 export type BenchResults = BenchmarkDetails[];
-export type BenchmarkFunction = () => BenchmarkResult;
+
+export type BenchmarkContext<T = any> = {
+    size: number,
+    CODE_PATH: string,
+    data: T
+};
+
+export type BenchmarkFunction =
+    (context: BenchmarkContext) => Promise<BenchmarkResult>;
