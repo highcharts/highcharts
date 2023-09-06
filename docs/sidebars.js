@@ -93,8 +93,10 @@ module.exports = {
             'dashboards/synchronize-components',
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
+            'dashboards/data-modifiers',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
+            'dashboards/synchronize-components',
             'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [

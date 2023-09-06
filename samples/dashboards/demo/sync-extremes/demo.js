@@ -1,18 +1,35 @@
-const csv = document.getElementById('csv').innerText;
+const data = [
+    ['Delhi', 31.18, 1484, 250],
+    ['Tokyo', 37.33, 2194, 2017],
+    ['Shanghai', 27.79, 14922, 118],
+    ['Sao Paulo', 22.23, 7946, 760],
+    ['Mexico City', 21.91, 1485, 3930],
+    ['Dhaka', 21.74, 2161, 32],
+    ['Cairo', 21.32, 2734, 23],
+    ['Beijing', 20.89, 12796, 2303],
+    ['Mumbai', 20.67, 4355, 14],
+    ['Osaka', 19.11, 225, 3],
+    ['Karachi', 16.45, 3530, 10],
+    ['Chongqing', 16.38, 5472, 2797],
+    ['Istanbul', 15.41, 5343, 537],
+    ['Buenos Aires', 15.25, 4758, 25],
+    ['Kolkata', 14.974, 1886, 9],
+    ['Kinshasa', 14.97, 9965, 240],
+    ['Lagos', 14.86, 2706, 41],
+    ['Manila', 14.16, 619, 108],
+    ['Tianjin', 13.79, 5609, 1078],
+    ['Guangzhou', 13.64, 19870, 21]
+];
 
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'Population',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                dataTable: {
-                    aliases: {
-                        Town: 'City'
-                    }
-                },
-                csv,
-                firstRowAsNames: true
+                columnNames: ['City', 'Population (mln)', 'Metro Area (km2)', 'Highest Elevation (m)'],
+                firstRowAsNames: false,
+                data
             }
         }]
     },
@@ -63,7 +80,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            Population: 'y'
+            'Population (mln)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -89,10 +106,8 @@ Dashboards.board('container', {
             title: {
                 text: ''
             },
-            subtitle: {
-                text: 'Millions',
-                align: 'left',
-                y: 0
+            tooltip: {
+                pointFormat: '<b>{point.y:.2f}</b> mln'
             },
             legend: {
                 enabled: false
@@ -102,7 +117,7 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-1',
         title: {
-            text: 'Metropolitan area'
+            text: 'Metropolitan Area'
         },
         sync: {
             extremes: true
@@ -113,7 +128,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            'Metro Area(km2)': 'y'
+            'Metro Area (km2)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -136,13 +151,11 @@ Dashboards.board('container', {
                     colorByPoint: true
                 }
             },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> km2'
+            },
             title: {
                 text: ''
-            },
-            subtitle: {
-                text: 'km2',
-                align: 'left',
-                y: 0
             },
             legend: {
                 enabled: false
@@ -163,7 +176,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            'Highest Elevation(m)': 'y'
+            'Highest Elevation (m)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -184,19 +197,13 @@ Dashboards.board('container', {
             plotOptions: {
                 series: {
                     colorByPoint: true
-                },
-                tooltip: {
-                    headerFormat: '{point.key}',
-                    format: '{y}'
                 }
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> m'
             },
             title: {
                 text: ''
-            },
-            subtitle: {
-                text: 'Meters',
-                align: 'left',
-                y: 0
             },
             legend: {
                 enabled: false

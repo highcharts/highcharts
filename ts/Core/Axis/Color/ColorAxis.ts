@@ -39,10 +39,12 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
+import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     extend,
+    fireEvent,
     isArray,
     isNumber,
     merge,
@@ -955,10 +957,19 @@ class ColorAxis extends Axis implements AxisLike {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
+                            const affectedSeries: SeriesClass[] = [];
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
+                                if (
+                                    affectedSeries.indexOf(point.series) === -1
+                                ) {
+                                    affectedSeries.push(point.series);
+                                }
                             }
                             chart.legend.colorizeItem(this as any, vis);
+                            affectedSeries.forEach((series): void => {
+                                fireEvent(series, 'afterDataClassLegendClick');
+                            });
                         }
                     },
                     dataClass

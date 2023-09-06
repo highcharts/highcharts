@@ -6,10 +6,6 @@
     fill: #f0f0f0;
 }
 
-#csv {
-    display: none;
-}
-
 #dashboard-col-2 .highcharts-line-series path {
     stroke-width: 0;
 }
@@ -34,4 +30,8 @@
 
 .highcharts-a11y-proxy-button {
     cursor: default;
+}
+
+.highcharts-description {
+    padding: 0 20px;
 }

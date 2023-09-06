@@ -42,6 +42,7 @@ const {
     addEvent,
     createElement,
     css,
+    fireEvent,
     merge
 } = U;
 
@@ -351,7 +352,8 @@ class EditMode {
      */
     private initEvents(): void {
         const editMode = this,
-            board = editMode.board;
+            board = editMode.board,
+            eventsOptions = editMode.options.events;
 
         for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
             editMode.setLayoutEvents(board.layouts[i]);
@@ -408,6 +410,16 @@ class EditMode {
         addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
             editMode.hideContextPointer();
         });
+
+        if (eventsOptions) {
+            if (eventsOptions.activate) {
+                addEvent(board, 'activate', eventsOptions.activate);
+            }
+
+            if (eventsOptions.deactivate) {
+                addEvent(board, 'deactivate', eventsOptions.deactivate);
+            }
+        }
     }
 
     /**
@@ -533,8 +545,7 @@ class EditMode {
      * @internal
      */
     public activate(): void {
-        const editMode = this,
-            eventsOptions = this.options.events;
+        const editMode = this;
 
         // Init edit mode.
         if (!editMode.isInitialized) {
@@ -561,7 +572,7 @@ class EditMode {
         editMode.active = true;
         editMode.isContextDetectionActive = true;
 
-        eventsOptions?.activate?.call(editMode);
+        fireEvent(editMode.board, 'activate');
     }
 
     /**
@@ -570,8 +581,7 @@ class EditMode {
      */
     public deactivate(): void {
         const editMode = this,
-            dashboardCnt = editMode.board.container,
-            eventsOptions = this.options.events;
+            dashboardCnt = editMode.board.container;
 
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
@@ -608,7 +618,7 @@ class EditMode {
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
 
-        eventsOptions?.deactivate?.call(editMode);
+        fireEvent(editMode.board, 'deactivate');
     }
 
     /**

@@ -13176,25 +13176,38 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
-              <a id="highcharts-dashboards-v1.0.1"></a>
-              <span>Highcharts Dashboards v1.0.1 (2023-07-19)</span>
-              <a class="release-header-hashtag" href="#highcharts-dashboards-v1.0.1">#</a>
-              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-1.0.1.zip" title="Download the zip archive for Highcharts Dashboards v1.0.1"><i class="fas fa-download"></i></a></span>
+              <a id="highcharts-dashboards-v1.0.2"></a>
+              <span>Highcharts Dashboards v1.0.2 (2023-08-10)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v1.0.2">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-1.0.2.zip" title="Download the zip archive for Highcharts Dashboards v1.0.2"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
+              <li>Replaced blocklist with allowlist in columnAssignment option.</li>
+              <li>RangeModifier will now intersect the results of multiple ranges by default. Use the <code>additive</code> option to concatenate results of multiple ranges.</li>
+              <li>Implemented visibility sync handler.</li>
+              <li>Implemented disabling of editing of the columns, which are created by Math Modifier.</li>
+              <li>Added user-defined <code>redraw</code> event for dashboard components.</li>
               <li>Added <code>getOptions()</code> method that returns config of dashboard.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
 
-                <div id="hd-heading-1-0-1-bug-fixes" class="card-header">
-                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v1.0.1">
-                    <button aria-label="Bug Fixes Highcharts-dashboards v1.0.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-1-0-1"><span> Bug fixes </span></button>
+                <div id="hd-heading-1-0-2-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v1.0.2">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v1.0.2" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-1-0-2"><span> Bug fixes </span></button>
                   </h4>
                 </div>
-                <div id="bug-fixes-hd-1-0-1" class="collapse" aria-labelledby="hd-heading-1-0-1-bug-fixes" data-parent=".accordion">
+                <div id="bug-fixes-hd-1-0-2" class="collapse" aria-labelledby="hd-heading-1-0-2-bug-fixes" data-parent=".accordion">
                   <div class="card-body">
                     <ul>
+                      <li>Fixed whitespaces not being removed from names when using CSVConnector with <code>firstRowAsNames</code> enabled.</li>
+                      <li>Fixed bug with disabling toolbars for cell or row.</li>
+                      <li>Fixed insufficient waiting for loading connectors on second request.</li>
+                      <li>Fixed missing reference to DOM element in the dataGrid, after dragging a point.</li>
+                      <li>Fixed, added TextOptions to documentation, changed <code>gui.enabled</code> as optional.</li>
+                      <li>Fixed, the data grid did not resize cells properly.</li>
+                      <li>Improved TypeScript-support of Dashboards.</li>
+                      <li>Fixed, sync was not preserved when the component updated its connector.</li>
                       <li>Path to icons has changed to <code>./gfx/dashboards-icons/</code>.</li>
                       <li>Fixed problem in <code>dataGrid </code> with visible unnecessary scrollbars on Windows.</li>
                       <li>Fixed links in the API that were pointing to not existing URL&#39;s.</li>

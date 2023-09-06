@@ -28,6 +28,7 @@ There are several types of the DataConnectors, depending on the data source.
 | Name                                                                                                                                                               | `connector.type` option |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
 | [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)                            | `'CSV'`                 |
+| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html)                         | `'JSON'`                |
 | [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'`        |
 | [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html)          | `'HTMLTable'`           |
 
@@ -67,6 +68,6 @@ changes are available on a clone in the `DataTable.modified` property.
 ## DataCursor
 
 The DataCursor provides a system to synchronize status data on cells of
-DataTables.  This can be for example highlights, markers, or selections.  It
+DataTables. This can be for example highlights, markers, or selections.  It
 supports multiple tables and statuses simultaneously.  Each Board has a DataCursor
 that is accessible via the `Board.dataCursor` property. [DataCursor sync demo](https://www.highcharts.com/demo/dashboards/datacursor-sync)

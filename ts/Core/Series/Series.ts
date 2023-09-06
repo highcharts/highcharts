@@ -68,6 +68,7 @@ const {
     win
 } = H;
 import type Legend from '../Legend/Legend';
+import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -145,9 +146,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject {
-    clientX: number;
-    plotY?: number;
+interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
 /* *
@@ -4126,6 +4125,8 @@ class Series {
             preserve.push(
                 'data',
                 'isDirtyData',
+                // GeoHeatMap interpolation
+                'isDirtyCanvas',
                 'points',
 
                 'processedData', // #17057
@@ -4135,7 +4136,7 @@ class Series {
                 'xIncrement',
                 'cropped',
                 '_hasPointMarkers',
-                '_hasPointLabels',
+                'hasDataLabels',
                 'clips', // #15420
 
                 // Networkgraph (#14397)
@@ -4178,14 +4179,10 @@ class Series {
             index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
-                // when updating from blank (#7933)
-                (
-                    plotOptions &&
-                    plotOptions.series &&
-                    plotOptions.series.pointStart
-                ),
+                // When updating from blank (#7933)
+                plotOptions?.series?.pointStart,
                 oldOptions.pointStart,
-                // when updating after addPoint
+                // When updating after addPoint
                 (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
@@ -4273,15 +4270,16 @@ class Series {
             if (seriesOptions.visible === false) {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
-            } else if (!series._hasPointLabels) {
-                const { marker, dataLabels } = seriesOptions,
+            } else {
+                const { marker } = seriesOptions,
                     oldMarker = oldOptions.marker || {};
 
                 // If the  marker got disabled or changed its symbol, width or
                 // height - destroy
                 if (
-                    marker && (
-                        marker.enabled === false ||
+                    marker &&
+                    (
+                        (oldMarker.enabled && !marker.enabled) ||
                         oldMarker.symbol !== marker.symbol || // #10870, #15946
                         oldMarker.height !== marker.height || // #16274
                         oldMarker.width !== marker.width // #16274
@@ -4289,10 +4287,8 @@ class Series {
                 ) {
                     kinds.graphic = 1;
                 }
-                if (
-                    dataLabels &&
-                    (dataLabels as any).enabled === false
-                ) {
+
+                if (!series.hasDataLabels?.()) {
                     kinds.dataLabel = 1;
                 }
             }

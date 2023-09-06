@@ -513,6 +513,6 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
     bottom: 2px;
 }
 
-#description {
+.highcharts-description {
     padding: 0 20px;
 }
