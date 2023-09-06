@@ -590,6 +590,18 @@ class Cell extends GUIElement {
         }
     }
 
+    /**
+     * Enables or disables the loading indicator in the cell.
+     *
+     * @internal
+     */
+    public setLoadingState(enabled: boolean = true): void {
+        this.container?.classList?.toggle(
+            Globals.classNames.cellLoading,
+            enabled
+        );
+    }
+
     private convertWidthToValue(
         width: (number|string)
     ): string {

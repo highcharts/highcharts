@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     // Prepare demo data
-    var data = [{
+    const data = [{
         'hc-key': 'us',
         value: 3
     }, {

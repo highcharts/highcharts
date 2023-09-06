@@ -1,4 +1,28 @@
-// Set global chart options.
+const data = [
+    ['x', 'Global', 'Africa', 'Europe', 'South-East Asia'],
+    [946684800000, 73, 54, 94, 64],
+    [978307200000, 73, 55, 94, 65],
+    [1009843200000, 74, 59, 93, 65],
+    [1041379200000, 75, 61, 92, 66],
+    [1072915200000, 76, 62, 95, 66],
+    [1104537600000, 78, 65, 95, 71],
+    [1136073600000, 79, 66, 95, 72],
+    [1167609600000, 80, 69, 96, 73],
+    [1199145600000, 82, 71, 96, 75],
+    [1230768000000, 83, 74, 95, 78],
+    [1262304000000, 83, 72, 95, 80],
+    [1293840000000, 84, 70, 95, 82],
+    [1325376000000, 84, 71, 95, 83],
+    [1356998400000, 84, 70, 96, 85],
+    [1388534400000, 85, 71, 94, 87],
+    [1420070400000, 85, 72, 94, 88],
+    [1451606400000, 85, 73, 94, 87],
+    [1483228800000, 85, 73, 93, 90],
+    [1514764800000, 85, 73, 94, 91],
+    [1546300800000, 86, 74, 95, 90],
+    [1577836800000, 82, 71, 94, 85],
+    [1609459200000, 80, 70, 94, 82]
+];
 Highcharts.setOptions({
     chart: {
         spacingTop: 20,
@@ -7,37 +31,25 @@ Highcharts.setOptions({
         type: 'area',
         zoomType: 'xy'
     },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        valueSuffix: '%'
+    },
     yAxis: {
-        max: 120,
+        max: 100,
         title: {
             text: null
+        },
+        labels: {
+            format: '{value}%'
         }
     },
     xAxis: {
         type: 'datetime'
-    },
-    colors: ['#37D5D6'],
-    plotOptions: {
-        area: {
-            pointStart: Date.UTC(2000, 0, 1),
-            pointIntervalUnit: 'year',
-            fillColor: {
-                linearGradient: {
-                    x1: 0,
-                    x2: 0,
-                    y1: 0,
-                    y2: 1
-                },
-                stops: [
-                    [0, '#37D5D6'],
-                    [1, '#37D5D600']
-                ]
-            }
-        }
     }
 });
-
-const csvData = document.getElementById('csv').innerText;
 
 Dashboards.board('container', {
     editMode: {
@@ -50,15 +62,15 @@ Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'connector-1',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: csvData
+                data
             }
         }, {
             id: 'connector-2',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: csvData
+                data
             }
         }]
     },
@@ -66,6 +78,10 @@ Dashboards.board('container', {
         layouts: [{
             id: 'layout-1',
             rows: [{
+                cells: [{
+                    id: 'title'
+                }]
+            }, {
                 cells: [{
                     id: 'dashboard-col-1'
                 }]
@@ -83,6 +99,24 @@ Dashboards.board('container', {
         }]
     },
     components: [
+        {
+            cell: 'title',
+            type: 'HTML',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'Polio (Pol3) immunization coverage'
+            },
+            {
+                tagName: 'div',
+                children: [{
+                    tagName: 'a',
+                    href: 'https://apps.who.int/gho/data/',
+                    class: 'subtitle',
+                    textContent: 'Among 1-year-olds (%)'
+
+                }]
+            }]
+        },
         {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
@@ -102,10 +136,13 @@ Dashboards.board('container', {
                     zoomType: 'x'
                 },
                 title: {
-                    text: 'Polio (Pol3) immunization coverage among 1-year-olds (%) '
+                    text: 'Global'
                 },
-                subtitle: {
-                    text: 'Source: https://apps.who.int/gho/data/'
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {
@@ -128,6 +165,17 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'South-East Asia'
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 1
+                    }
                 }
             }
         }, {
@@ -150,6 +198,17 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'Africa'
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 2
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
                 }
             }
         }, {
@@ -172,6 +231,11 @@ Dashboards.board('container', {
                 },
                 title: {
                     text: 'Europe'
+                },
+                plotOptions: {
+                    series: {
+                        colorIndex: 3
+                    }
                 }
             }
         }

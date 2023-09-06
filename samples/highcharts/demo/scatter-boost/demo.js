@@ -3,10 +3,17 @@
 const data = [],
     n = 1000000;
 
+// Generate and position the datapoints in a tangent wave pattern
 for (let i = 0; i < n; i += 1) {
+    const theta = Math.random() * 2 * Math.PI;
+    const radius = Math.pow(Math.random(), 2) * 100;
+
+    const waveDeviation = (Math.random() - 0.5) * 70;
+    const waveValue = Math.tan(theta) * waveDeviation;
+
     data.push([
-        Math.pow(Math.random(), 2) * 100,
-        Math.pow(Math.random(), 2) * 100
+        50 + (radius + waveValue) * Math.cos(theta),
+        50 + (radius + waveValue) * Math.sin(theta)
     ]);
 }
 
