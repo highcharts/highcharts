@@ -10,6 +10,18 @@ const Path = require('path');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+/** POSIX-uniform directory separator */
+const PSEP = Path.posix.sep;
+
+/** System-conform direcotry separator */
+const SEP = Path.sep;
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -38,15 +50,6 @@ function copyAllFiles(
     includeSubDirectories,
     filterFunction
 ) {
-
-    if (directorySourcePath && !directorySourcePath.endsWith('/')) {
-        directorySourcePath += '/';
-    }
-
-    if (directoryTargetPath && !directoryTargetPath.endsWith('/')) {
-        directoryTargetPath += '/';
-    }
-
     const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
 
     if (filePaths.length === 0) {
@@ -61,7 +64,7 @@ function copyAllFiles(
         filePaths.forEach(sourcePath => {
 
             targetPath = Path.join(
-                directoryTargetPath, sourcePath.substr(pathIndex)
+                directoryTargetPath, sourcePath.substring(pathIndex)
             );
 
             filterResult = filterFunction(sourcePath, targetPath);
@@ -78,7 +81,8 @@ function copyAllFiles(
         });
     } else {
         filePaths.forEach(filePath => copyFile(
-            filePath, Path.join(directoryTargetPath, filePath.substr(pathIndex))
+            filePath,
+            Path.join(directoryTargetPath, filePath.substring(pathIndex))
         ));
     }
 }
@@ -108,11 +112,18 @@ function copyFile(fileSourcePath, fileTargetPath) {
  * @param {boolean} [includeEntries]
  *        Set to true to remove containing entries as well
  *
+ * @param {Function} [filterCallback]
+ *        Callback to return `true` for files to delete.
+ *
  * @return {void}
  *
  * @throws {Error}
  */
-function deleteDirectory(directoryPath, includeEntries) {
+function deleteDirectory(
+    directoryPath,
+    includeEntries,
+    filterCallback
+) {
 
     if (!FS.existsSync(directoryPath)) {
         return;
@@ -120,9 +131,17 @@ function deleteDirectory(directoryPath, includeEntries) {
 
     if (includeEntries) {
         getDirectoryPaths(directoryPath).forEach(
-            path => deleteDirectory(path, true)
+            path => deleteDirectory(path, true, filterCallback)
         );
-        getFilePaths(directoryPath).forEach(path => deleteFile(path, true));
+
+        for (const filePath of getFilePaths(directoryPath)) {
+            if (
+                !filterCallback ||
+                filterCallback(filePath) === true
+            ) {
+                deleteFile(filePath, true);
+            }
+        }
     }
 
     FS.rmdirSync(directoryPath);
@@ -163,7 +182,6 @@ function deleteFile(filePath) {
  *         Hexadecimal hash value
  */
 function getDirectoryHash(directoryPath, useFileContent, contentFilter) {
-
     const directoryHash = Crypto.createHash('sha256');
 
     if (useFileContent) {
@@ -222,7 +240,6 @@ function getDirectoryHash(directoryPath, useFileContent, contentFilter) {
  *         Sub-directory paths
  */
 function getDirectoryPaths(directoryPath, includeSubDirectories) {
-
     const directoryPaths = [];
 
     let entryPath;
@@ -287,7 +304,6 @@ function getFileHash(filePath, contentFilter) {
  *         File paths
  */
 function getFilePaths(directoryPath, includeSubDirectories) {
-
     const filePaths = [];
 
     let entryPath;
@@ -328,7 +344,6 @@ function getFilePaths(directoryPath, includeSubDirectories) {
  *         Promise to keep
  */
 function gzipFile(fileSourcePath, fileTargetPath) {
-
     const ZLib = require('zlib');
 
     return new Promise((resolve, reject) => {
@@ -366,15 +381,6 @@ function moveAllFiles(
     includeSubDirectories,
     filterFunction
 ) {
-
-    if (directorySourcePath && !directorySourcePath.endsWith('/')) {
-        directorySourcePath += '/';
-    }
-
-    if (directoryTargetPath && !directoryTargetPath.endsWith('/')) {
-        directoryTargetPath += '/';
-    }
-
     const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
 
     if (filePaths.length === 0) {
@@ -417,6 +423,34 @@ function moveAllFiles(
     }
 }
 
+/**
+ * Converts from POSIX path to the system-specific path by default. Set the flag
+ * to convert to POSIX.
+ *
+ * @param {string} path
+ *        Path to convert.
+ *
+ * @param {boolean} toPosix
+ *        Convert to a POSIX-uniform path, if set to `true`.
+ *
+ * @return {string}
+ *         Converted path.
+ */
+function path(
+    path,
+    toPosix
+) {
+    if (Path.sep !== Path.posix.sep) {
+        return (
+            toPosix ?
+                path.replaceAll(SEP, PSEP) :
+                path.replaceAll(PSEP, SEP)
+        );
+    }
+
+    return path
+}
+
 /* *
  *
  *  Exports
@@ -433,5 +467,6 @@ module.exports = {
     getFileHash,
     getFilePaths,
     gzipFile,
-    moveAllFiles
+    moveAllFiles,
+    path
 };

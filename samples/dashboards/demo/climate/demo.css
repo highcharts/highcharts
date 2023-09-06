@@ -151,6 +151,11 @@
     fill: var(--color-axis);
 }
 
+#city-chart .highcharts-axis-line,
+#city-chart .highcharts-tick {
+    stroke: var(--color-axis);
+}
+
 #city-chart .highcharts-axis-labels,
 #city-chart .highcharts-axis-title {
     fill: var(--color-axis-labels);
@@ -182,6 +187,14 @@
     background-color: var(--color-background);
     color: var(--color-text);
     cursor: pointer;
+}
+
+#kpi-layout .highcharts-dashboards-component-title {
+    white-space: nowrap;
+}
+
+#kpi-layout #kpi-data .highcharts-dashboards-component-kpi-value {
+    margin: 0.5em 0;
 }
 
 #kpi-layout .highcharts-dashboards-component-kpi-content {
@@ -230,6 +243,10 @@
 #kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
 #kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
     fill: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-title {
+    font-size: 1em;
 }
 
 #kpi-data .highcharts-dashboards-component {
@@ -455,13 +472,13 @@
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
-    background: #241d3a;
+    background: var(--highcharts-background-color);
     border-radius: 2px;
 }
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
-    background: #646479;
+    background: var(--highcharts-background-color);
     border-radius: 2px;
 }
 
@@ -474,18 +491,6 @@
             rgb(169 167 188) 10px,
             rgb(169 167 188) 12px
         );
-}
-
-.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-cell-outline {
-    border: 2px solid #241d3a;
-}
-
-.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-row-outline {
-    border: 2px solid #646479;
-}
-
-.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row {
-    background: #646479;
 }
 
 .highcharts-dashboards-wrapper > .highcharts-dashboards-edit-drop-pointer {
@@ -506,4 +511,8 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
     width: 17px;
     left: 2px;
     bottom: 2px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
 }

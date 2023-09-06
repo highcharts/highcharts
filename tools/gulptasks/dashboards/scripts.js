@@ -3,6 +3,7 @@
  */
 
 const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -14,7 +15,6 @@ const gulp = require('gulp');
  * Gulp task to run the building process of distribution js files the classic
  * way.
  *
- * @deprecated
  * @return {Promise<void>}
  * Promise to keep
  */
@@ -57,7 +57,9 @@ async function dashboardsScripts() {
         fsLib.deleteDirectory('js/Stock/', true);
 
         // Fix masters
-        fs.renameSync('js/masters-dashboards', 'js/masters');
+        fs.renameSync('js/masters-dashboards/', 'js/masters/');
+
+        const { release } = argv;
 
         // Assemble bundle
         await buildTool
@@ -70,8 +72,12 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
+                product: 'Dashboards',
                 output: bundleTargetFolder,
-                version: (argv.release || '0.9.9')
+                version: (release || ''),
+                assetPrefix: release ?
+                    `https://code.highcharts.com/dashboards/${release}` :
+                    '/code'
             })
             .fnFirstBuild();
 

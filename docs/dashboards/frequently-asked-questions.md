@@ -5,10 +5,10 @@ Frequently asked questions
 How to connect dataPool to the other components?
 ---------------------------------------------
 
-First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
+First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
 
 After that, you need to pass the connector to the component config, and that’s it.
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/dashboard-minimal).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 * * *
 
@@ -41,7 +41,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
         }]
 ```
 
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/component-highcharts).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 * * *
 
@@ -101,13 +101,13 @@ Example of synchronized components
 
 
 
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
-See the next question for possible syncrhonization events.
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
+See the next question for possible synchronization events.
 
 * * *
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 The events, that can be synchronized between components are:
 * 'visibility’
@@ -141,7 +141,7 @@ afterRender(e) {
 }
 ```
 
-If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the correspoding column in the dataTable:
+If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
 
 ```js
   dataPool: {
@@ -163,6 +163,15 @@ If you have to change the displayed name in the chart options (and wish to sync 
     }]
   }
 ```
-See [highcharts.com/samples/dashboards/issues/sync-aliases](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
+See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
+How to style the Highcharts Component?
+-----------------------------------------------------------------------
+Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default. 
 
+The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
+```css
+@import url("https://code.highcharts.com/css/highcharts.css");
+```
+
+To customize your styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)

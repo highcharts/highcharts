@@ -3,20 +3,40 @@
 
 <figure class="highcharts-figure">
 	<div id="container"></div>
-	<div id="toolbar">
-	<label>
-		<input type="checkbox" name="interpolation" id="interpolation-toggle" checked >
-		Interpolation
-	</label>
-	<label>
-		<input type="checkbox" name="data" id="data-toggle" >
-		Change data
-	</label>
-	<label id="col-slider-wrapper">
-		<input type="range" name="col" id="col-range" value="24" min="1">
-		<output id="col-slider-output"></output>
-	</label>
-
+	<div id="toolwrap">
+		<div class="toolbar">
+			<label>
+				<input type="checkbox" name="interpolation" id="interpolation-toggle" checked >
+				Interpolation
+			</label>
+			<label>
+				<input type="checkbox" name="data" id="data-toggle" >
+				Change data
+			</label>
+			<label id="col-slider-wrapper">
+				<input type="range" name="col" id="col-range" value="24" min="1">
+				<output id="col-slider-output"></output>
+			</label>
+		</div>
+	</br>
+		<div class="toolbar">
+			<label>
+					<input type="checkbox" name="xrev" id="x-toggle" checked >
+					Reverse X
+			</label>
+			<label>
+					<input type="checkbox" name="yrev" id="y-toggle" checked >
+					Reverse Y
+			</label>
+			<label>
+					<input type="checkbox" name="invert" id="inv-toggle" checked >
+					Inverted
+			</label>
+			<label id="slider-wrapper">
+				<input type="range" name="padMin" id="padMin" max="800" min="0">
+				<output id="padMinOut"></output>
+			</label>
+		</div>
 	</div>
 </figure>
 

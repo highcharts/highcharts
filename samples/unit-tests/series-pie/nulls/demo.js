@@ -23,15 +23,17 @@ QUnit.test('Pie with zeroes(#4246)', function (assert) {
         'Has graphic'
     );
     assert.strictEqual(
-        chart.series[0].points[0].connector instanceof Highcharts.SVGElement,
-        true,
-        'Has connector'
-    );
-    assert.strictEqual(
         chart.series[0].points[0].dataLabel instanceof Highcharts.SVGElement,
         true,
         'Has data label'
     );
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.connector instanceof
+            Highcharts.SVGElement,
+        true,
+        'Has connector'
+    );
+
 });
 
 QUnit.test('Pie with nulls', function (assert) {
@@ -59,11 +61,6 @@ QUnit.test('Pie with nulls', function (assert) {
     assert.notOk(
         Highcharts.defined(chart.series[0].points[0].graphic),
         'No graphic'
-    );
-    assert.strictEqual(
-        chart.series[0].points[0].connector,
-        undefined,
-        'No connector'
     );
     assert.strictEqual(
         chart.series[0].points[0].dataLabel,

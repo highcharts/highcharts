@@ -68,7 +68,7 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
 
 Notice in the code above, that the Tea data series is set with one dimensional array, except for the last point, which is set with values for volume, name and a color.
 
-<iframe width="100%" height="710" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/packed-bubble-simple-demo/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="710" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-simple-demo allow="fullscreen"></iframe>
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble allow="fullscreen"></iframe>
 
@@ -95,7 +95,7 @@ Here is an example of setting min and max size for bubbles:
         }]
     });
 
-<iframe width="100%" height="500" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/packed-bubble-basic/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="500" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-basic allow="fullscreen"></iframe>
 
 ----------------------------------------------
 

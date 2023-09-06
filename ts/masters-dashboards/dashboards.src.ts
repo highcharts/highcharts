@@ -33,6 +33,7 @@ import Utilities from '../Dashboards/Utilities.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
+import '../Data/Connectors/JSONConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Modifiers/ChainModifier.js';

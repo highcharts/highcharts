@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import DataConnector from './DataConnector.js';
 import H from '../../Core/Globals.js';
@@ -116,19 +117,23 @@ class HTMLTableConnector extends DataConnector {
     public load(
         eventDetail?: DataEvent.Detail
     ): Promise<this> {
-        const connector = this;
-
-        // If already loaded, clear the current rows
-        connector.table.deleteColumns();
+        const connector = this,
+            converter = connector.converter,
+            table = connector.table,
+            {
+                dataModifier,
+                table: tableHTML
+            } = connector.options;
 
         connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: connector.table,
+            table,
             tableElement: connector.tableElement
         });
 
-        const { table: tableHTML } = connector.options;
+        // If already loaded, clear the current rows
+        table.deleteColumns();
 
         let tableElement: (HTMLElement|null);
 
@@ -150,27 +155,30 @@ class HTMLTableConnector extends DataConnector {
                 type: 'loadError',
                 detail: eventDetail,
                 error,
-                table: connector.table
+                table
             });
 
             return Promise.reject(new Error(error));
         }
 
-        connector.converter.parse(
+        converter.parse(
             merge({ tableElement: connector.tableElement }, connector.options),
             eventDetail
         );
 
-        connector.table.setColumns(connector.converter.getTable().getColumns());
+        table.setColumns(converter.getTable().getColumns());
 
-        connector.emit<HTMLTableConnector.Event>({
-            type: 'afterLoad',
-            detail: eventDetail,
-            table: connector.table,
-            tableElement: connector.tableElement
-        });
-
-        return Promise.resolve(this);
+        return connector
+            .setModifierOptions(dataModifier)
+            .then((): this => {
+                connector.emit<HTMLTableConnector.Event>({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table,
+                    tableElement: connector.tableElement
+                });
+                return connector;
+            });
     }
 
 }
@@ -226,7 +234,10 @@ namespace HTMLTableConnector {
      * Available options for constructor and converter of the
      * HTMLTableConnector.
      */
-    export type UserOptions = (DeepPartial<HTMLTableConnectorOptions>&HTMLTableConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<HTMLTableConnectorOptions>&
+        HTMLTableConverter.UserOptions
+    );
 
 }
 

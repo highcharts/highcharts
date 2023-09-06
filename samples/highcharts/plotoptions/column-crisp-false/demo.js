@@ -10,8 +10,8 @@ Highcharts.chart('container', {
 
     series: [{
         data: (function () {
-            var arr = [];
-            for (var i = 0; i < 100; i++) {
+            const arr = [];
+            for (let i = 0; i < 100; i++) {
                 arr.push(i);
             }
             return arr;
