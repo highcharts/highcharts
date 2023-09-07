@@ -16,7 +16,10 @@ runs:
         cache: 'npm'
 
     - run: npm i
+      shell: bash
     - run: npx gulp scripts
+      shell: bash
 
     - run: npx gulp dashboards/scripts
+      shell: bash
       if: ${{ inputs.dashboards == true }}
