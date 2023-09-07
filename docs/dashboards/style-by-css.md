@@ -53,7 +53,7 @@ To style the dashboard's cell:
 }
 ```
 
-To style the dashboard's component:
+To style the dashboard's component div and its content:
 ```css
 .highcharts-dashboards-component {
     border-radius: 10px;
@@ -80,7 +80,7 @@ To style the dashboard's component subtitle:
 ```
 
 ### KPI Component
-To style the dashboard's KPI component:
+To style the dashboard's KPI component div and its content:
 ```css
 .highcharts-dashboards-component-kpi {
     border-radius: 10px;
@@ -95,7 +95,7 @@ To style the dashboard's KPI value:
 ```
 
 ### Highcharts Component
-To style the dashboard's Highcharts component:
+To style the dashboard's Highcharts component div and its content:
 ```css
 .highcharts-dashboards-component-highcharts {
     background-color: gray;
@@ -105,7 +105,7 @@ To style the dashboard's Highcharts component:
 To individually style the dashboard's Highcharts chart please find more information on how to [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
 
 ### DataGrid Component
-To style the dashboard's DataGrid component:
+To style the dashboard's DataGrid component div and its content:
 ```css
 .highcharts-datagrid-container {
     border-radius: 10px;
@@ -134,9 +134,9 @@ Note that you can use the child selector to style even and odd rows:
 ```
 
 ### HTML Component
-Since this component is based on the HTML element and can be very different
-it is recommended to use the custom classes and ids to style it. More information
-in the section below.
+Since the whole structure of the HTML component is defined by the user, it can
+be very different. Thus it is recommended to use the custom classes and IDs to style it.
+More information is in the section below.
 
 ## Custom classes
 In the dashboard config each component or its element can have a custom class or id.

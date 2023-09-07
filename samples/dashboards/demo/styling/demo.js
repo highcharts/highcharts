@@ -195,7 +195,7 @@ Dashboards.board('container', {
                         marker: {
                             enabled: false
                         },
-                        name: 'Balance',
+                        name: 'Earnings',
                         data: [10, 20, 30, 40, 12, 11, 10, 23, 4, 34, 50, 20]
                     }
                 ]
@@ -211,6 +211,7 @@ Dashboards.board('container', {
                 series: [
                     {
                         type: 'column',
+                        enableMouseTracking: false,
                         dataLabels: {
                             enabled: false
                         },

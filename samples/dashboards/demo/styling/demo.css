@@ -11,11 +11,11 @@
 /* General */
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
-  background-color: #f2f9fd;
+  background-color: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-background {
-    fill: #fcfcfd;
+  fill: var(--highcharts-neutral-color-0);
 }
 
 .highcharts-color-0 {
@@ -30,13 +30,13 @@
 
 /* Rows and cells */
 .highcharts-dashboards-row#row-1 {
-  background-color: #f9f8fd;
+  background-color: var(--highcharts-neutral-color-5);
   border-radius: 20px;
   padding: 10px
 }
 
 .highcharts-dashboards-cell>.highcharts-dashboards-component {
-  background-color: #fcfcfd;
+  background-color: var(--highcharts-neutral-color-0);
   border-radius: 20px;
   text-align: left;
 }
@@ -95,7 +95,11 @@
 }
 
 #dashboard-row-3-cell-3 .highcharts-datagrid-column-header {
-    background-color: white;
+  background-color: var(--highcharts-neutral-color-0);
+}
+
+#dashboard-row-3-cell-3 .highcharts-datagrid-row {
+  background-color: var(--highcharts-neutral-color-0);
 }
 
 /* Custom classes and ids */
@@ -103,7 +107,7 @@
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
-    background: var(--highcharts-dashboards-orange);
+    background-color: var(--highcharts-dashboards-orange);
     cursor: pointer;
 }
 
