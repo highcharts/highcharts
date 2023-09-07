@@ -879,7 +879,9 @@ class DataGrid {
     private formatCell(cellValue: JSON.Primitive, column: string): string {
         const options = this.options,
             columnOptions = options.columns[column],
-            cellFormat = columnOptions && columnOptions.cellFormat;
+            cellFormat = columnOptions && columnOptions.cellFormat,
+            cellFormatter = columnOptions && columnOptions.cellFormatter;
+
         let formattedCell = defined(cellValue) ? cellValue : '';
 
         if (cellFormat) {
@@ -896,6 +898,10 @@ class DataGrid {
                 formattedCell =
                     Templating.format(cellFormat, { text: cellValue });
             }
+        }
+
+        if (cellFormatter) {
+            return cellFormatter.call({ value: cellValue });
         }
 
         return formattedCell.toString();
