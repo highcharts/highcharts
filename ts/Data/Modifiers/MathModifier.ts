@@ -30,10 +30,9 @@ import type {
     MathModifierOptions
 } from './MathModifierOptions';
 
-
 import DataModifier from './DataModifier.js';
-import FormulaParser from '../Formula/FormulaParser.js';
-import FormulaProcessor from '../Formula/FormulaProcessor.js';
+import FormulaNamespace from '../Formula/Formula.js';
+
 
 /* *
  *
@@ -68,6 +67,13 @@ class MathModifier extends DataModifier {
         type: 'Math',
         alternativeSeparators: false
     };
+
+
+    /**
+     * Formula system used by MathModifier.
+     * @private
+     */
+    public static readonly Formula = FormulaNamespace;
 
 
     /* *
@@ -149,7 +155,7 @@ class MathModifier extends DataModifier {
             ++i
         ) {
             columnFormula = columnFormulas[i];
-            formula = FormulaParser.parseFormula(
+            formula = MathModifier.Formula.parseFormula(
                 columnFormula.formula,
                 alternativeSeparators
             );
@@ -216,14 +222,14 @@ class MathModifier extends DataModifier {
                     cacheFormula = (
                         cacheString === cell ?
                             cacheFormula :
-                            FormulaParser.parseFormula(
+                            MathModifier.Formula.parseFormula(
                                 cell.substring(1),
                                 alternativeSeparators
                             )
                     );
                     // process parsed formula string
-                    column[i] =
-                        FormulaProcessor.processFormula(cacheFormula, table);
+                    column[i] = MathModifier.Formula
+                        .processFormula(cacheFormula, table);
                 } catch {
                     column[i] = NaN;
                 }
@@ -270,11 +276,13 @@ class MathModifier extends DataModifier {
 
         for (let i = 0, iEnd = (rowEnd - rowStart); i < iEnd; ++i) {
             try {
-                column[i] = FormulaProcessor.processFormula(formula, modified);
+                column[i] = MathModifier.Formula
+                    .processFormula(formula, modified);
             } catch {
                 column[i] = NaN;
             } finally {
-                formula = FormulaProcessor.translateReferences(formula, 0, 1);
+                formula = MathModifier.Formula
+                    .translateReferences(formula, 0, 1);
             }
         }
 

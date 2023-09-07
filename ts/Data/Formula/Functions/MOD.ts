@@ -22,10 +22,7 @@
  * */
 
 
-import type {
-    Arguments,
-    Value
-} from '../FormulaTypes';
+import type { Arguments } from '../FormulaTypes';
 import type DataTable from '../../DataTable';
 
 

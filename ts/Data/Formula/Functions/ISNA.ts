@@ -38,8 +38,8 @@ const { getArgumentValue } = FormulaProcessor;
 
 
 /**
- * Processor for the `ISNA(value)` implementation. Returns TRUE if value is not
- * a number.
+ * Processor for the `ISNA(value)` implementation. Returns `TRUE` if value is
+ * not a number.
  *
  * @private
  * @function Formula.processorFunctions.ISNA
