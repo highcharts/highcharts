@@ -532,8 +532,12 @@ class DataGrid {
      * scrolling.
      *
      * @internal
+     *
+     * @param force
+     * Whether to force the update regardless of whether the position of the
+     * first row has not been changed.
      */
-    private updateVisibleCells(): void {
+    private updateVisibleCells(force: boolean = false): void {
         let scrollTop = this.outerContainer.scrollTop;
         if (H.isSafari) {
             scrollTop = clamp(
@@ -547,7 +551,7 @@ class DataGrid {
         }
 
         let i = Math.floor(scrollTop / this.options.cellHeight);
-        if (i === this.prevTop) {
+        if (i === this.prevTop && !force) {
             return;
         }
         this.prevTop = i;
@@ -611,7 +615,7 @@ class DataGrid {
      */
     private onScroll(e: Event): void {
         e.preventDefault();
-        window.requestAnimationFrame(this.updateVisibleCells.bind(this));
+        window.requestAnimationFrame(this.updateVisibleCells.bind(this, false));
     }
 
 
@@ -1003,20 +1007,19 @@ class DataGrid {
                     .split(' ').map((word): string => (
                         word.length < 4 ? word : word.slice(0, 2) + '...'
                     )).join(' ');
+                header.classList.add(Globals.classNames.overflownColumnHeader);
             } else if (
                 isNumber(overflowWidth) &&
                 overflowWidth <= header.clientWidth
             ) {
                 this.overflowHeaderWidths[i] = null;
                 header.textContent = this.formatHeaderCell(columnName);
+                header.classList
+                    .remove(Globals.classNames.overflownColumnHeader);
             }
         });
 
         this.outerContainer.style.top = headersContainer.clientHeight + 'px';
-
-        if (this.rowElements.length) {
-            this.updateScrollingLength();
-        }
 
         // Header columns alignment when scrollbar is shown.
         if (this.columnHeadersContainer?.lastChild) {
@@ -1025,6 +1028,29 @@ class DataGrid {
                     this.outerContainer.offsetWidth -
                     this.outerContainer.clientWidth
                 ) + 'px';
+        }
+
+        if (this.rowElements.length) {
+            const prevColumnFlexes: string[] = [],
+                firstRowChildren = this.rowElements[0].children;
+
+            for (let i = 0; i < firstRowChildren.length; i++) {
+                prevColumnFlexes.push(
+                    (firstRowChildren[i] as HTMLElement).style.flex
+                );
+            }
+
+            emptyHTMLElement(this.innerContainer);
+            this.renderInitialRows();
+            this.updateScrollingLength();
+            this.updateVisibleCells(true);
+
+            this.rowElements.forEach((row): void => {
+                for (let i = 0; i < row.childElementCount; i++) {
+                    (row.children[i] as HTMLElement).style.flex =
+                        prevColumnFlexes[i];
+                }
+            });
         }
 
         if (!handlesContainer) {
