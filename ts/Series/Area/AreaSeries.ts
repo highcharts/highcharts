@@ -293,7 +293,8 @@ class AreaSeries extends LineSeries {
                     .path(areaPath)
                     .addClass(
                         'highcharts-area' +
-                        (i ? `highcharts-zone-area-${i - 1}` : '')
+                        (i ? ` highcharts-zone-area-${i - 1} ` : ' ') +
+                        ((i && (owner as SeriesZonesOptions).className) || '')
                     )
                     .add(this.group);
                 area.isArea = true;
