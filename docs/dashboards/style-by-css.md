@@ -8,7 +8,7 @@ or ids to the elements.
 
 
 ## Importing the CSS
-The CSS is not included in the library but you can import it from the CDN like:
+The CSS is not included in the library but you can import it like that:
 ```css
 @import url("https://code.highcharts.com/css/dashboards.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
