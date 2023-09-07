@@ -2,7 +2,7 @@ import type { BenchmarkContext, BenchmarkResult } from '../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
 
-function generateColumnData(rows: number, columns: number){
+export function generateColumnData(rows: number, columns: number){
     const data = [];
     for (let i = 0; i < rows; i++) {
         const row = [];
@@ -20,8 +20,8 @@ export const config = {
 
 export function before(size: number) {
     return {
-        fileName: `data-${size}.json`,
-        func: () => generateColumnData(size, 5)
+        fileName: `data-${size}-columns.json`,
+        func: () => generateColumnData(5, size)
     };
 }
 

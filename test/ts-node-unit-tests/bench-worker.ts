@@ -28,7 +28,7 @@ parentPort.on('message', async value =>{
 
             return content;
         } catch {
-            console.log(`Generating ${size} rows of data`);
+            console.log(`Generating data for sample size: ${size}`);
             let data = func();
 
             require('fs').writeFileSync(
