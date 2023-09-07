@@ -1,5 +1,5 @@
 ---
-name: DataCursor sync
+name: Sync of highlight cursor
 author:
   - Sophie Bremer
 js_wrap: b
