@@ -134,8 +134,8 @@ board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
 board.dataCursor.removeListener(table.id, 'point.mouseOut', handleCursorOut);
 ```
 
-The final step is to define your custom actions, which should be triggered.
-In our example, this refers to the `handleCursor` and `handleCursorOut`.
+The final step is to define your custom actions, which are triggered by the event listeners above.
+In our example it's the `handleCursor` and `handleCursorOut`.
 
 4. Emitter
 The emitter generates the output to the connector.
