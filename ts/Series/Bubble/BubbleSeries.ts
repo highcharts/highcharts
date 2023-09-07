@@ -828,7 +828,6 @@ interface BubbleSeries {
     isBubble: true;
     pointClass: typeof BubblePoint;
     specialGroup: 'group'|'markerGroup';
-    zoneAxis: string;
 }
 
 extend(BubbleSeries.prototype, {

@@ -268,7 +268,7 @@ class AreaSeries extends LineSeries {
                 'highcharts-area',
                 this.color as any,
                 options.fillColor as any
-            ]]; // area name, main color, fill color
+            ]]; // Area name, main color, fill color
 
         zones.forEach(function (
             zone: SeriesZonesOptions,
@@ -283,26 +283,26 @@ class AreaSeries extends LineSeries {
             ]);
         });
 
-        props.forEach(function (prop: Array<string>): void {
-            const areaKey = prop[0],
+        props.forEach((prop: Array<string>, i): void => {
+            const owner = (i === 0 ? series : series.zones[i - 1]),
                 attribs: SVGAttributes = {};
 
-            let area = (series as any)[areaKey];
+            let area = owner.area;
 
             const verb = area ? 'animate' : 'attr';
 
             // Create or update the area
-            if (area) { // update
+            if (area) { // Update
                 area.endX = series.preventGraphAnimation ?
                     null :
                     areaPath.xMap;
                 area.animate({ d: areaPath });
 
-            } else { // create
+            } else { // Create
 
                 attribs.zIndex = 0; // #1069
 
-                area = (series as any)[areaKey] = series.chart.renderer
+                area = owner.area = series.chart.renderer
                     .path(areaPath)
                     .addClass(prop[1])
                     .add(series.group);

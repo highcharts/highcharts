@@ -78,12 +78,12 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     clamp,
     correctFloat,
     defined,
+    destroyObjectProperties,
     diffObjects,
     erase,
     error,
@@ -147,6 +147,12 @@ interface KDNode {
 }
 
 interface KDPointSearchObject extends KDPointSearchObjectLike {
+}
+
+interface SeriesZone extends SeriesZonesOptions {
+    area?: SVGElement;
+    clip?: SVGElement;
+    graph?: SVGElement;
 }
 
 /* *
@@ -269,8 +275,6 @@ class Series {
 
     public chart: Chart = void 0 as any;
 
-    public clips?: Array<SVGElement>;
-
     public closestPointRange?: number;
 
     public closestPointRangePx?: number;
@@ -380,9 +384,9 @@ class Series {
         Array<Array<(number|null)>>
     );
 
-    public zoneAxis?: string;
+    public zoneAxis: 'x'|'y'|'z' = 'y';
 
-    public zones: Array<SeriesZonesOptions> = void 0 as any;
+    public zones: Array<SeriesZone> = void 0 as any;
 
     /* *
      *
@@ -840,7 +844,7 @@ class Series {
         }
 
         // Handle color zones
-        this.zoneAxis = options.zoneAxis;
+        this.zoneAxis = options.zoneAxis || 'y';
         const zones = this.zones = (options.zones || []).slice();
         if (
             (options.negativeColor || options.negativeFillColor) &&
@@ -859,13 +863,12 @@ class Series {
             }
             zones.push(zone);
         }
-        if (zones.length) { // Push one extra zone for the rest
-            if (defined(zones[zones.length - 1].value)) {
-                zones.push(styledMode ? {} : {
-                    color: this.color,
-                    fillColor: this.fillColor
-                });
-            }
+        // Push one extra zone for the rest
+        if (zones.length && defined(zones[zones.length - 1].value)) {
+            zones.push(styledMode ? {} : {
+                color: this.color,
+                fillColor: this.fillColor
+            });
         }
 
         fireEvent(this, 'afterSetOptions', { options: options });
@@ -2942,9 +2945,7 @@ class Series {
             }
         }
 
-        if (series.clips) {
-            series.clips.forEach((clip): void => clip.destroy());
-        }
+        series.zones.forEach(destroyObjectProperties);
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -2990,13 +2991,10 @@ class Series {
             chart = this.chart,
             renderer = chart.renderer,
             zones = this.zones,
-            clips = (this.clips || []) as Array<SVGElement>,
             graph = this.graph,
             area = this.area,
             plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
-            axis: Axis = (this as any)[
-                (this.zoneAxis || 'y') + 'Axis'
-            ],
+            axis = this[`${this.zoneAxis}Axis`],
             inverted = chart.inverted;
         let translatedFrom,
             translatedTo: (number|undefined),
@@ -3007,8 +3005,6 @@ class Series {
             pxRange: number,
             pxPosMin: number,
             pxPosMax: number,
-            zoneArea: SVGElement,
-            zoneGraph: SVGElement,
             ignoreZones = false;
 
         if (
@@ -3019,10 +3015,10 @@ class Series {
         ) {
             reversed = axis.reversed;
             horiz = axis.horiz;
-            // The use of the Color Threshold assumes there are no gaps
-            // so it is safe to hide the original graph and area
-            // unless it is not waterfall series, then use showLine property
-            // to set lines between columns to be visible (#7862)
+            // The use of the Color Threshold assumes there are no gaps so it is
+            // safe to hide the original graph and area unless it is not
+            // waterfall series, then use showLine property to set lines between
+            // columns to be visible (#7862)
             if (graph && !this.showLine) {
                 graph.hide();
             }
@@ -3032,7 +3028,9 @@ class Series {
 
             // Create the clips
             extremes = axis.getExtremes();
-            zones.forEach(function (threshold, i): void {
+            zones.forEach((zone, i): void => {
+
+                let clip = zone.clip;
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
@@ -3046,7 +3044,7 @@ class Series {
                 translatedTo = clamp(
                     Math.round(
                         axis.toPixels(
-                            pick(threshold.value, extremes.max),
+                            pick(zone.value, extremes.max),
                             true
                         ) || 0
                     ),
@@ -3084,35 +3082,31 @@ class Series {
                     }
                 }
 
-                if (clips[i]) {
-                    clips[i].animate(clipAttr);
+                if (clip) {
+                    clip.animate(clipAttr);
                 } else {
-                    clips[i] = (renderer.clipRect as any)(clipAttr);
+                    clip = zone.clip = renderer.clipRect(clipAttr);
                 }
 
-                // when no data, graph zone is not applied and after setData
+                // When no data, graph zone is not applied and after setData
                 // clip was ignored. As a result, it should be applied each
                 // time.
-                zoneArea = (series as any)['zone-area-' + i];
-                zoneGraph = (series as any)['zone-graph-' + i];
-
-                if (graph && zoneGraph) {
-                    zoneGraph.clip(clips[i]);
+                if (graph) {
+                    zone.graph?.clip(clip);
                 }
 
-                if (area && zoneArea) {
-                    zoneArea.clip(clips[i]);
+                if (area) {
+                    zone.area?.clip(clip);
                 }
 
-                // if this zone extends out of the axis, ignore the others
-                ignoreZones = (threshold.value as any) > extremes.max;
+                // If this zone extends out of the axis, ignore the others
+                ignoreZones = (zone.value as any) > extremes.max;
 
                 // Clear translatedTo for indicators
                 if (series.resetZones && translatedTo === 0) {
                     translatedTo = void 0;
                 }
             });
-            this.clips = clips;
         } else if (series.visible) {
             // If zones were removed, restore graph and area
             if (graph) {
@@ -4137,7 +4131,6 @@ class Series {
                 'cropped',
                 '_hasPointMarkers',
                 'hasDataLabels',
-                'clips', // #15420
 
                 // Networkgraph (#14397)
                 'nodes',
@@ -4477,9 +4470,7 @@ class Series {
                 ),
                 series.chart.options.chart.animation
             );
-        let attribs,
-            lineWidth = options.lineWidth,
-            i = 0,
+        let lineWidth = options.lineWidth,
             opacity = options.opacity;
 
         state = state || '';
@@ -4531,21 +4522,18 @@ class Series {
                 }
 
                 if (graph && !graph.dashstyle && isNumber(lineWidth)) {
-                    attribs = {
-                        'stroke-width': lineWidth
-                    };
-
-                    // Animate the graph stroke-width.
-                    graph.animate(
-                        attribs,
-                        stateAnimation
-                    );
-                    while ((series as any)['zone-graph-' + i]) {
-                        (series as any)['zone-graph-' + i].animate(
-                            attribs,
-                            stateAnimation
-                        );
-                        i = i + 1;
+                    // Animate the graph stroke-width
+                    for (
+                        const graphElement of [
+                            graph,
+                            ...this.zones.map(
+                                (zone): undefined|SVGElement => zone.graph
+                            )
+                        ]
+                    ) {
+                        graphElement?.animate({
+                            'stroke-width': lineWidth
+                        }, stateAnimation);
                     }
                 }
 

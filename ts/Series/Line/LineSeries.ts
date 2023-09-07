@@ -118,9 +118,9 @@ class LineSeries extends Series {
 
         // Draw the graph
         props.forEach(function (prop, i): void {
-            const graphKey = prop[0];
+            const owner = (i === 0 ? series : series.zones[i - 1]);
             let attribs: SVGAttributes,
-                graph = (series as any)[graphKey];
+                graph = owner.graph;
             const verb = graph ? 'animate' : 'attr';
 
             if (graph) {
@@ -135,8 +135,7 @@ class LineSeries extends Series {
                  * SVG element of area-based charts. Can be used for styling
                  * purposes. If zones are configured, this element will be
                  * hidden and replaced by multiple zone areas, accessible
-                 * via `series['zone-area-x']` (where x is a number,
-                 * starting with 0).
+                 * via `series.zones[i].area`.
                  *
                  * @name Highcharts.Series#area
                  * @type {Highcharts.SVGElement|undefined}
@@ -145,13 +144,12 @@ class LineSeries extends Series {
                  * SVG element of line-based charts. Can be used for styling
                  * purposes. If zones are configured, this element will be
                  * hidden and replaced by multiple zone lines, accessible
-                 * via `series['zone-graph-x']` (where x is a number,
-                 * starting with 0).
+                 * via `series.zones[i].graph`.
                  *
                  * @name Highcharts.Series#graph
                  * @type {Highcharts.SVGElement|undefined}
                  */
-                (series as any)[graphKey] = graph = series.chart.renderer
+                owner.graph = graph = series.chart.renderer
                     .path(graphPath)
                     .addClass(prop[1])
                     .attr({ zIndex: 1 }) // #1069
@@ -363,7 +361,7 @@ class LineSeries extends Series {
      */
     public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
         // Add the zone properties if any
-        this.zones.forEach(function (zone, i): void {
+        this.zones.forEach((zone, i): void => {
             const propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +

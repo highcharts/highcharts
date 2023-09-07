@@ -55,9 +55,9 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].clips[0].attr('width'),
+        chart.series[0].zones[0].clip.attr('width'),
         chart.plotWidth,
-        `When the zones are applied, their' clip width should equal the chart's
+        `When the zones are applied, their clip width should equal the chart's
         plotWidth, #17481.`
     );
 });
