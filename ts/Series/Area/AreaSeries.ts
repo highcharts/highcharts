@@ -259,33 +259,11 @@ class AreaSeries extends LineSeries {
         super.drawGraph.apply(this);
 
         // Define local variables
-        const series = this,
-            areaPath = this.areaPath,
-            options = this.options,
-            zones = this.zones,
-            props = [[
-                'area',
-                'highcharts-area',
-                this.color as any,
-                options.fillColor as any
-            ]]; // Area name, main color, fill color
+        const { areaPath, options } = this;
 
-        zones.forEach(function (
-            zone: SeriesZonesOptions,
-            i: number
-        ): void {
-            props.push([
-                'zone-area-' + i,
-                'highcharts-area highcharts-zone-area-' + i + ' ' +
-                zone.className,
-                zone.color || series.color,
-                zone.fillColor || options.fillColor
-            ]);
-        });
-
-        props.forEach((prop: Array<string>, i): void => {
-            const owner = (i === 0 ? series : series.zones[i - 1]),
-                attribs: SVGAttributes = {};
+        [this, ...this.zones].forEach((owner, i): void => {
+            const attribs: SVGAttributes = {},
+                fillColor = owner.fillColor || options.fillColor;
 
             let area = owner.area;
 
@@ -293,7 +271,7 @@ class AreaSeries extends LineSeries {
 
             // Create or update the area
             if (area) { // Update
-                area.endX = series.preventGraphAnimation ?
+                area.endX = this.preventGraphAnimation ?
                     null :
                     areaPath.xMap;
                 area.animate({ d: areaPath });
@@ -302,21 +280,33 @@ class AreaSeries extends LineSeries {
 
                 attribs.zIndex = 0; // #1069
 
-                area = owner.area = series.chart.renderer
+                /**
+                 * SVG element of area-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone areas, accessible
+                 * via `series.zones[i].area`.
+                 *
+                 * @name Highcharts.Series#area
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                area = owner.area = this.chart.renderer
                     .path(areaPath)
-                    .addClass(prop[1])
-                    .add(series.group);
+                    .addClass(
+                        'highcharts-area' +
+                        (i ? `highcharts-zone-area-${i - 1}` : '')
+                    )
+                    .add(this.group);
                 area.isArea = true;
             }
 
-            if (!series.chart.styledMode) {
+            if (!this.chart.styledMode) {
                 // If there is fillColor defined for the area, set it
-                if (prop[3]) {
-                    attribs.fill = prop[3];
+                if (fillColor) {
+                    attribs.fill = fillColor;
                 } else {
-                    // Otherwise, we set it to the series color and add
+                    // Otherwise, we set it to the zone/series color and add
                     // fill-opacity (#18939)
-                    attribs.fill = prop[2];
+                    attribs.fill = owner.color || this.color;
                     attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
                 }
             }

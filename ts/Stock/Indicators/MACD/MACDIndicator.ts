@@ -365,6 +365,7 @@ class MACDIndicator extends SMAIndicator {
         // indicator.graph = null;
     }
 
+    /*
     public getZonesGraphs(
         props: Array<Array<string>>
     ): Array<Array<string>> {
@@ -388,6 +389,7 @@ class MACDIndicator extends SMAIndicator {
 
         return currentZones;
     }
+    */
 
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method

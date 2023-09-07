@@ -965,14 +965,12 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
 }, { order: 2 });
 
 interface WaterfallSeries {
-    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;
 }
 
 extend(WaterfallSeries.prototype, {
-    getZonesGraphs: LineSeries.prototype.getZonesGraphs,
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
