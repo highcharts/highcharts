@@ -52,24 +52,26 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      */
     firstRowAsNames?: boolean;
     /**
-     * The key for a Google Spreadsheet to load. See [general information
-     * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+     * The API key of a Google account to access spreadsheets with.
+     *
+     * @see {@link https://developers.google.com/workspace/guides/create-credentials#api-key API key credentials}
      */
     googleAPIKey: string;
     /**
-     * The Google Spreadsheet worksheet to use in combination with
-     * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
-     * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
+     * The Google Docs spreadsheet to load. This is the spreadsheet key itself
+     * as found in the document URL as in
+     * `https://docs.google.com/spreadsheets/d/{key}/edit#gid=0`
+     * or
+     * `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
      */
     googleSpreadsheetKey: string;
     /**
      * The Google Spreadsheet `range` to use in combination with
-     * [googleSpreadsheetKey](#data.googleSpreadsheetKey). See
-     * [developers.google.com](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get)
-     * for details.
+     * [googleSpreadsheetKey](#data.googleSpreadsheetKey).
+     * If given, it takes precedence over `startColumn`, `endColumn`, `startRow`
+     * and `endRow`.
      *
-     * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
-     * `endRow`.
+     * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get developers.google.com}
      */
     googleSpreadsheetRange?: string;
     /**
