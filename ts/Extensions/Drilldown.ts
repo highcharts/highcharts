@@ -62,14 +62,11 @@ import type MapPointType from '../Series/Map/MapPoint.js';
 import type MapSeriesType from '../Series/Map/MapSeries.js';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, diffObjects, extend, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
 
 const {
-    defined,
-    diffObjects,
-    extend,
-    merge,
-    objectEach,
     pick,
     syncTimeout
 } = U;

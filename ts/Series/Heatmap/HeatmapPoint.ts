@@ -32,10 +32,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend } = ObjectHelper;
 const {
     clamp,
-    defined,
-    extend,
     pick
 } = U;
 

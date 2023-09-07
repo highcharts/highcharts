@@ -25,13 +25,10 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
 
 import '../../Core/Legend/Legend.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 
 /* *
  *

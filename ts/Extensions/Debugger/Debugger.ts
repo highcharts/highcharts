@@ -26,10 +26,11 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const { addEvent } = EH;
 const {
-    find,
-    isNumber
+    find
 } = U;
 
 /* *

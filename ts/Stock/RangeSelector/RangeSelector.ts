@@ -37,17 +37,21 @@ import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const {
+    defined,
+    destroyObjectProperties,
+    extend,
+    merge,
+    objectEach
+} = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     createElement,
     css,
-    defined,
-    destroyObjectProperties,
     discardElement,
-    extend,
-    isNumber,
-    merge,
-    objectEach,
     pad,
     pick,
     pInt,

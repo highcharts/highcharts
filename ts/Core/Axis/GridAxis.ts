@@ -39,15 +39,18 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    merge,
+    defined
+} = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
 const { addEvent } = EH;
 const {
-    defined,
     erase,
     find,
-    isArray,
-    isNumber,
-    merge,
     pick,
     timeUnits,
     wrap
@@ -165,7 +168,7 @@ function argsToArray(args: IArguments): Array<any> {
  */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return U.isObject(x, true);
+    return TypeChecker.isObject(x, true);
 }
 
 /**

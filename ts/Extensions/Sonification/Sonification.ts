@@ -37,8 +37,6 @@ const {
 } = D;
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    merge,
     pick
 } = U;
 import H from '../../Core/Globals.js';
@@ -54,6 +52,8 @@ import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 
 

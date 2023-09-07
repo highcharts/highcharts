@@ -57,18 +57,15 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    defined,
-    extend,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    syncTimeout
+    pick
 } = U;
-import A from '../../Core/Animation/AnimationUtilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = ObjectHelper;
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
+const { defined, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
-const { animObject } = A;
 
 /* *
  *

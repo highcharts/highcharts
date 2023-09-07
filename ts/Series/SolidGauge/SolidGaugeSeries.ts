@@ -36,11 +36,12 @@ const {
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 const {
     clamp,
-    extend,
-    isNumber,
-    merge,
     pick,
     pInt
 } = U;

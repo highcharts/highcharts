@@ -35,15 +35,15 @@ import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
     pick
 } = U;
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TypeChecker;
+const { merge, objectEach } = ObjectHelper;
 
 /* *
  *

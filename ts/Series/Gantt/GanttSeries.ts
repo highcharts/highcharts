@@ -35,9 +35,6 @@ const {
 import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    isNumber,
-    merge,
     splat
 } = U;
 
@@ -45,6 +42,10 @@ import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 
 /* *
  *

@@ -31,15 +31,15 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
-    extend,
-    isNumber,
-    merge,
-    objectEach,
     pick
 } = U;
 import './MapNavigationDefaults.js';
 import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, merge, objectEach } = ObjectHelper;
 const { addEvent } = EH;
 
 /* *

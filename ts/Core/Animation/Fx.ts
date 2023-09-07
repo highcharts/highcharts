@@ -27,11 +27,13 @@ import Color from '../Color/Color.js';
 const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
-import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const {
-    isNumber,
     objectEach
-} = U;
+} = ObjectHelper;
+
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

@@ -55,11 +55,11 @@ import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { destroyObjectProperties, merge } = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    destroyObjectProperties,
     erase,
-    merge,
     pick,
     splat
 } = U;

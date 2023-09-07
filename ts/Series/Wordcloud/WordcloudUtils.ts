@@ -27,12 +27,12 @@ import type WordcloudSeries from './WordcloudSeries';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 const {
-    extend,
-    find,
-    isNumber,
-    isObject,
-    merge
+    find
 } = U;
 
 /* *

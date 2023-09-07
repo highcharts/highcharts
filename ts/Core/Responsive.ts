@@ -10,6 +10,12 @@
 
 'use strict';
 
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const {
+    extend,
+    merge,
+    diffObjects
+} = ObjectHelper;
 /* *
  *
  *  Imports
@@ -21,13 +27,7 @@ import type GlobalOptions from './Options';
 
 import U from './Utilities.js';
 const {
-    diffObjects,
-    extend,
     find,
-    isArray,
-    isObject,
-    merge,
-    objectEach,
     pick,
     splat,
     uniqueKey

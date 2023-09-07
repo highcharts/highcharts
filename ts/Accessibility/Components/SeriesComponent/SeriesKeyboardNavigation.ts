@@ -31,14 +31,15 @@ const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import U from '../../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined
+} = ObjectHelper;
 const { fireEvent } = EH;
 const {
     getPointFromXY,

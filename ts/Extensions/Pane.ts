@@ -22,12 +22,11 @@ import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, merge, extend } = ObjectHelper;
 const { addEvent } = EH;
 const {
     correctFloat,
-    defined,
-    extend,
-    merge,
     pick,
     splat
 } = U;

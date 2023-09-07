@@ -22,12 +22,12 @@ import type StackingAxis from './Stacking/StackingAxis';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-const { addEvent } = EH;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
     objectEach
-} = U;
+} = ObjectHelper;
+const { addEvent } = EH;
 
 /* *
  *

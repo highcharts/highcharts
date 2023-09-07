@@ -41,11 +41,14 @@ const {
     }
 } = SeriesRegistry;
 const { prototype: areaRangeProto } = AreaRangeSeries;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    extend,
+    merge
+} = ObjectHelper;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    merge,
     pick
 } = U;
 

@@ -39,14 +39,14 @@ import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TypeChecker;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
     arrayMax,
     arrayMin,
-    defined,
-    extend,
-    isArray,
-    merge,
     pick,
     relativeLength
 } = U;

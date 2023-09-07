@@ -37,17 +37,19 @@ import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const {
+    extend,
+    merge
+} = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isString } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
     clamp,
     css,
     discardElement,
-    extend,
-    isArray,
-    isNumber,
-    isString,
-    merge,
     pick,
     splat,
     syncTimeout

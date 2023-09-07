@@ -49,14 +49,13 @@ const {
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject, isString } = TypeChecker;
+const { merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     clamp,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
     pick,
     relativeLength
 } = U;

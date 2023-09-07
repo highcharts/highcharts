@@ -33,10 +33,7 @@ import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
-    defined,
     error,
-    extend,
-    merge,
     pick,
     splat
 } = U;
@@ -213,6 +210,8 @@ declare global {
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 
 const max = Math.max,

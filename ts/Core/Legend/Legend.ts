@@ -47,15 +47,16 @@ import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { defined, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     createElement,
     css,
-    defined,
     discardElement,
     find,
-    isNumber,
-    merge,
     pick,
     relativeLength,
     stableSort,

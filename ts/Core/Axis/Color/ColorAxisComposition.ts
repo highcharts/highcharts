@@ -31,10 +31,13 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-const { addEvent } = EH;
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 const {
     extend,
-    merge,
+    merge
+} = ObjectHelper;
+const { addEvent } = EH;
+const {
     pick,
     splat
 } = U;

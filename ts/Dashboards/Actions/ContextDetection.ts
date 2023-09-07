@@ -14,13 +14,10 @@
  *
  * */
 
-import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 import type Cell from '../Layout/Cell.js';
 import GUIElement from '../Layout/GUIElement.js';
-
-const {
-    defined
-} = U;
 
 class ContextDetection {
     public static isGUIElementOnParentEdge(

@@ -21,10 +21,13 @@ import type Scrollbar from '../../Stock/Scrollbar/Scrollbar';
 import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined
+} = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
 const { addEvent } = EH;
 const {
-    defined,
     pick
 } = U;
 

@@ -22,13 +22,12 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    defined,
-    extend,
     getNestedProperty,
-    merge,
     pick
 } = U;
 import T from '../../Core/Templating.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const {
     format
 } = T;

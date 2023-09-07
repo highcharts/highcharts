@@ -26,12 +26,12 @@ import type { SymbolKey } from './SymbolType';
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { defined, extend, merge } = ObjectHelper;
 const { removeEvent } = EH;
 const {
-    defined,
-    extend,
-    isNumber,
-    merge,
     pick
 } = U;
 

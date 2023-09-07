@@ -26,14 +26,16 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TypeChecker;
 const {
-    defined,
-    getStyle,
-    isArray,
-    isNumber,
-    isObject,
     merge,
-    objectEach,
+    defined,
+    objectEach
+} = ObjectHelper;
+const {
+    getStyle,
     pick
 } = U;
 

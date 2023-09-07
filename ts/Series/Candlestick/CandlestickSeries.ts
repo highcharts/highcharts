@@ -26,12 +26,12 @@ import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
     column: ColumnSeries,
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *

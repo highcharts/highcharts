@@ -28,10 +28,11 @@ import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
 import U from '../../../Core/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-const { addEvent } = EH;
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 const {
     merge
-} = U;
+} = ObjectHelper;
+const { addEvent } = EH;
 
 /* *
  *

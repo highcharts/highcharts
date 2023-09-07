@@ -39,11 +39,13 @@ import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isObject } = TypeChecker;
+const { defined, merge } = ObjectHelper;
 const { addEvent, removeEvent } = EH;
 const {
-    defined,
     erase,
-    merge,
     pick,
     wrap
 } = U;
@@ -370,7 +372,7 @@ SVGRenderer.prototype.addPattern = function (
 
     // Use an SVG path for the pattern
     if (options.path) {
-        path = U.isObject(options.path) ?
+        path = isObject(options.path) ?
             options.path :
             { d: options.path };
 

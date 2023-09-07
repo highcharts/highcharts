@@ -33,15 +33,15 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
-    extend,
-    isNumber,
-    merge,
-    objectEach,
     pick
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, merge, objectEach } = ObjectHelper;
 const { addEvent } = EH;
 
 /* *

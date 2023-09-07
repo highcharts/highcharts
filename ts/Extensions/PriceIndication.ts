@@ -13,15 +13,13 @@
 import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
-import type Point from '../Core/Series/Point';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray } = TypeChecker;
+const { merge } = ObjectHelper;
 const { addEvent } = EH;
-const {
-    isArray,
-    merge
-} = U;
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {

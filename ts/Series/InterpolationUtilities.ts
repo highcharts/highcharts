@@ -25,9 +25,10 @@ const {
     doc
 } = H;
 
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 import U from '../Core/Utilities.js';
 const {
-    defined,
     pick
 } = U;
 

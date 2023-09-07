@@ -40,17 +40,16 @@ import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { objectEach, defined, extend } = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
     attr,
     css,
-    defined,
-    extend,
     find,
-    isNumber,
-    isObject,
-    objectEach,
     offset,
     pick,
     splat

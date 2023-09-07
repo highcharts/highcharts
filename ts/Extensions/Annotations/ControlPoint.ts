@@ -21,8 +21,9 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
-    merge,
     pick
 } = U;
 

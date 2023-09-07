@@ -56,20 +56,20 @@ const {
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction, isObject, isString } = TypeChecker;
+const {
+    defined,
+    extend,
+    merge, objectEach
+} = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     attr,
     createElement,
     css,
-    defined,
     erase,
-    extend,
-    isArray,
-    isFunction,
-    isObject,
-    isString,
-    merge,
-    objectEach,
     pick,
     pInt,
     syncTimeout,
@@ -1405,7 +1405,7 @@ class SVGElement implements SVGElementLike {
             cacheKey;
 
         // Avoid undefined and null (#7316)
-        if (defined(textStr)) {
+        if (ObjectHelper.defined(textStr)) {
 
             cacheKey = textStr.toString();
 

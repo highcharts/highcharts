@@ -27,9 +27,10 @@ import type Pointer from '../../Core/Pointer';
 import AxisResizer from './AxisResizer.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    merge,
     wrap
 } = U;
 

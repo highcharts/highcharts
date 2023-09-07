@@ -24,13 +24,14 @@ const { uniqueKey } = DU;
 import U from '../../Core/Utilities.js';
 const {
     pick,
-    defined
 } = U;
 
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 
 /**
  * @internal

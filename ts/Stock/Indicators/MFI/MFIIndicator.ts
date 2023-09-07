@@ -31,11 +31,12 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 const {
-    extend,
-    merge,
-    error,
-    isArray
+    error
 } = U;
 
 /* *

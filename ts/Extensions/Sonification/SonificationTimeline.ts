@@ -21,10 +21,10 @@ import toMIDI from './MIDI.js';
 import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge } = ObjectHelper;
 const {
-    defined,
-    find,
-    merge
+    find
 } = U;
 
 declare global {

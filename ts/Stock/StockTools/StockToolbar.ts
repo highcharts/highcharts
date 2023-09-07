@@ -29,13 +29,15 @@ import type {
 
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
     createElement,
     css,
     getStyle,
-    isArray,
-    merge,
     pick
 } = U;
 

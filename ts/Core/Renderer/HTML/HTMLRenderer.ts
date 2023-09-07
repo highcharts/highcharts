@@ -24,10 +24,11 @@ import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { extend } = ObjectHelper;
 const {
     attr,
     createElement,
-    extend,
     pick
 } = U;
 

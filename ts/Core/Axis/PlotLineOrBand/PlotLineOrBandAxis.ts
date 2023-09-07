@@ -23,10 +23,14 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const {
-    erase,
-    extend,
-    isNumber
+    extend
+} = ObjectHelper;
+const {
+    erase
 } = U;
 
 /* *

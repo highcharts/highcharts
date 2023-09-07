@@ -33,7 +33,6 @@ const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
-    isNumber,
     pick,
     syncTimeout
 } = U;
@@ -45,6 +44,8 @@ import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
     stripHTMLTagsFromString: stripHTMLTags,

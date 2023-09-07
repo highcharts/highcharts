@@ -32,9 +32,10 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const { extend } = U;
-
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    extend
+} = ObjectHelper;
 /* *
  *
  *  Class

@@ -41,7 +41,9 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode';
-const { correctFloat, extend } = U;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = ObjectHelper;
+const { correctFloat } = U;
 
 
 /* *

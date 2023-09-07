@@ -30,12 +30,16 @@ import D from '../Defaults.js';
 const { getOptions } = D;
 import U from '../Utilities.js';
 const {
-    isArray,
-    merge,
     splat
 } = U;
 
 import '../../Series/Gantt/GanttSeries.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TypeChecker;
+const {
+    merge
+} = ObjectHelper;
 
 /* *
  *

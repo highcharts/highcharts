@@ -2,8 +2,9 @@ import type SankeySeries from './SankeySeries';
 import type SankeyPoint from './SankeyPoint';
 
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 const {
-    defined,
     relativeLength
 } = U;
 

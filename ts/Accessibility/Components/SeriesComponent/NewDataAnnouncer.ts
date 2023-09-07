@@ -27,9 +27,6 @@ import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 import Announcer from '../../Utils/Announcer.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -37,6 +34,10 @@ const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined
+} = ObjectHelper;
 const { addEvent } = EH;
 const {
     defaultPointDescriptionFormatter,

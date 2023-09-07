@@ -15,17 +15,17 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
-import type { RendererElement, SelectFormFieldItemOptions } from '../EditRenderer.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';
 import EditRenderer from '../EditRenderer.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 
 const {
     createElement,
-    merge
 } = U;
 
 class MenuItem {

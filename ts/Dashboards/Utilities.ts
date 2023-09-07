@@ -23,11 +23,11 @@
  * */
 
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { objectEach } = ObjectHelper;
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isClass, isDOMElement, isObject } = TypeChecker;
 const {
-    isClass,
-    isDOMElement,
-    isObject,
-    objectEach,
     uniqueKey: coreUniqueKey
 } = U;
 

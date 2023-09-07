@@ -35,13 +35,12 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, defined, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
-    defined,
-    extend,
-    isNumber,
-    merge,
-    objectEach,
     pick,
     splat
 } = U;

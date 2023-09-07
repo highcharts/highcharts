@@ -33,10 +33,6 @@ const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
     removeElement
@@ -61,6 +57,8 @@ import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { merge, extend } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 
 /* *

@@ -45,18 +45,14 @@ import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction, isNumber, isObject } = TypeChecker;
+const { extend, merge, objectEach, defined } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    defined,
     erase,
-    extend,
     getNestedProperty,
-    isArray,
-    isFunction,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
     pick,
     syncTimeout,
     uniqueKey

@@ -42,18 +42,15 @@ const {
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge, extend, defined, objectEach } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
 const { fireEvent } = EH;
 const {
     clamp,
-    defined,
-    extend,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    objectEach,
-    relativeLength
+    pick
 } = U;
 
 /* *

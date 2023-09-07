@@ -43,14 +43,15 @@ const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     attr,
-    css,
-    merge
+    css
 } = U;
 
 import EventProvider from './Utils/EventProvider.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = ChartUtilities;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
     cloneMouseEvent,
     cloneTouchEvent,

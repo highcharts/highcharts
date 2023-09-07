@@ -25,13 +25,14 @@ import GUIElement from '../Layout/GUIElement.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    merge,
     createElement,
     pick
 } = U;
 
 import EditMode from '../EditMode/EditMode';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
 
 /**

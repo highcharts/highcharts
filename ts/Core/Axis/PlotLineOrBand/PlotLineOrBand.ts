@@ -34,15 +34,18 @@ import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined,
+    objectEach,
+    destroyObjectProperties,
+    merge
+} = ObjectHelper;
 const { fireEvent } = EH;
 const {
     arrayMax,
     arrayMin,
-    defined,
-    destroyObjectProperties,
     erase,
-    merge,
-    objectEach,
     pick
 } = U;
 

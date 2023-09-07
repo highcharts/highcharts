@@ -37,16 +37,20 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const {
+    extend,
+    merge,
+    defined,
+    destroyObjectProperties,
+    objectEach
+} = ObjectHelper;
 const { fireEvent } = EH;
 const {
     clamp,
     correctFloat,
-    defined,
-    destroyObjectProperties,
-    extend,
-    isNumber,
-    merge,
-    objectEach,
     pick
 } = U;
 

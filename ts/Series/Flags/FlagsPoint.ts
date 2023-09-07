@@ -21,6 +21,8 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const {
     column: {
         prototype: {
@@ -28,8 +30,6 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
 
 /* *
  *

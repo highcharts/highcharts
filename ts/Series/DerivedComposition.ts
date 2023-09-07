@@ -20,10 +20,9 @@ const { noop } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 const { addEvent } = EH;
-const {
-    defined
-} = U;
 
 /* *
  *

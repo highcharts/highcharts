@@ -47,11 +47,11 @@ const {
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
-    error,
-    extend,
-    merge
+    error
 } = U;
 
 AST.allowedAttributes.push(

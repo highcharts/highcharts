@@ -45,16 +45,13 @@ import NBU from './NavigationBindingsUtilities.js';
 const { getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction, isNumber, isObject } = TypeChecker;
+const { defined, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     attr,
-    defined,
-    isArray,
-    isFunction,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
     pick
 } = U;
 

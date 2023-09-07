@@ -44,11 +44,11 @@ import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
     createElement,
-    defined,
-    merge,
     pick
 } = U;
 

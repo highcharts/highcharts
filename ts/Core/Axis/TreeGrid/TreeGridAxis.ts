@@ -43,13 +43,15 @@ import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isObject, isString } = TypeChecker;
+const {
+    merge
+} = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     find,
-    isArray,
-    isObject,
-    isString,
-    merge,
     pick,
     wrap
 } = U;

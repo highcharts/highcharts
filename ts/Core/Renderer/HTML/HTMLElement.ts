@@ -34,10 +34,10 @@ const {
 } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend } = ObjectHelper;
 const {
     css,
-    defined,
-    extend,
     pick,
     pInt
 } = U;

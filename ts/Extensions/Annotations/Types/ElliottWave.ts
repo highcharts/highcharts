@@ -19,8 +19,8 @@ import type ColorType from '../../../Core/Color/ColorType';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 
 /* *
  *

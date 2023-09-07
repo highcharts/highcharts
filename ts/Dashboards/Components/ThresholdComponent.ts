@@ -28,12 +28,11 @@ import type Globals from '../Globals';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TypeChecker;
+const { merge, objectEach } = ObjectHelper;
 const {
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
     pick,
     splat
 } = U;

@@ -21,9 +21,11 @@ import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { defined } = ObjectHelper;
 const {
-    defined,
-    isNumber,
     pick
 } = U;
 

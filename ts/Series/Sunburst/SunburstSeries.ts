@@ -55,15 +55,13 @@ const {
 import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject, isString } = TypeChecker;
+const { defined, extend, merge } = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    defined,
     error,
-    extend,
-    isNumber,
-    isObject,
-    isString,
-    merge,
     splat
 } = U;
 

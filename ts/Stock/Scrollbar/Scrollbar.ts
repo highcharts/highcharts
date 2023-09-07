@@ -31,12 +31,11 @@ import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, destroyObjectProperties, merge } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
     correctFloat,
-    defined,
-    destroyObjectProperties,
-    merge,
     pick
 } = U;
 

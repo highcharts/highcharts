@@ -36,10 +36,10 @@ import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    extend,
-    merge,
     pick
 } = U;
 

@@ -36,9 +36,10 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem, { StackBoxProps } from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    extend,
     pick,
     wrap
 } = U;

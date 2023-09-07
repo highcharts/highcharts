@@ -25,12 +25,11 @@ import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
     pick
 } = U;
 
@@ -149,12 +148,13 @@ function getLevelOptions<T extends TreeUtilities.Series>(
         defaults: any,
         converted,
         i: number,
-        from: any,
+        from: number,
         to,
         levels;
 
     if (isObject(params)) {
         from = isNumber(params.from) ? params.from : 1;
+        (params.from) ? params.from : 1;
         levels = params.levels;
         converted = {} as any;
         defaults = isObject(params.defaults) ? params.defaults : {};

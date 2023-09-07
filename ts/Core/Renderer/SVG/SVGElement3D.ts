@@ -34,10 +34,9 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge, objectEach } = ObjectHelper;
 const {
-    defined,
-    merge,
-    objectEach,
     pick
 } = U;
 

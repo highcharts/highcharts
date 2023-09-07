@@ -31,11 +31,11 @@ const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge } = ObjectHelper;
 const {
     arrayMax,
     clamp,
-    defined,
-    merge,
     pick,
     relativeLength
 } = U;

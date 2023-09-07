@@ -43,12 +43,15 @@ import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
+const {
+    merge,
+    extend
+} = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    extend,
-    isArray,
-    isNumber,
-    merge,
     pick
 } = U;
 

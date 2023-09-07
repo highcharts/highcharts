@@ -22,10 +22,11 @@ import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
 import MenuItemBindings from './MenuItemBindings.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 
 const {
     createElement,
-    merge
 } = U;
 
 class Menu {

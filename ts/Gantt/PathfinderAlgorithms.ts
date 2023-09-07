@@ -18,7 +18,6 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import PathUtilities from '../Series/PathUtilities.js';
 import U from '../Core/Utilities.js';
 const {
-    extend,
     pick
 } = U;
 

@@ -19,18 +19,17 @@
 import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isObject } = TypeChecker;
+const { merge, defined, objectEach, extend } = ObjectHelper;
 import H from './Globals.js';
 const {
     win
 } = H;
 import U from './Utilities.js';
 const {
-    defined,
     error,
-    extend,
-    isObject,
-    merge,
-    objectEach,
     pad,
     pick,
     splat,

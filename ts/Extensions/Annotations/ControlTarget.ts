@@ -23,6 +23,10 @@ import type MockPointOptions from './MockPointOptions';
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isObject, isString } = TypeChecker;
+const { merge } = ObjectHelper;
 
 /* *
  *
@@ -112,7 +116,7 @@ namespace ControlTarget {
             controlPointsOptions = this.options.controlPoints || [];
 
         controlPointsOptions.forEach((controlPointOptions, i): void => {
-            const options = U.merge(
+            const options = merge(
                 this.options.controlPointOptions,
                 controlPointOptions
             );
@@ -162,7 +166,7 @@ namespace ControlTarget {
 
         return {
             relativePosition: anchor,
-            absolutePosition: U.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + (
                     point.mock ? plotBox.translateX : chart.plotLeft
                 ),
@@ -180,7 +184,7 @@ namespace ControlTarget {
     ): void {
 
         if (U.pushUnique(composedMembers, ControlTargetClass)) {
-            U.merge(true, ControlTargetClass.prototype, {
+            merge(true, ControlTargetClass.prototype, {
                 addControlPoints,
                 anchor,
                 destroyControlTarget,
@@ -292,13 +296,13 @@ namespace ControlTarget {
         }
 
         if (!point || point.series === null) {
-            if (U.isObject(pointOptions)) {
+            if (isObject(pointOptions)) {
                 point = new MockPoint(
                     this.chart,
                     this,
                     pointOptions as MockPointOptions
                 );
-            } else if (U.isString(pointOptions)) {
+            } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
                 const pointConfig: (MockPoint|MockPointOptions) =

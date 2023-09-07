@@ -29,11 +29,12 @@ const {
     isFirefox
 } = H;
 import U from '../../../Core/Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isObject } = TypeChecker;
+const { objectEach } = ObjectHelper;
 const {
     createElement,
-    isArray,
-    isObject,
-    objectEach,
     pick,
     stableSort
 } = U;

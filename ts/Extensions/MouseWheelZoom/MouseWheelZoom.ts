@@ -25,12 +25,13 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isObject } = TypeChecker;
+const { defined, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    isObject,
-    pick,
-    defined,
-    merge
+    pick
 } = U;
 
 /* *

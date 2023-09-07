@@ -37,13 +37,13 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
-    defined,
-    extend,
-    isNumber,
-    merge,
     pick
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { defined, extend, merge } = ObjectHelper;
 
 /* *
  *

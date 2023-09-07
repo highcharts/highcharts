@@ -24,9 +24,10 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
-    extendClass,
-    merge
+    extendClass
 } = U;
 
 /* *

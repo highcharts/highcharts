@@ -47,18 +47,22 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
     clamp,
-    defined,
-    extend,
     find,
-    isNumber,
-    isString,
-    merge,
     pick,
     splat
 } = U;
 
 import '../Pointer.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isString } = TypeChecker;
+const {
+    defined,
+    extend,
+    merge
+} = ObjectHelper;
+
 const { addEvent } = EH;
 
 /* *

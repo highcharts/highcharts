@@ -62,10 +62,12 @@ const {
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
-    extend,
-    isNumber,
     pick,
     syncTimeout
 } = U;

@@ -27,13 +27,12 @@ import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
 
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const { addEvent, fireEvent } = EH;
-const {
-    isNumber,
-    merge
-} = U;
 
 /* *
  *

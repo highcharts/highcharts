@@ -48,10 +48,9 @@ import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const {
-    defined,
-    extend,
-    merge,
     pick
 } = U;
 

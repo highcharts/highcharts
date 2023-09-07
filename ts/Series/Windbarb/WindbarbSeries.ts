@@ -34,11 +34,11 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    merge,
     pick
 } = U;
 import WindbarbPoint from './WindbarbPoint.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 
 /**
  * @private

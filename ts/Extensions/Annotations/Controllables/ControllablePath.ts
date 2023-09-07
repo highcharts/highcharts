@@ -27,11 +27,10 @@ const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    defined,
-    extend,
-    merge,
     uniqueKey
 } = U;
 

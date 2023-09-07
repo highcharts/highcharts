@@ -45,13 +45,8 @@ const { classNamePrefix } = Globals;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
-    isArray,
-    merge,
-    objectEach,
-    isFunction,
     getStyle,
     relativeLength,
-    diffObjects
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -64,6 +59,10 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction } = TypeChecker;
+const { diffObjects, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 
 /* *

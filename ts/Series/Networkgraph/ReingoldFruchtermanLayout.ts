@@ -33,12 +33,14 @@ import QuadTreeNode from './QuadTreeNode.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    defined,
-    isFunction,
     pick
 } = U;
 import VerletIntegration from './VerletIntegration.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isFunction } = TypeChecker;
+const { defined } = ObjectHelper;
 const { fireEvent } = EH;
 
 /* *

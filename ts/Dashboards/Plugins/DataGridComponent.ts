@@ -32,10 +32,10 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { diffObjects, merge } = ObjectHelper;
 
 const {
-    diffObjects,
-    merge,
     uniqueKey
 } = U;
 

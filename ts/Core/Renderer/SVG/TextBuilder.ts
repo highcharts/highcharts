@@ -33,12 +33,13 @@ const {
 } = H;
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isString } = TypeChecker;
+const { extend, objectEach } = ObjectHelper;
 const { fireEvent } = EH;
 const {
     attr,
-    extend,
-    isString,
-    objectEach,
     pick
 } = U;
 

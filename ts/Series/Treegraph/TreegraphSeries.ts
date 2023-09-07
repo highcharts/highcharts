@@ -41,8 +41,6 @@ import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    extend,
-    merge,
     pick,
     relativeLength,
     splat
@@ -54,6 +52,8 @@ import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 
 /* *
  *

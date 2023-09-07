@@ -16,9 +16,9 @@ import type PointerEvent from '../Core/PointerEvent';
 
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, extend } = ObjectHelper;
 const {
-    defined,
-    extend,
     pick,
     wrap
 } = U;

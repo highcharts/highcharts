@@ -35,10 +35,10 @@ import type {
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TypeChecker;
 const { addEvent } = EH;
 const {
-    isObject,
-    isNumber,
     pick,
     wrap
 } = U;

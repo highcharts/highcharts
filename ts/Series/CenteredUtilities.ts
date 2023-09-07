@@ -23,9 +23,10 @@ const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const { fireEvent } = EH;
 const {
-    isNumber,
     pick,
     relativeLength
 } = U;

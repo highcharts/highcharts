@@ -26,14 +26,15 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isFunction, isString } = TypeChecker;
+const { objectEach } = ObjectHelper;
 const {
     attr,
     createElement,
     css,
     error,
-    isFunction,
-    isString,
-    objectEach,
     splat
 } = U;
 const {

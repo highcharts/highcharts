@@ -39,12 +39,15 @@ const {
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-const { addEvent } = EH;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
-    defined,
     extend,
     merge,
     objectEach,
+    defined
+} = ObjectHelper;
+const { addEvent } = EH;
+const {
     wrap
 } = U;
 

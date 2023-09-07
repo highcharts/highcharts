@@ -38,16 +38,14 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge,
-    pick
-} = U;
 
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 const { fireEvent } = EH;
 
 /* *

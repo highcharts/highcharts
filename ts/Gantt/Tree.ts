@@ -16,9 +16,11 @@
 
 import type PointOptions from '../Core/Series/PointOptions';
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { extend } = ObjectHelper;
 const {
-    extend,
-    isNumber,
     pick
 } = U;
 

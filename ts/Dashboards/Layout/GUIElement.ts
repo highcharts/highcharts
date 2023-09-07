@@ -26,12 +26,13 @@ import Globals from '../Globals.js';
 import Row from './Row';
 import Cell from './Cell';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { objectEach } = ObjectHelper;
 const { addEvent } = EH;
 
 const {
     createElement,
     uniqueKey,
-    objectEach,
     error
 } = U;
 

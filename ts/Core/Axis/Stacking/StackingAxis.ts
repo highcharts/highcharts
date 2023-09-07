@@ -30,14 +30,17 @@ const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
+const {
+    objectEach,
+    destroyObjectProperties,
+    defined
+} = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
     correctFloat,
-    defined,
-    destroyObjectProperties,
-    isArray,
-    isNumber,
-    objectEach,
     pick
 } = U;
 

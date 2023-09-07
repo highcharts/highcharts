@@ -22,9 +22,13 @@ import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const {
-    isNumber,
-    merge,
+    merge
+} = ObjectHelper;
+const {
     pInt
 } = U;
 

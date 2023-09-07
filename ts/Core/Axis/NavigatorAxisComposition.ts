@@ -22,12 +22,16 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import H from '../Globals.js';
 const { isTouchDevice } = H;
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined
+} = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
 const { addEvent } = EH;
 const {
     correctFloat,
-    defined,
-    isNumber,
     pick
 } = U;
 

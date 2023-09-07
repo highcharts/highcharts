@@ -45,18 +45,17 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    defined,
-    extend,
     find,
-    isNumber,
-    isObject,
-    merge,
     pick,
     relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TypeChecker;
+const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 
 /* *

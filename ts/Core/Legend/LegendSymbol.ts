@@ -24,9 +24,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend,
-    merge,
+    merge
+} = ObjectHelper;
+const {
     pick
 } = U;
 

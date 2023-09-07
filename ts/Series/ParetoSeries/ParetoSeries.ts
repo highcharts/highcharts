@@ -27,10 +27,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const {
-    correctFloat,
-    merge,
-    extend
+    correctFloat
 } = U;
 
 /* *

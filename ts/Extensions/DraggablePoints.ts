@@ -49,12 +49,13 @@ const {
 import U from '../Core/Utilities.js';
 import { CursorValue } from '../Core/Renderer/CSSObject';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+const { merge, objectEach } = ObjectHelper;
 const { addEvent } = EH;
 const {
     clamp,
-    isNumber,
-    merge,
-    objectEach,
     pick
 } = U;
 

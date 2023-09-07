@@ -27,8 +27,9 @@ import DataLabel from '../../Core/Series/DataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
-    merge,
     pick
 } = U;
 

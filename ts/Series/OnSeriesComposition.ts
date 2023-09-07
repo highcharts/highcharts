@@ -25,8 +25,9 @@ const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined } = ObjectHelper;
 const {
-    defined,
     stableSort
 } = U;
 

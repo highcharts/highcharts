@@ -33,11 +33,11 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const { fireEvent } = EH;
 const {
     clamp,
-    extend,
-    merge,
     pick,
     relativeLength
 } = U;

@@ -78,26 +78,22 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isString } = TypeChecker;
+const { defined, diffObjects, extend, merge, objectEach } = ObjectHelper;
 const { fireEvent, removeEvent } = EH;
 const {
     arrayMax,
     arrayMin,
     clamp,
     correctFloat,
-    defined,
-    diffObjects,
     erase,
     error,
-    extend,
     find,
     getNestedProperty,
     insertItem,
-    isArray,
     getClosestDistance,
-    isNumber,
-    isString,
-    merge,
-    objectEach,
     pick,
     splat,
     syncTimeout

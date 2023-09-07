@@ -31,9 +31,10 @@ import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
-    merge,
     pick
 } = U;
 

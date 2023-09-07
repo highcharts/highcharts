@@ -20,11 +20,13 @@ import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
 import type CMOPoint from './CMOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = ObjectHelper;
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const { isNumber, merge } = U;
 
 /* *
  *

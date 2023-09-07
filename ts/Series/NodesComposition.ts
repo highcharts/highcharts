@@ -31,11 +31,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = ObjectHelper;
 const {
-    defined,
-    extend,
     find,
-    merge,
     pick
 } = U;
 

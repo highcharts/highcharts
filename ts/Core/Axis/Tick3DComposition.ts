@@ -23,9 +23,12 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    extend
+} = ObjectHelper;
 const { addEvent } = EH;
 const {
-    extend,
     wrap
 } = U;
 

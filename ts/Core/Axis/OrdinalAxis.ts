@@ -27,12 +27,15 @@ import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    defined
+} = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
 const { addEvent } = EH;
 const {
     correctFloat,
     css,
-    defined,
     error,
     pick,
     timeUnits

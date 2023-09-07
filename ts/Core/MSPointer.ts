@@ -29,11 +29,14 @@ const {
 } = H;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+const {
+    objectEach
+} = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
 const { addEvent, removeEvent } = EH;
 const {
     css,
-    objectEach,
     pick
 } = U;
 

@@ -27,10 +27,13 @@ const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    merge
+} = ObjectHelper;
 
 declare module './ChartLike'{
     interface ChartLike {

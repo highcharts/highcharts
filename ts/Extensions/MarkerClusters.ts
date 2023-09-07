@@ -50,14 +50,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
-    defined,
     error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
     relativeLength,
     syncTimeout
 } = U;
@@ -305,6 +298,10 @@ declare global {
 
 import Axis from '../Core/Axis/Axis.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction, isNumber, isObject } = TypeChecker;
+const { defined, merge, objectEach } = ObjectHelper;
 const { addEvent } = EH;
 
 const Scatter = seriesTypes.scatter,

@@ -27,10 +27,11 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TypeChecker;
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = ObjectHelper;
 const {
-    extend,
-    isNumber,
-    merge,
     pick,
     relativeLength
 } = U;

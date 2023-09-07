@@ -21,7 +21,7 @@ import type FlowMapSeries from './FlowMapSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ColorMapComposition from '../ColorMapComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { LonLatArray } from '../..//Maps/MapViewOptions';
+import { LonLatArray } from '../../Maps/MapViewOptions';
 const {
     seriesTypes: {
         mapline: {
@@ -32,10 +32,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isString } = TypeChecker;
 const {
-    pick,
-    isString,
-    isNumber
+    pick
 } = U;
 
 /* *

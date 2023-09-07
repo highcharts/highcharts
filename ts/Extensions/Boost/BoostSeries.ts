@@ -56,14 +56,17 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     error,
-    extend,
-    isArray,
-    isNumber,
     pick,
     wrap
 } = U;
 import WGLRenderer from './WGLRenderer.js';
+import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+const {
+    extend
+} = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 
 /* *

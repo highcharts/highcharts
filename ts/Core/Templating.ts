@@ -10,6 +10,12 @@
 
 'use strict';
 
+import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TypeChecker;
+const {
+    extend
+} = ObjectHelper;
 /* *
  *
  *  Imports
@@ -19,18 +25,13 @@
 import type Chart from './Chart/Chart';
 
 import D from './Defaults.js';
+import U from './Utilities.js';
 const {
     defaultOptions,
     defaultTime
 } = D;
-import U from './Utilities.js';
 const {
-    extend,
     getNestedProperty,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
     pick,
     pInt
 } = U;
