@@ -42,7 +42,7 @@ const { getArgumentValue } = FormulaProcessor;
 
 /**
  * Processor for the `AVERAGEA(...values)` implementation. Calculates the
- * average of the given values. Strings and FALSE are calculated as 0.
+ * average of the given values. Strings and `FALSE` are calculated as `0`.
  *
  * @private
  * @function Formula.processorFunctions.AVERAGEA

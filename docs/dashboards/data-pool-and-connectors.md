@@ -184,5 +184,5 @@ base class. An implementation has usually three steps to fulfill:
 
 You can see a typical implementation of this in the
 [GoogleSheetsConnector](https://github.com/highcharts/highcharts/blob/master/ts/Data/Connectors/GoogleSheetsConnector.ts).
-Please not that the included connectors use a separate converter instance for
+Please note that the included connectors use a separate converter instance for
 the second step regarding adding the data to the `DataTable`.

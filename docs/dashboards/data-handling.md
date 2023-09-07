@@ -28,12 +28,12 @@ There are multiple types of the DataConnectors for different kinds of data
 sources available, each with their own, specific options. For more information
 see the [DataPool & Connectors article](data-pool-and-connectors.md).
 
-| Name                                                                                                                                                               | `connector.type` option |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)                            | `'CSV'`                 |
-| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html)                         | `'JSON'`                |
-| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'`        |
-| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html)          | `'HTMLTable'`           |
+| Name | `connector.type` option |
+|------|-------------------------|
+| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html) | `'CSV'` |
+| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html) | `'JSON'` |
+| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'` |
+| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html) | `'HTMLTable'` |
 
 
 
@@ -72,6 +72,6 @@ information see the [Data Modifiers article](data-modifiers.md).
 ## DataCursor
 
 The DataCursor provides a system to synchronize status data on cells of
-DataTables. This can be for example highlights, markers, or selections.  It
-supports multiple tables and statuses simultaneously.  Each Board has a DataCursor
+DataTables. This can be for example highlights, markers, or selections. It
+supports multiple tables and statuses simultaneously. Each Board has a DataCursor
 that is accessible via the `Board.dataCursor` property. [DataCursor sync demo](https://www.highcharts.com/demo/dashboards/datacursor-sync)
