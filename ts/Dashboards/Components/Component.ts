@@ -406,6 +406,8 @@ abstract class Component {
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
+            this.cell.setLoadingState();
+
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
 
@@ -930,8 +932,6 @@ abstract class Component {
      * @internal
      */
     public async load(): Promise<this> {
-
-        this.cell.setLoadingState();
 
         await this.initConnector();
         this.render();
