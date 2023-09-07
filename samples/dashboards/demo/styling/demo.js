@@ -24,15 +24,48 @@ Dashboards.board('container', {
                         cells: [
                             {
                                 id: 'dashboard-row-1-cell-1',
-                                height: '160px'
+                                height: '160px',
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '50%'
+                                    },
+                                    large: {
+                                        width: '33,3%'
+                                    }
+                                }
                             },
                             {
                                 id: 'dashboard-row-1-cell-2',
-                                height: '160px'
+                                height: '160px',
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '50%'
+                                    },
+                                    large: {
+                                        width: '33,3%'
+                                    }
+                                }
                             },
                             {
                                 id: 'dashboard-row-1-cell-3',
-                                height: '160px'
+                                height: '160px',
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '33,3%'
+                                    }
+                                }
                             }
                         ]
                     },
@@ -48,16 +81,49 @@ Dashboards.board('container', {
                             {
                                 id: 'dashboard-row-3-cell-1',
                                 height: '260px',
-                                width: '20%'
+                                width: '20%',
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    },
+                                    medium: {
+                                        width: '50%'
+                                    },
+                                    large: {
+                                        width: '20%'
+                                    }
+                                }
                             },
                             {
                                 id: 'dashboard-row-3-cell-2',
                                 height: '260px',
-                                width: '20%'
+                                width: '20%',
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    },
+                                    medium: {
+                                        width: '50%'
+                                    },
+                                    large: {
+                                        width: '20%'
+                                    }
+                                }
                             }, {
                                 id: 'dashboard-row-3-cell-3',
                                 height: '260px',
-                                width: '60%'
+                                width: '60%',
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '60%'
+                                    }
+                                }
                             }
                         ]
                     }
