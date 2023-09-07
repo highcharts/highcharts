@@ -1002,20 +1002,19 @@ class DataGrid {
                 overflowWidth = this.overflowHeaderWidths[i];
 
             if (header.scrollWidth > header.clientWidth) {
+                // Headers overlap
                 this.overflowHeaderWidths[i] = header.scrollWidth;
                 header.textContent = this.formatHeaderCell(columnName)
                     .split(' ').map((word): string => (
                         word.length < 4 ? word : word.slice(0, 2) + '...'
                     )).join(' ');
-                header.classList.add(Globals.classNames.overflownColumnHeader);
             } else if (
                 isNumber(overflowWidth) &&
                 overflowWidth <= header.clientWidth
             ) {
+                // Headers not overlap
                 this.overflowHeaderWidths[i] = null;
                 header.textContent = this.formatHeaderCell(columnName);
-                header.classList
-                    .remove(Globals.classNames.overflownColumnHeader);
             }
         });
 

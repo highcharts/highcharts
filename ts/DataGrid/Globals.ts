@@ -68,8 +68,7 @@ namespace Globals {
         cell: classNamePrefix + 'cell',
         cellInput: classNamePrefix + 'cell-input',
         row: classNamePrefix + 'row',
-        columnHeader: classNamePrefix + 'column-header',
-        overflownColumnHeader: classNamePrefix + 'overflown-header'
+        columnHeader: classNamePrefix + 'column-header'
     };
 
     export const win = window;
