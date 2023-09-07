@@ -47,8 +47,6 @@ const {
  *
  * */
 
-type NonArray<T> = T extends Array<unknown> ? never : T;
-type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
 
 /* *
@@ -155,14 +153,6 @@ namespace error {
 function clamp(value: number, min: number, max: number): number {
     return value > min ? value < max ? value : max : min;
 }
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * Return the deep difference between two objects. It can either return the new
- * properties, or optionally return the old values of new properties.
- * @private
- */
-
 
 /**
  * Shortcut for parseInt

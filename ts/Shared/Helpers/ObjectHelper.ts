@@ -75,6 +75,12 @@ function destroyObjectProperties(obj: any, except?: any): void {
     });
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
+ * @private
+ */
 function diffObjects(
     newer: AnyRecord,
     older: AnyRecord,
