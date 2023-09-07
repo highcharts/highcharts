@@ -29,10 +29,11 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
+      - uses: actions/checkout@v4
       - name: Install and build
         uses: ./.github/actions/hs-build
         with:
-          branch: ${GITHUB_REF}
+          dashboards: true
 
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test
