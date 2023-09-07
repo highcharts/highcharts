@@ -555,9 +555,11 @@ class TreegraphSeries extends TreemapSeries {
                 series.options.link && series.options.link.color
             ),
             linkLineWidth = pick(
-                stateOptions && stateOptions.link && stateOptions.link.lineWidth,
+                stateOptions && stateOptions.link &&
+                stateOptions.link.lineWidth,
                 options && options.link && options.link.lineWidth,
-                levelOptions && levelOptions.link && levelOptions.link.lineWidth,
+                levelOptions && levelOptions.link &&
+                levelOptions.link.lineWidth,
                 series.options.link && series.options.link.lineWidth
             ),
             attribs = seriesProto.pointAttribs.call(series, point, state);
