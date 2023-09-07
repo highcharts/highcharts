@@ -29,17 +29,10 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Install and build
+        uses: ./.github/actions/hs-build
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm i
+          branch: ${GITHUB_REF}
 
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test

@@ -1,0 +1,31 @@
+name: 'Checkout and build'
+description: 'Checks out and builds'
+inputs:
+  branch:  # id of input
+    description: 'The branch to checkout'
+    required: true
+    default: 'master'
+  dashboards:  # id of input
+    description: 'Also build dashboards'
+    required: false
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.branch }}
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - run: npm i
+
+    - run: npx gulp scripts
+
+    - run: npx gulp dashboards/scripts
+      if: ${{ inputs.dashboards == true }}
