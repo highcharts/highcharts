@@ -108,6 +108,13 @@ class DataGrid {
     public rowElements: Array<HTMLElement>;
 
     /**
+     * The observer object that calls the callback when the container is
+     * resized.
+     * @internal
+     */
+    public containerResizeObserver: ResizeObserver;
+
+    /**
      * The rendered grid.
      * @internal
      */
@@ -269,6 +276,10 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
         this.render();
+
+        (this.containerResizeObserver = new ResizeObserver((): void => {
+            this.updateGridElements();
+        })).observe(this.container);
     }
 
     /**
@@ -520,10 +531,6 @@ class DataGrid {
         this.container.addEventListener('mouseover', (e): void => {
             this.handleMouseOver(e);
         });
-
-        new ResizeObserver((): void => {
-            this.onContainerResize();
-        }).observe(this.container);
     }
 
 
@@ -653,16 +660,6 @@ class DataGrid {
             this.emit({ type: 'cellClick', input });
         }
     }
-
-    /**
-     * Handle the DataGrid resizing.
-     *
-     * @internal
-     */
-    private onContainerResize(): void {
-        this.updateColumnHeaders();
-    }
-
 
     /**
      * Handle the user clicking somewhere outside the grid.
@@ -981,22 +978,31 @@ class DataGrid {
             this.outerContainer
         );
 
-        this.updateColumnHeaders();
+        this.updateGridElements();
     }
 
 
     /**
-     * Updates the column headers of the table.
+     * Refresh container elements to adapt them to new container dimensions.
+     * @internal
+     */
+    private updateGridElements(): void {
+        this.updateColumnHeaders();
+        this.redrawRowElements();
+        this.updateDragHandlesPosition();
+    }
+
+    /**
+     * Update the column headers of the table.
      * @internal
      */
     private updateColumnHeaders(): void {
-        const headersContainer = this.columnHeadersContainer,
-            handlesContainer = this.columnDragHandlesContainer;
-
+        const headersContainer = this.columnHeadersContainer;
         if (!headersContainer) {
             return;
         }
 
+        // Handle overflowing text in headers.
         this.columnNames.forEach((columnName, i): void => {
             const header = headersContainer.children[i] as HTMLElement,
                 overflowWidth = this.overflowHeaderWidths[i];
@@ -1018,41 +1024,58 @@ class DataGrid {
             }
         });
 
+        // Offset the outer container by the header row height.
         this.outerContainer.style.top = headersContainer.clientHeight + 'px';
 
         // Header columns alignment when scrollbar is shown.
-        if (this.columnHeadersContainer?.lastChild) {
-            (this.columnHeadersContainer?.lastChild as HTMLElement)
+        if (headersContainer.lastChild) {
+            (headersContainer.lastChild as HTMLElement)
                 .style.marginRight = (
                     this.outerContainer.offsetWidth -
                     this.outerContainer.clientWidth
                 ) + 'px';
         }
+    }
 
-        if (this.rowElements.length) {
-            const prevColumnFlexes: string[] = [],
-                firstRowChildren = this.rowElements[0].children;
-
-            for (let i = 0; i < firstRowChildren.length; i++) {
-                prevColumnFlexes.push(
-                    (firstRowChildren[i] as HTMLElement).style.flex
-                );
-            }
-
-            emptyHTMLElement(this.innerContainer);
-            this.renderInitialRows();
-            this.updateScrollingLength();
-            this.updateVisibleCells(true);
-
-            this.rowElements.forEach((row): void => {
-                for (let i = 0; i < row.childElementCount; i++) {
-                    (row.children[i] as HTMLElement).style.flex =
-                        prevColumnFlexes[i];
-                }
-            });
+    /**
+     * Redraw existing row elements.
+     * @internal
+     */
+    private redrawRowElements(): void {
+        if (!this.rowElements.length) {
+            return;
         }
 
-        if (!handlesContainer) {
+        const prevColumnFlexes: string[] = [],
+            firstRowChildren = this.rowElements[0].children;
+
+        for (let i = 0; i < firstRowChildren.length; i++) {
+            prevColumnFlexes.push(
+                (firstRowChildren[i] as HTMLElement).style.flex
+            );
+        }
+
+        emptyHTMLElement(this.innerContainer);
+        this.renderInitialRows();
+        this.updateScrollingLength();
+        this.updateVisibleCells(true);
+
+        this.rowElements.forEach((row): void => {
+            for (let i = 0; i < row.childElementCount; i++) {
+                (row.children[i] as HTMLElement).style.flex =
+                    prevColumnFlexes[i];
+            }
+        });
+    }
+
+    /**
+     * Update the column drag handles position.
+     * @internal
+     */
+    private updateDragHandlesPosition() : void {
+        const headersContainer = this.columnHeadersContainer,
+            handlesContainer = this.columnDragHandlesContainer;
+        if (!handlesContainer || !headersContainer) {
             return;
         }
 
@@ -1271,7 +1294,7 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
 
-        this.updateColumnHeaders();
+        this.updateGridElements();
     }
 
     /**
