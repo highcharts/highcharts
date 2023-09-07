@@ -42,6 +42,7 @@ const {
     addEvent,
     createElement,
     css,
+    fireEvent,
     merge
 } = U;
 
@@ -342,6 +343,7 @@ class EditMode {
         }
 
         editMode.isInitialized = true;
+
     }
 
     /**
@@ -350,7 +352,8 @@ class EditMode {
      */
     private initEvents(): void {
         const editMode = this,
-            board = editMode.board;
+            board = editMode.board,
+            eventsOptions = editMode.options.events;
 
         for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
             editMode.setLayoutEvents(board.layouts[i]);
@@ -407,6 +410,16 @@ class EditMode {
         addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
             editMode.hideContextPointer();
         });
+
+        if (eventsOptions) {
+            if (eventsOptions.activate) {
+                addEvent(board, 'activateEditMode', eventsOptions.activate);
+            }
+
+            if (eventsOptions.deactivate) {
+                addEvent(board, 'deactivateEditMode', eventsOptions.deactivate);
+            }
+        }
     }
 
     /**
@@ -558,6 +571,8 @@ class EditMode {
 
         editMode.active = true;
         editMode.isContextDetectionActive = true;
+
+        fireEvent(editMode.board, 'activateEditMode');
     }
 
     /**
@@ -602,6 +617,8 @@ class EditMode {
 
         this.editCellContext = void 0;
         this.potentialCellContext = void 0;
+
+        fireEvent(editMode.board, 'deactivateEditMode');
     }
 
     /**
@@ -1061,6 +1078,14 @@ namespace EditMode {
          * @internal
          */
         tools?: Tools;
+        /**
+        * Events attached to the board: `activate`, `deactivate`.
+        *
+        * Try it:
+        *
+        * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/ | Activated / Deactivated event }
+        */
+        events?: Record<string, Function>;
     }
 
     /**

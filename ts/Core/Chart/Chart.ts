@@ -3519,27 +3519,34 @@ class Chart {
             });
             pointer.initiated = false; // #6804
 
-        } else { // else, zoom in on all axes
+        } else { // Else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    isXAxis = axis.isXAxis;
+                    isXAxis = axis.isXAxis,
+                    { hasPinched, mouseDownX, mouseDownY } = pointer;
 
 
-                // don't zoom more than minRange
+                // Don't zoom more than minRange
                 if (
                     pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
                     (
-                        defined(pointer.mouseDownX) &&
-                        defined(pointer.mouseDownY) &&
+                        defined(mouseDownX) &&
+                        defined(mouseDownY) &&
                         chart.isInsidePlot(
-                            pointer.mouseDownX - chart.plotLeft,
-                            pointer.mouseDownY - chart.plotTop,
-                            { axis }
+                            mouseDownX - chart.plotLeft,
+                            mouseDownY - chart.plotTop,
+                            {
+                                axis,
+                                // Ignore touch positions if pinched on mobile
+                                // #18062
+                                ignoreX: hasPinched,
+                                ignoreY: hasPinched
+                            }
                         )
                     ) || !defined(
-                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
+                        chart.inverted ? mouseDownX : mouseDownY
                     )
                 ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
