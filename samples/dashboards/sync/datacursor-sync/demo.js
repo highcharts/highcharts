@@ -39,11 +39,11 @@ Dashboards.board('container', {
         }, {
             cell: 'highcharts-dashboards-cell-b0',
             type: 'Highcharts',
-            chartOptions: buildChartOptions('line', vegeTable, cursor)
+            chartOptions: buildChartOptions('pie', vegeTable, cursor)
         }, {
             cell: 'highcharts-dashboards-cell-a1',
             type: 'Highcharts',
-            chartOptions: buildChartOptions('pie', vegeTable, cursor)
+            chartOptions: buildChartOptions('line', vegeTable, cursor)
         }
     ]
 });
@@ -51,13 +51,6 @@ Dashboards.board('container', {
 function buildChartOptions(type, table, cursor) {
 
     const typeString = type.charAt(0).toUpperCase() + type.slice(1);
-    const seriesOptions = type === 'pie' ? {
-        innerSize: '60%',
-        dataLabels: {
-            enabled: true
-        }
-    } :
-        {};
 
     return {
         chart: {
@@ -86,8 +79,12 @@ function buildChartOptions(type, table, cursor) {
             enabled: false
         },
         plotOptions: {
-            series: {
+            bar: {
                 colorByPoint: true
+            },
+            pie: {
+                colorByPoint: true,
+                innerSize: '60%'
             }
         },
         series: [{
@@ -112,9 +109,7 @@ function buildChartOptions(type, table, cursor) {
                         });
                     }
                 }
-            },
-            colorByPoint: type !== 'line',
-            ...seriesOptions
+            }
         }],
         title: {
             text: table.id  + ' ' + typeString
