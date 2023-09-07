@@ -338,6 +338,11 @@ namespace OfflineExporting {
          * @private
          */
         const downloadPDF = (): void => {
+            // Need to add this exception for PDF exports (#19253).
+            if (AST.allowedTags.indexOf('fedropshadow') === -1) {
+                AST.allowedTags.push('fedropshadow');
+            }
+
             AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
@@ -765,11 +770,7 @@ namespace OfflineExporting {
                 ++imagesEmbedded;
 
                 // Change image href in chart copy
-                callbackArgs.imageElement.setAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href',
-                    imageURL
-                );
+                callbackArgs.imageElement.setAttribute('href', imageURL);
 
                 checkDone();
             };
@@ -810,10 +811,8 @@ namespace OfflineExporting {
             // Go through the images we want to embed
             for (let i = 0; i < images.length; i++) {
                 el = images[i];
-                href = el.getAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href'
-                );
+                href = el.getAttribute('href');
+
                 if (href) {
                     OfflineExporting.imageToDataUrl(
                         href,

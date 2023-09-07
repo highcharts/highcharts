@@ -25,12 +25,12 @@ the DataTable with new data from the source.
 
 There are several types of the DataConnectors, depending on the data source.
 
-| Name                                                                                                                                                               | `connector.type` option |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)                            | `'CSV'`                 |
-| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html)                         | `'JSON'`                |
-| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'`        |
-| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html)          | `'HTMLTable'`           |
+| Name | `connector.type` option |
+|------|-------------------------|
+| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html) | `'CSV'` |
+| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html) | `'JSON'` |
+| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'` |
+| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html) | `'HTMLTable'` |
 
 Each of those types has its own, specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html) has two data input options. Directly as a string - `options.csv`, or as a URL from which the CSV file is fetched - `options.csvURL`.
 

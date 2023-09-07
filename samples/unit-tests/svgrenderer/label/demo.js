@@ -151,7 +151,8 @@ QUnit.test('Image labels should have no fill (#4324)', function (assert) {
             '',
             100,
             100,
-            'url(https://smartview.antaris-solutions.net//images/icons/view_alerts.png)'
+            'url(https://smartview.antaris-solutions.net/' +
+            'images/icons/view_alerts.png)'
         )
         .attr({
             'stroke-width': 1,
@@ -623,7 +624,9 @@ QUnit.test('Label padding', assert => {
     });
 });
 
-QUnit.test('#14858: Callout missing line when anchorX within width and no room for chevron', assert => {
+QUnit.test('Label callout tests', assert => {
+    // #14858: Callout missing line when anchorX is within width and no room
+    // for chevron
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
         600,
@@ -654,4 +657,31 @@ QUnit.test('#14858: Callout missing line when anchorX within width and no room f
             'Anchor line should have rendered'
         );
     });
+
+    // #19505: Label missed connector on certain positions, when chevron was not
+    // rendered.
+
+    const x = 250,
+        y = 50;
+
+    const customLabel = ren.label(
+        'Label',
+        x,
+        y,
+        'callout',
+        x + 1, // leave at +1 for testing
+        y + 100
+    )
+        .attr({
+            fill: 'rgba(0, 0, 0, 0.25)',
+            zIndex: 6,
+            stroke: 'red'
+        })
+        .add();
+
+    assert.strictEqual(
+        customLabel.element.getBBox().height,
+        100,
+        'Callout label should always have a connector when chevron is not displayed, #19505.'
+    );
 });

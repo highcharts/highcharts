@@ -379,7 +379,6 @@ class DataGridComponent extends Component {
     ): void {
         if (this.dataGrid) {
             super.resize(width, height);
-            this.dataGrid.setSize(width, height);
         }
     }
 
@@ -414,8 +413,13 @@ class DataGridComponent extends Component {
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.filterColumns(),
-                    columns: columnOptions
+                    dataTable:
+                        this.options.dataGridOptions?.dataTable ||
+                        this.filterColumns(),
+                    columns: merge(
+                        columnOptions,
+                        this.options.dataGridOptions?.columns
+                    )
                 }
             );
             return this.dataGrid;
