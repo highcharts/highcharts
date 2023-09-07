@@ -120,7 +120,6 @@ export interface SeriesOptions {
     inactiveOtherPoints?: boolean;
     /** @private */
     isInternal?: boolean;
-    isNavigator?: boolean;
     joinBy?: (string|Array<string>);
     kdNow?: boolean;
     keys?: Array<string>;

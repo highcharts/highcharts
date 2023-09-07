@@ -266,7 +266,7 @@ function anchorPoints(
                 lastPoint: series.xData[series.xData.length - 1]
             } as AnchorChoiceType)[lastAnchor];
         }
-    } else if (series.options.isNavigator && series.xData) {
+    } else if (series.options.isInternal && series.xData) {
         // Set first grouped point of navigator series to first parent's series
         // point, to avoid gap in navigator #17212.
         groupedXData[0] = series.xData[0];
