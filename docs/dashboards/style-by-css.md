@@ -134,8 +134,8 @@ Note that you can use the child selector to style even and odd rows:
 ```
 
 ### HTML Component
-Since the whole structure of the HTML component is defined by the user, it can
-be very different. Thus it is recommended to use the custom classes and IDs to style it.
+Since the whole structure of the HTML component is defined by the user, it differs between the use cases.
+Thus it is recommended to use the custom classes and IDs to style it.
 More information is in the section below.
 
 ## Custom classes
