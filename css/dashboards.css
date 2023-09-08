@@ -157,6 +157,20 @@
 }
 /* stylelint-enable max-line-length */
 
+.highcharts-dark .highcharts-dashboards-edit-popup-close,
+.highcharts-dark .highcharts-dashboards-edit-pointer,
+.highcharts-dark .highcharts-dashboards-edit-accordion-header-icon {
+    filter: invert(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-sidebar-title {
+    filter: brightness(0) invert(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
+    filter: brightness(0) invert(1);
+}
+
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
     background-color: var(--highcharts-neutral-color-5);
@@ -209,6 +223,31 @@
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
+}
+
+.highcharts-dashboards-cell-state-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -32px;
+    margin-top: -32px;
+    width: 64px;
+    height: 64px;
+    border: 8px solid var(--highcharts-neutral-color-80);
+    border-radius: 50%;
+    animation: loading-spinner 1s linear infinite;
+    border-color: var(--highcharts-neutral-color-80) transparent transparent transparent;
+}
+
+@keyframes loading-spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Component */
@@ -954,6 +993,14 @@
 
     .highcharts-dashboards-cell {
         flex: 1;
+    }
+
+    .highcharts-dashboards-cell-state-loading::after {
+        margin-left: -16px;
+        margin-top: -16px;
+        width: 32px;
+        height: 32px;
+        border-width: 4px;
     }
 
     .highcharts-dashboards-component-title {

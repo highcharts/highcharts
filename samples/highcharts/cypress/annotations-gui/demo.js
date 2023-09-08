@@ -13,8 +13,8 @@ Highcharts.chart('container', {
         },
         events: {
             selectButton: function (event) {
-                var newClassName = event.button.className + ' highcharts-active',
-                    topButton = event.button.parentNode.parentNode;
+                let newClassName = event.button.className + ' highcharts-active';
+                const topButton = event.button.parentNode.parentNode;
 
                 if (topButton.classList.contains('right')) {
                     newClassName += ' right';

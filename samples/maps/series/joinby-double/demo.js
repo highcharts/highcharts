@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
     ).then(response => response.json());
 
-    var data = [{
+    const data = [{
         code: 'DK',
         value: 2
     }, {

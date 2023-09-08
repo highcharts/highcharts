@@ -1,4 +1,4 @@
-var setDragStatus = function (status) {
+const setDragStatus = function (status) {
     document.getElementById('dragstatus').innerText = status;
 };
 
@@ -52,7 +52,7 @@ Highcharts.chart('container', {
                             return false;
                         }
                         */
-                        var status = 'Dragging "' +
+                        let status = 'Dragging "' +
                             (this.name || this.id) + '". ' + e.numNewPoints +
                             ' point(s) selected.';
 

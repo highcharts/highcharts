@@ -1,5 +1,5 @@
 function getOptions() {
-    var options = {
+    const options = {
         chart: {
             events: {
                 load: function () {

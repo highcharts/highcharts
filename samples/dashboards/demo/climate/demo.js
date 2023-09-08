@@ -111,36 +111,116 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map'
+                        id: 'world-map',
+                        responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }, {
                         id: 'kpi-layout',
+                        responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
+                            small: {
+                                width: '100%'
+                            }
+                        },
                         layout: {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-temperature',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-max-temperature',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
-                                }]
-                            }, {
-                                cells: [{
+                                }, {
                                     id: 'kpi-rain',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-ice',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }, {
                                     id: 'kpi-frost',
-                                    width: '1/3',
+                                    responsive: {
+                                        large: {
+                                            width: '1/3'
+                                        },
+                                        medium: {
+                                            width: '1/2'
+                                        },
+                                        small: {
+                                            width: '1/2'
+                                        }
+                                    },
                                     height: '204px'
                                 }]
                             }]
@@ -148,9 +228,31 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid'
+                        id: 'selection-grid',
+                        responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }, {
-                        id: 'city-chart'
+                        id: 'city-chart',
+                        responsive: {
+                            large: {
+                                width: '1/2'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }]
                 }]
             }]
@@ -414,7 +516,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Average Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -486,7 +587,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Maximal Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -561,7 +661,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -632,7 +731,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Ice',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -704,7 +802,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Frost',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -774,14 +871,16 @@ async function setupBoard() {
                         show: false
                     },
                     TNC: {
-                        headerFormat: 'Average Temperature °C'
+                        headerFormat: 'Average Temperature °C',
+                        cellFormat: '{value:.2f}'
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
                         show: false
                     },
                     TXC: {
-                        headerFormat: 'Maximal Temperature °C'
+                        headerFormat: 'Maximal Temperature °C',
+                        cellFormat: '{value:.2f}'
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
@@ -821,13 +920,18 @@ async function setupBoard() {
                     min: 0,
                     stops: colorStopsTemperature
                 },
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: true,
+                            symbol: 'circle'
+                        }
+                    }
+                },
                 series: [{
                     name: activeCity,
                     animation: false,
-                    animationLimit: 0,
-                    marker: {
-                        enabledThreshold: 0.5
-                    }
+                    animationLimit: 0
                 }],
                 title: {
                     margin: 20,
@@ -876,9 +980,6 @@ async function setupBoard() {
             await setupCity(board, row.city, activeColumn, activeScale);
         }
     }
-
-    // Done
-    console.log(board);
 }
 
 async function setupCity(board, city, column, scale) {

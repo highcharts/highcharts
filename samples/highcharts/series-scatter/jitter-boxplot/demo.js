@@ -1,18 +1,19 @@
 // Generate test data with continuous Y values.
 function getExperimentData() {
-    var data = [],
-        off = 0.3 + 0.2 * Math.random(),
-        i;
-    for (i = 0; i < 200; i++) {
+    const data = [],
+        off = 0.3 + 0.2 * Math.random();
+
+    for (let i = 0; i < 200; i++) {
         data.push(
-            Math.round(1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5)))
+            Math.round(
+                1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5)))
         );
     }
     return data;
 }
 
 function getBoxPlotData(values) {
-    var sorted = values.sort(function (a, b) {
+    const sorted = values.sort(function (a, b) {
         return a - b;
     });
 
@@ -25,7 +26,7 @@ function getBoxPlotData(values) {
     };
 }
 
-var experiments = [
+const experiments = [
     getExperimentData(),
     getExperimentData(),
     getExperimentData(),
@@ -33,14 +34,14 @@ var experiments = [
     getExperimentData()
 ];
 
-var scatterData = experiments
+const scatterData = experiments
     .reduce(function (acc, data, x) {
         return acc.concat(data.map(function (value) {
             return [x, value];
         }));
     }, []);
 
-var boxplotData = experiments
+const boxplotData = experiments
     .map(getBoxPlotData);
 
 Highcharts.chart('container', {

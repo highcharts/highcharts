@@ -100,6 +100,7 @@ class ThresholdComponent extends Component {
         );
     }
 
+
     /* *
      *
      *  Properties
@@ -116,6 +117,12 @@ class ThresholdComponent extends Component {
      *  Functions
      *
      * */
+
+    /**
+     * @internal
+     */
+    public onTableChanged(): void {
+    }
 
     public render(): this {
         super.render();
@@ -180,9 +187,6 @@ class ThresholdComponent extends Component {
             valueName && isNumber(options.value) ?
                 { [valueName]: options.value } :
                 {},
-            {
-                parentElement: options.parentElement
-            },
             componentOptions
         );
 
@@ -214,12 +218,6 @@ class ThresholdComponent extends Component {
 
         return this;
     }
-
-    public redraw(): this {
-        super.redraw();
-        return this.render();
-    }
-
 }
 
 namespace ThresholdComponent {

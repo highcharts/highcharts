@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     id: '0.0',
     parent: '',
     name: 'The World'
