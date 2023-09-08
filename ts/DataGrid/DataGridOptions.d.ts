@@ -153,10 +153,16 @@ export interface ColumnOptions {
     show?: boolean;
 }
 
+/**
+ * Returns a formatted call's string.
+ */
 export interface cellFormatterCallback {
     (this: cellValue): string;
 }
 
+/**
+ * Value to convert
+ */
 export interface cellValue {
     value: number|string
 }
