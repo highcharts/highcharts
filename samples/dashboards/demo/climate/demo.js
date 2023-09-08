@@ -1115,8 +1115,10 @@ async function onNavigatorChange(board, city, column, scale) {
                     column,
                     pointTable.getRowIndexBy('time', lastTime)
                 )
-            });
+            }, false, false);
         }
+
+        worldMap.chart.redraw();
     })();
 
     // Update KPIs
