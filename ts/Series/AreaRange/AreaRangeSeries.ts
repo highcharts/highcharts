@@ -435,7 +435,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw upper labels
-            if (upperDataLabelOptions.enabled || this._hasPointLabels) {
+            if (upperDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 // Set preliminary values for plotY and dataLabel
                 // and draw the upper labels
                 i = length;
@@ -497,7 +497,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw lower labels
-            if (lowerDataLabelOptions.enabled || this._hasPointLabels) {
+            if (lowerDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 i = length;
                 while (i--) {
                     point = data[i];

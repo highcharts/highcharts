@@ -53,7 +53,7 @@ describe('layout resize on window changes', () => {
         cy.get('input.highcharts-datagrid-cell-input').should('have.focus');
     })
 
-    it('Chart and DataGridComponent should have synced selection events.', () => {
+    it('Chart and DataGridComponent should have synced extremes events.', () => {
         let containerTop;
 
         cy.get('.highcharts-datagrid-outer-container')
@@ -62,7 +62,7 @@ describe('layout resize on window changes', () => {
                 containerTop = scrollTopValue;
             });
 
-        cy.get('.highcharts-dashboards-component-content').eq(0)
+        cy.get('.highcharts-dashboards-component-highcharts-content').eq(0)
             .trigger('mousedown', 300)
             .trigger('mousemove', 300, 100)
             .trigger('mouseup');
@@ -106,5 +106,9 @@ describe('layout resize on window changes', () => {
                 'Error in reference to cells should not be thrown.'
             )
         });
+    });
+
+    it('The dataGridOptions should be applied to the component.', () => {
+        cy.get('.highcharts-datagrid-column-header').eq(1).should('have.text', 'Vitamin A (IU)');
     });
 });

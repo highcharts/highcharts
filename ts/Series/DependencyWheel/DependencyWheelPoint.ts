@@ -36,7 +36,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Shared/Utilities.js';
-const { wrap } = U;
+const { pInt, wrap } = U;
 
 /* *
  *
@@ -117,7 +117,7 @@ class DependencyWheelPoint extends SankeyPoint {
                 x: shapeArgs.x,
                 y: shapeArgs.y,
                 r: (
-                    shapeArgs.r + (label.options.distance || 0)
+                    (shapeArgs.r || 0) + pInt(label.options?.distance || 0)
                 ),
                 start: (upperHalf ? start : end),
                 end: (upperHalf ? end : start),

@@ -41,10 +41,10 @@ const {
     format
 } = Templating;
 import U from '../../Shared/Utilities.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-import  TC from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } =  TC;
-const { defined, diffObjects, merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TC;
+const { defined, diffObjects, merge } = OH;
 const {
     createElement,
     css,

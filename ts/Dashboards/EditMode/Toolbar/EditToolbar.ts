@@ -25,8 +25,8 @@ const {
 import Menu from '../Menu/Menu.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../../Layout/GUIElement.js';
-import  OH from '../../../Shared/Helpers/ObjectHelper.js';
-const { defined } =  OH;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 
 
 /**

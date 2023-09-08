@@ -26,8 +26,8 @@ import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheet
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
 import Serializable from '../Serializable.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

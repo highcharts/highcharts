@@ -20,8 +20,8 @@ import Menu from './Menu/Menu.js';
 import EditMode from './EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const { addEvent } = EH;
 
 

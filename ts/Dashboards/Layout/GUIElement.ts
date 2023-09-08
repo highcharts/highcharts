@@ -26,8 +26,8 @@ import Globals from '../Globals.js';
 import Row from './Row';
 import Cell from './Cell';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { objectEach } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { objectEach } = OH;
 const { addEvent } = EH;
 
 const {

@@ -32,8 +32,8 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Shared/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { diffObjects, merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { diffObjects, merge } = OH;
 
 const {
     uniqueKey
@@ -413,8 +413,13 @@ class DataGridComponent extends Component {
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.filterColumns(),
-                    columns: columnOptions
+                    dataTable:
+                        this.options.dataGridOptions?.dataTable ||
+                        this.filterColumns(),
+                    columns: merge(
+                        columnOptions,
+                        this.options.dataGridOptions?.columns
+                    )
                 }
             );
             return this.dataGrid;

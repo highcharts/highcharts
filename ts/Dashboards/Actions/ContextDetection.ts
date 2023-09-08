@@ -14,8 +14,8 @@
  *
  * */
 
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 import type Cell from '../Layout/Cell.js';
 import GUIElement from '../Layout/GUIElement.js';
 

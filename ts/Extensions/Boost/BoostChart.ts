@@ -105,12 +105,28 @@ function getBoostClipRect(
     chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
-    const clipBox = {
+    let clipBox = {
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
         height: chart.plotHeight
     };
+
+    /* Uncomment to fix #19039
+    if (target instanceof Series) {
+        clipBox = target.getClipBox();
+        if (chart.inverted) {
+            const lateral = clipBox.width;
+            clipBox.width = clipBox.height;
+            clipBox.height = lateral;
+            clipBox.x = target.yAxis.pos;
+            clipBox.y = target.xAxis.pos;
+        } else {
+            clipBox.x = target.xAxis.pos;
+            clipBox.y = target.yAxis.pos;
+        }
+    }
+    */
 
     if (target === chart) {
         const verticalAxes =

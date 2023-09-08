@@ -1525,9 +1525,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
                 if (!dataLabel.hidden) {
                     dataLabel.hide();
-                    if (point.connector) {
-                        point.connector.hide();
-                    }
+                    dataLabel.connector?.hide();
                 }
             }
         });
@@ -1564,9 +1562,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 
                     if (dataLabel && !dataLabel.hidden) { // #6127
                         dataLabel.fadeIn(); // #7384
-                        if (point.connector) {
-                            point.connector.fadeIn();
-                        }
+                        dataLabel.connector?.fadeIn();
                     }
                 });
             }

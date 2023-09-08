@@ -354,10 +354,10 @@ class TimelineSeries extends LineSeries {
             series.chart,
             'afterHideOverlappingLabel',
             function (): void {
-                series.points.forEach(function (p): void {
+                series.points.forEach((p): void => {
                     if (
-                        p.connector &&
                         p.dataLabel &&
+                        p.dataLabel.connector &&
                         p.dataLabel.oldOpacity !== p.dataLabel.newOpacity
                     ) {
                         p.alignConnector();

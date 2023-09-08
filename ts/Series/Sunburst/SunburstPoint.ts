@@ -42,8 +42,8 @@ const {
 import U from '../../Shared/Utilities.js';
 import SunburstNode from './SunburstNode';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { correctFloat, pInt } = U;
 const { extend } = OH;
-const { correctFloat } = U;
 
 
 /* *
@@ -94,7 +94,7 @@ class SunburstPoint extends TreemapPoint {
             upperHalf = angle < 0 &&
                 angle > -Math.PI ||
                 angle > Math.PI,
-            r = (shapeArgs.r + (label.options.distance || 0)),
+            r = shapeArgs.r + pInt(label.options?.distance || 0),
             moreThanHalf;
 
         // Check if point is a full circle

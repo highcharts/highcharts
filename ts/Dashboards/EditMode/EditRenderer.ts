@@ -28,12 +28,12 @@ import type EditMode from './EditMode.js';
 
 import EditGlobals from './EditGlobals.js';
 import U from '../../Shared/Utilities.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
 } = AH;
-const { defined, merge } =  OH;
+const { defined, merge } = OH;
 const {
     createElement
 } = U;

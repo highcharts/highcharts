@@ -26,8 +26,8 @@ import type CSVConnectorOptions from '../../Data/Connectors/CSVConnectorOptions'
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 import DataTableHelper from './DataTableHelper.js';
 import Serializable from '../Serializable.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

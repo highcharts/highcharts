@@ -4134,7 +4134,7 @@ class Series {
                 'xIncrement',
                 'cropped',
                 '_hasPointMarkers',
-                '_hasPointLabels',
+                'hasDataLabels',
                 'clips', // #15420
 
                 // Networkgraph (#14397)
@@ -4177,14 +4177,10 @@ class Series {
             index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
-                // when updating from blank (#7933)
-                (
-                    plotOptions &&
-                    plotOptions.series &&
-                    plotOptions.series.pointStart
-                ),
+                // When updating from blank (#7933)
+                plotOptions?.series?.pointStart,
                 oldOptions.pointStart,
-                // when updating after addPoint
+                // When updating after addPoint
                 (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
@@ -4272,15 +4268,16 @@ class Series {
             if (seriesOptions.visible === false) {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
-            } else if (!series._hasPointLabels) {
-                const { marker, dataLabels } = seriesOptions,
+            } else {
+                const { marker } = seriesOptions,
                     oldMarker = oldOptions.marker || {};
 
                 // If the  marker got disabled or changed its symbol, width or
                 // height - destroy
                 if (
-                    marker && (
-                        marker.enabled === false ||
+                    marker &&
+                    (
+                        (oldMarker.enabled && !marker.enabled) ||
                         oldMarker.symbol !== marker.symbol || // #10870, #15946
                         oldMarker.height !== marker.height || // #16274
                         oldMarker.width !== marker.width // #16274
@@ -4288,10 +4285,8 @@ class Series {
                 ) {
                     kinds.graphic = 1;
                 }
-                if (
-                    dataLabels &&
-                    (dataLabels as any).enabled === false
-                ) {
+
+                if (!series.hasDataLabels?.()) {
                     kinds.dataLabel = 1;
                 }
             }

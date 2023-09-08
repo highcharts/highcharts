@@ -18,11 +18,15 @@
     fill-opacity: 0.9;
 }
 
+.datagrid {
+    height: 100%;
+}
+
 #dashboard-col-0 h1 {
     margin-bottom: 0;
 }
 
-.inputs {
+.inputs-wrapper {
     padding: 12px;
     background-color: white;
     box-shadow: none;

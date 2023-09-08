@@ -54,24 +54,20 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         labels: Array<SVGElement|undefined> = [];
 
     // Consider external label collectors
-    (this.labelCollectors || []).forEach(function (
+    (this.labelCollectors || []).forEach((
         collector: Chart.LabelCollectorFunction
-    ): void {
+    ): void => {
         labels = labels.concat(collector());
     });
 
-    (this.yAxis || []).forEach(function (yAxis): void {
+    (this.yAxis || []).forEach((yAxis): void => {
         if (
             yAxis.stacking &&
             yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap
         ) {
-            objectEach(yAxis.stacking.stacks, function (
-                stack: Record<string, StackItem>
-            ): void {
-                objectEach(stack, function (
-                    stackItem: StackItem
-                ): void {
+            objectEach(yAxis.stacking.stacks, (stack): void => {
+                objectEach(stack, (stackItem): void => {
                     if (stackItem.label) {
                         labels.push(stackItem.label);
                     }
@@ -80,41 +76,29 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    (this.series || []).forEach(function (series): void {
-        const dlOptions: DataLabelOptions = (
-            series.options.dataLabels as any
-        );
-
-        if (
-            series.visible &&
-            !((dlOptions as any).enabled === false && !series._hasPointLabels)
-        ) { // #3866
+    (this.series || []).forEach((series): void => {
+        if (series.visible && series.hasDataLabels?.()) { // #3866
             const push = (points: Point[]): void =>
                 points.forEach((point: Point): void => {
                     if (point.visible) {
-                        const dataLabels = (
-                            isArray(point.dataLabels) ?
-                                point.dataLabels :
-                                (point.dataLabel ? [point.dataLabel] : [])
-                        );
-
-                        dataLabels.forEach(function (
-                            label: SVGElement
-                        ): void {
-                            const options = label.options;
+                        (point.dataLabels || []).forEach((label): void => {
+                            const options = label.options || {};
 
                             label.labelrank = pick(
                                 options.labelrank,
                                 (point as any).labelrank,
-                                point.shapeArgs && point.shapeArgs.height
+                                point.shapeArgs?.height
                             ); // #4118
 
-                            if (!options.allowOverlap) {
-                                labels.push(label);
-                            } else { // #13449
+                            // Allow overlap if the option is explicitly true
+                            if (options.allowOverlap) { // #13449
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;
                                 hideOrShow(label, chart);
+
+                            // Do not allow overlap
+                            } else {
+                                labels.push(label);
                             }
                         });
                     }

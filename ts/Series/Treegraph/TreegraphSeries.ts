@@ -445,7 +445,7 @@ class TreegraphSeries extends TreemapSeries {
             // If options for level exists, include them as well
             if (level && level.dataLabels) {
                 options = merge(options, level.dataLabels);
-                series._hasPointLabels = true;
+                series.hasDataLabels = (): boolean => true;
             }
 
             // Set dataLabel width to the width of the point shape.

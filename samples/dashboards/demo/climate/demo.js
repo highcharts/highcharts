@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const, jsdoc/require-description */
+/* eslint-disable jsdoc/require-description */
 
 // left arrow
 Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
@@ -88,9 +88,7 @@ async function setupBoard() {
                                 // Change temperature scale.
                                 activeScale = activeScale === 'C' ? 'F' : 'C';
                                 activeColumn = 'TX';
-                                window.setTimeout(
-                                    updateBoard,
-                                    50,
+                                updateBoard(
                                     board,
                                     activeCity,
                                     activeColumn,
@@ -259,82 +257,28 @@ async function setupBoard() {
         },
         components: [{
             cell: 'time-range-selector',
-            type: 'Highcharts',
+            type: 'Navigator',
             chartOptions: {
                 chart: {
                     height: '80px',
                     type: 'spline'
                 },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    enabled: false
+                navigator: {
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    }
                 },
                 series: [{
                     name: 'Timeline',
                     data: [
                         [Date.UTC(1951, 0, 5), 0],
                         [Date.UTC(2010, 11, 25), 0]
-                    ],
-                    marker: {
-                        enabled: false
-                    },
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    }
+                    ]
                 }],
-                navigator: {
-                    enabled: true,
-                    handles: {
-                        symbols: ['leftarrow', 'rightarrow'],
-                        lineWidth: 0,
-                        width: 8,
-                        height: 14
-                    },
-                    series: [{
-                        name: activeCity,
-                        data: [],
-                        animation: false,
-                        animationLimit: 0
-                    }],
-                    xAxis: {
-                        endOnTick: true,
-                        gridZIndex: 4,
-                        labels: {
-                            x: 1,
-                            y: 22
-                        },
-                        opposite: true,
-                        showFirstLabel: true,
-                        showLastLabel: true,
-                        startOnTick: true,
-                        tickPosition: 'inside'
-                    },
-                    yAxis: {
-                        maxPadding: 0.5
-                    }
-                },
-                scrollbar: {
-                    enabled: true,
-                    barBorderRadius: 0,
-                    barBorderWidth: 0,
-                    buttonBorderWidth: 0,
-                    buttonBorderRadius: 0,
-                    height: 14,
-                    trackBorderWidth: 0,
-                    trackBorderRadius: 0
-                },
                 xAxis: {
-                    visible: false,
                     min: activeTimeRange[0],
                     max: activeTimeRange[1],
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
@@ -351,19 +295,17 @@ async function setupBoard() {
 
                                     const newColumn =
                                         activeColumn[0] === 'T' ? activeColumn + activeScale : activeColumn;
-                                    await onNavigatorChange(
+                                    await updateBoard(
                                         board,
                                         activeCity,
                                         newColumn,
-                                        activeScale
+                                        activeScale,
+                                        false
                                     );
                                 }
                             }, 50);
                         }
                     }
-                },
-                yAxis: {
-                    visible: false
                 }
             }
         }, {
@@ -1038,30 +980,8 @@ async function setupCity(board, city, column, scale) {
 
 }
 
-async function onNavigatorChange(board, city, column, scale) {
-    const colorStopsDays = [
-        [0.0, '#C2CAEB'],
-        [1.0, '#162870']
-    ];
-    const colorStopsTemperature = [
-        [0.0, '#4CAFFE'],
-        [0.3, '#53BB6C'],
-        [0.5, '#DDCE16'],
-        [0.6, '#DF7642'],
-        [0.7, '#DD2323']
-    ];
+async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const [
-        timeRangeSelector,
-        worldMap,
-        kpiData,
-        kpiTemperature,
-        kpiMaxTemperature,
-        kpiRain,
-        kpiIce,
-        kpiFrost
-    ] = board.mountedComponents.map(c => c.component);
-    // Update range selection
     const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
     const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
     const colorStops = (
@@ -1070,6 +990,34 @@ async function onNavigatorChange(board, city, column, scale) {
             colorStopsTemperature
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    const cityTable = await dataPool.getConnectorTable(city);
+    const [
+        timeRangeSelector,
+        worldMap,
+        kpiData,
+        kpiTemperature,
+        kpiMaxTemperature,
+        kpiRain,
+        kpiIce,
+        kpiFrost,
+        selectionGrid,
+        cityChart
+    ] = board.mountedComponents.map(c => c.component);
+
+    column = (column[0] === 'T' ? column + scale : column);
+
+    // Update data of time range selector
+    if (newData) {
+        timeRangeSelector.chart.series[0].update({
+            type: column[0] === 'T' ? 'spline' : 'column',
+            data: cityTable.modified
+                .getRows(void 0, void 0, ['time', column])
+        });
+
+        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+    }
+
+    // Update range selection
     const timeRangeMax = timeRangeSelector.chart.axes[0].max;
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
     const selectionModifier = selectionTable.getModifier();
@@ -1152,66 +1100,24 @@ async function onNavigatorChange(board, city, column, scale) {
         true,
         true
     );
-}
-
-async function updateBoard(board, city, column, scale, newData) {
-    const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
-    const colorStops = (
-        column[0] !== 'T' ?
-            colorStopsDays :
-            colorStopsTemperature
-    );
-    const selectionTable = await dataPool.getConnectorTable('Range Selection');
-    const [
-        timeRangeSelector,
-        worldMap,
-        kpiData,
-        kpiTemperature,
-        kpiMaxTemperature,
-        kpiRain,
-        kpiIce,
-        kpiFrost,
-        selectionGrid,
-        cityChart
-    ] = board.mountedComponents.map(c => c.component);
-
-    column = (column[0] === 'T' ? column + scale : column);
-
-    let cityTable = await dataPool.getConnectorTable(city);
 
     if (newData) {
-        // Update time range selector
-        timeRangeSelector.chart.series[0].update({
-            type: column[0] === 'T' ? 'spline' : 'column',
-            data: cityTable.modified
-                .getRows(void 0, void 0, ['time', column])
-        });
+        const showCelsius = scale === 'C';
+        const sharedColumnAssignment = {
+            time: 'x',
+            FD: column === 'FD' ? 'y' : null,
+            ID: column === 'ID' ? 'y' : null,
+            RR1: column === 'RR1' ? 'y' : null,
+            TNC: column === 'TNC' ? 'y' : null,
+            TNF: column === 'TNF' ? 'y' : null,
+            TXC: column === 'TXC' ? 'y' : null,
+            TXF: column === 'TXF' ? 'y' : null
+        };
 
-        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
-    }
-
-    onNavigatorChange(board, city, column, scale);
-
-    if (newData) {
+        // Update range selection
         await selectionTable.setModifier(selectionTable.getModifier());
-    }
 
-    // Update city grid selection
-    const showCelsius = scale === 'C';
-    const sharedColumnAssignment = {
-        time: 'x',
-        FD: column === 'FD' ? 'y' : null,
-        ID: column === 'ID' ? 'y' : null,
-        RR1: column === 'RR1' ? 'y' : null,
-        TNC: column === 'TNC' ? 'y' : null,
-        TNF: column === 'TNF' ? 'y' : null,
-        TXC: column === 'TXC' ? 'y' : null,
-        TXF: column === 'TXF' ? 'y' : null
-    };
-
-    if (newData) {
+        // Update city grid selection
         await selectionGrid.update({
             dataGridOptions: {
                 columns: {
@@ -1231,10 +1137,8 @@ async function updateBoard(board, city, column, scale, newData) {
             },
             columnAssignment: sharedColumnAssignment
         });
-    }
 
-    // Update city chart selection
-    if (newData) {
+        // Update city chart selection
         await cityChart.update({
             columnAssignment: sharedColumnAssignment,
             chartOptions: {

@@ -46,7 +46,7 @@ class DumbbellPoint extends AreaRangePoint {
 
     public series: DumbbellSeries = void 0 as any;
     public options: DumbbellPointOptions = void 0 as any;
-    public connector: SVGElement = void 0 as any;
+    public connector?: SVGElement;
     public pointWidth: number = void 0 as any;
 
     /* *
@@ -115,7 +115,7 @@ class DumbbellPoint extends AreaRangePoint {
             }
         }
 
-        point.connector[verb](series.getConnectorAttribs(point));
+        point.connector?.[verb](series.getConnectorAttribs(point));
     }
 
     public destroy(): void {

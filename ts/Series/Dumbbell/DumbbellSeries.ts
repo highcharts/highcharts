@@ -415,7 +415,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 (upperGraphic.element as any).point = point;
                 upperGraphic.addClass('highcharts-lollipop-high');
             }
-            (point.connector.element as any).point = point;
+            (point.connector?.element as any).point = point;
 
             if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;

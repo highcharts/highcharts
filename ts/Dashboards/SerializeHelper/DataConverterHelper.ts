@@ -23,8 +23,8 @@ import JSON from '../JSON';
 
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 /* *
  *
  *  Functions

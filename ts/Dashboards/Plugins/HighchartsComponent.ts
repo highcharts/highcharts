@@ -32,7 +32,6 @@ import type {
     Series,
     SeriesOptions
 } from './HighchartsTypes';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
@@ -43,14 +42,14 @@ import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-import  TC from '../../Shared/Helpers/TypeChecker.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
 } = AH;
-const { isString } =  TC;
-const { diffObjects, merge } =  OH;
+const { isString } = TC;
+const { diffObjects, merge } = OH;
 const { addEvent } = EH;
 
 const {
@@ -111,6 +110,10 @@ class HighchartsComponent extends Component {
              * @default true
              */
             allowConnectorUpdate: true,
+            className: [
+                Component.defaultOptions.className,
+                `${Component.defaultOptions.className}-highcharts`
+            ].join(' '),
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {

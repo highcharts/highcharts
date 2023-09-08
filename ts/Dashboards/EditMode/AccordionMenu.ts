@@ -27,8 +27,8 @@ import type Globals from '../Globals';
 import EditRenderer from './EditRenderer.js';
 import U from '../../Shared/Utilities.js';
 import EditGlobals from './EditGlobals.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const {
     createElement,
     error

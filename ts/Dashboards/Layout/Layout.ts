@@ -30,8 +30,8 @@ import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 
 /**
  * @internal

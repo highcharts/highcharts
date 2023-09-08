@@ -31,8 +31,8 @@ const {
 
 import EditMode from '../EditMode/EditMode';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const { addEvent, fireEvent, removeEvent } = EH;
 
 /**

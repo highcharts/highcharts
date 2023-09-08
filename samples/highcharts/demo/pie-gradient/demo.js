@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-len
 // Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
 Highcharts.setOptions({
@@ -42,7 +43,8 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                format: '<span style="font-size: 1.2em"><b>{point.name}</b></span><br>' +
+                    '<span style="opacity: 0.6">{point.percentage:.1f} %</span>',
                 connectorColor: 'rgba(128,128,128,0.5)'
             }
         }

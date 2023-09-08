@@ -16,16 +16,19 @@
  *
  * */
 
-import type AlignObject from '../Renderer/AlignObject';
+import type { AlignObject, AlignValue } from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
+import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type DataLabelOptions from './DataLabelOptions';
+import type PiePoint from '../../Series/Pie/PiePoint';
 import type Point from './Point';
 import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -47,7 +50,8 @@ const { isArray, isString } = TC;
 const { defined, extend, merge, objectEach } = OH;
 const { fireEvent } = EH;
 const {
-    pick
+    pick,
+    pInt
 } = U;
 
 /* *
@@ -59,8 +63,6 @@ const {
 declare module './PointLike' {
     interface PointLike {
         bottom?: number;
-        connector?: SVGElement;
-        connectors?: Array<SVGElement>;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
         dataLabelOnNull?: boolean;
@@ -69,8 +71,6 @@ declare module './PointLike' {
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
-        /** @deprecated */
-        positionIndex?: unknown;
         top?: number;
         getDataLabelPath(dataLabel: SVGElement): SVGElement;
     }
@@ -85,9 +85,9 @@ declare module './PointOptions' {
 
 declare module './SeriesLike' {
     interface SeriesLike {
-        _hasPointLabels?: boolean;
-        dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
+        dataLabelsGroup?: SVGElement;
+        hasDataLabels?(): boolean;
         initDataLabelsGroup(): SVGElement;
         initDataLabels(
             animationConfig?: Partial<AnimationOptions>
@@ -100,6 +100,10 @@ declare module './SeriesLike' {
             isNew?: boolean
         ): void;
         drawDataLabels(points?:Array<Point>): void;
+        getDataLabelPosition(
+            point: PiePoint,
+            distance: number
+        ): DataLabel.LabelPositionObject;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -123,6 +127,12 @@ declare module './SeriesLike' {
 declare module './SeriesOptions' {
     interface SeriesOptions {
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    }
+}
+
+declare module '../../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        options?: DataLabelOptions;
     }
 }
 
@@ -157,6 +167,7 @@ namespace DataLabel {
         ): number;
         justify(
             point: Point,
+            dataLabel: SVGElement,
             radius: number,
             seriesCenter: Array<number>
         ): number;
@@ -164,9 +175,39 @@ namespace DataLabel {
             series: Series,
             point: Point,
             y: number,
-            naturalY: number
+            naturalY: number,
+            dataLabel: SVGElement
         ): number;
-        radialDistributionY(point: Point): number;
+        radialDistributionY(
+            point: Point,
+            dataLabel: SVGElement
+        ): number;
+    }
+
+    export interface ConnectorShapeFunction {
+        (...args: Array<any>): SVGPath;
+    }
+
+    export interface LabelConnectorPositionObject {
+        breakAt: CorePositionObject;
+        touchingSliceAt: CorePositionObject;
+    }
+
+    export interface LabelPositionObject {
+        alignment: AlignValue;
+        attribs?: SVGAttributes;
+        bottom?: number;
+        connectorPosition: LabelConnectorPositionObject;
+        computed: Record<string, undefined|number>;
+        distance: number;
+        natural: CorePositionObject;
+        posAttribs?: SVGAttributes;
+        sideOverflow?: number;
+        top?: number;
+    }
+
+    export interface PositionObject extends CorePositionObject {
+        alignment: AlignValue;
     }
 
     /* *
@@ -184,6 +225,20 @@ namespace DataLabel {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * Check if this series has data labels, either a series-level setting, or
+     * individual. In case of individual point labels, this method is overridden
+     * to always return true.
+     * @private
+     */
+    function hasDataLabels(this: Series): boolean {
+        return splat(
+            this.options.dataLabels || {}
+        ).some((o: DataLabelOptions|undefined): boolean|undefined =>
+            o?.enabled
+        );
+    }
 
     /**
      * Align each individual data label.
@@ -450,6 +505,7 @@ namespace DataLabel {
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
+            seriesProto.hasDataLabels = hasDataLabels;
         }
 
     }
@@ -520,12 +576,6 @@ namespace DataLabel {
             pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
 
-        const firstDLOptions = splat(seriesDlOptions)[0],
-            dataLabelAnim = firstDLOptions.animation,
-            animationConfig = firstDLOptions.defer ?
-                getDeferredAnimation(chart, dataLabelAnim, series) :
-                { defer: 0, duration: 0 };
-
         // Merge in plotOptions.dataLabels for series
         seriesDlOptions = mergeArrays(
             mergeArrays(
@@ -535,13 +585,16 @@ namespace DataLabel {
             seriesDlOptions
         );
 
+        // Resolve the animation
+        const { animation, defer } = splat(seriesDlOptions)[0],
+            animationConfig = defer ?
+                getDeferredAnimation(chart, animation, series) :
+                { defer: 0, duration: 0 };
+
+
         fireEvent(this, 'drawDataLabels');
 
-        if (
-            isArray(seriesDlOptions) ||
-            seriesDlOptions.enabled ||
-            series._hasPointLabels
-        ) {
+        if (series.hasDataLabels?.()) {
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
@@ -555,7 +608,7 @@ namespace DataLabel {
                 pointOptions = splat(
                     mergeArrays(
                         seriesDlOptions,
-                        // dlOptions is used in treemaps
+                        // The dlOptions prop is used in treemaps
                         point.dlOptions || point.options?.dataLabels
                     )
                 );
@@ -565,14 +618,13 @@ namespace DataLabel {
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
+                            point.visible &&
                             // #2282, #4641, #7112, #10049
                             (!point.isNull || point.dataLabelOnNull) &&
                             applyFilter(point, labelOptions)
                         ),
-                        connector = point.connectors ?
-                            point.connectors[i] :
-                            point.connector,
-                        style = labelOptions.style || {};
+                        style = labelOptions.style || {},
+                        labelDistance = labelOptions.distance;
 
                     let labelConfig,
                         formatString,
@@ -582,11 +634,6 @@ namespace DataLabel {
                         dataLabel: SVGLabel|SVGElement|undefined =
                             dataLabels[i],
                         isNew = !dataLabel;
-
-                    const labelDistance = pick(
-                        labelOptions.distance,
-                        point.labelDistance
-                    );
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
@@ -629,7 +676,7 @@ namespace DataLabel {
                                         !defined(labelDistance) &&
                                         labelOptions.inside
                                     ) ||
-                                    (labelDistance || 0) < 0 ||
+                                    pInt(labelDistance || 0) < 0 ||
                                     seriesOptions.stacking
                                 ) ?
                                     point.contrastColor :
@@ -693,18 +740,6 @@ namespace DataLabel {
                     ) {
                         dataLabel = void 0;
                         isNew = true;
-                        if (connector && point.connector) {
-                            point.connector = point.connector.destroy();
-                            if (point.connectors) {
-                                // Remove point.connectors if this was the last
-                                // one
-                                if (point.connectors.length === 1) {
-                                    delete point.connectors;
-                                } else {
-                                    delete point.connectors[i];
-                                }
-                            }
-                        }
                     }
 
                     // Individual labels are disabled if the are explicitly

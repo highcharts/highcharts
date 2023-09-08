@@ -59,10 +59,10 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import  OH from '../../Shared/Helpers/ObjectHelper.js';
-import  TC from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isFunction } =  TC;
-const { diffObjects, merge, objectEach } =  OH;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction } = TC;
+const { diffObjects, merge, objectEach } = OH;
 const { addEvent, fireEvent } = EH;
 
 /* *
@@ -225,9 +225,6 @@ abstract class Component {
      * */
     public options: Component.ComponentOptions;
     /**
-     * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
-     */
-    /**
      * Sets an ID for the component's `div`.
      */
     public id: string;
@@ -370,7 +367,10 @@ abstract class Component {
         this.filterAndAssignSyncOptions();
         this.setupEventListeners();
         this.attachCellListeneres();
-        this.on('tableChanged', this.onTableChanged);
+
+        this.on('tableChanged', (): void => {
+            this.onTableChanged();
+        });
 
         this.on('update', (): void => {
             this.cell.setLoadingState();
@@ -400,19 +400,19 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
+
         if (
             this.options.connector?.id &&
             this.connectorId !== this.options.connector.id
         ) {
+            this.cell.setLoadingState();
 
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-
-            this.render();
-
         }
+
         return this;
     }
     /**
@@ -531,11 +531,12 @@ abstract class Component {
         if (connector) {
             if (table) {
                 [
-                    'afterSetRows',
-                    'afterDeleteRows',
-                    'afterSetColumns',
                     'afterDeleteColumns',
-                    'afterSetCell'
+                    'afterDeleteRows',
+                    'afterSetCell',
+                    'afterSetConnector',
+                    'afterSetColumns',
+                    'afterSetRows'
                 ].forEach((event: any): void => {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
@@ -554,11 +555,9 @@ abstract class Component {
                 });
             }
 
-
-            const component = this;
             this.tableEvents.push(connector.on('afterLoad', (): void => {
                 this.emit({
-                    target: component,
+                    target: this,
                     type: 'tableChanged'
                 });
             }));
@@ -933,8 +932,6 @@ abstract class Component {
      */
     public async load(): Promise<this> {
 
-        this.cell.setLoadingState();
-
         await this.initConnector();
         this.render();
 
@@ -1180,9 +1177,11 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;
+
         /**
          * Allow overwriting gui elements.
          * @internal
