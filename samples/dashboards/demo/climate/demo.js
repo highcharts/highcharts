@@ -1064,8 +1064,10 @@ async function updateBoard(board, city, column, scale, newData) {
                     column,
                     pointTable.getRowIndexBy('time', lastTime)
                 )
-            });
+            }, false, false);
         }
+
+        worldMap.chart.redraw();
     })();
 
     // Update KPIs
