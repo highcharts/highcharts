@@ -120,7 +120,7 @@ export interface ColumnOptions {
      * @return {string}
      * A string to be concatenated in to the common cell's text.
      */
-    cellFormatter?: cellFormatterCallback;
+    cellFormatter?: CellFormatterCallback;
 
     /**
      * Switch to make the column cells editable ('true') or read-only ('false').
@@ -156,14 +156,14 @@ export interface ColumnOptions {
 /**
  * Returns a formatted call's string.
  */
-export interface cellFormatterCallback {
-    (this: cellValue): string;
+export interface CellFormatterCallback {
+    (this: CellValue): string;
 }
 
 /**
  * Value to convert
  */
-export interface cellValue {
+export interface CellValue {
     value: number|string
 }
 
