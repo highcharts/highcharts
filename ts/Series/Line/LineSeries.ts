@@ -137,7 +137,7 @@ class LineSeries extends Series {
 
                 attribs = {
                     'stroke': (
-                        options.lineColor ||
+                        (!i && options.lineColor) || // Series only
                         owner.color ||
                         this.color ||
                         // When colorByPoint = true

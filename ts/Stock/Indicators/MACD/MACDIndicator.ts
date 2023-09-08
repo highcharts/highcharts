@@ -190,7 +190,6 @@ class MACDIndicator extends SMAIndicator {
      *
      * */
 
-    public currentLineZone?: string;
     public data: Array<MACDPoint> = void 0 as any;
     public graphmacd?: SVGElement;
     public graphsignal?: SVGElement;
@@ -336,24 +335,26 @@ class MACDIndicator extends SMAIndicator {
         }
 
         // Modify options and generate smoothing line:
-        ['macd', 'signal'].forEach(
-            function (lineName: string, i: number): void {
+        (['macd', 'signal'] as ('macd'|'signal')[]).forEach(
+            (lineName, i): void => {
                 indicator.points = otherSignals[i];
-                indicator.options = merge(
-                    (mainLineOptions as any)[lineName + 'Line'].styles,
+                (indicator as any).options = merge(
+                    mainLineOptions[`${lineName}Line`]?.styles || {},
                     gappedExtend
                 );
-                indicator.graph = (indicator as any)['graph' + lineName];
+                indicator.graph = indicator[`graph${lineName}`];
 
                 // Zones extension:
-                indicator.currentLineZone = lineName + 'Zones';
-                indicator.zones =
-                (indicator as any)[indicator.currentLineZone].zones;
+                indicator.zones = (
+                    indicator[`${lineName}Zones`].zones || []
+                ).slice(
+                    indicator[`${lineName}Zones`].startIndex || 0
+                );
 
                 SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
                     indicator
                 );
-                (indicator as any)['graph' + lineName] = indicator.graph;
+                indicator[`graph${lineName}`] = indicator.graph;
             }
         );
 
@@ -361,35 +362,7 @@ class MACDIndicator extends SMAIndicator {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.zones = histogramZones;
-        indicator.currentLineZone = void 0;
-        // indicator.graph = null;
     }
-
-    /*
-    public getZonesGraphs(
-        props: Array<Array<string>>
-    ): Array<Array<string>> {
-        const allZones: Array<Array<string>> =
-        super.getZonesGraphs(props);
-        let currentZones: Array<Array<string>> = allZones;
-
-        if (this.currentLineZone) {
-            currentZones = allZones.splice(
-                (this as any)[this.currentLineZone].startIndex + 1
-            );
-
-            if (!currentZones.length) {
-                // Line has no zones, return basic graph "zone"
-                currentZones = [props[0]];
-            } else {
-                // Add back basic prop:
-                currentZones.splice(0, 0, props[0]);
-            }
-        }
-
-        return currentZones;
-    }
-    */
 
     public applyZones(): void {
         // Histogram zones are handled by drawPoints method
