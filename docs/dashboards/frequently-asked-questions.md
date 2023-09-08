@@ -178,9 +178,9 @@ You need to import the default CSS stylesheet to your project, so that the dashb
 
 
 But you can also customize the style of the dashboard by adding your own CSS stylesheet.
-More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/styling).
+More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/style-by-css).
 
 
 
-Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly. 
+Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
 To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
