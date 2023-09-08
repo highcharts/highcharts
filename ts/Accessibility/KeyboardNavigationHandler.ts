@@ -20,8 +20,10 @@
 
 import type Chart from '../Core/Chart/Chart';
 
-import U from '../Core/Utilities.js';
-const { find } = U;
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    find
+} = ArrayHelper;
 
 /* *
  *

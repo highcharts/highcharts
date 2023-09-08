@@ -45,6 +45,10 @@ const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
@@ -707,13 +711,13 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;
         }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
+        if (pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',

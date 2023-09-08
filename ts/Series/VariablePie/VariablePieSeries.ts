@@ -29,11 +29,14 @@ const {
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMin,
+    arrayMax
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    arrayMax,
-    arrayMin,
     clamp,
     pick
 } = U;

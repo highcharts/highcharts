@@ -18,8 +18,8 @@
  * */
 import type EventCallback from '../../Core/EventCallback';
 
-import OH from './ObjectHelper.js';
-const { extend, objectEach } = OH;
+import ObjectHelper from './ObjectHelper.js';
+const { extend, objectEach } = ObjectHelper;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 

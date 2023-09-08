@@ -26,7 +26,7 @@ import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 const { merge } = ObjectHelper;
 
 const {
-    createElement,
+    createElement
 } = U;
 
 class Menu {

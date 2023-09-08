@@ -24,11 +24,15 @@ import Axis from './Axis.js';
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat,
+    pushUnique
+} = ArrayHelper;
 const { merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -122,7 +126,7 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;

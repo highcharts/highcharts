@@ -31,6 +31,10 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import BoostableMap from './BoostableMap.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     pick
@@ -82,7 +86,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
+    if (wglMode && pushUnique(composedClasses, ChartClass)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 

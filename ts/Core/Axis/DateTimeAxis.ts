@@ -23,6 +23,10 @@ import type Time from '../Time';
 
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     getMagnitude,
@@ -112,7 +116,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

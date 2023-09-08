@@ -44,6 +44,11 @@ const {
 } = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    splat,
+    pushUnique
+} = ArrayHelper;
 const { isArray, isNumber, isString } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
@@ -51,7 +56,6 @@ const {
     css,
     discardElement,
     pick,
-    splat,
     syncTimeout
 } = U;
 
@@ -1908,7 +1912,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composedMembers, PointerClass)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 

@@ -25,6 +25,10 @@ import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { extend } = ObjectHelper;
 const {
     attr,
@@ -75,7 +79,7 @@ class HTMLRenderer extends SVGRenderer {
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composedMembers, SVGRendererClass)) {
             const htmlRendererProto = HTMLRenderer.prototype,
                 svgRendererProto = SVGRendererClass.prototype;
 

@@ -49,6 +49,12 @@ import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    stableSort,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { defined, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
@@ -56,10 +62,8 @@ const {
     createElement,
     css,
     discardElement,
-    find,
     pick,
     relativeLength,
-    stableSort,
     syncTimeout
 } = U;
 
@@ -1764,7 +1768,7 @@ namespace Legend {
      */
     export function compose(ChartClass: typeof Chart): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

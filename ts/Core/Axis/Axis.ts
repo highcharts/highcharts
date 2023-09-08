@@ -70,21 +70,24 @@ const {
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber, isString } = TypeChecker;
-const { fireEvent, removeEvent } = EH;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
+    erase,
+    getClosestDistance,
+    splat
+} = ArrayHelper;
+const { isArray, isNumber, isString } = TypeChecker;
+const { fireEvent, removeEvent } = EH;
+const {
     clamp,
     correctFloat,
-    erase,
     error,
-    getClosestDistance,
     insertItem,
     normalizeTickInterval,
     pick,
     relativeLength,
-    splat,
     syncTimeout
 } = U;
 

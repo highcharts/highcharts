@@ -42,11 +42,14 @@ import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 const { isArray } = TypeChecker;
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMin,
+    arrayMax
+} = ArrayHelper;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    arrayMax,
-    arrayMin,
     pick,
     relativeLength
 } = U;

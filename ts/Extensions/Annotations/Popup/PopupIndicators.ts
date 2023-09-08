@@ -39,13 +39,16 @@ const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    stableSort
+} = ArrayHelper;
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
 const { isArray, isObject } = TypeChecker;
 const { defined, objectEach } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    createElement,
-    stableSort
+    createElement
 } = U;
 
 /* *

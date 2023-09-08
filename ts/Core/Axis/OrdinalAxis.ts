@@ -32,6 +32,10 @@ const {
     defined
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     correctFloat,
@@ -158,7 +162,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -182,10 +186,10 @@ namespace OrdinalAxis {
             );
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
         }
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
 

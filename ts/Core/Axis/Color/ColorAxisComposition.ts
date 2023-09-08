@@ -32,14 +32,18 @@ const { parse: color } = Color;
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat,
+    pushUnique
+} = ArrayHelper;
 const {
     extend,
     merge
 } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -134,7 +138,7 @@ namespace ColorAxisComposition {
             ColorAxisClass = ColorAxisType;
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
@@ -147,14 +151,14 @@ namespace ColorAxisComposition {
             wrapChartCreateAxis(ChartClass);
         }
 
-        if (U.pushUnique(composedMembers, FxClass)) {
+        if (pushUnique(composedMembers, FxClass)) {
             const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
         }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
+        if (pushUnique(composedMembers, LegendClass)) {
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
                 LegendClass,
@@ -164,7 +168,7 @@ namespace ColorAxisComposition {
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             extend(
                 SeriesClass.prototype,
                 {

@@ -29,6 +29,10 @@ const {
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { merge } = ObjectHelper;
 const { addEvent } = EH;
 
@@ -149,11 +153,11 @@ class HeikinAshiSeries extends CandlestickSeries {
     ): void {
         CandlestickSeries.compose(SeriesClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'postProcessData', onAxisPostProcessData);
         }
 
-        if (U.pushUnique(composedMembers, HeikinAshiSeries)) {
+        if (pushUnique(composedMembers, HeikinAshiSeries)) {
             addEvent(
                 HeikinAshiSeries,
                 'afterTranslate',

@@ -35,6 +35,12 @@ import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMax,
+    arrayMin,
+    erase
+} = ArrayHelper;
 const {
     defined,
     objectEach,
@@ -43,9 +49,6 @@ const {
 } = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    arrayMax,
-    arrayMin,
-    erase,
     pick
 } = U;
 

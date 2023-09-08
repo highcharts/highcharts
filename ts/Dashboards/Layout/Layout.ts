@@ -23,7 +23,7 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import U from '../../Core/Utilities.js';
 const {
-    pick,
+    pick
 } = U;
 
 import Cell from './Cell.js';

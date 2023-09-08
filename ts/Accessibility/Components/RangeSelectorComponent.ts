@@ -36,6 +36,10 @@ import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     attr
@@ -705,7 +709,7 @@ namespace RangeSelectorComponent {
         RangeSelectorClass: typeof RangeSelector
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightRangeSelectorButton = (
@@ -713,7 +717,7 @@ namespace RangeSelectorComponent {
             );
         }
 
-        if (U.pushUnique(composedMembers, RangeSelectorClass)) {
+        if (pushUnique(composedMembers, RangeSelectorClass)) {
             addEvent(
                 RangeSelector,
                 'afterBtnClick',

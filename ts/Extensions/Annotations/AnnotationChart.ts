@@ -29,10 +29,14 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Annotation from './Annotation.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-const { addEvent, fireEvent } = EH;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     find,
+    pushUnique
+} = ArrayHelper;
+const { addEvent, fireEvent } = EH;
+const {
     pick,
     wrap
 } = U;
@@ -399,7 +403,7 @@ namespace AnnotationChart {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
 
             const chartProto = ChartClass.prototype as AnnotationChart;
@@ -427,7 +431,7 @@ namespace AnnotationChart {
             };
         }
 
-        if (U.pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(

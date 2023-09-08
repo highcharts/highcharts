@@ -56,12 +56,15 @@ import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    erase,
+    splat
+} = ArrayHelper;
 const { destroyObjectProperties, merge } = ObjectHelper;
 const { fireEvent } = EH;
 const {
-    erase,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *

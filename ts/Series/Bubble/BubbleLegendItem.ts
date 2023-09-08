@@ -44,13 +44,16 @@ import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
-const { merge } = ObjectHelper;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
-    pick,
     stableSort
+} = ArrayHelper;
+const { isNumber } = TypeChecker;
+const { merge } = ObjectHelper;
+const {
+    pick
 } = U;
 
 /* *

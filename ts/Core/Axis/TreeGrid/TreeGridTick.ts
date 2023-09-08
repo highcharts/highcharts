@@ -36,6 +36,10 @@ import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber, isObject } = TypeChecker;
 const { addEvent } = EH;
 const {
@@ -374,7 +378,7 @@ class TreeGridTickAdditions {
         TickClass: typeof Tick
     ): void {
 
-        if (U.pushUnique(composedMembers, TickClass)) {
+        if (pushUnique(composedMembers, TickClass)) {
             addEvent(TickClass, 'init', onTickInit);
 
             wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);

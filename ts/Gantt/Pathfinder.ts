@@ -34,8 +34,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     error,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -211,6 +210,10 @@ declare global {
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 

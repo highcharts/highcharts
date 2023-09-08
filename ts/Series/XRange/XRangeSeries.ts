@@ -45,7 +45,6 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    find,
     pick,
     relativeLength
 } = U;
@@ -54,6 +53,11 @@ import XRangePoint from './XRangePoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isNumber, isObject } = TypeChecker;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
@@ -137,7 +141,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',

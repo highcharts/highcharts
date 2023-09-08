@@ -42,6 +42,10 @@ const {
     extend
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent, fireEvent } = EH;
 const {
     correctFloat,
@@ -354,7 +358,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -382,7 +386,7 @@ namespace RadialAxis {
             );
         }
 
-        if (U.pushUnique(composedMembers, TickClass)) {
+        if (pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',

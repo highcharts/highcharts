@@ -31,6 +31,10 @@ const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { objectEach } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -151,7 +155,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -162,11 +166,11 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
     }
 
-    if (U.pushUnique(composedMembers, LegendClass)) {
+    if (pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
     }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 

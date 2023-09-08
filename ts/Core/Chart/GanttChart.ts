@@ -28,14 +28,14 @@ import type Options from '../Options';
 import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { getOptions } = D;
-import U from '../Utilities.js';
-const {
-    splat
-} = U;
 
 import '../../Series/Gantt/GanttSeries.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { isArray } = TypeChecker;
 const {
     merge

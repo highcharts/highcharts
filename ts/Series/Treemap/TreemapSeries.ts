@@ -65,14 +65,17 @@ import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     error,
-    pick,
-    stableSort
+    pick
 } = U;
 import './TreemapComposition.js';
 import TreemapNode from './TreemapNode.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    stableSort
+} = ArrayHelper;
 const { isArray, isObject, isString } = TypeChecker;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;

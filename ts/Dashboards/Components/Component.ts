@@ -46,7 +46,7 @@ import U from '../../Core/Utilities.js';
 const {
     createElement,
     getStyle,
-    relativeLength,
+    relativeLength
 } = U;
 
 import CU from './ComponentUtilities.js';

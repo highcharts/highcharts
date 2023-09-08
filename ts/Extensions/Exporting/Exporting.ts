@@ -54,6 +54,11 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isObject } = TypeChecker;
 const { extend, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
@@ -61,7 +66,6 @@ const {
     css,
     createElement,
     discardElement,
-    find,
     pick,
     uniqueKey
 } = U;
@@ -646,7 +650,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.afterPrint = afterPrint;
@@ -691,7 +695,7 @@ namespace Exporting {
             }
         }
 
-        if (U.pushUnique(composedMembers, setOptions)) {
+        if (pushUnique(composedMembers, setOptions)) {
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
                 defaultOptions.exporting

@@ -29,11 +29,12 @@ const { deg2rad } = H;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber, isObject } = TypeChecker;
-const { extend, merge } = ObjectHelper;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = U;
+} = ArrayHelper;
+const { isNumber, isObject } = TypeChecker;
+const { extend, merge } = ObjectHelper;
 
 /* *
  *

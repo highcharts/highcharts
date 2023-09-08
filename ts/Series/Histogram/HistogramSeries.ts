@@ -32,11 +32,14 @@ const {
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMin,
+    arrayMax
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend, merge, objectEach } = ObjectHelper;
 const {
-    arrayMax,
-    arrayMin,
     correctFloat
 } = U;
 

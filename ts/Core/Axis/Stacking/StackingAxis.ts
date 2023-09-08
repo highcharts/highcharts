@@ -32,6 +32,10 @@ import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isArray, isNumber } = TypeChecker;
 const {
     objectEach,
@@ -714,18 +718,18 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.getStacks = chartGetStacks;
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;

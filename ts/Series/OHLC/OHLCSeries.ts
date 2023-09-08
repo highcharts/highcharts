@@ -35,6 +35,10 @@ const {
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 
@@ -135,7 +139,7 @@ class OHLCSeries extends HLCSeries {
         ..._args: Array<never>
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterSetOptions', onSeriesAfterSetOptions);
             addEvent(SeriesClass, 'init', onSeriesInit);
         }

@@ -25,6 +25,11 @@ import MockPoint from './MockPoint.js';
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique,
+    splat
+} = ArrayHelper;
 const { isObject, isString } = TypeChecker;
 const { merge } = ObjectHelper;
 
@@ -183,7 +188,7 @@ namespace ControlTarget {
         ControlTargetClass: Class
     ): void {
 
-        if (U.pushUnique(composedMembers, ControlTargetClass)) {
+        if (pushUnique(composedMembers, ControlTargetClass)) {
             merge(true, ControlTargetClass.prototype, {
                 addControlPoints,
                 anchor,
@@ -237,7 +242,7 @@ namespace ControlTarget {
 
         return (
             options.points ||
-            (options.point && U.splat(options.point))
+            (options.point && splat(options.point))
         ) as any;
     }
 

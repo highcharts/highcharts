@@ -39,6 +39,10 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const {
     defined,
@@ -54,8 +58,7 @@ const {
     discardElement,
     pad,
     pick,
-    pInt,
-    splat
+    pInt
 } = U;
 
 /* *

@@ -28,6 +28,10 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { merge } = ObjectHelper;
 const {
     pick
@@ -160,7 +164,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, ColumnSeriesClass)) {
+        if (pushUnique(composedMembers, ColumnSeriesClass)) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

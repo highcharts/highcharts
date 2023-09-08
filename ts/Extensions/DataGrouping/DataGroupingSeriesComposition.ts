@@ -46,6 +46,10 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend, defined, merge } = ObjectHelper;
 const { addEvent } = EH;
@@ -467,7 +471,7 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (U.pushUnique(composedMembers, PointClass)) {
+    if (pushUnique(composedMembers, PointClass)) {
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -478,7 +482,7 @@ function compose(
         });
     }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 

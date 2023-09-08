@@ -46,16 +46,19 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    splat,
+    erase
+} = ArrayHelper;
 const { isArray, isNumber } = TypeChecker;
 const { defined, destroyObjectProperties, extend, merge } = ObjectHelper;
 const { addEvent, removeEvent } = EH;
 const {
     clamp,
     correctFloat,
-    erase,
-    find,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *

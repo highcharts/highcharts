@@ -47,11 +47,14 @@ import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    erase
+} = ArrayHelper;
 const { isArray, isFunction, isNumber, isObject } = TypeChecker;
 const { extend, merge, objectEach, defined } = ObjectHelper;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
-    erase,
     getNestedProperty,
     pick,
     syncTimeout,

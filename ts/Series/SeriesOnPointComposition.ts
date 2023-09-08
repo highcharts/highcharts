@@ -31,12 +31,14 @@ import Chart from '../Core/Chart/Chart';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { defined } = ObjectHelper;
 const { addEvent } = EH;
-const {
-    find
-} = U;
 
 /* *
  *
@@ -141,7 +143,7 @@ namespace SeriesOnPointComposition {
         // - sunburst
         pie.prototype.onPointSupported = true;
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(Series, 'afterInit', seriesAfterInit);
             addEvent(Series, 'afterRender', seriesAfterRender);
             addEvent(Series, 'afterGetCenter', seriesGetCenter);
@@ -150,7 +152,7 @@ namespace SeriesOnPointComposition {
             addEvent(Series, 'translate', seriesTranslate);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', chartGetZData);
             addEvent(ChartClass, 'beforeRedraw', chartGetZData);
         }

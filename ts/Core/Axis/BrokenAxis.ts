@@ -32,10 +32,14 @@ import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isArray, isNumber } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
-    find,
     pick
 } = U;
 
@@ -141,7 +145,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -154,7 +158,7 @@ namespace BrokenAxis {
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;

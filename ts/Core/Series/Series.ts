@@ -80,22 +80,25 @@ import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMax,
+    arrayMin,
+    erase,
+    find,
+    getClosestDistance,
+    splat
+} = ArrayHelper;
 const { isArray, isNumber, isString } = TypeChecker;
 const { defined, diffObjects, extend, merge, objectEach } = ObjectHelper;
 const { fireEvent, removeEvent } = EH;
 const {
-    arrayMax,
-    arrayMin,
     clamp,
     correctFloat,
-    erase,
     error,
-    find,
     getNestedProperty,
     insertItem,
-    getClosestDistance,
     pick,
-    splat,
     syncTimeout
 } = U;
 

@@ -26,7 +26,7 @@ import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
-    pick,
+    pick
 } = U;
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';

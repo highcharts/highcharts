@@ -25,14 +25,15 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import U from '../../Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    erase,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const {
     extend
 } = ObjectHelper;
-const {
-    erase
-} = U;
-
 /* *
  *
  *  Declarations
@@ -217,7 +218,7 @@ namespace PlotLineOrBandAxis {
             PlotLineOrBandClass = PlotLineOrBandType;
         }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             extend(
                 AxisClass.prototype as Composition,
                 {

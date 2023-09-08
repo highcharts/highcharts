@@ -48,7 +48,7 @@ const { defined, diffObjects, merge } = ObjectHelper;
 const {
     createElement,
     css,
-    getStyle,
+    getStyle
 } = U;
 
 /* *

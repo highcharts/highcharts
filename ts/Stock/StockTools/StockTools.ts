@@ -36,6 +36,10 @@ const {
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { defined } = ObjectHelper;
 const {
@@ -114,7 +118,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
+    if (pushUnique(composedMembers, NavigationBindingsClass)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -132,7 +136,7 @@ function compose(
         };
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {

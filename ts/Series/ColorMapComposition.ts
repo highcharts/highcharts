@@ -29,6 +29,10 @@ const {
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { defined } = ObjectHelper;
 const { addEvent } = EH;
 
@@ -124,7 +128,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (U.pushUnique(composedMembers, PointClass)) {
+        if (pushUnique(composedMembers, PointClass)) {
             addEvent(PointClass, 'afterSetState', onPointAfterSetState);
         }
 

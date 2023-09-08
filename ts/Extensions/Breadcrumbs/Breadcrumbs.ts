@@ -34,6 +34,10 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isString } = TypeChecker;
 const { defined, extend, merge, objectEach } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
@@ -214,7 +218,7 @@ class Breadcrumbs {
         highchartsDefaultOptions: typeof D.defaultOptions
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(Chart, 'destroy', onChartDestroy);
             addEvent(Chart, 'afterShowResetZoom', onChartAfterShowResetZoom);
             addEvent(Chart, 'getMargins', onChartGetMargins);
@@ -222,7 +226,7 @@ class Breadcrumbs {
             addEvent(Chart, 'selection', onChartSelection);
         }
 
-        if (U.pushUnique(composedMembers, highchartsDefaultOptions)) {
+        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
             // Add language support.
             extend(
                 highchartsDefaultOptions.lang,

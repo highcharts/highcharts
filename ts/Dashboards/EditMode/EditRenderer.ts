@@ -29,9 +29,13 @@ import type EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find
+} = ArrayHelper;
 const { defined, merge } = ObjectHelper;
 const {
-    createElement,
+    createElement
 } = U;
 
 
@@ -240,7 +244,7 @@ function renderSelect(
     );
 
     const iconURL = (
-        U.find(
+        find(
             options.selectOptions,
             (item): boolean => item.name === options.value
         ) || {}

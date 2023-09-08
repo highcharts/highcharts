@@ -27,11 +27,13 @@ const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { addEvent } = EH;
-const {
-    find
-} = U;
 
 /* *
  *
@@ -91,15 +93,15 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
     }
 
-    if (U.pushUnique(composedMembers, H)) {
+    if (pushUnique(composedMembers, H)) {
         addEvent(H, 'displayError', onHighchartsDisplayError);
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(defaultOptions);
     }
 

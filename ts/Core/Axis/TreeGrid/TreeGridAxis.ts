@@ -45,13 +45,17 @@ import U from '../../Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isArray, isObject, isString } = TypeChecker;
 const {
     merge
 } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
-    find,
     pick,
     wrap
 } = U;
@@ -850,7 +854,7 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
                 AxisClass.keepProps.push('treeGrid');
             }
@@ -868,7 +872,7 @@ class TreeGridAxisAdditions {
 
         }
 
-        if (U.pushUnique(composedMembers, TickClass)) {
+        if (pushUnique(composedMembers, TickClass)) {
             if (!TickConstructor) {
                 TickConstructor = TickClass;
             }

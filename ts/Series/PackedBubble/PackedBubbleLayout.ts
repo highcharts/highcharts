@@ -26,6 +26,10 @@ import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     pick
@@ -110,7 +114,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             const chartProto = ChartClass.prototype;

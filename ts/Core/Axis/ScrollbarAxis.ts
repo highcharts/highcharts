@@ -26,6 +26,10 @@ const {
     defined
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     pick
@@ -89,7 +93,7 @@ class ScrollbarAxis {
      * Scrollbar class to use.
      */
     public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
-        if (!U.pushUnique(composedMembers, AxisClass)) {
+        if (!pushUnique(composedMembers, AxisClass)) {
             return AxisClass as (T&ScrollbarAxis);
         }
 

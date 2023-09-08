@@ -1,5 +1,3 @@
-import ArrayHelper from './ArrayHelper.js';
-const { splat } = ArrayHelper;
 import TypeChecker from './TypeChecker.js';
 const { isObject, isArray, isClass, isDOMElement } = TypeChecker;
 /* eslint-disable valid-jsdoc */
@@ -73,6 +71,10 @@ function destroyObjectProperties(obj: any, except?: any): void {
         // Delete the property from the object.
         delete obj[n];
     });
+}
+// Implemented again to avoid circular dependency
+function splat(obj: any): Array<any> {
+    return isArray(obj) ? obj : [obj];
 }
 
 // eslint-disable-next-line valid-jsdoc

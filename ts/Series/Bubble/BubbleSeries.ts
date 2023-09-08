@@ -45,12 +45,16 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMin,
+    arrayMax,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    arrayMax,
-    arrayMin,
     clamp,
     pick
 } = U;
@@ -483,7 +487,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.prototype.beforePadding = axisBeforePadding;
         }
 

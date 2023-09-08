@@ -42,8 +42,7 @@ const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
     pick,
-    relativeLength,
-    splat
+    relativeLength
 } = U;
 
 import TreegraphLink from './TreegraphLink.js';
@@ -53,6 +52,10 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 
 /* *

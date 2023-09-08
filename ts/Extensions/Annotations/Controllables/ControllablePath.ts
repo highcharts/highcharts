@@ -28,6 +28,10 @@ import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -213,11 +217,11 @@ class ControllablePath extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         }
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.addMarker = svgRendererAddMarker;

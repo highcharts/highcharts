@@ -37,6 +37,10 @@ import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const {
     defined
 } = ObjectHelper;
@@ -902,7 +906,7 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
@@ -912,13 +916,13 @@ namespace SeriesKeyboardNavigation {
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
         }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
+        if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**

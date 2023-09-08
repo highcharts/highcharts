@@ -31,10 +31,10 @@ import type Time from './Time';
 
 import H from './Globals.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+const { defined, extend, objectEach } = ObjectHelper;
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isString, isArray, isNumber, isObject } = TypeChecker;
-import EventHelper from '../Shared/Helpers/EventHelper.js';
+import error from '../Shared/Helpers/Error.js';
+const { isString, isNumber, isObject } = TypeChecker;
 const {
     charts,
     doc,
@@ -54,92 +54,6 @@ type NullType = (null|undefined);
  *  Functions
  *
  * */
-
-/**
- * Provide error messages for debugging, with links to online explanation. This
- * function can be overridden to provide custom error handling.
- *
- * @sample highcharts/chart/highcharts-error/
- *         Custom error handler
- *
- * @function Highcharts.error
- *
- * @param {number|string} code
- *        The error code. See
- *        [errors.xml](https://github.com/highcharts/highcharts/blob/master/errors/errors.xml)
- *        for available codes. If it is a string, the error message is printed
- *        directly in the console.
- *
- * @param {boolean} [stop=false]
- *        Whether to throw an error or just log a warning in the console.
- *
- * @param {Highcharts.Chart} [chart]
- *        Reference to the chart that causes the error. Used in 'debugger'
- *        module to display errors directly on the chart.
- *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance. In such case, the error will be
- *        displayed on the last created chart.
- *
- * @param {Highcharts.Dictionary<string>} [params]
- *        Additional parameters for the generated message.
- *
- * @return {void}
- */
-function error(
-    code: (number|string),
-    stop?: boolean,
-    chart?: Chart,
-    params?: Record<string, string>
-): void {
-    const severity = stop ? 'Highcharts error' : 'Highcharts warning';
-    if (code === 32) {
-        code = `${severity}: Deprecated member`;
-    }
-
-    const isCode = isNumber(code);
-    let message = isCode ?
-        `${severity} #${code}: www.highcharts.com/errors/${code}/` :
-        code.toString();
-    const defaultHandler = function (): void {
-        if (stop) {
-            throw new Error(message);
-        }
-        // else ...
-        if (
-            win.console &&
-            error.messages.indexOf(message) === -1 // prevent console flooting
-        ) {
-            console.warn(message); // eslint-disable-line no-console
-        }
-    };
-
-    if (typeof params !== 'undefined') {
-        let additionalMessages = '';
-        if (isCode) {
-            message += '?';
-        }
-        objectEach(params, function (value, key): void {
-            additionalMessages += `\n - ${key}: ${value}`;
-            if (isCode) {
-                message += encodeURI(key) + '=' + encodeURI(value);
-            }
-        });
-        message += additionalMessages;
-    }
-
-    EventHelper.fireEvent(
-        H,
-        'displayError',
-        { chart, code, message, params },
-        defaultHandler
-    );
-
-    error.messages.push(message);
-}
-namespace error {
-    export const messages: Array<string> = [];
-}
-
 
 /**
  * Constrain a value to within a lower and upper threshold.
@@ -171,30 +85,6 @@ function clamp(value: number, min: number, max: number): number {
  */
 function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
-}
-
-/**
- * Remove the last occurence of an item from an array.
- *
- * @function Highcharts.erase
- *
- * @param {Array<*>} arr
- *        The array.
- *
- * @param {*} item
- *        The item to remove.
- *
- * @return {void}
- */
-function erase(arr: Array<unknown>, item: unknown): void {
-    let i = arr.length;
-
-    while (i--) {
-        if (arr[i] === item) {
-            arr.splice(i, 1);
-            break;
-        }
-    }
 }
 
 /**
@@ -248,42 +138,6 @@ function insertItem(
         }
     }
     return i;
-}
-
-/**
- * Adds an item to an array, if it is not present in the array.
- *
- * @function Highcharts.pushUnique
- *
- * @param {Array<unknown>} array
- * The array to add the item to.
- *
- * @param {unknown} item
- * The item to add.
- *
- * @return {boolean}
- * Returns true, if the item was not present and has been added.
- */
-function pushUnique(
-    array: Array<unknown>,
-    item: unknown
-): boolean {
-    return array.indexOf(item) < 0 && !!array.push(item);
-}
-
-/**
- * Check if an object is null or undefined.
- *
- * @function Highcharts.defined
- *
- * @param {*} obj
- *        The object to check.
- *
- * @return {boolean}
- *         False if the object is null or undefined, otherwise true.
- */
-function defined<T>(obj: T): obj is NonNullable<T> {
-    return typeof obj !== 'undefined' && obj !== null;
 }
 
 function attr(
@@ -366,21 +220,6 @@ function attr(
         objectEach(keyOrAttribs, attrSingle);
     }
     return ret;
-}
-
-/**
- * Check if an element is an array, and if not, make it into an array.
- *
- * @function Highcharts.splat
- *
- * @param {*} obj
- *        The object to splat.
- *
- * @return {Array}
- *         The produced or original array.
- */
-function splat(obj: any): Array<any> {
-    return isArray(obj) ? obj : [obj];
 }
 
 /**
@@ -563,7 +402,7 @@ function createElement(
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-function extendClass <T, TReturn = T>(
+function extendClass<T, TReturn = T>(
     parent: Class<T>,
     members: any
 ): Class<TReturn> {
@@ -785,98 +624,6 @@ function normalizeTickInterval(
     return retInterval;
 }
 
-
-/**
- * Sort an object array and keep the order of equal items. The ECMAScript
- * standard does not specify the behaviour when items are equal.
- *
- * @function Highcharts.stableSort
- *
- * @param {Array<*>} arr
- *        The array to sort.
- *
- * @param {Function} sortFunction
- *        The function to sort it with, like with regular Array.prototype.sort.
- */
-function stableSort<T>(
-    arr: Array<T>,
-    sortFunction: (a: T, b: T) => number
-): void {
-
-    // @todo It seems like Chrome since v70 sorts in a stable way internally,
-    // plus all other browsers do it, so over time we may be able to remove this
-    // function
-    const length = arr.length;
-    let sortValue,
-        i;
-
-    // Add index to each item
-    for (i = 0; i < length; i++) {
-        (arr[i] as any).safeI = i; // stable sort index
-    }
-
-    arr.sort(function (a: any, b: any): number {
-        sortValue = sortFunction(a, b);
-        return sortValue === 0 ? a.safeI - b.safeI : sortValue;
-    });
-
-    // Remove index from items
-    for (i = 0; i < length; i++) {
-        delete (arr[i] as any).safeI; // stable sort index
-    }
-}
-
-/**
- * Non-recursive method to find the lowest member of an array. `Math.min` raises
- * a maximum call stack size exceeded error in Chrome when trying to apply more
- * than 150.000 points. This method is slightly slower, but safe.
- *
- * @function Highcharts.arrayMin
- *
- * @param {Array<*>} data
- *        An array of numbers.
- *
- * @return {number}
- *         The lowest number.
- */
-function arrayMin(data: Array<any>): number {
-    let i = data.length,
-        min = data[0];
-
-    while (i--) {
-        if (data[i] < min) {
-            min = data[i];
-        }
-    }
-    return min;
-}
-
-/**
- * Non-recursive method to find the lowest member of an array. `Math.max` raises
- * a maximum call stack size exceeded error in Chrome when trying to apply more
- * than 150.000 points. This method is slightly slower, but safe.
- *
- * @function Highcharts.arrayMax
- *
- * @param {Array<*>} data
- *        An array of numbers.
- *
- * @return {number}
- *         The highest number.
- */
-function arrayMax(data: Array<any>): number {
-    let i = data.length,
-        max = data[0];
-
-    while (i--) {
-        if (data[i] > max) {
-            max = data[i];
-        }
-    }
-    return max;
-}
-
-
 /**
  * Discard a HTML element
  *
@@ -947,47 +694,6 @@ Math.easeInOutSine = function (pos: number): number {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
 
-/**
- * Find the closest distance between two values of a two-dimensional array
- * @private
- * @function Highcharts.getClosestDistance
- *
- * @param {Array<Array<number>>} arrays
- *          An array of arrays of numbers
- *
- * @return {number | undefined}
- *          The closest distance between values
- */
-function getClosestDistance(
-    arrays: number[][],
-    onError?: Function
-): (number|undefined) {
-    const allowNegative = !onError;
-    let closest: number | undefined,
-        loopLength: number,
-        distance: number,
-        i: number;
-
-    arrays.forEach((xData): void => {
-        if (xData.length > 1) {
-            loopLength = xData.length - 1;
-            for (i = loopLength; i > 0; i--) {
-                distance = xData[i] - xData[i - 1];
-                if (distance < 0 && !allowNegative) {
-                    onError?.();
-                    // Only one call
-                    onError = void 0;
-                } else if (distance && (
-                    typeof closest === 'undefined' || distance < closest
-                )) {
-                    closest = distance;
-                }
-            }
-        }
-    });
-
-    return closest;
-}
 
 /**
  * Returns the value of a property path on a given object.
@@ -1136,68 +842,6 @@ function getStyle(
 }
 
 /**
- * Search for an item in an array.
- *
- * @function Highcharts.inArray
- *
- * @deprecated
- *
- * @param {*} item
- *        The item to search for.
- *
- * @param {Array<*>} arr
- *        The array or node collection to search in.
- *
- * @param {number} [fromIndex=0]
- *        The index to start searching from.
- *
- * @return {number}
- *         The index within the array, or -1 if not found.
- */
-function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
-    error(32, false, void 0, { 'Highcharts.inArray': 'use Array.indexOf' });
-    return arr.indexOf(item, fromIndex);
-}
-
-/**
- * Return the value of the first element in the array that satisfies the
- * provided testing function.
- *
- * @function Highcharts.find<T>
- *
- * @param {Array<T>} arr
- *        The array to test.
- *
- * @param {Function} callback
- *        The callback function. The function receives the item as the first
- *        argument. Return `true` if this item satisfies the condition.
- *
- * @return {T|undefined}
- *         The value of the element.
- */
-const find = (Array.prototype as any).find ?
-    function<T> (
-        arr: Array<T>,
-        callback: Utilities.FindCallback<T>
-    ): (T|undefined) {
-        return (arr as any).find(callback as any);
-    } :
-    // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function<T> (
-        arr: Array<T>,
-        callback: Utilities.FindCallback<T>
-    ): (T|undefined) {
-        let i;
-        const length = arr.length;
-
-        for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
-                return arr[i];
-            }
-        }
-    };
-
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -1241,38 +885,6 @@ function offset(el: Element): Utilities.OffsetObject {
         height: box.height
     };
 }
-
-/* eslint-disable valid-jsdoc */
-/**
- * Iterate over object key pairs in an object.
- *
- * @function Highcharts.objectEach<T>
- *
- * @param {*} obj
- *        The object to iterate over.
- *
- * @param {Highcharts.ObjectEachCallbackFunction<T>} fn
- *        The iterator callback. It passes three arguments:
- *        * value - The property value.
- *        * key - The property key.
- *        * obj - The object that objectEach is being applied to.
- *
- * @param {T} [ctx]
- *        The context.
- */
-function objectEach<TObject, TContext>(
-    obj: TObject,
-    fn: Utilities.ObjectEachCallback<TObject, TContext>,
-    ctx?: TContext
-): void {
-    /* eslint-enable valid-jsdoc */
-    for (const key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
-        }
-    }
-}
-
 /**
  * Iterate over an array.
  *
@@ -1294,6 +906,7 @@ function objectEach<TObject, TContext>(
  * @return {void}
  */
 
+
 /**
  * Filter an array by a callback.
  *
@@ -1311,6 +924,7 @@ function objectEach<TObject, TContext>(
  *         A new, filtered array.
  */
 
+
 /**
  * Map an array by a callback.
  *
@@ -1326,6 +940,7 @@ function objectEach<TObject, TContext>(
  * @return {Array<*>}
  *         A new array item with modified items.
  */
+
 
 /**
  * Reduce an array to a single value.
@@ -1347,6 +962,7 @@ function objectEach<TObject, TContext>(
  * @return {*}
  *         The reduced value.
  */
+
 
 /**
  * Test whether at least one element in the array passes the test implemented by
@@ -1517,20 +1133,6 @@ namespace Utilities {
         fn: EventCallback<T>;
         order: number;
     }
-    export interface FindCallback<T> {
-        (
-            value: T,
-            index: number
-        ): unknown;
-    }
-    export interface ObjectEachCallback<TObject, TContext> {
-        (
-            this: TContext,
-            value: TObject[keyof TObject],
-            key: keyof TObject,
-            obj: TObject
-        ): void;
-    }
     export interface OffsetObject {
         height: number;
         left: number;
@@ -1550,8 +1152,6 @@ namespace Utilities {
 
 // TODO use named exports when supported.
 const Utilities = {
-    arrayMax,
-    arrayMin,
     attr,
     clamp,
     clearTimeout: internalClearTimeout,
@@ -1559,15 +1159,11 @@ const Utilities = {
     createElement,
     css,
     discardElement,
-    erase,
     error,
     extendClass,
-    find,
-    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,
-    inArray,
     insertItem,
     keys,
     normalizeTickInterval,
@@ -1575,10 +1171,7 @@ const Utilities = {
     pad,
     pick,
     pInt,
-    pushUnique,
     relativeLength,
-    splat,
-    stableSort,
     syncTimeout,
     timeUnits,
     uniqueKey,

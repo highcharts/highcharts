@@ -30,6 +30,10 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { defined, merge } = ObjectHelper;
 const {
     error
@@ -133,7 +137,7 @@ namespace MultipleLinesComposition {
         IndicatorClass: T
     ): (T&typeof IndicatorComposition) {
 
-        if (U.pushUnique(composedMembers, IndicatorClass)) {
+        if (pushUnique(composedMembers, IndicatorClass)) {
             const proto = IndicatorClass.prototype as IndicatorComposition;
 
             proto.linesApiNames = (

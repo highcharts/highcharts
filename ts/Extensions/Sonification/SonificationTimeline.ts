@@ -22,10 +22,11 @@ import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge } = ObjectHelper;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = U;
+} = ArrayHelper;
+const { defined, merge } = ObjectHelper;
 
 declare global {
     namespace Sonification {

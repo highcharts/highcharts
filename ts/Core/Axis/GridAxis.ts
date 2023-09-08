@@ -46,11 +46,15 @@ const {
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } = TypeChecker;
-const { addEvent } = EH;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     find,
+    pushUnique
+} = ArrayHelper;
+const { isArray, isNumber } = TypeChecker;
+const { addEvent } = EH;
+const {
     pick,
     timeUnits,
     wrap
@@ -212,7 +216,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composedMembers, AxisClass)) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
@@ -242,11 +246,11 @@ function compose<T extends typeof Axis>(
         addEvent(AxisClass, 'destroy', onDestroy);
     }
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
     }
 
-    if (U.pushUnique(composedMembers, TickClass)) {
+    if (pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

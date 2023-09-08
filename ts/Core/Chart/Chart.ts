@@ -92,6 +92,12 @@ import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    erase,
+    find,
+    splat
+} = ArrayHelper;
 const { isArray, isNumber, isObject, isString } = TypeChecker;
 const {
     merge,
@@ -106,14 +112,11 @@ const {
     createElement,
     css,
     discardElement,
-    erase,
     error,
-    find,
     getStyle,
     pick,
     pInt,
     relativeLength,
-    splat,
     syncTimeout,
     uniqueKey
 } = U;

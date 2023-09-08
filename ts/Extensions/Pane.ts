@@ -23,12 +23,15 @@ import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { defined, merge, extend } = ObjectHelper;
 const { addEvent } = EH;
 const {
     correctFloat,
-    pick,
-    splat
+    pick
 } = U;
 
 declare module '../Core/Axis/AxisLike' {

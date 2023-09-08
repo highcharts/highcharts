@@ -29,6 +29,10 @@ import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 import U from '../../../Core/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const {
     merge
 } = ObjectHelper;
@@ -85,7 +89,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',

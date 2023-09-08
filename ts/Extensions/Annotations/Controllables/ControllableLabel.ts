@@ -33,6 +33,10 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend } = ObjectHelper;
 const {
@@ -233,7 +237,7 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.symbols.connector = symbolConnector;

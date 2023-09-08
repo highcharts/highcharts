@@ -24,6 +24,10 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -116,7 +120,7 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.

@@ -38,11 +38,12 @@ const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } = TypeChecker;
-const { defined, merge, objectEach, extend } = ObjectHelper;
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     getClosestDistance
-} = U;
+} = ArrayHelper;
+const { isArray, isNumber } = TypeChecker;
+const { defined, merge, objectEach, extend } = ObjectHelper;
 
 /* *
  *

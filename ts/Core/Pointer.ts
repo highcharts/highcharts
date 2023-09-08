@@ -44,15 +44,19 @@ import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 const { objectEach, defined, extend } = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    splat,
+    pushUnique
+} = ArrayHelper;
 const { isNumber, isObject } = TypeChecker;
 const { addEvent, fireEvent } = EH;
 const {
     attr,
     css,
-    find,
     offset,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -2203,7 +2207,7 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch

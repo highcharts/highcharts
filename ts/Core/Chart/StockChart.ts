@@ -47,15 +47,18 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
     clamp,
-    find,
-    pick,
-    splat
+    pick
 } = U;
 
 import '../Pointer.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    splat
+} = ArrayHelper;
 const { isNumber, isString } = TypeChecker;
 const {
     defined,

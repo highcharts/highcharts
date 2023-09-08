@@ -48,13 +48,16 @@ const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    stableSort
+} = ArrayHelper;
 const { isObject } = TypeChecker;
 const { extend, merge } = ObjectHelper;
 const {
     clamp,
     pick,
-    relativeLength,
-    stableSort
+    relativeLength
 } = U;
 
 /* *

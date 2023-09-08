@@ -32,6 +32,10 @@ const {
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -512,7 +516,7 @@ namespace MenuComponent {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = Chart.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;

@@ -38,6 +38,10 @@ import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -159,11 +163,11 @@ function compose(
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
     }
 
-    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
+    if (pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
 
         wrap(

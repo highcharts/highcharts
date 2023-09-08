@@ -39,16 +39,19 @@ import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
-const { defined, extend, merge } = ObjectHelper;
-const { addEvent } = EH;
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
     erase,
+    splat
+} = ArrayHelper;
+const { isNumber } = TypeChecker;
+const { defined, extend, merge } = ObjectHelper;
+const { addEvent } = EH;
+const {
     insertItem,
     pick,
-    splat,
     wrap
 } = U;
 

@@ -42,6 +42,10 @@ const {
     merge
 } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     pick,
@@ -450,7 +454,7 @@ class Axis3DAdditions {
     ): void {
         Tick3D.compose(TickClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composedMembers, AxisClass)) {
             merge(true, AxisClass.defaultOptions, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');

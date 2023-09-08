@@ -32,11 +32,15 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { defined, extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
-    find,
     pick
 } = U;
 
@@ -154,11 +158,11 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composedMembers, AxisClass)) {
         AxisClass.prototype.minFromRange = axisMinFromRange;
     }
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         addEvent(ChartClass, 'destroy', onChartDestroy);
@@ -171,7 +175,7 @@ function compose(
         chartProto.callbacks.push(onChartCallback);
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         extend(
             defaultOptions,
             { rangeSelector: RangeSelectorDefaults.rangeSelector }

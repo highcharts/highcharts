@@ -34,6 +34,10 @@ const {
     objectEach
 } = ObjectHelper;
 import EH from '../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent, removeEvent } = EH;
 const {
     css,
@@ -289,7 +293,7 @@ namespace MSPointer {
      */
     export function compose(ChartClass: typeof Chart): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

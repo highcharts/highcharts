@@ -64,6 +64,10 @@ import { Palette } from '../../Core/Color/Palettes';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
@@ -364,17 +368,17 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(Chart, 'load', onChartRedraw);
         addEvent(Chart, 'redraw', onChartRedraw);
     }
 
-    if (U.pushUnique(composedMembers, SVGRendererClass)) {
+    if (pushUnique(composedMembers, SVGRendererClass)) {
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 

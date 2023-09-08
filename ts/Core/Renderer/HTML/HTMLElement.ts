@@ -35,6 +35,10 @@ const {
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { defined, extend } = ObjectHelper;
 const {
     css,
@@ -122,7 +126,7 @@ class HTMLElement extends SVGElement {
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
 
-        if (U.pushUnique(composedMembers, SVGElementClass)) {
+        if (pushUnique(composedMembers, SVGElementClass)) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

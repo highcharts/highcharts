@@ -16,11 +16,14 @@
  *
  * */
 
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    stableSort
+} = ArrayHelper;
 import U from '../Utilities.js';
 const {
     clamp,
-    pick,
-    stableSort
+    pick
 } = U;
 
 /* *

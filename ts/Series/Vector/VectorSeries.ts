@@ -34,9 +34,12 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMax
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const {
-    arrayMax,
     pick
 } = U;
 

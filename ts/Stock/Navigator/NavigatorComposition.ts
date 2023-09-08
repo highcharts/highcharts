@@ -37,6 +37,10 @@ const { getRendererType } = RendererRegistry;
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -104,7 +108,7 @@ function compose(
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
@@ -117,15 +121,15 @@ function compose(
         addEvent(ChartClass, 'update', onChartUpdate);
     }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
-    if (U.pushUnique(composedMembers, getRendererType)) {
+    if (pushUnique(composedMembers, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 

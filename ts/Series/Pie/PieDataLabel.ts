@@ -32,9 +32,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge } = ObjectHelper;
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
+    pushUnique
+} = ArrayHelper;
+const { defined, merge } = ObjectHelper;
+const {
     clamp,
     pick,
     relativeLength
@@ -145,7 +149,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, PieSeriesClass)) {
+        if (pushUnique(composedMembers, PieSeriesClass)) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;

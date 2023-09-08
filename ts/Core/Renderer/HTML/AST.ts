@@ -28,14 +28,17 @@ const {
 import U from '../../Utilities.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    splat
+} = ArrayHelper;
 const { isFunction, isString } = TypeChecker;
 const { objectEach } = ObjectHelper;
 const {
     attr,
     createElement,
     css,
-    error,
-    splat
+    error
 } = U;
 const {
     trustedTypes

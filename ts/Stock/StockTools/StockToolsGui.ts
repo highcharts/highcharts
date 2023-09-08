@@ -35,6 +35,10 @@ import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { merge } = ObjectHelper;
 const { addEvent } = EH;
 const {
@@ -110,7 +114,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -122,7 +126,7 @@ function compose(
         ChartClass.prototype.setStockTools = chartSetStockTools;
     }
 
-    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
+    if (pushUnique(composedMembers, NavigationBindingsClass)) {
         addEvent(
             NavigationBindingsClass,
             'deselectButton',
@@ -135,7 +139,7 @@ function compose(
         );
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
     }
 }

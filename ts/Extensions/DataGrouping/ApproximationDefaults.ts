@@ -22,11 +22,14 @@ import ApproximationRegistry from './ApproximationRegistry.js';
 import U from '../../Core/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMax,
+    arrayMin
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend } = ObjectHelper;
 const {
-    arrayMax,
-    arrayMin,
     correctFloat
 } = U;
 

@@ -31,6 +31,10 @@ import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
@@ -191,7 +195,7 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'init', function (): void {
                 this.datas = new DataSeriesAdditions(
                     this as DataSeriesComposition

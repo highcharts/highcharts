@@ -35,6 +35,10 @@ import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const {
     defined
 } = ObjectHelper;
@@ -438,7 +442,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',

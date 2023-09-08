@@ -30,6 +30,10 @@ import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 const {
     pick
@@ -127,14 +131,14 @@ namespace FocusBorderComposition {
         SVGElementClass: typeof SVGElement
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
         }
 
-        if (U.pushUnique(composedMembers, SVGElementClass)) {
+        if (pushUnique(composedMembers, SVGElementClass)) {
             const svgElementProto = (
                 SVGElementClass.prototype as SVGElementCompositon
             );

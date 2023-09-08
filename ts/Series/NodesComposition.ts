@@ -32,9 +32,13 @@ const {
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { defined, extend, merge } = ObjectHelper;
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
 const {
     find,
+    pushUnique
+} = ArrayHelper;
+const { defined, extend, merge } = ObjectHelper;
+const {
     pick
 } = U;
 
@@ -148,7 +152,7 @@ namespace NodesComposition {
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
 
-        if (U.pushUnique(composedMembers, PointClass)) {
+        if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.setNodeState = setNodeState;
@@ -156,7 +160,7 @@ namespace NodesComposition {
             pointProto.update = updateNode;
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.destroy = destroy;

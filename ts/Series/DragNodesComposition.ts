@@ -27,6 +27,10 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import U from '../Core/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { addEvent } = EH;
 
 /* *
@@ -100,7 +104,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'load', onChartLoad);
     }
 

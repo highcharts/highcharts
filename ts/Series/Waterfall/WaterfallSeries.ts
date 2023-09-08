@@ -30,8 +30,6 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    arrayMax,
-    arrayMin,
     correctFloat,
     pick
 } = U;
@@ -40,6 +38,11 @@ import WaterfallPoint from './WaterfallPoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    arrayMin,
+    arrayMax
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend, merge, objectEach } = ObjectHelper;
 const { addEvent } = EH;

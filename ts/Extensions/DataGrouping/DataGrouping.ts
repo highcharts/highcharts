@@ -30,6 +30,10 @@ import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { isNumber } = TypeChecker;
 const { extend } = ObjectHelper;
 const { addEvent } = EH;
@@ -61,7 +65,7 @@ function compose(
 
     if (
         TooltipClass &&
-        U.pushUnique(composedMembers, TooltipClass)
+        pushUnique(composedMembers, TooltipClass)
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }

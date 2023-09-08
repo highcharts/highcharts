@@ -11,6 +11,11 @@
 'use strict';
 
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    find,
+    pushUnique
+} = ArrayHelper;
 const {
     extend,
     merge,
@@ -27,9 +32,7 @@ import type GlobalOptions from './Options';
 
 import U from './Utilities.js';
 const {
-    find,
     pick,
-    splat,
     uniqueKey
 } = U;
 
@@ -132,7 +135,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             extend(
                 ChartClass.prototype as Composition,
                 {

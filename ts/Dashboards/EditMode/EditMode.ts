@@ -44,7 +44,7 @@ const { addEvent } = EH;
 
 const {
     createElement,
-    css,
+    css
 } = U;
 
 /* *

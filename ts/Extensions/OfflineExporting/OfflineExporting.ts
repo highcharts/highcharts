@@ -48,6 +48,10 @@ import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { extend, merge } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 const {
@@ -165,7 +169,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;

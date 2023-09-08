@@ -24,6 +24,10 @@ import type Tick from './Tick.js';
 import U from '../Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const {
     extend
 } = ObjectHelper;
@@ -53,7 +57,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (U.pushUnique(composedMembers, TickClass)) {
+    if (pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

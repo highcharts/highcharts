@@ -58,6 +58,10 @@ import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+const {
+    pushUnique
+} = ArrayHelper;
 const { merge, extend } = ObjectHelper;
 const { addEvent, fireEvent } = EH;
 
@@ -504,7 +508,7 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
@@ -550,7 +554,7 @@ namespace Accessibility {
             });
         }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
+        if (pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
@@ -558,7 +562,7 @@ namespace Accessibility {
             );
         }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(
