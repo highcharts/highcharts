@@ -1625,6 +1625,11 @@ const defaultOptions: Options = {
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
          *
+         * @sample {highcharts} highcharts/legend/scrollable-vertical/
+         *         Legend with vertical scrollable extension
+         * @sample {highcharts} highcharts/legend/scrollable-horizontal/
+         *         Legend with horizontal scrollable extension
+         *
          * @type      {boolean}
          * @default   false
          * @apioption legend.useHTML
