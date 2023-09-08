@@ -1025,6 +1025,7 @@ async function updateBoard(board, city, column, scale, newData) {
     const citiesTable = await dataPool.getConnectorTable('Cities');
 
     if (
+        newData ||
         !selectionModifier.options.ranges[0] ||
         selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
         selectionModifier.options.ranges[0].minValue !== timeRangeMin
@@ -1113,9 +1114,6 @@ async function updateBoard(board, city, column, scale, newData) {
             TXC: column === 'TXC' ? 'y' : null,
             TXF: column === 'TXF' ? 'y' : null
         };
-
-        // Update range selection
-        await selectionTable.setModifier(selectionTable.getModifier());
 
         // Update city grid selection
         await selectionGrid.update({
