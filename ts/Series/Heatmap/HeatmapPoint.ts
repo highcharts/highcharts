@@ -32,8 +32,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend } = OH;
 const {
     clamp,
     pick

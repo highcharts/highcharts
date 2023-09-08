@@ -28,10 +28,10 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend
-} = ObjectHelper;
+} = OH;
 
 /* *
  *

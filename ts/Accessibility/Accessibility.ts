@@ -57,12 +57,12 @@ import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { merge, extend } = ObjectHelper;
+} = AH;
+const { merge, extend } = OH;
 const { addEvent, fireEvent } = EH;
 
 /* *

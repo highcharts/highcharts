@@ -23,13 +23,13 @@ import type { SeriesOptions } from './Series/SeriesOptions';
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Series from './Series/Series.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
 const {
     objectEach
-} = ObjectHelper;
+} = OH;
 import EH from '../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isFunction } = TypeChecker;
+import TC from '../Shared/Helpers/TypeChecker.js';
+const { isFunction } = TC;
 const { addEvent, removeEvent } = EH;
 
 /* *

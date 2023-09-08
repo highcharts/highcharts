@@ -22,11 +22,11 @@ import type JSON from './JSON';
 import G from '../Core/Globals.js';
 const { doc } = G;
 import U from '../Shared/Utilities.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
 const {
     objectEach,
     merge
-} = ObjectHelper;
+} = OH;
 const {
     createElement,
     discardElement

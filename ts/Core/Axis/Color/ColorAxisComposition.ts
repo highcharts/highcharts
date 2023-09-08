@@ -31,16 +31,16 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     splat,
     pushUnique
-} = ArrayHelper;
+} = AH;
 const {
     extend,
     merge
-} = ObjectHelper;
+} = OH;
 const { addEvent } = EH;
 const {
     pick

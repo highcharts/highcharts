@@ -24,12 +24,12 @@ import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { extend } = ObjectHelper;
+} = AH;
+const { extend } = OH;
 const {
     attr,
     createElement,

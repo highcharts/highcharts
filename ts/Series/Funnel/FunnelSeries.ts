@@ -40,10 +40,10 @@ const {
 } = SeriesRegistry;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray } = TypeChecker;
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend, merge } = ObjectHelper;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TC;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = OH;
 const { addEvent, fireEvent } = EH;
 const {
     pick,

@@ -20,8 +20,8 @@ import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import ControlTarget from '../ControlTarget.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

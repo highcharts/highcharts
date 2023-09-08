@@ -40,8 +40,8 @@ const {
 } = H;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { objectEach } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { objectEach } = OH;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
     pick

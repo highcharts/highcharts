@@ -36,10 +36,10 @@ import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent } = EH;
 const {
     attr

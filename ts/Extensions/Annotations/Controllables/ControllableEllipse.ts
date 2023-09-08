@@ -24,8 +24,8 @@ import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../MockPointOptions';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge } = OH;
 
 /* *
  *

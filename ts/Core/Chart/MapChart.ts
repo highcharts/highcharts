@@ -30,10 +30,10 @@ const {
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     merge
-} = ObjectHelper;
+} = OH;
 
 declare module './ChartLike'{
     interface ChartLike {

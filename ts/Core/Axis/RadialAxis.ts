@@ -35,17 +35,17 @@ const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     defined,
     merge,
     extend
-} = ObjectHelper;
+} = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent, fireEvent } = EH;
 const {
     correctFloat,

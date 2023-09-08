@@ -30,8 +30,8 @@ import type {
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 
 /* *

@@ -30,11 +30,11 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../Core/Time';
 
 import H from '../Core/Globals.js';
-import ObjectHelper from './Helpers/ObjectHelper.js';
-const { defined, extend, objectEach } = ObjectHelper;
-import TypeChecker from './Helpers/TypeChecker.js';
+import OH from './Helpers/ObjectHelper.js';
+const { defined, extend, objectEach } = OH;
+import TC from './Helpers/TypeChecker.js';
 import error from './Helpers/Error.js';
-const { isString, isNumber, isObject } = TypeChecker;
+const { isString, isNumber, isObject } = TC;
 const {
     charts,
     doc,

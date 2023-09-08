@@ -29,12 +29,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Annotation from './Annotation.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     find,
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent, fireEvent } = EH;
 const {
     pick,

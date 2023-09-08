@@ -33,15 +33,15 @@ import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = ArrayHelper;
+} = AH;
 
 const {
     defined
-} = ObjectHelper;
+} = OH;
 const { fireEvent } = EH;
 
 /* *

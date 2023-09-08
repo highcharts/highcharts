@@ -51,15 +51,15 @@ const {
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
-const { isNumber, isObject } = TypeChecker;
-const { defined, extend, merge } = ObjectHelper;
+} = AH;
+const { isNumber, isObject } = TC;
+const { defined, extend, merge } = OH;
 const { addEvent } = EH;
 
 /* *

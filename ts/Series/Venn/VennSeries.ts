@@ -60,10 +60,10 @@ const {
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber, isObject } = TypeChecker;
-const { extend, merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TC;
+const { extend, merge } = OH;
 const { addEvent } = EH;
 
 /**

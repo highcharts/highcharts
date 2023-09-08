@@ -26,14 +26,14 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber, isObject } = TypeChecker;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject } = TC;
 const {
     merge,
     defined,
     objectEach
-} = ObjectHelper;
+} = OH;
 const {
     getStyle,
     pick

@@ -22,8 +22,8 @@ import type XRangePoint from './XRangePoint';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
 
 import U from '../../Shared/Utilities.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber, isObject } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TC;
 const {
     correctFloat
 } = U;

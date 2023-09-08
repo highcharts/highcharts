@@ -46,13 +46,13 @@ import TimelinePoint from './TimelinePoint.js';
 import TimelineSeriesDefaults from './TimelineSeriesDefaults.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMin,
     arrayMax
-} = ArrayHelper;
-const { defined, extend, merge } = ObjectHelper;
+} = AH;
+const { defined, extend, merge } = OH;
 const { addEvent } = EH;
 const {
     pick

@@ -30,16 +30,16 @@ const {
 
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import TC from '../Shared/Helpers/TypeChecker.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
     pushUnique
-} = ArrayHelper;
-const { isArray, isNumber, isString } = TypeChecker;
-const { defined } = ObjectHelper;
+} = AH;
+const { isArray, isNumber, isString } = TC;
+const { defined } = OH;
 const { addEvent } = EH;
 const {
     correctFloat,

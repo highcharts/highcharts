@@ -23,8 +23,8 @@ import type {
 import type NATRPoint from './NATRPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const {
     atr: ATRIndicator
 } = SeriesRegistry.seriesTypes;

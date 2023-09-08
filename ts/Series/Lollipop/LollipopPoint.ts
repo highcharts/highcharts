@@ -40,8 +40,8 @@ const {
     }
 } = SeriesRegistry;
 
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
 
 /* *
  *

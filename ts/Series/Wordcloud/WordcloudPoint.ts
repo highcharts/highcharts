@@ -34,8 +34,8 @@ const {
     }
 } = SeriesRegistry;
 import WordcloudSeries from './WordcloudSeries';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
 
 class WordcloudPoint extends ColumnPoint {
 

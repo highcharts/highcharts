@@ -18,8 +18,8 @@
 import type WindbarbPointOptions from './WindbarbPointOptions';
 import WindbarbSeries from './WindbarbSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 
 /* *
  *

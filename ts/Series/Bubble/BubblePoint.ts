@@ -21,8 +21,8 @@ import type BubbleSeries from './BubbleSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
 const {
     seriesTypes: {
         scatter: {

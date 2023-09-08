@@ -23,10 +23,10 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
 import StackItem from './Stacking/StackItem.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     objectEach
-} = ObjectHelper;
+} = OH;
 const { addEvent } = EH;
 
 /* *

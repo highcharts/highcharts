@@ -29,10 +29,10 @@ import type {
 
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray } = TypeChecker;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TC;
 const { addEvent, fireEvent } = EH;
 const {
     createElement,

@@ -28,10 +28,10 @@ const {
     }
 } = SeriesRegistry;
 import type SunburstNode from './SunburstNode.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber, isObject } = TypeChecker;
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isObject } = TC;
+const { merge } = OH;
 
 /* *
  *

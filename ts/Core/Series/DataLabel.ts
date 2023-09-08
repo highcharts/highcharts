@@ -36,15 +36,15 @@ import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat,
     pushUnique
-} = ArrayHelper;
-const { isArray, isString } = TypeChecker;
-const { defined, extend, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isArray, isString } = TC;
+const { defined, extend, merge, objectEach } = OH;
 const { fireEvent } = EH;
 const {
     pick

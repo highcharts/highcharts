@@ -44,12 +44,12 @@ import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
+} = AH;
+const { isNumber } = TC;
 const { addEvent, fireEvent } = EH;
 const {
     stripHTMLTagsFromString: stripHTMLTags,

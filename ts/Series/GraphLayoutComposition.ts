@@ -26,10 +26,10 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent } = EH;
 
 /* *

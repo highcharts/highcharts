@@ -18,8 +18,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type { PictorialPathOptions } from './PictorialSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 
 
 function rescalePatternFill(

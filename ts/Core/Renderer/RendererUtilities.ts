@@ -16,10 +16,10 @@
  *
  * */
 
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     stableSort
-} = ArrayHelper;
+} = AH;
 import U from '../../Shared/Utilities.js';
 const {
     clamp,

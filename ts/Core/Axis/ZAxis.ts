@@ -23,13 +23,13 @@ import type Chart from '../Chart/Chart.js';
 import Axis from './Axis.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat,
     pushUnique
-} = ArrayHelper;
-const { merge } = ObjectHelper;
+} = AH;
+const { merge } = OH;
 const { addEvent } = EH;
 const {
     pick

@@ -23,8 +23,8 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
 import ContextDetection from './ContextDetection.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } =  OH;
 const { addEvent, fireEvent } = EH;
 
 const {

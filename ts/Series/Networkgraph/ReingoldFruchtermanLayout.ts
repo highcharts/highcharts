@@ -37,10 +37,10 @@ const {
 } = U;
 import VerletIntegration from './VerletIntegration.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isFunction } = TypeChecker;
-const { defined } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isFunction } = TC;
+const { defined } = OH;
 const { fireEvent } = EH;
 
 /* *

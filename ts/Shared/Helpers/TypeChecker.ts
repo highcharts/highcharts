@@ -119,7 +119,7 @@ function isNumber(n: unknown): n is number {
 function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
-const TypeChecker = {
+const TC = {
     isArray,
     isClass,
     isObject,
@@ -129,4 +129,4 @@ const TypeChecker = {
     isString
 };
 
-export default TypeChecker;
+export default TC;

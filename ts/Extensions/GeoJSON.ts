@@ -26,8 +26,8 @@ const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
 import U from '../Shared/Utilities.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { extend, merge } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = OH;
 const {
     error,
     wrap

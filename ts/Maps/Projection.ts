@@ -28,10 +28,10 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import PC from '../Core/Geometry/PolygonClip.js';
 const { clipLineString, clipPolygon } = PC;
 import registry from './Projections/ProjectionRegistry.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     erase
-} = ArrayHelper;
+} = AH;
 import U from '../Shared/Utilities.js';
 const { clamp } = U;
 

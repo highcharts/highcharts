@@ -59,10 +59,10 @@ import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber, isObject, isString } = TypeChecker;
-const { defined, destroyObjectProperties, extend, merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber, isObject, isString } = TC;
+const { defined, destroyObjectProperties, extend, merge } = OH;
 const { addEvent } = EH;
 const {
     attr,

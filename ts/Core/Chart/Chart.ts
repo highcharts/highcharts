@@ -90,22 +90,22 @@ import U from '../../Shared/Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     find,
     splat
-} = ArrayHelper;
-const { isArray, isNumber, isObject, isString } = TypeChecker;
+} = AH;
+const { isArray, isNumber, isObject, isString } = TC;
 const {
     merge,
     defined,
     diffObjects,
     extend,
     objectEach
-} = ObjectHelper;
+} = OH;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
     attr,

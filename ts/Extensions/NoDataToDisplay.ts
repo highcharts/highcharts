@@ -23,8 +23,8 @@ import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
 const { addEvent } = EH;
 
 declare module '../Core/Chart/ChartLike' {

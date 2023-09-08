@@ -32,8 +32,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Shared/Utilities.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber, isString } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber, isString } = TC;
 const {
     pick
 } = U;

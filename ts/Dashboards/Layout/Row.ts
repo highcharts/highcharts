@@ -31,8 +31,8 @@ const {
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge, objectEach } = ObjectHelper;
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge, objectEach } =  OH;
 const { fireEvent } = EH;
 
 /**

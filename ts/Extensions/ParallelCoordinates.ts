@@ -37,17 +37,17 @@ const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import TC from '../Shared/Helpers/TypeChecker.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
     erase,
     splat
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
-const { defined, extend, merge } = ObjectHelper;
+} = AH;
+const { isNumber } = TC;
+const { defined, extend, merge } = OH;
 const { addEvent } = EH;
 const {
     insertItem,

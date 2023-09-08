@@ -19,8 +19,8 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

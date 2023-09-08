@@ -22,17 +22,17 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import H from '../Globals.js';
 const { isTouchDevice } = H;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     defined
-} = ObjectHelper;
+} = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
+} = AH;
+const { isNumber } = TC;
 const { addEvent } = EH;
 const {
     correctFloat,

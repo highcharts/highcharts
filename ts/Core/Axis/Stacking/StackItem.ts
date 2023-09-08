@@ -39,12 +39,12 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 const {
     destroyObjectProperties
-} = ObjectHelper;
+} = OH;
 const { fireEvent } = EH;
 const {
     pick

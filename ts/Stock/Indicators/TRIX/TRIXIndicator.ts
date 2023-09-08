@@ -21,8 +21,8 @@ import type TRIXPoint from './TRIXPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const {
     correctFloat
 } = U;

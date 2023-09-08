@@ -23,8 +23,8 @@ const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import TC from '../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 const { fireEvent } = EH;
 const {
     pick,

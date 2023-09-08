@@ -60,11 +60,11 @@ const {
     pick
 } = U;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } = TypeChecker;
-const { defined, merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TC;
+const { defined, merge } = OH;
 const { addEvent, fireEvent } = EH;
 
 /* *

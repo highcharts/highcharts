@@ -15,10 +15,10 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import ColorType from '../Core/Color/ColorType';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isArray } = TypeChecker;
-const { merge } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import TC from '../Shared/Helpers/TypeChecker.js';
+const { isArray } = TC;
+const { merge } = OH;
 const { addEvent } = EH;
 
 declare module '../Core/Series/SeriesLike' {

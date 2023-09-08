@@ -31,10 +31,10 @@ import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isObject } = TypeChecker;
-const { extend, merge } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import TC from '../Shared/Helpers/TypeChecker.js';
+const { isObject } = TC;
+const { extend, merge } = OH;
 const { addEvent } = EH;
 const {
     relativeLength

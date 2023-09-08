@@ -23,8 +23,8 @@ import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

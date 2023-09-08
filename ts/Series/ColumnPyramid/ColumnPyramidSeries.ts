@@ -21,8 +21,8 @@ import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 import U from '../../Shared/Utilities.js';
 const {
     clamp,

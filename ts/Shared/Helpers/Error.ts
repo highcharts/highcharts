@@ -1,13 +1,13 @@
 import type Chart from '../../Core/Chart/Chart';
 import EventHelper from './EventHelper.js';
-import TypeChecker from './TypeChecker.js';
+import TC from './TypeChecker.js';
 import H from '../../Core/Globals.js';
-import ObjectHelper from './ObjectHelper.js';
+import OH from './ObjectHelper.js';
 const {
     win
 } = H;
 
-const { isNumber } = TypeChecker;
+const { isNumber } = TC;
 
 /**
  * Provide error messages for debugging, with links to online explanation. This
@@ -72,7 +72,7 @@ function error(
         if (isCode) {
             message += '?';
         }
-        ObjectHelper.objectEach(params, function (value, key): void {
+        OH.objectEach(params, function (value, key): void {
             additionalMessages += `\n - ${key}: ${value}`;
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);

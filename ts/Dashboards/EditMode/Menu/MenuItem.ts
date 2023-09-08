@@ -21,8 +21,8 @@ import EditGlobals from '../EditGlobals.js';
 import U from '../../../Shared/Utilities.js';
 import Menu from './Menu.js';
 import EditRenderer from '../EditRenderer.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import  OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge } =  OH;
 
 const {
     createElement

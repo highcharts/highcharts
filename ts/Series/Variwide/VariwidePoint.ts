@@ -22,8 +22,8 @@ import type VariwidePointOptions from './VariwidePointOptions';
 import type VariwideSeries from './VariwideSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 const {
     column: {
         prototype: {

@@ -37,10 +37,10 @@ import U from '../Shared/Utilities.js';
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent, fireEvent } = EH;
 const { getElement, simulatedEventTarget } = HTMLUtilities;
 

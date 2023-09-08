@@ -55,13 +55,13 @@ import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     splat
-} = ArrayHelper;
-const { destroyObjectProperties, merge } = ObjectHelper;
+} = AH;
+const { destroyObjectProperties, merge } = OH;
 const { fireEvent } = EH;
 const {
     pick

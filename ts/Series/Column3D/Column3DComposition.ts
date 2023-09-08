@@ -36,8 +36,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem, { StackBoxProps } from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
 const { addEvent } = EH;
 const {
     pick,

@@ -29,15 +29,15 @@ const {
 } = H;
 import Pointer from './Pointer.js';
 import U from '../Shared/Utilities.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
 const {
     objectEach
-} = ObjectHelper;
+} = OH;
 import EH from '../Shared/Helpers/EventHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const { addEvent, removeEvent } = EH;
 const {
     css,

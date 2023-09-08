@@ -28,14 +28,14 @@ import type Globals from '../Globals';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+import  TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
-} = ArrayHelper;
-const { isArray, isNumber, isObject } = TypeChecker;
-const { merge, objectEach } = ObjectHelper;
+} = AH;
+const { isArray, isNumber, isObject } =  TC;
+const { merge, objectEach } =  OH;
 const {
     pick
 } = U;

@@ -28,14 +28,14 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
-const { extend } = ObjectHelper;
+} = AH;
+const { isNumber } = TC;
+const { extend } = OH;
 const { addEvent } = EH;
 
 /* *

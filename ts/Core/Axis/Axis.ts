@@ -60,25 +60,25 @@ const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     defined,
     merge,
     objectEach,
     extend,
     destroyObjectProperties
-} = ObjectHelper;
+} = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
     erase,
     getClosestDistance,
     splat
-} = ArrayHelper;
-const { isArray, isNumber, isString } = TypeChecker;
+} = AH;
+const { isArray, isNumber, isString } = TC;
 const { fireEvent, removeEvent } = EH;
 const {
     clamp,

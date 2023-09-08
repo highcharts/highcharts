@@ -14,8 +14,8 @@
 
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend } = OH;
 
 interface SonificationInstrumentCapabilitiesOptions {
     filters?: boolean;

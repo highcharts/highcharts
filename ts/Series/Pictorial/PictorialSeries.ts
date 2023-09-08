@@ -34,8 +34,8 @@ import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import U from '../../Shared/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge, objectEach } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge, objectEach } = OH;
 const { addEvent } = EH;
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;

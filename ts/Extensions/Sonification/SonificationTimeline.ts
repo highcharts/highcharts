@@ -21,12 +21,12 @@ import toMIDI from './MIDI.js';
 import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = ArrayHelper;
-const { defined, merge } = ObjectHelper;
+} = AH;
+const { defined, merge } = OH;
 
 declare global {
     namespace Sonification {

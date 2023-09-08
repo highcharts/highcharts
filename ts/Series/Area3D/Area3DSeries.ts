@@ -24,10 +24,10 @@ const {
         }
     }
 } = SeriesRegistry;
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 import U from '../../Shared/Utilities.js';
 const {
     wrap

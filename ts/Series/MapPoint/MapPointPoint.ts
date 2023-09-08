@@ -21,8 +21,8 @@ import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type ScatterPoint from './../Scatter/ScatterPoint';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 const {
     seriesTypes: {
         scatter: ScatterSeries

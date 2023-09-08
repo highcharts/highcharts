@@ -22,8 +22,8 @@ import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 
 const {
     map: {

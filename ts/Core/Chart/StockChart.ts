@@ -52,19 +52,19 @@ const {
 
 import '../Pointer.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     splat
-} = ArrayHelper;
-const { isNumber, isString } = TypeChecker;
+} = AH;
+const { isNumber, isString } = TC;
 const {
     defined,
     extend,
     merge
-} = ObjectHelper;
+} = OH;
 
 const { addEvent } = EH;
 

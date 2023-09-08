@@ -26,10 +26,10 @@ import type WMAPoint from './WMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isArray } = TypeChecker;
-const { merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray } = TC;
+const { merge } = OH;
 
 /* *
  *

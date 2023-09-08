@@ -34,12 +34,12 @@ const {
 } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { defined, extend } = ObjectHelper;
+} = AH;
+const { defined, extend } = OH;
 const {
     css,
     pick,

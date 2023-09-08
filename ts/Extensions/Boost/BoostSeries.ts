@@ -60,17 +60,17 @@ const {
     wrap
 } = U;
 import WGLRenderer from './WGLRenderer.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend
-} = ObjectHelper;
+} = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isArray, isNumber } = TypeChecker;
+} = AH;
+const { isArray, isNumber } = TC;
 const { addEvent, fireEvent } = EH;
 
 /* *

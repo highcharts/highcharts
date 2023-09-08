@@ -43,17 +43,17 @@ import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
-const { isArray, isObject, isString } = TypeChecker;
+} = AH;
+const { isArray, isObject, isString } = TC;
 const {
     merge
-} = ObjectHelper;
+} = OH;
 const { addEvent, fireEvent } = EH;
 const {
     pick,

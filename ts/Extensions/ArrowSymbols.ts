@@ -20,10 +20,10 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 /* *
  *
  *  Declarations

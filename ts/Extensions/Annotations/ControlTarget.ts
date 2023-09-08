@@ -23,15 +23,15 @@ import type MockPointOptions from './MockPointOptions';
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique,
     splat
-} = ArrayHelper;
-const { isObject, isString } = TypeChecker;
-const { merge } = ObjectHelper;
+} = AH;
+const { isObject, isString } = TC;
+const { merge } = OH;
 
 /* *
  *

@@ -39,10 +39,10 @@ const {
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     merge
-} = ObjectHelper;
+} = OH;
 import U from '../../Shared/Utilities.js';
 const {
     pick

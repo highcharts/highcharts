@@ -24,10 +24,10 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } = TypeChecker;
-const { objectEach } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import TC from '../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TC;
+const { objectEach } = OH;
 const { addEvent, fireEvent } = EH;
 const {
     pick

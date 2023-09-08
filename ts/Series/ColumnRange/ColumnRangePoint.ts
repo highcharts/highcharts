@@ -36,10 +36,10 @@ const {
         }
     }
 } = SeriesRegistry;
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend } = ObjectHelper;
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend } = OH;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 
 /* *
  *

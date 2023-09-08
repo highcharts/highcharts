@@ -26,10 +26,10 @@ import F from '../Core/Templating.js';
 const { format } = F;
 
 import U from '../Shared/Utilities.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
+} = AH;
 const {
     getNestedProperty,
     pick

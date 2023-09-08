@@ -78,9 +78,9 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
@@ -88,9 +88,9 @@ const {
     find,
     getClosestDistance,
     splat
-} = ArrayHelper;
-const { isArray, isNumber, isString } = TypeChecker;
-const { defined, diffObjects, extend, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isArray, isNumber, isString } = TC;
+const { defined, diffObjects, extend, merge, objectEach } = OH;
 const { fireEvent, removeEvent } = EH;
 const {
     clamp,

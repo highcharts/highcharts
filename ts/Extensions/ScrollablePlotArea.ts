@@ -44,8 +44,8 @@ import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { defined, merge } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+const { defined, merge } = OH;
 const { addEvent } = EH;
 const {
     createElement,

@@ -22,8 +22,8 @@ import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge, objectEach } = ObjectHelper;
+import  OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge, objectEach } =  OH;
 const { fireEvent } = EH;
 
 

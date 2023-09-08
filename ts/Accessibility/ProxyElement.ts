@@ -50,8 +50,8 @@ import EventProvider from './Utils/EventProvider.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = ChartUtilities;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const {
     cloneMouseEvent,
     cloneTouchEvent,

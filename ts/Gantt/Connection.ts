@@ -21,13 +21,13 @@ import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
 const {
     extend,
     merge,
     objectEach,
     defined
-} = ObjectHelper;
+} = OH;
 import Point from '../Core/Series/Point.js';
 import U from '../Shared/Utilities.js';
 const {

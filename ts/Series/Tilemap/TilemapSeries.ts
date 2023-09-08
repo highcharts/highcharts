@@ -34,8 +34,8 @@ const {
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import './TilemapComposition.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { extend, merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { extend, merge } = OH;
 
 /* *
  *

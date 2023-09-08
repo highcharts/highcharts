@@ -48,14 +48,14 @@ const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
-const { find } = ArrayHelper;
-const { isNumber, isString } = TypeChecker;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
+const { find } = AH;
+const { isNumber, isString } = TC;
 const {
     defined
-} = ObjectHelper;
+} = OH;
 const {
     pick
 } = U;

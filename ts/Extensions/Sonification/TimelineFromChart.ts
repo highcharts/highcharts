@@ -26,8 +26,8 @@ const {
     pick
 } = U;
 import T from '../../Core/Templating.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, extend, merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, extend, merge } = OH;
 const {
     format
 } = T;

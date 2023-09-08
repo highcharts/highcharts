@@ -35,12 +35,12 @@ import type {
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isNumber, isObject } = TypeChecker;
+} = AH;
+const { isNumber, isObject } = TC;
 const { addEvent } = EH;
 const {
     pick,

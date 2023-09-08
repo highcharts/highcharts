@@ -39,20 +39,20 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     merge,
     defined
-} = ObjectHelper;
+} = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     find,
     pushUnique
-} = ArrayHelper;
-const { isArray, isNumber } = TypeChecker;
+} = AH;
+const { isArray, isNumber } = TC;
 const { addEvent } = EH;
 const {
     pick,
@@ -172,7 +172,7 @@ function argsToArray(args: IArguments): Array<any> {
  */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return TypeChecker.isObject(x, true);
+    return TC.isObject(x, true);
 }
 
 /**

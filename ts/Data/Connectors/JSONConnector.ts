@@ -25,8 +25,8 @@ import type JSONConnectorOptions from './JSONConnectorOptions';
 
 import DataConnector from './DataConnector.js';
 import JSONConverter from '../Converters/JSONConverter.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 
 /* *
  *

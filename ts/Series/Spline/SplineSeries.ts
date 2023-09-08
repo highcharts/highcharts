@@ -25,8 +25,8 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 const {
     pick
 } = U;

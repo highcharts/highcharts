@@ -26,8 +26,8 @@ import type Series from '../../Core/Series/Series';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 const { fireEvent } = EH;
 
 /* *

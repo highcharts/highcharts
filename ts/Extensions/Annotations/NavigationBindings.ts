@@ -45,14 +45,14 @@ import NBU from './NavigationBindingsUtilities.js';
 const { getFieldType } = NBU;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { isArray, isFunction, isNumber, isObject } = TypeChecker;
-const { defined, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isArray, isFunction, isNumber, isObject } = TC;
+const { defined, merge, objectEach } = OH;
 const { addEvent, fireEvent } = EH;
 const {
     attr,

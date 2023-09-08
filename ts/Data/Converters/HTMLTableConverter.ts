@@ -28,8 +28,8 @@ import type DataConnector from '../Connectors/DataConnector';
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
 /* *
  *
  *  Functions

@@ -20,10 +20,10 @@
 
 import type Chart from '../Core/Chart/Chart';
 
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = ArrayHelper;
+} = AH;
 
 /* *
  *

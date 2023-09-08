@@ -39,14 +39,14 @@ import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
-const { extend, merge } = ObjectHelper;
+} = AH;
+const { isNumber } = TC;
+const { extend, merge } = OH;
 
 /* *
  *

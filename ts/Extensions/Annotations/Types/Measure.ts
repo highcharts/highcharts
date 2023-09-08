@@ -40,10 +40,10 @@ const {
     pick
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
-const { defined, extend, merge } = ObjectHelper;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
+const { defined, extend, merge } = OH;
 
 /* *
  *

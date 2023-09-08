@@ -38,8 +38,8 @@ import ConfirmationPopup from './ConfirmationPopup.js';
 import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } =  OH;
 const { addEvent } = EH;
 
 const {

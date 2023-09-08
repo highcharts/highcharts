@@ -30,12 +30,12 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { objectEach } = ObjectHelper;
+} = AH;
+const { objectEach } = OH;
 const { addEvent } = EH;
 const {
     wrap

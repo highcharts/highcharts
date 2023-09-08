@@ -9,8 +9,8 @@ import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 
 /* *
  *

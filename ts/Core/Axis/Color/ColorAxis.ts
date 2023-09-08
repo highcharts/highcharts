@@ -43,13 +43,13 @@ import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isArray, isNumber } = TypeChecker;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isNumber } = TC;
 const {
     merge,
     extend
-} = ObjectHelper;
+} = OH;
 const { fireEvent } = EH;
 const {
     pick

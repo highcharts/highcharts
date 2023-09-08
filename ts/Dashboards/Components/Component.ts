@@ -59,10 +59,10 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isArray, isFunction } = TypeChecker;
-const { diffObjects, merge, objectEach } = ObjectHelper;
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+import  TC from '../../Shared/Helpers/TypeChecker.js';
+const { isArray, isFunction } =  TC;
+const { diffObjects, merge, objectEach } =  OH;
 const { addEvent, fireEvent } = EH;
 
 /* *

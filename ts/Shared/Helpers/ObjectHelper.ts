@@ -1,5 +1,5 @@
-import TypeChecker from './TypeChecker.js';
-const { isObject, isArray, isClass, isDOMElement } = TypeChecker;
+import TC from './TypeChecker.js';
+const { isObject, isArray, isClass, isDOMElement } = TC;
 /* eslint-disable valid-jsdoc */
 
 /**
@@ -37,7 +37,7 @@ function defined<T>(obj: T): obj is NonNullable<T> {
  */
 function objectEach<TObject, TContext>(
     obj: TObject,
-    fn: ObjectHelper.ObjectEachCallback<TObject, TContext>,
+    fn: OH.ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -319,7 +319,7 @@ function merge<T>(): T {
 
     return ret;
 }
-namespace ObjectHelper {
+namespace OH {
     export interface ObjectEachCallback<TObject, TContext> {
         (
             this: TContext,
@@ -329,7 +329,7 @@ namespace ObjectHelper {
         ): void;
     }
 }
-const ObjectHelper = {
+const OH = {
     defined,
     destroyObjectProperties,
     diffObjects,
@@ -338,4 +338,4 @@ const ObjectHelper = {
     objectEach
 };
 
-export default ObjectHelper;
+export default OH;

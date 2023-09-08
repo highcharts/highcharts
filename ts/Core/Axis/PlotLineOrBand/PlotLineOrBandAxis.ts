@@ -23,17 +23,17 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     erase,
     pushUnique
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
+} = AH;
+const { isNumber } = TC;
 const {
     extend
-} = ObjectHelper;
+} = OH;
 /* *
  *
  *  Declarations

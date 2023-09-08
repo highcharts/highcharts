@@ -29,12 +29,12 @@ const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
-} = ArrayHelper;
-const { defined, merge } = ObjectHelper;
+} = AH;
+const { defined, merge } = OH;
 const {
     error
 } = U;

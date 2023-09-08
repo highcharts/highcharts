@@ -36,14 +36,14 @@ const { parse: color } = Color;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Shared/Utilities.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     getClosestDistance
-} = ArrayHelper;
-const { isArray, isNumber } = TypeChecker;
-const { defined, merge, objectEach, extend } = ObjectHelper;
+} = AH;
+const { isArray, isNumber } = TC;
+const { defined, merge, objectEach, extend } = OH;
 
 /* *
  *

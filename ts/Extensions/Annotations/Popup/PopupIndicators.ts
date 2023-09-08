@@ -38,14 +38,14 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     stableSort
-} = ArrayHelper;
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isArray, isObject } = TypeChecker;
-const { defined, objectEach } = ObjectHelper;
+} = AH;
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isArray, isObject } = TC;
+const { defined, objectEach } = OH;
 const { addEvent } = EH;
 const {
     createElement

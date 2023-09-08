@@ -43,8 +43,8 @@ import U from '../Shared/Utilities.js';
 import HTMLComponent from './Components/HTMLComponent.js';
 import ComponentType from './Components/ComponentType';
 import EH from '../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-const { merge, objectEach } = ObjectHelper;
+import  OH from '../Shared/Helpers/ObjectHelper.js';
+const { merge, objectEach } =  OH;
 const { addEvent } = EH;
 const {
     error,

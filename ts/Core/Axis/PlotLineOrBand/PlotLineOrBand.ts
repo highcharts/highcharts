@@ -34,19 +34,19 @@ import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMax,
     arrayMin,
     erase
-} = ArrayHelper;
+} = AH;
 const {
     defined,
     objectEach,
     destroyObjectProperties,
     merge
-} = ObjectHelper;
+} = OH;
 const { fireEvent } = EH;
 const {
     pick

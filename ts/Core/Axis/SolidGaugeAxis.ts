@@ -25,11 +25,11 @@ import Color from '../Color/Color.js';
 const {
     parse: color
 } = Color;
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend,
     merge
-} = ObjectHelper;
+} = OH;
 /* eslint-disable valid-jsdoc */
 
 /**

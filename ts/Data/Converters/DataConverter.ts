@@ -28,10 +28,10 @@ import type DataConnector from '../Connectors/DataConnector';
 
 import DataTable from '../DataTable.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { merge } = ObjectHelper;
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { merge } = OH;
+import TC from '../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
 const { addEvent, fireEvent } = EH;
 
 /* *

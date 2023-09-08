@@ -52,15 +52,15 @@ import HU from '../../Core/HttpUtilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
-const { isObject } = TypeChecker;
-const { extend, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isObject } = TC;
+const { extend, merge, objectEach } = OH;
 const { addEvent, fireEvent, removeEvent } = EH;
 const {
     css,

@@ -23,13 +23,13 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
-import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
-const { isNumber } = TypeChecker;
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../../Shared/Helpers/TypeChecker.js';
+const { isNumber } = TC;
+import OH from '../../../Shared/Helpers/ObjectHelper.js';
 const {
     defined,
     merge
-} = ObjectHelper;
+} = OH;
 
 /* *
  *

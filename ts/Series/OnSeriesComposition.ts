@@ -24,13 +24,13 @@ import SplinePoint from './Spline/SplinePoint';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique,
     stableSort
-} = ArrayHelper;
-const { defined } = ObjectHelper;
+} = AH;
+const { defined } = OH;
 
 /* *
  *

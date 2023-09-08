@@ -36,15 +36,15 @@ const {
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     arrayMin,
     arrayMax
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
-const { extend, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isNumber } = TC;
+const { extend, merge, objectEach } = OH;
 const { addEvent } = EH;
 
 /* *

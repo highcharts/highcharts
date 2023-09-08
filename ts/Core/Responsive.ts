@@ -10,17 +10,17 @@
 
 'use strict';
 
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
+import OH from '../Shared/Helpers/ObjectHelper.js';
+import AH from '../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
+} = AH;
 const {
     extend,
     merge,
     diffObjects
-} = ObjectHelper;
+} = OH;
 /* *
  *
  *  Imports

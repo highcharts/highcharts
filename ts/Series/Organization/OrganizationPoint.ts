@@ -33,12 +33,12 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find
-} = ArrayHelper;
-const { defined } = ObjectHelper;
+} = AH;
+const { defined } = OH;
 const {
     pick
 } = U;

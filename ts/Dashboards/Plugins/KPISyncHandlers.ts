@@ -22,8 +22,8 @@
 import type DataCursor from '../../Data/DataCursor';
 import type Sync from '../Components/Sync/Sync';
 import type KPIComponent from '../Components/KPIComponent';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } = ObjectHelper;
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } =  OH;
 
 /* *
  *

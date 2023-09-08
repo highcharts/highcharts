@@ -44,16 +44,16 @@ import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     splat,
     erase
-} = ArrayHelper;
-const { isArray, isNumber } = TypeChecker;
-const { defined, destroyObjectProperties, extend, merge } = ObjectHelper;
+} = AH;
+const { isArray, isNumber } = TC;
+const { defined, destroyObjectProperties, extend, merge } = OH;
 const { addEvent, removeEvent } = EH;
 const {
     clamp,

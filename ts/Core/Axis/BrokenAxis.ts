@@ -31,13 +31,13 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import StackItem from './Stacking/StackItem.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
-const { isArray, isNumber } = TypeChecker;
+} = AH;
+const { isArray, isNumber } = TC;
 const { addEvent, fireEvent } = EH;
 const {
     pick

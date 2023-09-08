@@ -37,11 +37,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend,
     merge
-} = ObjectHelper;
+} = OH;
 import U from '../../Shared/Utilities.js';
 const {
     error

@@ -37,20 +37,20 @@ import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
+} = AH;
+const { isNumber } = TC;
 const {
     defined,
     destroyObjectProperties,
     extend,
     merge,
     objectEach
-} = ObjectHelper;
+} = OH;
 const { addEvent, fireEvent } = EH;
 const {
     createElement,

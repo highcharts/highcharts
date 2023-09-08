@@ -26,13 +26,13 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     find,
     pushUnique
-} = ArrayHelper;
-const { isNumber } = TypeChecker;
+} = AH;
+const { isNumber } = TC;
 const { addEvent } = EH;
 
 /* *

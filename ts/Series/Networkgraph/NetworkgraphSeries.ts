@@ -55,8 +55,8 @@ const {
 
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined, merge, extend } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined, merge, extend } = OH;
 const { addEvent } = EH;
 const {
     pick

@@ -14,8 +14,8 @@
 'use strict';
 
 import U from '../../Shared/Utilities.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-const { defined } = ObjectHelper;
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+const { defined } = OH;
 const {
     clamp,
     pick

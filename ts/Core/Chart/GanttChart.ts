@@ -30,16 +30,16 @@ import D from '../Defaults.js';
 const { getOptions } = D;
 
 import '../../Series/Gantt/GanttSeries.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
-} = ArrayHelper;
-const { isArray } = TypeChecker;
+} = AH;
+const { isArray } = TC;
 const {
     merge
-} = ObjectHelper;
+} = OH;
 
 /* *
  *

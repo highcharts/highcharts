@@ -57,15 +57,15 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import OH from '../../Shared/Helpers/ObjectHelper.js';
+import TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat,
     find
-} = ArrayHelper;
-const { isArray, isNumber, isObject } = TypeChecker;
-const { defined, extend, merge, objectEach } = ObjectHelper;
+} = AH;
+const { isArray, isNumber, isObject } = TC;
+const { defined, extend, merge, objectEach } = OH;
 const { fireEvent } = EH;
 const {
     getNestedProperty,

@@ -43,14 +43,14 @@ import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
-import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
-import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
-import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
+import  OH from '../../Shared/Helpers/ObjectHelper.js';
+import  TC from '../../Shared/Helpers/TypeChecker.js';
+import AH from '../../Shared/Helpers/ArrayHelper.js';
 const {
     splat
-} = ArrayHelper;
-const { isString } = TypeChecker;
-const { diffObjects, merge } = ObjectHelper;
+} = AH;
+const { isString } =  TC;
+const { diffObjects, merge } =  OH;
 const { addEvent } = EH;
 
 const {

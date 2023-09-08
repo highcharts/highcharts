@@ -21,8 +21,8 @@ import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
-const { merge, objectEach } = ObjectHelper;
+import  OH from '../../../Shared/Helpers/ObjectHelper.js';
+const { merge, objectEach } =  OH;
 
 /**
  * @internal

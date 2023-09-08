@@ -1,6 +1,6 @@
 import error from './Error.js';
-import TypeChecker from './TypeChecker.js';
-const { isArray } = TypeChecker;
+import TC from './TypeChecker.js';
+const { isArray } = TC;
 /**
  *
  * Check if an element is an array, and if not, make it into an array.
