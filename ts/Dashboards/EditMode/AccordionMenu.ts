@@ -25,7 +25,7 @@ import type EditableOptions from '../Components/EditableOptions';
 import type Globals from '../Globals';
 
 import EditRenderer from './EditRenderer.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { merge } = ObjectHelper;

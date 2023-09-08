@@ -32,7 +32,7 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

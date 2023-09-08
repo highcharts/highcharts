@@ -21,7 +21,7 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {

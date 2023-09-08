@@ -38,7 +38,7 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
     merge,

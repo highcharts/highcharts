@@ -38,7 +38,7 @@ const {
         pie: PieSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 const { isArray } = TypeChecker;

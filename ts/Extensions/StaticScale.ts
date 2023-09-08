@@ -20,7 +20,7 @@ import type Series from '../Core/Series/Series';
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';

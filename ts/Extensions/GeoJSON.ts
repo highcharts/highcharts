@@ -25,7 +25,7 @@ import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 const { extend, merge } = ObjectHelper;
 const {

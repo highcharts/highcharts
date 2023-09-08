@@ -32,7 +32,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';

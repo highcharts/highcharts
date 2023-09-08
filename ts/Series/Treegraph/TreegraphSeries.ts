@@ -39,7 +39,7 @@ import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     pick,
     relativeLength

@@ -30,7 +30,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';

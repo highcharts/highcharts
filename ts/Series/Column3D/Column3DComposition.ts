@@ -34,7 +34,7 @@ import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem, { StackBoxProps } from '../../Core/Axis/Stacking/StackItem.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { extend } = ObjectHelper;

@@ -22,7 +22,7 @@ import type MockPointOptions from './MockPointOptions';
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

@@ -37,7 +37,7 @@ const {
     extend,
     merge
 } = ObjectHelper;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     pick
 } = U;

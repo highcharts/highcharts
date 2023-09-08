@@ -23,7 +23,7 @@ import H from '../Globals.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { merge } = ObjectHelper;
 const {

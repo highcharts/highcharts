@@ -32,7 +32,7 @@ const {
     win
 } = H;
 import MenuComponent from './Components/MenuComponent.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';

@@ -16,24 +16,24 @@
  *
  * */
 
-import type AxisType from './Axis/AxisType';
-import type Chart from './Chart/Chart';
-import type CSSObject from './Renderer/CSSObject';
+import type AxisType from '../Core/Axis/AxisType';
+import type Chart from '../Core/Chart/Chart';
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
     HTMLDOMElement
-} from './Renderer/DOMElementType';
-import type EventCallback from './EventCallback';
-import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
-import type Series from './Series/Series';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type Time from './Time';
+} from '../Core/Renderer/DOMElementType';
+import type EventCallback from '../Core/EventCallback';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type Series from '../Core/Series/Series';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type Time from '../Core/Time';
 
-import H from './Globals.js';
-import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
+import H from '../Core/Globals.js';
+import ObjectHelper from './Helpers/ObjectHelper.js';
 const { defined, extend, objectEach } = ObjectHelper;
-import TypeChecker from '../Shared/Helpers/TypeChecker.js';
-import error from '../Shared/Helpers/Error.js';
+import TypeChecker from './Helpers/TypeChecker.js';
+import error from './Helpers/Error.js';
 const { isString, isNumber, isObject } = TypeChecker;
 const {
     charts,

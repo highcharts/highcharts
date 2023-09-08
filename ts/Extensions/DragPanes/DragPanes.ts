@@ -25,7 +25,7 @@ import type AxisResizerOptions from './AxisResizerOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

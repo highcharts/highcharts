@@ -13,7 +13,7 @@
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { defined } = ObjectHelper;
 const {

@@ -57,7 +57,7 @@ import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';

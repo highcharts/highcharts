@@ -25,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     attr
 } = U;

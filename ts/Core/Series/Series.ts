@@ -76,7 +76,7 @@ import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';

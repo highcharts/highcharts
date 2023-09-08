@@ -30,7 +30,7 @@ import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {

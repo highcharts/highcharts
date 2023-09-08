@@ -33,7 +33,7 @@ import type {
 } from './TreeGridOptions';
 
 import { Palette } from '../../Color/Palettes.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';
 import ArrayHelper from '../../../Shared/Helpers/ArrayHelper.js';

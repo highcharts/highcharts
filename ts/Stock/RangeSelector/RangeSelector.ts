@@ -35,7 +35,7 @@ import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';

@@ -21,7 +21,7 @@
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

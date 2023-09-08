@@ -13,7 +13,7 @@
  *  - Sophie Bremer
  *
  * */
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import type Row from '../Layout/Row.js';
 import type Cell from '../Layout/Cell.js';
 import Globals from '../Globals.js';

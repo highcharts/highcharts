@@ -46,7 +46,7 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';

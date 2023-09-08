@@ -41,7 +41,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

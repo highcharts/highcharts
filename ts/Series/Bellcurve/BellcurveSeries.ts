@@ -32,7 +32,7 @@ const {
         areaspline: AreaSplineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 const { isNumber } = TypeChecker;

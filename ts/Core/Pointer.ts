@@ -37,7 +37,7 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from './Utilities.js';
+import U from '../Shared/Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';

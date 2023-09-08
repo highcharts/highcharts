@@ -20,7 +20,7 @@ import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     stableSort
 } = ArrayHelper;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     clamp,
     pick

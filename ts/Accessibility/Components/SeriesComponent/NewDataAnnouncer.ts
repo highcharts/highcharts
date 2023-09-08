@@ -26,7 +26,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 
 import Announcer from '../../Utils/Announcer.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';

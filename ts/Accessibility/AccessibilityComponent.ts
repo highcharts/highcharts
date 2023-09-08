@@ -32,7 +32,7 @@ import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
 import HU from './Utils/HTMLUtilities.js';
 const { getFakeMouseEvent } = HU;
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 const { extend } = ObjectHelper;
 

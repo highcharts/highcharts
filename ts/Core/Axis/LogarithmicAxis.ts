@@ -18,7 +18,7 @@
 
 import type Axis from './Axis';
 
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {

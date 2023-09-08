@@ -32,7 +32,7 @@ import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';
 const {
     erase
 } = ArrayHelper;
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const { clamp } = U;
 
 

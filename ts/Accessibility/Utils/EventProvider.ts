@@ -21,7 +21,7 @@
 import type EventCallback from '../../Core/EventCallback';
 
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 const { addEvent } = EH;
 

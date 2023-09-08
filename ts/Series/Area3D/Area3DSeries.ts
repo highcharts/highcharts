@@ -28,7 +28,7 @@ import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {
     pushUnique
 } = ArrayHelper;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     wrap
 } = U;

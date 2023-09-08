@@ -39,7 +39,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import SunburstNode from './SunburstNode';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { extend } = ObjectHelper;

@@ -34,7 +34,7 @@ import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

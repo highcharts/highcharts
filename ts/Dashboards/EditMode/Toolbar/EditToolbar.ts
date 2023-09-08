@@ -17,7 +17,7 @@
 'use strict';
 
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     createElement,
     css

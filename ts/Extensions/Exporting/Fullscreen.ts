@@ -26,7 +26,7 @@
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {

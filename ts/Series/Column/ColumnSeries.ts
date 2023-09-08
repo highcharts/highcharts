@@ -41,7 +41,7 @@ const {
 } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { merge, extend, defined, objectEach } = ObjectHelper;
 import EH from '../../Shared/Helpers/EventHelper.js';

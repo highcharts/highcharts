@@ -35,7 +35,7 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';

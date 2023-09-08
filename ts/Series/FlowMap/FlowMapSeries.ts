@@ -37,7 +37,7 @@ const {
 } = SeriesRegistry;
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 const { isArray } = TypeChecker;

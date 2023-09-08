@@ -30,7 +30,7 @@ import type DataTable from './DataTable.js';
 
 import DataConnector from './Connectors/DataConnector.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 const { addEvent, fireEvent } = EH;
 

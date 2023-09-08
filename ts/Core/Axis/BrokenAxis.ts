@@ -29,7 +29,7 @@ import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

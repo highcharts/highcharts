@@ -28,7 +28,7 @@ import Axis from '../Axis.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../../../Shared/Helpers/TypeChecker.js';

@@ -36,7 +36,7 @@ import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
-import U from './Utilities.js';
+import U from '../Shared/Utilities.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 const {
     extend,

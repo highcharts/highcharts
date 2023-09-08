@@ -28,7 +28,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';
 const {

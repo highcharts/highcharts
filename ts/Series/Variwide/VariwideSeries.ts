@@ -29,7 +29,7 @@ const {
 } = SeriesRegistry;
 import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const { extend, merge } = ObjectHelper;

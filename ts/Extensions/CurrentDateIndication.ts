@@ -35,7 +35,7 @@ import type {
 import Axis from '../Core/Axis/Axis.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../Shared/Helpers/ArrayHelper.js';

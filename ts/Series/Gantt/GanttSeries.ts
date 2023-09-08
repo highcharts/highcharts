@@ -33,7 +33,7 @@ const {
     }
 } = SeriesRegistry;
 import Tick from '../../Core/Axis/Tick.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);

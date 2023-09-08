@@ -34,7 +34,7 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
     defined,

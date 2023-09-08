@@ -53,7 +53,7 @@ const {
     noop,
     win
 } = H;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     error,
     pick,

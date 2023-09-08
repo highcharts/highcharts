@@ -21,7 +21,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 import ArrayHelper from '../../Shared/Helpers/ArrayHelper.js';

@@ -26,7 +26,7 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import TypeChecker from '../../Shared/Helpers/TypeChecker.js';
 const { isNumber } = TypeChecker;
 import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';

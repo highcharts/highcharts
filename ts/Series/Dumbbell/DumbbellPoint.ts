@@ -25,7 +25,7 @@ import ObjectHelper from '../../Shared/Helpers/ObjectHelper.js';
 const {
     extend
 } = ObjectHelper;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     pick
 } = U;

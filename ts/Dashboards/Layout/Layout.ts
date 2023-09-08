@@ -21,7 +21,7 @@ import type Serializable from '../Serializable';
 
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     pick
 } = U;
