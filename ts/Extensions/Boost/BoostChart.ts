@@ -25,10 +25,10 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
-import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -107,6 +107,7 @@ function getBoostClipRect(
         height: chart.plotHeight
     };
 
+    /* Uncomment to fix #19039
     if (target instanceof Series) {
         clipBox = target.getClipBox();
         if (chart.inverted) {
@@ -120,6 +121,7 @@ function getBoostClipRect(
             clipBox.y = target.yAxis.pos;
         }
     }
+    */
 
     if (target === chart) {
         const verticalAxes =
