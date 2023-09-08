@@ -55,19 +55,11 @@ describe('Remove the dashboard.', () => {
                     finalWidth,
                     200,
                     10,
-                    'The width should be close to 500px.'
+                    'The width should be close to 200px.'
                 )
             });
 
-            cy.wait(50);
-
-            cy.get('.highcharts-datagrid-column-header').should('exist').then(($el) => {
-                assert.strictEqual(
-                    $el[0].outerText,
-                    'pr... na...',
-                    'The overlapped text should be shortened.'
-                )
-            });
+            cy.get('.highcharts-datagrid-column-header').first().should('have.text', 'pr... na...');
         });
     });
 });

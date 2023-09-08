@@ -514,6 +514,8 @@ class DataGrid {
         if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
         }
+
+        this.updateGridElements();
     }
 
 
@@ -978,7 +980,7 @@ class DataGrid {
             this.outerContainer
         );
 
-        this.updateGridElements();
+        this.updateColumnHeaders();
     }
 
 
