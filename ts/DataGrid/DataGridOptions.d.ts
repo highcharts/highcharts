@@ -118,9 +118,9 @@ export interface ColumnOptions {
      * Extendable method for formatting each cell's in DataGrid.
      *
      * @return {string}
-     *         A string to be concatenated in to the common cell's text.
+     * A string to be concatenated in to the common cell's text.
      */
-    cellFormatter?: Function;
+    cellFormatter?: cellFormatterCallback;
 
     /**
      * Switch to make the column cells editable ('true') or read-only ('false').
@@ -151,6 +151,14 @@ export interface ColumnOptions {
      * @default true
      */
     show?: boolean;
+}
+
+export interface cellFormatterCallback {
+    (this: cellValue): string;
+}
+
+export interface cellValue {
+    value: number|string
 }
 
 /* *
