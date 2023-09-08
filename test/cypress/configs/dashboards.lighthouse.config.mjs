@@ -8,7 +8,11 @@ import defaultConfig from '../../../cypress.config.mjs';
 
 export default defineConfig({
     ...defaultConfig,
+    env: {
+        type: 'actual'
+    },
     e2e: {
+        ...defaultConfig.e2e,
         setupNodeEvents(on, config) {
             on('before:browser:launch', (browser = {}, launchOptions) => {
                 prepareAudit(launchOptions);
@@ -54,9 +58,7 @@ export default defineConfig({
                 })
             });
         },
-        baseUrl: 'http://localhost:3030/samples/view?mobile=true&path=/',
         specPattern: 'test/cypress/performance/**/*.cy.{js,jsx,ts,tsx}',
-        supportFile: 'test/cypress/support/index.js',
-        testIsolation: false
+        video: false
     }
 });
