@@ -25,10 +25,10 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
-import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -100,12 +100,26 @@ function getBoostClipRect(
     chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
-    const clipBox = {
+    let clipBox = {
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
         height: chart.plotHeight
     };
+
+    if (target instanceof Series) {
+        clipBox = target.getClipBox();
+        if (chart.inverted) {
+            const lateral = clipBox.width;
+            clipBox.width = clipBox.height;
+            clipBox.height = lateral;
+            clipBox.x = target.yAxis.pos;
+            clipBox.y = target.xAxis.pos;
+        } else {
+            clipBox.x = target.xAxis.pos;
+            clipBox.y = target.yAxis.pos;
+        }
+    }
 
     if (target === chart) {
         const verticalAxes =

@@ -36,9 +36,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      */
     firstRowAsNames?: boolean,
     /**
-     * URL to the JSON data.
-     *
-     * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ JSON demo with data fetched from url}
+     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
      */
     dataUrl?: string;
     /**
@@ -55,8 +53,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     dataRefreshRate?: number;
     /**
      * Whether data is in columns or rows.
-     *
-     * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ JSON demo with data orientation}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
      */
     orientation?: 'columns'|'rows';
 }

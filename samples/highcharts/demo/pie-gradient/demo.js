@@ -1,5 +1,4 @@
-// Data retrieved from
-// https://ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
+// Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
 Highcharts.setOptions({
     colors: Highcharts.map(Highcharts.getOptions().colors, function (color) {
