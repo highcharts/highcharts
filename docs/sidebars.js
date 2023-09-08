@@ -84,6 +84,7 @@ module.exports = {
             'dashboards/dashboards-with-react',
             'dashboards/dashboards-with-vue',
             'dashboards/layout-description',
+            'dashboards/style-by-css.md',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/datagrid-component',
