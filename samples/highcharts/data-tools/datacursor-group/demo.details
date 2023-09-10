@@ -1,0 +1,7 @@
+---
+ name: DataCursor demo with three HTML tables in two groups
+ authors:
+   - Sophie Bremer
+ js_wrap: b
+ skipTest: true
+...

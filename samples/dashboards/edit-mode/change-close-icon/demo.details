@@ -1,0 +1,6 @@
+---
+ name: Change the confirmation popup close icon
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...

@@ -1,5 +1,11 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
-    var ohlc = [],
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
+
+    const ohlc = [],
         volume = [];
 
     data.forEach(function (point) {
@@ -15,7 +21,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             point[5]
         ]);
     });
-
 
     // create the chart
     Highcharts.stockChart('container', {
@@ -88,4 +93,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         }]
     });
-});
+})();

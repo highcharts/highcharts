@@ -324,13 +324,14 @@ test('HTMLTableConverter', function (assert) {
     dataconverter.parse();
 });
 
-test('Export as HTML', function (assert) {
+test('Export as HTML', async (assert) => {
     const csv = `identifier,Range (low),Range (mid),Range (high),something else,Range (ultra)
 1,2,5,10,"Blue",22`;
 
     // Load the table from the CSV
     const csvconnector = new CSVConnector({ csv });
-    csvconnector.load();
+
+    await csvconnector.load();
 
     const connector = new HTMLTableConnector({
             dataTable: {
@@ -424,6 +425,6 @@ test('Export as HTML', function (assert) {
         done();
     });
 
-    connectorWithExport.load();
-    assert.ok(true)
-})
+    await connectorWithExport.load();
+
+});

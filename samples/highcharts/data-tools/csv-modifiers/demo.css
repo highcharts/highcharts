@@ -1,0 +1,40 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+:root {
+    --highcharts-color-0: #2caffe;
+    --highcharts-color-1: #544fc5;
+    --highcharts-color-2: #00e272;
+    --highcharts-color-3: #fe6a35;
+    --highcharts-color-4: #2caffe;
+    --highcharts-color-5: #544fc5;
+    --highcharts-color-6: #00e272;
+    --highcharts-color-7: #fe6a35;
+    --highcharts-color-8: #2caffe;
+    --highcharts-color-9: #544fc5;
+    --highcharts-color-10: #00e272;
+    --highcharts-color-11: #fe6a35;
+}
+
+.highcharts-series-10 {
+    stroke: var(--highcharts-color-2);
+    fill: var(--highcharts-color-2);
+}
+
+.highcharts-series-11 {
+    stroke: var(--highcharts-color-3);
+    fill: var(--highcharts-color-3);
+}
+
+.highcharts-legend-item > text {
+    font-size: 1.5em;
+}
+
+.highcharts-graph {
+    stroke-width: 3px;
+}

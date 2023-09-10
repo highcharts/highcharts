@@ -112,8 +112,9 @@ function onTooltipHeaderFormatter(
         // if we have grouped data, use the grouping information to get the
         // right format
         if (currentDataGrouping) {
-            labelFormats =
-                dateTimeLabelFormats[(currentDataGrouping as any).unitName];
+            labelFormats = (dateTimeLabelFormats as AnyRecord)[
+                currentDataGrouping.unitName
+            ];
             if ((currentDataGrouping as any).count === 1) {
                 xDateFormat = labelFormats[0];
             } else {

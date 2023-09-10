@@ -1,0 +1,6 @@
+---
+ name: Dashboards cypress test
+ authors:
+   - Pawel Lysy
+ js_wrap: b
+...

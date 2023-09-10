@@ -205,6 +205,13 @@ class SVGRenderer implements SVGRendererLike {
      * @type {Highcharts.SVGElement}
      */
     public defs: SVGElement = void 0 as any;
+
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
     public forExport?: boolean;
     public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
@@ -603,10 +610,10 @@ class SVGRenderer implements SVGRendererLike {
             id = [
                 `highcharts-drop-shadow-${this.chartIndex}`,
                 ...Object.keys(shadowOptions)
-                    .map((key: string): number|string =>
-                        (shadowOptions as any)[key]
+                    .map((key: string): string =>
+                        `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
@@ -619,7 +626,8 @@ class SVGRenderer implements SVGRendererLike {
             this.definition({
                 tagName: 'filter',
                 attributes: {
-                    id
+                    id,
+                    filterUnits: options.filterUnits
                 },
                 children: [{
                     tagName: 'feDropShadow',

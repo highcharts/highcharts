@@ -4,8 +4,12 @@ QUnit.test('Hover color', function (assert) {
     Highcharts.Color.names = {};
 
     var chart = Highcharts.mapChart('container', {
+            mapNavigation: {
+                enabled: true
+            },
             series: [
                 {
+                    allowPointSelect: true,
                     mapData: Highcharts.maps['custom/europe'],
                     data: [
                         ['no', 5],
@@ -55,4 +59,13 @@ QUnit.test('Hover color', function (assert) {
 
     // Reset
     Highcharts.Color.names = colorNames;
+
+    point1.firePointEvent('click');
+    chart.mapView.zoomBy(1);
+
+    assert.strictEqual(
+        point1.selected,
+        true,
+        'Point should be selected after zooming/panning the chart (#19175).'
+    );
 });

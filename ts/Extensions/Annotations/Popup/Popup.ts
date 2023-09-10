@@ -162,7 +162,7 @@ class Popup extends BaseForm {
         super(parentDiv, iconsURL);
 
         this.chart = chart;
-        this.lang = (getOptions().lang.navigation as any).popup;
+        this.lang = (getOptions().lang.navigation || {}).popup as any || {};
 
         addEvent(this.container, 'mousedown', (): void => {
             const activeAnnotation = chart &&

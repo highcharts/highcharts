@@ -1,11 +1,10 @@
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+    const arr = [];
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+    for (let i = 0; i < n; i = i + 1) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -29,8 +28,8 @@ function getData(n) {
 }
 
 function getSeries(n, s) {
-    var i = 0,
-        r = [];
+    let i = 0;
+    const r = [];
 
     for (; i < s; i++) {
         r.push({
@@ -44,7 +43,7 @@ function getSeries(n, s) {
     return r;
 }
 
-var n = 1000,
+const n = 1000,
     s = 600,
     series = getSeries(n, s);
 

@@ -1,34 +1,38 @@
-Math.easeInSine = function (pos) {
-    return -Math.cos(pos * (Math.PI / 2)) + 1;
-};
+(async () => {
 
-Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
-};
-// Math.easeInQuint = function (pos) {
-//     return Math.pow(pos, 5);
-// },
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
-    }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-    }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
-    }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
-};
+    Math.easeInSine = function (pos) {
+        return -Math.cos(pos * (Math.PI / 2)) + 1;
+    };
 
-const big = window.matchMedia('(min-width: 500px)').matches;
+    Math.easeOutQuint = function (pos) {
+        return (Math.pow((pos - 1), 5) + 1);
+    };
+    // Math.easeInQuint = function (pos) {
+    //     return Math.pow(pos, 5);
+    // },
 
-// Create the chart
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    Math.easeOutBounce = pos => {
+        if ((pos) < (1 / 2.75)) {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75)) {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75)) {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    };
+
+    const big = window.matchMedia('(min-width: 500px)').matches;
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
         dataLength = data.length,
         // set the allowed units for data grouping
@@ -38,11 +42,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         ], [
             'month',
             [1, 2, 3, 4, 6]
-        ]],
+        ]];
 
-        i = 0;
-
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -391,4 +393,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
     Highcharts.stockChart('stock', static);
 
-});
+})();

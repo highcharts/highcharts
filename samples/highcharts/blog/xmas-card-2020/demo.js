@@ -68,7 +68,7 @@ const sdInstruments = [{
 
 // Utility function that highlights a point
 function highlightPoint(event, point) {
-    var chart = point.series.chart,
+    const chart = point.series.chart,
         hasVisibleSeries = chart.series.some(function (series) {
             return series.visible;
         });
@@ -1155,11 +1155,11 @@ const soundChart = Highcharts.chart('soundContainer', {
                 events: {
                     click: function () {
                         // Sonify all points at this x value
-                        var targetX = this.x,
+                        const targetX = this.x,
                             chart = this.series.chart;
                         chart.series.forEach(function (series) {
                             // Map instruments to the options for this series
-                            var instruments = series.options.id === 'sd' ?
+                            const instruments = series.options.id === 'sd' ?
                                 sdInstruments : nyInstruments;
                             // See if we have a point with the targetX
                             series.points.some(function (point) {

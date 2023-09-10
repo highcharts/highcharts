@@ -130,6 +130,14 @@ function jsDocServer() {
                     response302(response, '/highmaps/');
                     return;
                 }
+                if (p === '/gantt') {
+                    response302(response, '/gantt/');
+                    return;
+                }
+                if (p === '/dashboards') {
+                    response302(response, '/dashboards/');
+                    return;
+                }
                 if (request.method !== 'GET') {
                     response404(response, p);
                     return;

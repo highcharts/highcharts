@@ -1,27 +1,31 @@
-Highcharts.setOptions({
-    lang: {
-        stockTools: {
-            gui: {
-                thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
-            }
-        },
-        navigation: {
-            popup: {
-                thresholds: 'Color threshold'
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
+
+    Highcharts.setOptions({
+        lang: {
+            stockTools: {
+                gui: {
+                    thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
+                }
+            },
+            navigation: {
+                popup: {
+                    thresholds: 'Color threshold'
+                }
             }
         }
-    }
-});
-
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    });
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
-        dataLength = data.length,
-        i = 0;
+        dataLength = data.length;
 
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -74,7 +78,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 thresholds: {
                     className: 'highcharts-threshold-annotation',
                     start: function (event) {
-                        var chart = this.chart,
+                        const chart = this.chart,
                             x = chart.xAxis[0].toValue(event.chartX),
                             y = chart.yAxis[0].toValue(event.chartY),
                             colors = chart.options.colors,
@@ -103,7 +107,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             draggable: 'y',
                             events: {
                                 drag: function (e) {
-                                    var newZones = series.userOptions.zones;
+                                    const newZones = series.userOptions.zones;
 
                                     newZones[this.userOptions.zoneIndex].value =
                                         chart.yAxis[0].toValue(e.chartY);
@@ -167,4 +171,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }]
         }
     });
-});
+})();

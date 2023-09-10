@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 body {
     margin: 0 !important;
@@ -15,7 +15,7 @@ body {
     position: relative;
     overflow: hidden;
     width: 100%;
-    opacity: 100%;
+    opacity: 1;
     text-align: left;
     line-height: normal;
     z-index: 0;
@@ -46,7 +46,7 @@ body {
 }
 
 #hero .highcharts-range-selector-buttons {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #hero .highcharts-range-selector-buttons .highcharts-button.highcharts-button-pressed {
@@ -59,7 +59,7 @@ body {
 #hero .highcharts-area-series.cover {
     fill: url("#bg-gradient");
     fill-opacity: 1;
-    opacity: 0%;
+    opacity: 0;
     stroke: transparent;
 }
 
@@ -120,7 +120,7 @@ body {
     fill: #fff;
     font-size: 2em;
     font-weight: 700;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #hero .highcharts-point {
@@ -132,7 +132,7 @@ body {
     fill: none;
     stroke: #3f3e57;
     stroke-width: 1px;
-    opacity: 0%;
+    opacity: 0;
     transform-origin: top;
     transition: transform 1s;
     transform: rotate(0deg);
@@ -296,7 +296,7 @@ body {
     fill: url("#sankey-gradient");
     stroke: transparent;
     transition: opacity 2s;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #hero .highcharts-node {

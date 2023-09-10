@@ -41,7 +41,7 @@ document.getElementById('pre').innerHTML = (function () {
     let indent = '';
     return svg
         .replace(/(<\/?|\/?>)/g, function (a) {
-            var ret;
+            let ret;
             if (a === '<') {
                 ret = '\n' + indent + '&lt;';
                 indent += '   ';
