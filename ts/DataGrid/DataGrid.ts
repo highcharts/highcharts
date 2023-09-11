@@ -331,12 +331,13 @@ class DataGrid {
                         header.style.flex = flex;
                     }
                 }
-                this.rowElements.forEach((row): void => {
-                    const cellElement = row.children[index] as HTMLElement;
+                for (let i = 0; i < this.rowElements.length; i++) {
+                    const cellElement =
+                        this.rowElements[i].children[index] as HTMLElement;
                     if (cellElement) {
                         cellElement.style.flex = flex;
                     }
-                });
+                }
             }
         } else {
             if (headers) {
@@ -344,11 +345,12 @@ class DataGrid {
                     (headers.children[i] as HTMLElement).style.flex = flex;
                 }
             }
-            this.rowElements.forEach((row): void => {
+            for (let i = 0; i < this.rowElements.length; i++) {
+                const row = this.rowElements[i];
                 for (let i = 0; i < row.children.length; i++) {
                     (row.children[i] as HTMLElement).style.flex = flex;
                 }
-            });
+            }
         }
 
         this.renderColumnDragHandles();
@@ -1005,8 +1007,9 @@ class DataGrid {
         }
 
         // Handle overflowing text in headers.
-        this.columnNames.forEach((columnName, i): void => {
-            const header = headersContainer.children[i] as HTMLElement,
+        for (let i = 0; i < this.columnNames.length; i++) {
+            const columnName = this.columnNames[i],
+                header = headersContainer.children[i] as HTMLElement,
                 overflowWidth = this.overflowHeaderWidths[i];
 
             if (header.scrollWidth > header.clientWidth) {
@@ -1024,7 +1027,8 @@ class DataGrid {
                 this.overflowHeaderWidths[i] = null;
                 header.textContent = this.formatHeaderCell(columnName);
             }
-        });
+
+        }
 
         // Offset the outer container by the header row height.
         this.outerContainer.style.top = headersContainer.clientHeight + 'px';
@@ -1062,12 +1066,13 @@ class DataGrid {
         this.updateScrollingLength();
         this.updateVisibleCells(true);
 
-        this.rowElements.forEach((row): void => {
+        for (let i = 0; i < this.rowElements.length; i++) {
+            const row = this.rowElements[i];
             for (let i = 0; i < row.childElementCount; i++) {
                 (row.children[i] as HTMLElement).style.flex =
                     prevColumnFlexes[i];
             }
-        });
+        }
     }
 
     /**
