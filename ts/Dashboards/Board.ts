@@ -566,18 +566,17 @@ class Board implements Serializable<Board, Board.JSON> {
     public reflowLayout(layout: Layout, cntSize: string): void {
         let row, cell;
 
-            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-                row = layout.rows[j];
+        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
+            row = layout.rows[j];
 
-                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    cell = row.cells[k];
-                    cell.reflow(cntSize);
-                    if (cell.nestedLayout) {
-                        this.reflowLayout(cell.nestedLayout, cntSize);
-                    }
+            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
+                cell = row.cells[k];
+                cell.reflow(cntSize);
+                if (cell.nestedLayout) {
+                    this.reflowLayout(cell.nestedLayout, cntSize);
                 }
             }
-
+        }
     }
 
     /**
