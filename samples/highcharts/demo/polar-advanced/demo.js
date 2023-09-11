@@ -1,4 +1,6 @@
 const
+    data = JSON.parse(document.getElementById('data').innerHTML),
+    scoreData = data[3],
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
@@ -24,10 +26,8 @@ const
         });
         chart.subtitle.element.style.opacity = 1;
     },
-    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
-    data = JSON.parse(document.getElementById('data').innerHTML),
-    scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
+    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
     teamColors = [
         colors[9].tweenTo(colors[0], 0.25),
         colors[9].tweenTo(colors[8], 0.65),
@@ -54,21 +54,19 @@ const
         colorKey: 't',
         tooltip: {
             headerFormat: (
-                '<div class="team-day-display center">' +
+                '<div class="team-day center">' +
                 '<span style="margin-bottom: 6em;">' +
-                '<b style="font-size: 1.4em; color:#000;">Day {point.x}</b>' +
-                '</span><span style="width:100%;' +
-                'margin-top:-130px;background: transparent; ' +
-                'font-size: 2em; padding: 0.8rem;' +
-                'border: 0 outset {series.color}; border-block-end:' +
-                '0 outset {series.color};"><b>{series.name}</b></span>'
+                '<b class="team-index">Day {point.x}</b></span>' +
+                '<span class="team-name" ' +
+                'style="border: 0 outset {series.color};' +
+                'border-block-end: 0 outset {series.color};">' +
+                '<b>{series.name}</b></span>'
             ),
             pointFormat: (
-                '<span style="margin-top:11em; position: absolute;' +
-                'font-size: 1em;"><span style="width:100%;' +
-                'text-align:center;">Daily Sales:</span></br>' +
-                '<span style="line-height:3em;width:100%;font-size:2em;' +
-                'text-align:center;">{point.z}</span>'
+                '<span class="team-points">' +
+                '<span class="team-salescount-header">Daily Sales:</span>' +
+                '</br>' +
+                '<span class="team-salescount">{point.z}</span>'
             ),
             footerFormat: '</div>'
         }
@@ -111,12 +109,12 @@ const
             y: 1.5
         })),
     asColFieldStr = str => (
-        '<span class=\"col-display-fieldwrap\">' +
-        '<span style=\"color:{point.color}; font-size: 1em;\">●</span> ' +
+        '<span class="col-display-fieldwrap">' +
+        '<span style="color:{point.color}; font-size: 1em;">●</span> ' +
         str + '</span>'
     );
 
-Highcharts.chart('container', {
+const c = Highcharts.chart('container', {
     chart: {
         polar: true,
         height: '100%',
@@ -290,6 +288,9 @@ Highcharts.chart('container', {
         itemStyle: {
             color: '#FFF'
         },
+        itemHoverStyle: {
+            color: '#BBBAC5'
+        },
         itemMarginBottom: 1,
         width: '26%',
         maxHeight: '14%'
@@ -338,8 +339,8 @@ Highcharts.chart('container', {
                         padding: 5,
                         symbolPadding: 8,
                         symbolHeight: 8,
-                        itemMarginBottom: 0,
-                        itemMarginTop: 0,
+                        itemMarginBottom: 1,
+                        itemMarginTop: 1,
                         itemStyle: {
                             fontSize: '1em'
                         },
@@ -439,11 +440,12 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     mouseOver: function () {
-                        this.series.chart.setMidPaneBg({
+                        const chart = this.series.chart;
+                        chart.setMidPaneBg({
                             backgroundColor: toggleableGradient,
                             outerRadius: '75%'
                         });
-                        this.series.chart.subtitle.element.style.opacity = 0;
+                        chart.subtitle.element.style.opacity = 0;
                     },
                     mouseOut
                 }
@@ -451,7 +453,7 @@ Highcharts.chart('container', {
             tooltip: {
                 headerFormat: (
                     '<span style="color:#fff;" ' +
-                    'class="team-day-display center">' +
+                    'class="team-day center">' +
                     '<span class="{series.options.custom.textSizeClass}">' +
                     '<b style="color:{point.color};">Day {point.x}</b></span>'
                 ),
@@ -472,9 +474,11 @@ Highcharts.chart('container', {
                 ),
                 footerFormat: (
                     '<i class="col-display-footer center">' +
-                    'Week {point.week}</i></span>'
+                    'Week {point.week}</i></span></span>'
                 )
             }
         }
     ]
 });
+
+console.log(c.series);

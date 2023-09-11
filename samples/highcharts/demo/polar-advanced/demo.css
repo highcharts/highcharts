@@ -29,9 +29,40 @@ pre {
     position: sticky;
 }
 
-.team-day-display {
+.team-day {
     width: 100%;
     text-align: center;
+}
+
+.team-salescount {
+    line-height: 3em;
+    width: 100%;
+    font-size: 2em;
+}
+
+.team-salescount-header {
+    width: 100%;
+    text-align: center;
+}
+
+.team-index {
+    font-size: 1.4em;
+    color: #000;
+}
+
+.team-name {
+    width: 100%;
+    margin-top: -130px;
+    background: transparent;
+    font-size: 2em;
+    padding: 0.8rem;
+    border: 0 outset;
+}
+
+.team-points {
+    margin-top: 11em;
+    position: absolute;
+    font-size: 1em;
 }
 
 .col-display-fieldwrap {
