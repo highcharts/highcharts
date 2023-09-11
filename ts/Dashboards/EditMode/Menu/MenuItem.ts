@@ -15,9 +15,8 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
-import type { RendererElement, SelectFormFieldItemOptions } from '../EditRenderer.js';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';

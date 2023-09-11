@@ -16,6 +16,8 @@
 
 'use strict';
 
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -24,7 +26,6 @@ const {
     css
 } = U;
 import Menu from '../Menu/Menu.js';
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../../Layout/GUIElement.js';
 
 

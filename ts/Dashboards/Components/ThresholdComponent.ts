@@ -25,7 +25,6 @@
 import type Cell from '../Layout/Cell';
 import type Globals from '../Globals';
 
-import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -263,7 +262,7 @@ namespace ThresholdComponent {
         ): void {
             objectEach(options, function (val, key): void {
                 if (
-                    Chart.prototype.collectionsWithUpdate.indexOf(key) > -1 &&
+                    (['xAxis', 'yAxis', 'series'].indexOf(key) > -1) &&
                     isArray(curr[key])
                 ) {
                     val = splat(val);
