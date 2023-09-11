@@ -18,7 +18,7 @@
 
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
-import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
+import type Series from './../../Core/Series/Series';
 
 import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -103,7 +103,7 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
-    public getZone(): SeriesZonesOptions {
+    public getZone(): Series.ZoneObject {
         const zone = super.getZone();
         this.resolveUpColor();
 

@@ -19,7 +19,7 @@ import type LinePointOptions from './LinePointOptions';
 import type LineSeries from './LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PointOptions from '../../Core/Series/PointOptions';
-import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type Series from '../../Core/Series/Series';
 
 /* *
  *
@@ -43,7 +43,7 @@ declare module '../../Core/Series/PointLike' {
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;
-        zone?: SeriesZonesOptions;
+        zone?: Series.ZoneObject;
     }
 }
 

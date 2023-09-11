@@ -149,12 +149,6 @@ interface KDNode {
 interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
 
-interface SeriesZone extends SeriesZonesOptions {
-    area?: SVGElement;
-    clip?: SVGElement;
-    graph?: SVGElement;
-}
-
 /* *
  *
  *  Class
@@ -386,7 +380,7 @@ class Series {
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
-    public zones: Array<SeriesZone> = void 0 as any;
+    public zones: Array<Series.ZoneObject> = void 0 as any;
 
     /* *
      *
@@ -845,7 +839,12 @@ class Series {
 
         // Handle color zones
         this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = (options.zones || []).slice();
+        const zones = this.zones = (options.zones || []).map(
+            (zoneOptions): Series.ZoneObject => extend(
+                { segments: [] } as Series.ZoneObject,
+                zoneOptions
+            )
+        );
         if (
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
@@ -855,8 +854,9 @@ class Series {
                     (options as any)[this.zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
-                className: 'highcharts-negative'
-            } as SeriesZonesOptions;
+                className: 'highcharts-negative',
+                segments: []
+            } as Series.ZoneObject;
             if (!styledMode) {
                 zone.color = options.negativeColor;
                 zone.fillColor = options.negativeFillColor;
@@ -865,9 +865,10 @@ class Series {
         }
         // Push one extra zone for the rest
         if (zones.length && defined(zones[zones.length - 1].value)) {
-            zones.push(styledMode ? {} : {
+            zones.push(styledMode ? { segments: [] } : {
                 color: this.color,
-                fillColor: this.fillColor
+                fillColor: this.fillColor,
+                segments: []
             });
         }
 
@@ -2998,7 +2999,7 @@ class Series {
             inverted = chart.inverted;
         let translatedFrom,
             translatedTo: (number|undefined),
-            clipAttr: Record<string, number>,
+            clipAttr: SVGAttributes,
             extremes: RangeSelector.RangeObject,
             reversed: (boolean|undefined),
             horiz: (boolean|undefined),
@@ -3026,11 +3027,74 @@ class Series {
                 area.hide();
             }
 
+            // Prepare for perpendicular clips
+            let lastPoint: Point|undefined,
+                lastZone: Series.ZoneObject|undefined;
+            for (const point of this.points) {
+                const lastY = lastPoint?.y,
+                    lastPlotX = lastPoint?.plotX,
+                    { plotX, y } = point;
+
+                if (
+                    isNumber(y) &&
+                    isNumber(lastY) &&
+                    lastPoint && point.zone !== lastPoint.zone
+                ) {
+
+                    // Which zone crossing is between the two points?
+                    let threshold: number|undefined;
+                    for (const zone of [point.zone, lastPoint.zone]) {
+                        threshold = zone?.value;
+                        if (
+                            isNumber(threshold) && (
+                                (lastY < threshold && threshold <= y) ||
+                                (lastY >= threshold && threshold > y)
+                            )
+                        ) {
+                            break;
+                        }
+                    }
+
+                    if (
+                        isNumber(threshold) &&
+                        isNumber(plotX) &&
+                        isNumber(lastPlotX)
+                    ) {
+                        const factor = (threshold - lastY) / (y - lastY),
+                            interpolatedPlotX = lastPlotX +
+                                (plotX - lastPlotX) * factor;
+
+                        if (lastZone) {
+                            if (!lastZone.segments.length) {
+                                lastZone.segments.push([0]);
+                            }
+                            lastZone.segments[
+                                lastZone.segments.length - 1
+                            ][1] = interpolatedPlotX;
+                        }
+                        if (point.zone) {
+                            point.zone.segments.push([interpolatedPlotX]);
+                        }
+                    }
+                }
+                lastPoint = point;
+                lastZone = lastPoint.zone;
+            }
+            if (lastZone && lastZone.segments.length) {
+                lastZone.segments[
+                    lastZone.segments.length - 1
+                ][1] = lastPoint?.plotX || 0;
+            }
+
             // Create the clips
             extremes = axis.getExtremes();
-            zones.forEach((zone, i): void => {
+            zones.forEach((zone): void => {
 
-                let clip = zone.clip;
+                let clip = zone.clip,
+                    x = 0,
+                    y = 0,
+                    width: number,
+                    height: number;
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
@@ -3060,31 +3124,39 @@ class Series {
                 pxPosMin = Math.min(translatedFrom, translatedTo);
                 pxPosMax = Math.max(translatedFrom, translatedTo);
                 if (axis.isXAxis) {
-                    clipAttr = {
-                        x: inverted ? pxPosMax : pxPosMin,
-                        y: 0,
-                        width: pxRange,
-                        height: plotSizeMax
-                    };
+                    x = inverted ? pxPosMax : pxPosMin;
+                    width = pxRange;
+                    height = plotSizeMax;
                     if (!horiz) {
-                        clipAttr.x = chart.plotHeight - clipAttr.x;
+                        x = chart.plotHeight - x;
                     }
                 } else {
-                    clipAttr = {
-                        x: 0,
-                        y: inverted ? pxPosMax : pxPosMin,
-                        width: plotSizeMax,
-                        height: pxRange
-                    };
+                    y = inverted ? pxPosMax : pxPosMin;
+                    width = plotSizeMax;
+                    height = pxRange;
                     if (horiz) {
-                        clipAttr.y = chart.plotWidth - clipAttr.y;
+                        y = chart.plotWidth - y;
                     }
                 }
 
+                // Perpendicular clips
+                const d: SVGPath = [];
+                for (const seg of zone.segments) {
+                    d.push(
+                        ['M', seg[0], 0],
+                        ['L', seg[0], chart.chartHeight],
+                        ['L', seg[1], chart.chartHeight],
+                        ['L', seg[1], 0],
+                        ['Z']
+                    );
+                }
+
                 if (clip) {
-                    clip.animate(clipAttr);
+                    clip.animate({ x, y, width, height });
+                    // clip.animate({ d });
                 } else {
-                    clip = zone.clip = renderer.rect(clipAttr);
+                    clip = zone.clip = renderer.rect({ x, y, width, height });
+                    // clip = zone.clip = renderer.path(d);
                 }
 
                 // When no data, graph zone is not applied and after setData
@@ -4840,6 +4912,13 @@ namespace Series {
         cropped: (boolean|undefined);
         cropStart: number;
         closestPointRange: (number|undefined);
+    }
+
+    export interface ZoneObject extends SeriesZonesOptions {
+        area?: SVGElement;
+        clip?: SVGElement;
+        graph?: SVGElement;
+        segments: number[][];
     }
 
 }

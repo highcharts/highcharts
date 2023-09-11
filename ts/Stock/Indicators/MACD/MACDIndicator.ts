@@ -20,13 +20,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
-    MACDZonesOptions,
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
-import type {
-    SeriesZonesOptions
-} from '../../../Core/Series/SeriesOptions';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../../Core/Globals.js';
@@ -54,6 +51,11 @@ declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
         resetZones?: boolean;
     }
+}
+
+interface MACDZonesObject {
+    startIndex?: number;
+    zones?: Series.ZoneObject[];
 }
 
 /* *
@@ -193,10 +195,10 @@ class MACDIndicator extends SMAIndicator {
     public data: Array<MACDPoint> = void 0 as any;
     public graphmacd?: SVGElement;
     public graphsignal?: SVGElement;
-    public macdZones: MACDZonesOptions = void 0 as any;
+    public macdZones: MACDZonesObject = void 0 as any;
     public options: MACDOptions = void 0 as any;
     public points: Array<MACDPoint> = void 0 as any;
-    public signalZones: MACDZonesOptions = void 0 as any;
+    public signalZones: MACDZonesObject = void 0 as any;
 
     /* *
      *
@@ -303,7 +305,7 @@ class MACDIndicator extends SMAIndicator {
             )> = indicator.points,
             mainLineOptions: MACDOptions =
             indicator.options,
-            histogramZones: Array<(SeriesZonesOptions)> = indicator.zones,
+            histogramZones: Array<Series.ZoneObject> = indicator.zones,
             gappedExtend: MACDGappedExtensionObject = {
                 options: {
                     gapSize: mainLineOptions.gapSize

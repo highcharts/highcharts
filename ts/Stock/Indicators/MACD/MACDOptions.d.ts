@@ -64,11 +64,6 @@ export interface MACDLineStyleOptions extends CSSObject {
     lineColor?: ColorString
 }
 
-export interface MACDZonesOptions {
-    startIndex?: number;
-    zones?: MACDLineOptions['zones'];
-}
-
 /* *
 *
 *  Default Export
