@@ -105,21 +105,24 @@ const chart = Highcharts.chart('container', {
                 borderWidth: 0,
                 backgroundColor: undefined,
                 verticalAlign: 'middle',
-                allowOverlap: true
+                allowOverlap: true,
+                style: {
+                    opacity: 0,
+                    transition: 'opacity 500ms'
+                }
             },
             labels: [
                 {
-                    text: 'Vnl',
-                    backgroundColor: '#fff',
-                    borderWidth: 2,
+                    text: 'Vinyl',
+                    verticalAlign: 'top',
                     point: {
                         x: 1975,
                         xAxis: 0,
-                        y: 1.6,
+                        y: 1.45,
                         yAxis: 0
                     },
                     style: {
-                        fontSize: '0.5em',
+                        fontSize: '0.8em',
                         color: '#000'
                     },
                     id: 'vinyl-label'
@@ -244,6 +247,7 @@ function update() {
     );
 
     const series = chart.series,
+        labels = chart.annotations[0].labels,
         yearIndex = input.value - startYear,
         dataLength = series[0].data.length;
 
@@ -270,6 +274,14 @@ function update() {
         const newY = formatRevenue[i][input.value] || 0;
         series[i].addPoint([newY], false);
     }
+
+    labels.forEach(label => {
+        label
+            .graphic
+            .css({
+                opacity: input.value >= label.options.point.x | 0
+            });
+    });
 
     chart.redraw();
 
