@@ -24,21 +24,14 @@ const
         });
         chart.subtitle.element.style.opacity = 1;
     },
-    colors = Highcharts.getOptions().colors,
-    asHcColor = hexval => new Highcharts.Color(hexval),
-    // Declaring colors used more than once
-    hcColor0 = asHcColor(colors[0]),
-    hcColor1 = asHcColor(colors[1]),
-    hcColor5 = asHcColor(colors[5]),
-    hcColor8 = asHcColor(colors[8]),
-    hcColor9 = asHcColor(colors[9]),
+    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
     data = JSON.parse(document.getElementById('data').innerHTML),
     scoreData = data[3],
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
     teamColors = [
-        hcColor9.tweenTo(hcColor0, 0.25),
-        hcColor9.tweenTo(hcColor8, 0.65),
-        hcColor9.tweenTo(asHcColor(colors[3]), 0.85)
+        colors[9].tweenTo(colors[0], 0.25),
+        colors[9].tweenTo(colors[8], 0.65),
+        colors[9].tweenTo(colors[3], 0.85)
     ],
     teamSeries = Array(3).fill({
         type: 'bubble',
@@ -136,6 +129,9 @@ Highcharts.chart('container', {
                 };
             },
             render: function () {
+
+                console.log(this.chartHeight);
+
                 if (this.legend.group) {
                     const
                         { chartWidth, legend } = this,
@@ -161,8 +157,7 @@ Highcharts.chart('container', {
         verticalAlign: 'middle',
         style: {
             color: 'white',
-            textAlign: 'center',
-            fontSize: '1.2em'
+            textAlign: 'center'
         }
     },
 
@@ -180,13 +175,13 @@ Highcharts.chart('container', {
         }
     },
     colorAxis: [{
-        minColor: hcColor0.brighten(0.05).get('rgba'),
-        maxColor: hcColor5.brighten(0.05).get('rgba'),
+        minColor: colors[0].brighten(0.05).get('rgba'),
+        maxColor: colors[5].brighten(0.05).get('rgba'),
         showInLegend: false,
         ...weekExtremes
     }, {
-        minColor: hcColor1.tweenTo(hcColor5, 0.5),
-        maxColor: asHcColor(colors[8]).tweenTo(asHcColor(colors[8]), 0.5),
+        minColor: colors[1].tweenTo(colors[5], 0.5),
+        maxColor: colors[8].tweenTo(colors[8], 0.5),
         showInLegend: false,
         ...monthExtremes
     }
@@ -196,7 +191,7 @@ Highcharts.chart('container', {
         innerSize: '60%',
         ...paneOpeningAngles,
         background: {
-            borderColor: asHcColor(colors[4]).get('rgba'),
+            borderColor: colors[4],
             backgroundColor: toggleableGradient,
             outerRadius: '60%'
         }
@@ -216,7 +211,7 @@ Highcharts.chart('container', {
         endAngle: 343.5,
         background: {
             borderWidth: 1,
-            borderColor: asHcColor(colors[4]).get('rgba'),
+            borderColor: colors[4],
             backgroundColor: '#46465C',
             innerRadius: '55%',
             outerRadius: '100%'
@@ -277,7 +272,7 @@ Highcharts.chart('container', {
         pane: 2,
         tickInterval: 0.25,
         gridLineWidth: 0,
-        gridLineColor: hcColor1.brighten(0.05).get('rgba'),
+        gridLineColor: colors[1].brighten(0.05).get('rgba'),
         min: -3,
         max: 1,
         title: null,
@@ -319,9 +314,12 @@ Highcharts.chart('container', {
                         padding: 4,
                         symbolPadding: 6,
                         symbolHeight: 6,
+                        itemMarginBottom: 0,
+                        itemMarginTop: 0,
                         itemStyle: {
-                            fontSize: '0.5em'
-                        }
+                            fontSize: '0.8em'
+                        },
+                        width: '34%'
                     },
                     subtitle: {
                         style: {
@@ -332,7 +330,7 @@ Highcharts.chart('container', {
             },
             {
                 condition: {
-                    minWidth: 420
+                    minWidth: 480
                 },
                 chartOptions: {
                     legend: {
@@ -340,25 +338,28 @@ Highcharts.chart('container', {
                         padding: 5,
                         symbolPadding: 8,
                         symbolHeight: 8,
+                        itemMarginBottom: 0,
+                        itemMarginTop: 0,
                         itemStyle: {
-                            fontSize: '0.7em'
-                        }
+                            fontSize: '1em'
+                        },
+                        width: '30%'
                     },
                     subtitle: {
                         style: {
-                            fontSize: '1.2em'
+                            fontSize: '1.4em'
                         }
                     }
                 }
             },
             {
                 condition: {
-                    minWidth: 520
+                    minWidth: 580
                 },
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            fontSize: '0.8em'
+                            fontSize: '1.2em'
                         },
                         borderWidth: 1.5,
                         padding: 6,
@@ -374,19 +375,19 @@ Highcharts.chart('container', {
                     },
                     subtitle: {
                         style: {
-                            fontSize: '1.8rem'
+                            fontSize: '1.8em'
                         }
                     }
                 }
             },
             {
                 condition: {
-                    minWidth: 650
+                    minWidth: 680
                 },
                 chartOptions: {
                     legend: {
                         itemStyle: {
-                            fontSize: '1em'
+                            fontSize: '1.4em'
                         },
                         padding: 6
                     },
