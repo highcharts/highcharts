@@ -17,7 +17,6 @@ permissions:
 
 jobs:
   cypress_lighthouse:
-    timeout-minutes: 10
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:
@@ -27,9 +26,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: master
-
-      - name: Check out the test files from current branch
-        run: git pull && git checkout origin/${{ github.head_ref }} -- test/cypress/performance/minimal.cy.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -65,9 +61,6 @@ jobs:
       - name: Stop server
         run: kill $(lsof -t -i:3030)
 
-      - name: Rename report
-        run: mv tmp/lighthouse.json tmp/lighthouse-master.json
-
       - name: Checkout current branch
         uses: actions/checkout@v3
         with:
@@ -97,6 +90,13 @@ jobs:
           env: type=actual
           config: specPattern=**/performance/*.cy.js
           install: false
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: tmp-files
+          path: |
+            tmp
 
       - name: Add to summary
         if: ${{ always() }}
