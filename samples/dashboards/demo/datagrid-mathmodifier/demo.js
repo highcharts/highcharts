@@ -116,7 +116,11 @@ Dashboards.board('container', {
                 editable: false,
                 columns: {
                     Day: {
-                        // cellFormat: '{value:.2f}'
+                        cellFormatter: function () {
+                            return new Date(this.value)
+                                .toISOString()
+                                .substring(0, 10);
+                        }
                     }
                 }
             }
