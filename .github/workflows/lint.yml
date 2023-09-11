@@ -5,6 +5,7 @@ on:
     branches: [ 'master' ]
     paths:
       - 'ts/**'
+      - '.github/workflows/lint.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
