@@ -35,8 +35,10 @@ async function setupBoard() {
     let activeCity = 'New York',
         activeColumn = 'TX',
         activeScale = 'C',
-        activeTimeRange = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
-        selectionTimeout = -1;
+        activeTimeRange = [ // default to a year
+            Date.UTC(2009, 11, 25, 0, 0, 1),
+            Date.UTC(2010, 11, 25)
+        ];
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
@@ -284,26 +286,23 @@ async function setupBoard() {
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
                     maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
                     events: {
-                        afterSetExtremes: function (e) {
-                            window.clearTimeout(selectionTimeout);
-                            selectionTimeout = window.setTimeout(async () => {
-                                if (
-                                    activeTimeRange[0] !== e.min ||
-                                    activeTimeRange[1] !== e.max
-                                ) {
-                                    activeTimeRange = [e.min, e.max];
-
-                                    const newColumn =
-                                        activeColumn[0] === 'T' ? activeColumn + activeScale : activeColumn;
-                                    await updateBoard(
-                                        board,
-                                        activeCity,
-                                        newColumn,
-                                        activeScale,
-                                        false
-                                    );
-                                }
-                            }, 50);
+                        afterSetExtremes: async function (e) {
+                            if (
+                                activeTimeRange[0] !== Math.round(e.min) ||
+                                activeTimeRange[1] !== Math.round(e.max)
+                            ) {
+                                activeTimeRange = [
+                                    Math.round(e.min),
+                                    Math.round(e.max)
+                                ];
+                                await updateBoard(
+                                    board,
+                                    activeCity,
+                                    activeColumn,
+                                    activeScale,
+                                    false
+                                );
+                            }
                         }
                     }
                 }
@@ -977,7 +976,6 @@ async function setupCity(board, city, column, scale) {
             cityTable.getRowIndexBy('time', time)
         ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
-
 }
 
 async function updateBoard(board, city, column, scale, newData) {
@@ -1022,8 +1020,6 @@ async function updateBoard(board, city, column, scale, newData) {
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
     const selectionModifier = selectionTable.getModifier();
 
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-
     if (
         newData ||
         !selectionModifier.options.ranges[0] ||
@@ -1039,8 +1035,25 @@ async function updateBoard(board, city, column, scale, newData) {
     }
 
     const rangeTable = selectionTable.modified;
+    const rangeEnd = rangeTable.getRowCount() - 1;
 
     // Update world map
+    const mapPoints = worldMap.chart.series[1].data;
+    const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
+
+    for (const mapPoint of mapPoints) {
+        const pointTable = await dataPool.getConnectorTable(mapPoint.name);
+
+        mapPoint.update({
+            custom: {
+                yScale: scale
+            },
+            y: pointTable.modified.getCellAsNumber(
+                column,
+                pointTable.modified.getRowIndexBy('time', lastTime)
+            )
+        }, false);
+    }
     worldMap.chart.update({
         colorAxis: {
             min: colorMin,
@@ -1048,62 +1061,30 @@ async function updateBoard(board, city, column, scale, newData) {
             stops: colorStops
         }
     });
-    (async () => {
-        const dataPoints = worldMap.chart.series[1].data;
-        const lastTime = rangeTable
-            .getCellAsNumber('time', rangeTable.getRowCount() - 1);
-
-        for (const point of dataPoints) {
-            const pointTable = await dataPool.getConnectorTable(point.name);
-
-            point.update({
-                custom: {
-                    yScale: scale
-                },
-                y: pointTable.modified.getCellAsNumber(
-                    column,
-                    pointTable.getRowIndexBy('time', lastTime)
-                )
-            }, false, false);
-        }
-
-        worldMap.chart.redraw();
-    })();
 
     // Update KPIs
-    await kpiData.update({
-        title: city,
-        value: citiesTable.getCellAsNumber(
-            'elevation',
-            citiesTable.getRowIndexBy('city', city)
-        ) || '--'
-    });
-    kpiTemperature.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('TN' + scale, 0) || 0,
-        true,
-        true
-    );
-    kpiMaxTemperature.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('TX' + scale, 0) || 0,
-        true,
-        true
-    );
-    kpiRain.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('RR1', 0) || 0,
-        true,
-        true
-    );
-    kpiIce.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('ID', 0) || 0,
-        true,
-        true
-    );
-    kpiFrost.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('FD', 0) || 0,
-        true,
-        true
-    );
+    if (newData) {
+        const citiesTable = await dataPool.getConnectorTable('Cities');
+        await kpiData.update({
+            title: city,
+            value: citiesTable.getCellAsNumber(
+                'elevation',
+                citiesTable.getRowIndexBy('city', city)
+            ) || '--'
+        });
+    }
+    kpiTemperature.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('TN' + scale, rangeEnd) || 0);
+    kpiMaxTemperature.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
+    kpiRain.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
+    kpiIce.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
+    kpiFrost.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
 
+    // Update data grid and city chart
     if (newData) {
         const showCelsius = scale === 'C';
         const sharedColumnAssignment = {
