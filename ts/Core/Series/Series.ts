@@ -3011,7 +3011,7 @@ class Series {
             zones.length &&
             (graph || area) &&
             axis &&
-            typeof axis.min !== 'undefined'
+            isNumber(axis.min)
         ) {
             reversed = axis.reversed;
             horiz = axis.horiz;
@@ -3053,8 +3053,7 @@ class Series {
                 );
 
                 if (ignoreZones) {
-                    translatedFrom = translatedTo =
-                        axis.toPixels(extremes.max);
+                    translatedFrom = translatedTo = axis.toPixels(extremes.max);
                 }
 
                 pxRange = Math.abs(translatedFrom - translatedTo);
@@ -3085,7 +3084,7 @@ class Series {
                 if (clip) {
                     clip.animate(clipAttr);
                 } else {
-                    clip = zone.clip = renderer.clipRect(clipAttr);
+                    clip = zone.clip = renderer.rect(clipAttr);
                 }
 
                 // When no data, graph zone is not applied and after setData
@@ -3100,7 +3099,7 @@ class Series {
                 }
 
                 // If this zone extends out of the axis, ignore the others
-                ignoreZones = (zone.value as any) > extremes.max;
+                ignoreZones = isNumber(zone.value) && zone.value > extremes.max;
 
                 // Clear translatedTo for indicators
                 if (series.resetZones && translatedTo === 0) {
