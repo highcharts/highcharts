@@ -25,10 +25,10 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
-import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -107,17 +107,19 @@ function getBoostClipRect(
         height: chart.plotHeight
     };
 
-    if (target instanceof Series) {
-        clipBox = target.getClipBox();
+    // Clipping of individal series (#11906, #19039).
+    if ((target as Series).getClipBox) {
+        const { xAxis, yAxis } = target as Series;
+        clipBox = (target as Series).getClipBox();
         if (chart.inverted) {
             const lateral = clipBox.width;
             clipBox.width = clipBox.height;
             clipBox.height = lateral;
-            clipBox.x = target.yAxis.pos;
-            clipBox.y = target.xAxis.pos;
+            clipBox.x = yAxis.pos;
+            clipBox.y = xAxis.pos;
         } else {
-            clipBox.x = target.xAxis.pos;
-            clipBox.y = target.yAxis.pos;
+            clipBox.x = xAxis.pos;
+            clipBox.y = yAxis.pos;
         }
     }
 
