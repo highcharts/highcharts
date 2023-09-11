@@ -15,8 +15,8 @@ describe('Responsive options.', () => {
 				const cellWidth = cell.width();
 				const rowWidth = row.width();
 				expect(cellWidth / rowWidth).greaterThan(0.8);
-			})
-})
+			});
+		});
 
     });
 });
