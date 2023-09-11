@@ -178,7 +178,7 @@ You need to import the default CSS stylesheet to your project, so that the dashb
 
 
 But you can also customize the style of the dashboard by adding your own CSS stylesheet.
-More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/styling).
+More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/style-by-css).
 
 
 

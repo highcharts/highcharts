@@ -1,4 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
 
 /* *
  *
@@ -26,7 +28,7 @@
     --color-text: #2f2b38;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dark #kpi-layout {
+#container.highcharts-dark #kpi-layout {
     --color-axis-labels: #838394;
     --color-background: #0d0d0d;
     --color-pane: #20202c;
@@ -41,7 +43,7 @@
     --color-hover-text: #e7e7ec;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dark #selection-grid {
+#container.highcharts-dark #selection-grid {
     --color-background: #20202c;
 }
 
@@ -59,7 +61,7 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dark #time-range-selector {
+#container.highcharts-dark #time-range-selector {
     --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
@@ -87,7 +89,7 @@
     --color-tooltip-background: #dadae2;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dark #world-map {
+#container.highcharts-dark #world-map {
     --color-navigation: #20202b;
     --color-navigation-line: #646478;
     --color-navigation-text: #838393;
@@ -126,6 +128,50 @@
         --color-navigation-line: #646478;
         --color-navigation-text: #838393;
     }
+}
+
+#toggle-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    background-color: var(--highcharts-neutral-color-5);
+    padding-top: 10px;
+    color: var(--highcharts-neutral-color-100);
+}
+
+#toggle-container label {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+#toggle-container #mode-toggle {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background-color: var(--highcharts-neutral-color-100);
+    border-radius: 20px;
+    position: relative;
+}
+
+#toggle-container #mode-toggle:checked {
+    background-color: var(--highcharts-neutral-color-100);
+}
+
+#toggle-container #mode-toggle::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background-color: var(--highcharts-neutral-color-0);
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    transition: 0.2s;
+}
+
+#toggle-container #mode-toggle:checked::before {
+    left: 21px;
 }
 
 /* *
@@ -459,7 +505,7 @@
 
 /* Safari fix for manual dark mode */
 /* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-wrapper.highcharts-dark #world-map .highcharts-series-1 .highcharts-data-label text {
+.highcharts-dark #world-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
 }

@@ -70,16 +70,6 @@ async function setupBoard() {
                 items: [
                     'editMode',
                     {
-                        id: 'dark-mode',
-                        type: 'toggle',
-                        text: 'Dark mode',
-                        events: {
-                            click: function () {
-                                this.menu.editMode.board.container
-                                    .classList.toggle('highcharts-dark');
-                            }
-                        }
-                    }, {
                         id: 'fahrenheit',
                         type: 'toggle',
                         text: 'Fahrenheit',
@@ -1159,3 +1149,29 @@ async function updateBoard(board, city, column, scale, newData) {
         });
     }
 }
+
+const toggle = document.getElementById('mode-toggle');
+
+toggle.addEventListener('click', () => {
+    changeTheme();
+});
+
+function isDarkModeEnabled() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+toggle.checked = isDarkModeEnabled();
+
+function changeTheme() {
+    const toggleContainer = document.getElementById('toggle-container'),
+        container = document.getElementById('container'),
+        className = toggle.checked ? 'highcharts-dark' : 'highcharts-light';
+
+    container.className = className;
+    toggleContainer.className = className;
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    toggle.checked = isDarkModeEnabled();
+    changeTheme();
+});
