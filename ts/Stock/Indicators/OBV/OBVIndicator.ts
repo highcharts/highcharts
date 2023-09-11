@@ -27,15 +27,11 @@ import Series from '../../../Core/Series/Series';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Shared/Utilities.js';
+import error from '../../../Shared/Helpers/Error.js';
 import OH from '../../../Shared/Helpers/ObjectHelper.js';
 import TC from '../../../Shared/Helpers/TypeChecker.js';
 const { isNumber } = TC;
 const { extend, merge } = OH;
-const {
-    error
-} = U;
-
 /* *
  *
  *  Class

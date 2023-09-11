@@ -40,6 +40,7 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Shared/Utilities.js';
+import error from '../Shared/Helpers/Error.js';
 import HTMLComponent from './Components/HTMLComponent.js';
 import ComponentType from './Components/ComponentType';
 import EH from '../Shared/Helpers/EventHelper.js';
@@ -47,7 +48,6 @@ import OH from '../Shared/Helpers/ObjectHelper.js';
 const { merge, objectEach } = OH;
 const { addEvent } = EH;
 const {
-    error,
     uniqueKey,
     createElement
 } = U;

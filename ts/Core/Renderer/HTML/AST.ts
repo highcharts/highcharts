@@ -29,6 +29,7 @@ import U from '../../../Shared/Utilities.js';
 import OH from '../../../Shared/Helpers/ObjectHelper.js';
 import TC from '../../../Shared/Helpers/TypeChecker.js';
 import AH from '../../../Shared/Helpers/ArrayHelper.js';
+import error from '../../../Shared/Helpers/Error.js';
 const {
     splat
 } = AH;
@@ -37,8 +38,7 @@ const { objectEach } = OH;
 const {
     attr,
     createElement,
-    css,
-    error
+    css
 } = U;
 const {
     trustedTypes

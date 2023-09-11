@@ -34,12 +34,9 @@ import type Component from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
-import U from '../../Shared/Utilities.js';
 import EH from '../../Shared/Helpers/EventHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const { addEvent, fireEvent } = EH;
-const {
-    error
-} = U;
 
 /* *
  *

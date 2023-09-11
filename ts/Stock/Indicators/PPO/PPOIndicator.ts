@@ -27,11 +27,11 @@ const {
     ema: EMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Shared/Utilities.js';
+import error from '../../../Shared/Helpers/Error.js';
 import OH from '../../../Shared/Helpers/ObjectHelper.js';
 const { extend, merge } = OH;
 const {
-    correctFloat,
-    error
+    correctFloat
 } = U;
 
 /* *

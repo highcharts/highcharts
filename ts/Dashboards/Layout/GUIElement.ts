@@ -27,13 +27,13 @@ import Row from './Row';
 import Cell from './Cell';
 import EH from '../../Shared/Helpers/EventHelper.js';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const { objectEach } = OH;
 const { addEvent } = EH;
 
 const {
     createElement,
-    uniqueKey,
-    error
+    uniqueKey
 } = U;
 
 abstract class GUIElement {

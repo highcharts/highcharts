@@ -55,7 +55,6 @@ const {
 } = H;
 import U from '../../Shared/Utilities.js';
 const {
-    error,
     pick,
     wrap
 } = U;
@@ -67,6 +66,7 @@ const {
 import EH from '../../Shared/Helpers/EventHelper.js';
 import TC from '../../Shared/Helpers/TypeChecker.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     pushUnique
 } = AH;

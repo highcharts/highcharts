@@ -32,14 +32,11 @@ const {
 } = H;
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
-import U from '../../Shared/Utilities.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     pushUnique
 } = AH;
-const {
-    error
-} = U;
 
 /* *
  *

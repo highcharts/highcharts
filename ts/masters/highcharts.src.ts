@@ -54,6 +54,7 @@ import EH from '../Shared/Helpers/EventHelper.js';
 import OH from '../Shared/Helpers/ObjectHelper.js';
 import TypeChecker from '../Shared/Helpers/TypeChecker.js';
 import AH from '../Shared/Helpers/ArrayHelper.js';
+import error from '../Shared/Helpers/Error.js';
 const { addEvent, fireEvent, removeEvent } = EH;
 const G: AnyRecord = Highcharts;
 // Animation
@@ -112,7 +113,7 @@ G.destroyObjectProperties = OH.destroyObjectProperties;
 G.discardElement = Utilities.discardElement;
 G.distribute = RendererUtilities.distribute;
 G.erase = AH.erase;
-G.error = Utilities.error;
+G.error = error;
 G.extend = OH.extend;
 G.extendClass = Utilities.extendClass;
 G.find = AH.find;

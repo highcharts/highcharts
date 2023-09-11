@@ -25,12 +25,9 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Shared/Utilities.js';
 import OH from '../../../Shared/Helpers/ObjectHelper.js';
+import error from '../../../Shared/Helpers/Error.js';
 const { extend, merge } = OH;
-const {
-    error
-} = U;
 
 /* *
  *

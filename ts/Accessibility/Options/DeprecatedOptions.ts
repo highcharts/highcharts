@@ -79,8 +79,8 @@ import type Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Shared/Utilities.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
-    error,
     pick
 } = U;
 

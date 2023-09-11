@@ -1159,7 +1159,6 @@ const Utilities = {
     createElement,
     css,
     discardElement,
-    error,
     extendClass,
     getMagnitude,
     getNestedProperty,

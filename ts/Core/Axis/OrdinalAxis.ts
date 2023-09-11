@@ -33,6 +33,7 @@ const {
 } = OH;
 import EH from '../../Shared/Helpers/EventHelper.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     pushUnique
 } = AH;
@@ -40,7 +41,6 @@ const { addEvent } = EH;
 const {
     correctFloat,
     css,
-    error,
     pick,
     timeUnits
 } = U;

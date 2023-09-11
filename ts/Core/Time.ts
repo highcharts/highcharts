@@ -22,6 +22,7 @@ import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 import OH from '../Shared/Helpers/ObjectHelper.js';
 import TC from '../Shared/Helpers/TypeChecker.js';
 import AH from '../Shared/Helpers/ArrayHelper.js';
+import error from '../Shared/Helpers/Error.js';
 const {
     splat
 } = AH;
@@ -33,7 +34,6 @@ const {
 } = H;
 import U from '../Shared/Utilities.js';
 const {
-    error,
     pad,
     pick,
     timeUnits

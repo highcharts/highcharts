@@ -22,6 +22,7 @@ import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 import OH from '../Shared/Helpers/ObjectHelper.js';
+import error from '../Shared/Helpers/Error.js';
 const {
     extend,
     merge,
@@ -31,7 +32,6 @@ const {
 import Point from '../Core/Series/Point.js';
 import U from '../Shared/Utilities.js';
 const {
-    error,
     pick
 } = U;
 

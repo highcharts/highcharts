@@ -45,6 +45,7 @@ import EH from '../../Shared/Helpers/EventHelper.js';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
 import TC from '../../Shared/Helpers/TypeChecker.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     splat
 } = AH;
@@ -54,7 +55,6 @@ const { addEvent } = EH;
 
 const {
     createElement,
-    error,
     uniqueKey
 } = U;
 

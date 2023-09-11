@@ -38,14 +38,11 @@ import H from '../../Core/Globals.js';
 const { charts } = H;
 import SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     extend,
     merge
 } = OH;
-import U from '../../Shared/Utilities.js';
-const {
-    error
-} = U;
 import '../../Core/Renderer/SVG/SVGRenderer.js';
 
 /* *

@@ -81,6 +81,7 @@ import EH from '../../Shared/Helpers/EventHelper.js';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
 import TC from '../../Shared/Helpers/TypeChecker.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     arrayMax,
     arrayMin,
@@ -95,7 +96,6 @@ const { fireEvent, removeEvent } = EH;
 const {
     clamp,
     correctFloat,
-    error,
     getNestedProperty,
     insertItem,
     pick,

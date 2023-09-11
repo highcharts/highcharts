@@ -28,16 +28,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Shared/Utilities.js';
 import OH from '../../Shared/Helpers/ObjectHelper.js';
 import AH from '../../Shared/Helpers/ArrayHelper.js';
+import error from '../../Shared/Helpers/Error.js';
 const {
     pushUnique
 } = AH;
 const { defined, merge } = OH;
-const {
-    error
-} = U;
 
 /* *
  *

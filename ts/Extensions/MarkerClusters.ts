@@ -50,7 +50,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../Shared/Utilities.js';
 const {
-    error,
     relativeLength,
     syncTimeout
 } = U;
@@ -300,6 +299,7 @@ import Axis from '../Core/Axis/Axis.js';
 import EH from '../Shared/Helpers/EventHelper.js';
 import OH from '../Shared/Helpers/ObjectHelper.js';
 import TC from '../Shared/Helpers/TypeChecker.js';
+import error from '../Shared/Helpers/Error.js';
 const { isArray, isFunction, isNumber, isObject } = TC;
 const { defined, merge, objectEach } = OH;
 const { addEvent } = EH;

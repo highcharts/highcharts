@@ -45,6 +45,7 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Shared/Utilities.js';
+import error from '../../../Shared/Helpers/Error.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 import EH from '../../../Shared/Helpers/EventHelper.js';
 import OH from '../../../Shared/Helpers/ObjectHelper.js';
@@ -58,8 +59,7 @@ const { isArray } = TC;
 const { defined, extend, merge } = OH;
 const { addEvent } = EH;
 const {
-    correctFloat,
-    error
+    correctFloat
 } = U;
 
 /* *
