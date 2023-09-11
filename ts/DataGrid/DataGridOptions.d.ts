@@ -164,7 +164,7 @@ export interface CellFormatterCallback {
  * Value to convert
  */
 export interface CellValue {
-    value: number|string
+    value: DataTable.CellType
 }
 
 /* *
