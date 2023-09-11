@@ -31,3 +31,7 @@
 .highcharts-a11y-proxy-button {
     cursor: default;
 }
+
+.highcharts-description {
+    padding: 0 20px;
+}

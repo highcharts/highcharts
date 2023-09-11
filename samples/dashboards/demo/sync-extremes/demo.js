@@ -27,13 +27,8 @@ Dashboards.board('container', {
             id: 'Population',
             type: 'JSON',
             options: {
-                columnNames: ['Town', 'Population', 'Metro Area(km2)', 'Highest Elevation(m)'],
+                columnNames: ['City', 'Population (mln)', 'Metro Area (km2)', 'Highest Elevation (m)'],
                 firstRowAsNames: false,
-                dataTable: {
-                    aliases: {
-                        Town: 'City'
-                    }
-                },
                 data
             }
         }]
@@ -105,7 +100,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            Population: 'y'
+            'Population (mln)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -131,10 +126,8 @@ Dashboards.board('container', {
             title: {
                 text: ''
             },
-            subtitle: {
-                text: 'Millions',
-                align: 'left',
-                y: 0
+            tooltip: {
+                pointFormat: '<b>{point.y:.2f}</b> mln'
             },
             legend: {
                 enabled: false
@@ -144,7 +137,7 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-1',
         title: {
-            text: 'Metropolitan area'
+            text: 'Metropolitan Area'
         },
         sync: {
             extremes: true
@@ -155,7 +148,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            'Metro Area(km2)': 'y'
+            'Metro Area (km2)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -178,13 +171,11 @@ Dashboards.board('container', {
                     colorByPoint: true
                 }
             },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> km2'
+            },
             title: {
                 text: ''
-            },
-            subtitle: {
-                text: 'km2',
-                align: 'left',
-                y: 0
             },
             legend: {
                 enabled: false
@@ -205,7 +196,7 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
-            'Highest Elevation(m)': 'y'
+            'Highest Elevation (m)': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -226,19 +217,13 @@ Dashboards.board('container', {
             plotOptions: {
                 series: {
                     colorByPoint: true
-                },
-                tooltip: {
-                    headerFormat: '{point.key}',
-                    format: '{y}'
                 }
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> m'
             },
             title: {
                 text: ''
-            },
-            subtitle: {
-                text: 'Meters',
-                align: 'left',
-                y: 0
             },
             legend: {
                 enabled: false
