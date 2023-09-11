@@ -1,4 +1,3 @@
-import Board from '/base/code/dashboards/es-modules/Dashboards/Board.js';
 import DashboardGlobals from '/base/code/dashboards/es-modules/Dashboards/Globals.js';
 const { test, skip } = QUnit;
 
@@ -51,7 +50,7 @@ const components = [{
             title: 'I heard you like components'
         }
     }, {
-        textContent: 'Loreum ipsum'
+        textContent: 'Lorem ipsum'
     }]
 }]
 
@@ -73,19 +72,13 @@ test('Components in layout with no row style', function (assert) {
         components
     });
 
-    // assert.strictEqual(
-    //     container.innerText,
-    //     '',
-    //     'Container content should be cleared after creating dashboard.'
-    // );
-
-    const comps = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
+    const comps = document.querySelectorAll(
+        '[class*="' + DashboardGlobals.classNamePrefix + 'component"]:not([class*="-content"])'
+    );
     for (const component of comps) {
-        assert.strictEqual(component.style.height, '', 'Height should be unset')
-        assert.strictEqual(component.style.width, '', 'Width should be unset')
+        assert.strictEqual(component.style.height, '', 'Height should be unset');
+        assert.strictEqual(component.style.width, '', 'Width should be unset');
     }
-
-
 });
 
 test('Components in rows with set height', function (assert) {
@@ -107,10 +100,21 @@ test('Components in rows with set height', function (assert) {
     const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
+        const components = column.querySelectorAll(
+            '[class*="' + DashboardGlobals.classNamePrefix + 'component"]:not([class*="-content"])'
+        );
+
         for (const component of components) {
-            assert.strictEqual(component.style.height, column.style.height, 'Height should be set to the row')
-            assert.strictEqual(component.style.width, '', 'Width should be unset')
+            assert.strictEqual(
+                component.style.height,
+                column.style.height,
+                'Height should be set to the row.'
+            );
+            assert.strictEqual(
+                component.style.width,
+                '',
+                'Width should be unset'
+            );
         }
     }
 

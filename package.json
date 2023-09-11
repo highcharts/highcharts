@@ -36,7 +36,9 @@
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
+    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.282.0",
