@@ -3,7 +3,7 @@ const
     scoreData = data[3],
     colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
 
-    // Defining recurring values
+    // Defining recurring values.
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
@@ -14,7 +14,7 @@ const
         pointPadding: 0
     },
 
-    // A gradient background for the inner circle (aka pane)
+    // A gradient background for the inner circle (aka pane.)
     toggleableGradient = {
         pattern: undefined,
         radialGradient: [1, 0.25, 0.1],
@@ -34,15 +34,15 @@ const
         chart.subtitle.element.style.opacity = 1;
     },
 
-    // A function used in the creation of our second custom tooltip
+    // A function used in the creation of our second custom tooltip.
     asColFieldStr = str => (
         '<span class="col-display-fieldwrap">' +
         '<span class="symbolSize" ' +
         'style="color:{point.color};">●</span> ' + str + '</span>'
     ),
 
-    // We create our teams, 1 serie per team
-    countries = ['Ulambaator', 'Sofia', 'Asmara'],
+    // We create our teams, 1 serie per team.
+    teamNames = ['Ulambaator', 'Sofia', 'Asmara'],
     teamColors = [
         colors[9].tweenTo(colors[0], 0.25),
         colors[9].tweenTo(colors[8], 0.65),
@@ -92,7 +92,7 @@ const
         }
     }).map((seriesProps, i) => ({
         ...seriesProps,
-        name: countries[i],
+        name: teamNames[i],
         data: data[i],
         color: teamColors[i],
         marker: {
@@ -138,23 +138,21 @@ Highcharts.chart('container', {
         height: '100%',
         events: {
 
-            // Our custom background functions are actually wrappers of the
-            // function defined below. This function needs to be defined in
-            // the load-event so that it is able to reference an instance
-            // of Highcharts, without Highcharts being fully instantiated yet.
             load: function () {
                 const midPane = this.pane[1];
+
+                // Our custom background functions are actually wrappers of the
+                // function defined below. This function needs to be defined in
+                // the load-event so that it is able to reference an instance
+                // of Highcharts, without Highcharts being instantiated yet.
                 this.setMidPaneBg = function (background) {
                     midPane.update({ background: background });
                 };
             },
 
             // We assign a function which positions our legend dynamically
-            // regardless of viewport or chart dimensions
+            // regardless of viewport or chart dimensions.
             render: function () {
-
-                console.log(this.chartHeight);
-
                 if (this.legend.group) {
                     const
                         { chartWidth, legend } = this,
@@ -191,7 +189,7 @@ Highcharts.chart('container', {
         useHTML: true,
 
         // This function positions our tooltip in the center,
-        // regardless of viewport or chart dimensions
+        // regardless of viewport or chart dimensions.
         positioner: function (labelWidth, labelHeight) {
             const { chartWidth, chartHeight } = this.chart;
             return {
