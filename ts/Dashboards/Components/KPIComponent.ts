@@ -45,7 +45,6 @@ const {
     createElement,
     css,
     defined,
-    getStyle,
     isArray,
     isNumber,
     merge,
