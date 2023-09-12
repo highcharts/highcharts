@@ -6,7 +6,7 @@ on:
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmarks/*'
+      - 'test/ts-node-unit-tests/benchmark*'
       - '.github/workflows/**'
 
 permissions:
