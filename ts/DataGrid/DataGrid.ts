@@ -1068,9 +1068,9 @@ class DataGrid {
 
         for (let i = 0; i < this.rowElements.length; i++) {
             const row = this.rowElements[i];
-            for (let i = 0; i < row.childElementCount; i++) {
-                (row.children[i] as HTMLElement).style.flex =
-                    prevColumnFlexes[i];
+            for (let j = 0; j < row.childElementCount; j++) {
+                (row.children[j] as HTMLElement).style.flex =
+                    prevColumnFlexes[j];
             }
         }
     }
