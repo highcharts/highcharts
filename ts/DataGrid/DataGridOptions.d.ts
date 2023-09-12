@@ -36,6 +36,9 @@ export interface DataGridOptions {
      * Height of each grid cell in pixels. This is used to calculate the amount
      * of visible cells in a container and the size of the scrollbar.
      *
+     * It also specifies the minimum height of the header row and its double
+     * determines the maximum possible height of the header row.
+     *
      * @default 49
      */
     cellHeight?: number;
