@@ -1,6 +1,9 @@
 const
     data = JSON.parse(document.getElementById('data').innerHTML),
     scoreData = data[3],
+    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
+
+    // Defining recurring values
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
@@ -10,6 +13,8 @@ const
         groupPadding: 0,
         pointPadding: 0
     },
+
+    // A gradient background for the inner circle (aka pane)
     toggleableGradient = {
         pattern: undefined,
         radialGradient: [1, 0.25, 0.1],
@@ -18,7 +23,9 @@ const
             [1, '#45445d']
         ]
     },
-    mouseOut = function () {
+
+    // A function which (re)sets the inner circles background to our gradient.
+    setGradient = function () {
         const chart = this.series.chart;
         chart.setMidPaneBg({
             backgroundColor: toggleableGradient,
@@ -26,8 +33,16 @@ const
         });
         chart.subtitle.element.style.opacity = 1;
     },
+
+    // A function used in the creation of our second custom tooltip
+    asColFieldStr = str => (
+        '<span class="col-display-fieldwrap">' +
+        '<span class="symbolSize" ' +
+        'style="color:{point.color};">●</span> ' + str + '</span>'
+    ),
+
+    // We create our teams, 1 serie per team
     countries = ['Ulambaator', 'Sofia', 'Asmara'],
-    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
     teamColors = [
         colors[9].tweenTo(colors[0], 0.25),
         colors[9].tweenTo(colors[8], 0.65),
@@ -40,6 +55,9 @@ const
         minSize: '1%',
         point: {
             events: {
+
+                // When hovering a bubble, change the inner circles background
+                // to the color of its parent series.
                 mouseOver: function () {
                     const chart = this.series.chart;
                     chart.subtitle.element.style.opacity = 0;
@@ -48,17 +66,19 @@ const
                         innerRadius: '0%'
                     });
                 },
-                mouseOut
+                mouseOut: setGradient
             }
         },
         colorKey: 't',
+
+        // A custom tooltip, using our own CSS
         tooltip: {
             headerFormat: (
                 '<div class="team-day center">' +
-                '<span style="margin-bottom: 6em;">' +
+                '<span class="team-header">' +
                 '<b class="team-index">Day {point.x}</b></span>' +
-                '<span class="team-name" ' +
-                'style="border: 0 outset {series.color};' +
+                '<span class="team-name" style="' +
+                'border: 0 outset {series.color};' +
                 'border-block-end: 0 outset {series.color};">' +
                 '<b>{series.name}</b></span>'
             ),
@@ -82,6 +102,9 @@ const
             lineWidth: 2
         }
     })),
+
+    // We create a series which only purpose is to act as a label
+    // indicating the week in which a given datapoint occurred.
     weekLabels = Array(4)
         .fill(0)
         .map((_value, index) => ({
@@ -107,25 +130,27 @@ const
             },
             x: index + 1,
             y: 1.5
-        })),
-    asColFieldStr = str => (
-        '<span class="col-display-fieldwrap">' +
-        '<span style="color:{point.color}; font-size: 1em;">●</span> ' +
-        str + '</span>'
-    );
+        }));
 
-const c = Highcharts.chart('container', {
+Highcharts.chart('container', {
     chart: {
         polar: true,
         height: '100%',
         events: {
+
+            // Our custom background functions are actually wrappers of the
+            // function defined below. This function needs to be defined in
+            // the load-event so that it is able to reference an instance
+            // of Highcharts, without Highcharts being fully instantiated yet.
             load: function () {
                 const midPane = this.pane[1];
-
                 this.setMidPaneBg = function (background) {
                     midPane.update({ background: background });
                 };
             },
+
+            // We assign a function which positions our legend dynamically
+            // regardless of viewport or chart dimensions
             render: function () {
 
                 console.log(this.chartHeight);
@@ -164,6 +189,9 @@ const c = Highcharts.chart('container', {
         backgroundColor: undefined,
         hideDelay: 0,
         useHTML: true,
+
+        // This function positions our tooltip in the center,
+        // regardless of viewport or chart dimensions
         positioner: function (labelWidth, labelHeight) {
             const { chartWidth, chartHeight } = this.chart;
             return {
@@ -184,6 +212,8 @@ const c = Highcharts.chart('container', {
         ...monthExtremes
     }
     ],
+
+    // Our chart is made of 3 different panes/circles
     pane: [{
         size: '95%',
         innerSize: '60%',
@@ -202,6 +232,8 @@ const c = Highcharts.chart('container', {
             backgroundColor: toggleableGradient,
             outerRadius: '75%'
         }
+
+    // ...And this the one we alter
     }, {
         size: '100%',
         innerSize: '88%',
@@ -228,6 +260,9 @@ const c = Highcharts.chart('container', {
         linkedTo: 0,
         gridLineWidth: 0,
         lineWidth: 0,
+
+        // We put some plotbands on the chart to represent weekends
+        // when no datapoints occur.
         plotBands: Array(3).fill(7).map(
             (weekendOffset, week) => {
                 const
@@ -439,6 +474,8 @@ const c = Highcharts.chart('container', {
             pointStart: 1,
             point: {
                 events: {
+                    // Here we change our circle once again but this time
+                    // it is when the innermost column series is hovered.
                     mouseOver: function () {
                         const chart = this.series.chart;
                         chart.setMidPaneBg({
@@ -447,13 +484,17 @@ const c = Highcharts.chart('container', {
                         });
                         chart.subtitle.element.style.opacity = 0;
                     },
-                    mouseOut
+                    // We reuse our originally defined "setGradient" function
+                    // to reset the circles background when the mouse leaves
+                    // a hovered column.
+                    mouseOut: setGradient
                 }
             },
+
+            // ...And here is the custom tooltip content for the columns
             tooltip: {
                 headerFormat: (
-                    '<span style="color:#fff;" ' +
-                    'class="team-day center">' +
+                    '<span class="team-day center">' +
                     '<span class="{series.options.custom.textSizeClass}">' +
                     '<b style="color:{point.color};">Day {point.x}</b></span>'
                 ),
@@ -480,5 +521,3 @@ const c = Highcharts.chart('container', {
         }
     ]
 });
-
-console.log(c.series);

@@ -32,6 +32,7 @@ pre {
 .team-day {
     width: 100%;
     text-align: center;
+    color: #fff;
 }
 
 .team-salescount {
@@ -63,6 +64,10 @@ pre {
     margin-top: 11em;
     position: absolute;
     font-size: 1em;
+}
+
+.team-header {
+    margin-bottom: 6em;
 }
 
 .col-display-fieldwrap {
