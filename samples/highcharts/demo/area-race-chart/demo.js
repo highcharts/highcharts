@@ -81,8 +81,10 @@ const chart = Highcharts.chart('container', {
     },
     tooltip: {
         split: true,
+        headerFormat: '<span style="font-size: 1.2em">{point.x}</span>',
         pointFormat:
-            '{series.name} generated <b>${point.y:,.1f} B</b><br/> in {point.x}'
+            '{series.name}: <b>${point.y:,.1f} B</b> ({point.percentage:.1f}%)',
+        crosshairs: true
     },
     plotOptions: {
         area: {
