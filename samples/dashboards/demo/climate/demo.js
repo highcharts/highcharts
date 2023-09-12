@@ -287,14 +287,14 @@ async function setupBoard() {
                     maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
                     events: {
                         afterSetExtremes: async function (e) {
+                            const min = Math.round(e.min);
+                            const max = Math.round(e.max);
+
                             if (
-                                activeTimeRange[0] !== Math.round(e.min) ||
-                                activeTimeRange[1] !== Math.round(e.max)
+                                activeTimeRange[0] !== min ||
+                                activeTimeRange[1] !== max
                             ) {
-                                activeTimeRange = [
-                                    Math.round(e.min),
-                                    Math.round(e.max)
-                                ];
+                                activeTimeRange = [min, max];
                                 await updateBoard(
                                     board,
                                     activeCity,
