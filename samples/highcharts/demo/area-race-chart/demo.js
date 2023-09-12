@@ -7,9 +7,7 @@ const btn = document.getElementById('play-pause-button'),
 const arrToAssociative = arr => {
     const tmp = {};
     arr.forEach(item => {
-        if (item[1] !== null) {
-            tmp[item[0]] = item[1];
-        }
+        tmp[item[0]] = item[1];
     });
 
     return tmp;
@@ -43,16 +41,13 @@ const chart = Highcharts.chart('container', {
         marginTop: 100,
         animation: {
             duration: 700,
-            easing: function (t) {
-                return t;
-            }
+            easing: t => t
         }
     },
     title: {
         text: 'Music revenue race chart'
     },
     subtitle: {
-        useHTML: true,
         text: getSubtitle(),
         floating: true,
         align: 'right',
@@ -85,20 +80,19 @@ const chart = Highcharts.chart('container', {
         }
     },
     tooltip: {
+        split: true,
         pointFormat:
-            '{series.name} had a revenue of <b>${point.y:,.1f} B</b><br/> in {point.x}'
+            '{series.name} generated <b>${point.y:,.1f} B</b><br/> in {point.x}'
     },
     plotOptions: {
         area: {
             stacking: 'normal',
             pointStart: startYear,
-            pointEnd: endYear,
             marker: {
                 enabled: false
             }
         }
     },
-
     annotations: [
         {
             labelOptions: {
@@ -107,6 +101,7 @@ const chart = Highcharts.chart('container', {
                 verticalAlign: 'middle',
                 allowOverlap: true,
                 style: {
+                    pointerEvents: 'none',
                     opacity: 0,
                     transition: 'opacity 500ms'
                 }
@@ -249,7 +244,7 @@ function update() {
     const series = chart.series,
         labels = chart.annotations[0].labels,
         yearIndex = input.value - startYear,
-        dataLength = series[0].data.length;
+        dataLength = series[0].options.data.length;
 
     // If slider moved back in time
     if (yearIndex < dataLength - 1) {
@@ -264,14 +259,14 @@ function update() {
         const remainingYears = yearIndex - dataLength;
         for (let i = 0; i < series.length; i++) {
             for (let j = input.value - remainingYears; j < input.value; j++) {
-                series[i].addPoint([formatRevenue[i][j] || 0], false);
+                series[i].addPoint([formatRevenue[i][j]], false);
             }
         }
     }
 
     // Add current year
     for (let i = 0; i < series.length; i++) {
-        const newY = formatRevenue[i][input.value] || 0;
+        const newY = formatRevenue[i][input.value];
         series[i].addPoint([newY], false);
     }
 
@@ -316,6 +311,4 @@ btn.addEventListener('click', function () {
 play(btn);
 
 // Trigger the update on the range bar click.
-input.addEventListener('input', function () {
-    update();
-});
+input.addEventListener('input', update);
