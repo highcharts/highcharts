@@ -1,78 +1,196 @@
+// Define custom SVG symbols for left and right triangles
+Highcharts.SVGRenderer.prototype.symbols.triangleLeft = function (x, y, w, h) {
+    return ['M', x, y + h / 2, 'L', x + w, y, 'L', x + w, y + h, 'Z'];
+};
+
+Highcharts.SVGRenderer.prototype.symbols.triangleRight = function (x, y, w, h) {
+    return ['M', x + w, y + h / 2, 'L', x, y, 'L', x, y + h, 'Z'];
+};
+
+// Process and transform the data for the chart
+const data = [{
+    name: 'wall-breakers',
+    previous: 47,
+    current: 128
+}, {
+    name: 'electro-giant',
+    previous: 99,
+    current: 88
+}, {
+    name: 'mortar',
+    previous: 66,
+    current: 79
+}, {
+    name: 'hog-rider',
+    previous: 84,
+    current: 78
+}, {
+    name: 'royal-giant',
+    previous: 104,
+    current: 73
+}, {
+    name: 'graveyars',
+    previous: 101,
+    current: 70
+}, {
+    name: 'test',
+    previous: 51,
+    current: 50
+}, {
+    name: 'giant',
+    previous: 41,
+    current: 49
+}, {
+    name: 'royal-hogs',
+    previous: 39,
+    current: 48
+}, {
+    name: 'balloon',
+    previous: 62,
+    current: 47
+}, {
+    name: 'lava-hound',
+    previous: 54,
+    current: 42
+}, {
+    name: 'goblin-drill',
+    previous: 19,
+    current: 41
+}, {
+    name: 'golem',
+    previous: 49,
+    current: 40
+}, {
+    name: 'x-bow',
+    previous: 55,
+    current: 36
+}, {
+    name: 'miner',
+    previous: 9,
+    current: 31
+}, {
+    name: 'battle-ram',
+    previous: 48,
+    current: 30
+}, {
+    name: 'goblin-giant',
+    previous: 10,
+    current: 30
+}, {
+    name: 'three-musketeers',
+    previous: 18,
+    current: 28
+}, {
+    name: 'goblin-barrel',
+    previous: 57,
+    current: 21
+}, {
+    name: 'ram-rider',
+    previous: 23,
+    current: 20
+}, {
+    name: 'elixir-golem',
+    previous: 4,
+    current: 7
+}, {
+    name: 'skeleton-barrel',
+    previous: 4,
+    current: 3
+}].map(dataPoint => {
+    const isIncrease = dataPoint.previous < dataPoint.current;
+    return {
+        ...dataPoint,
+        low: isIncrease ? dataPoint.previous : dataPoint.current,
+        high: isIncrease ? dataPoint.current : dataPoint.previous,
+        color: isIncrease ?
+            Highcharts.getOptions().colors[2] :
+            Highcharts.getOptions().colors[5]
+    };
+});
+
+// Separate the data into increasing and decreasing series
+const increasingData = [],
+    decreasingData = [];
+data.forEach((dataPoint, index) => {
+    const isIncrease = dataPoint.previous < dataPoint.current,
+        transformedDataPoint = {
+            ...dataPoint,
+            x: index
+        };
+
+    if (isIncrease) {
+        increasingData.push(transformedDataPoint);
+    } else {
+        decreasingData.push(transformedDataPoint);
+    }
+});
+
+// Create the chart
 Highcharts.chart('container', {
     chart: {
-        type: 'dumbbell'
+        type: 'dumbbell',
+        inverted: true
     },
-
     title: {
-        text: 'Temperature variation represented by lower and upper symbols'
+        text: 'Change in Card Usage'
     },
 
-    xAxis: {
-        type: 'datetime',
-        accessibility: {
-            rangeDescription: 'Range: Jan 1st 2017 to Jan 31 2017.'
-        }
-    },
-
-    yAxis: {
-        title: {
-            text: null
-        }
+    subtitle: {
+        text: 'Season 21 vs Season 22 <br>Top 1000'
     },
 
     tooltip: {
-        crosshairs: true,
-        shared: true,
-        valueSuffix: '°C',
-        xDateFormat: '%A, %b %e'
+        pointFormat: 'Season 21: used in deck by <strong>{point.previous}</strong> of 1000 top players<br>' +
+            'Season 22: used in deck by <strong>{point.current}</strong> of 1000 top players'
+    },
+
+    xAxis: {
+        type: 'category',
+        opposite: true
+    },
+
+    yAxis: {
+        title: ''
     },
 
     legend: {
         enabled: false
     },
 
+    plotOptions: {
+        series: {
+            connectorWidth: 2,
+            dataLabels: {
+                enabled: true,
+                inside: false,
+                crop: false,
+                overflow: 'allow'
+            }
+        }
+    },
+
     series: [{
-        name: 'Temperatures',
-        data: [
-            [1483232400000, 1.4, 4.7],
-            [1483318800000, -1.3, 1.9],
-            [1483405200000, -0.7, 4.3],
-            [1483491600000, -5.5, 3.2],
-            [1483578000000, -9.9, -6.6],
-            [1483664400000, -9.6, 0.1],
-            [1483750800000, -0.9, 4.0],
-            [1483837200000, -2.2, 2.9],
-            [1483923600000, 1.3, 2.3],
-            [1484010000000, -0.3, 2.9],
-            [1484096400000, 1.1, 3.8],
-            [1484182800000, 0.6, 2.1],
-            [1484269200000, -3.4, 2.5],
-            [1484355600000, -2.9, 2.0],
-            [1484442000000, -5.7, -2.6],
-            [1484528400000, -8.7, -3.3],
-            [1484614800000, -3.5, -0.3],
-            [1484701200000, -0.2, 7.0],
-            [1484787600000, 2.3, 8.5],
-            [1484874000000, 5.6, 9.5],
-            [1484960400000, 0.4, 5.8],
-            [1485046800000, 0.1, 3.1],
-            [1485133200000, 1.5, 4.1],
-            [1485219600000, -0.2, 2.8],
-            [1485306000000, 2.3, 10.3],
-            [1485392400000, -0.8, 9.4],
-            [1485478800000, -1.3, 4.6],
-            [1485565200000, -0.6, 5.3],
-            [1485651600000, 1.4, 5.8],
-            [1485738000000, -3.6, 0.9],
-            [1485824400000, -5.4, -2.6]
-        ],
+        name: 'Increase',
+        data: increasingData,
         marker: {
-            symbol: 'triangle',
-            fillColor: Highcharts.defaultOptions.colors[3]
+            enabled: true,
+            symbol: 'triangleRight'
         },
         lowMarker: {
-            symbol: 'circle',
-            fillColor: Highcharts.defaultOptions.colors[2]
+            enabled: false
         }
-    }]
+    },
+    {
+        name: 'Decrease',
+        data: decreasingData,
+        marker: {
+            enabled: false
+        },
+        lowMarker: {
+            enabled: true,
+            symbol: 'triangleLeft',
+            fillColor: Highcharts.getOptions().colors[5]
+        }
+    }
+    ]
 });
