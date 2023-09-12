@@ -19,6 +19,7 @@
  *
  * */
 
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type Globals from '../Globals';
 import type JSON from '../JSON';
 
@@ -118,7 +119,7 @@ namespace DataTableHelper {
 
     export type ColumnJSON = JSON.Array<JSON.Primitive>;
 
-    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTable.Options);
+    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTableOptions);
 
 }
 
