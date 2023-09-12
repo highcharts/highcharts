@@ -115,6 +115,14 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
+     * Extendable method for formatting each cell's in DataGrid.
+     *
+     * @return {string}
+     * A string to be concatenated in to the common cell's text.
+     */
+    cellFormatter?: CellFormatterCallback;
+
+    /**
      * Switch to make the column cells editable ('true') or read-only ('false').
      *
      * @default true
@@ -143,6 +151,20 @@ export interface ColumnOptions {
      * @default true
      */
     show?: boolean;
+}
+
+/**
+ * Returns a formatted call's string.
+ */
+export interface CellFormatterCallback {
+    (this: CellValue): string;
+}
+
+/**
+ * Value to convert
+ */
+export interface CellValue {
+    value: DataTable.CellType
 }
 
 /* *

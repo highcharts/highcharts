@@ -1,12 +1,13 @@
 // Create Dashboard
 const data = [
     ['Day', 'EUR', 'Rate'],
-    [15, 11, 1.0876],
-    [16, 23, 1.0881],
-    [17, 15, 1.0829],
-    [18, 27, 1.0813],
-    [19, 13, 1.0808]
+    [1691971200000, 11, 1.0930],
+    [1692057600000, 23, 1.0926],
+    [1692144000000, 15, 1.0916],
+    [1692230400000, 27, 1.0900],
+    [1692316800000, 13, 1.0867]
 ];
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -79,15 +80,40 @@ Dashboards.board('container', {
                 chart: {
                     animation: false,
                     type: 'line',
-                    zooming: false
+                    zooming: false,
+                    events: {
+                        redraw: function () {
+                            if (!this.series[1].options.yAxis) {
+                                this.series[1].update({
+                                    yAxis: 1
+                                });
+                            }
+                        }
+                    }
+                },
+                title: {
+                    text: 'EUR to USD'
+                },
+                subtitle: {
+                    text: 'Euro foreign exchange reference rate to US dollar'
                 },
                 tooltip: {
                     shared: true,
                     split: true
                 },
                 xAxis: {
-                    type: 'category'
-                }
+                    type: 'datetime'
+                },
+                yAxis: [{
+                    title: {
+                        text: 'EUR / USD'
+                    }
+                }, {
+                    title: {
+                        text: 'Rate'
+                    },
+                    opposite: true
+                }]
             }
         }, {
             cell: 'dashboard-col-2',
@@ -97,6 +123,18 @@ Dashboards.board('container', {
             },
             sync: {
                 highlight: true
+            },
+            dataGridOptions: {
+                editable: false,
+                columns: {
+                    Day: {
+                        cellFormatter: function () {
+                            return new Date(this.value)
+                                .toISOString()
+                                .substring(0, 10);
+                        }
+                    }
+                }
             }
         }
     ]
