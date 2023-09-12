@@ -18,7 +18,7 @@ import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     defined

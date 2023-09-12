@@ -24,7 +24,7 @@ import SplinePoint from './Spline/SplinePoint';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     defined,
     stableSort

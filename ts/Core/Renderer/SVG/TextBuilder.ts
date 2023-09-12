@@ -31,7 +31,7 @@ const {
     SVG_NS,
     win
 } = H;
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     attr,
     extend,

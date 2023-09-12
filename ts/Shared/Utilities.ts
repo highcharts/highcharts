@@ -16,22 +16,21 @@
  *
  * */
 
-import type AxisType from './Axis/AxisType';
-import type Chart from './Chart/Chart';
-import type CSSObject from './Renderer/CSSObject';
+import type AxisType from '../Core/Axis/AxisType';
+import type Chart from '../Core/Chart/Chart';
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
     HTMLDOMElement
-} from './Renderer/DOMElementType';
-import type EventCallback from './EventCallback';
-import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
-import type Series from './Series/Series';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type Time from './Time';
+} from '../Core/Renderer/DOMElementType';
+import type EventCallback from '../Core/EventCallback';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type Series from '../Core/Series/Series';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type Time from '../Core/Time';
 
-import H from './Globals.js';
+import H from '../Core/Globals.js';
 const {
-    charts,
     doc,
     win
 } = H;
@@ -2126,64 +2125,6 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
-// Register Highcharts as a plugin in jQuery
-if ((win as any).jQuery) {
-
-    /**
-     * Highcharts-extended JQuery.
-     *
-     * @external JQuery
-     */
-
-    /**
-     * Helper function to return the chart of the current JQuery selector
-     * element.
-     *
-     * @function external:JQuery#highcharts
-     *
-     * @return {Highcharts.Chart}
-     *         The chart that is linked to the JQuery selector element.
-     *//**
-     * Factory function to create a chart in the current JQuery selector
-     * element.
-     *
-     * @function external:JQuery#highcharts
-     *
-     * @param {'Chart'|'Map'|'StockChart'|string} [className]
-     *        Name of the factory class in the Highcharts namespace.
-     *
-     * @param {Highcharts.Options} [options]
-     *        The chart options structure.
-     *
-     * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
-     *        images are loaded. Defining a
-     *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *        handler is equivalent.
-     *
-     * @return {JQuery}
-     *         The current JQuery selector.
-     */
-    (win as any).jQuery.fn.highcharts = function (): any {
-        const args = [].slice.call(arguments) as any;
-
-        if (this[0]) { // this[0] is the renderTo div
-
-            // Create the chart
-            if (args[0]) {
-                new (H as any)[ // eslint-disable-line computed-property-spacing, no-new
-                    // Constructor defaults to Chart
-                    isString(args[0]) ? args.shift() : 'Chart'
-                ](this[0], args[0], args[1]);
-                return this;
-            }
-
-            // When called without parameters or with the return argument,
-            // return an existing chart
-            return charts[(attr(this[0], 'data-highcharts-chart') as any)];
-        }
-    };
-}
 
 /* *
  *

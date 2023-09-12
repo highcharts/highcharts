@@ -19,7 +19,7 @@
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
 
-import U from './Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     diffObjects,
     extend,

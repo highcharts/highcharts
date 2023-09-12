@@ -24,7 +24,7 @@ import type ZAxis from '../Axis/ZAxis';
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     extend,

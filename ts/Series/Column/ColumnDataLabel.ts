@@ -26,7 +26,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import DataLabel from '../../Core/Series/DataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     merge,
     pick

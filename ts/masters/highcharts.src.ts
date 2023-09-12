@@ -8,7 +8,7 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import Utilities from '../Core/Utilities.js';
+import Utilities from '../Shared/Utilities.js';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
@@ -30,6 +30,7 @@ import Pointer from '../Core/Pointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
+import '../Extensions/JqueryPlugin.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import Series from '../Core/Series/Series.js';

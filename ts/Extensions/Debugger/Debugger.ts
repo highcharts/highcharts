@@ -24,7 +24,7 @@ import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     find,

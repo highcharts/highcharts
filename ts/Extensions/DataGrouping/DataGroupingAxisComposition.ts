@@ -21,7 +21,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     extend,

@@ -27,7 +27,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     arearange: AreaRangeSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     merge,

@@ -24,7 +24,7 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     pick

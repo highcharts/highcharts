@@ -19,7 +19,7 @@
 import type { ApproximationArray } from './ApproximationType';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,

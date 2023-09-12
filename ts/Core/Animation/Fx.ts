@@ -27,7 +27,7 @@ import Color from '../Color/Color.js';
 const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     isNumber,
     objectEach

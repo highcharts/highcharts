@@ -33,7 +33,7 @@ import type SVGPath from './SVGPath';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import SVGElement from './SVGElement.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     defined,
     merge,

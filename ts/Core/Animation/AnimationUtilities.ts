@@ -25,7 +25,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     defined,
     getStyle,

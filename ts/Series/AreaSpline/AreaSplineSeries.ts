@@ -25,7 +25,7 @@ const {
     area: AreaSeries,
     area: { prototype: areaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge

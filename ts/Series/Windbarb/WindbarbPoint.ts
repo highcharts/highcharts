@@ -16,7 +16,7 @@
   *
   * */
 import type WindbarbPointOptions from './WindbarbPointOptions';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { isNumber } = U;
 import WindbarbSeries from './WindbarbSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';

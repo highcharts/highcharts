@@ -30,7 +30,7 @@ const { win } = H;
 import GraphLayout from '../GraphLayoutComposition.js';
 import QuadTree from './QuadTree.js';
 import QuadTreeNode from './QuadTreeNode.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     clamp,
     defined,

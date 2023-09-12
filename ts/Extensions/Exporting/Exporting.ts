@@ -50,7 +50,7 @@ const {
 } = G;
 import HU from '../../Core/HttpUtilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     css,

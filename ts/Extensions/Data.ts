@@ -33,7 +33,7 @@ const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     defined,

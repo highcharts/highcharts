@@ -29,7 +29,7 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     extend,

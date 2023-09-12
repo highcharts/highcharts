@@ -25,7 +25,7 @@ import Color from '../Color/Color.js';
 const {
     parse: color
 } = Color;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge

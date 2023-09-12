@@ -19,7 +19,7 @@
 import type MapNavigationOptions from './MapNavigationOptions';
 import D from '../Core/Defaults.js';
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const { extend } = U;
 
 /* *

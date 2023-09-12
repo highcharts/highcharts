@@ -56,7 +56,7 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import '../Series/Column/ColumnSeries.js';
 import type MapPointType from '../Series/Map/MapPoint.js';
 import type MapSeriesType from '../Series/Map/MapSeries.js';

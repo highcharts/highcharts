@@ -59,7 +59,7 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,

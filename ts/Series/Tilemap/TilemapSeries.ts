@@ -33,7 +33,7 @@ const {
 } = SeriesRegistry;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge

@@ -28,7 +28,7 @@ import type Types from '../../Shared/Types';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { merge } = U;
 
 /* *

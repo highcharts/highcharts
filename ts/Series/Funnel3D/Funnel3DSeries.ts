@@ -38,7 +38,7 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge,

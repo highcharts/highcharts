@@ -21,7 +21,7 @@ const {
         areaspline: AreaSplineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     merge,
     extend

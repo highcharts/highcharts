@@ -31,7 +31,7 @@ import PictorialUtilities from './PictorialUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;

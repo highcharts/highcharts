@@ -28,7 +28,7 @@ const {
     doc,
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     createElement,
     isArray,

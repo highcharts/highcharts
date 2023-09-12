@@ -21,7 +21,7 @@ import type { ColorLike, ColorType } from './ColorType';
 import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     isNumber,
     merge,

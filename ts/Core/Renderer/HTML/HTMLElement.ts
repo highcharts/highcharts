@@ -33,7 +33,7 @@ const {
     win
 } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     css,
     defined,

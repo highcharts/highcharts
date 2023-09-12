@@ -86,7 +86,7 @@ import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
 const {

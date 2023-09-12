@@ -20,7 +20,7 @@ import type WaterfallSeries from './WaterfallSeries';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { isNumber } = U;
 
 

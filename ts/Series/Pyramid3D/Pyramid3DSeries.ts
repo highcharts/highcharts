@@ -27,7 +27,7 @@ const {
         funnel3d: Funnel3DSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { merge } = U;
 
 /* *

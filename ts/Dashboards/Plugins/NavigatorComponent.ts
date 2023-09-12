@@ -38,7 +38,7 @@ import DataModifier from '../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     diffObjects,

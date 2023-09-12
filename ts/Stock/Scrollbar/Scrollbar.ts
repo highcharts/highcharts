@@ -29,7 +29,7 @@ const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

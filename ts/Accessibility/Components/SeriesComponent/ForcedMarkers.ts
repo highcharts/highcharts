@@ -26,7 +26,7 @@ import type {
 import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     addEvent,
     merge

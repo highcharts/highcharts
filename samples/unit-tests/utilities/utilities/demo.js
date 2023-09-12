@@ -28,7 +28,7 @@
 
         // eslint-disable-next-line no-underscore-dangle
         const diffObjects = Highcharts._modules[
-            'Core/Utilities.js'
+            'Shared/Utilities.js'
         ].diffObjects;
 
         let result;

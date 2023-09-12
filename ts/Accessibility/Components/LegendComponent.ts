@@ -31,7 +31,7 @@ const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

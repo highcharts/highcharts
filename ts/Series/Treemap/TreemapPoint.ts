@@ -45,7 +45,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import type TreemapNode from './TreemapNode.js';
 const {
     extend,

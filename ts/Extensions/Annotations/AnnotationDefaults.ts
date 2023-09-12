@@ -9,7 +9,7 @@ import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { defined } = U;
 
 /* *

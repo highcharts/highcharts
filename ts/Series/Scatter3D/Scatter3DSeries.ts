@@ -25,7 +25,7 @@ const { pointCameraDistance } = Math3D;
 import Scatter3DPoint from './Scatter3DPoint.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge

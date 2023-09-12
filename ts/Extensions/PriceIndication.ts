@@ -13,7 +13,7 @@
 import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
 const {

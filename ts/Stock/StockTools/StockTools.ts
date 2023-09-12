@@ -33,7 +33,7 @@ const {
     isNotNavigatorYAxis,
     isPriceIndicatorEnabled
 } = STU;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     correctFloat,
     defined,

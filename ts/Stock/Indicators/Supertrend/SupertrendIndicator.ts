@@ -35,7 +35,7 @@ const {
     atr: ATRIndicator,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,

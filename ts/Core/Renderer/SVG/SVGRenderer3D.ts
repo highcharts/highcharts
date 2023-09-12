@@ -47,7 +47,7 @@ const {
 import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     defined,
     extend,

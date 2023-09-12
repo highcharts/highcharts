@@ -28,7 +28,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     pick

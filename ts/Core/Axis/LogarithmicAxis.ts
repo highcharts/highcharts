@@ -18,7 +18,7 @@
 
 import type Axis from './Axis';
 
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     normalizeTickInterval,

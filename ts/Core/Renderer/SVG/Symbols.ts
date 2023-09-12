@@ -20,7 +20,7 @@ import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     defined,
     isNumber,

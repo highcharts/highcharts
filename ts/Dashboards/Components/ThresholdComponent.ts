@@ -26,7 +26,7 @@ import type Cell from '../Layout/Cell';
 import type Globals from '../Globals';
 
 import Component from './Component.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     isArray,
     isNumber,

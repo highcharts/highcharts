@@ -27,7 +27,7 @@ import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { merge } = U;
 
 /* *

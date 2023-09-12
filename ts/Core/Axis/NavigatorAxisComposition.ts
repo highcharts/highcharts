@@ -21,7 +21,7 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
 const { isTouchDevice } = H;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

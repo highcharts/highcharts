@@ -27,7 +27,7 @@ const {
     sma: SMAIndicator,
     stochastic: StochasticIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     extend,
     merge

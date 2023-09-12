@@ -34,7 +34,7 @@ import type Component from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

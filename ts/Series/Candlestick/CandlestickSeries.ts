@@ -30,7 +30,7 @@ const {
     column: ColumnSeries,
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { merge } = U;
 
 /* *

@@ -53,7 +53,7 @@ const {
     initDataLabelsDefer
 } = D;
 
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,

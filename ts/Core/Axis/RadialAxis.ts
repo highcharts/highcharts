@@ -34,7 +34,7 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

@@ -20,7 +20,7 @@ import type Axis from './Axis';
 import type Scrollbar from '../../Stock/Scrollbar/Scrollbar';
 import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,

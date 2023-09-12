@@ -15,7 +15,7 @@ import type MapPoint from '../Series/Map/MapPoint';
 import type PointerEvent from '../Core/PointerEvent';
 
 import Pointer from '../Core/Pointer.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     defined,
     extend,

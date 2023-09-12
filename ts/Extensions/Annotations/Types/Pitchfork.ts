@@ -20,7 +20,7 @@ import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotation.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const { merge } = U;
 
 /* *

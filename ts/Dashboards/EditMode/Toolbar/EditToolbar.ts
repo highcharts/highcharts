@@ -19,7 +19,7 @@
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     defined,
     createElement,

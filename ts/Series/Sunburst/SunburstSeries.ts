@@ -52,7 +52,7 @@ const {
     setTreeValues,
     updateRootId
 } = TU;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 const {
     defined,

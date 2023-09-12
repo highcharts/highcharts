@@ -23,7 +23,7 @@ import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     extend,
     merge,

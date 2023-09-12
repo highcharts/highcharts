@@ -26,7 +26,7 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

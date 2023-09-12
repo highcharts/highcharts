@@ -41,7 +41,7 @@ import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     extend,
     fireEvent,

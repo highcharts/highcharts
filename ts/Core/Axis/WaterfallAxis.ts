@@ -22,7 +22,7 @@ import type StackingAxis from './Stacking/StackingAxis';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     objectEach

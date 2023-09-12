@@ -24,7 +24,7 @@ import type SVGRenderer from './SVGRenderer';
 import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
-import U from '../../Utilities.js';
+import U from '../../../Shared/Utilities.js';
 const {
     defined,
     extend,

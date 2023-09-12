@@ -33,7 +33,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { doc, win } = H;
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     isNumber,
     isObject,

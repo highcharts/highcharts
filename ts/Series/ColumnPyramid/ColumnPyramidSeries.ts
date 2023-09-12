@@ -21,7 +21,7 @@ import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     clamp,
     extend,

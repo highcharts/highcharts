@@ -35,7 +35,7 @@ import H from '../Core/Globals.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     arrayMax,

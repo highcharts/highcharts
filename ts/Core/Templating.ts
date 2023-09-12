@@ -23,7 +23,7 @@ const {
     defaultOptions,
     defaultTime
 } = D;
-import U from './Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     extend,
     getNestedProperty,

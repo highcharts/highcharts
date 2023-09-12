@@ -29,7 +29,7 @@ import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

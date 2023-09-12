@@ -53,7 +53,7 @@ import MockPoint from './MockPoint.js';
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     destroyObjectProperties,
     erase,

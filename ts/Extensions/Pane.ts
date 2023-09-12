@@ -20,7 +20,7 @@ import CU from '../Series/CenteredUtilities.js';
 import H from '../Core/Globals.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

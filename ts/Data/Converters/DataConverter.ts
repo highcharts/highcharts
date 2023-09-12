@@ -27,7 +27,7 @@ import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
 
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

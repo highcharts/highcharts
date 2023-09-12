@@ -20,7 +20,7 @@
  * */
 
 import Axis from '../../Core/Axis/Axis.js';
-import U from '../../Core/Utilities.js';
+import U from '../../Shared/Utilities.js';
 const { addEvent } = U;
 
 /* *

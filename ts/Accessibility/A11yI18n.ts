@@ -25,7 +25,7 @@ import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
 
-import U from '../Core/Utilities.js';
+import U from '../Shared/Utilities.js';
 const {
     getNestedProperty,
     pick

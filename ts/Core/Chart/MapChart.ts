@@ -25,7 +25,7 @@ import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
-import U from '../Utilities.js';
+import U from '../../Shared/Utilities.js';
 const {
     merge,
     pick
