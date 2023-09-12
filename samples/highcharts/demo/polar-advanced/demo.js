@@ -123,8 +123,13 @@ const
                 textPath: {
                     enabled: true,
                     attributes: {
-                        startOffset: index % 3 ? '75%' : '25%',
-                        dy: '2.8%'
+                        startOffset: (
+                            index % 3 ? '75%' : (
+                                index % 2 ? '22%' : '28%'
+                            )
+                        ),
+                        dx: index % 2 ? '-2%' : '0%',
+                        dy: index % 3 ? '2.8%' : '3.3%'
                     }
                 }
             },
@@ -213,13 +218,13 @@ Highcharts.chart('container', {
 
     // Our chart is made of 3 different panes/circles
     pane: [{
-        size: '95%',
-        innerSize: '60%',
+        size: '82.5%',
+        innerSize: '72.5%',
         ...paneOpeningAngles,
         background: {
             borderColor: colors[4],
             backgroundColor: toggleableGradient,
-            outerRadius: '60%'
+            innerRadius: '40%'
         }
     }, {
         size: '55%',
@@ -282,12 +287,13 @@ Highcharts.chart('container', {
     }],
     yAxis: [{
         pane: 0,
-        tickInterval: 8,
+        tickInterval: 1,
         gridLineWidth: 0.5,
         gridLineDashStyle: 'longdash',
         gridLineColor: '#BBBAC5',
-        max: 1800,
-        min: -8,
+
+        max: 3,
+        min: 1,
         title: null,
         ...noLabelProp
     }, {
@@ -328,7 +334,6 @@ Highcharts.chart('container', {
         width: '26%',
         maxHeight: '14%'
     },
-
     plotOptions: {
         columnrange: {
             custom: {
@@ -472,6 +477,7 @@ Highcharts.chart('container', {
             pointStart: 1,
             point: {
                 events: {
+
                     // Here we change our circle once again but this time
                     // it is when the innermost column series is hovered.
                     mouseOver: function () {
@@ -482,6 +488,7 @@ Highcharts.chart('container', {
                         });
                         chart.subtitle.element.style.opacity = 0;
                     },
+
                     // We reuse our originally defined "setGradient" function
                     // to reset the circles background when the mouse leaves
                     // a hovered column.
