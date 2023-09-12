@@ -899,14 +899,15 @@ async function setupBoard() {
     }, true);
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
+    const cityRows = citiesTable.getRowObjects();
 
     // Add city sources
-    for (const row of citiesTable.getRowObjects()) {
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         dataPool.setConnectorOptions({
-            id: row.city,
+            id: cityRows[i].city,
             type: 'CSV',
             options: {
-                csvURL: row.csv
+                csvURL: cityRows[i].csv
             }
         });
     }
@@ -916,9 +917,9 @@ async function setupBoard() {
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
     // Load additional cities
-    for (const row of citiesTable.getRowObjects()) {
-        if (row.city !== activeCity) {
-            await setupCity(board, row.city, activeColumn, activeScale);
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
+        if (cityRows[i].city !== activeCity) {
+            await setupCity(board, cityRows[i].city, activeColumn, activeScale);
         }
     }
 }
@@ -1041,10 +1042,10 @@ async function updateBoard(board, city, column, scale, newData) {
     const mapPoints = worldMap.chart.series[1].data;
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
-    for (const mapPoint of mapPoints) {
-        const pointTable = await dataPool.getConnectorTable(mapPoint.name);
+    for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
+        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
 
-        mapPoint.update({
+        mapPoints[i].update({
             custom: {
                 yScale: scale
             },
