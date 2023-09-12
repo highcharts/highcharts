@@ -52,7 +52,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
-          config: specPattern=**/visual/*.cy.js
+          config-file: test/cypress/configs/dashboards.visual.config.mjs
           install: false
 
       - name: Store artifacts
@@ -109,7 +109,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
-          config: specPattern=**/visual/*.cy.js
+          config-file: test/cypress/configs/dashboards.visual.config.mjs
           install: false
 
       - name: Store artifacts
