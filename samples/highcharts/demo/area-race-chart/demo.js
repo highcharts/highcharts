@@ -203,16 +203,25 @@ const chart = Highcharts.chart('container', {
                     maxWidth: 500
                 },
                 chartOptions: {
+                    title: {
+                        align: 'left'
+                    },
                     subtitle: {
                         y: -150,
                         x: -20
                     },
                     yAxis: {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -3
+                        },
+                        tickLength: 0,
                         title: {
                             align: 'high',
+                            reserveSpace: false,
                             rotation: 0,
-                            offset: -80,
-                            x: 0,
+                            textAlign: 'left',
                             y: -20
                         }
                     }
