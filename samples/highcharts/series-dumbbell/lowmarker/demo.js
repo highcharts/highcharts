@@ -159,7 +159,15 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            connectorWidth: 2,
+            connectorWidth: 3,
+            marker: {
+                radius: 5,
+                states: {
+                    hover: {
+                        lineWidth: 0
+                    }
+                }
+            },
             dataLabels: {
                 enabled: true,
                 inside: false,
