@@ -309,8 +309,7 @@ abstract class EventEmitter {
             // Using experimental property on event object to check if event was
             // created by touch on screen on hybrid device (#18122)
             firesTouchEvents = (
-                (e as any).sourceCapabilities &&
-                (e as any).sourceCapabilities.firesTouchEvents
+                (e as any)?.sourceCapabilities?.firesTouchEvents
             ) || false;
 
         e = pointer.normalize(e);
