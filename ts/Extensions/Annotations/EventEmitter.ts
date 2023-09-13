@@ -308,13 +308,10 @@ abstract class EventEmitter {
             pointer = emitter.chart.pointer,
             // Using experimental property on event object to check if event was
             // created by touch on screen on hybrid device (#18122)
-            firesTouchEvents = pick(
-                (
-                    (e as any).sourceCapabilities &&
-                    (e as any).sourceCapabilities.firesTouchEvents
-                ),
-                false
-            );
+            firesTouchEvents = (
+                (e as any).sourceCapabilities &&
+                (e as any).sourceCapabilities.firesTouchEvents
+            ) || false;
 
         e = pointer.normalize(e);
 
