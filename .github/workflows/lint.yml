@@ -11,7 +11,7 @@ permissions:
    contents: read # to fetch code (actions/checkout)
 
 jobs:
-  dashboards_test:
+  lint:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -30,5 +30,7 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
-      - name: Execute linting
+      - name: Lint (ts)
         run: npx gulp lint
+      - name: Lint samples
+        run: npx eslint -c samples/.eslintrc samples/**/*.js
