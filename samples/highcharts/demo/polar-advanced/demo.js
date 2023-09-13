@@ -162,7 +162,6 @@ Highcharts.chart('container', {
                     const
                         { chartWidth, chartHeight, legend } = this,
                         { legendWidth, legendHeight } = legend;
-                    console.log(chartWidth);
                     legend.group.translate(
                         (chartWidth - legendWidth) / 2,
                         legendHeight * (chartWidth / chartHeight)
