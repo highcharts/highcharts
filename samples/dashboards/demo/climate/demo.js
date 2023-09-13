@@ -912,8 +912,6 @@ async function setupBoard() {
             await setupCity(board, row.city, activeColumn, activeScale);
         }
     }
-
-    console.log('The demo has been loaded.');
 }
 
 async function setupCity(board, city, column, scale) {

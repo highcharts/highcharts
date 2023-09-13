@@ -3,16 +3,13 @@ describe('Dashboards climate demo visual tests', () => {
         cy.intercept('/**/*.csv').as('getData');
         cy.visit('/dashboards/demo/climate');
         cy.wait('@getData', {timeout: 100000}) // wait for data to be laoded
-        cy.window().then(win => {
-            win.console.log = cy.spy();
-        });
     });
 
     it('Climate demo', () => {
         cy.boardRendered();
-        cy.window().its('console.log').should('be.calledWith', 'The demo has been loaded.');
-        cy.get('#demo-content')
-            .compareSnapshot('dashboard-climate-loaded', 0.1);
+        cy.get('g.highcharts-markers.highcharts-series-1.highcharts-mappoint-series')
+            .children('.highcharts-point').should('have.length', 30);
+        cy.get('#demo-content').compareSnapshot('dashboard-climate-loaded', 0.1);
     });
 
     it('edit mode', () => {
