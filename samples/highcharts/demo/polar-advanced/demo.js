@@ -160,11 +160,12 @@ Highcharts.chart('container', {
             render: function () {
                 if (this.legend.group) {
                     const
-                        { chartWidth, legend } = this,
+                        { chartWidth, chartHeight, legend } = this,
                         { legendWidth, legendHeight } = legend;
+                    console.log(chartWidth);
                     legend.group.translate(
                         (chartWidth - legendWidth) / 2,
-                        legendHeight * 1.25
+                        legendHeight * (chartWidth / chartHeight)
                     );
                 }
             }
@@ -210,8 +211,7 @@ Highcharts.chart('container', {
         maxColor: colors[8].tweenTo(colors[8], 0.5),
         showInLegend: false,
         ...monthExtremes
-    }
-    ],
+    }],
 
     // Our chart is made of 3 different panes/circles
     pane: [{
@@ -348,14 +348,40 @@ Highcharts.chart('container', {
                 },
                 chartOptions: {
                     legend: {
+                        borderRadius: 18,
                         borderWidth: 0.7,
                         padding: 4,
-                        symbolPadding: 6,
-                        symbolHeight: 6,
-                        itemMarginBottom: 0,
-                        itemMarginTop: 0,
+                        symbolPadding: 2,
+                        symbolHeight: 1,
+                        itemMarginBottom: 1,
+                        itemMarginTop: 1,
                         itemStyle: {
                             fontSize: '0.8em'
+                        },
+                        width: '36%'
+                    },
+                    subtitle: {
+                        style: {
+                            fontSize: '1em'
+                        }
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 380
+                },
+                chartOptions: {
+                    legend: {
+                        borderRadius: 14,
+                        borderWidth: 0.7,
+                        padding: 4,
+                        symbolPadding: 4,
+                        symbolHeight: 3,
+                        itemMarginBottom: 2,
+                        itemMarginTop: 1,
+                        itemStyle: {
+                            fontSize: '0.9em'
                         },
                         width: '34%'
                     },
@@ -368,7 +394,7 @@ Highcharts.chart('container', {
             },
             {
                 condition: {
-                    minWidth: 480
+                    minWidth: 520
                 },
                 chartOptions: {
                     legend: {
@@ -376,10 +402,10 @@ Highcharts.chart('container', {
                         padding: 5,
                         symbolPadding: 8,
                         symbolHeight: 8,
-                        itemMarginBottom: 1,
-                        itemMarginTop: 1,
+                        itemMarginBottom: 2,
+                        itemMarginTop: 0,
                         itemStyle: {
-                            fontSize: '1em'
+                            fontSize: '1.1em'
                         },
                         width: '30%'
                     },
@@ -392,7 +418,7 @@ Highcharts.chart('container', {
             },
             {
                 condition: {
-                    minWidth: 580
+                    minWidth: 600
                 },
                 chartOptions: {
                     legend: {
@@ -402,7 +428,9 @@ Highcharts.chart('container', {
                         borderWidth: 1.5,
                         padding: 6,
                         symbolPadding: 12,
-                        symbolHeight: 12
+                        symbolHeight: 12,
+                        itemMarginBottom: 2,
+                        itemMarginTop: 2
                     },
                     plotOptions: {
                         columnrange: {
@@ -427,6 +455,8 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '1.4em'
                         },
+                        itemMarginBottom: 2,
+                        itemMarginTop: 0,
                         padding: 6
                     },
                     plotOptions: {
