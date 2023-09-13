@@ -6,14 +6,14 @@ on:
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmarks/*'
+      - 'test/ts-node-unit-tests/benchmark*'
       - '.github/workflows/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-  cypress_lighthouse:
+  dashboard_benchmark:
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:

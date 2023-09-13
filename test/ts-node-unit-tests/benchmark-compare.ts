@@ -174,16 +174,33 @@ async function compare (base: BenchResults, actual: BenchResults){
         }
     });
 
+    const fmtResult = (num: number) =>
+        Math.round((num + Number.EPSILON) * 100) / 100;
 
     // test, averages, diff
     const markdownTableRows = actual.map((entry, i) =>{
-      return `| \`${entry.test}\` | ${entry.sampleSize} | ${base[i].avg} | ${entry.avg} | ${entry.avg - base[i].avg} |`;
+      return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(entry.avg - base[i].avg)} |`;
     });
+
+    const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff |
+| --- | --- | --- | --- |`;
 
     await appendFile(
         join(TMP_FILE_PATH, 'table.md'),
-        '\n' + markdownTableRows.join('\n')
-    );
+        `### ${actual[0].test}
+${markdownTableHeader}
+${markdownTableRows[markdownTableRows.length - 1]}
+
+<details><summary>See all</summary>
+
+
+${markdownTableHeader}
+${markdownTableRows.join('\n')}
+
+
+</details>
+
+`);
 
     const chartName = actual[0].test.replace('.bench.ts', '');
 
@@ -201,10 +218,8 @@ async function compareBenchmarks (){
         throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist. Try running \`npm run benchmark\``);
     });
 
-    const markdownTableHeader = `| Test | Sample size | Base avg (ms) | Actual avg (ms) | Diff |
-| --- | --- | --- | --- | --- |`;
 
-    await writeFile(join(TMP_FILE_PATH, 'table.md'), markdownTableHeader);
+    await writeFile(join(TMP_FILE_PATH, 'table.md'), '');
     await writeFile(join(TMP_FILE_PATH, 'report.html'), `
         <script src="https://code.highcharts.com/highcharts.js"></script>`);
 
