@@ -141,7 +141,19 @@ class DataTable implements DataEvent.Emitter {
         options: DataTable.Options = {}
     ) {
 
-        this.aliases = {};
+        /**
+         * Dictionary of all column aliases and their mapped column. If a column
+         * for one of the get-methods matches an column alias, this column will
+         * be replaced with the mapped column by the column alias.
+         *
+         * @name Highcharts.DataTable#aliases
+         * @type {Highcharts.Dictionary<string>}
+         */
+        this.aliases = (
+            options.aliases ?
+                JSON.parse(JSON.stringify(options.aliases)) :
+                {}
+        );
 
         /**
          * Whether the ID was automatic generated or given in the constructor.
@@ -211,11 +223,7 @@ class DataTable implements DataEvent.Emitter {
      *
      * */
 
-    /**
-     * Mapping aliases to column names.
-     * @private
-     */
-    private readonly aliases: DataTable.ColumnAliases;
+    public readonly aliases: DataTable.ColumnAliases;
 
     public readonly autoId: boolean;
 
@@ -690,33 +698,6 @@ class DataTable implements DataEvent.Emitter {
             [columnNameOrAlias],
             asReference
         )[columnNameOrAlias];
-    }
-
-    /**
-     * Fetches all column aliases and their mapped columns.
-     *
-     * @function Highcharts.DataTable#getColumnAliases
-     *
-     * @return {Highcharts.Dictionary<string>}
-     * Returns all column aliases.
-     */
-    public getColumnAliases(): DataTable.ColumnAliases {
-        const aliases = this.aliases,
-            aliasKeys = Object.keys(aliases),
-            columnAliases: DataTable.ColumnAliases = {};
-
-        for (
-            let i = 0,
-                iEnd = aliasKeys.length,
-                alias: string;
-            i < iEnd;
-            ++i
-        ) {
-            alias = aliasKeys[i];
-            columnAliases[alias] = aliases[alias];
-        }
-
-        return columnAliases;
     }
 
     public getColumnAsNumbers(
@@ -1321,36 +1302,6 @@ class DataTable implements DataEvent.Emitter {
         eventDetail?: DataEvent.Detail
     ): void {
         this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
-    }
-
-    /**
-     * Defines an alias for a column. If a column name for one of the
-     * get-functions matches an column alias, the column name will be replaced
-     * with the original column name.
-     *
-     * @function Highcharts.DataTable#setColumnAlias
-     *
-     * @param {string} columnAlias
-     * Column alias to create.
-     *
-     * @param {string} columnName
-     * Original column name to create an alias for.
-     *
-     * @return {boolean}
-     * `true` if successfully changed, `false` if reserved.
-     */
-    public setColumnAlias(
-        columnAlias: string,
-        columnName: string
-    ): boolean {
-        const aliases = this.aliases;
-
-        if (!aliases[columnAlias]) {
-            aliases[columnAlias] = columnName;
-            return true;
-        }
-
-        return false;
     }
 
     /**
