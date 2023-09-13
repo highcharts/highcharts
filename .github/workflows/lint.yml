@@ -33,4 +33,4 @@ jobs:
       - name: Lint (ts)
         run: npx gulp lint
       - name: Lint samples
-        run: npx eslint -c samples/.eslintrc samples/**/*.js
+        run: npx eslint -c samples/.eslintrc "samples/**/*.js"
