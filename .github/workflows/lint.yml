@@ -12,7 +12,7 @@ permissions:
    contents: read # to fetch code (actions/checkout)
 
 jobs:
-  lint:
+  lint_hc:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -34,12 +34,30 @@ jobs:
       - name: Lint (ts)
         run: npx gulp lint
 
+      - name: Lint CSS
+        run: npx stylelint --config css/.stylelintrc.json "css/**/*.css"
+
+  lint_samples:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
       - name: Lint samples JS
         run: npx eslint -c samples/.eslintrc "samples/**/*.js"
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"
-
-      - name: Lint CSS
-        run: npx stylelint --config css/.stylelintrc.json "css/**/*.css"
-
