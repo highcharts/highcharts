@@ -225,7 +225,7 @@ class ZoomComponent extends AccessibilityComponent {
     ): void {
         this[buttonProp] = this.proxyProvider.addProxyElement('zoom', {
             click: buttonEl
-        }, {
+        }, 'button', {
             'aria-label': label,
             tabindex: -1
         });
@@ -450,7 +450,7 @@ class ZoomComponent extends AccessibilityComponent {
                 const hasButton = (
                     (chart as any)[buttonProp] &&
                     (chart as any)[buttonProp].box &&
-                    (component as any)[proxyProp].buttonElement
+                    (component as any)[proxyProp].innerElement
                 );
                 return hasButton;
             },
@@ -458,7 +458,7 @@ class ZoomComponent extends AccessibilityComponent {
             init: function (): void {
                 chart.setFocusToElement(
                     (chart as any)[buttonProp].box,
-                    (component as any)[proxyProp].buttonElement
+                    (component as any)[proxyProp].innerElement
                 );
             }
         });
