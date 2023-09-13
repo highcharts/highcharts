@@ -31,6 +31,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Install dependencies
         uses: cypress-io/github-action@v6
@@ -54,10 +55,19 @@ jobs:
           config-file: test/cypress/configs/dashboards.visual.config.mjs
           install: false
 
+      - name: Stop server
+        run: kill $(lsof -t -i:3030)
+
       - name: Checkout current branch
         uses: actions/checkout@v3
         with:
           clean: false
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Install dependencies
         uses: cypress-io/github-action@v6
