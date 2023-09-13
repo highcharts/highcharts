@@ -170,11 +170,9 @@ Highcharts.chart('container', {
             }
         }
     },
-
     title: {
         text: 'Advanced Polar Chart'
     },
-
     subtitle: {
         text: 'Sales Team<br>Performance',
         useHTML: 'true',
@@ -186,7 +184,6 @@ Highcharts.chart('container', {
             textAlign: 'center'
         }
     },
-
     tooltip: {
         animation: false,
         backgroundColor: undefined,
@@ -287,15 +284,17 @@ Highcharts.chart('container', {
     }],
     yAxis: [{
         pane: 0,
-        tickInterval: 1,
-        gridLineWidth: 0.5,
-        gridLineDashStyle: 'longdash',
-        gridLineColor: '#BBBAC5',
-
-        max: 3,
-        min: 1,
+        gridLineWidth: 0,
         title: null,
-        ...noLabelProp
+        ...noLabelProp,
+        plotLines: Array(3).fill(0).map(
+            (_v, i) => ({
+                width: 0.5,
+                dashStyle: 'longdash',
+                color: '#BBBAC5',
+                value: i + 1
+            })
+        )
     }, {
         pane: 1,
         reversed: true,
