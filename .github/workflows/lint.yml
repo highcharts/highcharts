@@ -1,10 +1,11 @@
-name: TS linting
+name: Linting
 
 on:
   pull_request:
     branches: [ 'master' ]
     paths:
       - 'ts/**'
+      - 'samples/**'
       - '.github/workflows/lint.yml'
 
 permissions:
@@ -32,5 +33,13 @@ jobs:
 
       - name: Lint (ts)
         run: npx gulp lint
-      - name: Lint samples
+
+      - name: Lint samples JS
         run: npx eslint -c samples/.eslintrc "samples/**/*.js"
+
+      - name: Lint samples CSS
+        run: npx stylelint --config .stylelintrc.json "samples/**/*.css"
+
+      - name: Lint CSS
+        run: npx stylelint --config css/.stylelintrc.json "css/**/*.css"
+
