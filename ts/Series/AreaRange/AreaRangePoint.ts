@@ -134,10 +134,8 @@ class AreaRangePoint extends AreaPoint {
             this.plotLow = this.plotY = series.yAxis.toPixels(this.low, true);
         }
 
-        if (series.stateMarkerGraphic) {
-            series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
-            series.stateMarkerGraphic = series.upperStateMarkerGraphic;
-        }
+        series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
+        series.stateMarkerGraphic = series.upperStateMarkerGraphic;
 
         // Change state also for the top marker
         this.graphic = this.graphics && this.graphics[1];
@@ -160,13 +158,11 @@ class AreaRangePoint extends AreaPoint {
             this.plotX = this.plotLowX;
         }
 
-        if (series.stateMarkerGraphic) {
-            series.upperStateMarkerGraphic = series.stateMarkerGraphic;
-            series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
-            // Lower marker is stored at stateMarkerGraphic
-            // to avoid reference duplication (#7021)
-            series.lowerStateMarkerGraphic = void 0;
-        }
+        series.upperStateMarkerGraphic = series.stateMarkerGraphic;
+        series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
+        // Lower marker is stored at stateMarkerGraphic
+        // to avoid reference duplication (#7021)
+        series.lowerStateMarkerGraphic = void 0;
 
         if (series.options.lowMarker) {
             const { marker, lowMarker } = series.options;
