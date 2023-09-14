@@ -77,7 +77,7 @@ async function dashboardsScripts() {
                 version: (release || ''),
                 assetPrefix: release ?
                     `https://code.highcharts.com/dashboards/${release}` :
-                    '/code'
+                    '/code/dashboards'
             })
             .fnFirstBuild();
 
