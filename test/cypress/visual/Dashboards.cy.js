@@ -15,18 +15,17 @@ describe('Dashboards climate demo visual tests', () => {
     it('edit mode', () => {
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
-        cy.get('#demo-content')
-            .compareSnapshot('dashboard-climate-edit-mode', 0.1);
+        cy.get('#demo-content').compareSnapshot('dashboard-climate-edit-mode', 0.1);
     });
 
     it('small screen vertical', () => {
         cy.toggleEditMode();
-        cy.viewport(375, 812).wait(500);
+        cy.viewport('iphone-x').wait(500);
         cy.get('#demo-content').compareSnapshot('dashboard-climate-mobile-vertical', 0.1);
     });
 
     it('small screen horizontal', () => {
-        cy.viewport(812, 375).wait(500);
+        cy.viewport('iphone-x', 'landscape').wait(500);
         cy.get('#demo-content').compareSnapshot('dashboard-climate-mobile-horizontal', 0.1);
     });
 });
@@ -36,7 +35,7 @@ describe('Test the rest', () => {
         '/dashboards/demo/minimal',
         '/dashboards/responsive/responsive-breakpoints'
     ];
-    
+
     for (const demo of DEMOS_TO_VISUALLY_TEST) {
         const name = demo.replace('/', '').replace(/\//g, '-');
 
@@ -48,12 +47,12 @@ describe('Test the rest', () => {
         });
 
         it('small screen vertical ' + demo, () => {
-            cy.viewport(375, 812).wait(500);
+            cy.viewport('iphone-x').wait(100);
             cy.get('#demo-content').compareSnapshot(name + '-mobile-vertical', 0.1);
         });
-    
+
         it('small screen horizontal ' + demo, () => {
-            cy.viewport(812, 375).wait(500);
+            cy.viewport('iphone-x', 'landscape').wait(100);
             cy.get('#demo-content').compareSnapshot(name + '-mobile-horizontal', 0.1);
         });
     }
