@@ -35,7 +35,7 @@ const {
         pie: PieSeries
     }
 } = SeriesRegistry;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,

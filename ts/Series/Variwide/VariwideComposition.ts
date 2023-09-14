@@ -25,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
 
 import VariwidePoint from './VariwidePoint.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     wrap

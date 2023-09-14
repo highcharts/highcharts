@@ -35,7 +35,7 @@ import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,

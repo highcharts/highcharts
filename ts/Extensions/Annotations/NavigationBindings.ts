@@ -43,7 +43,7 @@ const {
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
 const { getFieldType } = NBU;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,

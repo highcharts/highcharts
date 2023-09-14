@@ -23,7 +23,7 @@ import type DataEvent from '../DataEvent';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { merge, isArray } = U;
 
 /* *

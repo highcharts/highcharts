@@ -30,7 +30,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,

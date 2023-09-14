@@ -28,7 +28,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     isNumber,
     merge

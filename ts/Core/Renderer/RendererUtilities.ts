@@ -16,7 +16,7 @@
  *
  * */
 
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     clamp,
     pick,

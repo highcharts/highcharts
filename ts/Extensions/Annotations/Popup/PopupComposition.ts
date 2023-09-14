@@ -28,7 +28,7 @@ import type NavigationBindings from '../NavigationBindings';
 import type Pointer from '../../../Core/Pointer';
 
 import Popup from './Popup.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     wrap

@@ -22,7 +22,7 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
 /* *

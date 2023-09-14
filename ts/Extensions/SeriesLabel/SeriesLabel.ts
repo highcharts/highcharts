@@ -59,7 +59,7 @@ const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
 const {
     addEvent,

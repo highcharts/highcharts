@@ -22,7 +22,7 @@ import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend

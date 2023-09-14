@@ -37,7 +37,7 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     error,
     extend,

@@ -20,7 +20,7 @@ import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
 import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     find,

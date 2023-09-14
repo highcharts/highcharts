@@ -36,7 +36,7 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     pick

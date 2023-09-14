@@ -46,7 +46,7 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes
 } = SeriesRegistry;
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 import { CursorValue } from '../Core/Renderer/CSSObject';
 const {
     addEvent,

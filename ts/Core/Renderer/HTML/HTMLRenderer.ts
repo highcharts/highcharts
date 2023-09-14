@@ -23,7 +23,7 @@ import type { HTMLDOMElement } from '../DOMElementType';
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../Utilities.js';
 const {
     attr,
     createElement,

@@ -30,7 +30,7 @@ import DataConnector from './DataConnector.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *

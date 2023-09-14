@@ -23,7 +23,7 @@ import H from './Globals.js';
 const {
     win
 } = H;
-import U from '../Shared/Utilities.js';
+import U from './Utilities.js';
 const {
     defined,
     error,

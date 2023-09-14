@@ -23,7 +23,7 @@ import type { SeriesOptions } from './Series/SeriesOptions';
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Series from './Series/Series.js';
-import U from '../Shared/Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     isFunction,

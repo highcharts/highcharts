@@ -25,7 +25,7 @@ import type InvertModifierOptions from './InvertModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *

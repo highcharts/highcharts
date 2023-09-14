@@ -30,7 +30,7 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,

@@ -20,7 +20,7 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 
 /* *
  *

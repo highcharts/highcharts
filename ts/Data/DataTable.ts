@@ -23,7 +23,7 @@
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,

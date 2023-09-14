@@ -23,7 +23,7 @@ import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     isObject,

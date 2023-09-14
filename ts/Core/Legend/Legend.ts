@@ -45,7 +45,7 @@ const {
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     createElement,

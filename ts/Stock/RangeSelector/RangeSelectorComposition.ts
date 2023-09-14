@@ -28,7 +28,7 @@ const {
     setOptions
 } = D;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,

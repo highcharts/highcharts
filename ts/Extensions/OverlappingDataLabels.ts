@@ -22,7 +22,7 @@ import type StackItem from '../Core/Axis/Stacking/StackItem';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,

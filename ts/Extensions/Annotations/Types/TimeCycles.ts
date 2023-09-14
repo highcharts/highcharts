@@ -23,7 +23,7 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import ControlPoint from '../ControlPoint.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     isNumber,

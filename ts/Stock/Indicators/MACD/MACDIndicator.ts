@@ -36,7 +36,7 @@ const {
     column: ColumnSeries,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
     correctFloat,

@@ -61,7 +61,7 @@ const {
     getLevelOptions,
     updateRootId
 } = TU;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,

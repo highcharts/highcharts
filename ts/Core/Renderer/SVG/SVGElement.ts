@@ -54,7 +54,7 @@ const {
     win
 } = H;
 import { Palette } from '../../Color/Palettes.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     attr,

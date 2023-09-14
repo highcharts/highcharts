@@ -24,7 +24,7 @@ import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../MockPointOptions';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     defined

@@ -25,7 +25,7 @@ import type ReingoldFruchtermanLayout from './Networkgraph/ReingoldFruchtermanLa
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent
 } = U;

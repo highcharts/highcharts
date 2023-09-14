@@ -36,7 +36,7 @@ import NU from '../NavigationBindingsUtilities.js';
 const { annotationsFieldsTypes } = NU;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     createElement,

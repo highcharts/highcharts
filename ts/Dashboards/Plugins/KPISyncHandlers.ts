@@ -23,7 +23,7 @@ import type DataCursor from '../../Data/DataCursor';
 import type Sync from '../Components/Sync/Sync';
 import type KPIComponent from '../Components/KPIComponent';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { defined } = U;
 
 

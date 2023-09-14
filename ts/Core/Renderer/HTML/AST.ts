@@ -25,7 +25,7 @@ const {
     SVG_NS,
     win
 } = H;
-import U from '../../../Shared/Utilities.js';
+import U from '../../Utilities.js';
 const {
     attr,
     createElement,

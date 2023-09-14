@@ -21,7 +21,7 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     getMagnitude,

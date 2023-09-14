@@ -27,7 +27,7 @@ import type {
 import type Series from './Series';
 
 import DataTable from '../../Data/DataTable.js';
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     fireEvent,

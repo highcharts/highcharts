@@ -59,7 +59,7 @@ const {
 } = SeriesRegistry;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,

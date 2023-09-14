@@ -45,7 +45,7 @@ const {
     ajax
 } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     error,

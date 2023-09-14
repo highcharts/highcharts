@@ -34,7 +34,7 @@ const {
 import Announcer from '../Utils/Announcer.js';
 import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr

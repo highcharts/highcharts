@@ -33,7 +33,7 @@ import type DataTable from '../../Data/DataTable';
 
 import ComponentType from '../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
 

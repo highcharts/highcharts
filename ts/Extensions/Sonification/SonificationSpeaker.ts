@@ -12,7 +12,7 @@
 
 'use strict';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     pick
 } = U;

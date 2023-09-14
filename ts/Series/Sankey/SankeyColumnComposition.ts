@@ -1,7 +1,7 @@
 import type SankeySeries from './SankeySeries';
 import type SankeyPoint from './SankeyPoint';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     relativeLength

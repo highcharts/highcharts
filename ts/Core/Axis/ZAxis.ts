@@ -21,7 +21,7 @@ import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     merge,

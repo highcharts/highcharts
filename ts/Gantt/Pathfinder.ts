@@ -31,7 +31,7 @@ import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,

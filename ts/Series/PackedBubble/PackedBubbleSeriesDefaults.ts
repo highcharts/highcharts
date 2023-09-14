@@ -11,7 +11,7 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
 /* *

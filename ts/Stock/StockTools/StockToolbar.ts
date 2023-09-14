@@ -27,7 +27,7 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,

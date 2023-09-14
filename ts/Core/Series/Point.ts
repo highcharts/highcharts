@@ -43,7 +43,7 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import U from '../../Shared/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     defined,

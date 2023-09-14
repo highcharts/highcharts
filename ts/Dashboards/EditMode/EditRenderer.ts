@@ -27,7 +27,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type EditMode from './EditMode.js';
 
 import EditGlobals from './EditGlobals.js';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     createElement,

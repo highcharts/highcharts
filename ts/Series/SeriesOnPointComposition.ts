@@ -26,7 +26,7 @@ import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
 
-import U from '../Shared/Utilities.js';
+import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
 const {
     addEvent,

@@ -57,7 +57,7 @@ import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     attr,

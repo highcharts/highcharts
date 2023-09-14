@@ -18,7 +18,7 @@
 
 import type Pointer from '../../Core/Pointer';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined,
     isNumber,

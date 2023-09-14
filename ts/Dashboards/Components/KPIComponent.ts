@@ -40,7 +40,7 @@ import KPISyncHandlers from '../Plugins/KPISyncHandlers.js';
 const {
     format
 } = Templating;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement,
     css,

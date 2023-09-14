@@ -26,7 +26,7 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,

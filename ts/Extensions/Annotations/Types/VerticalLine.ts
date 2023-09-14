@@ -27,7 +27,7 @@ import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../../Shared/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     pick

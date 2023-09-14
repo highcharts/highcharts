@@ -26,7 +26,7 @@ import type WordcloudSeries from './WordcloudSeries';
 
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     find,

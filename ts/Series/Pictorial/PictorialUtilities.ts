@@ -16,7 +16,7 @@
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type { PictorialPathOptions } from './PictorialSeriesOptions';
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 

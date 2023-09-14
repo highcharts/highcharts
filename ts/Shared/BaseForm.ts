@@ -17,7 +17,7 @@
  * */
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import U from './Utilities.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement

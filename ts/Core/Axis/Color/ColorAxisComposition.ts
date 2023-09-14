@@ -29,7 +29,7 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import U from '../../../Shared/Utilities.js';
+import U from '../../Utilities.js';
 const {
     addEvent,
     extend,

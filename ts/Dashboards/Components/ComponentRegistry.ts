@@ -19,7 +19,7 @@
 
 import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
 
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const { merge } = U;
 
 /* *

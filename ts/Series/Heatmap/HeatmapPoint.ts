@@ -31,7 +31,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     defined,

@@ -43,7 +43,7 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import U from '../../Shared/Utilities.js';
+import U from '../../Core/Utilities.js';
 
 const {
     addEvent,
