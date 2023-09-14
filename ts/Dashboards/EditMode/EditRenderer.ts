@@ -78,7 +78,7 @@ function renderContextButton(
 
         ctxBtnElement.setAttribute(
             'aria-label',
-            editMode.lang.accessibility.confirmationPopup.contextMenu
+            editMode.lang.accessibility.contextMenu.button
         );
     }
 
