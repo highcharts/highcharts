@@ -53,6 +53,7 @@ const
         shadow: true,
         maxSize: '4%',
         minSize: '1%',
+        clip: false,
         point: {
             events: {
 
@@ -214,8 +215,8 @@ Highcharts.chart('container', {
 
     // Our chart is made of 3 different panes/circles
     pane: [{
-        size: '82.5%',
-        innerSize: '72.5%',
+        size: '80%',
+        innerSize: '75%',
         ...paneOpeningAngles,
         background: {
             borderColor: colors[4],
@@ -283,17 +284,13 @@ Highcharts.chart('container', {
     }],
     yAxis: [{
         pane: 0,
-        gridLineWidth: 0,
+        gridLineWidth: 0.5,
+        gridLineDashStyle: 'longdash',
+        tickInterval: 1,
         title: null,
         ...noLabelProp,
-        plotLines: Array(3).fill(0).map(
-            (_v, i) => ({
-                width: 0.5,
-                dashStyle: 'longdash',
-                color: '#BBBAC5',
-                value: i + 1
-            })
-        )
+        min: 1,
+        max: 3
     }, {
         pane: 1,
         reversed: true,
