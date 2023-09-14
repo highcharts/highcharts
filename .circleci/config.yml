@@ -544,18 +544,8 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-common
-      - lint:
-          requires: [checkout_and_install]
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-      - generate_ts_declarations:
-          requires: [checkout_and_install]
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
       - visual_comparison_with_master:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             branches:
               ignore:
@@ -563,7 +553,7 @@ workflows:
                 - /db\/.*/
           context: highcharts-staging
       - generate_release_reference_images:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             branches:
               ignore: /.*/
@@ -571,9 +561,9 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_cypress:
-          requires: [lint]
+          requires: [checkout_and_install]
       - test_timezones:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             branches:
               only: [tools/ci-dist-release-yes]
@@ -582,10 +572,10 @@ workflows:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
-          requires: [lint]
+          requires: [checkout_and_install]
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["generate_ts_declarations"]
+          requires: ["test_cypress"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
