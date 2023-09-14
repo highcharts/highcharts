@@ -71,10 +71,9 @@ const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
 ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
-    const listOfParents = data.reduce(function (
-            prev: (
-                Record<string, Array<Highcharts.TreePointOptionsObject>>
-            ),
+    const listOfParents = data.reduce(
+        function (
+            prev: Record<string, Array<Highcharts.TreePointOptionsObject>>,
             curr: Highcharts.TreePointOptionsObject
         ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
             const parent = pick(curr.parent, '');
@@ -82,26 +81,30 @@ const getListOfParents = function (
             if (typeof prev[parent] === 'undefined') {
                 prev[parent] = [];
             }
+
             prev[parent].push(curr);
+
             return prev;
-        }, {} as (
-            Record<string, Array<Highcharts.TreePointOptionsObject>>
-        )),
-        parents = Object.keys(listOfParents);
+        },
+        {} as (Record<string, Array<Highcharts.TreePointOptionsObject>>)
+    );
 
     // If parent does not exist, hoist parent to root of tree.
-    parents.forEach(function (parent: string, list: number): void {
-        const children = listOfParents[parent];
+    const root = '';
 
-        if ((parent !== '') && (ids.indexOf(parent) === -1)) {
-            children.forEach(function (
-                child: Highcharts.TreePointOptionsObject
-            ): void {
-                (list as any)[''].push(child);
-            });
-            delete (list as any)[parent];
+    Object.keys(listOfParents).forEach(
+        (node: string): void => {
+            if ((node !== root) && (ids.indexOf(node) === -1)) {
+                listOfParents[root] = [
+                    ...listOfParents[root],
+                    ...listOfParents[node]
+                ];
+
+                delete listOfParents[node];
+            }
         }
-    });
+    );
+
     return listOfParents;
 };
 const getNode = function (
@@ -203,7 +206,6 @@ const getTree = function (
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
-
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
