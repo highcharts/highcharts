@@ -76,6 +76,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '25%'
+                        },
+                        large: {
+                            width: '35%'
                         }
                     }
                 }, {
@@ -83,6 +89,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '25%'
+                        },
+                        large: {
+                            width: '35%'
                         }
                     }
                 }]
