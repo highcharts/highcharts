@@ -55,7 +55,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
-          config: specPattern=**/performance/*.cy.js
+          config-file: test/cypress/configs/dashboards.lighthouse.config.mjs
           install: false
 
       - name: Stop server
@@ -88,7 +88,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
-          config: specPattern=**/performance/*.cy.js
+          config-file: test/cypress/configs/dashboards.lighthouse.config.mjs
           install: false
 
       - name: Store artifacts
@@ -98,9 +98,28 @@ jobs:
           path: |
             tmp
 
+      - name: Write markdown to file
+        if: ${{ always() }}
+        run: |
+          node test/cypress/lighthouseCompare.mjs  --reportsDir ./tmp/lighthouseReports > ./tmp/lighthousetable.md
+
       - name: Add to summary
         if: ${{ always() }}
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-          node test/cypress/lighthouseCompare.mjs  --reportsDir ./tmp/lighthouseReports >> $GITHUB_STEP_SUMMARY
+          cat ./tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: ${{ always() }}
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+
+            const markdown = readFileSync('./tmp/lighthousetable.md');
+
+            await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
+
 

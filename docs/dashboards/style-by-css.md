@@ -10,9 +10,9 @@ or ids to the elements.
 ## Importing the CSS
 The CSS is not included in the library but you can import it like that:
 ```css
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 ```
 
 Note that each component has its own CSS file. You can import only the CSS
