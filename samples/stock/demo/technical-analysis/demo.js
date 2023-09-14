@@ -14,6 +14,7 @@ Highcharts.stockChart('container', {
 
     annotations: [{
         type: 'fibonacci',
+        langKey: 'Fibonacci',
         typeOptions: {
             points: [{
                 x: 1631021400000,
@@ -28,6 +29,7 @@ Highcharts.stockChart('container', {
         }
     }, {
         type: 'crookedLine',
+        langKey: 'Trendline',
         typeOptions: {
             points: [{
                 x: 1636727400000,
@@ -44,6 +46,7 @@ Highcharts.stockChart('container', {
     }],
 
     series: [{
+        id: 'main',
         type: 'candlestick',
         color: '#FF6F6F',
         upColor: '#6FB76F',
