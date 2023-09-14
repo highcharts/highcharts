@@ -16,7 +16,7 @@
 
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';

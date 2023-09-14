@@ -18,7 +18,7 @@ import type CSSJSONObject from '../../CSSJSONObject';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
 import EditGlobals from '../EditGlobals.js';
-import U from '../../../Core/Utilities.js';
+import U from '../../Utilities.js';
 import Menu from './Menu.js';
 import EditRenderer from '../EditRenderer.js';
 

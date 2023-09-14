@@ -25,7 +25,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 
 const {

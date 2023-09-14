@@ -543,6 +543,43 @@ function fireEvent<T>(
     }
 }
 
+/**
+ * Return the value of the first element in the array that satisfies the
+ * provided testing function.
+ *
+ * @function Highcharts.find<T>
+ *
+ * @param {Array<T>} arr
+ *        The array to test.
+ *
+ * @param {Function} callback
+ *        The callback function. The function receives the item as the first
+ *        argument. Return `true` if this item satisfies the condition.
+ *
+ * @return {T|undefined}
+ *         The value of the element.
+ */
+const find = (Array.prototype as any).find ?
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
+        return (arr as any).find(callback as any);
+    } :
+    // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
+    function<T> (
+        arr: Array<T>,
+        callback: Utilities.FindCallback<T>
+    ): (T|undefined) {
+        let i;
+        const length = arr.length;
+
+        for (i = 0; i < length; i++) {
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
+                return arr[i];
+            }
+        }
+    };
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
@@ -687,6 +724,21 @@ function isObject<T>(
  */
 function isDOMElement(obj: unknown): obj is HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
+}
+
+/**
+ * Utility function to check for string type.
+ *
+ * @function Highcharts.isString
+ *
+ * @param {*} s
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the argument is a string.
+ */
+function isString(s: unknown): s is string {
+    return typeof s === 'string';
 }
 
 /**
@@ -1180,6 +1232,7 @@ const Utilities = {
     error,
     extend,
     fireEvent,
+    find,
     getStyle,
     isArray,
     isClass,
@@ -1187,6 +1240,7 @@ const Utilities = {
     isFunction,
     isNumber,
     isObject,
+    isString,
     merge,
     objectEach,
     pick,
