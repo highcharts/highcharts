@@ -72,9 +72,19 @@ Dashboards.board('container', {
                         }]
                     }
                 }, {
-                    id: 'dashboard-col-0'
+                    id: 'dashboard-col-0',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
                 }, {
-                    id: 'dashboard-col-1'
+                    id: 'dashboard-col-1',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
                 }]
             }, {
                 cells: [{
@@ -122,7 +132,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Grocieries'
+                }
             },
             yAxis: {
                 title: {
@@ -162,6 +175,18 @@ Dashboards.board('container', {
             },
             title: {
                 text: ''
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            accessibility: {
+                chartContainerLabel: 'Iron',
+                typeDescription: 'Column chart',
+                description: 'The iron amount in Foods',
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
     },
@@ -182,7 +207,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Grocieries'
+                }
             },
             yAxis: {
                 title: {
@@ -222,6 +250,18 @@ Dashboards.board('container', {
                 animation: false,
                 type: 'column',
                 spacing: [30, 30, 30, 20]
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            accessibility: {
+                chartContainerLabel: 'Vitamin A',
+                typeDescription: 'Column chart',
+                description: 'The vitamin A amount in Foods',
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
     }, {
