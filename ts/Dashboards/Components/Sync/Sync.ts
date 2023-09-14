@@ -159,63 +159,65 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
-        Object.keys(syncConfig)
-            .forEach((id): void => {
-                let {
-                    emitter: emitterConfig,
-                    handler: handlerConfig
-                } = syncConfig[id];
-                if (handlerConfig) {
-                    // Avoid registering the same handler multiple times
-                    // i.e. panning and selection uses the same handler
-                    if (typeof handlerConfig === 'boolean') {
-                        handlerConfig =
-                            Sync.defaultHandlers[id]
-                                .handler as Sync.HandlerConfig;
-                    }
-
-                    // TODO: should rework the SyncHandler constructor when
-                    // all handlers are updated
-                    if (typeof handlerConfig === 'function') {
-                        handlerConfig = [id, void 0, handlerConfig];
-                    }
-
-                    const handler = new SyncHandler(...handlerConfig);
-                    if (!this.isRegisteredHandler(handler.id)) {
-                        this.registerSyncHandler(handler);
-
-                        // TODO: workaround for now
-                        // we should only use register in the future
-                        if (handlerConfig[1] !== void 0) {
-                            handler.create(component);
-                        } else {
-                            handler.register(component);
-                        }
-
-                    }
+        for (const id of Object.keys(syncConfig)) {
+            if (!syncConfig[id]) {
+                continue;
+            }
+            let {
+                emitter: emitterConfig,
+                handler: handlerConfig
+            } = syncConfig[id];
+            if (handlerConfig) {
+                // Avoid registering the same handler multiple times
+                // i.e. panning and selection uses the same handler
+                if (typeof handlerConfig === 'boolean') {
+                    handlerConfig =
+                        Sync.defaultHandlers[id]
+                            .handler as Sync.HandlerConfig;
                 }
 
-                if (emitterConfig) {
-                    if (typeof emitterConfig === 'boolean') {
-                        emitterConfig =
-                            Sync.defaultHandlers[id]
-                                .emitter as Sync.EmitterConfig;
-                    }
-
-                    // TODO: should rework the SyncHandler constructor when
-                    // all handlers are updated
-                    if (typeof emitterConfig === 'function') {
-                        emitterConfig = [id, emitterConfig];
-                    }
-
-                    const emitter = new SyncEmitter(...emitterConfig);
-                    if (!this.isRegisteredEmitter(emitter.id)) {
-                        this.registerSyncEmitter(emitter);
-                        emitter.create(component);
-                    }
+                // TODO: should rework the SyncHandler constructor when
+                // all handlers are updated
+                if (typeof handlerConfig === 'function') {
+                    handlerConfig = [id, void 0, handlerConfig];
                 }
 
-            });
+                const handler = new SyncHandler(...handlerConfig);
+                if (!this.isRegisteredHandler(handler.id)) {
+                    this.registerSyncHandler(handler);
+
+                    // TODO: workaround for now
+                    // we should only use register in the future
+                    if (handlerConfig[1] !== void 0) {
+                        handler.create(component);
+                    } else {
+                        handler.register(component);
+                    }
+
+                }
+            }
+
+            if (emitterConfig) {
+                if (typeof emitterConfig === 'boolean') {
+                    emitterConfig =
+                        Sync.defaultHandlers[id]
+                            .emitter as Sync.EmitterConfig;
+                }
+
+                // TODO: should rework the SyncHandler constructor when
+                // all handlers are updated
+                if (typeof emitterConfig === 'function') {
+                    emitterConfig = [id, emitterConfig];
+                }
+
+                const emitter = new SyncEmitter(...emitterConfig);
+                if (!this.isRegisteredEmitter(emitter.id)) {
+                    this.registerSyncEmitter(emitter);
+                    emitter.create(component);
+                }
+            }
+
+        }
         this.isSyncing = true;
 
         this.listeners.push(component.on('update', (): void => this.stop()));

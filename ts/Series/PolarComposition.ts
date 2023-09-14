@@ -378,7 +378,7 @@ function onChartGetAxes(
     this.options.pane.forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,
-            this
+            this as any
         );
     }, this);
 }
@@ -718,7 +718,7 @@ function onSeriesAfterTranslate(
                 ): void {
                     let circ: Array<number>;
 
-                    if (chart.polar) {
+                    if (chart.polar && this.options.clip !== false) {
                         // For clipping purposes there is a need for
                         // coordinates from the absolute center
                         circ = this.yAxis.pane.center;

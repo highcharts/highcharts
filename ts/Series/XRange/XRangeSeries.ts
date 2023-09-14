@@ -285,7 +285,9 @@ class XRangeSeries extends ColumnSeries {
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
             posX = pick(point.x2, (point.x as any) + (point.len || 0)),
-            borderRadius = options.borderRadius;
+            borderRadius = options.borderRadius,
+            plotTop = this.chart.plotTop,
+            plotLeft = this.chart.plotLeft;
 
 
         let plotX = point.plotX,
@@ -413,22 +415,22 @@ class XRangeSeries extends ColumnSeries {
         );
 
         // Centering tooltip position (#14147)
-        if (!inverted) {
+        if (inverted) {
+            tooltipPos[xIndex] += shapeArgs.width / 2;
+        } else {
             tooltipPos[xIndex] = clamp(
                 tooltipPos[xIndex] +
                 (xAxis.reversed ? -1 : 0) * shapeArgs.width,
-                0,
-                xAxis.len - 1
+                xAxis.left - plotLeft,
+                xAxis.left + xAxis.len - plotLeft - 1
             );
-        } else {
-            tooltipPos[xIndex] += shapeArgs.width / 2;
         }
         tooltipPos[yIndex] = clamp(
             tooltipPos[yIndex] + (
                 (inverted ? -1 : 1) * tooltipYOffset
             ),
-            0,
-            yAxis.len - 1
+            yAxis.top - plotTop,
+            yAxis.top + yAxis.len - plotTop - 1
         );
 
         // Add a partShapeArgs to the point, based on the shapeArgs property
@@ -677,7 +679,6 @@ class XRangeSeries extends ColumnSeries {
 interface XRangeSeries {
     pointClass: typeof XRangePoint;
     columnMetrics: ColumnMetricsObject;
-    cropShoulder: number;
     getExtremesFromAll: boolean;
     parallelArrays: Array<string>;
     requireSorting: boolean;
@@ -688,7 +689,6 @@ interface XRangeSeries {
 
 extend(XRangeSeries.prototype, {
     pointClass: XRangePoint,
-    cropShoulder: 1,
     getExtremesFromAll: true,
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,

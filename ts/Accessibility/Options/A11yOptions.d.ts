@@ -129,6 +129,10 @@ export interface ExportingAccessibilityOptions {
     enabled: boolean;
 }
 
+export interface NavigatorAccessibilityOptions {
+    enabled: boolean;
+}
+
 export interface FocusBorderStyleObject {
     borderRadius?: number;
     color?: ColorType;
@@ -213,6 +217,13 @@ declare module '../../Extensions/Exporting/ExportingOptions' {
         accessibility?: ExportingAccessibilityOptions;
     }
 }
+
+declare module '../../Stock/Navigator/NavigatorOptions' {
+    interface NavigatorOptions {
+        accessibility?: NavigatorAccessibilityOptions;
+    }
+}
+
 
 /* *
  *

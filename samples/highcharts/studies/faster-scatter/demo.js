@@ -17,13 +17,15 @@
         },
         pointAttr: {}
     });
+
     // Draw points as composite shapes
     H.seriesTypes.scatter.prototype.drawPoints = function () {
-        var data = this.points,
+        const data = this.points,
             renderer = this.chart.renderer,
             radius = this.options.marker.radius,
-            stripes = [],
-            group,
+            stripes = [];
+
+        let group,
             i = data.length,
             point,
             layers = this.layers;
@@ -55,8 +57,9 @@
 
         // Loop over the members of each stripe and add them to a group if they don't overlap
         // in the x dimension.
-        var groups = [],
-            oddOrEven = 0,
+        const groups = [];
+
+        let oddOrEven = 0,
             stripe,
             remaining = data.length,
             x,
@@ -94,10 +97,10 @@
         }
 
         i = groups.length;
-        var paths = [];
+        const paths = [];
         while (i--) {
-            var path = [],
-                y;
+            const path = [];
+            let y;
 
             group = groups[i];
 
@@ -125,7 +128,7 @@
                 size);
 
                 // faster than concat:
-                for (var m = 0, len = symbolPath.length; m < len; m += 1)
+                for (let m = 0, len = symbolPath.length; m < len; m += 1)
                 path.push(symbolPath[m]);
                 */
             }
@@ -154,15 +157,15 @@
 // End faster scatter mod
 
 // Prepare the data
-var data = [];
-for (var i = 0; i < 50000; i += 1) {
+const data = [];
+for (let i = 0; i < 50000; i += 1) {
     data.push([
         Math.pow(Math.random(), 2) * 100,
         Math.pow(Math.random(), 2) * 100
     ]);
 }
 
-var start = +new Date();
+const start = +new Date();
 // console.profile('scatter');
 Highcharts.chart('container', {
 

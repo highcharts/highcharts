@@ -1,4 +1,4 @@
-var data = {
+const data = {
         'South-East Asia': {
             'Sri Lanka': {
                 'Communicable & other Group I': '75.5',
@@ -872,8 +872,9 @@ var data = {
             }
         }
     },
-    points = [],
-    regionP,
+    points = [];
+
+let regionP,
     regionVal,
     regionI = 0,
     countryP,
@@ -882,12 +883,13 @@ var data = {
     causeI,
     region,
     country,
-    cause,
-    causeName = {
-        'Communicable & other Group I': 'Communicable diseases',
-        'Noncommunicable diseases': 'Non-communicable diseases',
-        Injuries: 'Injuries'
-    };
+    cause;
+
+const causeName = {
+    'Communicable & other Group I': 'Communicable diseases',
+    'Noncommunicable diseases': 'Non-communicable diseases',
+    Injuries: 'Injuries'
+};
 
 for (region in data) {
     if ({}.hasOwnProperty.call(data, region)) {

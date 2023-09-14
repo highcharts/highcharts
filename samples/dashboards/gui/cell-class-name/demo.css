@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 #csv {
     display: none;
@@ -13,8 +13,7 @@
 
 .custom-rest {
     background-color: #e295ee;
-    padding: 5px;
+    padding: 20px 5px 5px;
     border-radius: 5px;
     box-shadow: 4px 6px 10px #0000008c;
-    margin-top: 15px;
 }

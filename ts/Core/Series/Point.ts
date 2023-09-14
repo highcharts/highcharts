@@ -346,9 +346,6 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = this.isValid && !this.isValid();
-
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         // The point is initially selected by options (#5777)
         if (point.selected) {
@@ -380,6 +377,10 @@ class Point {
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
+
+        point.isNull = this.isValid && !this.isValid();
+
+        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         return point;
     }
@@ -575,14 +576,16 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic');
+            props.push(
+                'graphic',
+                'connector' // Used by dumbbell
+            );
         }
         if (kinds.dataLabel) {
             props.push(
                 'dataLabel',
                 'dataLabelPath',
-                'dataLabelUpper',
-                'connector'
+                'dataLabelUpper'
             );
         }
 
@@ -596,8 +599,7 @@ class Point {
 
         [
             'graphic',
-            'dataLabel',
-            'connector'
+            'dataLabel'
         ].forEach(function (prop: string): void {
             const plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
@@ -739,7 +741,13 @@ class Point {
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
-        return this.x !== null && isNumber(this.y);
+        return (
+            (
+                isNumber(this.x) ||
+                (this.x as number | Date) instanceof Date
+            ) &&
+            isNumber(this.y)
+        );
     }
 
     /**
@@ -806,12 +814,14 @@ class Point {
             // This is the fastest way to detect if there are individual point
             // dataLabels that need to be considered in drawDataLabels. These
             // can only occur in object configs.
-            if ((options as any).dataLabels) {
-                series._hasPointLabels = true;
+            if (options.dataLabels) {
+                // Override the prototype function to always return true,
+                // regardless of whether data labels are enabled series-wide
+                series.hasDataLabels = (): boolean => true;
             }
 
             // Same approach as above for markers
-            if ((options as any).marker) {
+            if (options.marker) {
                 series._hasPointMarkers = true;
             }
         }
@@ -1092,11 +1102,8 @@ class Point {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && (options as any).dataLabels && point.dataLabel) {
+                if (options?.dataLabels && point.dataLabel) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
-                }
-                if (point.connector) {
-                    point.connector = point.connector.destroy(); // #7243
                 }
             }
 
@@ -1455,15 +1462,15 @@ class Point {
                             !label.hasClass('highcharts-data-label-hidden')
                         ) {
                             label.animate({ opacity }, pointAttribsAnimation);
+
+                            if (label.connector) {
+                                label.connector.animate(
+                                    { opacity },
+                                    pointAttribsAnimation
+                                );
+                            }
                         }
                     });
-
-                    if (point.connector) {
-                        point.connector.animate(
-                            { opacity },
-                            pointAttribsAnimation
-                        );
-                    }
                 }
 
                 point.graphic.animate(
@@ -1657,7 +1664,7 @@ namespace Point {
         total?: number;
     }
     export interface SeriesPointsOptions {
-        events?: Highcharts.PointEventsOptionsObject;
+        events?: PointEventsOptions;
     }
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;

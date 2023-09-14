@@ -1,12 +1,19 @@
-const csvData = document.getElementById('csv').innerText;
+const data = [
+    ['Food', 'Vitamin A'],
+    ['Beef Liver', 6421],
+    ['Lamb Liver', 2122],
+    ['Cod Liver Oil', 1350],
+    ['Mackerel', 388],
+    ['Tuna', 214]
+];
 
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'sample',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: csvData
+                data
             }
         }]
     },
@@ -18,14 +25,28 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
+
                     },
                     id: 'dashboard-col-0'
                 }, {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
+
                     },
                     id: 'dashboard-col-1'
                 }]
@@ -101,10 +122,8 @@ Dashboards.board('container', {
             connector: {
                 id: 'sample'
             },
+            className: 'datagrid',
             editable: true,
-            title: {
-                text: 'Data Grid Component'
-            },
             sync: {
                 highlight: true
             }

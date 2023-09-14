@@ -4,7 +4,7 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json'
     ).then(response => response.json());
 
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
 
         data[i][0] = Date.parse(data[i][0]);
     }

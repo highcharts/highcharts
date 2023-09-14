@@ -29,7 +29,6 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type Globals from '../Globals';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -39,12 +38,10 @@ import type Row from '../Layout/Row';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
-import DG from '../Globals.js';
-const {
-    classNamePrefix
-} = DG;
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Globals from '../Globals.js';
+const { classNamePrefix } = Globals;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -117,17 +114,25 @@ abstract class Component {
     ): HTMLElement | undefined {
         if (typeof textOptions === 'object') {
             const { className, text, style } = textOptions;
-            return createElement(tagName, {
-                className: className || `${classNamePrefix}component-${elementName}`,
-                textContent: text
-            }, style);
+            return createElement(
+                tagName,
+                {
+                    className: className || `${classNamePrefix}component-${elementName}`,
+                    textContent: text
+                },
+                style
+            );
         }
 
         if (typeof textOptions === 'string') {
-            return createElement(tagName, {
-                className: `${classNamePrefix}component-${elementName}`,
-                textContent: textOptions
-            });
+            return createElement(
+                tagName,
+                {
+                    className: `${classNamePrefix}component-${elementName}`,
+                    textContent: textOptions
+                },
+                {}
+            );
         }
     }
 
@@ -147,10 +152,6 @@ abstract class Component {
         id: '',
         title: false,
         caption: false,
-        style: {
-            display: 'flex',
-            'flex-direction': 'column'
-        },
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
@@ -180,7 +181,7 @@ abstract class Component {
      */
     public cell: Cell;
     /**
-     * Defalut sync Handlers
+     * Default sync Handlers.
      */
     public static syncHandlers: Sync.OptionsRecord = {};
     /**
@@ -225,9 +226,6 @@ abstract class Component {
      * */
     public options: Component.ComponentOptions;
     /**
-     * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
-     */
-    /**
      * Sets an ID for the component's `div`.
      */
     public id: string;
@@ -244,33 +242,24 @@ abstract class Component {
      */
     public callbackRegistry = new CallbackRegistry();
     /**
-     * The interval for redrawing the component on data changes.
+     * The interval for rendering the component on data changes.
      * @internal
      */
     private tableEventTimeout?: number;
     /**
-     * Event listeners tied to the current DataTable. Used for redrawing the
+     * Event listeners tied to the current DataTable. Used for rerendering the
      * component on data changes.
      *
      * @internal
      */
     private tableEvents: Function[] = [];
     /**
-     * Event listeners tied to the parent cell. Used for redrawing/resizing the
+     * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
      *
      * @internal
      */
     private cellListeners: Function[] = [];
-
-    /**
-     * @internal
-     */
-    protected hasLoaded: boolean;
-    /**
-     * @internal
-     */
-    protected shouldRedraw: boolean;
     /**
      * @internal
      */
@@ -335,69 +324,69 @@ abstract class Component {
         options: Partial<Component.ComponentOptions>
     ) {
         this.board = cell.row.layout.board;
-
-        this.cell = cell;
         this.parentElement = cell.container;
-        this.attachCellListeneres();
-
+        this.cell = cell;
 
         this.options = merge(
             Component.defaultOptions as Required<Component.ComponentOptions>,
             options
         );
+
         this.id = this.options.id && this.options.id.length ?
             this.options.id :
             uniqueKey();
 
-        // Todo: we might want to handle this later
-
-        this.hasLoaded = false;
-        this.shouldRedraw = true;
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
-        // Initial dimensions
         this.dimensions = {
             width: null,
             height: null
         };
 
+        this.element = createElement(
+            'div',
+            {
+                className: this.options.className
+            },
+            {},
+            this.parentElement
+        );
+
+        this.contentElement = createElement(
+            'div', {
+                className: `${this.options.className}-content`
+            }, {
+                height: '100%'
+            },
+            this.element,
+            true
+        );
 
         this.filterAndAssignSyncOptions();
-        this.element = createElement('div', {
-            className: this.options.className
+        this.setupEventListeners();
+        this.attachCellListeneres();
+
+        this.on('tableChanged', (): void => {
+            this.onTableChanged();
         });
 
-        this.contentElement = createElement('div', {
-            className: `${this.options.className}-content`
-        }, {
-            height: '100%'
-        }, void 0, true);
+        this.on('update', (): void => {
+            this.cell.setLoadingState();
+        });
 
+        this.on('afterRender', (): void => {
+            this.cell.setLoadingState(false);
+        });
     }
 
     /**
-     * Inits connectors for the component and redraws it.
-     *
-     * @returns
-     * Promise resolving to the component.
+     * Function fired when component's `tableChanged` event is fired.
+     * @internal
      */
-    public async initConnector(): Promise<this> {
-        if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
-        ) {
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
-
-            this.setConnector(connector);
-            this.shouldRedraw = true;
-            this.redraw();
-        }
-        return this;
-    }
+    public abstract onTableChanged(e?: Component.EventTypes): void;
 
     /* *
      *
@@ -405,6 +394,28 @@ abstract class Component {
      *
      * */
 
+    /**
+     * Inits connectors for the component and rerenders it.
+     *
+     * @returns
+     * Promise resolving to the component.
+     */
+    public async initConnector(): Promise<this> {
+
+        if (
+            this.options.connector?.id &&
+            this.connectorId !== this.options.connector.id
+        ) {
+            this.cell.setLoadingState();
+
+            const connector = await this.board.dataPool
+                .getConnector(this.options.connector.id);
+
+            this.setConnector(connector);
+        }
+
+        return this;
+    }
     /**
     * Filter the sync options that are declared in the component options.
     * Assigns the sync options to the component and to the sync instance.
@@ -521,31 +532,33 @@ abstract class Component {
         if (connector) {
             if (table) {
                 [
-                    'afterSetRows',
-                    'afterDeleteRows',
-                    'afterSetColumns',
                     'afterDeleteColumns',
-                    'afterSetCell'
+                    'afterDeleteRows',
+                    'afterSetCell',
+                    'afterSetConnector',
+                    'afterSetColumns',
+                    'afterSetRows'
                 ].forEach((event: any): void => {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
                             clearInterval(this.tableEventTimeout);
-                            this.tableEventTimeout = setTimeout((): void => {
-                                this.emit({
-                                    ...e,
-                                    type: 'tableChanged'
-                                });
-                                this.tableEventTimeout = void 0;
-                            }, 0);
+                            this.tableEventTimeout = Globals.win.setTimeout(
+                                (): void => {
+                                    this.emit({
+                                        ...e,
+                                        type: 'tableChanged'
+                                    });
+                                    this.tableEventTimeout = void 0;
+                                },
+                                0
+                            );
                         }));
                 });
             }
 
-
-            const component = this;
             this.tableEvents.push(connector.on('afterLoad', (): void => {
                 this.emit({
-                    target: component,
+                    target: this,
                     type: 'tableChanged'
                 });
             }));
@@ -764,16 +777,16 @@ abstract class Component {
      * @param newOptions
      * The options to apply.
      *
-     * @param redraw
-     * Set to true if the update should redraw the component.
+     * @param shouldRerender
+     * Set to true if the update should rerender the component.
      */
     public async update(
         newOptions: Partial<Component.ComponentOptions>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
             options: newOptions,
-            shouldForceRedraw: false
+            shouldForceRerender: false
         };
 
         // Update options
@@ -789,108 +802,23 @@ abstract class Component {
                 .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
-            this.shouldRedraw = true;
         }
 
         this.options = merge(this.options, newOptions);
 
-        if (redraw || eventObject.shouldForceRedraw) {
-            this.redraw();
+
+        if (shouldRerender || eventObject.shouldForceRerender) {
+            this.render();
         }
 
     }
 
     /**
-     * Adds title at the top of component's container.
-     * @param titleOptions
-     * The options for the title.
-     */
-    public setTitle(titleOptions: Component.TextOptionsType): void {
-        const previousTitle = this.titleElement;
-
-        if (
-            !titleOptions || typeof titleOptions === 'string' ?
-                titleOptions === '' :
-                titleOptions.text === ''
-        ) {
-            if (previousTitle) {
-                previousTitle.remove();
-            }
-            return;
-        }
-
-        const titleElement =
-            Component.createTextElement('h1', 'title', titleOptions);
-
-        if (titleElement) {
-            this.titleElement = titleElement;
-
-            if (previousTitle) {
-                previousTitle.replaceWith(this.titleElement);
-            }
-        }
-    }
-
-    /**
-     * Adds caption at the bottom of component's container.
-     *
-     * @param captionOptions
-     * The options for the caption.
-     */
-    public setCaption(captionOptions: Component.TextOptionsType): void {
-        const previousCaption = this.captionElement;
-        if (
-            !captionOptions ||
-                typeof captionOptions === 'string' ?
-                captionOptions === '' :
-                captionOptions.text === ''
-        ) {
-            if (previousCaption) {
-                previousCaption.remove();
-            }
-            return;
-        }
-
-        const captionElement =
-            Component.createTextElement('div', 'caption', captionOptions);
-
-        if (captionElement) {
-            this.captionElement = captionElement;
-
-            if (previousCaption) {
-                previousCaption.replaceWith(this.captionElement);
-            }
-        }
-    }
-
-    /**
-     * Handles setting things up on initial render.
-     *
-     * @returns
-     * The component for chaining.
+     * Private method which sets up event listeners for the component.
      *
      * @internal
      */
-    public load(): this {
-
-        // Set up the connector on initial load if it has not been done
-        if (!this.hasLoaded && this.connector) {
-            this.setConnector(this.connector);
-        }
-
-        this.setTitle(this.options.title);
-        this.setCaption(this.options.caption);
-        [
-            this.titleElement,
-            this.contentElement,
-            this.captionElement
-        ].forEach((element): void => {
-            if (element) {
-                this.element.appendChild(element);
-            }
-        });
-        // Setup event listeners
-        // Grabbed from Chart.ts
+    private setupEventListeners(): void {
         const events = this.options.events;
 
         if (events) {
@@ -911,14 +839,102 @@ abstract class Component {
             });
         }
 
-        // TODO: should cleanup this event listener
+        // TODO: Replace with a resize observer.
         window.addEventListener(
             'resize',
             (): void => this.resizeTo(this.parentElement)
         );
+    }
 
-        this.hasLoaded = true;
-        this.shouldRedraw = false;
+    /**
+     * Adds title at the top of component's container.
+     *
+     * @param titleOptions
+     * The options for the title.
+     */
+    public setTitle(titleOptions: Component.TextOptionsType): void {
+        const titleElement = this.titleElement,
+            shouldExist =
+                titleOptions &&
+                (typeof titleOptions === 'string' || titleOptions.text);
+
+        if (shouldExist) {
+            const newTitle = Component.createTextElement(
+                'h1',
+                'title',
+                titleOptions
+            );
+
+            if (newTitle) {
+                if (!titleElement) {
+                    this.element.insertBefore(
+                        newTitle,
+                        this.element.firstChild
+                    );
+                } else {
+                    titleElement.replaceWith(newTitle);
+                }
+                this.titleElement = newTitle;
+            }
+        } else {
+            if (titleElement) {
+                titleElement.remove();
+                delete this.titleElement;
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * Adds caption at the bottom of component's container.
+     *
+     * @param captionOptions
+     * The options for the caption.
+     */
+    public setCaption(captionOptions: Component.TextOptionsType): void {
+        const captionElement = this.captionElement,
+            shouldExist =
+                captionOptions &&
+                (typeof captionOptions === 'string' || captionOptions.text);
+
+        if (shouldExist) {
+            const newCaption = Component.createTextElement(
+                'div',
+                'caption',
+                captionOptions
+            );
+
+            if (newCaption) {
+                if (!captionElement) {
+                    this.element.appendChild(newCaption);
+                } else {
+                    captionElement.replaceWith(newCaption);
+                }
+                this.titleElement = newCaption;
+            }
+        } else {
+            if (captionElement) {
+                captionElement.remove();
+                delete this.captionElement;
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * Handles setting things up on initial render.
+     *
+     * @returns
+     * The component for chaining.
+     *
+     * @internal
+     */
+    public async load(): Promise<this> {
+
+        await this.initConnector();
+        this.render();
 
         return this;
     }
@@ -932,33 +948,12 @@ abstract class Component {
      * @internal
      */
     public render(): this {
-        /**
-         * TODO: make this call load on initial render
-         */
-        if (this.shouldRedraw || !this.hasLoaded) {
-            this.load();
-            // Call resize to fit to the cell.
-            this.resizeTo(this.parentElement);
-        }
+        this.emit({ type: 'render' });
+        this.resizeTo(this.parentElement);
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
+
         return this;
-    }
-
-    /**
-     * Redraws the component.
-     * @returns
-     * The component for chaining.
-     */
-    public redraw(): this {
-        // Do a redraw
-        const e = {
-            component: this
-        };
-
-        fireEvent(this, 'redraw', e);
-
-        this.shouldRedraw = true; // set to make render call load as well
-
-        return this.render();
     }
 
     /**
@@ -966,8 +961,7 @@ abstract class Component {
      */
     public destroy(): void {
         /**
-         * TODO: Should perhaps also remove the component from the registry
-         * or set an `isactive` flag to false.
+         * TODO: Should perhaps set an `isActive` flag to false.
          */
 
         while (this.element.firstChild) {
@@ -1116,7 +1110,6 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
-        RedrawEvent |
         JSONEvent |
         PresentationModifierEvent;
 
@@ -1138,9 +1131,7 @@ namespace Component {
     /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
     /** @internal */
-    export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
-    /** @internal */
-    export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    export type RenderEvent = Event<'render' | 'afterRender', {}>;
 
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
@@ -1187,9 +1178,11 @@ namespace Component {
         className?: string;
 
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`,
+         * `Navigator`.
          */
         type: keyof ComponentTypeRegistry;
+
         /**
          * Allow overwriting gui elements.
          * @internal
@@ -1236,10 +1229,6 @@ namespace Component {
          * Sets an ID for the component's container.
          */
         id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
         /**
          * The component's title, which will render at the top.
          *

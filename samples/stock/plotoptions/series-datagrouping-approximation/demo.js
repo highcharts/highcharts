@@ -33,7 +33,7 @@ Highcharts.stockChart('container', {
         data: ADBE,
         dataGrouping: {
             approximation: function () {
-                var start = this.dataGroupInfo.start;
+                const start = this.dataGroupInfo.start;
 
                 console.log(
                     'dataGroupInfo:',

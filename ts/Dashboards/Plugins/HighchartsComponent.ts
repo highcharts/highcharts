@@ -32,7 +32,6 @@ import type {
     Series,
     SeriesOptions
 } from './HighchartsTypes';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
@@ -46,12 +45,12 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    merge,
-    splat,
-    uniqueKey,
     error,
     diffObjects,
-    isString
+    isString,
+    merge,
+    splat,
+    uniqueKey
 } = U;
 
 /* *
@@ -62,10 +61,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof H.chart;
-        ganttChart: typeof H.chart;
-        mapChart: typeof H.chart;
-        stockChart: typeof H.chart;
+        chart: typeof Chart.chart;
+        ganttChart: typeof Chart.chart;
+        mapChart: typeof Chart.chart;
+        stockChart: typeof Chart.chart;
     }
 }
 
@@ -89,7 +88,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof H;
+    public static charter?: H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -106,6 +105,10 @@ class HighchartsComponent extends Component {
              * @default true
              */
             allowConnectorUpdate: true,
+            className: [
+                Component.defaultOptions.className,
+                `${Component.defaultOptions.className}-highcharts`
+            ].join(' '),
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
@@ -417,7 +420,7 @@ class HighchartsComponent extends Component {
             'figure',
             void 0,
             void 0,
-            void 0,
+            this.contentElement,
             true
         );
 
@@ -434,8 +437,6 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        this.on('tableChanged', (): void => this.updateSeries());
-
         if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
@@ -448,6 +449,9 @@ class HighchartsComponent extends Component {
         this.innerResizeTimeouts = [];
     }
 
+    public onTableChanged(): void {
+        this.updateSeries();
+    }
     /* *
      *
      *  Functions
@@ -455,12 +459,10 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public load(): this {
+    public async load(): Promise<this> {
         this.emit({ type: 'load' });
-        super.load();
-        this.parentElement.appendChild(this.element);
-        this.contentElement.appendChild(this.chartContainer);
-        this.hasLoaded = true;
+
+        await super.load();
 
         this.emit({ type: 'afterLoad' });
 
@@ -470,7 +472,6 @@ class HighchartsComponent extends Component {
     public render(): this {
         const hcComponent = this;
 
-        hcComponent.emit({ type: 'beforeRender' });
         super.render();
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
@@ -567,7 +568,7 @@ class HighchartsComponent extends Component {
      */
     public async update(
         options: Partial<HighchartsComponent.Options>,
-        redraw: boolean = true
+        shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
@@ -578,7 +579,7 @@ class HighchartsComponent extends Component {
         }
         this.emit({ type: 'afterUpdate' });
 
-        redraw && this.redraw();
+        shouldRerender && this.render();
     }
 
     /**
@@ -586,7 +587,7 @@ class HighchartsComponent extends Component {
      *
      * @private
      */
-    private updateSeries(): void {
+    public updateSeries(): void {
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
@@ -699,8 +700,6 @@ class HighchartsComponent extends Component {
 
                 series.setData(seriesData);
             });
-
-            /* chart.redraw(); */
         }
     }
 
@@ -759,7 +758,7 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof H
+            Globals.win.Highcharts as H
         );
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];

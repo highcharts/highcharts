@@ -1,10 +1,10 @@
 /* global highchartsData */
 
-var colors = ['#992222', '#229922', '#229922'];
+const colors = ['#992222', '#229922', '#229922'];
 
 function createSnow() {
-    var arr = [];
-    for (var i = 0; i < 100; i++) {
+    const arr = [];
+    for (let i = 0; i < 100; i++) {
         arr.push({
             x: Math.random() * 100,
             y: Math.random() * 100,
@@ -20,12 +20,12 @@ highchartsData.forEach(function (chan) {
     });
 });
 
-var snowman = document.getElementById('snowman'),
+const snowman = document.getElementById('snowman'),
     tooltip = document.getElementById('tooltip'),
     clickToStart = document.getElementById('click-to-start'),
     bubble = clickToStart.getElementsByClassName('bubble')[0];
 
-var chart = Highcharts.chart('highcharts-container', {
+const chart = Highcharts.chart('highcharts-container', {
     colors: colors,
     chart: {
         alignTicks: false,
@@ -240,7 +240,7 @@ setInterval(function () {
                 return;
             }
 
-            var y = point.y - 0.25 - point.z / 500;
+            let y = point.y - 0.25 - point.z / 500;
 
             if (y < 0) {
                 y = 100;

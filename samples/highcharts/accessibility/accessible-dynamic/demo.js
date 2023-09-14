@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Dynamic data'
     },
@@ -39,7 +39,7 @@ var chart = Highcharts.chart('container', {
 });
 
 // Add random point when clicking button
-var button = document.getElementById('add');
+const button = document.getElementById('add');
 button.onclick = function () {
     button.focus();
     chart.series[0].addPoint(Math.round(Math.random() * 10));
