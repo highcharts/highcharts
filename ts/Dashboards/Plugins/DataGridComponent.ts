@@ -507,6 +507,14 @@ class DataGridComponent extends Component {
             type: 'DataGrid'
         };
     }
+
+    /**
+     * Destroys the data grid component.
+     */
+    public override destroy(): void {
+        this.dataGrid?.containerResizeObserver.disconnect();
+        super.destroy();
+    }
 }
 
 /* *
