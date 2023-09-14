@@ -196,7 +196,7 @@ function anchorPoints(
     series: Series,
     groupedXData: Array<number>,
     xMax: number
-): any {
+): void {
     const options = series.options,
         dataGroupingOptions = options.dataGrouping,
         totalRange = (
@@ -266,10 +266,6 @@ function anchorPoints(
                 lastPoint: series.xData[series.xData.length - 1]
             } as AnchorChoiceType)[lastAnchor];
         }
-    } else if (series.options.isInternal && series.xData) {
-        // Set first grouped point of navigator series to first parent's series
-        // point, to avoid gap in navigator #17212.
-        groupedXData[0] = series.xData[0];
     }
 }
 
@@ -403,8 +399,6 @@ function applyGrouping(
                 });
             }
 
-            anchorPoints(series, groupedXData, xMax);
-
             // Record what data grouping values were used
             for (i = 1; i < groupPositions.length; i++) {
                 // The grouped gapSize needs to be the largest distance between
@@ -424,6 +418,9 @@ function applyGrouping(
             (currentDataGrouping as any).gapSize = gapSize;
             series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
+            series.currentDataGrouping = currentDataGrouping;
+
+            anchorPoints(series, groupedXData, xMax);
 
             if (visible) {
                 adjustExtremes(xAxis, groupedXData);
@@ -453,7 +450,6 @@ function applyGrouping(
             series.groupMap = null as any;
         }
         series.hasGroupedData = hasGroupedData;
-        series.currentDataGrouping = currentDataGrouping;
 
         series.preventGraphAnimation =
             (lastDataGrouping && lastDataGrouping.totalRange) !==
