@@ -387,12 +387,15 @@ async function distUpload() {
     // Hack
     const sourceCssFolder = path.join(sourceFolder, 'css');
     const sourceGfxFolder = path.join(sourceFolder, 'gfx');
+    const targetCssFolder = path.join(cdnFolder, 'css');
+    const targetGfxFolder = path.join(cdnFolder, 'gfx');
     logLib.warn('Uploading to css & gfx...');
-    await uploadFolder(sourceCssFolder, targetStorage, bucket, 'css');
-    await uploadFolder(sourceGfxFolder, targetStorage, bucket, 'gfx');
+    await uploadFolder(sourceCssFolder, targetStorage, bucket, targetCssFolder);
+    await uploadFolder(sourceGfxFolder, targetStorage, bucket, targetGfxFolder);
 
     logLib.warn('Uploading to zips/...');
-    await uploadZips(buildFolder, targetStorage, bucket, 'zips/');
+    const targetZipFolder = path.join(cdnFolder, 'zips');
+    await uploadZips(buildFolder, targetStorage, bucket, targetZipFolder);
 
     logLib.success('Uploading Done.');
 
