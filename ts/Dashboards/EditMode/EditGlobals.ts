@@ -116,8 +116,8 @@ const EditGlobals: EditGlobals = {
     },
     lang: {
         accessibility: {
-            confirmationPopup: {
-                contextMenu: 'Context menu'
+            contextMenu: {
+                button: 'Context menu'
             }
         },
         addComponent: 'Add component',
@@ -359,14 +359,14 @@ namespace EditGlobals {
     }
 
     export interface LangAccessibilityOptions {
-        confirmationPopup: LangAccessibilityConfirmationPopupOptions;
+        contextMenu: LangAccessibilityOptionsContextMenu;
     }
 
-    export interface LangAccessibilityConfirmationPopupOptions {
+    export interface LangAccessibilityOptionsContextMenu {
         /**
          * @default 'Context menu'
          */
-        contextMenu: string;
+        button: string;
     }
 
     export type TLangKeys = 'editMode' | 'verticalSeparator';
