@@ -70,7 +70,7 @@ jobs:
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
-          mkdir ./tmp/visual-test-results &&
+          mkdir -p ./tmp/visual-test-results
           find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ./tmp/visual-test-results
         if: ${{ always() }}
 
