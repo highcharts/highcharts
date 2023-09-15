@@ -181,6 +181,7 @@ Highcharts.chart('container', {
         y: 35,
         verticalAlign: 'middle',
         style: {
+            fontSize: '1em',
             color: 'white',
             textAlign: 'center'
         }
@@ -317,8 +318,9 @@ Highcharts.chart('container', {
         verticalAlign: 'center',
         align: 'center',
         backgroundColor: '#1f1836',
-        borderColor: 'transparent',
         borderRadius: 12,
+        borderColor: 'transparent',
+        borderWidth: 1,
         itemStyle: {
             color: '#FFF'
         },
@@ -326,7 +328,11 @@ Highcharts.chart('container', {
             color: '#BBBAC5'
         },
         itemMarginBottom: 1,
-        width: '26%',
+        itemMarginTop: 1,
+        symbolPadding: 2,
+        symbolHeight: 8,
+        padding: 4,
+        width: '36%',
         maxHeight: '14%'
     },
     plotOptions: {
@@ -340,31 +346,6 @@ Highcharts.chart('container', {
         rules: [
             {
                 condition: {
-                    minWidth: 0
-                },
-                chartOptions: {
-                    legend: {
-                        borderRadius: 18,
-                        borderWidth: 0.7,
-                        padding: 4,
-                        symbolPadding: 2,
-                        symbolHeight: 1,
-                        itemMarginBottom: 1,
-                        itemMarginTop: 1,
-                        itemStyle: {
-                            fontSize: '0.8em'
-                        },
-                        width: '36%'
-                    },
-                    subtitle: {
-                        style: {
-                            fontSize: '1em'
-                        }
-                    }
-                }
-            },
-            {
-                condition: {
                     minWidth: 380
                 },
                 chartOptions: {
@@ -372,8 +353,6 @@ Highcharts.chart('container', {
                         borderRadius: 14,
                         borderWidth: 0.7,
                         padding: 4,
-                        symbolPadding: 4,
-                        symbolHeight: 3,
                         itemMarginBottom: 2,
                         itemMarginTop: 1,
                         itemStyle: {
@@ -397,8 +376,6 @@ Highcharts.chart('container', {
                         borderWidth: 1,
                         padding: 5,
                         symbolPadding: 8,
-                        symbolHeight: 8,
-                        itemMarginBottom: 2,
                         itemMarginTop: 0,
                         itemStyle: {
                             fontSize: '1.1em'
@@ -425,8 +402,8 @@ Highcharts.chart('container', {
                         padding: 6,
                         symbolPadding: 12,
                         symbolHeight: 12,
-                        itemMarginBottom: 2,
-                        itemMarginTop: 2
+                        itemMarginTop: 2,
+                        width: '26%'
                     },
                     plotOptions: {
                         columnrange: {
@@ -451,9 +428,7 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '1.4em'
                         },
-                        itemMarginBottom: 2,
-                        itemMarginTop: 0,
-                        padding: 6
+                        itemMarginTop: 0
                     },
                     plotOptions: {
                         columnrange: {
