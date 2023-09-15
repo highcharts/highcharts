@@ -161,7 +161,7 @@
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
     color: var(--highcharts-neutral-color-100);
     overflow: hidden;
-    padding: 16px 8px 12px;
+    padding: 4px 4px 4px 12px;
     flex: 1;
     font-weight: 700;
     box-sizing: border-box;

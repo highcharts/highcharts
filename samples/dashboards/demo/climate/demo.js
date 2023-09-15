@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const, jsdoc/require-description */
+/* eslint-disable jsdoc/require-description */
 
 // left arrow
 Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
@@ -35,8 +35,10 @@ async function setupBoard() {
     let activeCity = 'New York',
         activeColumn = 'TX',
         activeScale = 'C',
-        activeTimeRange = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
-        selectionTimeout = -1;
+        activeTimeRange = [ // default to a year
+            Date.UTC(2009, 11, 25, 0, 0, 1),
+            Date.UTC(2010, 11, 25)
+        ];
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
@@ -70,16 +72,6 @@ async function setupBoard() {
                 items: [
                     'editMode',
                     {
-                        id: 'dark-mode',
-                        type: 'toggle',
-                        text: 'Dark mode',
-                        events: {
-                            click: function () {
-                                this.menu.editMode.board.container
-                                    .classList.toggle('highcharts-dark');
-                            }
-                        }
-                    }, {
                         id: 'fahrenheit',
                         type: 'toggle',
                         text: 'Fahrenheit',
@@ -88,9 +80,7 @@ async function setupBoard() {
                                 // Change temperature scale.
                                 activeScale = activeScale === 'C' ? 'F' : 'C';
                                 activeColumn = 'TX';
-                                window.setTimeout(
-                                    updateBoard,
-                                    50,
+                                updateBoard(
                                     board,
                                     activeCity,
                                     activeColumn,
@@ -259,111 +249,52 @@ async function setupBoard() {
         },
         components: [{
             cell: 'time-range-selector',
-            type: 'Highcharts',
+            type: 'Navigator',
             chartOptions: {
                 chart: {
                     height: '80px',
                     type: 'spline'
                 },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    enabled: false
+                navigator: {
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    }
                 },
                 series: [{
                     name: 'Timeline',
                     data: [
                         [Date.UTC(1951, 0, 5), 0],
                         [Date.UTC(2010, 11, 25), 0]
-                    ],
-                    marker: {
-                        enabled: false
-                    },
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    }
+                    ]
                 }],
-                navigator: {
-                    enabled: true,
-                    handles: {
-                        symbols: ['leftarrow', 'rightarrow'],
-                        lineWidth: 0,
-                        width: 8,
-                        height: 14
-                    },
-                    series: [{
-                        name: activeCity,
-                        data: [],
-                        animation: false,
-                        animationLimit: 0
-                    }],
-                    xAxis: {
-                        endOnTick: true,
-                        gridZIndex: 4,
-                        labels: {
-                            x: 1,
-                            y: 22
-                        },
-                        opposite: true,
-                        showFirstLabel: true,
-                        showLastLabel: true,
-                        startOnTick: true,
-                        tickPosition: 'inside'
-                    },
-                    yAxis: {
-                        maxPadding: 0.5
-                    }
-                },
-                scrollbar: {
-                    enabled: true,
-                    barBorderRadius: 0,
-                    barBorderWidth: 0,
-                    buttonBorderWidth: 0,
-                    buttonBorderRadius: 0,
-                    height: 14,
-                    trackBorderWidth: 0,
-                    trackBorderRadius: 0
-                },
                 xAxis: {
-                    visible: false,
                     min: activeTimeRange[0],
                     max: activeTimeRange[1],
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
                     maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
                     events: {
-                        afterSetExtremes: function (e) {
-                            window.clearTimeout(selectionTimeout);
-                            selectionTimeout = window.setTimeout(async () => {
-                                if (
-                                    activeTimeRange[0] !== e.min ||
-                                    activeTimeRange[1] !== e.max
-                                ) {
-                                    activeTimeRange = [e.min, e.max];
+                        afterSetExtremes: async function (e) {
+                            const min = Math.round(e.min);
+                            const max = Math.round(e.max);
 
-                                    const newColumn =
-                                        activeColumn[0] === 'T' ? activeColumn + activeScale : activeColumn;
-                                    await onNavigatorChange(
-                                        board,
-                                        activeCity,
-                                        newColumn,
-                                        activeScale
-                                    );
-                                }
-                            }, 50);
+                            if (
+                                activeTimeRange[0] !== min ||
+                                activeTimeRange[1] !== max
+                            ) {
+                                activeTimeRange = [min, max];
+                                await updateBoard(
+                                    board,
+                                    activeCity,
+                                    activeColumn,
+                                    activeScale,
+                                    false
+                                );
+                            }
                         }
                     }
-                },
-                yAxis: {
-                    visible: false
                 }
             }
         }, {
@@ -958,14 +889,15 @@ async function setupBoard() {
     }, true);
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
+    const cityRows = citiesTable.getRowObjects();
 
     // Add city sources
-    for (const row of citiesTable.getRowObjects()) {
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         dataPool.setConnectorOptions({
-            id: row.city,
+            id: cityRows[i].city,
             type: 'CSV',
             options: {
-                csvURL: row.csv
+                csvURL: cityRows[i].csv
             }
         });
     }
@@ -975,9 +907,9 @@ async function setupBoard() {
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
     // Load additional cities
-    for (const row of citiesTable.getRowObjects()) {
-        if (row.city !== activeCity) {
-            await setupCity(board, row.city, activeColumn, activeScale);
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
+        if (cityRows[i].city !== activeCity) {
+            await setupCity(board, cityRows[i].city, activeColumn, activeScale);
         }
     }
 }
@@ -1035,123 +967,6 @@ async function setupCity(board, city, column, scale) {
             cityTable.getRowIndexBy('time', time)
         ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
-
-}
-
-async function onNavigatorChange(board, city, column, scale) {
-    const colorStopsDays = [
-        [0.0, '#C2CAEB'],
-        [1.0, '#162870']
-    ];
-    const colorStopsTemperature = [
-        [0.0, '#4CAFFE'],
-        [0.3, '#53BB6C'],
-        [0.5, '#DDCE16'],
-        [0.6, '#DF7642'],
-        [0.7, '#DD2323']
-    ];
-    const dataPool = board.dataPool;
-    const [
-        timeRangeSelector,
-        worldMap,
-        kpiData,
-        kpiTemperature,
-        kpiMaxTemperature,
-        kpiRain,
-        kpiIce,
-        kpiFrost
-    ] = board.mountedComponents.map(c => c.component);
-    // Update range selection
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
-    const colorStops = (
-        column[0] !== 'T' ?
-            colorStopsDays :
-            colorStopsTemperature
-    );
-    const selectionTable = await dataPool.getConnectorTable('Range Selection');
-    const timeRangeMax = timeRangeSelector.chart.axes[0].max;
-    const timeRangeMin = timeRangeSelector.chart.axes[0].min;
-    const selectionModifier = selectionTable.getModifier();
-
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-
-    if (
-        !selectionModifier.options.ranges[0] ||
-        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
-        selectionModifier.options.ranges[0].minValue !== timeRangeMin
-    ) {
-        selectionModifier.options.ranges = [{
-            column: 'time',
-            maxValue: timeRangeMax,
-            minValue: timeRangeMin
-        }];
-        await selectionTable.setModifier(selectionModifier);
-    }
-
-    const rangeTable = selectionTable.modified;
-
-    // Update world map
-    worldMap.chart.update({
-        colorAxis: {
-            min: colorMin,
-            max: colorMax,
-            stops: colorStops
-        }
-    });
-    (async () => {
-        const dataPoints = worldMap.chart.series[1].data;
-        const lastTime = rangeTable
-            .getCellAsNumber('time', rangeTable.getRowCount() - 1);
-
-        for (const point of dataPoints) {
-            const pointTable = await dataPool.getConnectorTable(point.name);
-
-            point.update({
-                custom: {
-                    yScale: scale
-                },
-                y: pointTable.modified.getCellAsNumber(
-                    column,
-                    pointTable.getRowIndexBy('time', lastTime)
-                )
-            });
-        }
-    })();
-
-    // Update KPIs
-    await kpiData.update({
-        title: city,
-        value: citiesTable.getCellAsNumber(
-            'elevation',
-            citiesTable.getRowIndexBy('city', city)
-        ) || '--'
-    });
-    kpiTemperature.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('TN' + scale, 0) || 0,
-        true,
-        true
-    );
-    kpiMaxTemperature.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('TX' + scale, 0) || 0,
-        true,
-        true
-    );
-    kpiRain.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('RR1', 0) || 0,
-        true,
-        true
-    );
-    kpiIce.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('ID', 0) || 0,
-        true,
-        true
-    );
-    kpiFrost.chart.series[0].points[0].update(
-        rangeTable.getCellAsNumber('FD', 0) || 0,
-        true,
-        true
-    );
 }
 
 async function updateBoard(board, city, column, scale, newData) {
@@ -1164,6 +979,7 @@ async function updateBoard(board, city, column, scale, newData) {
             colorStopsTemperature
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    const cityTable = await dataPool.getConnectorTable(city);
     const [
         timeRangeSelector,
         worldMap,
@@ -1179,10 +995,8 @@ async function updateBoard(board, city, column, scale, newData) {
 
     column = (column[0] === 'T' ? column + scale : column);
 
-    let cityTable = await dataPool.getConnectorTable(city);
-
+    // Update data of time range selector
     if (newData) {
-        // Update time range selector
         timeRangeSelector.chart.series[0].update({
             type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
@@ -1192,26 +1006,90 @@ async function updateBoard(board, city, column, scale, newData) {
         selectionTable.setColumns(cityTable.modified.getColumns(), 0);
     }
 
-    onNavigatorChange(board, city, column, scale);
+    // Update range selection
+    const timeRangeMax = timeRangeSelector.chart.axes[0].max;
+    const timeRangeMin = timeRangeSelector.chart.axes[0].min;
+    const selectionModifier = selectionTable.getModifier();
 
-    if (newData) {
-        await selectionTable.setModifier(selectionTable.getModifier());
+    if (
+        newData ||
+        !selectionModifier.options.ranges[0] ||
+        selectionModifier.options.ranges[0].maxValue !== timeRangeMax ||
+        selectionModifier.options.ranges[0].minValue !== timeRangeMin
+    ) {
+        selectionModifier.options.ranges = [{
+            column: 'time',
+            maxValue: timeRangeMax,
+            minValue: timeRangeMin
+        }];
+        await selectionTable.setModifier(selectionModifier);
     }
 
-    // Update city grid selection
-    const showCelsius = scale === 'C';
-    const sharedColumnAssignment = {
-        time: 'x',
-        FD: column === 'FD' ? 'y' : null,
-        ID: column === 'ID' ? 'y' : null,
-        RR1: column === 'RR1' ? 'y' : null,
-        TNC: column === 'TNC' ? 'y' : null,
-        TNF: column === 'TNF' ? 'y' : null,
-        TXC: column === 'TXC' ? 'y' : null,
-        TXF: column === 'TXF' ? 'y' : null
-    };
+    const rangeTable = selectionTable.modified;
+    const rangeEnd = rangeTable.getRowCount() - 1;
 
+    // Update world map
+    const mapPoints = worldMap.chart.series[1].data;
+    const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
+
+    for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
+        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
+
+        mapPoints[i].update({
+            custom: {
+                yScale: scale
+            },
+            y: pointTable.modified.getCellAsNumber(
+                column,
+                pointTable.modified.getRowIndexBy('time', lastTime)
+            )
+        }, false);
+    }
+    worldMap.chart.update({
+        colorAxis: {
+            min: colorMin,
+            max: colorMax,
+            stops: colorStops
+        }
+    });
+
+    // Update KPIs
     if (newData) {
+        const citiesTable = await dataPool.getConnectorTable('Cities');
+        await kpiData.update({
+            title: city,
+            value: citiesTable.getCellAsNumber(
+                'elevation',
+                citiesTable.getRowIndexBy('city', city)
+            ) || '--'
+        });
+    }
+    kpiTemperature.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('TN' + scale, rangeEnd) || 0);
+    kpiMaxTemperature.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
+    kpiRain.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
+    kpiIce.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
+    kpiFrost.chart.series[0].points[0]
+        .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
+
+    // Update data grid and city chart
+    if (newData) {
+        const showCelsius = scale === 'C';
+        const sharedColumnAssignment = {
+            time: 'x',
+            FD: column === 'FD' ? 'y' : null,
+            ID: column === 'ID' ? 'y' : null,
+            RR1: column === 'RR1' ? 'y' : null,
+            TNC: column === 'TNC' ? 'y' : null,
+            TNF: column === 'TNF' ? 'y' : null,
+            TXC: column === 'TXC' ? 'y' : null,
+            TXF: column === 'TXF' ? 'y' : null
+        };
+
+        // Update city grid selection
         await selectionGrid.update({
             dataGridOptions: {
                 columns: {
@@ -1231,10 +1109,8 @@ async function updateBoard(board, city, column, scale, newData) {
             },
             columnAssignment: sharedColumnAssignment
         });
-    }
 
-    // Update city chart selection
-    if (newData) {
+        // Update city chart selection
         await cityChart.update({
             columnAssignment: sharedColumnAssignment,
             chartOptions: {
@@ -1255,3 +1131,29 @@ async function updateBoard(board, city, column, scale, newData) {
         });
     }
 }
+
+const toggle = document.getElementById('mode-toggle');
+
+toggle.addEventListener('click', () => {
+    changeTheme();
+});
+
+function isDarkModeEnabled() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+toggle.checked = isDarkModeEnabled();
+
+function changeTheme() {
+    const toggleContainer = document.getElementById('toggle-container'),
+        container = document.getElementById('container'),
+        className = toggle.checked ? 'highcharts-dark' : 'highcharts-light';
+
+    container.className = className;
+    toggleContainer.className = className;
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    toggle.checked = isDarkModeEnabled();
+    changeTheme();
+});
