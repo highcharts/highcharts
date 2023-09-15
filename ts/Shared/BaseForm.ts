@@ -129,8 +129,8 @@ abstract class BaseForm {
         // close popup when press ESC
         addEvent(
             document,
-            'keydown', function (event):void {
-                if ((event as any).code === 'Escape') {
+            'keydown', function (event: KeyboardEvent):void {
+                if (event.code === 'Escape') {
                     popup.closeButtonEvents();
                 }
             }
