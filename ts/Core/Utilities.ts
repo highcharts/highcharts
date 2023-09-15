@@ -115,6 +115,25 @@ function erase(arr: Array<unknown>, item: unknown): void {
     }
 }
 
+
+function coreAddEvent<T>(
+    el: (Class<T>|T),
+    type: string,
+    fn: (EventCallback<T>|Function),
+    options: Utilities.EventOptions = {}
+): Function {
+
+    // Allow click events added to points, otherwise they will be prevented by
+    // the TouchPointer.pinch function after a pinch zoom operation (#7091).
+    if ((H as any).Point && // without H a dependency loop occurs
+        el instanceof (H as any).Point &&
+        (el as any).series &&
+        (el as any).series.chart
+    ) {
+        (el as any).series.chart.runTrackerClick = true;
+    }
+    return addEvent(el, type, fn, options);
+}
 /**
  * Insert a series or an axis in a collection with other items, either the
  * chart series or yAxis series or axis collections, in the correct order
@@ -1109,7 +1128,7 @@ namespace Utilities {
 
 // TODO use named exports when supported.
 const Utilities = {
-    addEvent,
+    addEvent: coreAddEvent,
     arrayMax,
     arrayMin,
     attr,

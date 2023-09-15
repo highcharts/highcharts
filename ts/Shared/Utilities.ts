@@ -73,17 +73,6 @@ function addEvent<T>(
     }
     const events: Record<string, Array<any>> = owner.hcEvents;
 
-
-    // Allow click events added to points, otherwise they will be prevented by
-    // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
-        el instanceof (H as any).Point &&
-        (el as any).series &&
-        (el as any).series.chart
-    ) {
-        (el as any).series.chart.runTrackerClick = true;
-    }
-
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
