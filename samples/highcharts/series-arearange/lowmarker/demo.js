@@ -71,7 +71,7 @@ Highcharts.chart('container', {
             fillColor: Highcharts.defaultOptions.colors[3]
         },
         lowMarker: {
-            symbol: 'circle',
+            symbol: 'triangle-down',
             fillColor: Highcharts.defaultOptions.colors[2]
         }
     }]
