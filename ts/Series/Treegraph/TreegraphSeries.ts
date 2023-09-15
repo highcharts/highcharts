@@ -528,7 +528,7 @@ class TreegraphSeries extends TreemapSeries {
      * @private
      */
     public pointAttribs(
-        point: TreegraphPoint,
+        point?: TreegraphPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
