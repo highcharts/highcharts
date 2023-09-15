@@ -95,11 +95,7 @@ const getListOfParents = function (
     Object.keys(listOfParents).forEach(
         (node: string): void => {
             if ((node !== root) && (ids.indexOf(node) === -1)) {
-                listOfParents[root] = [
-                    ...listOfParents[root],
-                    ...listOfParents[node]
-                ];
-
+                listOfParents[root].push(...listOfParents[node]);
                 delete listOfParents[node];
             }
         }
