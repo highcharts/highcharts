@@ -20,7 +20,7 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
 
@@ -45,9 +45,10 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           clean: false
+          fetch-depth: 0
 
       - name: Merge master into PR branch
         run: git merge origin/master --ff-only
@@ -72,10 +73,16 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
 
+      - name: Save test results where both an reference.svg and candidate.svg exists
+        run: |
+          mkdir ./tmp/visual-test-results &&
+          find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
+
+
       - name: Store artifacts
         uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
-          name: post-tests
-          path:
+          name: visual-test-results
+          path: tmp/visual-test-results
 
