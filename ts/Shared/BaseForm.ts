@@ -126,6 +126,16 @@ abstract class BaseForm {
             );
         });
 
+        // close popup when press ESC
+        addEvent(
+            document,
+            'keydown', function (event):void {
+                if ((event as any).code === 'Escape') {
+                    popup.closeButtonEvents();
+                }
+            }
+        );
+
         return closeButton;
     }
 
