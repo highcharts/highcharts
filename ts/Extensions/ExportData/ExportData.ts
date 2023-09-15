@@ -60,7 +60,8 @@ const {
         gantt: GanttSeries,
         map: MapSeries,
         mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries
+        treemap: TreemapSeries,
+        xrange: XRangeSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -127,6 +128,7 @@ interface ExportingCategoryDateTimeMap {
 interface ExportDataPoint {
     series: ExportDataSeries;
     x?: number;
+    x2?: number;
 }
 
 interface ExportDataSeries {
@@ -399,27 +401,22 @@ function chartGetDataRows(
             series: Series,
             xAxis: Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
-            );
+            const pointArrayMap = series.pointArrayMap || ['y'],
+                namedPoints = series.data.some((d): string | false =>
+                    (typeof d.y !== 'undefined') && d.name
+                );
 
+            // If there are points with a name, we also want the x value in the
+            // table
             if (
-                namedPoints.length &&
+                namedPoints &&
                 xAxis &&
                 !xAxis.categories &&
-                !series.keyToAxis
+                series.exportKey !== 'name'
             ) {
-                if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap
-                        .filter((p): boolean => p === 'x');
-                    if (pointArrayMapCheck.length) {
-                        series.pointArrayMap.unshift('x');
-                        return series.pointArrayMap;
-                    }
-                }
-                return ['x', 'y'];
+                return ['x', ...pointArrayMap];
             }
-            return series.pointArrayMap || ['y'];
+            return pointArrayMap;
         },
         xAxisIndices: Array<Array<number>> = [];
 
@@ -1158,9 +1155,16 @@ function compose(
     }
 
     if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
+        GanttSeries.prototype.exportKey = 'name';
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
+        };
+    }
+
+    if (XRangeSeries && U.pushUnique(composedMembers, XRangeSeries)) {
+        XRangeSeries.prototype.keyToAxis = {
+            x2: 'x'
         };
     }
 
