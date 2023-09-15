@@ -67,7 +67,6 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
-
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
           mkdir -p ./tmp/visual-test-results
