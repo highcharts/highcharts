@@ -142,14 +142,25 @@ class EditContextMenu extends Menu {
         const contextMenu = this;
 
         if (
-            contextMenu.container
+            contextMenu.container &&
+            this.editMode.tools.contextButtonElement
         ) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
                 contextMenu.isVisible = true;
+
+                this.editMode.tools.contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'true'
+                );
             } else {
                 contextMenu.container.style.display = 'none';
                 contextMenu.isVisible = false;
+
+                this.editMode.tools.contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
             }
         }
     }
