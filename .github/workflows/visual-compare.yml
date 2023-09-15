@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   visual_compare:
-    timeout-minutes: 10
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,9 +35,6 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
-
-      - name: Build Dashboards
-        run: npx gulp dashboards/scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
@@ -64,8 +61,6 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Build Dashboards
-        run: npx gulp dashboards/scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
@@ -76,8 +71,17 @@ jobs:
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
           mkdir ./tmp/visual-test-results &&
-          find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
+          find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ./tmp/visual-test-results
+        if: ${{ always() }}
 
+      - name: Comment on PR and upload visual test images if any produced
+        run: |
+          npx gulp update-pr-testresults \
+          --fail-silently \
+          --user circleci-mu \
+          --token ${{secrets.PR_COMMENT_TOKEN}} \
+          --pr ${{github.event.pull_request.number}}
+        if: ${{ always() }}
 
       - name: Store artifacts
         uses: actions/upload-artifact@v3
