@@ -1,0 +1,81 @@
+name: Highcharts Visual Comparison
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'samples/**'
+      - 'ts/**'
+      - 'css/**'
+      - '.github/workflows/visual-compare.yml'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  visual_compare:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+        with:
+          clean: false
+
+      - name: Merge master into PR branch
+        run: git merge master --ff-only
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
+
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: post-tests
+          path:
+
