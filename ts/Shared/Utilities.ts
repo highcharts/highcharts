@@ -24,11 +24,33 @@ import type {
 import type EventCallback from '../Core/EventCallback';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 
-import H from '../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function Utilities(Globals: any) {
+    const {
+        win
+    } = Globals;
+    const doc = win.document;
+    const supportsPassiveEvents = (function (): boolean {
+        // Checks whether the browser supports passive events, (#11353).
+        let supportsPassive = false;
+
+        // Object.defineProperty doesn't work on IE as well as passive
+        // events - instead of using polyfill, we can exclude IE totally.
+        if (!Globals.isMS) {
+            const opts = Object.defineProperty({}, 'passive', {
+                get: function (): void {
+                    supportsPassive = true;
+                }
+            });
+
+            if (win.addEventListener && win.removeEventListener) {
+                win.addEventListener('testPassive', Globals.noop, opts);
+                win.removeEventListener('testPassive', Globals.noop, opts);
+            }
+        }
+
+        return supportsPassive;
+    }());
 
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
@@ -82,7 +104,7 @@ function addEvent<T>(
             el,
             type,
             fn,
-            H.supportsPassiveEvents ? {
+            supportsPassiveEvents ? {
                 passive: options.passive === void 0 ?
                     type.indexOf('touch') !== -1 : options.passive,
                 capture: false
@@ -176,7 +198,7 @@ function css(
     el: DOMElementType,
     styles: CSSObject
 ): void {
-    if (H.isMS && !H.svg) { // #2686
+    if (Globals.isMS && !Globals.svg) { // #2686
         if (styles && defined(styles.opacity)) {
             styles.filter = `alpha(opacity=${styles.opacity * 100})`;
         }
@@ -399,7 +421,7 @@ function error(
     }
 
     fireEvent(
-        H,
+        Globals,
         'displayError',
         { chart, code, message, params },
         defaultHandler
@@ -449,7 +471,7 @@ function fireEvent<T>(
             (
                 (el as any).fireEvent &&
                 // Enable firing events on Highcharts instance.
-                (el as any) !== H
+                (el as any) !== Globals
             )
         )
     ) {
@@ -527,7 +549,7 @@ function fireEvent<T>(
     }
 
     // Run the default if not prevented
-    if (defaultFunction && !eventArguments.defaultPrevented) {
+    if (defaultFunction && !(eventArguments as any).defaultPrevented) {
         (defaultFunction as Function).call(el, eventArguments);
     }
 }
@@ -1172,6 +1194,37 @@ function useSerialIds(mode?: boolean): (boolean|undefined) {
     return (serialMode = pick(mode, serialMode));
 }
 
+const Utilities = {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    diffObjects,
+    error,
+    extend,
+    fireEvent,
+    find,
+    getStyle,
+    isArray,
+    isClass,
+    isDOMElement,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    splat,
+    uniqueKey,
+    useSerialIds
+};
+
+return Utilities;
+}
 namespace Utilities {
     export type RelativeSize = (number|string);
     export interface ErrorMessageEventObject {
@@ -1212,33 +1265,5 @@ namespace Utilities {
         (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
-const Utilities = {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    diffObjects,
-    error,
-    extend,
-    fireEvent,
-    find,
-    getStyle,
-    isArray,
-    isClass,
-    isDOMElement,
-    isFunction,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    pInt,
-    relativeLength,
-    removeEvent,
-    splat,
-    uniqueKey,
-    useSerialIds
-};
 
 export default Utilities;

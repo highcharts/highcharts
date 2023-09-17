@@ -33,7 +33,7 @@ const {
     doc,
     win
 } = H;
-import U from '../Shared/Utilities.js';
+import fromGlobals from '../Shared/Utilities.js';
 
 const {
     addEvent,
@@ -62,7 +62,7 @@ const {
     splat,
     uniqueKey,
     useSerialIds
-} = U;
+} = fromGlobals(H);
 
 /* *
  *
