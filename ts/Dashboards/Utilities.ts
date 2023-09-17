@@ -22,7 +22,7 @@
  *
  * */
 
-import U from '../Shared/Utilities.js';
+import fromGlobals from '../Shared/Utilities.js';
 import Globals from './Globals.js';
 const {
     addEvent,
@@ -51,7 +51,7 @@ const {
     splat,
     useSerialIds,
     uniqueKey: coreUniqueKey
-} = U(Globals);
+} = fromGlobals(Globals);
 
 /* *
  *
