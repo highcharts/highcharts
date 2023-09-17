@@ -20,6 +20,39 @@
  * */
 
 import type DataTable from '../Data/DataTable';
+import fromGlobals from '../Shared/Utilities.js';
+import Globals from './Globals.js';
+
+const {
+    addEvent,
+    createElement,
+    css,
+    clamp,
+    defined,
+    diffObjects,
+    error,
+    extend,
+    fireEvent,
+    find,
+    getStyle,
+    isArray,
+    isClass,
+    isDOMElement,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    splat,
+    uniqueKey,
+    useSerialIds
+
+} = fromGlobals(Globals);
 
 /* *
  *
@@ -47,7 +80,34 @@ const DataGridUtils = {
             div.id = id;
         }
         return div;
-    }
+    },
+    addEvent,
+    createElement,
+    css,
+    clamp,
+    defined,
+    diffObjects,
+    error,
+    extend,
+    fireEvent,
+    find,
+    getStyle,
+    isArray,
+    isClass,
+    isDOMElement,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    splat,
+    uniqueKey,
+    useSerialIds
 };
 
 /* *

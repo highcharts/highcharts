@@ -32,17 +32,7 @@ import DataGridUtils from './DataGridUtils.js';
 const {
     dataTableCellToString,
     emptyHTMLElement,
-    makeDiv
-} = DataGridUtils;
-import Globals from './Globals.js';
-import Templating from '../Core/Templating.js';
-import DataGridDefaults from './DataGridDefaults.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
-import U from '../Core/Utilities.js';
-const {
+    makeDiv,
     addEvent,
     clamp,
     defined,
@@ -50,7 +40,15 @@ const {
     isNumber,
     merge,
     pick
-} = U;
+} = DataGridUtils;
+import Globals from './Globals.js';
+import Templating from '../Core/Templating.js';
+const { format } = Templating;
+import DataGridDefaults from './DataGridDefaults.js';
+import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
 
 /* *
  *
@@ -859,7 +857,7 @@ class DataGrid {
             headerFormat = columnOptions && columnOptions.headerFormat;
 
         if (headerFormat) {
-            return Templating.format(headerFormat, { text: columnName });
+            return format(headerFormat, { text: columnName });
         }
 
         return columnName;
@@ -890,13 +888,13 @@ class DataGrid {
                 cellFormat.indexOf('value') > -1
             ) {
                 formattedCell =
-                    Templating.format(cellFormat, { value: cellValue });
+                    format(cellFormat, { value: cellValue });
             } else if (
                 typeof cellValue === 'string' &&
                 cellFormat.indexOf('text') > -1
             ) {
                 formattedCell =
-                    Templating.format(cellFormat, { text: cellValue });
+                    format(cellFormat, { text: cellValue });
             }
         }
 

@@ -135,6 +135,18 @@ function addEvent<T>(
 }
 
 /**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @private
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
+/**
  * Utility function to create an HTML element with attributes and styles.
  *
  * @function Highcharts.createElement
@@ -1198,6 +1210,7 @@ const Utilities = {
     addEvent,
     createElement,
     css,
+    clamp,
     defined,
     diffObjects,
     error,
