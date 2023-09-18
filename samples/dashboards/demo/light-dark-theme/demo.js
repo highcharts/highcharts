@@ -67,9 +67,6 @@ Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            title: {
-                text: 'Vitamin A'
-            },
             chartOptions: {
                 xAxis: {
                     type: 'category'
@@ -81,12 +78,11 @@ Dashboards.board('container', {
                     enabled: false
                 },
                 title: {
-                    text: ''
+                    text: 'Vitamin A in Various Foods',
+                    align: 'left'
                 },
                 subtitle: {
-                    text: 'in Various Foods',
-                    align: 'left',
-                    y: 10
+                    text: ''
                 },
                 legend: {
                     enabled: false
