@@ -139,17 +139,16 @@ class EditContextMenu extends Menu {
     }
 
     public setVisible(visible: boolean): void {
-        const contextMenu = this;
+        const contextMenu = this,
+            contextButtonElement =
+                contextMenu.editMode.tools.contextButtonElement;
 
-        if (
-            contextMenu.container &&
-            this.editMode.tools.contextButtonElement
-        ) {
+        if (contextMenu.container && contextButtonElement) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
                 contextMenu.isVisible = true;
 
-                this.editMode.tools.contextButtonElement.setAttribute(
+                contextButtonElement.setAttribute(
                     'aria-expanded',
                     'true'
                 );
@@ -157,7 +156,7 @@ class EditContextMenu extends Menu {
                 contextMenu.container.style.display = 'none';
                 contextMenu.isVisible = false;
 
-                this.editMode.tools.contextButtonElement.setAttribute(
+                contextButtonElement.setAttribute(
                     'aria-expanded',
                     'false'
                 );
