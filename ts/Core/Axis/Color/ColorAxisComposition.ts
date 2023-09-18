@@ -290,14 +290,13 @@ namespace ColorAxisComposition {
      * Updates in the legend need to be reflected in the color axis. (#6888)
      * @private
      */
-    function onLegendAfterUpdate(this: Legend): void {
-        const colorAxes = this.chart.colorAxis;
-
-        if (colorAxes) {
-            colorAxes.forEach(function (colorAxis): void {
-                colorAxis.update({}, arguments[2]);
-            });
-        }
+    function onLegendAfterUpdate(
+        this: Legend,
+        e: { redraw: boolean|undefined}
+    ): void {
+        this.chart.colorAxis?.forEach((colorAxis): void => {
+            colorAxis.update({}, e.redraw);
+        });
     }
 
     /**
