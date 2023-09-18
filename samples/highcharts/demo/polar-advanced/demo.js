@@ -9,7 +9,7 @@ const
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
     noLabelProp = { labels: { enabled: false } },
     specialSeriesProps = {
-        showIn: false,
+        showInLegend: false,
         groupPadding: 0,
         pointPadding: 0
     },
@@ -209,12 +209,12 @@ Highcharts.chart('container', {
     colorAxis: [{
         minColor: colors[0].brighten(0.05).get('rgba'),
         maxColor: colors[5].brighten(0.05).get('rgba'),
-        showIn: false,
+        showInLegend: false,
         ...weekExtremes
     }, {
         minColor: colors[1].tweenTo(colors[5], 0.5),
         maxColor: colors[8].tweenTo(colors[8], 0.5),
-        showIn: false,
+        showInLegend: false,
         ...monthExtremes
     }],
 
@@ -325,12 +325,14 @@ Highcharts.chart('container', {
         borderRadius: 14,
         borderColor: 'transparent',
         borderWidth: 0,
+        lineHeight: 8,
         itemStyle: {
-            color: '#FFF'
+            color: '#FFF',
+            fontSize: '0.8em'
         },
         itemHoverStyle: {
             color: '#BBBAC5',
-            fontSize: '0.75em'
+            fontSize: '0.9em'
         },
         padding: 2,
         itemDistance: 0,
@@ -354,6 +356,7 @@ Highcharts.chart('container', {
                 },
                 chartOptions: {
                     legend: {
+                        lineHeight: 16,
                         padding: 3,
                         borderWidth: 0.5,
                         itemStyle: {
@@ -456,6 +459,7 @@ Highcharts.chart('container', {
             pointPlacement: 'between',
             enableMouseTracking: false
         }, {
+            showInLegend: false,
             ...specialSeriesProps,
             animation: false,
             name: 'Total',
