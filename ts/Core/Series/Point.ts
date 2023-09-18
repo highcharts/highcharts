@@ -76,16 +76,13 @@ declare module './PointLike' {
         hasImportedEvents?: boolean;
         selected?: boolean;
         selectedStaging?: boolean;
-        state?: string;
+        state: StatesOptionsKey;
         haloPath(size: number): SVGPath;
         importEvents(): void;
         onMouseOut(): void;
         onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
-        setState(
-            state?: (StatesOptionsKey|''),
-            move?: boolean
-        ): void;
+        setState(state?: (StatesOptionsKey | ''), move?: boolean): void;
     }
 }
 
@@ -222,7 +219,7 @@ class Point {
 
     public startXPos?: number;
 
-    public state?: StatesOptionsKey;
+    public state: StatesOptionsKey = 'normal';
 
     /**
      * The total of values in either a stack for stacked series, or a pie in a
