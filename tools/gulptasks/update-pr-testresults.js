@@ -8,7 +8,7 @@ const logLib = require('./lib/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('./lib/git');
-const { uploadFiles, getS3Object, putS3Object } = require('./lib/uploadS3');
+const { uploadFiles, putS3Object } = require('./lib/uploadS3');
 const { doRequest, createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
