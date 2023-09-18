@@ -271,16 +271,8 @@ class EditMode {
      */
     public onContextBtnClick(): void {
         const editMode = this;
-        // Init contextMenu if doesn't exist.
-        if (!editMode.tools.contextMenu) {
-            editMode.tools.contextMenu = new EditContextMenu(
-                editMode.board.container,
-                editMode.options.contextMenu || {},
-                editMode
-            );
-        }
 
-        // Show context menu.
+        // Toggle context menu visibility.
         if (editMode.tools.contextMenu) {
             if (!editMode.tools.contextMenu.isVisible) {
                 editMode.tools.contextMenu
@@ -707,7 +699,7 @@ class EditMode {
 
     /**
      * Creates the buttons such as `addComponent` button, rwd buttons and
-     * context menu button.
+     * context menu button and its container.
      * @internal
      */
     public createTools(): void {
@@ -724,17 +716,22 @@ class EditMode {
         );
 
         // Create context menu button
-        if (
-            options.contextMenu &&
-            options.contextMenu.enabled
-        ) {
+        if (options.contextMenu && options.contextMenu.enabled) {
             this.tools.contextButtonElement = EditRenderer.renderContextButton(
                 this.tools.container,
                 editMode
             );
+
+            // Init contextMenu if doesn't exist.
+            if (!editMode.tools.contextMenu) {
+                editMode.tools.contextMenu = new EditContextMenu(
+                    editMode.board.container,
+                    editMode.options.contextMenu || {},
+                    editMode
+                );
+            }
         }
 
-        // Create rwd menu
         this.createRwdMenu();
 
         // Create add button
