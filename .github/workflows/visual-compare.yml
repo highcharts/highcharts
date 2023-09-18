@@ -32,6 +32,9 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
       - name: Write file sizes at master
         run: npx gulp write-file-sizes --filename master.json
 
@@ -55,6 +58,9 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
 
       - name: File size comparison
         run: |
