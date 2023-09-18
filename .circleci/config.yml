@@ -544,14 +544,6 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-common
-      - visual_comparison_with_master:
-          requires: [checkout_and_install]
-          filters:
-            branches:
-              ignore:
-                - master
-                - /db\/.*/
-          context: highcharts-staging
       - generate_release_reference_images:
           requires: [checkout_and_install]
           filters:
