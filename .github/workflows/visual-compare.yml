@@ -78,9 +78,15 @@ jobs:
           npx gulp update-pr-testresults \
           --fail-silently \
           --user circleci-mu \
-          --token ${{secrets.PR_COMMENT_TOKEN}} \
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
+        env:
+          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
+          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+
 
       - name: Store artifacts
         uses: actions/upload-artifact@v3
