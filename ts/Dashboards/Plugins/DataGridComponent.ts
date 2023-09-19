@@ -413,8 +413,13 @@ class DataGridComponent extends Component {
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.filterColumns(),
-                    columns: columnOptions
+                    dataTable:
+                        this.options.dataGridOptions?.dataTable ||
+                        this.filterColumns(),
+                    columns: merge(
+                        columnOptions,
+                        this.options.dataGridOptions?.columns
+                    )
                 }
             );
             return this.dataGrid;
@@ -501,6 +506,14 @@ class DataGridComponent extends Component {
             ...diffObjects(this.options, DataGridComponent.defaultOptions),
             type: 'DataGrid'
         };
+    }
+
+    /**
+     * Destroys the data grid component.
+     */
+    public override destroy(): void {
+        this.dataGrid?.containerResizeObserver.disconnect();
+        super.destroy();
     }
 }
 

@@ -27,8 +27,8 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 2. You also need to import the styles in your main CSS file.
     ```css
-    @import url("https://code.highcharts.com/css/dashboards.css");
-    @import url("https://code.highcharts.com/css/datagrid.css");
+    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+    @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
     ```
 
 3. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.

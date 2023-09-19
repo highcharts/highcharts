@@ -43,10 +43,10 @@ const {
 
 /**
  * Function to create a context button.
- * @intenal
+ * @internal
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param editMode
  * EditMode instance.
@@ -58,8 +58,7 @@ function renderContextButton(
     parentNode: HTMLElement,
     editMode: EditMode
 ): HTMLElement|undefined {
-
-    let ctxBtnElement;
+    let ctxBtnElement : HTMLElement|undefined;
 
     if (editMode.options.contextMenu) {
         ctxBtnElement = createElement(
@@ -75,6 +74,11 @@ function renderContextButton(
                 ')'
             } as any,
             parentNode
+        );
+
+        ctxBtnElement.setAttribute(
+            'aria-label',
+            editMode.lang.accessibility.contextMenu.button
         );
     }
 
@@ -189,7 +193,7 @@ function renderCollapseHeader(
  * Function to create select element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Select form field options.
@@ -375,7 +379,7 @@ function renderSelectElement(
  * Function to create toggle element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Form field options
@@ -459,7 +463,7 @@ function renderToggle(
  * Function to create text element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param text
  * Text to be displayed
@@ -498,7 +502,7 @@ function renderText(
  * Function to create Icon element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param icon
  * Icon URL
@@ -549,7 +553,7 @@ function renderIcon(
  * Function to create input element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -601,7 +605,7 @@ function renderInput(
  * Function to create textarea element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -681,7 +685,7 @@ function renderCheckbox(
  * Function to create button element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Button field options
