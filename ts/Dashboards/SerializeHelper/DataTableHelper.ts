@@ -74,7 +74,7 @@ function jsonSupportFor(
 function toJSON(
     obj: DataTable
 ): DataTableHelper.JSON {
-    const aliases = obj.getColumnAliases(),
+    const aliases = obj.aliases,
         aliasKeys = Object.keys(aliases),
         json: DataTableHelper.JSON = {
             $class: 'Data.DataTable',
