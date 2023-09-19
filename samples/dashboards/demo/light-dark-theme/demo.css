@@ -38,3 +38,8 @@
         fill-opacity: 0.9;
     }
 }
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
