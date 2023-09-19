@@ -292,7 +292,7 @@ namespace ColorAxisComposition {
      */
     function onLegendAfterUpdate(
         this: Legend,
-        e: { redraw: boolean|undefined}
+        e: { redraw: boolean|undefined }
     ): void {
         this.chart.colorAxis?.forEach((colorAxis): void => {
             colorAxis.update({}, e.redraw);
