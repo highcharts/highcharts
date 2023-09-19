@@ -91,11 +91,20 @@ const getListOfParents = function (
 
     // If parent does not exist, hoist parent to root of tree.
     const root = '';
-
+    console.log(listOfParents);
     Object.keys(listOfParents).forEach(
         (node: string): void => {
             if ((node !== root) && (ids.indexOf(node) === -1)) {
-                listOfParents[root].push(...listOfParents[node]);
+                const adoptedByRoot = listOfParents[node].map(
+                    orphan => {
+                        const { parent, ...parentExcluded } = orphan;
+                        return parentExcluded;
+                    }
+
+                )
+                listOfParents[root].push(...adoptedByRoot);
+
+
                 delete listOfParents[node];
             }
         }
@@ -202,6 +211,7 @@ const getTree = function (
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
+    console.log(ids, mapOfIdToChildren);
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 
