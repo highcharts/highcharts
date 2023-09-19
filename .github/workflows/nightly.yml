@@ -1,0 +1,76 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 2am
+  workflow_dispatch:
+    inputs:
+      pust_dist:
+        description: 'Push nightly build to highcharts-dist'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+  nightly_visual_diff:
+    runs-on: ubuntu-latest
+    env:
+      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+      BROWSER_COUNT: 2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Set application version env var
+        command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
+
+      - name: Sync references from S3
+        run: |
+          aws s3 cp s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET} ./samples/ \
+          --exclude "*" \
+          --include "*/reference.svg"
+
+      - name: Upload reference images
+        run: |
+          npx gulp dist-testresults \
+          --tag ${HIGHCHARTS_VERSION} \
+          --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y librsvg2-bin
+
+      - name: "Generate PNGs and diff"
+        run: |
+          find . -name reference.svg -print -execdir rsvg-convert -o reference.png {}
+          find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {}
+          find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0
+
+      - name: Upload reference images
+        run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+
+
