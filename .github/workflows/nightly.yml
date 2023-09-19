@@ -37,7 +37,7 @@ jobs:
         run: npm i
 
       - name: Set application version env var
-        command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+        run: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
