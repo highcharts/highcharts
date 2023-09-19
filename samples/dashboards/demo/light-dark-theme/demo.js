@@ -93,6 +93,9 @@ Dashboards.board('container', {
                     margin: 0,
                     spacing: [0, 10, 10, 10]
                 },
+                tooltip: {
+                    stickOnContact: true
+                },
                 plotOptions: {
                     series: {
                         colorByPoint: true,
@@ -107,7 +110,7 @@ Dashboards.board('container', {
                         },
                         tooltip: {
                             headerFormat: '{point.key}:',
-                            pointFormat: ' {point.y}'
+                            pointFormat: ' {point.y} μg'
                         }
                     }
                 }
@@ -122,6 +125,13 @@ Dashboards.board('container', {
             editable: true,
             sync: {
                 highlight: true
+            },
+            dataGridOptions: {
+                columns: {
+                    'Vitamin A': {
+                        headerFormat: '{text} μg'
+                    }
+                }
             }
         }
     ]
