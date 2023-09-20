@@ -24,6 +24,7 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import U from '../../Core/Utilities.js';
+import DOMElementType from '../../Core/Renderer/DOMElementType';
 const {
     addEvent,
     isObject,
@@ -259,7 +260,6 @@ const zoomBy = function (
     }
 };
 
-
 /**
  * @private
  */
@@ -269,14 +269,20 @@ function onAfterGetContainer(this: Chart): void {
             optionsToObject(chart.options.chart.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
+        let haltScroll: boolean | undefined = false;
 
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
             e = this.pointer.normalize(e);
+            haltScroll = chart.pointer.inClass(
+                e.target as DOMElementType,
+                'highcharts-no-mousewheel'
+            );
             // Firefox uses e.detail, WebKit and IE uses deltaX, deltaY, deltaZ.
             if (chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop
-            )) {
+            ) && !haltScroll) {
+
                 const wheelSensitivity = pick(
                         wheelZoomOptions.sensitivity,
                         1.1
@@ -298,7 +304,7 @@ function onAfterGetContainer(this: Chart): void {
             }
 
             // prevent page scroll
-            if (e.preventDefault) {
+            if (e.preventDefault && !haltScroll) {
                 e.preventDefault();
             }
         });
