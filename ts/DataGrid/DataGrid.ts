@@ -42,7 +42,7 @@ const {
     pick
 } = DataGridUtils;
 import Globals from './Globals.js';
-import Templating from '../Core/Templating.js';
+import Templating from './Templating.js';
 const { format } = Templating;
 import DataGridDefaults from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
