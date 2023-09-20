@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Chrome CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
     branches: [ 'master' ]
   pull_request:
@@ -24,82 +20,72 @@ permissions:
 
 jobs:
 
-  ### BROWSERSTACK ###
-  test_browserstack:
+  ### HEADLESS ###
+  test_headless:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    environment: browserstack
-    strategy:
-      matrix:
-        node-version: [lts/*]
-    steps:
-      # set system env variables
-      - name: 'BrowserStack Env Setup'
-        uses: 'browserstack/github-actions/setup-env@master'
-        with:
-          username:  ${{ secrets.BROWSERSTACK_USER }}
-          access-key: ${{ secrets.BROWSERSTACK_KEY }}
-          build-name: BUILD_INFO
-          project-name: REPO_NAME
-      - name: 'BrowserStackLocal Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: start
-          local-identifier: random
-      # setup
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm i
-      # tasks
-      - name: Build Highcharts
-        run: npx gulp scripts
-      - name: Run Browserstack Tests (Chrome)
-        run: npx gulp test --single-run --splitbrowsers Win.Chrome
-
-  ### CYPRESS ###
-  test_cypress:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [lts/*]
     steps:
       # setup
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: 'npm'
       - uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
       - uses: nanasess/setup-chromedriver@v2
-      - name: Install Dependencies
+      - name: Setup Display
         run: |
-          npm i cypress github:highcharts/highcharts-utils
-          npx cypress install && npx cypress info
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+      - name: Install Dependencies
+        run: npm i
       # tasks
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Run Highcharts-Utils
-        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
       - name: Check Chrome
         run: |
-            google-chrome --version
-            whereis google-chrome
-      - name: Run Cypress Tests (Chrome)
-        run: TZ=UTC npx cypress run --browser chrome --headless
-      - name: Store Cypress Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-chrome
-          path: |
-            ${GITHUB_WORKSPACE}/cypress/videos
-            ${GITHUB_WORKSPACE}/cypress/screenshots
-          retention-days: 12
+          chrome --version
+          whereis chrome
+      - name: Run Tests (Chrome)
+        run: |
+          export DISPLAY=:99
+          npx gulp test --single-run --splitbrowsers Chrome
+
+  ### BROWSERSTACK ###
+  # test_browserstack:
+  #   timeout-minutes: 20
+  #   runs-on: ubuntu-latest
+  #   environment: browserstack
+  #   steps:
+  #     # setup
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: lts/*
+  #         cache: 'npm'
+  #     - name: Install Dependencies
+  #       run: npm i
+  #     - name: 'BrowserStack Env Setup'
+  #       uses: 'browserstack/github-actions/setup-env@master'
+  #       with:
+  #         username:  ${{ secrets.BROWSERSTACK_USER }}
+  #         access-key: ${{ secrets.BROWSERSTACK_KEY }}
+  #         build-name: BUILD_INFO
+  #         project-name: REPO_NAME
+  #     - name: 'BrowserStackLocal Setup'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: start
+  #         local-identifier: random
+  #     # tasks
+  #     - name: Build Highcharts
+  #       run: npx gulp scripts
+  #     - name: Run Browserstack Tests (Chrome)
+  #       run: npx gulp test --single-run --splitbrowsers Win.Chrome
+  #     # clean up
+  #     - name: 'BrowserStackLocal Stop'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: stop
