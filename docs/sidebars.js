@@ -96,6 +96,7 @@ module.exports = {
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/data-modifiers',
+            'dashboards/mathmodifier-module',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/synchronize-components',
