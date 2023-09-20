@@ -21,10 +21,9 @@ import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
-import DOMElementType from '../../Core/Renderer/DOMElementType';
 const {
     addEvent,
     isObject,
