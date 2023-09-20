@@ -23,11 +23,11 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        //data: [-1, -1, 100, -1, -1],
+        data: [-1, -1, 100, 1, 1, -100, -1, -1],
         //data: [1, 1, -100, 1, 1],
         //data: [1, -1, -1, -2, 0, 1, -1, -0.022, -0.01, 1, 2, 1],
-        data: new Array(20).fill(0).map(() => Math.random() - 0.5),
-        type: 'area',
+        //data: new Array(100).fill(0).map(() => Math.random() - 0.5),
+        // type: 'area',
         lineWidth: 10,
         color: 'lightgreen',
         negativeColor: 'red'
