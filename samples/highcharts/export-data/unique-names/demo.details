@@ -1,6 +1,0 @@
----
- name: Daytime temperatures in the capitals
- authors:
-   - Kamil Kubik
- js_wrap: b
-...
