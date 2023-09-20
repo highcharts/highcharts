@@ -104,7 +104,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
             },
             yAxis: {
                 title: {
@@ -127,10 +130,16 @@ Dashboards.board('container', {
                 text: ''
             },
             tooltip: {
-                pointFormat: '<b>{point.y:.2f}</b> mln'
+                pointFormat: '<b>{point.y:.2f}</b> mln',
+                stickOnContact: true
             },
             legend: {
                 enabled: false
+            },
+            accessibility: {
+                chartContainerLabel: 'Population',
+                typeDescription: 'Bar chart',
+                description: 'Population of cities in millions'
             }
         }
     },
@@ -152,7 +161,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
             },
             yAxis: {
                 title: {
@@ -172,13 +184,19 @@ Dashboards.board('container', {
                 }
             },
             tooltip: {
-                pointFormat: '<b>{point.y}</b> km2'
+                pointFormat: '<b>{point.y}</b> km2',
+                stickOnContact: true
             },
             title: {
                 text: ''
             },
             legend: {
                 enabled: false
+            },
+            accessibility: {
+                chartContainerLabel: 'Metropolitan Area',
+                typeDescription: 'Bar chart',
+                description: 'Metropolitan area or cities in km2'
             }
         }
     },
@@ -200,7 +218,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
             },
             yAxis: {
                 title: {
@@ -220,13 +241,19 @@ Dashboards.board('container', {
                 }
             },
             tooltip: {
-                pointFormat: '<b>{point.y}</b> m'
+                pointFormat: '<b>{point.y}</b> m',
+                stickOnContact: true
             },
             title: {
                 text: ''
             },
             legend: {
                 enabled: false
+            },
+            accessibility: {
+                chartContainerLabel: 'Highest Elevation',
+                typeDescription: 'Bar chart',
+                description: 'Highest Elevation of cities in meters'
             }
         }
     },
