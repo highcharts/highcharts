@@ -136,10 +136,14 @@ Dashboards.board('container', {
             legend: {
                 enabled: false
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Population'
+                }
+            },
             accessibility: {
-                chartContainerLabel: 'Population',
-                typeDescription: 'Bar chart',
-                description: 'Population of cities in millions'
+                description: `The chart is displaying the Population of cities.
+                The values are introduced in millions.`
             }
         }
     },
@@ -193,10 +197,14 @@ Dashboards.board('container', {
             legend: {
                 enabled: false
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Metropolitan Area'
+                }
+            },
             accessibility: {
-                chartContainerLabel: 'Metropolitan Area',
-                typeDescription: 'Bar chart',
-                description: 'Metropolitan area or cities in km2'
+                description: `The chart is displaying the Metropolitan area.
+                The values are introduced in square kilometers.`
             }
         }
     },
@@ -250,10 +258,14 @@ Dashboards.board('container', {
             legend: {
                 enabled: false
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Highest Elevation'
+                }
+            },
             accessibility: {
-                chartContainerLabel: 'Highest Elevation',
-                typeDescription: 'Bar chart',
-                description: 'Highest Elevation of cities in meters'
+                description: `The chart is displaying the Highest Elevation of
+                    cities. The values are introduced in meters.`
             }
         }
     },
