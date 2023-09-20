@@ -24,16 +24,51 @@ permissions:
 
 jobs:
 
-  ### BROWSERSTACK ###
-  test_browserstack:
+  ### HEADLESS ###
+  test_headless:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    environment: browserstack
-    strategy:
-      matrix:
-        node-version: [lts/*]
     steps:
-      # set system env variables
+      # setup
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - uses: browser-actions/setup-firefox@latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Setup Display
+        run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+      - name: Install Dependencies
+        run: npm i
+      # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+      - name: Run Firefox Tests (Firefox)
+        run: |
+          export DISPLAY=:99
+          npx gulp test --single-run --splitbrowsers Firefox
+
+  ### BROWSERSTACK ###
+  test_browserstack:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    environment: browserstack
+    steps:
+      # setup
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm i
       - name: 'BrowserStack Env Setup'
         uses: 'browserstack/github-actions/setup-env@master'
         with:
@@ -46,58 +81,13 @@ jobs:
         with:
           local-testing: start
           local-identifier: random
-      # setup
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm i
       # tasks
       - name: Build Highcharts
         run: npx gulp scripts
       - name: Run Browserstack Tests (Firefox)
         run: npx gulp test --single-run --splitbrowsers Mac.Firefox
-
-  ### CYPRESS ###
-  test_cypress:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [lts/*]
-    steps:
-      # setup
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      # clean up
+      - name: 'BrowserStackLocal Stop'
+        uses: 'browserstack/github-actions/setup-local@master'
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - uses: browser-actions/setup-firefox@latest
-      - uses: browser-actions/setup-geckodriver@latest
-      - name: Install Dependencies
-        run: |
-          npm i cypress github:highcharts/highcharts-utils
-          npx cypress install && npx cypress info
-      # tasks
-      - name: Build Highcharts
-        run: npx gulp scripts
-      - name: Run Highcharts-Utils
-        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
-      - name: Check Firefox
-        run: |
-          firefox --version
-          whereis firefox
-      - name: Run Cypress Tests (Firefox)
-        run: TZ=UTC npx cypress run --browser firefox --headless
-      - name: Store Cypress Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-firefox
-          path: |
-            ${GITHUB_WORKSPACE}/cypress/videos
-            ${GITHUB_WORKSPACE}/cypress/screenshots
-          retention-days: 12
+          local-testing: stop
