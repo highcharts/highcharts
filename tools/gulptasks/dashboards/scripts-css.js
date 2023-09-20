@@ -54,9 +54,15 @@ function dashboardsScriptsCSS() {
 
         const dataGridCSS = path.join('css', 'datagrid.css');
 
+        // TODO: datagrid should only be in a separate folder
         fslib.copyFile(
             dataGridCSS,
             path.join('code', 'datagrid', dataGridCSS)
+        );
+
+        fslib.copyFile(
+            dataGridCSS,
+            path.join('code', 'dashboards', dataGridCSS)
         );
 
         log.success('Done.');

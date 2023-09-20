@@ -37,8 +37,24 @@ function buildCSS(
     );
 
     for (const cssFile of fsLib.getFilePaths(targetFolder)) {
+        let writeFilePath = cssFile;
+
+        // Workaround until datagrid is its own product
+        if (cssFile.includes('datagrid.css')) {
+            const dataGridTarget = targetFolder
+                .replace('dashboards/code', 'datagrid/code');
+
+            fs.mkdirSync(path.join(dataGridTarget), { recursive: true });
+
+            writeFilePath = writeFilePath
+                .replace(
+                    targetFolder,
+                    dataGridTarget
+                );
+        }
+
         fs.writeFileSync(
-            cssFile,
+            writeFilePath,
             fs
                 .readFileSync(cssFile, 'utf8')
                 .replace(/@product.version@/gu, release)
