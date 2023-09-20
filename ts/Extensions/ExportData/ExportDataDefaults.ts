@@ -164,6 +164,7 @@ const exporting: ExportingOptions = {
          * The line delimiter in the exported data, defaults to a newline.
          */
         lineDelimiter: '\n'
+
     },
 
     /**
