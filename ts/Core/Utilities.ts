@@ -47,6 +47,7 @@ const {
     fireEvent,
     find,
     getStyle,
+    getNestedProperty,
     isArray,
     isClass,
     isDOMElement,
@@ -916,63 +917,6 @@ function getClosestDistance(
     return closest;
 }
 
-/**
- * Returns the value of a property path on a given object.
- *
- * @private
- * @function getNestedProperty
- *
- * @param {string} path
- * Path to the property, for example `custom.myValue`.
- *
- * @param {unknown} obj
- * Instance containing the property on the specific path.
- *
- * @return {unknown}
- * The unknown property value.
- */
-function getNestedProperty(path: string, parent: unknown): unknown {
-
-    const pathElements = path.split('.');
-
-    while (pathElements.length && defined(parent)) {
-        const pathElement = pathElements.shift();
-
-        // Filter on the key
-        if (
-            typeof pathElement === 'undefined' ||
-            pathElement === '__proto__'
-        ) {
-            return; // undefined
-        }
-
-        if (pathElement === 'this') {
-            let thisProp;
-            if (isObject(parent)) {
-                thisProp = (parent as Record<string, unknown>)['@this'];
-            }
-            return thisProp ?? parent;
-        }
-
-        const child = (parent as Record<string, unknown>)[
-            pathElement
-        ] as Record<string, unknown>;
-
-        // Filter on the child
-        if (
-            !defined(child) ||
-            typeof child === 'function' ||
-            typeof child.nodeType === 'number' ||
-            child as unknown === win
-        ) {
-            return; // undefined
-        }
-
-        // Else, proceed
-        parent = child;
-    }
-    return parent;
-}
 
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
