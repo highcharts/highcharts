@@ -63,7 +63,6 @@ export interface ExportingCsvOptions {
     decimalPoint?: (string|null);
     itemDelimiter?: (string|null);
     lineDelimiter?: string;
-    uniqueNames?: boolean;
 }
 
 export interface ExportingOptions {
