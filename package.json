@@ -62,7 +62,7 @@
     "browserify": "^17.0.0",
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
-    "cypress": "^12.5.0",
+    "cypress": "^13.2.0",
     "cypress-visual-regression": "^2.1.1",
     "dtslint": "^4.2.1",
     "eslint": "^8.33.0",
