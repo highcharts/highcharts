@@ -190,3 +190,14 @@ describe('Add components through UI', () => {
         });
     });
 });
+
+describe('Edit mode with toolbars disabled', () => {
+    before(() => {
+        cy.visit('/dashboards/edit-mode/toolbars-disabled');
+        cy.toggleEditMode();
+    });
+
+    it('Add component button should not exist.', () => {
+        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').should('not.exist');
+    });
+});

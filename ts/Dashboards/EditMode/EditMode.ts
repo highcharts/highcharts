@@ -737,27 +737,29 @@ class EditMode {
         // Create rwd menu
         this.createRwdMenu();
 
-        // Create add button
-        const addIconURL = options?.tools?.addComponentBtn?.icon;
+        // Create add component button
+        if (options.toolbars?.cell?.enabled) {
+            const addIconURL = options?.tools?.addComponentBtn?.icon;
 
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon: addIconURL,
-                text: this.lang.addComponent,
-                callback: (): void => {
-                    // Sidebar trigger
-                    if (editMode.sidebar) {
-                        editMode.sidebar.show();
-                        editMode.setEditOverlay();
+            this.addComponentBtn = EditRenderer.renderButton(
+                this.tools.container,
+                {
+                    className: EditGlobals.classNames.editToolsBtn,
+                    icon: addIconURL,
+                    text: this.lang.addComponent,
+                    callback: (): void => {
+                        // Sidebar trigger
+                        if (editMode.sidebar) {
+                            editMode.sidebar.show();
+                            editMode.setEditOverlay();
+                        }
+                    },
+                    style: {
+                        display: 'none'
                     }
-                },
-                style: {
-                    display: 'none'
                 }
-            }
-        );
+            );
+        }
     }
 
     /**
