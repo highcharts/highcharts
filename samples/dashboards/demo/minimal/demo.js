@@ -146,7 +146,7 @@ Dashboards.board('container', {
             xAxis: {
                 type: 'category',
                 accessibility: {
-                    description: 'Grocieries'
+                    description: 'Groceries'
                 }
             },
             yAxis: {
@@ -192,10 +192,15 @@ Dashboards.board('container', {
                 valueSuffix: ' mcg',
                 stickOnContact: true
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Vitamin A in food. Highcharts Interactive Chart.'
+                }
+            },
             accessibility: {
-                chartContainerLabel: 'Iron',
-                typeDescription: 'Column chart',
-                description: 'The iron amount in Foods',
+                description: `The chart is displaying the vitamin A amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA)`,
                 point: {
                     valueSuffix: ' mcg'
                 }
@@ -221,7 +226,7 @@ Dashboards.board('container', {
             xAxis: {
                 type: 'category',
                 accessibility: {
-                    description: 'Grocieries'
+                    description: 'Groceries'
                 }
             },
             yAxis: {
@@ -267,10 +272,15 @@ Dashboards.board('container', {
                 valueSuffix: ' mcg',
                 stickOnContact: true
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Iron in food. Highcharts Interactive Chart.'
+                }
+            },
             accessibility: {
-                chartContainerLabel: 'Vitamin A',
-                typeDescription: 'Column chart',
-                description: 'The vitamin A amount in Foods',
+                description: `The chart is displaying the Iron amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA)`,
                 point: {
                     valueSuffix: ' mcg'
                 }
