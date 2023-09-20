@@ -860,7 +860,7 @@ abstract class Component {
 
         if (shouldExist) {
             const newTitle = Component.createTextElement(
-                'h1',
+                'h2',
                 'title',
                 titleOptions
             );
