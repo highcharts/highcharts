@@ -33,7 +33,6 @@ import Utilities from '../Dashboards/Utilities.js';
 
 // Fill registries
 import '../Dashboards/Components/HTMLComponent.js';
-import '../Dashboards/Components/KPIComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
