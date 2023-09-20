@@ -8,8 +8,13 @@ on:
     paths:
       - 'css/**'
       - 'samples/**'
+      - '!samples/dashboards/**'
+      - '!samples/data-grid/**'
       - 'test/**'
       - 'ts/**'
+      - '!ts/Dashboards/**'
+      - '!ts/DataGrid/**'
+      - '!ts/masters-dashboards/**'
       - '.github/workflows/**'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -40,13 +45,11 @@ jobs:
       # tasks
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Build Dashboards
-        run: npx gulp dashboards/scripts
       - name: Check Firefox
         run: |
           firefox --version
           whereis firefox
-      - name: Run Firefox Tests (Firefox)
+      - name: Run Tests (Firefox)
         run: |
           export DISPLAY=:99
           npx gulp test --single-run --splitbrowsers Firefox
