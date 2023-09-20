@@ -2982,11 +2982,8 @@ class Series {
      */
     public applyZones(): void {
         const series = this,
-            chart = this.chart,
+            { area, chart, graph, zones, points } = series,
             renderer = chart.renderer,
-            zones = this.zones,
-            graph = this.graph,
-            area = this.area,
             plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis = this[`${this.zoneAxis}Axis`],
             inverted = chart.inverted,
@@ -3035,36 +3032,32 @@ class Series {
             // Prepare for perpendicular clips
             let lastPoint: Point|undefined,
                 // slant = 0,
-                isClose = false,
+                closeTo: Series.ZoneObject|undefined,
                 start = 0;
 
-            for (const point of this.points) {
-                const zone = point.zone,
-                    lastY = lastPoint?.y,
+            for (let i = 0; i < points.length; i++) {
+                const point = points[i],
+                    zone = point.zone,
+                    isLast = i === points.length - 1,
                     lastPlotX = lastPoint?.plotX,
-                    { plotX, y } = point;
-
-                if (zone && Math.abs(
-                    (point.plotY || 0) - (zone.translated || 0)
-                ) < halfWidth) {
-                    isClose = true;
-                }
+                    lastPlotY = lastPoint?.plotY,
+                    { plotX, plotY } = point;
 
                 // When crossing between zones
                 if (
-                    isNumber(y) &&
-                    isNumber(lastY) &&
+                    isNumber(plotY) &&
+                    isNumber(lastPlotY) &&
                     lastPoint &&
-                    zone !== lastPoint.zone
+                    (zone !== lastPoint.zone || isLast)
                 ) {
                     // Which zone crossing is between the two points?
-                    let threshold: number|undefined;
+                    let threshold = zone?.translated;
                     for (const z of [zone, lastPoint.zone]) {
-                        threshold = z?.value;
+                        threshold = z?.translated;
                         if (
                             isNumber(threshold) && (
-                                (lastY < threshold && threshold <= y) ||
-                                (lastY >= threshold && threshold > y)
+                                (lastPlotY < threshold && threshold <= plotY) ||
+                                (lastPlotY >= threshold && threshold > plotY)
                             )
                         ) {
                             break;
@@ -3076,9 +3069,11 @@ class Series {
                         isNumber(plotX) &&
                         isNumber(lastPlotX)
                     ) {
-                        const factor = (threshold - lastY) / (y - lastY),
-                            interpolatedPlotX = lastPlotX +
-                                (plotX - lastPlotX) * factor;
+                        const factor = (threshold - lastPlotY) /
+                                (plotY - lastPlotY),
+                            end = isLast ?
+                                chart.plotSizeX || 0 :
+                                lastPlotX + (plotX - lastPlotX) * factor;
                         /* Logic for slanted notch edge
                         slant = Math.min(
                             maxSlant,
@@ -3089,22 +3084,37 @@ class Series {
                         );
                         */
 
-                        const lowerZone = y > lastY ? lastPoint.zone : zone,
-                            sign = y > lastY ? 1 : -1;
-
-                        if (lowerZone) {
-                            lowerZone.segments?.push({
+                        if (closeTo) {
+                            closeTo.segments?.push({
                                 start,
-                                end: interpolatedPlotX,
-                                sign,
-                                isClose
+                                end,
+                                sign: lastPlotY > (closeTo.translated || 0) ?
+                                    1 : -1
                             });
-                            start = interpolatedPlotX;
-                            isClose = false;
                         }
+                        start = end;
+                        closeTo = void 0;
                     }
+
                 }
+                // Close to upper boundary
+                if (zone && Math.abs(
+                    (plotY || 0) - (zone.translated || 0)
+                ) < halfWidth) {
+                    closeTo = zone;
+                }
+
+                // Close to lower boundary
+                // @todo refactor
+                const zoneBelow = zone && zones[zones.indexOf(zone) - 1];
+                if (zoneBelow && Math.abs(
+                    (plotY || 0) - (zoneBelow.translated || 0)
+                ) < halfWidth) {
+                    closeTo = zoneBelow;
+                }
+
                 lastPoint = point;
+
             }
 
             // Create the clips
@@ -3115,16 +3125,14 @@ class Series {
 
                 const lineClip = (zone?.segments || []).reduce(
                     (path, seg): SVGPath => {
-                        if (seg.isClose) {
-                            const translated = (zone.translated || 0),
-                                notch = translated - seg.sign * halfWidth;
-                            path.push(
-                                ['L', seg.start, translated],
-                                ['L', seg.start, notch],
-                                ['L', seg.end, notch],
-                                ['L', seg.end, translated]
-                            );
-                        }
+                        const translated = (zone.translated || 0),
+                            notch = translated - seg.sign * halfWidth;
+                        path.push(
+                            ['L', seg.start, translated],
+                            ['L', seg.start, notch],
+                            ['L', seg.end, notch],
+                            ['L', seg.end, translated]
+                        );
                         return path;
                     },
                     [] as SVGPath
@@ -3193,7 +3201,7 @@ class Series {
                 lastLineClip = lineClip.reverse();
 
 
-                /* Debug clip paths
+                //* Debug clip paths
                 chart.renderer.path(d)
                     .attr({
                         stroke: zone.color || this.color || 'gray',

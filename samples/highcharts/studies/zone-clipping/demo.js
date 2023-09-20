@@ -2,6 +2,9 @@ Highcharts.chart('container', {
     chart: {
         width: 400
     },
+    accessibility: {
+        enabled: false
+    },
     title: {
         text: 'Zoned graph with adaptive clips',
         align: 'left'
@@ -20,10 +23,10 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data1: [1, 1, -1, 1, 1],
-        data2: [1000, 1000, -1, -1, 0, 0, 1, 1, -1],
-        data: [1, -1, -1, -2, 0, 1, -1, -0.022, -0.01, 1, 2, 1],
-        data4: new Array(10).fill(0).map(() => Math.random() - 0.5),
+        //data: [-1, -1, 100, -1, -1],
+        //data: [1, 1, -100, 1, 1],
+        //data: [1, -1, -1, -2, 0, 1, -1, -0.022, -0.01, 1, 2, 1],
+        data: new Array(20).fill(0).map(() => Math.random() - 0.5),
         type: 'area',
         lineWidth: 10,
         color: 'lightgreen',
