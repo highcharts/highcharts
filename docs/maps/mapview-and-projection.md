@@ -30,5 +30,5 @@ A map view operates with three different coordinate systems:
 * The projected plane on which the geographic coordinates are projected, and
 * The pixel positions within the plot area, onto which the projected plane is scaled and translated.
 
-The [MapView class](https://api.highcharts.com/class-reference/Highcharts.MapView) contains conversion functions between these coordiate systems. In addition to that, all pointer events are extended with `lon` and `lat` properties, allowing longitude and latitude to be read directly from for example a click event.
+The [MapView class](https://api.highcharts.com/class-reference/Highcharts.MapView) contains conversion functions between these coordinate systems. In addition to that, all pointer events are extended with `lon` and `lat` properties, allowing longitude and latitude to be read directly from for example a click event.
 

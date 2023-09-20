@@ -339,7 +339,9 @@ class SeriesKeyboardNavigation {
                 focusedElement && focusedElement.getAttribute('class')
             );
             const isProxyFocused = focusedElClassName &&
-                focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
+                focusedElClassName.indexOf(
+                    'highcharts-a11y-proxy-element'
+                ) > -1;
 
             if (
                 chart.highlightedPoint === point &&

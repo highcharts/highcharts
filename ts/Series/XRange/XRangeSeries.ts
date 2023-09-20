@@ -679,7 +679,6 @@ class XRangeSeries extends ColumnSeries {
 interface XRangeSeries {
     pointClass: typeof XRangePoint;
     columnMetrics: ColumnMetricsObject;
-    cropShoulder: number;
     getExtremesFromAll: boolean;
     parallelArrays: Array<string>;
     requireSorting: boolean;
@@ -690,7 +689,7 @@ interface XRangeSeries {
 
 extend(XRangeSeries.prototype, {
     pointClass: XRangePoint,
-    cropShoulder: 1,
+    pointArrayMap: ['x2', 'y'],
     getExtremesFromAll: true,
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
