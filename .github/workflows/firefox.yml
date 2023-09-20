@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Firefox CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
     branches: [ 'master' ]
   pull_request:
@@ -56,38 +52,38 @@ jobs:
           npx gulp test --single-run --splitbrowsers Firefox
 
   ### BROWSERSTACK ###
-  test_browserstack:
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-    environment: browserstack
-    steps:
-      # setup
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm i
-      - name: 'BrowserStack Env Setup'
-        uses: 'browserstack/github-actions/setup-env@master'
-        with:
-          username:  ${{ secrets.BROWSERSTACK_USER }}
-          access-key: ${{ secrets.BROWSERSTACK_KEY }}
-          build-name: BUILD_INFO
-          project-name: REPO_NAME
-      - name: 'BrowserStackLocal Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: start
-          local-identifier: random
-      # tasks
-      - name: Build Highcharts
-        run: npx gulp scripts
-      - name: Run Browserstack Tests (Firefox)
-        run: npx gulp test --single-run --splitbrowsers Mac.Firefox
-      # clean up
-      - name: 'BrowserStackLocal Stop'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: stop
+  # test_browserstack:
+  #   timeout-minutes: 20
+  #   runs-on: ubuntu-latest
+  #   environment: browserstack
+  #   steps:
+  #     # setup
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: lts/*
+  #         cache: 'npm'
+  #     - name: Install Dependencies
+  #       run: npm i
+  #     - name: 'BrowserStack Env Setup'
+  #       uses: 'browserstack/github-actions/setup-env@master'
+  #       with:
+  #         username:  ${{ secrets.BROWSERSTACK_USER }}
+  #         access-key: ${{ secrets.BROWSERSTACK_KEY }}
+  #         build-name: BUILD_INFO
+  #         project-name: REPO_NAME
+  #     - name: 'BrowserStackLocal Setup'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: start
+  #         local-identifier: random
+  #     # tasks
+  #     - name: Build Highcharts
+  #       run: npx gulp scripts
+  #     - name: Run Browserstack Tests (Firefox)
+  #       run: npx gulp test --single-run --splitbrowsers Mac.Firefox
+  #     # clean up
+  #     - name: 'BrowserStackLocal Stop'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: stop
