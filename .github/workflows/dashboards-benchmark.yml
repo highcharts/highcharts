@@ -7,7 +7,7 @@ on:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
       - 'test/ts-node-unit-tests/benchmark*'
-      - '.github/workflows/**'
+      - '.github/workflows/dashboards-benchmark.yml'
 
 permissions:
   contents: read # to fetch code (actions/checkout)

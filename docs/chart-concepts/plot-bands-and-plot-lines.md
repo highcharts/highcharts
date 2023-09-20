@@ -88,7 +88,7 @@ Some simple examples of how a plot band can be [added](https://jsfiddle.net/gh/g
 Plot bands and lines in polar charts and gauges
 -----------------------------------------------
 
-With a plot band in a polar chart or a gauge, the band will form as a concentric circle around the chart.  When used inside the x-axis of a polar chart the band will wrap around the outer corner of the chart. With the y-axis it will form a circle and fill the given area. Inside a gauge the band will wrap around the outer corner of the chart. The plot line will form as a straigth line when used within the x-axis, and as a concentric circle used within the y-axis.
+With a plot band in a polar chart or a gauge, the band will form as a concentric circle around the chart.  When used inside the x-axis of a polar chart the band will wrap around the outer corner of the chart. With the y-axis it will form a circle and fill the given area. Inside a gauge the band will wrap around the outer corner of the chart. The plot line will form as a straight line when used within the x-axis, and as a concentric circle used within the y-axis.
 
 ![plot_bands_in_polar_chart.png](plot_bands_in_polar_chart.png)
 

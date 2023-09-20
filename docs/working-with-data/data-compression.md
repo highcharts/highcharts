@@ -3,7 +3,7 @@ Data compression
 
 The `data` option of a series supports [three basic ways](https://www.highcharts.com/docs/chart-concepts/series#the-data-in-a-series) of of providing data. However, Highcharts requires `x` values on a datetime axis to be given in JavaScript timestamps, which are milliseconds since 1970-01-01.
 
-For a large time based dataset, passing individual `x` values over the network may represent a substancial amount of traffic. For example, a dataset with hourly values over a year (24 * 365 = 8760 x/y pairs), weighs 158 kB on the file system. It should be noted though that gzipping would chip off most of the repetetive parts of the timestamp in a typical web setup.
+For a large time based dataset, passing individual `x` values over the network may represent a substantial amount of traffic. For example, a dataset with hourly values over a year (24 * 365 = 8760 x/y pairs), weighs 158 kB on the file system. It should be noted though that gzipping would chip off most of the repetetive parts of the timestamp in a typical web setup.
 
 ```js
 data: [

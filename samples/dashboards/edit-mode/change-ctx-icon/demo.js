@@ -3,7 +3,7 @@ const dash = Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
-            icon: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd81b2100b6f4851a05cdbcd38658b662c18/gfx/dashboard-icons/series-types/icon-gauge.svg'
+            icon: 'https://code.highcharts.com/dashboards/gfx/dashboards-icons/series-types/icon-gauge.svg'
         }
     },
     gui: {

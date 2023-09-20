@@ -441,7 +441,7 @@
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
-    background: url("https://code.highcharts.com/gfx/dashboards-icons/drag.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/drag.svg") no-repeat 50% 50%;
     width: 20px;
     height: 20px;
     margin-right: 10px;
@@ -449,7 +449,7 @@
 
 .highcharts-dashboards-toolbar .edit-col,
 .highcharts-dashboards-toolbar .edit-row {
-    background: url("https://code.highcharts.com/gfx/dashboards-icons/settings.svg") no-repeat 50% 50%;
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/settings.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0;
     text-indent: -9999px;

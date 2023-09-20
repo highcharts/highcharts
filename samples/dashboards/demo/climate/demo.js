@@ -67,7 +67,8 @@ async function setupBoard() {
             contextMenu: {
                 enabled: true,
                 icon: (
-                    'https://code.highcharts.com/gfx/dashboards-icons/menu.svg'
+                    'https://code.highcharts.com/dashboards/gfx/' +
+                    'dashboards-icons/menu.svg'
                 ),
                 items: [
                     'editMode',

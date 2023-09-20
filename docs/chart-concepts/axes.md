@@ -167,6 +167,12 @@ Note that on logarithmic axes, the [tickInterval](https://api.highcharts.com/hig
 
 Another thing to note is that a logarithmic axis can never become negative, as each full axis unit is one tenth of the previous. As a consequence, Highcharts will remove 0 or negative points associated to the axis, and if you try to set the [axis.min](https://api.highcharts.com/highcharts/yAxis.min) option to 0 or negative, it will fail with an error.
 
+#### A trick to plot zero and negative values on a logarithmic axis in Highcharts
+
+Let's begin by delving into the core concept of logarithms. When we have an equation like 10 raised to the power of L equals Z, we say that L is the logarithm with a base of 10 for Z. If L is a negative number, this implies that Z is a positive fraction smaller than 1.0. In the case where L equals zero, Z is precisely 1.0. On the other hand, if L is greater than 0, then Z exceeds 1.0. It's essential to emphasize that no matter the value of L, it's impossible for Z to be zero or negative. Logarithms do not have defined values for such cases, they exclusively operate on positive numbers.
+
+If you would like to show zero and negative values on a logarithmic axis in Highcharts, the only viable approach is to employ a custom plugin. This plugin allows for the emulation of negative values on a logarithmic axis. It's important to bear in mind that the resulting scale is not mathematically precise since a true logarithmic axis never touches or crosses zero. The custom plugin can be [found in this demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/).
+
 ### Datetime
 
 A datetime axis prints labels of round date values in appropriate intervals. Internally, a datetime axis is a linear numeric axis based on milliseconds since midnight Jan 1, 1970, as specified by the JavaScript Date object. Depending on the scale the datetime label will either be represented as time or a date.
