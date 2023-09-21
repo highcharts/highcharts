@@ -16,7 +16,7 @@ on:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
       - 'css/**'
-      - '.github/workflows/**'
+      - '.github/workflows/dashboards-test.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)

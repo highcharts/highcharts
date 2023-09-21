@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 .highcharts-background-color {
     fill: #f0f0f0;
@@ -28,7 +28,7 @@
     opacity: 1;
 }
 
-.highcharts-a11y-proxy-button {
+.highcharts-a11y-proxy-element {
     cursor: default;
 }
 

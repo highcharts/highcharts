@@ -64,6 +64,11 @@ class ConfirmationPopup extends BaseForm {
         editMode: EditMode,
         options?: ConfirmationPopup.Options
     ) {
+        iconsURL =
+            options && options.close && options.close.icon ?
+                options.close.icon :
+                iconsURL;
+
         super(parentDiv, iconsURL);
 
         this.editMode = editMode;

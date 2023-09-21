@@ -1457,7 +1457,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public pointAttribs(
-        point: TreemapPoint,
+        point?: TreemapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         let series = this,

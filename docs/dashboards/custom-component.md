@@ -19,7 +19,7 @@ class YouTubeComponent extends Component {
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new `YouTubeComponent` class needs to be addded to the registry, using the `ComponentRegistry.registerComponent` method.
+At the end, the new `YouTubeComponent` class needs to be added to the registry, using the `ComponentRegistry.registerComponent` method.
 
 The custom code looks like below:
 

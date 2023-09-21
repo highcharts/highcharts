@@ -36,6 +36,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/dist-upload',
     'dashboards/dist-zip',
     'dashboards/scripts',
+    'dashboards/scripts-css',
     'dashboards/scripts-dts',
     'dashboards/scripts-watch',
     'dashboards/test',
