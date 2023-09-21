@@ -104,16 +104,6 @@ class CSVConnector extends DataConnector {
      */
     public readonly converter: CSVConverter;
 
-    /**
-     * The URL to fetch if the source is external
-     */
-    private liveDataURL?: string;
-
-    /**
-     * The current timeout ID if polling is enabled
-     */
-    private liveDataTimeout?: number;
-
     /* *
      *
      *  Functions
@@ -151,13 +141,11 @@ class CSVConnector extends DataConnector {
 
         return Promise
             .resolve(
-                csv ?
-                    csv :
-                    csvURL ?
-                        fetch(csvURL || '').then(
-                            (response): Promise<string> => response.text()
-                        ) :
-                        ''
+                csvURL ?
+                    fetch(csvURL).then(
+                        (response): Promise<string> => response.text()
+                    ) :
+                    csv || ''
             )
             .then((csv): Promise<string> => {
                 if (csv) {
