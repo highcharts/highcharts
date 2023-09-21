@@ -58,7 +58,7 @@ jobs:
       #   run: npx gulp test --single-run --splitbrowsers Win.Chrome
       # - name: Run BrowserStack Tests (Firefox)
       #   run: npx gulp test --single-run --splitbrowsers Mac.Firefox
-      - name: Run BrowserStack (Safaru)
+      - name: Run BrowserStack (Safari)
         run: npx gulp test --single-run --splitbrowsers Mac.Safari
       # clean up
       - name: 'BrowserStackLocal Stop'

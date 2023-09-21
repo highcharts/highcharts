@@ -565,10 +565,10 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [checkout_and_install]
-      - test_browsers:
-          name: "test-Mac.Safari"
-          requires: ["test_cypress"]
-          browsers: "Mac.Safari"
+#      - test_browsers:
+#          name: "test-Mac.Safari"
+#          requires: ["test_cypress"]
+#          browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
@@ -580,7 +580,7 @@ workflows:
 #          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
 #          browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
-          requires: ["test-Mac.Safari"]
+          requires: ["test_cypress"]
           filters:
             branches:
               only: [master]
