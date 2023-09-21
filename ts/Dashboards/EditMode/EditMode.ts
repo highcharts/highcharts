@@ -726,10 +726,7 @@ class EditMode {
         );
 
         // Create context menu button
-        if (
-            options.contextMenu &&
-            options.contextMenu.enabled
-        ) {
+        if (options.contextMenu?.enabled) {
             this.tools.contextButtonElement = EditRenderer.renderContextButton(
                 this.tools.container,
                 editMode
@@ -746,7 +743,7 @@ class EditMode {
             options.tools?.addComponentBtn?.enabled &&
             options.toolbars?.cell?.enabled
         ) {
-            const addIconURL = options.tools?.addComponentBtn?.icon;
+            const addIconURL = options.tools.addComponentBtn.icon;
 
             this.addComponentBtn = EditRenderer.renderButton(
                 this.tools.container,
