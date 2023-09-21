@@ -198,9 +198,10 @@ Dashboards.board('container', {
                 }
             },
             accessibility: {
-                description: `The chart is displaying the vitamin A amount in
+                description: `The chart is displaying the Vitamin A amount in
                 micrograms for some groceries. There is a plotLine demonstrating
-                the daily Recommended Dietary Allowance (RDA)`,
+                the daily Recommended Dietary Allowance (RDA) of 900
+                micrograms.`,
                 point: {
                     valueSuffix: ' mcg'
                 }
@@ -280,7 +281,8 @@ Dashboards.board('container', {
             accessibility: {
                 description: `The chart is displaying the Iron amount in
                 micrograms for some groceries. There is a plotLine demonstrating
-                the daily Recommended Dietary Allowance (RDA)`,
+                the daily Recommended Dietary Allowance (RDA) of 8
+                micrograms.`,
                 point: {
                     valueSuffix: ' mcg'
                 }
