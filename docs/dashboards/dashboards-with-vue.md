@@ -32,6 +32,11 @@ To create a dashboard with Vue, please follow the steps below: <br>
     Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
     ```
 
+    __Please Note:__ If you are using the Visual Studio Code editor with the
+    Volar extension, you should change the editor setting
+    `"vue.server.maxFileSize"` to a value of at least `25000000` bytes to get
+    full editor support for all Highcharts modules.
+
 4. Add a div or any other HTML element where you want to render the dashboard.
 
     ```html
