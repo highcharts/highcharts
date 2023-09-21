@@ -89,8 +89,10 @@ class EditMode {
                 },
                 tools: {
                     addComponentBtn: {
+                        enabled: true,
                         icon: this.iconsURLPrefix + 'add.svg'
                     },
+                    enableRwdButtons: true,
                     rwdIcons: {
                         small: this.iconsURLPrefix + 'smartphone.svg',
                         medium: this.iconsURLPrefix + 'tablet.svg',
@@ -735,11 +737,16 @@ class EditMode {
         }
 
         // Create rwd menu
-        this.createRwdMenu();
+        if (options.tools?.enableRwdButtons) {
+            this.createRwdMenu();
+        }
 
         // Create add component button
-        if (options.toolbars?.cell?.enabled) {
-            const addIconURL = options?.tools?.addComponentBtn?.icon;
+        if (
+            options.tools?.addComponentBtn?.enabled &&
+            options.toolbars?.cell?.enabled
+        ) {
+            const addIconURL = options.tools?.addComponentBtn?.icon;
 
             this.addComponentBtn = EditRenderer.renderButton(
                 this.tools.container,
@@ -1060,7 +1067,7 @@ namespace EditMode {
          */
         toolbars?: Toolbars;
         /**
-         * @internal
+         * Tools options.
          */
         tools?: Tools;
     }
@@ -1071,6 +1078,9 @@ namespace EditMode {
     export interface Toolbars {
         /**
         * Options of the cell toolbar.
+        *
+        * When the cell toolbar is disabled, the Add Component button is not
+        * displayed.
         */
         cell?: CellEditToolbar.Options;
         /**
@@ -1084,29 +1094,73 @@ namespace EditMode {
     }
 
     /**
-    * @internal
+    * Tools options.
     */
     export interface Tools {
-        contextMenu?: EditContextMenu;
-        contextButtonElement?: HTMLDOMElement;
+        /**
+        * Add Component button options.
+        */
         addComponentBtn?: AddComponentBtn;
-        container?: HTMLDOMElement;
+        /**
+         * Whether the RWD buttons should be visible.
+         *
+         * @default true
+         *
+         */
+        enableRwdButtons?: boolean;
+        /**
+         * RWD buttons icons options.
+         */
         rwdIcons?: RwdIcons;
+        /**
+        * @internal
+        */
+        contextMenu?: EditContextMenu;
+        /**
+        * @internal
+        */
+        contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
+        container?: HTMLDOMElement;
     }
 
     /**
-    * @internal
+    * Add Component Button options.
     */
     export interface AddComponentBtn {
+        /**
+         * Whether the Add Component button should be visible.
+         *
+         * Note that the Add Component button is always disabled when cell
+         * toolbars are disabled.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * URL to the Add Component button icon.
+         */
         icon: string;
     }
 
     /**
-    * @internal
-    */
+     * RWD Buttons icons options.
+     */
     export interface RwdIcons {
+        /**
+         * URL to small RWD button icon.
+         */
         small: string;
+        /**
+         * URL to medium RWD button icon.
+         */
         medium: string;
+        /**
+         * URL to large RWD button icon.
+         */
         large: string;
     }
 
