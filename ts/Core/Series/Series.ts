@@ -677,7 +677,6 @@ class Series {
             marker = options.marker,
             oldMarker = oldOptions.marker || {};
 
-        // This is a workaround for update lowMarker symbol #14024
         return marker && (
             marker.enabled === false ||
             oldMarker.symbol !== marker.symbol || // #10870, #15946

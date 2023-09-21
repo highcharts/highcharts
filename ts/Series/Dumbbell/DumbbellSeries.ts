@@ -633,7 +633,7 @@ export default DumbbellSeries;
  */
 /**
  *
- * @sample {highcharts} highcharts/series-dumbbell/lowmarker/
+ * @sample {highcharts} highcharts/demo/dumbbell-markers
  *         Dumbbell chart with lowMarker option
  *
  * @declare   Highcharts.PointMarkerOptionsObject

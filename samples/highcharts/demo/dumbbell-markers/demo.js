@@ -1,11 +1,9 @@
 // Define custom SVG symbols for left and right triangles
-Highcharts.SVGRenderer.prototype.symbols.triangleLeft = function (x, y, w, h) {
-    return ['M', x, y + h / 2, 'L', x + w, y, 'L', x + w, y + h, 'Z'];
-};
+Highcharts.SVGRenderer.prototype.symbols.triangleLeft = (x, y, w, h) =>
+    ['M', x, y + h / 2, 'L', x + w, y, 'L', x + w, y + h, 'Z'];
 
-Highcharts.SVGRenderer.prototype.symbols.triangleRight = function (x, y, w, h) {
-    return ['M', x + w, y + h / 2, 'L', x, y, 'L', x, y + h, 'Z'];
-};
+Highcharts.SVGRenderer.prototype.symbols.triangleRight = (x, y, w, h) =>
+    ['M', x + w, y + h / 2, 'L', x, y, 'L', x, y + h, 'Z'];
 
 // Process and transform the data for the chart
 const data = [{
@@ -101,10 +99,7 @@ const data = [{
     return {
         ...dataPoint,
         low: isIncrease ? dataPoint.previous : dataPoint.current,
-        high: isIncrease ? dataPoint.current : dataPoint.previous,
-        color: isIncrease ?
-            Highcharts.getOptions().colors[2] :
-            Highcharts.getOptions().colors[5]
+        high: isIncrease ? dataPoint.current : dataPoint.previous
     };
 });
 
@@ -180,6 +175,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Increase',
         data: increasingData,
+        color: Highcharts.getOptions().colors[2],
         marker: {
             enabled: true,
             symbol: 'triangleRight'
@@ -191,6 +187,7 @@ Highcharts.chart('container', {
     {
         name: 'Decrease',
         data: decreasingData,
+        color: Highcharts.getOptions().colors[5],
         marker: {
             enabled: false
         },
