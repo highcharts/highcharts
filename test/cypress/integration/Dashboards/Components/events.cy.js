@@ -7,7 +7,7 @@ function dropComponent(elementName) {
 describe('Component events', () => {
   before(() => {
     cy.visit('/dashboards/cypress/chart-interaction');
-  });
+  })
 
   it('Mount event should be triggered on init', () => {
     cy.get('#mount').should('have.value', 'mount');
@@ -49,11 +49,21 @@ describe('Component events', () => {
     cy.get('#update').should('have.value', 'update');
   });
 
-  it('The editMode event should be triggered when triggering editmode', () => {
-    cy.toggleEditMode();
-    cy.get('#editmode').should('have.value', 'deactivated');
+  it('Press ESC should close sidebar popup', () => {
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
-    cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
-    cy.get('#editmode').should('have.value', 'activated');
+    cy.contains('Confirm').should('be.visible');
+    cy.get('body').type('{esc}');
+
+    cy.contains('Confirm').should('not.be.visible');
+  });
+
+  it('Press ESC should close confirmation popup', () => {
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
+
+    cy.contains('Confirm').should('be.visible');
+    cy.get('body').type('{esc}');
+
+    cy.contains('Confirm').should('not.be.visible');
   });
 });

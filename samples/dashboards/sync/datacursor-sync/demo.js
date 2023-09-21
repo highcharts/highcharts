@@ -13,6 +13,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
                     },
                     id: 'highcharts-dashboards-cell-a0'
@@ -20,7 +26,14 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
+
                     },
                     id: 'highcharts-dashboards-cell-b0'
                 }]
@@ -128,6 +141,10 @@ function buildChartOptions(type, table, cursor) {
 // Build table with Highcharts.Series aliases
 function buildVegeTable() {
     const table = new DataTable({
+        aliases: {
+            name: 'vegetable',
+            y: 'amount'
+        },
         columns: {
             vegetable: [
                 'Broccoli',
@@ -153,9 +170,6 @@ function buildVegeTable() {
         },
         id: 'Vegetables'
     });
-
-    table.setColumnAlias('name', 'vegetable');
-    table.setColumnAlias('y', 'amount');
 
     return table;
 }

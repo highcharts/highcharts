@@ -134,5 +134,17 @@ QUnit.test('Treegraph series',
             1,
             'CollapseButton should be visible when point is expanded (#19368).'
         );
+
+        series.update({
+            showInLegend: true,
+            legendSymbol: 'lineMarker'
+        });
+
+        assert.ok(
+            chart.series[0].legendItem.symbol.element &&
+            chart.series[0].legendItem.line.element,
+            `Legend symbol and line should be rendered when
+            legendSymbol is set to lineMarker (#19671).`
+        );
     }
 );

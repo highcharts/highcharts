@@ -156,10 +156,7 @@ class StockChart extends Chart {
                         type: 'x'
                     },
                     zooming: {
-                        pinchType: 'x',
-                        mouseWheel: {
-                            type: 'x'
-                        }
+                        pinchType: 'x'
                     }
                 },
                 navigator: {

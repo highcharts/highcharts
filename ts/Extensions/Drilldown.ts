@@ -959,6 +959,8 @@ Chart.prototype.applyDrilldown = function (): void {
         // #3352, async loading
         levelToRemove =
             drilldownLevels[drilldownLevels.length - 1].levelNumber;
+        chart.hasCartesianSeries = drilldownLevels.some((level): boolean =>
+            level.lowerSeries.isCartesian); // #19725
         (this.drilldownLevels as any).forEach(function (
             level: Highcharts.DrilldownLevelObject
         ): void {
@@ -987,7 +989,7 @@ Chart.prototype.applyDrilldown = function (): void {
                             series.remove(false);
                         }
                     } else {
-                        // deal with asonchrynous removing of map series after
+                        // Deal with asonchrynous removing of map series after
                         // zooming into
                         if (
                             series.options &&
@@ -1050,6 +1052,14 @@ Chart.prototype.applyDrilldown = function (): void {
         this.pointer.reset();
 
         fireEvent(this, 'afterDrilldown');
+
+        // Axes shouldn't be visible after drilling into non-cartesian (#19725)
+        if (!chart.hasCartesianSeries) {
+            chart.axes.forEach((axis): void => {
+                axis.destroy(true);
+                axis.init(this, merge(axis.userOptions, axis.options));
+            });
+        }
 
         this.redraw();
         fireEvent(this, 'afterApplyDrilldown');

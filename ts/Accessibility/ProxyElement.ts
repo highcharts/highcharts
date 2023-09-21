@@ -80,14 +80,13 @@ class ProxyElement {
      * */
 
     /**
-     * The proxy button element, may be same as element, depending on group
-     * type.
+     * The proxy element that receives the proxied events.
      */
-    public buttonElement: HTMLButtonElement;
+    public innerElement: HTMLDOMElement;
 
     /**
-     * The entire proxy HTML element. Note: May not refer to the button element
-     * directly, see below.
+     * The entire proxy HTML element container. Note: If the proxy element is
+     * not wrapped, this refers to the same element as innerElement.
      */
     public element: HTMLDOMElement;
 
@@ -102,28 +101,27 @@ class ProxyElement {
     constructor(
         private chart: Accessibility.ChartComposition,
         public target: ProxyElement.Target,
-        public groupType: ProxyElement.GroupType,
+        proxyElementType: keyof HTMLElementTagNameMap = 'button',
+        wrapperElementType?: keyof HTMLElementTagNameMap,
         attributes?: NullableHTMLAttributes
     ) {
-        const isListItem = groupType === 'ul';
         this.eventProvider = new EventProvider();
 
-        const wrapperEl = isListItem ? doc.createElement('li') : null;
-        const btnEl = this.buttonElement = doc.createElement('button');
+        const innerEl = this.innerElement =
+                doc.createElement(proxyElementType),
+            wrapperEl = this.element = wrapperElementType ?
+                doc.createElement(wrapperElementType) : innerEl;
 
         if (!chart.styledMode) {
-            this.hideButtonVisually(btnEl);
+            this.hideElementVisually(innerEl);
         }
 
-        if (wrapperEl) {
-            if (isListItem && !chart.styledMode) {
+        if (wrapperElementType) {
+            if (wrapperElementType === 'li' && !chart.styledMode) {
                 wrapperEl.style.listStyle = 'none';
             }
-
-            wrapperEl.appendChild(btnEl);
+            wrapperEl.appendChild(innerEl);
             this.element = wrapperEl;
-        } else {
-            this.element = btnEl;
         }
 
         this.updateTarget(target, attributes);
@@ -157,7 +155,7 @@ class ProxyElement {
      * Update the target to be proxied. The position and events are updated to
      * match the new target.
      * @param target The new target definition
-     * @param attributes New HTML attributes to apply to the button. Set an
+     * @param attributes New HTML attributes to apply to the proxy. Set an
      * attribute to null to remove.
      */
     public updateTarget(
@@ -174,12 +172,13 @@ class ProxyElement {
             }
         });
 
-        attr(this.buttonElement, merge({
-            'aria-label': this.getTargetAttr(target.click, 'aria-label')
-        }, attrs as HTMLAttributes));
+        const targetAriaLabel = this.getTargetAttr(target.click, 'aria-label');
+        attr(this.innerElement, merge(targetAriaLabel ? {
+            'aria-label': targetAriaLabel
+        } : {}, attrs as HTMLAttributes));
 
         this.eventProvider.removeAddedEvents();
-        this.addProxyEventsToButton(this.buttonElement, target.click);
+        this.addProxyEventsToElement(this.innerElement, target.click);
         this.refreshPosition();
     }
 
@@ -189,7 +188,7 @@ class ProxyElement {
      */
     public refreshPosition(): void {
         const bBox = this.getTargetPosition();
-        css(this.buttonElement, {
+        css(this.innerElement, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (Math.round(bBox.x) || 0) + 'px',
@@ -228,17 +227,17 @@ class ProxyElement {
         ) as string || '';
         const noTooltipOnTarget = stringHasNoTooltip(targetClassName);
 
-        this.buttonElement.className = noTooltipOnGroup || noTooltipOnTarget ?
-            'highcharts-a11y-proxy-button highcharts-no-tooltip' :
-            'highcharts-a11y-proxy-button';
+        this.innerElement.className = noTooltipOnGroup || noTooltipOnTarget ?
+            'highcharts-a11y-proxy-element highcharts-no-tooltip' :
+            'highcharts-a11y-proxy-element';
     }
 
 
     /**
-     * Mirror events for a proxy button to a target
+     * Mirror events for a proxy element to a target
      */
-    private addProxyEventsToButton(
-        button: HTMLDOMElement,
+    private addProxyEventsToElement(
+        element: HTMLDOMElement,
         target: DOMElementType|SVGElement|HTMLElement
     ): void {
         [
@@ -248,7 +247,7 @@ class ProxyElement {
             const isTouchEvent = evtType.indexOf('touch') === 0;
 
             this.eventProvider.addEvent(
-                button,
+                element,
                 evtType,
                 (e: MouseEvent | TouchEvent): void => {
                     const clonedEvent = isTouchEvent ?
@@ -277,10 +276,10 @@ class ProxyElement {
 
 
     /**
-     * Set visually hidden style on a proxy button
+     * Set visually hidden style on a proxy element
      */
-    private hideButtonVisually(button: HTMLDOMElement): void {
-        css(button, {
+    private hideElementVisually(el: HTMLDOMElement): void {
+        css(el, {
             borderWidth: 0,
             backgroundColor: 'transparent',
             cursor: 'pointer',
@@ -356,8 +355,6 @@ namespace ProxyElement {
      *  Declarations
      *
      * */
-
-    export type GroupType = ('div'|'ul');
 
     export interface Target {
         click: (DOMElementType|SVGElement|HTMLElement);

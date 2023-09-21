@@ -17,7 +17,7 @@ Heat maps borrow a central concept from Highcharts Maps, the color axis. See the
 
 ### Interpolation
 
-Heat maps have an [interpolation feature](https://api.highcharts.com/highcharts/plotOptions.heatmap.interpolation), which allows for displaying seamlessly transitioning data points. Check out the featured demo [here](https://highcharts.com/demo/heatmap-interpolation/).
+Heat maps have an [interpolation feature](https://api.highcharts.com/highcharts/plotOptions.heatmap.interpolation), which allows for displaying seamlessly transitioning data points. Check out the featured demo [here](https://highcharts.com/demo/highcharts/heatmap-interpolation).
 
 ### Resources
 
