@@ -13,7 +13,9 @@ Highcharts.chart('container', {
         enabled: false
     },
     yAxis: {
-        title: null
+        title: null,
+        min: -10,
+        max: 10
     },
     plotOptions: {
         series: {
@@ -23,7 +25,9 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [-1, -1, 100, 1, 1, -100, -1, -1],
+        data: [-0.5, -0.4, -0.3, -0.1, 0, 0.1, 0.2, 0.1, 0, 0.1, 0.3, 0.4],
+        //data: [-1, -1, 100, 1, 1, -100, -1, -1],
+
         //data: [1, 1, -100, 1, 1],
         //data: [1, -1, -1, -2, 0, 1, -1, -0.022, -0.01, 1, 2, 1],
         //data: new Array(100).fill(0).map(() => Math.random() - 0.5),

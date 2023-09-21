@@ -2986,7 +2986,7 @@ class Series {
             renderer = chart.renderer,
             plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
             axis = this[`${zoneAxis}Axis`],
-            halfWidth = (graph?.strokeWidth() || 0) / 2,
+            halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
             // Avoid points that are so close to the threshold that the graph
             // line would be split
@@ -3003,7 +3003,7 @@ class Series {
                         'L',
                         plotX,
                         Math.abs(distance) < halfWidth ?
-                            plotY - halfWidth * Math.sign(distance) :
+                            plotY - halfWidth * (distance < 0 ? -1 : 1) :
                             translated
                     ]);
                 }
