@@ -15,7 +15,7 @@
         },
 
         rangeSelector: {
-            selected: 1
+            selected: 4
         },
 
         series: [{
