@@ -25,46 +25,46 @@ permissions:
 
 jobs:
 
-  test_browserstack:
-    name: Test with BrowserStack
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-    environment: browserstack
-    steps:
-      # setup
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm i
-      - name: 'BrowserStack Env Setup'
-        uses: 'browserstack/github-actions/setup-env@master'
-        with:
-          username:  ${{ secrets.BROWSERSTACK_USER }}
-          access-key: ${{ secrets.BROWSERSTACK_KEY }}
-          build-name: BUILD_INFO
-          project-name: REPO_NAME
-      - name: 'BrowserStackLocal Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: start
-          local-identifier: random
-      # tasks
-      - name: Build Highcharts
-        run: npx gulp scripts
-      # - name: Run BrowserStack Tests (Chrome)
-      #   run: npx gulp test --single-run --splitbrowsers Win.Chrome
-      # - name: Run BrowserStack Tests (Firefox)
-      #   run: npx gulp test --single-run --splitbrowsers Mac.Firefox
-      - name: Run BrowserStack (Safari)
-        run: npx gulp test --single-run --splitbrowsers Mac.Safari
-      # clean up
-      - name: 'BrowserStackLocal Stop'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: stop
+  # test_browserstack:
+  #   name: Test with BrowserStack
+  #   timeout-minutes: 20
+  #   runs-on: ubuntu-latest
+  #   environment: browserstack
+  #   steps:
+  #     # setup
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: lts/*
+  #         cache: 'npm'
+  #     - name: Install Dependencies
+  #       run: npm i
+  #     - name: 'BrowserStack Env Setup'
+  #       uses: 'browserstack/github-actions/setup-env@master'
+  #       with:
+  #         username:  ${{ secrets.BROWSERSTACK_USER }}
+  #         access-key: ${{ secrets.BROWSERSTACK_KEY }}
+  #         build-name: BUILD_INFO
+  #         project-name: REPO_NAME
+  #     - name: 'BrowserStackLocal Setup'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: start
+  #         local-identifier: random
+  #     # tasks
+  #     - name: Build Highcharts
+  #       run: npx gulp scripts
+  #     - name: Run BrowserStack Tests (Chrome)
+  #       run: npx gulp test --single-run --splitbrowsers Win.Chrome
+  #     - name: Run BrowserStack Tests (Firefox)
+  #       run: npx gulp test --single-run --splitbrowsers Mac.Firefox
+  #     - name: Run BrowserStack (Safari)
+  #       run: npx gulp test --single-run --splitbrowsers Mac.Safari
+  #     # clean up
+  #     - name: 'BrowserStackLocal Stop'
+  #       uses: 'browserstack/github-actions/setup-local@master'
+  #       with:
+  #         local-testing: stop
 
   test_headless:
     name: Test with headless browsers
@@ -110,3 +110,22 @@ jobs:
         run: |
           export DISPLAY=:99
           npx gulp test --single-run --splitbrowsers Firefox
+
+  test_macos:
+    name: Test with MacOS
+    timeout-minutes: 10
+    runs-on: macos-latest
+    steps:
+      # setup
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm i
+      # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Run Tests (Safari)
+        run: npx gulp test --single-run --splitbrowsers Safari
