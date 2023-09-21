@@ -114,7 +114,7 @@ jobs:
   test_macos:
     name: Test with MacOS
     timeout-minutes: 10
-    runs-on: macos-latest
+    runs-on: macos-latest-xl
     steps:
       # setup
       - uses: actions/checkout@v3
