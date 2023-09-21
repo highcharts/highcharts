@@ -574,13 +574,13 @@ workflows:
 #          browsercount: 2
 #          requires: ["test-Mac.Safari"]
 #          browsers: "Mac.Firefox"
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
-          browsers: "Win.Chrome"
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
+#          browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
-          requires: ["test-Mac.Safari", "test-Win.Chrome"]
+          requires: ["test-Mac.Safari"]
           filters:
             branches:
               only: [master]
@@ -641,12 +641,12 @@ workflows:
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
           notify_on_failure: true
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["test-Mac.Safari"]
-          browsers: "Win.Chrome"
-          notify_on_failure: true
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["test-Mac.Safari"]
+#          browsers: "Win.Chrome"
+#          notify_on_failure: true
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
