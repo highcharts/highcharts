@@ -22,7 +22,7 @@ function uploadVisualTestResults() {
     const promises = [];
     const defaultParams = {
         profile: argv.profile,
-        s3Parms: {
+        s3Params: {
             ACL: void 0
         }
     };
