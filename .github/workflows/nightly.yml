@@ -43,7 +43,9 @@ jobs:
         run: npm i
 
       - name: Set application version env var
-        run: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: |
+          echo "HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          echo ${HIGHCHARTS_VERSION}
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -55,15 +57,16 @@ jobs:
 
       - name: Sync references from S3
         run: |
-          aws s3 cp s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET} ./samples/ \
+          aws s3 cp s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/ ./samples/ \
           --exclude "*" \
           --include "*/reference.svg"
 
-      - name: Upload reference images
+      - name: Upload new reference images
         run: |
           npx gulp dist-testresults \
           --tag ${HIGHCHARTS_VERSION} \
           --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
