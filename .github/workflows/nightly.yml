@@ -78,9 +78,9 @@ jobs:
 
       - name: "Generate PNGs and diff"
         run: |
-          find . -name reference.svg -print -execdir rsvg-convert -o reference.png {}
-          find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {}
-          find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0
+          find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \;
+          find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \;
+          find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
 
       - name: Upload reference images
         run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
