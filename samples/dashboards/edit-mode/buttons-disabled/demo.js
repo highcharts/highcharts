@@ -2,8 +2,10 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         tools: {
-            enableRwdButtons: false,
             addComponentBtn: {
+                enabled: false
+            },
+            rwdButtons: {
                 enabled: false
             }
         },

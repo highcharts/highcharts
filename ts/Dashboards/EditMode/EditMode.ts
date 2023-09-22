@@ -92,11 +92,13 @@ class EditMode {
                         enabled: true,
                         icon: this.iconsURLPrefix + 'add.svg'
                     },
-                    enableRwdButtons: true,
-                    rwdIcons: {
-                        small: this.iconsURLPrefix + 'smartphone.svg',
-                        medium: this.iconsURLPrefix + 'tablet.svg',
-                        large: this.iconsURLPrefix + 'computer.svg'
+                    rwdButtons: {
+                        enabled: true,
+                        icons: {
+                            small: this.iconsURLPrefix + 'smartphone.svg',
+                            medium: this.iconsURLPrefix + 'tablet.svg',
+                            large: this.iconsURLPrefix + 'computer.svg'
+                        }
                     }
                 },
                 confirmationPopup: {
@@ -734,7 +736,7 @@ class EditMode {
         }
 
         // Create rwd menu
-        if (options.tools?.enableRwdButtons) {
+        if (options.tools?.rwdButtons?.enabled) {
             this.createRwdMenu();
         }
 
@@ -774,8 +776,7 @@ class EditMode {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
-        const rwdIcons =
-            (options && options.tools && options.tools.rwdIcons) || {};
+        const rwdIcons = options?.tools?.rwdButtons?.icons || {};
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
@@ -1099,16 +1100,9 @@ namespace EditMode {
         */
         addComponentBtn?: AddComponentBtn;
         /**
-         * Whether the RWD buttons should be visible.
-         *
-         * @default true
-         *
+         * RWD buttons options.
          */
-        enableRwdButtons?: boolean;
-        /**
-         * RWD buttons icons options.
-         */
-        rwdIcons?: RwdIcons;
+        rwdButtons?: RwdButtons;
         /**
         * @internal
         */
@@ -1141,6 +1135,23 @@ namespace EditMode {
          * URL to the Add Component button icon.
          */
         icon: string;
+    }
+
+    /**
+     * RWD buttons options.
+     */
+    export interface RwdButtons {
+        /**
+         * Whether the RWD buttons should be visible.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * RWD buttons icons options.
+         */
+        icons: RwdIcons;
     }
 
     /**
