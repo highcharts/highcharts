@@ -8,7 +8,7 @@
 
         yAxis: {
             plotBands: [{
-                color: '#FDFD96',
+                color: 'rgba(169, 255, 101, 0.4)',
                 from: 182.94,
                 to: 177.57,
                 zIndex: 3,
@@ -56,7 +56,7 @@
             type: 'candlestick',
             color: '#FF6F6F',
             upColor: '#6FB76F',
-            data: data, //eslint-disable-line
+            data,
             dataGrouping: {
                 enabled: false
             }
