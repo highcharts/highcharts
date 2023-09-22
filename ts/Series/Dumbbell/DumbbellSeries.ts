@@ -121,7 +121,9 @@ class DumbbellSeries extends AreaRangeSeries {
             crisp: false,
             pointPadding: 0.1,
             /**
-             * Color of the start markers in a dumbbell graph.
+             * Color of the start markers in a dumbbell graph. This option takes
+             * priority over the series color. To avoid this, set `lowColor` to
+             * `undefined`.
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 8.0.0
@@ -660,7 +662,9 @@ export default DumbbellSeries;
  * @apioption   series.dumbbell.data.connectorWidth
  */
 /**
- * Color of the start markers in a dumbbell graph.
+ * Color of the start markers in a dumbbell graph. This option takes
+ * priority over the series color. To avoid this, set `lowColor` to
+ * `undefined`.
  *
  * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @since       8.0.0

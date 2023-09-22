@@ -191,10 +191,10 @@ Highcharts.chart('container', {
         marker: {
             enabled: false
         },
+        lowColor: undefined,
         lowMarker: {
             enabled: true,
-            symbol: 'triangleLeft',
-            fillColor: Highcharts.getOptions().colors[5]
+            symbol: 'triangleLeft'
         }
     }
     ]
