@@ -57,7 +57,7 @@ jobs:
 
       - name: Sync references from S3
         run: |
-          aws s3 cp s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/ ./samples/ \
+          aws s3 sync s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/ ./samples/ \
           --exclude "*" \
           --include "*/reference.svg"
 
