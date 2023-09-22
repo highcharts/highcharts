@@ -2982,9 +2982,17 @@ class Series {
      */
     public applyZones(): void {
         const series = this,
-            { area, chart, graph, zones, points, zoneAxis } = series,
-            renderer = chart.renderer,
-            plotSizeMax = Math.max(chart.plotWidth, chart.plotHeight),
+            {
+                area,
+                chart,
+                graph,
+                zones,
+                points,
+                xAxis,
+                yAxis,
+                zoneAxis
+            } = series,
+            { inverted, renderer } = chart,
             axis = this[`${zoneAxis}Axis`],
             halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
@@ -2995,6 +3003,9 @@ class Series {
                 plotX: number = 0,
                 plotY: number = 0
             ): void => {
+                if (inverted) {
+                    plotY = yAxis.len - plotY;
+                }
                 const { translated = 0, lineClip } = zone,
                     distance = plotY - translated;
 
@@ -3003,7 +3014,7 @@ class Series {
                         'L',
                         plotX,
                         Math.abs(distance) < halfWidth ?
-                            plotY - halfWidth * (distance < 0 ? -1 : 1) :
+                            plotY - halfWidth * (distance <= 0 ? -1 : 1) :
                             translated
                     ]);
                 }
@@ -3015,16 +3026,31 @@ class Series {
             axis &&
             isNumber(axis.min)
         ) {
+
+            const axisMax = axis.getExtremes().max,
+                // Invert the y coordinate in inverted charts
+                invertPath = (path: SVGPath): void => {
+                    path.forEach((segment, i): void => {
+                        if (segment[0] === 'M' || segment[0] === 'L') {
+                            path[i] = [
+                                segment[0],
+                                segment[1],
+                                axis.len - segment[2]
+                            ];
+                        }
+                    });
+                };
+
             // Reset
             zones.forEach((zone, i): void => {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(
-                        pick(zone.value, axis.getExtremes().max),
+                        pick(zone.value, axisMax),
                         true
                     ) || 0,
                     0,
-                    plotSizeMax
+                    axis.len
                 );
             });
 
@@ -3041,7 +3067,7 @@ class Series {
 
             // Prepare for adaptive clips, avoiding segments close to the
             // threshold (#19709)
-            if (this.zoneAxis === 'y') {
+            if (zoneAxis === 'y') {
                 for (const point of points) {
                     const zone = point.zone,
                         { plotX, plotY } = point;
@@ -3062,17 +3088,21 @@ class Series {
 
             // Compute and apply the clips
             let lastLineClip: SVGPath = [],
-                lastTranslated = axis.isXAxis ? 0 : plotSizeMax;
-            zones.forEach((zone): void => {
+                lastTranslated = axis.toPixels(axis.getExtremes().min, true);
 
+            zones.forEach((zone): void => {
                 const lineClip = zone.lineClip || [],
                     translated = Math.round(zone.translated || 0);
+
+                if (xAxis.reversed) {
+                    lineClip.reverse();
+                }
 
                 let clip = zone.clip,
                     x1 = 0,
                     y1 = 0,
-                    x2 = plotSizeMax,
-                    y2 = plotSizeMax;
+                    x2 = xAxis.len,
+                    y2 = yAxis.len;
 
                 if (axis.isXAxis) {
                     x1 = translated;
@@ -3096,6 +3126,9 @@ class Series {
                 lastLineClip = lineClip.reverse();
                 lastTranslated = translated;
 
+                if (inverted) {
+                    invertPath(d);
+                }
 
                 /* Debug clip paths
                 chart.renderer.path(d)
@@ -3104,8 +3137,7 @@ class Series {
                         'stroke-width': 1,
                         'dashstyle': 'Dash'
                     })
-                    .translate(chart.plotLeft, chart.plotTop)
-                    .add();
+                    .add(series.group);
                 // */
 
                 if (clip) {
