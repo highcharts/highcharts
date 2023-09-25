@@ -164,24 +164,13 @@ class AreaRangePoint extends AreaPoint {
         // to avoid reference duplication (#7021)
         series.lowerStateMarkerGraphic = void 0;
 
-        if (series.options.lowMarker) {
-            const { marker, lowMarker } = series.options;
+        const originalSettings = series.modifyMarkerSettings();
 
-            series.options.marker = merge(marker, lowMarker);
-
-            if (lowMarker.symbol) {
-                series.symbol = lowMarker.symbol;
-            }
-        }
-
-        // Bottom state:
+        // Bottom state
         areaProto.setState.apply(this, arguments as any);
 
         // Restore previous state
-        if (series.options.lowMarker) {
-            series.options.marker = seriesOptionsMarker;
-            series.symbol = seriesDefaultSymbol;
-        }
+        series.restoreMarkerSettings(originalSettings);
     }
 
     public haloPath(): SVGPath {

@@ -23,6 +23,8 @@ import type AreaPoint from '../Area/AreaPoint';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type PointMarkerOptions from '../../Core/Series/PointOptions';
+import { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -38,7 +40,7 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import SeriesOptions from '../../Core/Series/SeriesOptions';
+
 const {
     addEvent,
     defined,
@@ -558,17 +560,20 @@ class AreaRangeSeries extends AreaSeries {
         columnProto.alignDataLabel.apply(this, arguments);
     }
 
-    public drawPoints(): void {
+    public modifyMarkerSettings(): {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    } {
         const series = this,
-            pointLength = series.points.length,
-            seriesOptionsMarker = series.options.marker,
-            seriesDefaultSymbol = series.symbol;
-
-        let i: number,
-            point: AreaRangePoint;
+            originalMarkerSettings = {
+                marker: series.options.marker,
+                symbol: series.symbol
+            };
 
         if (series.options.lowMarker) {
-            const { options: { marker, lowMarker } } = series;
+            const {
+                options: { marker, lowMarker }
+            } = series;
 
             series.options.marker = merge(marker, lowMarker);
 
@@ -577,14 +582,33 @@ class AreaRangeSeries extends AreaSeries {
             }
         }
 
+        return originalMarkerSettings;
+    }
+
+    public restoreMarkerSettings(originalSettings: {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    }): void {
+        const series = this;
+
+        series.options.marker = originalSettings.marker;
+        series.symbol = originalSettings.symbol;
+    }
+
+    public drawPoints(): void {
+        const series = this,
+            pointLength = series.points.length;
+
+        let i: number,
+            point: AreaRangePoint;
+
+        const originalSettings = series.modifyMarkerSettings();
+
         // Draw bottom points
         areaProto.drawPoints.apply(series, arguments);
 
         // Restore previous state
-        if (series.options.lowMarker) {
-            series.options.marker = seriesOptionsMarker;
-            series.symbol = seriesDefaultSymbol;
-        }
+        series.restoreMarkerSettings(originalSettings);
 
         // Prepare drawing top points
         i = 0;
