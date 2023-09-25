@@ -467,20 +467,6 @@ jobs:
       - slack/status:
           fail_only: true
 
-  deploy_api_docs:
-    <<: *defaults
-    steps:
-      - <<: *load_workspace
-      - run:
-          name: Generate api docs
-          command: npx gulp jsdoc
-      - run:
-          name: Upload api docs to S3
-          command: npx gulp upload-api --silent --noextensions
-      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
-      - slack/status:
-          fail_only: true
-
   deploy_changelog:
     <<: *defaults
     parameters:
@@ -657,9 +643,6 @@ workflows:
           requires: [checkout_and_install, "test-Mac.Safari"]
           context: highcharts-staging
       - deploy_code:
-          requires: [build_dist]
-          context: highcharts-staging
-      - deploy_api_docs:
           requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:
