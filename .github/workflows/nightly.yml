@@ -27,12 +27,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Test S3 read access
-        run: aws s3 ls ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
-
-      - name: Test S3 CLI write access
-        run: touch test.html && aws s3 cp ./test.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
