@@ -94,7 +94,9 @@ Highcharts.chart('container', {
             scrollableLegendArea: {
                 minWidth: 300
             }
-        }
+        },
+        // Extra space for the Windows scrollbar
+        y: -10
     },
 
     xAxis: {
