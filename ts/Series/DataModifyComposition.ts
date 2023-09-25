@@ -305,11 +305,6 @@ namespace DataModifyComposition {
      * @private
      */
     function afterGetExtremes(this: Series, e: AnyRecord|Event): void {
-        if (this.is('vbp')) {
-            // Do not recalculate extremes for VBP series, #16686.
-            return;
-        }
-
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
             activeYData = dataExtremes.activeYData;
 
