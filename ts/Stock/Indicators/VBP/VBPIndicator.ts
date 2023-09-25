@@ -46,6 +46,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 import StockChart from '../../../Core/Chart/StockChart.js';
+import DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 const {
     addEvent,
     arrayMax,
@@ -529,6 +530,27 @@ class VBPIndicator extends SMAIndicator {
                 );
             }
         }
+    }
+
+    public getExtremes(): DataExtremesObject {
+        const prevCompare = this.options.compare,
+            prevCumulative = this.options.cumulative;
+        let ret: DataExtremesObject;
+
+        // Temporarily disable cumulative and compare while getting the extremes
+        if (this.options.compare) {
+            this.options.compare = void 0;
+            ret = super.getExtremes();
+            this.options.compare = prevCompare;
+        } else if (this.options.cumulative) {
+            this.options.cumulative = false;
+            ret = super.getExtremes();
+            this.options.cumulative = prevCumulative;
+        } else {
+            ret = super.getExtremes();
+        }
+
+        return ret;
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
