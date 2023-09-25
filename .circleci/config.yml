@@ -604,10 +604,6 @@ workflows:
     jobs:
       - checkout_and_install:
           context: highcharts-common
-      - nightly_visual_diff:
-          name: "Test visual differences and distribute diff log to S3."
-          requires: [checkout_and_install]
-          context: highcharts-staging
       - test_timezones:
           requires: [checkout_and_install]
       - test_timezones:
