@@ -10,16 +10,23 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     GeoJSON,
     GeoJSONFeature,
+    MapLonLatObject,
     TopoJSON
 } from '../Maps/GeoJSON';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type { ProjectedXY } from '../Maps/MapViewOptions';
 import type Series from '../Core/Series/Series';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
@@ -33,38 +40,44 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        /** @requires modules/maps */
+        /** @requires modules/map */
         mapCredits?: string;
-        /** @requires modules/maps */
+        /** @requires modules/map */
         mapCreditsFull?: string;
-        /** @requires modules/maps */
+        /** @requires modules/map */
         mapTransforms?: any;
         /**
-         * @requires modules/maps
+         * @requires modules/map
          * @deprecated
          */
         fromLatLonToPoint(
-            latLon: Highcharts.MapLonLatObject
+            latLon: MapLonLatObject
         ): ProjectedXY|undefined;
         /**
-         * @requires modules/maps
+         * @requires modules/map
          * @deprecated
          */
         fromPointToLatLon(
             point: ProjectedXY
-        ): (Highcharts.MapLonLatObject|undefined);
-        /** @requires modules/maps */
+        ): (MapLonLatObject|undefined);
+        /** @requires modules/map */
         transformFromLatLon(
-            latLon: Highcharts.MapLonLatObject,
+            latLon: MapLonLatObject,
             transform: any
         ): ProjectedXY|undefined;
-        /** @requires modules/maps */
+        /** @requires modules/map */
         transformToLatLon(
             point: ProjectedXY,
             transform: any
-        ): (Highcharts.MapLonLatObject|undefined);
+        ): (MapLonLatObject|undefined);
     }
 }
 
@@ -72,41 +85,6 @@ declare module '../Core/Chart/ChartOptions'{
     interface ChartOptions {
         /** @requires modules/map */
         proj4?: any;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface MapPathObject {
-            name?: string;
-            path?: SVGPath;
-            properties?: object;
-        }
-        interface MapLonLatObject {
-            lat: number;
-            lon: number;
-        }
-
-        /** @requires modules/maps */
-        function geojson(
-            geojson: GeoJSON,
-            hType?: string,
-            series?: Series
-        ): Array<any>;
-
-        /** @requires modules/maps */
-        function topo2geo(
-            topology: TopoJSON,
-            objectName?: string
-        ): GeoJSON;
-    }
-    interface Window {
-        d3: any;
-        proj4: any;
     }
 }
 
@@ -283,7 +261,7 @@ declare global {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (
-    latLon: Highcharts.MapLonLatObject,
+    latLon: MapLonLatObject,
     transform: any
 ): ProjectedXY|undefined {
 
@@ -298,7 +276,7 @@ Chart.prototype.transformFromLatLon = function (
      * @apioption chart.proj4
      */
 
-    const proj4 = this.options.chart.proj4 || win.proj4;
+    const proj4 = this.options.chart.proj4 || (win as AnyRecord).proj4;
     if (!proj4) {
         error(21, false, this);
         return;
@@ -354,9 +332,9 @@ Chart.prototype.transformFromLatLon = function (
 Chart.prototype.transformToLatLon = function (
     point: ProjectedXY,
     transform: any
-): (Highcharts.MapLonLatObject|undefined) {
+): (MapLonLatObject|undefined) {
 
-    const proj4 = this.options.chart.proj4 || win.proj4;
+    const proj4 = this.options.chart.proj4 || (win as AnyRecord).proj4;
     if (!proj4) {
         error(21, false, this);
         return;
@@ -412,7 +390,7 @@ Chart.prototype.transformToLatLon = function (
  */
 Chart.prototype.fromPointToLatLon = function (
     point: ProjectedXY
-): (Highcharts.MapLonLatObject|undefined) {
+): (MapLonLatObject|undefined) {
     return this.mapView && this.mapView.projectedUnitsToLonLat(point);
 };
 
@@ -431,7 +409,7 @@ Chart.prototype.fromPointToLatLon = function (
  *      X and Y coordinates in terms of projected values
  */
 Chart.prototype.fromLatLonToPoint = function (
-    lonLat: Highcharts.MapLonLatObject
+    lonLat: MapLonLatObject
 ): ProjectedXY|undefined {
     return this.mapView && this.mapView.lonLatToProjectedUnits(lonLat);
 };
@@ -661,11 +639,14 @@ wrap(Chart.prototype, 'addCredits', function (
     }
 });
 
-H.geojson = geojson;
-H.topo2geo = topo2geo;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-const GeoJSONModule = {
+const GeoJSON = {
     geojson,
     topo2geo
 };
-export default GeoJSONModule;
+export default GeoJSON;
