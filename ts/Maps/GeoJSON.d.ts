@@ -20,6 +20,11 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
     coordinates: LonLatArray;
 }
 
+export interface MapLonLatObject {
+    lat: number;
+    lon: number;
+}
+
 export interface MultiPoint extends BaseGeometry{
     type: 'MultiPoint';
     coordinates: LonLatArray[];
