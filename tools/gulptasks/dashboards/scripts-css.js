@@ -38,8 +38,8 @@ function dashboardsScriptsCSS() {
     return new Promise(resolve => {
         log.message('Copy css and gfx ...');
 
-        const dashboardsCSS = fslib.path('css/dashboards.css');
-        const dashboardsGFX = fslib.path('gfx/dashboards-icons');
+        const dashboardsCSS = path.join('css', 'dashboards.css');
+        const dashboardsGFX = path.join('gfx', 'dashboards-icons');
 
         fslib.copyFile(
             dashboardsCSS,
@@ -52,7 +52,12 @@ function dashboardsScriptsCSS() {
             true
         );
 
-        const dataGridCSS = fslib.path('css/datagrid.css');
+        const dataGridCSS = path.join('css', 'datagrid.css');
+
+        fslib.copyFile(
+            dataGridCSS,
+            path.join('code', 'dashboards', dataGridCSS)
+        );
 
         fslib.copyFile(
             dataGridCSS,
