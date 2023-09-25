@@ -678,7 +678,7 @@ class Series {
             oldMarker = oldOptions.marker || {};
 
         return marker && (
-            marker.enabled === false ||
+            (oldMarker.enabled && !marker.enabled) ||
             oldMarker.symbol !== marker.symbol || // #10870, #15946
             oldMarker.height !== marker.height || // #16274
             oldMarker.width !== marker.width // #16274
@@ -4290,8 +4290,6 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else {
-                const { marker } = seriesOptions,
-                    oldMarker = oldOptions.marker || {};
 
                 // If the  marker got disabled or changed its symbol, width or
                 // height - destroy

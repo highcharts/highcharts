@@ -196,6 +196,5 @@ Highcharts.chart('container', {
             enabled: true,
             symbol: 'triangleLeft'
         }
-    }
-    ]
+    }]
 });
