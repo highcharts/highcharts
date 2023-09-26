@@ -4,12 +4,34 @@
 
 'use strict';
 
-import type ProviderDefinition from '../ProviderDefinition';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ProviderDefinition,
+    Themes
+} from '../ProviderDefinition';
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class Thunderforest implements ProviderDefinition {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     subdomains = ['a', 'b', 'c'];
 
-    themes = {
+    themes: Themes = {
         OpenCycleMap: {
             url: 'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey={apikey}',
             minZoom: 0,
@@ -64,5 +86,11 @@ class Thunderforest implements ProviderDefinition {
 
     requiresApiKey = true;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Thunderforest;
