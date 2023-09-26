@@ -6,6 +6,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 import LambertConformalConic from './LambertConformalConic.js';
@@ -14,6 +20,11 @@ import Miller from './Miller.js';
 import Orthographic from './Orthographic.js';
 import WebMercator from './WebMercator.js';
 
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const registry: Record<string, typeof ProjectionDefinition> = {
     EqualEarth,
@@ -22,5 +33,11 @@ const registry: Record<string, typeof ProjectionDefinition> = {
     Orthographic,
     WebMercator
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default registry;
