@@ -33,4 +33,5 @@ G.Projection = Projection;
 G.geojson = GeoJSON.geojson;
 G.topo2geo = GeoJSON.topo2geo;
 ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
+GeoJSON.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
