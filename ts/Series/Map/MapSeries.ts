@@ -1050,7 +1050,7 @@ class MapSeries extends ScatterSeries {
             mapDataObject && mapDataObject.type === 'FeatureCollection'
         ) {
             this.mapTitle = mapDataObject.title;
-            mapData = H.geojson(mapDataObject, this.type, this);
+            mapData = (H as AnyRecord).geojson(mapDataObject, this.type, this);
         }
 
         // Reset processedData
