@@ -25,13 +25,14 @@ permissions:
 
 jobs:
 
+  ### BROWSERSTACK ###
   test_browserstack:
     name: Test with BrowserStack
     timeout-minutes: 20
     runs-on: ubuntu-latest
     environment: browserstack
     steps:
-      # setup
+      ### SETUP ###
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -44,14 +45,13 @@ jobs:
         with:
           username:  ${{ secrets.BROWSERSTACK_USER }}
           access-key: ${{ secrets.BROWSERSTACK_KEY }}
-          build-name: BUILD_INFO
-          project-name: REPO_NAME
-      - name: 'BrowserStackLocal Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: start
-          local-identifier: random
-      # tasks
+      ### karma-browserstack-launcher creates its own tunnel ###
+      # - name: 'BrowserStackLocal Setup'
+      #   uses: 'browserstack/github-actions/setup-local@master'
+      #   with:
+      #     local-testing: start
+      #     local-identifier: random
+      ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts
       # - name: Run BrowserStack Tests (Chrome)
@@ -60,18 +60,19 @@ jobs:
       #   run: npx gulp test --single-run --splitbrowsers Mac.Firefox
       - name: Run BrowserStack (Safari)
         run: npx gulp test --single-run --splitbrowsers Mac.Safari
-      # clean up
+      ### CLEAN UP ###
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: stop
 
+  ### HEADLESS LINUX ###
   test_headless:
     name: Test with headless browsers
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
-      # setup
+      ### SETUP ###
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -91,7 +92,7 @@ jobs:
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
       - name: Install Dependencies
         run: npm i
-      # tasks
+      ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts
       - name: Check Chrome
@@ -111,12 +112,13 @@ jobs:
           export DISPLAY=:99
           npx gulp test --single-run --splitbrowsers Firefox
 
+  # ### HEADLESS MACOS ###
   # test_macos:
   #   name: Test with MacOS
   #   timeout-minutes: 10
   #   runs-on: macos-latest
   #   steps:
-  #     # setup
+  #     ### SETUP ###
   #     - uses: actions/checkout@v3
   #     - uses: actions/setup-node@v3
   #       with:
@@ -124,7 +126,7 @@ jobs:
   #         cache: 'npm'
   #     - name: Install Dependencies
   #       run: npm i
-  #     # tasks
+  #     ### TASKS ###
   #     - name: Build Highcharts
   #       run: npx gulp scripts
   #     - name: Run Tests (Safari)
