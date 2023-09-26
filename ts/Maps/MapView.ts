@@ -37,10 +37,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewOptionsDefault.js';
 import defaultInsetsOptions from './MapViewInsetsOptionsDefault.js';
-import GeoJSONModule from '../Extensions/GeoJSON.js';
-const {
-    topo2geo
-} = GeoJSONModule;
+import GeoJSONComposition from './GeoJSONComposition.js';
+const { topo2geo } = GeoJSONComposition;
 import MapChart from '../Core/Chart/MapChart.js';
 const { maps } = MapChart;
 import MU from './MapUtilities.js';
