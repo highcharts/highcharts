@@ -10,7 +10,11 @@
  *
  * */
 
-import type { LonLatArray, MapBounds, ProjectedXYArray } from '../MapViewOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    ProjectedXYArray
+} from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 /* *
