@@ -24,10 +24,10 @@ import type {
     GeoJSONFeature,
     MapLonLatObject,
     TopoJSON
-} from '../Maps/GeoJSON';
+} from './GeoJSON';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
-import type { ProjectedXY } from '../Maps/MapViewOptions';
+import type { ProjectedXY } from './MapViewOptions';
 import type Series from '../Core/Series/Series';
 
 import F from '../Core/Templating.js';
