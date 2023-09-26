@@ -16,7 +16,11 @@
  *
  * */
 
-import type { LonLatArray, ProjectedXYArray } from '../MapViewOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    ProjectedXYArray
+} from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 /* *
@@ -46,7 +50,7 @@ class EqualEarth implements ProjectionDefinition {
      *
      * */
 
-    public bounds: Record<('x1'|'x2'|'y1'|'y2'), number> = {
+    public bounds: MapBounds = {
         x1: -200.37508342789243,
         x2: 200.37508342789243,
         y1: -97.52595454902263,
