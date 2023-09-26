@@ -31,7 +31,7 @@ class OpenStreetMap implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator';
+    initialProjectionName = 'WebMercator' as const;
 
     defaultCredits = `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
             OpenStreetMap</a>`;
