@@ -29,18 +29,18 @@ class OpenStreetMap implements ProviderDefinition {
      *
      * */
 
-    defaultCredits = (
+    public defaultCredits = (
         'Map data &copy2023' +
         ' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     );
 
-    initialProjectionName = 'WebMercator' as const;
+    public initialProjectionName = 'WebMercator' as const;
 
-    requiresApiKey: undefined;
+    public requiresApiKey: undefined;
 
-    subdomains = ['a', 'b', 'c'];
+    public subdomains = ['a', 'b', 'c'];
 
-    themes: Themes = {
+    public themes: Themes = {
         Standard: {
             url: 'https://tile.openstreetmap.org/{zoom}/{x}/{y}.png',
             minZoom: 0,

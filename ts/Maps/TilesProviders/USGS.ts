@@ -29,18 +29,18 @@ class USGS implements ProviderDefinition {
      *
      * */
 
-    defaultCredits = (
+    public defaultCredits = (
         'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological' +
         'Survey</a>'
     );
 
-    initialProjectionName = 'WebMercator' as const;
+    public initialProjectionName = 'WebMercator' as const;
 
-    requiresApiKey: undefined;
+    public requiresApiKey: undefined;
 
-    subdomains: undefined;
+    public subdomains: undefined;
 
-    themes: Themes = {
+    public themes: Themes = {
         USTopo: {
             url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
             minZoom: 0,

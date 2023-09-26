@@ -29,9 +29,19 @@ class Thunderforest implements ProviderDefinition {
      *
      * */
 
-    subdomains = ['a', 'b', 'c'];
+    public defaultCredits = (
+        'Maps &copy <a href="https://www.thunderforest.com">Thunderforest</a>' +
+        ', Data &copy; <a href="https://www.openstreetmap.org/copyright">' +
+        'OpenStreetMap contributors</a>'
+    );
 
-    themes: Themes = {
+    public initialProjectionName = 'WebMercator' as const;
+
+    public requiresApiKey = true;
+
+    public subdomains = ['a', 'b', 'c'];
+
+    public themes: Themes = {
         OpenCycleMap: {
             url: 'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey={apikey}',
             minZoom: 0,
@@ -79,12 +89,6 @@ class Thunderforest implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator' as const;
-
-    defaultCredits = `Maps \u00a9 <a href="https://www.thunderforest.com">Thunderforest</a>,
-        Data \u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`;
-
-    requiresApiKey = true;
 }
 
 /* *

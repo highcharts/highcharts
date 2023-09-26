@@ -29,18 +29,18 @@ class LimaLabs implements ProviderDefinition {
      *
      * */
 
-    defaultCredits = (
+    public defaultCredits = (
         'Map data &copy;2023' +
         ' <a href="https://maps.lima-labs.com/">LimaLabs</a>'
     );
 
-    initialProjectionName = 'WebMercator' as const;
+    public initialProjectionName = 'WebMercator' as const;
 
-    requiresApiKey = true;
+    public requiresApiKey = true;
 
-    subdomains: undefined;
+    public subdomains: undefined;
 
-    themes: Themes = {
+    public themes: Themes = {
         Standard: {
             url: 'https://cdn.lima-labs.com/{zoom}/{x}/{y}.png?api={apikey}',
             minZoom: 0,

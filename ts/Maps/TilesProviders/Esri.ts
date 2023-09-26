@@ -29,19 +29,19 @@ class Esri implements ProviderDefinition {
      *
      * */
 
-    defaultCredits = (
+    public defaultCredits = (
         'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, ' +
         ' Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong),' +
         ' Esri (Thailand), TomTom, 2012'
     );
 
-    initialProjectionName = 'WebMercator' as const;
+    public initialProjectionName = 'WebMercator' as const;
 
-    requiresApiKey: undefined;
+    public requiresApiKey: undefined;
 
-    subdomains: undefined;
+    public subdomains: undefined;
 
-    themes: Themes = {
+    public themes: Themes = {
         WorldStreetMap: {
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
             minZoom: 0,

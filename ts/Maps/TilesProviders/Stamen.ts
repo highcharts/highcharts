@@ -29,20 +29,20 @@ class Stamen implements ProviderDefinition {
      *
      * */
 
-    defaultCredits = (
+    public defaultCredits = (
         '&copy; Map tiles by <a href="https://stamen.com">Stamen Design</a>,' +
         ' under <a href="https://creativecommons.org/licenses/by/3.0">CC BY' +
         ' 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap' +
         '</a>, under <a href="https://www.openstreetmap.org/copyright">ODbL</a>'
     );
 
-    initialProjectionName = 'WebMercator' as const;
+    public initialProjectionName = 'WebMercator' as const;
 
-    requiresApiKey: undefined;
+    public requiresApiKey: undefined;
 
-    subdomains = ['a', 'b', 'c', 'd'];
+    public subdomains = ['a', 'b', 'c', 'd'];
 
-    themes: Themes = {
+    public themes: Themes = {
         Toner: {
             url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
             minZoom: 0,
