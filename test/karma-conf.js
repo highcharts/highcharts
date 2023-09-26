@@ -558,8 +558,11 @@ module.exports = function (config) {
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
             build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
-            name: `circle-ci-karma-highcharts-${randomString}`,
-            localIdentifier: randomString, // to avoid instances interfering with each other.
+            name: `karma-highcharts-${randomString}`,
+            startTunnel: false,
+            tunnelIdentifier: 'karma-highcharts',
+            localIdentifier: 'karma-highcharts', // to avoid instances interfering with each other.
+            forcelocal: true,
             video: false,
             retryLimit: 1,
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
