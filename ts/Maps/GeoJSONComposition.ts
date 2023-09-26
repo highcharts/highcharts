@@ -10,13 +10,11 @@
 
 'use strict';
 
-
 /* *
  *
  *  Imports
  *
  * */
-
 
 import type Chart from '../Core/Chart/Chart';
 import type {
@@ -30,10 +28,10 @@ import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type { ProjectedXY } from './MapViewOptions';
 import type Series from '../Core/Series/Series';
 
-import F from '../Core/Templating.js';
-const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
+import T from '../Core/Templating.js';
+const { format } = T;
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -43,13 +41,11 @@ const {
     wrap
 } = U;
 
-
 /* *
  *
  *  Declarations
  *
  * */
-
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -60,15 +56,15 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/map */
         mapTransforms?: any;
         /**
-         * @requires modules/map
          * @deprecated
+         * @requires modules/map
          */
         fromLatLonToPoint(
             latLon: MapLonLatObject
-        ): ProjectedXY|undefined;
+        ): (ProjectedXY|undefined);
         /**
-         * @requires modules/map
          * @deprecated
+         * @requires modules/map
          */
         fromPointToLatLon(
             point: ProjectedXY
@@ -77,7 +73,7 @@ declare module '../Core/Chart/ChartLike'{
         transformFromLatLon(
             latLon: MapLonLatObject,
             transform: any
-        ): ProjectedXY|undefined;
+        ): (ProjectedXY|undefined);
         /** @requires modules/map */
         transformToLatLon(
             point: ProjectedXY,
@@ -93,16 +89,13 @@ declare module '../Core/Chart/ChartOptions'{
     }
 }
 
-
 /* *
  *
  *  Composition
  *
  * */
 
-
 namespace GeoJSONComposition {
-
 
     /* *
      *
@@ -110,16 +103,13 @@ namespace GeoJSONComposition {
      *
      * */
 
-
     const composedMembers: Array<unknown> = [];
-
 
     /* *
      *
      *  Functions
      *
      * */
-
 
     /**
      * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
@@ -130,10 +120,11 @@ namespace GeoJSONComposition {
      *
      * @function Highcharts.Chart#fromLatLonToPoint
      *
-     * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
+     * @param {Highcharts.MapLonLatObject} lonLat
+     *        Coordinates.
      *
      * @return {Highcharts.ProjectedXY}
-     *      X and Y coordinates in terms of projected values
+     * X and Y coordinates in terms of projected values
      */
     function chartFromLatLonToPoint(
         this: Chart,
@@ -141,7 +132,6 @@ namespace GeoJSONComposition {
     ): (ProjectedXY|undefined) {
         return this.mapView && this.mapView.lonLatToProjectedUnits(lonLat);
     }
-
 
     /**
      * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
@@ -152,12 +142,12 @@ namespace GeoJSONComposition {
      *
      * @function Highcharts.Chart#fromPointToLatLon
      *
-     * @param {Highcharts.Point|Highcharts.ProjectedXY} point A `Point`
-     *        instance or anything containing `x` and `y` properties with numeric
-     *        values.
+     * @param {Highcharts.Point|Highcharts.ProjectedXY} point
+     *        A `Point` instance or anything containing `x` and `y` properties
+     *        with numeric values.
      *
-     * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and `lon`
-     *         properties.
+     * @return {Highcharts.MapLonLatObject|undefined}
+     * An object with `lat` and `lon` properties.
      */
     function chartFromPointToLatLon(
         this: Chart,
@@ -165,7 +155,6 @@ namespace GeoJSONComposition {
     ): (MapLonLatObject|undefined) {
         return this.mapView && this.mapView.projectedUnitsToLonLat(point);
     }
-
 
     /**
      * Highcharts Maps only. Get point from latitude and longitude using
@@ -186,7 +175,7 @@ namespace GeoJSONComposition {
      *        {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
      *
      * @return {ProjectedXY}
-     *         An object with `x` and `y` properties.
+     * An object with `x` and `y` properties.
      */
     function chartTransformFromLatLon(
         this: Chart,
@@ -204,8 +193,8 @@ namespace GeoJSONComposition {
          * @product   highmaps
          * @apioption chart.proj4
          */
-
         const proj4 = this.options.chart.proj4 || (win as AnyRecord).proj4;
+
         if (!proj4) {
             error(21, false, this);
             return;
@@ -239,7 +228,6 @@ namespace GeoJSONComposition {
             )
         };
     }
-
 
     /**
      * Highcharts Maps only. Get latLon from point using specified transform
@@ -365,12 +353,13 @@ namespace GeoJSONComposition {
     ): (MapPointOptions|MapPointPointOptions)[] {
         const mapData: (MapPointOptions|MapPointPointOptions)[] = [];
 
-        const geojson = json.type === 'Topology' ? topo2geo(json) : json;
+        const geojson = json.type === 'Topology' ? topo2geo(json) : json,
+            features = geojson.features;
 
-        geojson.features.forEach(function (feature): void {
-
-            const geometry = feature.geometry || {},
-                type = geometry.type as any,
+        for (let i = 0, iEnd = features.length; i < iEnd; ++i) {
+            const feature = features[i],
+                geometry = feature.geometry || {},
+                type = geometry.type,
                 coordinates = geometry.coordinates as any,
                 properties = feature.properties;
 
@@ -400,10 +389,12 @@ namespace GeoJSONComposition {
                     pointOptions = { geometry: { coordinates, type } };
                 }
             }
+
             if (pointOptions) {
                 const name = properties && (properties.name || properties.NAME),
                     lon = properties && properties.lon,
                     lat = properties && properties.lat;
+
                 mapData.push(extend(pointOptions, {
                     lat: typeof lat === 'number' ? lat : void 0,
                     lon: typeof lon === 'number' ? lon : void 0,
@@ -420,18 +411,17 @@ namespace GeoJSONComposition {
                     properties
                 }));
             }
-
-        });
+        }
 
         // Create a credits text that includes map source, to be picked up in
         // Chart.addCredits
         if (series && geojson.copyrightShort) {
             series.chart.mapCredits = format(
-                (series.chart.options.credits as any).mapText,
+                series.chart.options.credits?.mapText,
                 { geojson: geojson }
             );
             series.chart.mapCreditsFull = format(
-                (series.chart.options.credits as any).mapTextFull,
+                series.chart.options.credits?.mapTextFull,
                 { geojson: geojson }
             );
         }
@@ -454,40 +444,52 @@ namespace GeoJSONComposition {
         if (!objectName) {
             objectName = Object.keys(topology.objects)[0];
         }
-        const object = topology.objects[objectName];
+        const obj = topology.objects[objectName];
 
         // Already decoded => return cache
-        if (object['hc-decoded-geojson']) {
-            return object['hc-decoded-geojson'];
+        if (obj['hc-decoded-geojson']) {
+            return obj['hc-decoded-geojson'];
         }
 
         // Do the initial transform
-        let arcsArray = topology.arcs as any[];
+        let arcsArray = topology.arcs;
         if (topology.transform) {
-            const { scale, translate } = topology.transform;
-            arcsArray = topology.arcs.map((arc): any => {
-                let x = 0,
-                    y = 0;
-                return arc.map((position): number[] => {
-                    position = position.slice();
-                    position[0] = (x += position[0]) * scale[0] + translate[0];
-                    position[1] = (y += position[1]) * scale[1] + translate[1];
-                    return position;
-                });
-            });
+            const arcs = topology.arcs,
+                { scale, translate } = topology.transform;
+
+            let positionArray: Array<Array<number>>,
+                x: number,
+                y: number;
+
+            arcsArray = [];
+
+            for (let i = 0, iEnd = arcs.length; i < iEnd; ++i) {
+                const positions = arcs[i];
+
+                arcsArray.push(positionArray = []);
+                x = 0;
+                y = 0;
+
+                for (let j = 0, jEnd = positions.length; j < jEnd; ++j) {
+                    positionArray.push([
+                        (x += positions[j][0]) * scale[0] + translate[0],
+                        (y += positions[j][1]) * scale[1] + translate[1]
+                    ]);
+                }
+            }
         }
 
         // Recurse down any depth of multi-dimentional arrays of arcs and insert
         // the coordinates
         const arcsToCoordinates = (
             arcs: any
-        ): number[] => {
+        ): Array<number> => {
             if (typeof arcs[0] === 'number') {
                 return arcs.reduce((
-                    coordinates: number[],
+                    coordinates: Array<number>,
                     arcNo: number,
                     i: number
-                ): number[] => {
+                ): Array<number> => {
                     let arc = arcNo < 0 ? arcsArray[~arcNo] : arcsArray[arcNo];
 
                     // The first point of an arc is always identical to the last
@@ -502,22 +504,26 @@ namespace GeoJSONComposition {
                     } else if (i) {
                         arc = arc.slice(1);
                     }
-                    return coordinates.concat(arc);
+                    return coordinates.concat(arc as any);
                 }, []);
             }
             return arcs.map(arcsToCoordinates);
         };
 
-        const features = object.geometries
-            .map((geometry): GeoJSONFeature => ({
+        const geometries = obj.geometries,
+            features: Array<GeoJSONFeature> = [];
+
+        for (let i = 0, iEnd = geometries.length; i < iEnd; ++i) {
+            features.push({
                 type: 'Feature',
-                properties: geometry.properties,
+                properties: geometries[i].properties,
                 geometry: {
-                    type: geometry.type,
-                    coordinates: geometry.coordinates ||
-                        arcsToCoordinates(geometry.arcs)
+                    type: geometries[i].type,
+                    coordinates: geometries[i].coordinates ||
+                        arcsToCoordinates(geometries[i].arcs)
                 } as any
-            }));
+            });
+        }
 
         const geojson: GeoJSON = {
             type: 'FeatureCollection',
@@ -525,12 +531,12 @@ namespace GeoJSONComposition {
             copyrightShort: topology.copyrightShort,
             copyrightUrl: topology.copyrightUrl,
             features,
-            'hc-recommended-mapview': object['hc-recommended-mapview'],
+            'hc-recommended-mapview': obj['hc-recommended-mapview'],
             bbox: topology.bbox,
             title: topology.title
         };
 
-        object['hc-decoded-geojson'] = geojson;
+        obj['hc-decoded-geojson'] = geojson;
 
         return geojson;
     }
@@ -551,7 +557,7 @@ namespace GeoJSONComposition {
         // Disable credits link if map credits enabled. This to allow for
         // in-text anchors.
         if (this.mapCredits) {
-            credits.href = null as any;
+            credits.href = void 0;
         }
 
         proceed.call(this, credits);
@@ -564,9 +570,7 @@ namespace GeoJSONComposition {
         }
     }
 
-
 }
-
 
 /* *
  *
@@ -574,16 +578,13 @@ namespace GeoJSONComposition {
  *
  * */
 
-
 export default GeoJSONComposition;
-
 
 /* *
  *
  *  API Declarations
  *
  * */
-
 
 /**
  * Represents the loose structure of a geographic JSON file.
@@ -732,4 +733,5 @@ export default GeoJSONComposition;
  *
  * @typedef {Object} Highcharts.TopoJSON
  */
+
 ''; // detach doclets above
