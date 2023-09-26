@@ -28,7 +28,7 @@ jobs:
   ### BROWSERSTACK ###
   test_browserstack:
     name: Test with BrowserStack
-    timeout-minutes: 20
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     environment: browserstack
     steps:
@@ -68,7 +68,7 @@ jobs:
   ### HEADLESS LINUX ###
   test_headless:
     name: Test with headless browsers
-    timeout-minutes: 20
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       ### SETUP ###
