@@ -45,12 +45,11 @@ jobs:
         with:
           username:  ${{ secrets.BROWSERSTACK_USER }}
           access-key: ${{ secrets.BROWSERSTACK_KEY }}
-      ### karma-browserstack-launcher creates its own tunnel ###
-      # - name: 'BrowserStackLocal Setup'
-      #   uses: 'browserstack/github-actions/setup-local@master'
-      #   with:
-      #     local-testing: start
-      #     local-identifier: random
+      - name: 'BrowserStackLocal Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: 'karma-highcharts'
       ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts
