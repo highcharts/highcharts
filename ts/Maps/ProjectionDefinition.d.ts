@@ -31,24 +31,10 @@ export interface Projector {
     inverse(xy: ProjectedXYArray): LonLatArray;
 }
 
-/* *
- *
- *  Class
- *
- * */
-
-abstract class ProjectionDefinition implements Projector {
-
-    public antimeridianCutting?: boolean;
-
-    public bounds?: MapBounds;
-
-    public abstract forward(coords: LonLatArray): ProjectedXYArray;
-
-    public abstract inverse(xy: ProjectedXYArray): LonLatArray;
-
-    public maxLatitude?: number;
-
+export interface ProjectionDefinition extends Projector {
+    antimeridianCutting?: boolean;
+    bounds?: MapBounds;
+    maxLatitude?: number;
 }
 
 /* *
