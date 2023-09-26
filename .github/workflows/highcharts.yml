@@ -27,7 +27,7 @@ jobs:
 
   test_browserstack:
     name: Test with BrowserStack
-    timeout-minutes: 30
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     environment: browserstack
     steps:
