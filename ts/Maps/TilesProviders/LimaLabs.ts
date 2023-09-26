@@ -15,7 +15,7 @@ class LimaLabs implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator';
+    initialProjectionName = 'WebMercator' as const;
 
     defaultCredits = 'Map data \u00a92023 <a href="https://maps.lima-labs.com/">LimaLabs</a>';
 

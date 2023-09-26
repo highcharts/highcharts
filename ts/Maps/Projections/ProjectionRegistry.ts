@@ -12,8 +12,6 @@
  *
  * */
 
-import type ProjectionDefinition from '../ProjectionDefinition';
-
 import LambertConformalConic from './LambertConformalConic.js';
 import EqualEarth from './EqualEarth.js';
 import Miller from './Miller.js';
@@ -22,11 +20,27 @@ import WebMercator from './WebMercator.js';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+export interface ProjectionRegistry {
+    EqualEarth: typeof EqualEarth;
+    LambertConformalConic: typeof LambertConformalConic;
+    Miller: typeof Miller;
+    Orthographic: typeof Orthographic;
+    WebMercator: typeof WebMercator;
+}
+
+export type ProjectionRegistryName = keyof ProjectionRegistry;
+
+/* *
+ *
  *  Constants
  *
  * */
 
-const registry: Record<string, typeof ProjectionDefinition> = {
+const projectionRegistry: ProjectionRegistry = {
     EqualEarth,
     LambertConformalConic,
     Miller,
@@ -40,4 +54,4 @@ const registry: Record<string, typeof ProjectionDefinition> = {
  *
  * */
 
-export default registry;
+export default projectionRegistry;

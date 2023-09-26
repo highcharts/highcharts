@@ -25,7 +25,7 @@ class USGS implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator';
+    initialProjectionName = 'WebMercator' as const;
 
     defaultCredits = `Tiles courtesy of the <a href="https://usgs.gov/">U.S.
         Geological Survey</a>`;
