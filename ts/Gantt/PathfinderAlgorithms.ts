@@ -460,7 +460,7 @@ simpleConnect.requiresObstacles = true;
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const fastAvoid = function (
+function fastAvoid(
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -485,30 +485,32 @@ const fastAvoid = function (
             - When going around the end obstacle we should not always go the
                 shortest route, rather pick the one closer to the end point
     */
-    let dirIsX = pick(
+    const dirIsX = pick(
             options.startDirectionX,
             abs(end.x - start.x) > abs(end.y - start.y)
         ),
         dir = dirIsX ? 'x' : 'y',
-        segments: any,
-        useMax: boolean,
-        extractedEndPoint: any,
         endSegments = [],
-        forceObstacleBreak = false, // Used in clearPathTo to keep track of
-        // when to force break through an obstacle.
-
         // Boundaries to stay within. If beyond soft boundary, prefer to
         // change direction ASAP. If at hard max, always change immediately.
         metrics = options.obstacleMetrics,
         softMinX = min(start.x, end.x) - metrics.maxWidth - 10,
         softMaxX = max(start.x, end.x) + metrics.maxWidth + 10,
         softMinY = min(start.y, end.y) - metrics.maxHeight - 10,
-        softMaxY = max(start.y, end.y) + metrics.maxHeight + 10,
+        softMaxY = max(start.y, end.y) + metrics.maxHeight + 10;
+
+    let segments: any,
+        useMax: boolean,
+        extractedEndPoint: any,
+        forceObstacleBreak = false, // Used in clearPathTo to keep track of
+        // when to force break through an obstacle.
+
 
         // Obstacles
         chartObstacles = options.chartObstacles,
-        startObstacleIx = findLastObstacleBefore(chartObstacles, softMinX),
         endObstacleIx = findLastObstacleBefore(chartObstacles, softMaxX);
+
+    const startObstacleIx = findLastObstacleBefore(chartObstacles, softMinX);
 
     // eslint-disable-next-line valid-jsdoc
     /**
@@ -521,12 +523,12 @@ const fastAvoid = function (
         toPoint: any,
         directionIsX?: boolean
     ): any {
+        const searchDirection = fromPoint.x < toPoint.x ? 1 : -1;
+
         let firstPoint,
             lastPoint,
             highestPoint,
-            lowestPoint,
-            i,
-            searchDirection = fromPoint.x < toPoint.x ? 1 : -1;
+            lowestPoint;
 
         if (fromPoint.x < toPoint.x) {
             firstPoint = fromPoint;
@@ -546,7 +548,7 @@ const fastAvoid = function (
 
         // Go through obstacle range in reverse if toPoint is before
         // fromPoint in the X-dimension.
-        i = searchDirection < 0 ?
+        let i = searchDirection < 0 ?
             // Searching backwards, start at last obstacle before last point
             min(findLastObstacleBefore(chartObstacles, lastPoint.x),
                 chartObstacles.length - 1) :
@@ -576,7 +578,7 @@ const fastAvoid = function (
                         obstacle: chartObstacles[i]
                     };
                 }
-                // else ...
+                // Else ...
                 return {
                     x: fromPoint.x,
                     y: fromPoint.y < toPoint.y ?
@@ -627,15 +629,13 @@ const fastAvoid = function (
         dirIsX: boolean,
         bounds: any
     ): boolean {
-        let softBounds = bounds.soft,
+        const softBounds = bounds.soft,
             hardBounds = bounds.hard,
             dir = dirIsX ? 'x' : 'y',
             toPointMax: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
             toPointMin: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
-            minPivot,
-            maxPivot,
             maxOutOfSoftBounds = obstacle[dir + 'Max'] >=
                                 softBounds[dir + 'Max'],
             minOutOfSoftBounds = obstacle[dir + 'Min'] <=
@@ -647,8 +647,9 @@ const fastAvoid = function (
             // Find out if we should prefer one direction over the other if
             // we can choose freely
             minDistance = abs(obstacle[dir + 'Min'] - fromPoint[dir]),
-            maxDistance = abs(obstacle[dir + 'Max'] - fromPoint[dir]),
-            // If it's a small difference, pick the one leading towards dest
+            maxDistance = abs(obstacle[dir + 'Max'] - fromPoint[dir]);
+
+        let // If it's a small difference, pick the one leading towards dest
             // point. Otherwise pick the shortest distance
             useMax = abs(minDistance - maxDistance) < 10 ?
                 fromPoint[dir] < toPoint[dir] :
@@ -658,15 +659,15 @@ const fastAvoid = function (
         // direction.
         toPointMin[dir] = obstacle[dir + 'Min'];
         toPointMax[dir] = obstacle[dir + 'Max'];
-        minPivot = pivotPoint(fromPoint, toPointMin, dirIsX)[dir] !==
-                    toPointMin[dir];
-        maxPivot = pivotPoint(fromPoint, toPointMax, dirIsX)[dir] !==
-                    toPointMax[dir];
+        const minPivot = pivotPoint(fromPoint, toPointMin, dirIsX)[dir] !==
+                toPointMin[dir],
+            maxPivot = pivotPoint(fromPoint, toPointMax, dirIsX)[dir] !==
+                toPointMax[dir];
         useMax = minPivot ?
             (maxPivot ? useMax : true) :
             (maxPivot ? false : useMax);
 
-        // useMax now contains our preferred choice, bounds not taken into
+        // `useMax` now contains our preferred choice, bounds not taken into
         // account. If both or neither direction is out of bounds we want to
         // use this.
 
@@ -698,14 +699,7 @@ const fastAvoid = function (
             return [];
         }
 
-        let dir = dirIsX ? 'x' : 'y',
-            pivot,
-            segments: Array<any>,
-            waypoint,
-            waypointUseMax,
-            envelopingObstacle,
-            secondEnvelopingObstacle,
-            envelopWaypoint: Record<string, number>,
+        const dir = dirIsX ? 'x' : 'y',
             obstacleMargin = options.obstacleOptions.margin,
             bounds = {
                 soft: {
@@ -716,6 +710,14 @@ const fastAvoid = function (
                 },
                 hard: options.hardBounds
             };
+
+        let pivot,
+            segments: Array<any>,
+            waypoint,
+            waypointUseMax,
+            envelopingObstacle,
+            secondEnvelopingObstacle,
+            envelopWaypoint: Record<string, number>;
 
         // If fromPoint is inside an obstacle we have a problem. Break out
         // by just going to the outside of this obstacle. We prefer to go to
@@ -940,7 +942,7 @@ const fastAvoid = function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-};
+}
 fastAvoid.requiresObstacles = true;
 
 /* *
