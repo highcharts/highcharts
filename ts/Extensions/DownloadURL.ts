@@ -25,8 +25,14 @@ const {
     win: { document: doc }
 } = H;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
- * Internal types
+ * Deprecated types
  * @private
  */
 declare global {
@@ -59,6 +65,12 @@ declare global {
 
 const domurl = win.URL || win.webkitURL || win;
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
  * @private
@@ -68,7 +80,7 @@ const domurl = win.URL || win.webkitURL || win;
  * @return {string|undefined}
  *         Blob
  */
-const dataURLtoBlob = function dataURLtoBlob(
+function dataURLtoBlob(
     dataURL: string
 ): (string|undefined) {
     const parts = dataURL
@@ -94,11 +106,10 @@ const dataURLtoBlob = function dataURLtoBlob(
             binary[i] = binStr.charCodeAt(i);
         }
 
-        const blob = new win.Blob([binary], { 'type': parts[1] });
-        return domurl.createObjectURL(blob);
+        return domurl
+            .createObjectURL(new win.Blob([binary], { 'type': parts[1] }));
     }
-};
-
+}
 
 /**
  * Download a data URL in the browser. Can also take a blob as first param.
@@ -111,7 +122,7 @@ const dataURLtoBlob = function dataURLtoBlob(
  *        The name of the resulting file (w/extension)
  * @return {void}
  */
-const downloadURL = function (
+function downloadURL(
     dataURL: (string|URL),
     filename: string
 ): void {
@@ -120,7 +131,8 @@ const downloadURL = function (
 
     // IE specific blob implementation
     // Don't use for normal dataURLs
-    if (typeof dataURL !== 'string' &&
+    if (
+        typeof dataURL !== 'string' &&
         !(dataURL instanceof String) &&
         nav.msSaveOrOpenBlob
     ) {
@@ -128,17 +140,18 @@ const downloadURL = function (
         return;
     }
 
-    dataURL = `${dataURL}`;
+    dataURL = '' + dataURL;
 
-    // Some browsers have limitations for data URL lengths. Try to convert to
-    // Blob or fall back. Edge always needs that blob.
-    const isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
-    // Safari on iOS needs Blob in order to download PDF
-    const safariBlob = (
-        isSafari &&
-        typeof dataURL === 'string' &&
-        dataURL.indexOf('data:application/pdf') === 0
-    );
+    const // Some browsers have limitations for data URL lengths. Try to convert
+        // to Blob or fall back. Edge always needs that blob.
+        isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
+        // Safari on iOS needs Blob in order to download PDF
+        safariBlob = (
+            isSafari &&
+            typeof dataURL === 'string' &&
+            dataURL.indexOf('data:application/pdf') === 0
+        );
+
     if (safariBlob || isOldEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {
@@ -156,17 +169,21 @@ const downloadURL = function (
     } else {
         // No download attr, just opening data URI
         try {
-            const windowRef = win.open(dataURL, 'chart');
-            if (typeof windowRef === 'undefined' || windowRef === null) {
+            if (!win.open(dataURL, 'chart')) {
                 throw new Error('Failed to open window');
             }
-        } catch (e) {
-            // window.open failed, trying location.href
+        } catch {
+            // If window.open failed, try location.href
             win.location.href = dataURL;
         }
     }
-};
+}
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 const DownloadURL = {
     dataURLtoBlob,
