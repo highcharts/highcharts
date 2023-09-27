@@ -11,6 +11,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -21,6 +27,7 @@ import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -31,75 +38,6 @@ const {
     objectEach,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Connection {
-            public constructor(
-                from: Point,
-                to: Point,
-                options?: ConnectorsOptions
-            );
-            public chart: Chart;
-            public fromPoint: Point;
-            public graphics: Record<string, SVGElement>;
-            public options?: ConnectorsOptions;
-            public pathfinder: Pathfinder;
-            public toPoint: Point;
-            public addMarker(
-                type: string,
-                options: ConnectorsMarkerOptions,
-                path: SVGPath
-            ): void;
-            public destroy(): void;
-            public getPath(
-                options: ConnectorsOptions
-            ): PathfinderAlgorithmResultObject;
-            public init(
-                from: Point,
-                to: Point,
-                options?: ConnectorsOptions
-            ): void;
-            public render(): void;
-            public renderPath(
-                path: SVGPath,
-                attribs?: SVGAttributes,
-                animation?: (boolean|DeepPartial<AnimationOptions>)
-            ): void;
-        }
-    }
-}
-
-/**
- * The default pathfinder algorithm to use for a chart. It is possible to define
- * your own algorithms by adding them to the
- * `Highcharts.Pathfinder.prototype.algorithms`
- * object before the chart has been created.
- *
- * The default algorithms are as follows:
- *
- * `straight`:      Draws a straight line between the connecting
- *                  points. Does not avoid other points when drawing.
- *
- * `simpleConnect`: Finds a path between the points using right angles
- *                  only. Takes only starting/ending points into
- *                  account, and will not avoid other points.
- *
- * `fastAvoid`:     Finds a path between the points using right angles
- *                  only. Will attempt to avoid other points, but its
- *                  focus is performance over accuracy. Works well with
- *                  less dense datasets.
- *
- * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
- */
-
-''; // detach doclets above
-
-import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 
 const deg2rad = H.deg2rad,
     max = Math.max,
@@ -918,9 +856,6 @@ class Connection {
     }
 }
 
-// Add to Highcharts namespace
-H.Connection = Connection as any;
-
 
 // Add pathfinding capabilities to Points
 extend(Point.prototype, /** @lends Point.prototype */ {
@@ -1131,3 +1066,34 @@ function warnLegacy(chart: Chart): void {
 }
 
 export default Connection;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * The default pathfinder algorithm to use for a chart. It is possible to define
+ * your own algorithms by adding them to the
+ * `Highcharts.Pathfinder.prototype.algorithms`
+ * object before the chart has been created.
+ *
+ * The default algorithms are as follows:
+ *
+ * `straight`:      Draws a straight line between the connecting
+ *                  points. Does not avoid other points when drawing.
+ *
+ * `simpleConnect`: Finds a path between the points using right angles
+ *                  only. Takes only starting/ending points into
+ *                  account, and will not avoid other points.
+ *
+ * `fastAvoid`:     Finds a path between the points using right angles
+ *                  only. Will attempt to avoid other points, but its
+ *                  focus is performance over accuracy. Works well with
+ *                  less dense datasets.
+ *
+ * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
+ */
+
+''; // detach doclets above

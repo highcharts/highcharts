@@ -646,7 +646,7 @@ class Pathfinder {
     public chart: Chart = void 0 as any;
     public chartObstacles: Array<any> = void 0 as any;
     public chartObstacleMetrics: Record<string, number> = void 0 as any;
-    public connections: Array<Highcharts.Connection> = void 0 as any;
+    public connections: Array<Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
 
