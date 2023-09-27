@@ -119,8 +119,7 @@ extend(defaultOptions, ConnectorsDefaults);
  *         Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point: Point): (Record<string, number>|null) {
-    let shapeArgs = point.shapeArgs,
-        bb;
+    const shapeArgs = point.shapeArgs;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
@@ -133,7 +132,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     }
 
     // Otherwise use plotX/plotY and bb
-    bb = point.graphic && point.graphic.getBBox();
+    const bb = point.graphic && point.graphic.getBBox();
     return bb ? {
         xMin: (point.plotX as any) - bb.width / 2,
         xMax: (point.plotX as any) + bb.width / 2,
@@ -228,13 +227,14 @@ class Connection {
         attribs?: SVGAttributes,
         animation?: (boolean|DeepPartial<AnimationOptions>)
     ): void {
-        let connection = this,
+        const connection = this,
             chart = this.chart,
             styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
             animate = !chart.options.chart.forExport && animation !== false,
-            pathGraphic = connection.graphics && connection.graphics.path,
-            anim: SVGAttributes;
+            anim: SVGAttributes = {};
+
+        let pathGraphic = connection.graphics && connection.graphics.path;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!(pathfinder as any).group) {
@@ -262,7 +262,7 @@ class Connection {
 
         // Set path attribs and animate to the new path
         pathGraphic.attr(attribs);
-        anim = { d: path };
+        anim.d = path;
         if (!styledMode) {
             anim.opacity = 1;
         }
@@ -296,7 +296,7 @@ class Connection {
         options: ConnectorsMarkerOptions,
         path: SVGPath
     ): void {
-        let connection = this,
+        const connection = this,
             chart = connection.fromPoint.series.chart,
             pathfinder = chart.pathfinder,
             renderer = chart.renderer,
@@ -305,8 +305,8 @@ class Connection {
                     connection.fromPoint :
                     connection.toPoint
             ),
-            anchor = point.getPathfinderAnchorPoint(options),
-            markerVector,
+            anchor = point.getPathfinderAnchorPoint(options);
+        let markerVector,
             radians,
             rotation,
             box,
@@ -412,10 +412,11 @@ class Connection {
     public getPath(
         options: ConnectorsOptions
     ): (Highcharts.PathfinderAlgorithmResultObject) {
-        let pathfinder = this.pathfinder,
+        const pathfinder = this.pathfinder,
             chart = this.chart,
-            algorithm = pathfinder.algorithms[options.type as any],
-            chartObstacles = pathfinder.chartObstacles;
+            algorithm = pathfinder.algorithms[options.type as any];
+
+        let chartObstacles = pathfinder.chartObstacles;
 
         if (typeof algorithm !== 'function') {
             error(
@@ -475,18 +476,17 @@ class Connection {
      * @function Highcharts.Connection#render
      */
     public render(): void {
-        let connection = this,
+        const connection = this,
             fromPoint = connection.fromPoint,
             series = fromPoint.series,
             chart = series.chart,
             pathfinder = chart.pathfinder,
-            pathResult: Highcharts.PathfinderAlgorithmResultObject,
-            path: SVGPath,
-            options = merge(
-                chart.options.connectors, series.options.connectors,
-                fromPoint.options.connectors, connection.options
-            ),
             attribs: SVGAttributes = {};
+
+        let options = merge(
+            chart.options.connectors, series.options.connectors,
+            fromPoint.options.connectors, connection.options
+        );
 
         // Set path attribs
         if (!chart.styledMode) {
@@ -509,8 +509,9 @@ class Connection {
             ), 5);
         }
         // Get the path
-        pathResult = connection.getPath(options);
-        path = pathResult.path;
+        const pathResult: Highcharts.PathfinderAlgorithmResultObject =
+            connection.getPath(options);
+        const path: SVGPath = pathResult.path;
 
         // Always update obstacle storage with obstacles from this path.
         // We don't know if future calls will need this for their algorithm.
@@ -575,8 +576,9 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         markerOptions: ConnectorsMarkerOptions
     ): PositionObject {
-        let bb = getPointBB(this),
-            x,
+        const bb = getPointBB(this);
+
+        let x,
             y;
 
         switch (markerOptions.align) { // eslint-disable-line default-case
@@ -663,14 +665,11 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         markerRadius: number,
         anchor: PositionObject
     ): PositionObject {
-        let twoPI = Math.PI * 2.0,
-            theta = radians,
+        const twoPI = Math.PI * 2.0,
             bb = getPointBB(this),
             rectWidth = (bb as any).xMax - (bb as any).xMin,
             rectHeight = (bb as any).yMax - (bb as any).yMin,
             rAtan = Math.atan2(rectHeight, rectWidth),
-            tanTheta = 1,
-            leftOrRightRegion = false,
             rectHalfWidth = rectWidth / 2.0,
             rectHalfHeight = rectHeight / 2.0,
             rectHorizontalCenter = (bb as any).xMin + rectHalfWidth,
@@ -678,7 +677,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             edgePoint = {
                 x: rectHorizontalCenter,
                 y: rectVerticalCenter
-            },
+            };
+        let theta = radians,
+            tanTheta = 1,
+            leftOrRightRegion = false,
             xFactor = 1,
             yFactor = 1;
 
@@ -729,8 +731,14 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             y: edgePoint.y - (markerRadius * Math.sin(theta))
         };
     }
+
 });
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Connection;
 
@@ -763,4 +771,4 @@ export default Connection;
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 
-''; // detach doclets above
+''; // Keeps doclets above in JS file
