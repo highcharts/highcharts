@@ -23,6 +23,7 @@ import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import PathfinderComposition from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -538,6 +539,21 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  *        The chart to operate on.
  */
 class Pathfinder {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        PointClass: typeof Point
+    ): void {
+        PathfinderComposition.compose(
+            PointClass
+        );
+    }
+
     public constructor(
         chart: Chart
     ) {
