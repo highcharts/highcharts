@@ -17,11 +17,13 @@
  *
  * */
 
+import type Chart from '../Core/Chart/Chart';
 import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
 } from './ConnectorsOptions';
 import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
+import type Pathfinder from './Pathfinder';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 
@@ -31,6 +33,8 @@ const { setOptions } = D;
 import U from '../Core/Utilities.js';
 const {
     defined,
+    error,
+    merge,
     pushUnique
 } = U;
 
@@ -111,6 +115,37 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     } : null;
 }
 
+/**
+ * Warn if using legacy options. Copy the options over. Note that this will
+ * still break if using the legacy options in chart.update, addSeries etc.
+ * @private
+ */
+function warnLegacy(chart: Chart): void {
+    if (
+        (chart.options as any).pathfinder ||
+        chart.series.reduce(function (acc, series): boolean {
+            if (series.options) {
+                merge(
+                    true,
+                    (
+                        series.options.connectors = series.options.connectors ||
+                        {}
+                    ), (series.options as any).pathfinder
+                );
+            }
+            return acc || series.options && (series.options as any).pathfinder;
+        }, false)
+    ) {
+        merge(
+            true,
+            (chart.options.connectors = chart.options.connectors || {}),
+            (chart.options as any).pathfinder
+        );
+        error('WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.');
+    }
+}
+
 /* *
  *
  *  Composition
@@ -135,8 +170,25 @@ namespace ConnectionComposition {
 
     /** @private */
     export function compose(
+        ChartClass: typeof Chart,
+        PathfinderClass: typeof Pathfinder,
         PointClass: typeof Point
     ): void {
+
+        if (pushUnique(composedMembers, ChartClass)) {
+            // Initialize Pathfinder for charts
+            ChartClass.prototype.callbacks.push(function (
+                chart: Chart
+            ): void {
+                const options = chart.options;
+
+                if ((options.connectors as any).enabled !== false) {
+                    warnLegacy(chart);
+                    this.pathfinder = new PathfinderClass(this);
+                    this.pathfinder.update(true); // First draw, defer render
+                }
+            });
+        }
 
         if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype;

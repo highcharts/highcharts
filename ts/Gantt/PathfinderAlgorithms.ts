@@ -11,6 +11,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -58,6 +64,12 @@ const {
     max,
     abs
 } = Math;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Get index of last obstacle before xMin. Employs a type of binary search, and
@@ -157,7 +169,7 @@ function findObstacleFromPoint(
     while (i--) {
         if (
             obstacles[i].xMax >= point.x &&
-            // optimization using lazy evaluation
+            // Optimization using lazy evaluation
             pointWithinObstacle(obstacles[i], point)
         ) {
             return i;

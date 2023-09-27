@@ -34,9 +34,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    error,
-    extend,
-    merge,
     pick,
     splat
 } = U;
@@ -194,37 +191,6 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     );
 }
 
-/**
- * Warn if using legacy options. Copy the options over. Note that this will
- * still break if using the legacy options in chart.update, addSeries etc.
- * @private
- */
-function warnLegacy(chart: Chart): void {
-    if (
-        (chart.options as any).pathfinder ||
-        chart.series.reduce(function (acc, series): boolean {
-            if (series.options) {
-                merge(
-                    true,
-                    (
-                        series.options.connectors = series.options.connectors ||
-                        {}
-                    ), (series.options as any).pathfinder
-                );
-            }
-            return acc || series.options && (series.options as any).pathfinder;
-        }, false)
-    ) {
-        merge(
-            true,
-            (chart.options.connectors = chart.options.connectors || {}),
-            (chart.options as any).pathfinder
-        );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
-    }
-}
-
 /* *
  *
  *  Class
@@ -250,9 +216,10 @@ class Pathfinder {
      * */
 
     public static compose(
+        ChartClass: typeof Chart,
         PointClass: typeof Point
     ): void {
-        PathfinderComposition.compose(PointClass);
+        PathfinderComposition.compose(ChartClass, Pathfinder, PointClass);
     }
 
     /* *
@@ -279,6 +246,12 @@ class Pathfinder {
     public connections: Array<Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Pathfinder object.
@@ -320,24 +293,21 @@ class Pathfinder {
         chart.series.forEach(function (series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
-                    const ganttPointOptions: GanttPointOptions = point.options;
+                    const ganttPointOptions: GanttPointOptions = point.options,
+                        connects = (
+                            point.options &&
+                            point.options.connect &&
+                            splat(point.options.connect)
+                        );
+
                     // For Gantt series the connect could be
                     // defined as a dependency
                     if (ganttPointOptions && ganttPointOptions.dependency) {
                         ganttPointOptions.connect = ganttPointOptions
                             .dependency;
                     }
-                    let to: (
-                            Axis|
-                            Series|
-                            Point|
-                            undefined
-                        ),
-                        connects = (
-                            point.options &&
-                            point.options.connect &&
-                            splat(point.options.connect)
-                        );
+
+                    let to: (Axis|Series|Point|undefined);
 
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (
@@ -356,7 +326,7 @@ class Pathfinder {
                                 // Add new connection
                                 pathfinder.connections.push(
                                     new (Connection as any)(
-                                        point, // from
+                                        point, // From
                                         to,
                                         typeof connect === 'string' ?
                                             {} :
@@ -475,10 +445,13 @@ class Pathfinder {
      *         An array of calculated obstacles. Each obstacle is defined as an
      *         object with xMin, xMax, yMin and yMax properties.
      */
-    public getChartObstacles(options: { algorithmMargin?: number }): Array<any> {
+    public getChartObstacles(
+        options: { algorithmMargin?: number }
+    ): Array<any> {
+        const series = this.chart.series,
+            margin = pick(options.algorithmMargin, 0);
+
         let obstacles = [],
-            series = this.chart.series,
-            margin = pick(options.algorithmMargin, 0),
             calculatedMargin: number;
 
         for (let i = 0, sLen = series.length; i < sLen; ++i) {
@@ -578,15 +551,14 @@ class Pathfinder {
     public getAlgorithmStartDirection(
         markerOptions: ConnectorsMarkerOptions
     ): (boolean|undefined) {
-        let xCenter = markerOptions.align !== 'left' &&
-                        markerOptions.align !== 'right',
+        const xCenter = markerOptions.align !== 'left' &&
+                markerOptions.align !== 'right',
             yCenter = markerOptions.verticalAlign !== 'top' &&
-                        markerOptions.verticalAlign !== 'bottom',
-            undef;
+                markerOptions.verticalAlign !== 'bottom';
 
         return xCenter ?
-            (yCenter ? undef : false) : // x is centered
-            (yCenter ? true : undef); // x is off-center
+            (yCenter ? void 0 : false) : // When x is centered
+            (yCenter ? true : void 0); // When x is off-center
     }
 }
 
@@ -606,196 +578,11 @@ interface Pathfinder {
  */
 Pathfinder.prototype.algorithms = PathfinderAlgorithms;
 
-
-// Add pathfinding capabilities to Points
-extend(Point.prototype, /** @lends Point.prototype */ {
-
-    /**
-     * Get coordinates of anchor point for pathfinder connection.
-     *
-     * @private
-     * @function Highcharts.Point#getPathfinderAnchorPoint
-     *
-     * @param {Highcharts.ConnectorsMarkerOptions} markerOptions
-     *        Connection options for position on point.
-     *
-     * @return {Highcharts.PositionObject}
-     *         An object with x/y properties for the position. Coordinates are
-     *         in plot values, not relative to point.
-     */
-    getPathfinderAnchorPoint: function (
-        this: Point,
-        markerOptions: ConnectorsMarkerOptions
-    ): PositionObject {
-        let bb = getPointBB(this),
-            x,
-            y;
-
-        switch (markerOptions.align) { // eslint-disable-line default-case
-            case 'right':
-                x = 'xMax';
-                break;
-            case 'left':
-                x = 'xMin';
-        }
-
-        switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-            case 'top':
-                y = 'yMin';
-                break;
-            case 'bottom':
-                y = 'yMax';
-        }
-
-        return {
-            x: x ? (bb as any)[x] : ((bb as any).xMin + (bb as any).xMax) / 2,
-            y: y ? (bb as any)[y] : ((bb as any).yMin + (bb as any).yMax) / 2
-        };
-    },
-
-    /**
-     * Utility to get the angle from one point to another.
-     *
-     * @private
-     * @function Highcharts.Point#getRadiansToVector
-     *
-     * @param {Highcharts.PositionObject} v1
-     *        The first vector, as an object with x/y properties.
-     *
-     * @param {Highcharts.PositionObject} v2
-     *        The second vector, as an object with x/y properties.
-     *
-     * @return {number}
-     *         The angle in degrees
-     */
-    getRadiansToVector: function (
-        this: Point,
-        v1: PositionObject,
-        v2: PositionObject
-    ): number {
-        let box: (Record<string, number>|null);
-
-        if (!defined(v2)) {
-            box = getPointBB(this);
-            if (box) {
-                v2 = {
-                    x: (box.xMin + box.xMax) / 2,
-                    y: (box.yMin + box.yMax) / 2
-                };
-            }
-        }
-
-        return Math.atan2(v2.y - v1.y, v1.x - v2.x);
-    },
-
-    /**
-     * Utility to get the position of the marker, based on the path angle and
-     * the marker's radius.
-     *
-     * @private
-     * @function Highcharts.Point#getMarkerVector
-     *
-     * @param {number} radians
-     *        The angle in radians from the point center to another vector.
-     *
-     * @param {number} markerRadius
-     *        The radius of the marker, to calculate the additional distance to
-     *        the center of the marker.
-     *
-     * @param {Object} anchor
-     *        The anchor point of the path and marker as an object with x/y
-     *        properties.
-     *
-     * @return {Object}
-     *         The marker vector as an object with x/y properties.
-     */
-    getMarkerVector: function (
-        this: Point,
-        radians: number,
-        markerRadius: number,
-        anchor: PositionObject
-    ): PositionObject {
-        let twoPI = Math.PI * 2.0,
-            theta = radians,
-            bb = getPointBB(this),
-            rectWidth = (bb as any).xMax - (bb as any).xMin,
-            rectHeight = (bb as any).yMax - (bb as any).yMin,
-            rAtan = Math.atan2(rectHeight, rectWidth),
-            tanTheta = 1,
-            leftOrRightRegion = false,
-            rectHalfWidth = rectWidth / 2.0,
-            rectHalfHeight = rectHeight / 2.0,
-            rectHorizontalCenter = (bb as any).xMin + rectHalfWidth,
-            rectVerticalCenter = (bb as any).yMin + rectHalfHeight,
-            edgePoint = {
-                x: rectHorizontalCenter,
-                y: rectVerticalCenter
-            },
-            xFactor = 1,
-            yFactor = 1;
-
-        while (theta < -Math.PI) {
-            theta += twoPI;
-        }
-
-        while (theta > Math.PI) {
-            theta -= twoPI;
-        }
-
-        tanTheta = Math.tan(theta);
-
-        if ((theta > -rAtan) && (theta <= rAtan)) {
-            // Right side
-            yFactor = -1;
-            leftOrRightRegion = true;
-        } else if (theta > rAtan && theta <= (Math.PI - rAtan)) {
-            // Top side
-            yFactor = -1;
-        } else if (theta > (Math.PI - rAtan) || theta <= -(Math.PI - rAtan)) {
-            // Left side
-            xFactor = -1;
-            leftOrRightRegion = true;
-        } else {
-            // Bottom side
-            xFactor = -1;
-        }
-
-        // Correct the edgePoint according to the placement of the marker
-        if (leftOrRightRegion) {
-            edgePoint.x += xFactor * (rectHalfWidth);
-            edgePoint.y += yFactor * (rectHalfWidth) * tanTheta;
-        } else {
-            edgePoint.x += xFactor * (rectHeight / (2.0 * tanTheta));
-            edgePoint.y += yFactor * (rectHalfHeight);
-        }
-
-        if (anchor.x !== rectHorizontalCenter) {
-            edgePoint.x = anchor.x;
-        }
-        if (anchor.y !== rectVerticalCenter) {
-            edgePoint.y = anchor.y;
-        }
-
-        return {
-            x: edgePoint.x + (markerRadius * Math.cos(theta)),
-            y: edgePoint.y - (markerRadius * Math.sin(theta))
-        };
-    }
-});
-
-
-// Initialize Pathfinder for charts
-Chart.prototype.callbacks.push(function (
-    chart: Chart
-): void {
-    const options = chart.options;
-
-    if ((options.connectors as any).enabled !== false) {
-        warnLegacy(chart);
-        this.pathfinder = new Pathfinder(this);
-        this.pathfinder.update(true); // First draw, defer render
-    }
-});
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pathfinder;
 
