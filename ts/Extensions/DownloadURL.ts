@@ -12,10 +12,18 @@
 
 'use strict';
 
-import Highcharts from '../Core/Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import H from '../Core/Globals.js';
 const {
-    isSafari
-} = Highcharts;
+    isSafari,
+    win,
+    win: { document: doc }
+} = H;
 
 /**
  * Internal types
@@ -25,10 +33,6 @@ declare global {
     interface HTMLCanvasElement {
         /** @deprecated */
         msToBlob: Function;
-    }
-    namespace Highcharts {
-        function dataURLtoBlob(dataURL: string): (string|undefined);
-        function downloadURL(dataURL: (string|URL), filename: string): void;
     }
     /** @deprecated */
     interface MSBlobBuilder extends Blob {
@@ -47,9 +51,13 @@ declare global {
     }
 }
 
-const win = Highcharts.win,
-    doc = win.document,
-    domurl = win.URL || win.webkitURL || win;
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const domurl = win.URL || win.webkitURL || win;
 
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
@@ -60,7 +68,7 @@ const win = Highcharts.win,
  * @return {string|undefined}
  *         Blob
  */
-const dataURLtoBlob = Highcharts.dataURLtoBlob = function (
+const dataURLtoBlob = function dataURLtoBlob(
     dataURL: string
 ): (string|undefined) {
     const parts = dataURL
@@ -103,7 +111,7 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (
  *        The name of the resulting file (w/extension)
  * @return {void}
  */
-const downloadURL = Highcharts.downloadURL = function (
+const downloadURL = function (
     dataURL: (string|URL),
     filename: string
 ): void {
