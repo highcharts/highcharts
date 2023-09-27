@@ -36,6 +36,7 @@ import VerletIntegration from '../Networkgraph/VerletIntegration.js';
 function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
         gravitationalConstant = layout.options.gravitationalConstant,
+        gravitationalConstantY = layout.options.gravitationalConstantY,
         box = layout.box,
         nodes = layout.nodes;
 
@@ -47,8 +48,8 @@ function barycenter(this: PackedBubbleLayout): void {
             centerX = (node.series.parentNode as any).plotX;
             centerY = (node.series.parentNode as any).plotY;
         } else {
-            centerX = box.width / 2;
-            centerY = box.height / 2;
+            centerX = node.series.options.centerX || box.width / 2;
+            centerY = node.series.options.centerY || box.height / 2;
         }
         if (!node.fixedPosition) {
             (node.plotX as any) -=
@@ -58,7 +59,7 @@ function barycenter(this: PackedBubbleLayout): void {
 
             (node.plotY as any) -=
                 ((node.plotY as any) - (centerY as any)) *
-                (gravitationalConstant as any) /
+                (gravitationalConstantY || gravitationalConstant as any) /
                 (node.mass * Math.sqrt(nodes.length));
         }
     }

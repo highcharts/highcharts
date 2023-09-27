@@ -22,10 +22,17 @@ import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
 import '../Series/ErrorBar/ErrorBarSeries.js';
 import '../Series/Gauge/GaugeSeries.js';
 import PackedBubbleSeries from '../Series/PackedBubble/PackedBubbleSeries.js';
+import PackedBubbleAxisSeries from '../Series/PackedBubbleAxis/PackedBubbleAxisSeries.js';
 import '../Series/Polygon/PolygonSeries.js';
 import '../Series/Waterfall/WaterfallSeries.js';
 import PolarAdditions from '../Series/PolarComposition.js';
 PackedBubbleSeries.compose(
+    G.Axis,
+    G.Chart,
+    G.Legend,
+    G.Series
+);
+PackedBubbleAxisSeries.compose(
     G.Axis,
     G.Chart,
     G.Legend,

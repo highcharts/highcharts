@@ -55,6 +55,7 @@ const {
     initDataLabelsDefer
 } = D;
 import U from '../../Core/Utilities.js';
+import PackedBubbleAxisSeries from '../PackedBubbleAxis/PackedBubbleAxisSeries';
 const {
     addEvent,
     clamp,
