@@ -29,8 +29,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -99,13 +97,6 @@ const deg2rad = H.deg2rad,
  *  Class
  *
  * */
-
-/*
- @todo:
-     - Document how to write your own algorithms
-     - Consider adding a Point.pathTo method that wraps creating a connection
-       and rendering it
-*/
 
 /**
  * The Connection class. Used internally to represent a connection between two
