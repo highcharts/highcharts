@@ -11,6 +11,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import Connection from '../../Gantt/Connection.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
 import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
@@ -21,6 +22,7 @@ import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
 import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
 const G: AnyRecord = Highcharts;
 // Classes
+G.Connection = Connection;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
 G.Navigator = Navigator;
