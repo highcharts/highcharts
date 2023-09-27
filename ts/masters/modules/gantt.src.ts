@@ -27,6 +27,7 @@ G.Connection = Connection;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
 G.Navigator = Navigator;
+G.Pathfinder = Pathfinder;
 G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 // Compositions

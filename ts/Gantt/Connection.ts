@@ -22,6 +22,7 @@ import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
 } from './ConnectorsOptions';
+import type Pathfinder from './Pathfinder';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -89,7 +90,7 @@ class Connection {
     public fromPoint: Point = void 0 as any;
     public graphics: Record<string, SVGElement> = void 0 as any;
     public options?: ConnectorsOptions;
-    public pathfinder: Highcharts.Pathfinder = void 0 as any;
+    public pathfinder: Pathfinder = void 0 as any;
     public toPoint: Point = void 0 as any;
 
     /**
@@ -421,8 +422,8 @@ class Connection {
         }
         // Get the path
         const pathResult: Highcharts.PathfinderAlgorithmResultObject =
-            connection.getPath(options);
-        const path: SVGPath = pathResult.path;
+                connection.getPath(options),
+            path: SVGPath = pathResult.path;
 
         // Always update obstacle storage with obstacles from this path.
         // We don't know if future calls will need this for their algorithm.

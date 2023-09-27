@@ -57,12 +57,17 @@ declare module '../Core/Series/PointLike' {
 declare module '../Core/Series/PointOptions' {
     interface PointOptions {
         connect?: (
-            Highcharts.PointConnectOptionsObject|
+            PointConnectOptionsObject|
             GanttDependencyOptions
         );
         connectors?: ConnectorsOptions;
     }
 }
+
+export interface PointConnectOptionsObject {
+    to?: string;
+}
+
 
 /* *
  *

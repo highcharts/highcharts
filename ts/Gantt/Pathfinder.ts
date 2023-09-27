@@ -11,6 +11,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from '../Core/Axis/Axis';
 import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
@@ -20,8 +26,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 import PathfinderComposition from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
@@ -51,47 +55,6 @@ declare module '../Core/Chart/ChartLike'{
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         pathfinderRemoveRenderEvent?: Function;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type PathfinderTypeValue = (
-            'straight'|
-            'fastAvoid'|
-            'simpleConnect'|
-            string
-        );
-
-        interface PointConnectOptionsObject {
-            to?: string;
-        }
-        class Pathfinder {
-            public constructor(chart: Chart);
-            public algorithms: Record<string, PathfinderAlgorithmFunction>;
-            public chart: Chart;
-            public chartObstacles: Array<any>;
-            public chartObstacleMetrics: Record<string, number>;
-            public connections: Array<Connection>;
-            public group: SVGElement;
-            public lineObstacles: Array<any>;
-            public getAlgorithmStartDirection(
-                markerOptions: ConnectorsMarkerOptions
-            ): (boolean|undefined);
-            public getChartObstacles(
-                options: { algorithmMargin?: number }
-            ): Array<any>;
-            public getObstacleMetrics(
-                obstacles: Array<any>
-            ): Record<string, number>;
-            public init(chart: Chart): void;
-            public renderConnections(deferRender?: boolean): void;
-            public update(deferRender?: boolean): void;
-        }
     }
 }
 
@@ -609,9 +572,6 @@ interface Pathfinder {
     algorithms: Record<string, Highcharts.PathfinderAlgorithmFunction>;
 }
 Pathfinder.prototype.algorithms = pathfinderAlgorithms;
-
-// Add to Highcharts namespace
-H.Pathfinder = Pathfinder as any;
 
 
 // Add pathfinding capabilities to Points
