@@ -11,7 +11,8 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Gantt/Pathfinder.js';
+import Pathfinder from '../../Gantt/Pathfinder.js';
 import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
 const G: AnyRecord = Highcharts;
 ArrowSymbols.compose(G.SVGRenderer);
+Pathfinder.compose(G.Point);

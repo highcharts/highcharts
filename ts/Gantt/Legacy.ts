@@ -57,48 +57,16 @@ const max = Math.max,
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    let len = obstacles.length,
-        i = 0,
-        j,
-        obstacleDistance,
-        distances = [],
-        // Compute smallest distance between two rectangles
-        distance = function (
-            a: Record<string, number>,
-            b: Record<string, number>,
-            bbMargin?: number
-        ): number {
-            // Count the distance even if we are slightly off
-            const margin = pick(bbMargin, 10),
-                yOverlap = a.yMax + margin > b.yMin - margin &&
-                            a.yMin - margin < b.yMax + margin,
-                xOverlap = a.xMax + margin > b.xMin - margin &&
-                            a.xMin - margin < b.xMax + margin,
-                xDistance = yOverlap ? (
-                    a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
-                ) : Infinity,
-                yDistance = xOverlap ? (
-                    a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
-                ) : Infinity;
+    const distances = [],
+        len = obstacles.length;
 
-            // If the rectangles collide, try recomputing with smaller margin.
-            // If they collide anyway, discard the obstacle.
-            if (xOverlap && yOverlap) {
-                return (
-                    margin ?
-                        distance(a, b, Math.floor(margin / 2)) :
-                        Infinity
-                );
-            }
-
-            return min(xDistance, yDistance);
-        };
+    let obstacleDistance;
 
     // Go over all obstacles and compare them to the others.
-    for (; i < len; ++i) {
+    for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
-        for (j = i + 1; j < len; ++j) {
+        for (let j = i + 1; j < len; ++j) {
             obstacleDistance = distance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
             if (obstacleDistance < 80) { // Ignore large distances
@@ -106,14 +74,13 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             }
         }
     }
+
     // Ensure we always have at least one value, even in very spaceous charts
     distances.push(80);
 
     return max(
         Math.floor(
-            distances.sort(function (a: number, b: number): number {
-                return (a - b);
-            })[
+            distances.sort((a: number, b: number): number => (a - b))[
                 // Discard first 10% of the relevant distances, and then grab
                 // the smallest one.
                 Math.floor(distances.length / 10)
@@ -121,6 +88,41 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         ),
         1 // 1 is the minimum margin
     );
+}
+
+/**
+ * Compute smallest distance between two rectangles
+ * @private
+ */
+function distance(
+    a: Record<string, number>,
+    b: Record<string, number>,
+    bbMargin?: number
+): number {
+    // Count the distance even if we are slightly off
+    const margin = pick(bbMargin, 10),
+        yOverlap = a.yMax + margin > b.yMin - margin &&
+                    a.yMin - margin < b.yMax + margin,
+        xOverlap = a.xMax + margin > b.xMin - margin &&
+                    a.xMin - margin < b.xMax + margin,
+        xDistance = yOverlap ? (
+            a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
+        ) : Infinity,
+        yDistance = xOverlap ? (
+            a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
+        ) : Infinity;
+
+    // If the rectangles collide, try recomputing with smaller margin.
+    // If they collide anyway, discard the obstacle.
+    if (xOverlap && yOverlap) {
+        return (
+            margin ?
+                distance(a, b, Math.floor(margin / 2)) :
+                Infinity
+        );
+    }
+
+    return min(xDistance, yDistance);
 }
 
 /**
@@ -153,3 +155,17 @@ function warnLegacy(chart: Chart): void {
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const legacy = {
+    calculateObstacleMargin,
+    distance,
+    warnLegacy
+};
+
+export default legacy;

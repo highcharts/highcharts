@@ -35,6 +35,14 @@ export interface ConnectorsDefaults {
  *
  * */
 
+
+/*
+ @todo:
+     - Document how to write your own algorithms
+     - Consider adding a Point.pathTo method that wraps creating a connection
+       and rendering it
+*/
+
 const connectorsDefaults: ConnectorsDefaults = {
     /**
      * The Pathfinder module allows you to define connections between any two
@@ -136,7 +144,7 @@ const connectorsDefaults: ConnectorsDefaults = {
         type: 'straight',
 
         /**
-         * The corner radius for this chart's Pathfinder connecting lines
+         * The corner radius for the connector line.
          *
          * @since next
          */
@@ -269,6 +277,20 @@ const connectorsDefaults: ConnectorsDefaults = {
     }
 };
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default connectorsDefaults;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * Override Pathfinder connector options for a series. Requires Highcharts Gantt
  * to be loaded.
@@ -308,12 +330,4 @@ const connectorsDefaults: ConnectorsDefaults = {
  * @apioption series.xrange.data.connect.to
  */
 
-''; // detach doclets above
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default connectorsDefaults;
+''; // Keeps doclets above in JS file
