@@ -3,8 +3,6 @@
  *  (c) 2016 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera, Jon Arild Nygard
  *
- *  Contains detached legacy code not used anymore after tree shaking.
- *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
@@ -47,6 +45,7 @@ const max = Math.max,
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
  *
+ * @deprecated
  * @private
  * @function
  *
@@ -92,6 +91,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
 
 /**
  * Compute smallest distance between two rectangles
+ * @deprecated
  * @private
  */
 function distance(
@@ -128,6 +128,7 @@ function distance(
 /**
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
+ * @deprecated
  * @private
  */
 function warnLegacy(chart: Chart): void {
@@ -162,6 +163,10 @@ function warnLegacy(chart: Chart): void {
  *
  * */
 
+/**
+ * Contains detached legacy code not used anymore after tree shaking.
+ * @deprecated
+ */
 const legacy = {
     calculateObstacleMargin,
     distance,

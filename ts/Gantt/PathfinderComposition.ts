@@ -18,8 +18,10 @@
  * */
 
 import type {
-    ConnectorsMarkerOptions
+    ConnectorsMarkerOptions,
+    ConnectorsOptions
 } from './ConnectorsOptions';
+import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 
@@ -31,6 +33,36 @@ const {
     defined,
     pushUnique
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        getMarkerVector(
+            radians: number,
+            markerRadius: number,
+            anchor: PositionObject
+        ): PositionObject;
+        getPathfinderAnchorPoint(
+            markerOptions: ConnectorsMarkerOptions
+        ): PositionObject;
+        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        connect?: (
+            Highcharts.PointConnectOptionsObject|
+            GanttDependencyOptions
+        );
+        connectors?: ConnectorsOptions;
+    }
+}
 
 /* *
  *

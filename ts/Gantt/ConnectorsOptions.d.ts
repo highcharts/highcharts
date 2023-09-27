@@ -25,9 +25,21 @@ import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 
 /* *
  *
- *  API Options
+ *  Declarations
  *
  * */
+
+declare module '../Core/Options'{
+    interface Options {
+        connectors?: ConnectorsOptions;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        connectors?: ConnectorsOptions;
+    }
+}
 
 export interface ConnectorsEndMarkerOptions {
     align?: AlignValue;
