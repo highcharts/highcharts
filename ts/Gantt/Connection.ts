@@ -22,7 +22,6 @@ import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
 } from './ConnectorsOptions';
-import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -35,52 +34,9 @@ import U from '../Core/Utilities.js';
 const {
     defined,
     error,
-    extend,
     merge,
     objectEach
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../Core/Options'{
-    interface Options {
-        connectors?: ConnectorsOptions;
-    }
-}
-
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-        getMarkerVector(
-            radians: number,
-            markerRadius: number,
-            anchor: PositionObject
-        ): PositionObject;
-        getPathfinderAnchorPoint(
-            markerOptions: ConnectorsMarkerOptions
-        ): PositionObject;
-        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-    }
-}
-
-declare module '../Core/Series/PointOptions' {
-    interface PointOptions {
-        connect?: (
-            Highcharts.PointConnectOptionsObject|
-            GanttDependencyOptions
-        );
-        connectors?: ConnectorsOptions;
-    }
-}
-
-declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        connectors?: ConnectorsOptions;
-    }
-}
 
 /* *
  *
