@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2020-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -48,7 +48,6 @@ export namespace JSON {
     /**
      * All object types, that are supported in JSON.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     export type Type = (Array|Object);
 
 }
