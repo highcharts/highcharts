@@ -20,13 +20,14 @@
 import type Axis from '../Core/Axis/Axis';
 import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
+import type { PathfinderAlgorithmFunction } from './PathfinderAlgorithms';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import PathfinderComposition from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
@@ -58,35 +59,20 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
-/**
- * The default pathfinder algorithm to use for a chart. It is possible to define
- * your own algorithms by adding them to the
- * `Highcharts.Pathfinder.prototype.algorithms`
- * object before the chart has been created.
+/* *
  *
- * The default algorithms are as follows:
+ *  Constants
  *
- * `straight`:      Draws a straight line between the connecting
- *                  points. Does not avoid other points when drawing.
- *
- * `simpleConnect`: Finds a path between the points using right angles
- *                  only. Takes only starting/ending points into
- *                  account, and will not avoid other points.
- *
- * `fastAvoid`:     Finds a path between the points using right angles
- *                  only. Will attempt to avoid other points, but its
- *                  focus is performance over accuracy. Works well with
- *                  less dense datasets.
- *
- * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
- */
-
-''; // detach doclets above
-
-import pathfinderAlgorithms from './PathfinderAlgorithms.js';
+ * */
 
 const max = Math.max,
     min = Math.min;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Get point bounding box using plotX/plotY and shapeArgs. If using
@@ -102,8 +88,7 @@ const max = Math.max,
  *         Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point: Point): (Record<string, number>|null) {
-    let shapeArgs = point.shapeArgs,
-        bb;
+    const shapeArgs = point.shapeArgs;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
@@ -116,7 +101,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     }
 
     // Otherwise use plotX/plotY and bb
-    bb = point.graphic && point.graphic.getBBox();
+    const bb = point.graphic && point.graphic.getBBox();
     return bb ? {
         xMin: (point.plotX as any) - bb.width / 2,
         xMax: (point.plotX as any) + bb.width / 2,
@@ -125,6 +110,40 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     } : null;
 }
 
+/**
+ * Compute smallest distance between two rectangles.
+ * @private
+ */
+function calculateObstacleDistance(
+    a: Record<string, number>,
+    b: Record<string, number>,
+    bbMargin?: number
+): number {
+    // Count the distance even if we are slightly off
+    const margin = pick(bbMargin, 10),
+        yOverlap = a.yMax + margin > b.yMin - margin &&
+                    a.yMin - margin < b.yMax + margin,
+        xOverlap = a.xMax + margin > b.xMin - margin &&
+                    a.xMin - margin < b.xMax + margin,
+        xDistance = yOverlap ? (
+            a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
+        ) : Infinity,
+        yDistance = xOverlap ? (
+            a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
+        ) : Infinity;
+
+    // If the rectangles collide, try recomputing with smaller margin.
+    // If they collide anyway, discard the obstacle.
+    if (xOverlap && yOverlap) {
+        return (
+            margin ?
+                calculateObstacleDistance(a, b, Math.floor(margin / 2)) :
+                Infinity
+        );
+    }
+
+    return min(xDistance, yDistance);
+}
 
 /**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
@@ -140,52 +159,21 @@ function getPointBB(point: Point): (Record<string, number>|null) {
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    let len = obstacles.length,
-        i = 0,
-        j,
-        obstacleDistance,
-        distances = [],
-        // Compute smallest distance between two rectangles
-        distance = function (
-            a: Record<string, number>,
-            b: Record<string, number>,
-            bbMargin?: number
-        ): number {
-            // Count the distance even if we are slightly off
-            const margin = pick(bbMargin, 10),
-                yOverlap = a.yMax + margin > b.yMin - margin &&
-                            a.yMin - margin < b.yMax + margin,
-                xOverlap = a.xMax + margin > b.xMin - margin &&
-                            a.xMin - margin < b.xMax + margin,
-                xDistance = yOverlap ? (
-                    a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
-                ) : Infinity,
-                yDistance = xOverlap ? (
-                    a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
-                ) : Infinity;
+    const len = obstacles.length,
+        distances = [];
 
-            // If the rectangles collide, try recomputing with smaller margin.
-            // If they collide anyway, discard the obstacle.
-            if (xOverlap && yOverlap) {
-                return (
-                    margin ?
-                        distance(a, b, Math.floor(margin / 2)) :
-                        Infinity
-                );
-            }
-
-            return min(xDistance, yDistance);
-        };
+    let onstacleDistance: number;
 
     // Go over all obstacles and compare them to the others.
-    for (; i < len; ++i) {
+    for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
-        for (j = i + 1; j < len; ++j) {
-            obstacleDistance = distance(obstacles[i], obstacles[j]);
+        for (let j = i + 1; j < len; ++j) {
+            onstacleDistance =
+                calculateObstacleDistance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
-            if (obstacleDistance < 80) { // Ignore large distances
-                distances.push(obstacleDistance);
+            if (onstacleDistance < 80) { // Ignore large distances
+                distances.push(onstacleDistance);
             }
         }
     }
@@ -206,7 +194,42 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     );
 }
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/**
+ * Warn if using legacy options. Copy the options over. Note that this will
+ * still break if using the legacy options in chart.update, addSeries etc.
+ * @private
+ */
+function warnLegacy(chart: Chart): void {
+    if (
+        (chart.options as any).pathfinder ||
+        chart.series.reduce(function (acc, series): boolean {
+            if (series.options) {
+                merge(
+                    true,
+                    (
+                        series.options.connectors = series.options.connectors ||
+                        {}
+                    ), (series.options as any).pathfinder
+                );
+            }
+            return acc || series.options && (series.options as any).pathfinder;
+        }, false)
+    ) {
+        merge(
+            true,
+            (chart.options.connectors = chart.options.connectors || {}),
+            (chart.options as any).pathfinder
+        );
+        error('WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.');
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Pathfinder class.
@@ -229,10 +252,14 @@ class Pathfinder {
     public static compose(
         PointClass: typeof Point
     ): void {
-        PathfinderComposition.compose(
-            PointClass
-        );
+        PathfinderComposition.compose(PointClass);
     }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     public constructor(
         chart: Chart
@@ -252,11 +279,6 @@ class Pathfinder {
     public connections: Array<Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
-
-    /**
-     * @name Highcharts.Pathfinder#algorithms
-     * @type {Highcharts.Dictionary<Function>}
-     */
 
     /**
      * Initialize the Pathfinder object.
@@ -568,10 +590,21 @@ class Pathfinder {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Pathfinder {
-    algorithms: Record<string, Highcharts.PathfinderAlgorithmFunction>;
+    algorithms: Record<string, PathfinderAlgorithmFunction>;
 }
-Pathfinder.prototype.algorithms = pathfinderAlgorithms;
+
+/**
+ * @name Highcharts.Pathfinder#algorithms
+ * @type {Highcharts.Dictionary<Function>}
+ */
+Pathfinder.prototype.algorithms = PathfinderAlgorithms;
 
 
 // Add pathfinding capabilities to Points
@@ -751,38 +784,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 });
 
 
-/**
- * Warn if using legacy options. Copy the options over. Note that this will
- * still break if using the legacy options in chart.update, addSeries etc.
- * @private
- */
-function warnLegacy(chart: Chart): void {
-    if (
-        (chart.options as any).pathfinder ||
-        chart.series.reduce(function (acc, series): boolean {
-            if (series.options) {
-                merge(
-                    true,
-                    (
-                        series.options.connectors = series.options.connectors ||
-                        {}
-                    ), (series.options as any).pathfinder
-                );
-            }
-            return acc || series.options && (series.options as any).pathfinder;
-        }, false)
-    ) {
-        merge(
-            true,
-            (chart.options.connectors = chart.options.connectors || {}),
-            (chart.options as any).pathfinder
-        );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
-    }
-}
-
-
 // Initialize Pathfinder for charts
 Chart.prototype.callbacks.push(function (
     chart: Chart
@@ -797,3 +798,34 @@ Chart.prototype.callbacks.push(function (
 });
 
 export default Pathfinder;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * The default pathfinder algorithm to use for a chart. It is possible to define
+ * your own algorithms by adding them to the
+ * `Highcharts.Pathfinder.prototype.algorithms`
+ * object before the chart has been created.
+ *
+ * The default algorithms are as follows:
+ *
+ * `straight`:      Draws a straight line between the connecting
+ *                  points. Does not avoid other points when drawing.
+ *
+ * `simpleConnect`: Finds a path between the points using right angles
+ *                  only. Takes only starting/ending points into
+ *                  account, and will not avoid other points.
+ *
+ * `fastAvoid`:     Finds a path between the points using right angles
+ *                  only. Will attempt to avoid other points, but its
+ *                  focus is performance over accuracy. Works well with
+ *                  less dense datasets.
+ *
+ * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
+ */
+
+''; // Keeps doclets above in JS file

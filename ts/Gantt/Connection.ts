@@ -23,6 +23,7 @@ import type {
     ConnectorsOptions
 } from './ConnectorsOptions';
 import type Pathfinder from './Pathfinder';
+import type { PathfinderAlgorithmResultObject } from './PathfinderAlgorithms';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -323,7 +324,7 @@ class Connection {
      */
     public getPath(
         options: ConnectorsOptions
-    ): (Highcharts.PathfinderAlgorithmResultObject) {
+    ): (PathfinderAlgorithmResultObject) {
         const pathfinder = this.pathfinder,
             chart = this.chart,
             algorithm = pathfinder.algorithms[options.type as any];
@@ -421,7 +422,7 @@ class Connection {
             ), 5);
         }
         // Get the path
-        const pathResult: Highcharts.PathfinderAlgorithmResultObject =
+        const pathResult: PathfinderAlgorithmResultObject =
                 connection.getPath(options),
             path: SVGPath = pathResult.path;
 

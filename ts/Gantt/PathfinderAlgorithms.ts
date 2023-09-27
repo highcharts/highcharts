@@ -17,27 +17,41 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import PathUtilities from '../Series/PathUtilities.js';
 import U from '../Core/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+const { pick } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PathfinderAlgorithmFunction {
-            (...args: Array<any>): PathfinderAlgorithmResultObject;
-            requiresObstacles?: boolean;
-        }
-        interface PathfinderAlgorithmResultObject {
-            obstacles: Array<any>;
-            path: SVGPath;
-        }
-    }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface Obstacle {
+    xMax: number;
+    xMin: number;
+    yMax: number;
+    yMin: number;
 }
+
+export interface ObstacleSegment {
+    end: (PositionObject|Record<string, number>);
+    start: (PositionObject|Record<string, number>);
+}
+
+export interface PathfinderAlgorithmFunction {
+    (...args: Array<any>): PathfinderAlgorithmResultObject;
+    requiresObstacles?: boolean;
+}
+
+export interface PathfinderAlgorithmResultObject {
+    obstacles: Array<ObstacleSegment>;
+    path: SVGPath;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const {
     min,
@@ -65,13 +79,14 @@ const {
  *         The index of the last obstacle element before xMin.
  */
 function findLastObstacleBefore(
-    obstacles: Array<any>,
+    obstacles: Array<Obstacle>,
     xMin: number,
     startIx?: number
 ): number {
-    let left = startIx || 0, // left limit
-        right = obstacles.length - 1, // right limit
-        min = xMin - 0.0000001, // Make sure we include all obstacles at xMin
+    const min = xMin - 0.0000001; // Make sure we include all obstacles at xMin
+
+    let left = startIx || 0, // Left limit
+        right = obstacles.length - 1, // Right limit
         cursor,
         cmp;
 
@@ -86,6 +101,7 @@ function findLastObstacleBefore(
             return cursor;
         }
     }
+
     return left > 0 ? left - 1 : 0;
 }
 
@@ -104,12 +120,15 @@ function findLastObstacleBefore(
  * @return {boolean}
  *         Whether point is within the obstacle or not.
  */
-function pointWithinObstacle(obstacle: any, point: Point): boolean {
+function pointWithinObstacle(
+    obstacle: Obstacle,
+    point: (Point|PositionObject|Record<string, number>)
+): boolean {
     return (
-        (point.x as any) <= obstacle.xMax &&
-        (point.x as any) >= obstacle.xMin &&
-        (point.y as any) <= obstacle.yMax &&
-        (point.y as any) >= obstacle.yMin
+        point.x <= obstacle.xMax &&
+        point.x >= obstacle.xMin &&
+        point.y as number <= obstacle.yMax &&
+        point.y as number >= obstacle.yMin
     );
 }
 
@@ -129,7 +148,10 @@ function pointWithinObstacle(obstacle: any, point: Point): boolean {
  * @return {number}
  *         Ix of the obstacle in the array, or -1 if not found.
  */
-function findObstacleFromPoint(obstacles: Array<any>, point: any): number {
+function findObstacleFromPoint(
+    obstacles: Array<Obstacle>,
+    point: (Point|PositionObject|Record<string, number>)
+): number {
     let i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
 
     while (i--) {
@@ -183,7 +205,10 @@ function pathFromSegments(segments: Array<any>): SVGPath {
  *
  * @return {void}
  */
-function limitObstacleToBounds(obstacle: any, bounds: any): void {
+function limitObstacleToBounds(
+    obstacle: Obstacle,
+    bounds: Obstacle
+): void {
     obstacle.yMin = max(obstacle.yMin, bounds.yMin);
     obstacle.yMax = min(obstacle.yMax, bounds.yMax);
     obstacle.xMin = max(obstacle.xMin, bounds.xMin);
@@ -210,7 +235,7 @@ function limitObstacleToBounds(obstacle: any, bounds: any): void {
 function straight(
     start: PositionObject,
     end: PositionObject
-): Highcharts.PathfinderAlgorithmResultObject {
+): PathfinderAlgorithmResultObject {
     return {
         path: [
             ['M', start.x, start.y],
@@ -249,23 +274,22 @@ const simpleConnect = function (
     start: PositionObject,
     end: PositionObject,
     options: any
-): Highcharts.PathfinderAlgorithmResultObject {
-    let segments = [],
-        endSegment,
+): PathfinderAlgorithmResultObject {
+    const segments: Array<ObstacleSegment> = [],
+        chartObstacles = options.chartObstacles,
+        startObstacleIx = findObstacleFromPoint(chartObstacles, start),
+        endObstacleIx = findObstacleFromPoint(chartObstacles, end);
+
+    let endSegment: any,
         dir = pick(
             options.startDirectionX,
             abs(end.x - start.x) > abs(end.y - start.y)
         ) ? 'x' : 'y',
-        chartObstacles = options.chartObstacles,
-        startObstacleIx = findObstacleFromPoint(chartObstacles, start),
-        endObstacleIx = findObstacleFromPoint(chartObstacles, end),
         startObstacle,
         endObstacle,
-        prevWaypoint,
-        waypoint,
-        waypoint2,
+        waypoint: Record<string, number>,
         useMax,
-        endPoint;
+        endPoint: (PositionObject|Record<string, number>);
 
     // eslint-disable-next-line valid-jsdoc
     /**
@@ -362,7 +386,7 @@ const simpleConnect = function (
 
     // We are around the start obstacle. Go towards the end in one
     // direction.
-    prevWaypoint = segments.length ?
+    const prevWaypoint = segments.length ?
         segments[segments.length - 1].end :
         start;
     waypoint = copyFromPoint(prevWaypoint, dir, endPoint);
@@ -373,7 +397,7 @@ const simpleConnect = function (
 
     // Final run to end point in the other direction
     dir = dir === 'y' ? 'x' : 'y';
-    waypoint2 = copyFromPoint(waypoint, dir, endPoint);
+    const waypoint2 = copyFromPoint(waypoint, dir, endPoint);
     segments.push({
         start: waypoint,
         end: waypoint2
@@ -428,7 +452,7 @@ const fastAvoid = function (
     start: PositionObject,
     end: PositionObject,
     options: any
-): Highcharts.PathfinderAlgorithmResultObject {
+): PathfinderAlgorithmResultObject {
     /*
         Algorithm rules/description
         - Find initial direction
@@ -906,6 +930,12 @@ const fastAvoid = function (
     };
 };
 fastAvoid.requiresObstacles = true;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an
