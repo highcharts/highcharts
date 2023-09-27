@@ -11,15 +11,8 @@
 
 'use strict';
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
 import type Axis from '../Core/Axis/Axis';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
+import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
@@ -54,45 +47,9 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Options'{
-    interface Options {
-        connectors?: Highcharts.ConnectorsOptions;
-    }
-}
-
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-        getMarkerVector(
-            radians: number,
-            markerRadius: number,
-            anchor: PositionObject
-        ): PositionObject;
-        getPathfinderAnchorPoint(
-            markerOptions: Highcharts.ConnectorsMarkerOptions
-        ): PositionObject;
-        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-    }
-}
-
-declare module '../Core/Series/PointOptions' {
-    interface PointOptions {
-        connect?: (
-            Highcharts.PointConnectOptionsObject|
-            GanttDependencyOptions
-        );
-        connectors?: Highcharts.ConnectorsOptions;
-    }
-}
-
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         pathfinderRemoveRenderEvent?: Function;
-    }
-}
-
-declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        connectors?: Highcharts.ConnectorsOptions;
     }
 }
 
@@ -108,57 +65,7 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface ConnectorsEndMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsOptions {
-            algorithmMargin?: number;
-            dashStyle?: DashStyleValue;
-            enabled?: boolean;
-            endMarker?: ConnectorsEndMarkerOptions;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            marker?: ConnectorsMarkerOptions;
-            radius?: number;
-            startMarker?: ConnectorsStartMarkerOptions;
-            type?: PathfinderTypeValue;
-        }
-        interface ConnectorsStartMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
+
         interface PointConnectOptionsObject {
             to?: string;
         }
@@ -951,7 +858,7 @@ class Pathfinder {
      *         Returns true for X, false for Y, and undefined for autocalculate.
      */
     public getAlgorithmStartDirection(
-        markerOptions: Highcharts.ConnectorsMarkerOptions
+        markerOptions: ConnectorsMarkerOptions
     ): (boolean|undefined) {
         let xCenter = markerOptions.align !== 'left' &&
                         markerOptions.align !== 'right',
@@ -992,7 +899,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      */
     getPathfinderAnchorPoint: function (
         this: Point,
-        markerOptions: Highcharts.ConnectorsMarkerOptions
+        markerOptions: ConnectorsMarkerOptions
     ): PositionObject {
         let bb = getPointBB(this),
             x,
