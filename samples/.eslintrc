@@ -29,9 +29,8 @@ rules:
     function-paren-newline: 0
     indent: [2, 4]
     max-len: [
-        "error",
+        "warn",
         {
-            "ignoreComments": true,
             "ignoreStrings": true
         }
     ]

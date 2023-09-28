@@ -1,11 +1,13 @@
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+
+    const arr = [];
+
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+
+    for (let i = 0; i < n; i = i + 1) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -27,11 +29,12 @@ function getData(n) {
     }
     return arr;
 }
-var n = 1000000,
+
+const n = 1000000,
     data = getData(n);
 
-
 console.time('line');
+
 Highcharts.chart('container', {
 
     chart: {
@@ -60,4 +63,5 @@ Highcharts.chart('container', {
     }]
 
 });
+
 console.timeEnd('line');

@@ -638,8 +638,8 @@ const Options: DeepPartial<A11yOptions> = {
             /**
              * Order of tab navigation in the chart. Determines which elements
              * are tabbed to first. Available elements are: `series`, `zoom`,
-             * `rangeSelector`, `chartMenu`, `legend` and `container`. In
-             * addition, any custom components can be added here. Adding
+             * `rangeSelector`, `navigator`, `chartMenu`, `legend` and `container`.
+             * In addition, any custom components can be added here. Adding
              * `container` first in order will make the keyboard focus stop on
              * the chart container first, requiring the user to tab again to
              * enter the chart.
@@ -647,7 +647,10 @@ const Options: DeepPartial<A11yOptions> = {
              * @type  {Array<string>}
              * @since 7.1.0
              */
-            order: ['series', 'zoom', 'rangeSelector', 'legend', 'chartMenu'],
+            order: [
+                'series', 'zoom', 'rangeSelector',
+                'navigator', 'legend', 'chartMenu'
+            ],
 
             /**
              * Whether or not to wrap around when reaching the end of arrow-key
@@ -1005,8 +1008,28 @@ const Options: DeepPartial<A11yOptions> = {
              */
             enabled: true
         }
-    }
+    },
 
+    /**
+     * @optionparent navigator
+     */
+    navigator: {
+        /**
+         * Accessibility options for the navigator. Requires the
+         * Accessibility module.
+         *
+         * @since    next
+         * @requires modules/accessibility
+         */
+        accessibility: {
+            /**
+             * Enable accessibility support for the navigator.
+             *
+             * @since next
+             */
+            enabled: true
+        }
+    }
 };
 
 export default Options;

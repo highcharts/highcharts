@@ -55,7 +55,7 @@ import ProxyElement from './ProxyElement.js';
 interface ProxyGroup {
     proxyContainerElement: HTMLDOMElement;
     groupElement: HTMLDOMElement;
-    type: ProxyElement.GroupType;
+    type: keyof HTMLElementTagNameMap;
     proxyElements: ProxyElement[];
 }
 
@@ -121,6 +121,7 @@ class ProxyProvider {
     public addProxyElement(
         groupKey: string,
         target: ProxyElement.Target,
+        proxyElementType: keyof HTMLElementTagNameMap = 'button',
         attributes?: NullableHTMLAttributes
     ): ProxyElement {
         const group = this.groups[groupKey];
@@ -128,7 +129,12 @@ class ProxyProvider {
             throw new Error('ProxyProvider.addProxyElement: Invalid group key ' + groupKey);
         }
 
-        const proxy = new ProxyElement(this.chart, target, group.type, attributes);
+        const wrapperElementType = group.type === 'ul' || group.type === 'ol' ?
+                'li' : void 0,
+            proxy = new ProxyElement(
+                this.chart, target, proxyElementType,
+                wrapperElementType, attributes
+            );
 
         group.proxyContainerElement.appendChild(proxy.element);
         group.proxyElements.push(proxy);
@@ -145,7 +151,7 @@ class ProxyProvider {
      */
     public addGroup(
         groupKey: string,
-        groupType: ProxyElement.GroupType,
+        groupElementType: keyof HTMLElementTagNameMap = 'div',
         attributes?: HTMLAttributes
     ): HTMLElement {
         const existingGroup = this.groups[groupKey];
@@ -153,12 +159,14 @@ class ProxyProvider {
             return existingGroup.groupElement;
         }
 
-        const proxyContainer = this.domElementProvider.createElement(groupType);
+        const proxyContainer = this.domElementProvider
+            .createElement(groupElementType);
 
         // If we want to add a role to the group, and still use e.g.
-        // a list group, we need a wrapper div.
+        // a list group, we need a wrapper div around the proxyContainer.
+        // Used for setting region role on legend.
         let groupElement;
-        if (attributes && attributes.role && groupType !== 'div') {
+        if (attributes && attributes.role && groupElementType !== 'div') {
             groupElement = this.domElementProvider.createElement('div');
             groupElement.appendChild(proxyContainer);
         } else {
@@ -171,13 +179,13 @@ class ProxyProvider {
         this.groups[groupKey] = {
             proxyContainerElement: proxyContainer,
             groupElement,
-            type: groupType,
+            type: groupElementType,
             proxyElements: []
         };
 
         attr(groupElement, attributes || {});
 
-        if (groupType === 'ul') {
+        if (groupElementType === 'ul') {
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 

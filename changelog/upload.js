@@ -7,13 +7,12 @@
  * This node script is used to call generation of the changelog HTML, then
  * upload it to S3.
  */
-const path = require('path');
-const { uploadFiles } = require(
-    path.join(__dirname, '../tools/gulptasks/lib/uploadS3')
-);
-const { generateHTML } = require(path.join(__dirname, 'generate-html'));
 
-function uploadFile(filename) {
+const { exit } = require('node:process');
+const { uploadFiles } = require('../tools/gulptasks/lib/uploadS3');
+const { generateHTML } = require('./generate-html');
+
+async function uploadFile(filename) {
     uploadFiles({
         bucket: 'assets.highcharts.com',
         files: [{
@@ -24,6 +23,9 @@ function uploadFile(filename) {
     });
 }
 
-generateHTML().then(params => {
-    uploadFile(params.outputFile);
-});
+generateHTML()
+    .then(params => uploadFile(params.outputFile))
+    .catch(error => {
+        console.error(error);
+        exit(1);
+    });

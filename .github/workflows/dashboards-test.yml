@@ -16,7 +16,7 @@ on:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
       - 'css/**'
-      - '.github/workflows/**'
+      - '.github/workflows/dashboards-test.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -27,30 +27,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Note that this adds a post-job step that saves the cache
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      # Lists modules if no cache
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Install Dependencies
         run: npm i

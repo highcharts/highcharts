@@ -1,7 +1,37 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#csv {
-    display: none;
+.highcharts-background-color {
+    fill: #f0f0f0;
+}
+
+#dashboard-col-2 .highcharts-line-series path {
+    stroke-width: 0;
+}
+
+#dashboard-col-1 .highcharts-point {
+    stroke-width: 2px;
+}
+
+.highcharts-subtitle {
+    fill: var(--highcharts-neutral-color-60);
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.highcharts-legend-item text {
+    cursor: default;
+}
+
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
+    opacity: 1;
+}
+
+.highcharts-a11y-proxy-element {
+    cursor: default;
+}
+
+.highcharts-description {
+    padding: 0 20px;
 }

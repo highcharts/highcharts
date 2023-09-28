@@ -30,7 +30,8 @@ import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    createElement
+    createElement,
+    defined
 } = U;
 
 
@@ -42,10 +43,10 @@ const {
 
 /**
  * Function to create a context button.
- * @intenal
+ * @internal
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param editMode
  * EditMode instance.
@@ -57,8 +58,7 @@ function renderContextButton(
     parentNode: HTMLElement,
     editMode: EditMode
 ): HTMLElement|undefined {
-
-    let ctxBtnElement;
+    let ctxBtnElement : HTMLElement|undefined;
 
     if (editMode.options.contextMenu) {
         ctxBtnElement = createElement(
@@ -75,6 +75,13 @@ function renderContextButton(
             } as any,
             parentNode
         );
+
+        ctxBtnElement.setAttribute(
+            'aria-label',
+            editMode.lang.accessibility.contextMenu.button
+        );
+
+        ctxBtnElement.setAttribute('aria-expanded', 'false');
     }
 
     return ctxBtnElement;
@@ -103,7 +110,6 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
-        iconsURLPrefix,
         lang
     } = options;
 
@@ -147,7 +153,7 @@ function renderCollapseHeader(
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
-            name: name,
+            name: '',
             onchange: onchange,
             value: isEnabled || false,
             lang
@@ -155,12 +161,11 @@ function renderCollapseHeader(
     }
 
     const headerIcon = createElement(
-        'img',
+        'span',
         {
             className:
                 EditGlobals.classNames.accordionHeaderIcon + ' ' +
-                EditGlobals.classNames.rotateElement,
-            src: iconsURLPrefix + 'dropdown-pointer.svg'
+                EditGlobals.classNames.collapsedElement
         },
         {},
         headerBtn
@@ -179,7 +184,7 @@ function renderCollapseHeader(
 
     headerBtn.addEventListener('click', function (): void {
         content.classList.toggle(EditGlobals.classNames.hiddenElement);
-        headerIcon.classList.toggle(EditGlobals.classNames.rotateElement);
+        headerIcon.classList.toggle(EditGlobals.classNames.collapsedElement);
     });
 
     return { outerElement: accordion, content: content };
@@ -189,7 +194,7 @@ function renderCollapseHeader(
  * Function to create select element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Select form field options.
@@ -274,7 +279,7 @@ function renderSelect(
             className:
                 EditGlobals.classNames.dropdownIcon +
                 ' ' +
-                EditGlobals.classNames.rotateElement,
+                EditGlobals.classNames.collapsedElement,
             src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
@@ -294,7 +299,9 @@ function renderSelect(
     );
     btn.addEventListener('click', function (): void {
         dropdown.classList.toggle(EditGlobals.classNames.hiddenElement);
-        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
+        dropdownPointer.classList.toggle(
+            EditGlobals.classNames.collapsedElement
+        );
     });
 
     for (let i = 0, iEnd = options.selectOptions.length; i < iEnd; ++i) {
@@ -354,7 +361,9 @@ function renderSelectElement(
 
     selectOptionBtn.addEventListener('click', function (): void {
         dropdown.classList.add(EditGlobals.classNames.hiddenElement);
-        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
+        dropdownPointer.classList.toggle(
+            EditGlobals.classNames.collapsedElement
+        );
         placeholder.textContent = option.name || '';
 
         if (headerIcon && option.iconURL) {
@@ -371,7 +380,7 @@ function renderSelectElement(
  * Function to create toggle element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Form field options
@@ -388,7 +397,8 @@ function renderToggle(
         return;
     }
 
-    const { value, title, lang } = options;
+    const { value, lang } = options;
+    const title = options.title || options.name;
     const toggleContainer = createElement(
         'div',
         { className: EditGlobals.classNames.toggleContainer },
@@ -454,7 +464,7 @@ function renderToggle(
  * Function to create text element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param text
  * Text to be displayed
@@ -493,7 +503,7 @@ function renderText(
  * Function to create Icon element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param icon
  * Icon URL
@@ -544,7 +554,7 @@ function renderIcon(
  * Function to create input element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -572,8 +582,10 @@ function renderInput(
             id: options.id || '',
             name: options.name || '',
             value: (
-                options.value && options.value.replace(/\"/g, '') ||
-                ''
+                (
+                    defined(options.value) &&
+                    options.value.toString().replace(/\"/g, '')
+                ) || ''
             )
         },
         {},
@@ -594,7 +606,7 @@ function renderInput(
  * Function to create textarea element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -674,7 +686,7 @@ function renderCheckbox(
  * Function to create button element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Button field options

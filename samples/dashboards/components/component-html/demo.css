@@ -1,6 +1,9 @@
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#dashboard-3 h1 {
-    height: 400px;
-    text-align: center;
+#main-title {
+    color: #4b4b4b;
+}
+
+#description {
+    text-decoration: underline;
 }

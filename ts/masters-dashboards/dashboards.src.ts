@@ -32,9 +32,11 @@ import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
 
 // Fill registries
+import '../Dashboards/Components/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
-import '../Data/Connectors/HTMLTableConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
+import '../Data/Connectors/HTMLTableConnector.js';
+import '../Data/Connectors/JSONConnector.js';
 import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';

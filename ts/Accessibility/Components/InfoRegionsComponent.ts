@@ -286,7 +286,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public initRegionsDefinitions(): void {
-        const component = this;
+        const component = this,
+            accessibilityOptions = this.chart.options.accessibility;
 
         this.screenReaderSections = {
             before: {
@@ -296,8 +297,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 ): string {
                     const formatter: (
                         ScreenReaderFormatterCallbackFunction<Chart>|undefined
-                    ) = chart.options.accessibility
-                        .screenReaderSection.beforeChartFormatter;
+                    ) = accessibilityOptions.screenReaderSection
+                        .beforeChartFormatter;
                     return formatter ? formatter(chart) :
                         (component.defaultBeforeChartFormatter as any)(chart);
                 },
@@ -326,8 +327,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility
-                        .screenReaderSection
+                    const formatter = accessibilityOptions.screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -341,7 +341,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     );
                 },
                 afterInserted: function (): void {
-                    if (component.chart.accessibility) {
+                    if (
+                        component.chart.accessibility &&
+                        accessibilityOptions.keyboardNavigation.enabled
+                    ) {
                         component.chart.accessibility
                             .keyboardNavigation.updateExitAnchor(); // #15986
                     }

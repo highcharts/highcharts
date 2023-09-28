@@ -152,8 +152,13 @@ function callout(
         return path;
     }
 
+    // Do not render a connector, if anchor starts inside the label
+    if (anchorX < w && anchorX > 0 && anchorY < h && anchorY > 0) {
+        return path;
+    }
+
     // Anchor on right side
-    if (x + anchorX >= w) {
+    if (x + anchorX >= w - safeDistance) {
 
         // Chevron
         if (
@@ -171,18 +176,31 @@ function callout(
 
         // Simple connector
         } else {
-            path.splice(
-                3,
-                1,
-                ['L', x + w, h / 2],
-                ['L', anchorX, anchorY],
-                ['L', x + w, h / 2],
-                ['L', x + w, y + h - r]
-            );
+            if (anchorX < w) { // Corner connector
+                const isTopCorner = anchorY < y + safeDistance,
+                    cornerY = isTopCorner ? y : y + h,
+                    sliceStart = isTopCorner ? 2 : 5;
+
+                path.splice(
+                    sliceStart,
+                    0,
+                    ['L', anchorX, anchorY],
+                    ['L', x + w - r, cornerY]
+                );
+            } else { // Side connector
+                path.splice(
+                    3,
+                    1,
+                    ['L', x + w, h / 2],
+                    ['L', anchorX, anchorY],
+                    ['L', x + w, h / 2],
+                    ['L', x + w, y + h - r]
+                );
+            }
         }
 
     // Anchor on left side
-    } else if (x + anchorX <= 0) {
+    } else if (x + anchorX <= safeDistance) {
 
         // Chevron
         if (
@@ -200,21 +218,32 @@ function callout(
 
         // Simple connector
         } else {
-            path.splice(
-                7,
-                1,
-                ['L', x, h / 2],
-                ['L', anchorX, anchorY],
-                ['L', x, h / 2],
-                ['L', x, y + r]
-            );
+            if (anchorX > 0) { // Corner connector
+                const isTopCorner = anchorY < y + safeDistance,
+                    cornerY = isTopCorner ? y : y + h,
+                    sliceStart = isTopCorner ? 1 : 6;
+
+                path.splice(
+                    sliceStart,
+                    0,
+                    ['L', anchorX, anchorY],
+                    ['L', x + r, cornerY]
+                );
+            } else { // Side connector
+                path.splice(
+                    7,
+                    1,
+                    ['L', x, h / 2],
+                    ['L', anchorX, anchorY],
+                    ['L', x, h / 2],
+                    ['L', x, y + r]
+                );
+            }
         }
 
     } else if ( // replace bottom
-        anchorY &&
         anchorY > h &&
-        anchorX > x + safeDistance &&
-        anchorX < x + w - safeDistance
+        anchorX < w - safeDistance
     ) {
         path.splice(
             5,
@@ -226,10 +255,8 @@ function callout(
         );
 
     } else if ( // replace top
-        anchorY &&
         anchorY < 0 &&
-        anchorX > x + safeDistance &&
-        anchorX < x + w - safeDistance
+        anchorX > safeDistance
     ) {
         path.splice(
             1,

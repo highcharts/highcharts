@@ -23,7 +23,8 @@ import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
 import type EventCallback from '../Core/EventCallback';
-import type GanttPoint from '../Series/Gantt//GanttPoint';
+import type GanttPoint from '../Series/Gantt/GanttPoint';
+import type { MapLonLatObject } from '../Maps/GeoJSON';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
@@ -1126,6 +1127,9 @@ if (seriesTypes.xrange) {
  * @sample {highcharts|highstock}
  *         highcharts/dragdrop/drag-xrange
  *         Draggable X range series
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  * @sample {highmaps}
  *         maps/series/draggable-mappoint
  *         Draggable Map Point series
@@ -1446,6 +1450,8 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
+ * @sample {highcharts|highstock} highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  *
  * @type      {Highcharts.PointDragCallbackFunction}
  * @since     6.2.0
@@ -1461,6 +1467,8 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *
  * @sample {highcharts} highcharts/dragdrop/drag-xrange
  *         Drag events
+ * @sample {highcharts|highstock} highcharts/dragdrop/undraggable-points
+ *         Dragging disabled for specific points
  *
  * @type      {Highcharts.PointDropCallbackFunction}
  * @since     6.2.0
@@ -2305,13 +2313,13 @@ Point.prototype.getDropValues = function (
             let min = pick(
                     (options as any)['dragMin' + direction] as any,
                     lonLatMin &&
-                        lonLatMin[key as keyof Highcharts.MapLonLatObject],
+                        lonLatMin[key as keyof MapLonLatObject],
                     -Infinity
                 ),
                 max = pick(
                     (options as any)['dragMax' + direction] as number,
                     lonLatMax &&
-                        lonLatMax[key as keyof Highcharts.MapLonLatObject],
+                        lonLatMax[key as keyof MapLonLatObject],
                     Infinity
                 ),
                 res = newPos[key as keyof typeof newPos] as number;
