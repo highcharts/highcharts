@@ -72,7 +72,6 @@ export interface PointConnectOptionsObject {
     to?: string;
 }
 
-
 /* *
  *
  *  Functions

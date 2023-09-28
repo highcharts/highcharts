@@ -46,7 +46,7 @@ class Stamen implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator';
+    initialProjectionName = 'WebMercator' as const;
 
     defaultCredits = `\u00a9 Map tiles by <a href="https://stamen.com">Stamen Design</a>,
         under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.

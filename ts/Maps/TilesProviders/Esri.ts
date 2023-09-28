@@ -72,7 +72,7 @@ class Esri implements ProviderDefinition {
         }
     };
 
-    initialProjectionName = 'WebMercator';
+    initialProjectionName = 'WebMercator' as const;
 
     defaultCredits = `Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ,
         USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong),

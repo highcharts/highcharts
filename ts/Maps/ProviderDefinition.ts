@@ -8,6 +8,20 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 export interface Theme {
     url: string,
     minZoom: number,
@@ -23,7 +37,7 @@ export declare class ProviderDefinition {
     subdomains?: Array<string>;
     themes: Themes;
     defaultCredits: String;
-    initialProjectionName: DeepPartial<string>;
+    initialProjectionName: ProjectionRegistryName;
     requiresApiKey?: boolean;
 }
 
