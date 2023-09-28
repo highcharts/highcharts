@@ -105,7 +105,7 @@ class SolidGaugeSeries extends GaugeSeries {
         if (!axis.dataClasses && axis.options.dataClasses) {
             axis.initDataClasses(axis.options);
         }
-        axis.initStops(axis.options);
+        axis.initStops();
 
         // Generate points and inherit data label position
         GaugeSeries.prototype.translate.call(this);
