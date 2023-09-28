@@ -83,6 +83,7 @@ namespace ColorAxisLike {
      * */
 
     /**
+     * Initialize defined data classes.
      * @private
      */
     export function initDataClasses(
@@ -126,6 +127,7 @@ namespace ColorAxisLike {
     }
 
     /**
+     * Create initial color stops.
      * @private
      */
     export function initStops(
@@ -144,6 +146,7 @@ namespace ColorAxisLike {
     }
 
     /**
+     * Normalize logarithmic values.
      * @private
      */
     export function normalizedValue(
