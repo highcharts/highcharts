@@ -46,7 +46,7 @@ import PieSeries from '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
 import '../Extensions/OverlappingDataLabels.js';
-import '../Extensions/BorderRadius.js';
+import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
@@ -142,6 +142,7 @@ G.useSerialIds = Utilities.useSerialIds;
 G.wrap = Utilities.wrap;
 // Compositions
 ColumnDataLabel.compose(ColumnSeries);
+BorderRadius.compose(ColumnSeries, PieSeries, SVGElement, SVGRenderer);
 DataLabel.compose(Series);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
