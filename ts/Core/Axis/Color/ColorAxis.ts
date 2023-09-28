@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type AxisLike from '../AxisLike';
-import type AxisOptions from '../AxisOptions';
 import type Chart from '../../Chart/Chart.js';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -37,6 +36,7 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
+import ColorAxisLike from '../ColorAxisLike.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
@@ -294,7 +294,7 @@ class ColorAxis extends Axis implements AxisLike {
 
                 dataClass.colorIndex = colorCounter;
 
-                // increase and loop back to zero
+                // Increase and loop back to zero
                 colorCounter++;
                 if (colorCounter === colorCount) {
                     colorCounter = 0;
@@ -328,23 +328,6 @@ class ColorAxis extends Axis implements AxisLike {
         if (!this.dataClasses) {
             return super.setTickPositions();
         }
-    }
-
-    /**
-     * @private
-     */
-    public initStops(): void {
-        const axis = this;
-
-        axis.stops = axis.options.stops || [
-            [0, axis.options.minColor as any],
-            [1, axis.options.maxColor as any]
-        ];
-        axis.stops.forEach(function (
-            stop: GradientColor['stops'][0]
-        ): void {
-            stop.color = color(stop[1]);
-        });
     }
 
     /**
@@ -983,6 +966,22 @@ class ColorAxis extends Axis implements AxisLike {
 
 /* *
  *
+ *  Class Properties
+ *
+ * */
+
+interface ColorAxis extends ColorAxisLike {
+    // Nothing to add
+}
+
+extend(ColorAxis.prototype, {
+    initStops: ColorAxisLike.initStops,
+    normalizedValue: ColorAxisLike.normalizedValue,
+    toColor: ColorAxisLike.toColor
+});
+
+/* *
+ *
  *  Class Namespace
  *
  * */
@@ -995,13 +994,7 @@ namespace ColorAxis {
      *
      * */
 
-    export interface DataClassesOptions {
-        color?: ColorType;
-        colorIndex?: number;
-        from?: number;
-        name?: string;
-        to?: number;
-    }
+    export type DataClassesOptions = ColorAxisLike.DataClassOptions;
 
     export interface LegendItemObject extends DataClassesOptions {
         [key: string]: any;
@@ -1021,16 +1014,12 @@ namespace ColorAxis {
         width?: number;
     }
 
-    export interface Options extends AxisOptions {
-        dataClassColor?: string;
+    export interface Options extends ColorAxisLike.Options {
         dataClasses?: Array<DataClassesOptions>;
         layout?: string;
         legend?: LegendOptions;
         marker?: MarkerOptions;
-        maxColor?: ColorType;
-        minColor?: ColorType;
         showInLegend?: boolean;
-        stops?: GradientColor['stops'];
     }
 
 }
