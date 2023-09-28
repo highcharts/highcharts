@@ -71,37 +71,38 @@ const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
 ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
-    const listOfParents = data.reduce(
-        function (
-            prev: Record<string, Array<Highcharts.TreePointOptionsObject>>,
-            curr: Highcharts.TreePointOptionsObject
-        ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
-            const parent = pick(curr.parent, '');
+    const
+        listOfParents = data.reduce(
+            function (
+                prev: Record<string, Array<Highcharts.TreePointOptionsObject>>,
+                curr: Highcharts.TreePointOptionsObject
+            ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
+                const parent = pick(curr.parent, '');
 
-            if (typeof prev[parent] === 'undefined') {
-                prev[parent] = [];
-            }
+                if (typeof prev[parent] === 'undefined') {
+                    prev[parent] = [];
+                }
 
-            prev[parent].push(curr);
+                prev[parent].push(curr);
 
-            return prev;
-        },
-        {} as (Record<string, Array<Highcharts.TreePointOptionsObject>>)
-    );
-
+                return prev;
+            },
+            {} as (Record<string, Array<Highcharts.TreePointOptionsObject>>)
+        ),
+        root = '';
+    type TreeOptions = Highcharts.TreePointOptionsObject;
     // If parent does not exist, hoist parent to root of tree.
-    const root = '';
-    console.log(listOfParents);
     Object.keys(listOfParents).forEach(
         (node: string): void => {
             if ((node !== root) && (ids.indexOf(node) === -1)) {
+
                 const adoptedByRoot = listOfParents[node].map(
-                    orphan => {
+                    function (orphan): TreeOptions {
                         const { parent, ...parentExcluded } = orphan;
                         return parentExcluded;
                     }
+                );
 
-                )
                 listOfParents[root].push(...adoptedByRoot);
 
 
@@ -112,6 +113,7 @@ const getListOfParents = function (
 
     return listOfParents;
 };
+
 const getNode = function (
     id: string,
     parent: (string|null),
@@ -201,6 +203,7 @@ const getNode = function (
 
     return node;
 };
+
 const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
@@ -211,7 +214,6 @@ const getTree = function (
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
-    console.log(ids, mapOfIdToChildren);
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 

@@ -155,6 +155,7 @@ function renderLabelIcon(
     // Set the new position, and show or hide
     icon[shouldRender ? 'show' : 'hide'](); // #14904, #1338
 
+
     // Presentational attributes
     if (!renderer.styledMode) {
         icon
@@ -261,7 +262,9 @@ function wrapRenderLabel(
                 {}
         ),
         node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
-        level = node && node.depth,
+        hasDescendants = node?.descendants && node.descendants > 0,
+        level = node?.depth || 0,
+        isSubNode = level < 2,
         isTreeGrid = options.type === 'treegrid',
         shouldRender = axis.tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
@@ -286,9 +289,8 @@ function wrapRenderLabel(
         isTreeGrid &&
         label &&
         label.element &&
-        node &&
-        node.descendants &&
-        node.descendants > 0
+        hasDescendants &&
+        isSubNode
     ) {
         collapsed = axis.treeGrid.isCollapsed(node);
 
