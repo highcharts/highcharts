@@ -2,6 +2,7 @@
     "extends": "./node_modules/eslint-config-eslint/default.yml",
     "rules": {
         "camelcase": [2, {"properties": "always"}],
+        "capitalized-comments": 0,
         "comma-dangle": [2, "never"],
         "dot-location": [2, "property"],
         "lines-around-comment": 0,
