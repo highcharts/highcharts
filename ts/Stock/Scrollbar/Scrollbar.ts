@@ -27,7 +27,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-import ScrollbarAxisComposition from '../../Core/Axis/ScrollbarAxisComposition.js';
+import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -89,7 +89,7 @@ class Scrollbar {
      * */
 
     public static compose(AxisClass: typeof Axis): void {
-        ScrollbarAxisComposition.compose(AxisClass, Scrollbar);
+        ScrollbarAxis.compose(AxisClass, Scrollbar);
     }
 
     /**
