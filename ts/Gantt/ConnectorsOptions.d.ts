@@ -79,7 +79,7 @@ export interface ConnectorsOptions {
     marker?: ConnectorsMarkerOptions;
     radius?: number;
     startMarker?: ConnectorsStartMarkerOptions;
-    type?: Highcharts.PathfinderTypeValue;
+    type?: PathfinderTypeValue;
 }
 
 export interface ConnectorsStartMarkerOptions {
@@ -95,6 +95,13 @@ export interface ConnectorsStartMarkerOptions {
     verticalAlign?: VerticalAlignValue;
     width?: number;
 }
+
+export type PathfinderTypeValue = (
+    'straight'|
+    'fastAvoid'|
+    'simpleConnect'|
+    string
+);
 
 /* *
  *

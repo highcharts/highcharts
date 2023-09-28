@@ -23,22 +23,28 @@ import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
  * */
 
 export interface Theme {
-    url: string,
-    minZoom: number,
-    maxZoom: number,
-    credits?: string
+    credits?: string;
+    maxZoom: number;
+    minZoom: number;
+    url: string;
 }
 
 export interface Themes {
     [key: string]: Theme
 }
 
-export declare class ProviderDefinition {
-    subdomains?: Array<string>;
-    themes: Themes;
-    defaultCredits: String;
+export interface ProviderDefinition {
+    defaultCredits: string;
     initialProjectionName: ProjectionRegistryName;
-    requiresApiKey?: boolean;
+    requiresApiKey: (boolean|undefined);
+    subdomains: (Array<string>|undefined);
+    themes: Themes;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ProviderDefinition;
