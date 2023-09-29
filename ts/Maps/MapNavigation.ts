@@ -194,23 +194,24 @@ class MapNavigation {
     public update(
         options?: Partial<MapNavigationOptions>
     ): void {
-        let mapNav = this,
-            chart = this.chart,
-            o: MapNavigationOptions = chart.options.mapNavigation as any,
-            attr: ButtonThemeObject,
+        const mapNav = this,
+            chart = mapNav.chart,
+            navButtons = mapNav.navButtons,
             outerHandler = function (
                 this: SVGElement,
                 e: (Event|AnyRecord)
             ): void {
                 this.handler.call(chart, e);
                 stopEvent(e as any); // Stop default click event (#4444)
-            },
-            navButtons = mapNav.navButtons;
+            };
+
+        let navOptions = chart.options.mapNavigation as MapNavigationOptions,
+            attr: ButtonThemeObject;
 
         // Merge in new options in case of update, and register back to chart
         // options.
         if (options) {
-            o = chart.options.mapNavigation =
+            navOptions = chart.options.mapNavigation =
                 merge(chart.options.mapNavigation, options);
         }
 
@@ -219,7 +220,10 @@ class MapNavigation {
             (navButtons.pop() as any).destroy();
         }
 
-        if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
+        if (
+            !chart.renderer.forExport &&
+            pick(navOptions.enableButtons, navOptions.enabled)
+        ) {
             if (!mapNav.navButtonsGroup) {
                 mapNav.navButtonsGroup = chart.renderer.g()
                     .attr({
@@ -227,11 +231,11 @@ class MapNavigation {
                     })
                     .add();
             }
-            objectEach(o.buttons, function (
+            objectEach(navOptions.buttons, (
                 buttonOptions: MapNavigationButtonOptions,
                 n: string
-            ): void {
-                buttonOptions = merge(o.buttonOptions, buttonOptions);
+            ): void => {
+                buttonOptions = merge(navOptions.buttonOptions, buttonOptions);
 
                 // Presentational
                 if (!chart.styledMode && buttonOptions.theme) {
@@ -363,8 +367,8 @@ class MapNavigation {
                             belowExpBtn = expBtnBBox.y + expBtnBBox.height -
                                 navBtnsBBox.y + 5,
                             mapNavVerticalAlign = (
-                                o.buttonOptions &&
-                                o.buttonOptions.verticalAlign
+                                navOptions.buttonOptions &&
+                                navOptions.buttonOptions.verticalAlign
                             );
 
                         // If bottom aligned and adjusting the mapNav button
@@ -387,7 +391,7 @@ class MapNavigation {
             }
         }
 
-        this.updateEvents(o);
+        this.updateEvents(navOptions);
     }
 
     /**

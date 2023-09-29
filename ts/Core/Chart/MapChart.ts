@@ -266,15 +266,16 @@ namespace MapChart {
      *
      * @function Highcharts.splitPath
      *
-     * @param {string|Array<string|number>} path
+     * @param {string|Array<(string|number)>} path
+     *        Path to split.
      *
      * @return {Highcharts.SVGPathArray}
      * Splitted SVG path
      */
     export function splitPath(
-        path: string|Array<string|number>
+        path: (string|Array<(string|number)>)
     ): SVGPath {
-        let arr: Array<string|number>;
+        let arr: Array<(string|number)>;
 
         if (typeof path === 'string') {
             path = path
