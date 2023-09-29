@@ -381,11 +381,9 @@ namespace BoostCanvas {
                 target === chart ?
                     chart.seriesGroup :
                     chart.seriesGroup || this.group
-            );
-
-        let width = chart.chartWidth,
+            ),
+            width = chart.chartWidth,
             height = chart.chartHeight,
-            ctx: CanvasRenderingContext2D,
             swapXY = function (
                 this: CanvasRenderingContext2D,
                 proceed: Function,
@@ -398,6 +396,8 @@ namespace BoostCanvas {
             ): void {
                 proceed.call(this, y, x, a, b, c, d);
             };
+
+        let ctx: CanvasRenderingContext2D;
 
         const boost: Required<BoostTargetAdditions> = target.boost =
             target.boost as Required<BoostTargetAdditions> ||
@@ -482,11 +482,11 @@ namespace BoostCanvas {
     function seriesRenderCanvas(
         this: Series
     ): void {
-        let series = this,
+        const series = this,
             options = series.options,
             chart = series.chart,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
             activeBoostSettings = chart.options.boost || {},
             boostSettings = {
                 timeRendering: activeBoostSettings.timeRendering || false,
@@ -494,8 +494,6 @@ namespace BoostCanvas {
                     activeBoostSettings.timeSeriesProcessing || false,
                 timeSetup: activeBoostSettings.timeSetup || false
             },
-            ctx: (CanvasRenderingContext2D|null|undefined),
-            c = 0,
             xData = series.processedXData,
             yData = series.processedYData,
             rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
@@ -506,25 +504,14 @@ namespace BoostCanvas {
             yMin = yExtremes.min,
             yMax = yExtremes.max,
             pointTaken: Record<string, boolean> = {},
-            lastClientX: number,
             sampling = !!series.sampling,
-            points: Array<Record<string, number>>,
             r = options.marker && options.marker.radius,
-            cvsDrawPoint = this.cvsDrawPoint,
-            cvsLineTo = options.lineWidth ? this.cvsLineTo : void 0,
-            cvsMarker: (typeof this['cvsMarkerCircle']) = (
-                r && r <= 1 ?
-                    this.cvsMarkerSquare :
-                    this.cvsMarkerCircle
-            ),
-            strokeBatch = this.cvsStrokeBatch || 1000,
+            strokeBatch = series.cvsStrokeBatch || 1000,
             enableMouseTracking = options.enableMouseTracking,
-            lastPoint: Record<string, number>,
             threshold: number = options.threshold as any,
-            yBottom = yAxis.getThreshold(threshold),
             hasThreshold = isNumber(threshold),
-            translatedThreshold: number = yBottom as any,
-            doFill = this.fill,
+            translatedThreshold: number = yAxis.getThreshold(threshold),
+            doFill = series.fill,
             isRange = (
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
@@ -533,14 +520,8 @@ namespace BoostCanvas {
             cropStart = series.cropStart || 0,
             loadingOptions = chart.options.loading,
             requireSorting = series.requireSorting,
-            wasNull: boolean,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            minVal: number,
-            maxVal: number,
-            minI: (number|undefined),
-            maxI: (number|undefined),
-            index: (number|string),
             sdata: Array<any> = (
                 isStacked ?
                     series.data :
@@ -553,8 +534,99 @@ namespace BoostCanvas {
                     ).get() :
                     series.color
             ),
-            //
-            stroke = function (): void {
+            compareX = options.findNearestPointBy === 'x',
+            boost: BoostTargetAdditions = this.boost || {},
+            cvsDrawPoint = series.cvsDrawPoint,
+            cvsLineTo = options.lineWidth ? series.cvsLineTo : void 0,
+            cvsMarker: (typeof series['cvsMarkerCircle']) = (
+                r && r <= 1 ?
+                    series.cvsMarkerSquare :
+                    series.cvsMarkerCircle
+            );
+
+        if (boost.target) {
+            boost.target.attr({ href: b64BlankPixel });
+        }
+
+        // If we are zooming out from SVG mode, destroy the graphics
+        if (series.points || series.graph) {
+            destroyGraphics(series);
+        }
+
+        // The group
+        series.plotGroup(
+            'group',
+            'series',
+            series.visible ? 'visible' : 'hidden',
+            options.zIndex,
+            chart.seriesGroup
+        );
+
+        series.markerGroup = series.group;
+        addEvent(series, 'destroy', function (): void {
+            // Prevent destroy twice
+            series.markerGroup = null as any;
+        });
+
+        const points: Array<Record<string, number>> = this.points = [],
+            ctx = this.getContext();
+        series.buildKDTree = noop; // Do not start building while drawing
+
+        if (boost.clear) {
+            boost.clear();
+        }
+
+        // if (series.canvas) {
+        //     ctx.clearRect(
+        //         0,
+        //         0,
+        //         series.canvas.width,
+        //         series.canvas.height
+        //     );
+        // }
+
+        if (!series.visible) {
+            return;
+        }
+
+        // Display a loading indicator
+        if (rawData.length > 99999) {
+            chart.options.loading = merge(loadingOptions, {
+                labelStyle: {
+                    backgroundColor: color(
+                        Palette.backgroundColor
+                    ).setOpacity(0.75).get(),
+                    padding: '1em',
+                    borderRadius: '0.5em'
+                },
+                style: {
+                    backgroundColor: 'none',
+                    opacity: 1
+                }
+            });
+            U.clearTimeout(destroyLoadingDiv);
+            chart.showLoading('Drawing...');
+            chart.options.loading = loadingOptions; // reset
+        }
+
+        if (boostSettings.timeRendering) {
+            console.time('canvas rendering'); // eslint-disable-line no-console
+        }
+
+        // Loop variables
+        let c = 0,
+            lastClientX: number,
+            lastPoint: Record<string, number>,
+            yBottom = translatedThreshold,
+            wasNull: boolean,
+            minVal: number,
+            maxVal: number,
+            minI: (number|undefined),
+            maxI: (number|undefined),
+            index: (number|string);
+
+        // Loop helpers
+        const stroke = function (): void {
                 if (doFill) {
                     (ctx as any).fillStyle = fillColor as any;
                     (ctx as any).fill();
@@ -635,9 +707,6 @@ namespace BoostCanvas {
                     yBottom: yBottom
                 };
             },
-            //
-            compareX = options.findNearestPointBy === 'x',
-            //
             xDataFull: Array<number> = (
                 this.xData ||
                 (this.options as any).xData ||
@@ -674,80 +743,12 @@ namespace BoostCanvas {
                         i: cropStart + i
                     });
                 }
-            },
-            boost: BoostTargetAdditions = this.boost || {};
-
-        if (boost.target) {
-            boost.target.attr({ href: b64BlankPixel });
-        }
-
-        // If we are zooming out from SVG mode, destroy the graphics
-        if (this.points || this.graph) {
-            destroyGraphics(this);
-        }
-
-        // The group
-        series.plotGroup(
-            'group',
-            'series',
-            series.visible ? 'visible' : 'hidden',
-            options.zIndex,
-            chart.seriesGroup
-        );
-
-        series.markerGroup = series.group;
-        addEvent(series, 'destroy', function (): void {
-            // Prevent destroy twice
-            series.markerGroup = null as any;
-        });
-
-        points = this.points = [];
-        ctx = this.getContext();
-        series.buildKDTree = noop; // Do not start building while drawing
-
-        if (boost.clear) {
-            boost.clear();
-        }
-
-        // if (this.canvas) {
-        //     ctx.clearRect(
-        //         0,
-        //         0,
-        //         this.canvas.width,
-        //         this.canvas.height
-        //     );
-        // }
-
-        if (!this.visible) {
-            return;
-        }
-
-        // Display a loading indicator
-        if (rawData.length > 99999) {
-            chart.options.loading = merge(loadingOptions, {
-                labelStyle: {
-                    backgroundColor: color(
-                        Palette.backgroundColor
-                    ).setOpacity(0.75).get(),
-                    padding: '1em',
-                    borderRadius: '0.5em'
-                },
-                style: {
-                    backgroundColor: 'none',
-                    opacity: 1
-                }
-            });
-            U.clearTimeout(destroyLoadingDiv);
-            chart.showLoading('Drawing...');
-            chart.options.loading = loadingOptions; // reset
-        }
-
-        if (boostSettings.timeRendering) {
-            console.time('canvas rendering'); // eslint-disable-line no-console
-        }
+            };
 
         // Loop over the points
         BoostSeries.eachAsync(sdata, (d: any, i: number): boolean => {
+            const chartDestroyed = typeof chart.index === 'undefined';
+
             let x: number,
                 y: number,
                 clientX: number,
@@ -756,9 +757,8 @@ namespace BoostCanvas {
                 low: (number|undefined),
                 isNextInside = false,
                 isPrevInside = false,
-                nx: number = false as any,
-                px: number = false as any,
-                chartDestroyed = typeof chart.index === 'undefined',
+                nx: number = NaN,
+                px: number = NaN,
                 isYInside = true;
 
             if (!chartDestroyed) {
