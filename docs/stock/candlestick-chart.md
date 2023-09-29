@@ -22,11 +22,11 @@ plotOptions: {
 ```
 
 Properties given for candlestick colors are:
-- `color` Candle body color when going down (closing value is lower than the opening value)
-- `lineColor` color of the wick when going down (closing value is lower than the opening value) m
-- `upColor` Candle body color when going up (closing value is higher than the opening value), by default it is transparent
-- `upLineColor` Color of the wick when going up (closing value is higher than the opening value)
+- [color](https://api.highcharts.com/highstock/plotOptions.candlestick.color) - Candle body color when going down (closing value is lower than the opening value)
+- [lineColor](https://api.highcharts.com/highstock/plotOptions.candlestick.lineColor) - Color of the wick when going down (closing value is lower than the opening value)
+- [upColor](https://api.highcharts.com/highstock/plotOptions.candlestick.upColor) - Candle body color when going up (closing value is higher than the opening value), by default it is transparent
+- [upLineColor](https://api.highcharts.com/highstock/plotOptions.candlestick.upLineColor) - Color of the wick when going up (closing value is higher than the opening value)
 
-![candlestick-color.png](candlestick-color.png)
+<iframe src="https://www.highcharts.com/samples/embed/stock/plotoptions/candlestick-linecolor" width="100%" height="400" allow="fullscreen"></iframe>
 
 For more information on the candlestick chart, see the [API reference](https://api.highcharts.com/highstock/plotOptions.candlestick).
