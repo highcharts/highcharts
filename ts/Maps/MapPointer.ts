@@ -10,6 +10,13 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
 import type MapNavigation from './MapNavigation';
 import type MapPoint from '../Series/Map/MapPoint';
@@ -24,6 +31,18 @@ const {
     wrap
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        mapNavigation?: MapNavigation;
+    }
+}
+
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
         deltaY?: number;
@@ -32,33 +51,40 @@ declare module '../Core/PointerEvent' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface MapPointer extends Pointer {
-            chart: MapPointerChart;
-            mapNavigation: MapNavigation;
-            onContainerDblClick(e: PointerEvent): void;
-            onContainerMouseWheel(e: PointerEvent): void;
-        }
-        interface MapPointerChart extends Chart {
-            hoverPoint: MapPoint;
-            mapZoom: MapNavigationChart['mapZoom'];
-        }
-    }
+export interface MapNavigationChart extends Chart {
+    hoverPoint: MapPoint;
+    mapNavigation: MapNavigation;
+    pointer: MapPointer;
+    fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
+    /** @deprecated */
+    mapZoom(
+        howMuch?: number,
+        xProjected?: number,
+        yProjected?: number,
+        chartX?: number,
+        chartY?: number
+    ): void;
 }
 
-/* eslint-disable no-invalid-this */
+interface MapPointer extends Pointer {
+    chart: MapNavigationChart;
+    mapNavigation: MapNavigation;
+    onContainerDblClick(e: PointerEvent): void;
+    onContainerMouseWheel(e: PointerEvent): void;
+}
+
+/* *
+ *
+ *  Variables
+ *
+ * */
 
 const normalize = Pointer.prototype.normalize;
 let totalWheelDelta = 0;
 let totalWheelDeltaTimer: number;
 
 // Extend the Pointer
-extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
+extend<Pointer|MapPointer>(Pointer.prototype, {
 
     // Add lon and lat information to pointer events
     normalize: function <T extends PointerEvent> (
@@ -85,7 +111,7 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (
-        this: Highcharts.MapPointer,
+        this: MapPointer,
         e: PointerEvent
     ): void {
         const chart = this.chart;
@@ -117,7 +143,7 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
     // The event handler for the mouse scroll event
     onContainerMouseWheel: function (
-        this: Highcharts.MapPointer,
+        this: MapPointer,
         e: PointerEvent
     ): void {
         const chart = this.chart;
@@ -227,3 +253,11 @@ wrap(
         }
     }
 );
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapPointer;

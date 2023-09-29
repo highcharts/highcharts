@@ -22,6 +22,7 @@ import type {
     MapNavigationButtonOptions,
     MapNavigationOptions
 } from './MapNavigationOptions';
+import type { MapNavigationChart } from './MapPointer';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -46,38 +47,6 @@ const {
  *  Declarations
  *
  * */
-
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        mapNavigation?: MapNavigation;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface MapNavigationChart extends Chart {
-            mapNavigation: MapNavigation;
-            pointer: MapPointer;
-            fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
-            /** @deprecated */
-            mapZoom(
-                howMuch?: number,
-                xProjected?: number,
-                yProjected?: number,
-                chartX?: number,
-                chartY?: number
-            ): void;
-        }
-    }
-    interface Document {
-        onmousewheel: unknown;
-    }
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -128,7 +97,7 @@ class MapNavigation {
      *
      * */
 
-    public chart: Highcharts.MapNavigationChart = void 0 as any;
+    public chart: MapNavigationChart = void 0 as any;
     public navButtons: Array<SVGElement>;
     public navButtonsGroup: SVGElement = void 0 as any;
     public unbindDblClick?: Function;
@@ -153,7 +122,7 @@ class MapNavigation {
     public init(
         chart: Chart
     ): void {
-        this.chart = chart as Highcharts.MapNavigationChart;
+        this.chart = chart as MapNavigationChart;
     }
 
     /**
@@ -399,9 +368,7 @@ class MapNavigation {
         if (pick(options.enableMouseWheelZoom, options.enabled)) {
             this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
                 chart.container,
-                doc.onwheel !== void 0 ? 'wheel' : // Newer Firefox
-                    doc.onmousewheel !== void 0 ? 'mousewheel' :
-                        'DOMMouseScroll',
+                'wheel',
                 function (e: PointerEvent): boolean {
                     // Prevent scrolling when the pointer is over the element
                     // with that class, for example anotation popup #12100.
@@ -433,7 +400,7 @@ class MapNavigation {
  * */
 
 // Add events to the Chart object itself
-extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,
@@ -452,7 +419,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *         The inner box
      */
     fitToBox: function (
-        this: Highcharts.MapNavigationChart,
+        this: MapNavigationChart,
         inner: BBoxObject,
         outer: BBoxObject
     ): BBoxObject {
@@ -519,7 +486,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      * @deprecated
      */
     mapZoom: function (
-        this: Highcharts.MapNavigationChart,
+        this: MapNavigationChart,
         howMuch?: number,
         xProjected?: number,
         yProjected?: number,
@@ -548,7 +515,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
 
 // Extend the Chart.render method to add zooming and panning
 addEvent(Chart as any, 'beforeRender', function (
-    this: Highcharts.MapNavigationChart
+    this: MapNavigationChart
 ): void {
     // Render the plus and minus buttons. Doing this before the shapes makes
     // getBBox much quicker, at least in Chrome.

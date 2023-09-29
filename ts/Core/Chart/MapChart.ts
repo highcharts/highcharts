@@ -32,11 +32,23 @@ const {
 } = U;
 import '../../Maps/MapSymbols.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './ChartLike'{
     interface ChartLike {
         mapView?: MapView;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -48,6 +60,13 @@ declare module './ChartLike'{
  * @extends Highcharts.Chart
  */
 class MapChart extends Chart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Initializes the chart. The constructor's arguments are passed on
      * directly.
@@ -102,11 +121,23 @@ class MapChart extends Chart {
 
         super.init(options, callback);
     }
+
 }
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace MapChart {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
     /**
      * Contains all loaded map data for Highmaps.
      *
@@ -116,6 +147,12 @@ namespace MapChart {
      * @type {Record<string,*>}
      */
     export const maps: AnyRecord = {};
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * The factory function for creating new map charts. Creates a new {@link
@@ -192,6 +229,7 @@ namespace MapChart {
 
         return SVGRenderer.prototype.pathToSegments(arr);
     }
+
 }
 
 /* *
