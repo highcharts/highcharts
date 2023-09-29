@@ -23,23 +23,24 @@ import type {
     MapNavigationOptions
 } from './MapNavigationOptions';
 import type MapChart from '../Core/Chart/MapChart';
+import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
-import H from '../Core/Globals.js';
-const { doc } = H;
+const { setOptions } = D;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
+import MapPointer from './MapPointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    isNumber,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -48,7 +49,25 @@ const {
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        mapNavigation: MapNavigation;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -65,6 +84,12 @@ function stopEvent(e: Event): void {
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
@@ -80,13 +105,45 @@ class MapNavigation {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        MapChartClass: typeof MapChart,
+        PointerClass: typeof Pointer
+    ): void {
+
+        MapPointer.compose(PointerClass);
+
+        if (pushUnique(composedMembers, MapChartClass)) {
+            // Extend the Chart.render method to add zooming and panning
+            addEvent(MapChartClass, 'beforeRender', function (
+                this: MapChart
+            ): void {
+                // Render the plus and minus buttons. Doing this before the
+                // shapes makes getBBox much quicker, at least in Chrome.
+                this.mapNavigation = new MapNavigation(this);
+                this.mapNavigation.update();
+            });
+        }
+
+        if (pushUnique(composedMembers, setOptions)) {
+            setOptions(MapNavigationDefaults);
+        }
+
+    }
+
+    /* *
+     *
      *  Constructor
      *
      * */
 
     public constructor(
-        chart: Chart
+        chart: MapChart
     ) {
+        this.chart = chart;
         this.navButtons = [];
         this.init(chart);
     }
@@ -97,7 +154,7 @@ class MapNavigation {
      *
      * */
 
-    public chart: MapChart = void 0 as any;
+    public chart: MapChart;
     public navButtons: Array<SVGElement>;
     public navButtonsGroup: SVGElement = void 0 as any;
     public unbindDblClick?: Function;
@@ -120,9 +177,9 @@ class MapNavigation {
      * @return {void}
      */
     public init(
-        chart: Chart
+        chart: MapChart
     ): void {
-        this.chart = chart as MapChart;
+        this.chart = chart;
     }
 
     /**
@@ -131,11 +188,11 @@ class MapNavigation {
      *
      * @function MapNavigation#update
      *
-     * @param {Highcharts.MapNavigationOptions} [options]
+     * @param {Partial<Highcharts.MapNavigationOptions>} [options]
      *        New options for the map navigation.
      */
     public update(
-        options?: MapNavigationOptions
+        options?: Partial<MapNavigationOptions>
     ): void {
         let mapNav = this,
             chart = this.chart,
@@ -339,11 +396,11 @@ class MapNavigation {
      *
      * @function MapNavigation#updateEvents
      *
-     * @param {Highcharts.MapNavigationOptions} options
+     * @param {Partial<Highcharts.MapNavigationOptions>} options
      *        Options for map navigation.
      */
     public updateEvents(
-        options: MapNavigationOptions
+        options: Partial<MapNavigationOptions>
     ): void {
         const chart = this.chart;
 
@@ -391,33 +448,6 @@ class MapNavigation {
     }
 
 }
-
-
-/* *
- *
- *  Modifications
- *
- * */
-
-// Extend the Chart.render method to add zooming and panning
-addEvent(Chart as any, 'beforeRender', function (
-    this: MapChart
-): void {
-    // Render the plus and minus buttons. Doing this before the shapes makes
-    // getBBox much quicker, at least in Chrome.
-    this.mapNavigation = new (MapNavigation as any)(this);
-    this.mapNavigation.update();
-});
-
-(H as any).MapNavigation = MapNavigation as any;
-
-// Add language
-extend(D.defaultOptions.lang, {
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out'
-});
-// Set the default map navigation options
-D.defaultOptions.mapNavigation = MapNavigationDefaults;
 
 /* *
  *

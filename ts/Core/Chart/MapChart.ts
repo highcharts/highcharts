@@ -16,9 +16,7 @@
  *
  * */
 
-import type BBoxObject from '../Renderer/BBoxObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type MapNavigation from '../../Maps/MapNavigation';
 import type MapPoint from '../../Series/Map/MapPoint';
 import type MapPointer from '../../Maps/MapPointer';
 import type MapView from '../../Maps/MapView';
@@ -71,56 +69,6 @@ class MapChart extends Chart {
      *  Functions
      *
      * */
-
-    /**
-     * Fit an inner box to an outer. If the inner box overflows left or right,
-     * align it to the sides of the outer. If it overflows both sides, fit it
-     * within the outer. This is a pattern that occurs more places in
-     * Highcharts, perhaps it should be elevated to a common utility function.
-     *
-     * @ignore
-     * @function Highcharts.Chart#fitToBox
-     *
-     * @param {Highcharts.BBoxObject} inner
-     *
-     * @param {Highcharts.BBoxObject} outer
-     *
-     * @return {Highcharts.BBoxObject}
-     *         The inner box
-     */
-    public fitToBox(
-        this: MapChart,
-        inner: BBoxObject,
-        outer: BBoxObject
-    ): BBoxObject {
-        [['x', 'width'], ['y', 'height']].forEach(function (
-            dim: Array<string>
-        ): void {
-            const pos = dim[0],
-                size = dim[1];
-
-            if ((inner as any)[pos] + (inner as any)[size] >
-                (outer as any)[pos] + (outer as any)[size]
-            ) { // right
-                // the general size is greater, fit fully to outer
-                if ((inner as any)[size] > (outer as any)[size]) {
-                    (inner as any)[size] = (outer as any)[size];
-                    (inner as any)[pos] = (outer as any)[pos];
-                } else { // align right
-                    (inner as any)[pos] = (outer as any)[pos] +
-                        (outer as any)[size] - (inner as any)[size];
-                }
-            }
-            if ((inner as any)[size] > (outer as any)[size]) {
-                (inner as any)[size] = (outer as any)[size];
-            }
-            if ((inner as any)[pos] < (outer as any)[pos]) {
-                (inner as any)[pos] = (outer as any)[pos];
-            }
-        });
-
-        return inner;
-    }
 
     /**
      * Initializes the chart. The constructor's arguments are passed on
@@ -243,18 +191,8 @@ class MapChart extends Chart {
  * */
 
 interface MapChart extends Chart {
-    hoverPoint: MapPoint;
-    mapNavigation: MapNavigation;
+    hoverPoint?: MapPoint;
     pointer: MapPointer;
-    fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
-    /** @deprecated */
-    mapZoom(
-        howMuch?: number,
-        xProjected?: number,
-        yProjected?: number,
-        chartX?: number,
-        chartY?: number
-    ): void;
 }
 
 /* *
@@ -314,8 +252,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        a: (string|HTMLDOMElement|Partial<Options>),
+        b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);

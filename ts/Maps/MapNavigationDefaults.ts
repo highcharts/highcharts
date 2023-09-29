@@ -27,6 +27,11 @@ import { Palette } from '../Core/Color/Palettes.js';
  *
  * */
 
+const lang: Record<string, string> = {
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out'
+};
+
 /**
  * The `mapNavigation` option handles buttons for navigation in addition to
  * `mousewheel` and `doubleclick` handlers for map zooming.
@@ -34,7 +39,7 @@ import { Palette } from '../Core/Color/Palettes.js';
  * @product      highmaps
  * @optionparent mapNavigation
  */
-const mapNavigationDefaults: MapNavigationOptions = {
+const mapNavigation: MapNavigationOptions = {
 
     /**
      * General options for the map navigation buttons. Individual options
@@ -295,5 +300,10 @@ const mapNavigationDefaults: MapNavigationOptions = {
  *  Default Export
  *
  * */
+
+const mapNavigationDefaults = {
+    lang,
+    mapNavigation
+};
 
 export default mapNavigationDefaults;
