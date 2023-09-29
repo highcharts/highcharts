@@ -36,12 +36,6 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        mapNavigation?: MapNavigation;
-    }
-}
-
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
         deltaY?: number;
@@ -118,7 +112,7 @@ namespace MapPointer {
         this: MapPointer,
         e: PointerEvent
     ): void {
-        const chart = this.chart;
+        const chart = this.chart as MapChart;
 
         e = this.normalize(e);
 
