@@ -16,10 +16,8 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
+import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigation from './MapNavigation';
-import type MapPoint from '../Series/Map/MapPoint';
 import type PointerEvent from '../Core/PointerEvent';
 
 import Pointer from '../Core/Pointer.js';
@@ -51,23 +49,8 @@ declare module '../Core/PointerEvent' {
     }
 }
 
-export interface MapNavigationChart extends Chart {
-    hoverPoint: MapPoint;
-    mapNavigation: MapNavigation;
-    pointer: MapPointer;
-    fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
-    /** @deprecated */
-    mapZoom(
-        howMuch?: number,
-        xProjected?: number,
-        yProjected?: number,
-        chartX?: number,
-        chartY?: number
-    ): void;
-}
-
 interface MapPointer extends Pointer {
-    chart: MapNavigationChart;
+    chart: MapChart;
     mapNavigation: MapNavigation;
     onContainerDblClick(e: PointerEvent): void;
     onContainerMouseWheel(e: PointerEvent): void;

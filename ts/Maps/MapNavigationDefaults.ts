@@ -16,7 +16,7 @@
  *
  * */
 
-import type { MapNavigationChart } from './MapPointer';
+import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
 
 import { Palette } from '../Core/Color/Palettes.js';
@@ -159,7 +159,7 @@ const mapNavigationDefaults: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
              */
-            onclick: function (this: MapNavigationChart): void {
+            onclick: function (this: MapChart): void {
                 this.mapZoom(0.5);
             },
 
@@ -194,7 +194,7 @@ const mapNavigationDefaults: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
              */
-            onclick: function (this: MapNavigationChart): void {
+            onclick: function (this: MapChart): void {
                 this.mapZoom(2);
             },
 
