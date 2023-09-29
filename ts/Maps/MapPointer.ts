@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type MapNavigation from './MapNavigation';
 import type MapPoint from '../Series/Map/MapPoint';
 import type PointerEvent from '../Core/PointerEvent';
 
