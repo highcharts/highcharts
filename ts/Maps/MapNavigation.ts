@@ -27,12 +27,13 @@ import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
+import MapSymbols from './MapSymbols.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -111,10 +112,12 @@ class MapNavigation {
 
     public static compose(
         MapChartClass: typeof MapChart,
-        PointerClass: typeof Pointer
+        PointerClass: typeof Pointer,
+        SVGRendererClass: typeof SVGRenderer
     ): void {
 
         MapPointer.compose(PointerClass);
+        MapSymbols.compose(SVGRendererClass);
 
         if (pushUnique(composedMembers, MapChartClass)) {
             // Extend the Chart.render method to add zooming and panning
