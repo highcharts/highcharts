@@ -172,7 +172,7 @@ class OrganizationSeries extends SankeySeries {
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            state = point?.state || 'normal',
+            state = point.state,
             stateOptions: OrganizationSeriesOptions =
                 (levelOptions.states[state] as any) || {},
             borderRadius = pick(

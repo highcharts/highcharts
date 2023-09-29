@@ -285,7 +285,7 @@ class VectorSeries extends ScatterSeries {
         let options = this.options,
             stroke = point.color || this.color,
             strokeWidth = this.options.lineWidth,
-            state = point?.state || 'normal';
+            state = point.state;
 
         if (state) {
             stroke = options?.states?.[state]?.color || stroke;

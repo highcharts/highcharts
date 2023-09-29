@@ -532,7 +532,7 @@ class TreegraphSeries extends TreemapSeries {
             levelOptions =
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
             options = point.options,
-            state = point?.state || 'normal',
+            state = point.state,
             stateOptions = levelOptions.states?.[state] || {};
 
         point.options.marker = merge(

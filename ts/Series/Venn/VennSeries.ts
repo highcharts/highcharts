@@ -623,7 +623,7 @@ class VennSeries extends ScatterSeries {
         const series = this,
             seriesOptions = series.options || {},
             pointOptions = point && point.options || {},
-            state = point?.state || 'normal',
+            state = point.state,
             stateOptions = seriesOptions.states?.[state] || {},
             options = merge(
                 seriesOptions,

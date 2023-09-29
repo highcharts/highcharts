@@ -1351,17 +1351,13 @@ class Point {
      *
      * @emits Highcharts.Point#event:afterSetState
      */
-    public setState(
-        state?: (StatesOptionsKey|''),
-        move?: boolean
-    ): void {
+    public setState(state?: (StatesOptionsKey | ''), move?: boolean): void {
+        state = state || 'normal';
+
         const point = this,
             series = point.series,
             previousState = point.state,
-            stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
-                {}
-            ),
+            stateOptions = series.options?.states?.[state] as any || {},
             markerOptions = (
                 (defaultOptions.plotOptions as any)[
                     series.type as any
@@ -1369,15 +1365,12 @@ class Point {
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
-            markerStateOptions = ((
-                markerOptions &&
-                markerOptions.states &&
-                (markerOptions.states as any)[state || 'normal']
-            ) || {}),
+            markerStateOptions = markerOptions?.states?.[state] as any || {},
             stateDisabled = (markerStateOptions as any).enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
             hasMarkers = (markerOptions && series.markerAttribs);
+
         let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
@@ -1385,12 +1378,7 @@ class Point {
             stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
-        state = state || ''; // empty string
-
         if (
-            // already has this state
-            (state === point.state && !move) ||
-
             // selected points don't respond to hover
             (point.selected && state !== 'select') ||
 

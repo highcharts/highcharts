@@ -501,7 +501,7 @@ class XRangeSeries extends ColumnSeries {
             cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
             pointState = point.state,
             stateOpts: SeriesStateHoverOptions = (
-                (seriesOpts.states as any)[pointState || 'normal'] ||
+                (seriesOpts.states as any)[pointState] ||
                 {}
             ),
             pointStateVerb = typeof pointState === 'undefined' ?

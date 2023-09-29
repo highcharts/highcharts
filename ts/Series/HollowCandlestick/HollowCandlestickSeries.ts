@@ -294,7 +294,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
             stateOptions;
 
         const index = point.index,
-            state = point?.state || 'normal',
+            state = point.state,
             hollowcandleInfo = this.hollowCandlestickData[index];
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;

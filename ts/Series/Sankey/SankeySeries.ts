@@ -275,7 +275,7 @@ class SankeySeries extends ColumnSeries {
         }
         const series = this,
             level = point.isNode ? point.level : point.fromNode.level,
-            state = point?.state || 'normal',
+            state = point.state,
             levelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,

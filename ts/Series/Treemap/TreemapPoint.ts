@@ -133,7 +133,7 @@ class TreemapPoint extends ScatterPoint {
         return Boolean(this.id || isNumber(this.value));
     }
 
-    public setState(state: StatesOptionsKey): void {
+    public setState(state?: StatesOptionsKey): void {
         Point.prototype.setState.call(this, state);
 
         // Graphic does not exist when point is not visible.

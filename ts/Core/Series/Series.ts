@@ -447,7 +447,7 @@ class Series {
              * @type {string}
              */
             name: options.name,
-            state: '',
+            state: 'normal',
             /**
              * Read only. The series' visibility state as set by {@link
              * Series#show}, {@link Series#hide}, or in the initial
@@ -2613,7 +2613,7 @@ class Series {
 
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : 'normal'
                     );
 
                     // Set starting position for point sliding animation.
@@ -2743,7 +2743,7 @@ class Series {
             );
 
         // Handle hover and select states
-        if (state) {
+        if (state && state !== 'normal') {
             seriesStateOptions = (seriesMarkerOptions as any).states[state];
             pointStateOptions = pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state];
@@ -2794,25 +2794,18 @@ class Series {
      * @param {Highcharts.Point} [point]
      * The point instance to inspect.
      *
-     * @param {string} [state]
-     * The point state, can be either `hover`, `select` or 'normal'. If
-     * undefined, normal state is assumed.
-     *
      * @return {Highcharts.SVGAttributes}
      * The presentational attributes to be set on the point.
      */
-    public pointAttribs(
-        point?: Point
-    ): SVGAttributes {
+    public pointAttribs(point?: Point): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
-            pointOptions = point && point.options,
-            pointMarkerOptions = (
-                (pointOptions && pointOptions.marker) || {}
-            ),
-            pointColorOption = pointOptions && pointOptions.color,
-            pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color,
-            state = point?.state || 'normal';
+            pointOptions = point?.options,
+            pointMarkerOptions = pointOptions?.marker || {},
+            state = point?.state || 'normal',
+            pointColorOption = pointOptions?.color,
+            pointColor = point?.color,
+            zoneColor = point?.zone?.color;
+
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2822,7 +2815,13 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity = 1;
+            opacity;
+
+        opacity = pick(
+            (pointMarkerOptions as any).opacity ||
+            (seriesMarkerOptions as any).opacity ||
+            1
+        );
 
         color = (
             pointColorOption ||
@@ -2836,6 +2835,7 @@ class Series {
             (seriesMarkerOptions as any).fillColor ||
             color
         );
+
         stroke = (
             pointMarkerOptions.lineColor ||
             (seriesMarkerOptions as any).lineColor ||
@@ -2847,10 +2847,12 @@ class Series {
             seriesStateOptions = (
                 (seriesMarkerOptions as any).states[state] || {}
             );
+
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
             ) || {};
+
             strokeWidth = pick(
                 pointStateOptions.lineWidth,
                 seriesStateOptions.lineWidth,
@@ -2860,11 +2862,13 @@ class Series {
                     0
                 )
             );
+
             fill = (
                 pointStateOptions.fillColor ||
                 seriesStateOptions.fillColor ||
                 fill
             );
+
             stroke = (
                 pointStateOptions.lineColor ||
                 seriesStateOptions.lineColor ||
@@ -4447,10 +4451,9 @@ class Series {
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
      */
-    public setState(
-        state?: (StatesOptionsKey|''),
-        inherit?: boolean
-    ): void {
+    public setState(state?: (StatesOptionsKey | ''), inherit?: boolean): void {
+        state = state || 'normal';
+
         const series = this,
             options = series.options,
             graph = series.graph,
@@ -4459,18 +4462,14 @@ class Series {
             // By default a quick animation to hover/inactive,
             // slower to un-hover
             stateAnimation = pick(
-                (
-                    (stateOptions as any)[state || 'normal'] &&
-                    (stateOptions as any)[state || 'normal'].animation
-                ),
+                (stateOptions as any)?.[state]?.animation,
                 series.chart.options.chart.animation
             );
+
         let attribs,
             lineWidth = options.lineWidth,
             i = 0,
             opacity = options.opacity;
-
-        state = state || '';
 
         if (series.state !== state) {
 

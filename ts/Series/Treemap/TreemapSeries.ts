@@ -1447,7 +1447,7 @@ class TreemapSeries extends ScatterSeries {
 
         // If a drill id is returned, add click event and cursor.
         if (isString(drillId)) {
-            point.setState(''); // Remove hover
+            point.setState(); // Remove hover
             series.setRootNode(drillId, true, { trigger: 'click' });
         }
     }
@@ -1465,7 +1465,7 @@ class TreemapSeries extends ScatterSeries {
             ),
             level = point && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
-            state = point?.state || 'normal',
+            state = point.state,
             attr: SVGAttributes,
             stateOptions = options?.states && options.states?.[state] || {},
             className = (point && point.getClassName()) || '',

@@ -93,7 +93,7 @@ class CandlestickSeries extends OHLCSeries {
             isUp = point.open < point.close,
             stroke = options.lineColor || this.color,
             color = point.color || this.color, // (#14826)
-            state = point?.state || 'normal';
+            state = point.state;
 
         attribs['stroke-width'] = options.lineWidth;
 
