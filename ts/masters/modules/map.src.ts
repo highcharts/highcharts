@@ -35,4 +35,4 @@ G.topo2geo = GeoJSONComposition.topo2geo;
 ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
 GeoJSONComposition.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
-MapNavigation.compose(MapChart, G.Pointer);
+MapNavigation.compose(MapChart, G.Pointer, G.SVGRenderer);
