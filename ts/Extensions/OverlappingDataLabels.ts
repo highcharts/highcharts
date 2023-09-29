@@ -197,7 +197,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     isNumber(label.x) &&
                     Math.round(label.x) !== label.translateX
                 ) {
-                    xOffset = label.x - label.translateX;
+                    xOffset = label.x - (label.translateX || 0);
                 }
 
                 return {
@@ -206,7 +206,7 @@ Chart.prototype.hideOverlappingLabels = function (
                     y: pos.y + (parent.translateY || 0) + padding -
                         lineHeightCorrection,
                     width: label.width - 2 * padding,
-                    height: label.height - 2 * padding
+                    height: (label.height || 0) - 2 * padding
                 };
 
             }

@@ -828,16 +828,17 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         };
     }
 
-    // left edge
-    if (crossLabel.translateX < limit.left) {
-        offset = limit.left - crossLabel.translateX;
+    const translateX = crossLabel.translateX || 0;
+    // Left edge
+    if (translateX < limit.left) {
+        offset = limit.left - translateX;
     }
-    // right edge
-    if (crossLabel.translateX + crossBox.width >= limit.right) {
-        offset = -(crossLabel.translateX + crossBox.width - limit.right);
+    // Right edge
+    if (translateX + crossBox.width >= limit.right) {
+        offset = -(translateX + crossBox.width - limit.right);
     }
 
-    // show the crosslabel
+    // Show the crosslabel
     crossLabel.attr({
         x: posx + offset,
         y: posy,
