@@ -8,9 +8,7 @@ const gulp = require('gulp');
  */
 const fileUpload = () => {
     const colors = require('colors');
-    const {
-        uploadFiles
-    } = require('../../upload.js');
+    const { uploadFiles } = require('../lib/uploadS3');
     const argv = require('yargs').argv;
     const bucket = argv.bucket;
     const batchSize = argv.batchsize || 30000;

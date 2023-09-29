@@ -7,10 +7,10 @@ const gulp = require('gulp');
 const glob = require('glob');
 const fs = require('fs');
 const log = require('./lib/log');
+const { isDirectory, isDotEntry } = require('./lib/fs');
 const {
     uploadFiles,
     getGitIgnoreMeProperties,
-    isDirectoryOrSystemFile,
     getVersionPaths
 } = require('./lib/uploadS3');
 
@@ -158,7 +158,7 @@ function uploadProductPackage(productProps, options = {}) {
     }));
 
     const rootJSFiles = gzippedFilesToRootDir.filter(
-        path => !isDirectoryOrSystemFile(path.from)
+        path => !isDirectory(path.from) && !isDotEntry(path.from)
     );
     cdnFiles.push.apply(cdnFiles, rootJSFiles);
     promises.push(uploadFiles({
@@ -174,7 +174,7 @@ function uploadProductPackage(productProps, options = {}) {
     }));
 
     const rootGfxFiles = gfxFilesToRootDir.filter(
-        path => !isDirectoryOrSystemFile(path.from)
+        path => !isDirectory(path.from) && !isDotEntry(path.from)
     );
     cdnFiles.push.apply(cdnFiles, rootGfxFiles);
     promises.push(uploadFiles({
@@ -189,7 +189,7 @@ function uploadProductPackage(productProps, options = {}) {
     }));
 
     const versionJSFiles = gzippedFilesToVersionDir.filter(
-        path => !isDirectoryOrSystemFile(path.from)
+        path => !isDirectory(path.from) && !isDotEntry(path.from)
     );
     cdnFiles.push.apply(cdnFiles, versionJSFiles);
     promises.push(uploadFiles({
@@ -205,7 +205,7 @@ function uploadProductPackage(productProps, options = {}) {
     }));
 
     const versionGfxFiles = gfxFilesToVersionedDir.filter(
-        path => !isDirectoryOrSystemFile(path.from)
+        path => !isDirectory(path.from) && !isDotEntry(path.from)
     );
     cdnFiles.push.apply(cdnFiles, versionGfxFiles);
     promises.push(uploadFiles({
