@@ -13,7 +13,7 @@
 import Highcharts from '../../Core/Globals.js';
 import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
 import '../../Maps/MapNavigation.js';
-import '../../Maps/MapPointer.js';
+import MapPointer from '../../Maps/MapPointer.js';
 import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
 import '../../Series/MapPoint/MapPointSeries.js';
@@ -35,3 +35,4 @@ G.topo2geo = GeoJSONComposition.topo2geo;
 ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
 GeoJSONComposition.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
+MapPointer.compose(G.Pointer);
