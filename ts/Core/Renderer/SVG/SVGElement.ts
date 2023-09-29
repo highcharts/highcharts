@@ -166,6 +166,8 @@ class SVGElement implements SVGElementLike {
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
     // @todo public height?: number;
+    public imgwidth?: number;
+    public imgheight?: number;
     public inverted: undefined;
     public matrix?: Array<number>;
     public onEvents: Record<string, Function> = {};
