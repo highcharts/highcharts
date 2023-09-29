@@ -16,16 +16,16 @@
  *
  * */
 
-import type AxisComposition from './AxisComposition';
-import type AxisOptions from './AxisOptions';
-import type Chart from '../Chart/Chart';
-import type ColorType from '../Color/ColorType';
-import type { GradientColorStop } from '../Color/GradientColor';
-import type Point from '../Series/Point';
+import type AxisComposition from '../AxisComposition';
+import type AxisOptions from '../AxisOptions';
+import type Chart from '../../Chart/Chart';
+import type ColorType from '../../Color/ColorType';
+import type { GradientColorStop } from '../../Color/GradientColor';
+import type Point from '../../Series/Point';
 
-import Color from '../Color/Color.js';
+import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import U from '../Utilities.js';
+import U from '../../Utilities.js';
 const { merge } = U;
 
 /* *
@@ -40,7 +40,7 @@ interface ColorAxisLike extends AxisComposition {
     index: number;
     options: ColorAxisLike.Options;
     stops: Array<GradientColorStop>;
-    initDataClasses(userOptions: ColorAxisLike.Options): void;
+    initDataClasses(userOptions: Partial<ColorAxisLike.Options>): void;
     initStops(): void;
     normalizedValue(value: number): number;
     toColor(value: number, point: Point): (ColorType|undefined);
@@ -88,40 +88,52 @@ namespace ColorAxisLike {
      */
     export function initDataClasses(
         this: ColorAxisLike,
-        userOptions: Options
+        userOptions: Partial<Options>
     ): void {
-        const chart = this.chart,
-            options = this.options,
+        const axis = this,
+            chart = axis.chart,
+            legendItem = axis.legendItem = axis.legendItem || {},
+            options = axis.options,
             userDataClasses = userOptions.dataClasses || [];
 
         let dataClass: DataClassOptions,
             dataClasses: Array<DataClassOptions>,
-            colorCounter = 0;
+            colorCount = chart.options.chart.colorCount,
+            colorCounter = 0,
+            colors: (Array<string>|undefined);
 
-        this.dataClasses = dataClasses = [];
+        axis.dataClasses = dataClasses = [];
+        legendItem.labels = [];
 
         for (let i = 0, iEnd = userDataClasses.length; i < iEnd; ++i) {
             dataClass = userDataClasses[i];
 
-            let colors: (Array<string>|undefined);
-
             dataClass = merge(dataClass);
             dataClasses.push(dataClass);
 
-            if (!dataClass.color) {
-                if (options.dataClassColor === 'category') {
-                    colors = chart.options.colors;
-                    dataClass.color = (colors as any)[colorCounter++];
-                    // Loop back to zero
-                    if (colorCounter === (colors as any).length) {
-                        colorCounter = 0;
-                    }
-                } else {
-                    dataClass.color = color(options.minColor).tweenTo(
-                        color(options.maxColor),
-                        i / ((userOptions.dataClasses as any).length - 1)
-                    );
+            if (!chart.styledMode && dataClass.color) {
+                continue;
+            }
+
+            if (options.dataClassColor === 'category') {
+                if (!chart.styledMode) {
+                    colors = chart.options.colors || [];
+                    colorCount = colors.length;
+                    dataClass.color = colors[colorCounter];
                 }
+
+                dataClass.colorIndex = colorCounter;
+
+                // Loop back to zero
+                colorCounter++;
+                if (colorCounter === colorCount) {
+                    colorCounter = 0;
+                }
+            } else {
+                dataClass.color = color(options.minColor).tweenTo(
+                    color(options.maxColor),
+                    iEnd < 2 ? 0.5 : i / (iEnd - 1) // #3219
+                );
             }
         }
     }
