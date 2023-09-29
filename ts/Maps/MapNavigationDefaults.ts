@@ -17,10 +17,8 @@
  * */
 
 import type MapNavigationOptions from './MapNavigationOptions';
-import D from '../Core/Defaults.js';
+
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
-const { extend } = U;
 
 /* *
  *
@@ -35,7 +33,7 @@ const { extend } = U;
  * @product      highmaps
  * @optionparent mapNavigation
  */
-const MapNavigationDefaults: MapNavigationOptions = {
+const mapNavigationDefaults: MapNavigationOptions = {
 
     /**
      * General options for the map navigation buttons. Individual options
@@ -293,22 +291,8 @@ const MapNavigationDefaults: MapNavigationOptions = {
 
 /* *
  *
- *  Composition
- *
- * */
-
-// Add language
-extend(D.defaultOptions.lang, {
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out'
-});
-// Set the default map navigation options
-D.defaultOptions.mapNavigation = MapNavigationDefaults;
-
-/* *
- *
  *  Default Export
  *
  * */
 
-export default MapNavigationDefaults;
+export default mapNavigationDefaults;
