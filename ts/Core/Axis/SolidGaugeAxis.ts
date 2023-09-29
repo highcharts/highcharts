@@ -20,7 +20,7 @@ import type { AxisCollectionKey } from './AxisOptions';
 import type Pane from '../../Extensions/Pane';
 import type RadialAxis from './RadialAxis';
 
-import ColorAxisLike from './ColorAxisLike.js';
+import ColorAxisLike from './Color/ColorAxisLike.js';
 import U from '../Utilities.js';
 const { extend } = U;
 

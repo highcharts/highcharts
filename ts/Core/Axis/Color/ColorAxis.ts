@@ -19,7 +19,6 @@
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type AxisLike from '../AxisLike';
 import type Chart from '../../Chart/Chart.js';
-import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
@@ -32,11 +31,9 @@ import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
-import Color from '../../Color/Color.js';
-const { parse: color } = Color;
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisLike from '../ColorAxisLike.js';
+import ColorAxisLike from './ColorAxisLike.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
@@ -171,7 +168,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public constructor(
         chart: Chart,
-        userOptions: DeepPartial<ColorAxis.Options>
+        userOptions: Partial<ColorAxis.Options>
     ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
@@ -215,7 +212,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public init(
         chart: Chart,
-        userOptions: DeepPartial<ColorAxis.Options>
+        userOptions: Partial<ColorAxis.Options>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -256,56 +253,6 @@ class ColorAxis extends Axis implements AxisLike {
         // Override original axis properties
         axis.horiz = horiz;
         axis.zoomEnabled = false;
-    }
-
-    /**
-     * @private
-     */
-    public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
-        const axis = this,
-            chart = axis.chart,
-            legendItem = axis.legendItem = axis.legendItem || {},
-            len = (userOptions.dataClasses as any).length,
-            options = axis.options;
-
-        let dataClasses,
-            colorCounter = 0,
-            colorCount = chart.options.chart.colorCount;
-
-        axis.dataClasses = dataClasses = [] as Array<ColorAxis.DataClassesOptions>;
-        legendItem.labels = [] as Array<ColorAxis.LegendItemObject>;
-
-        (userOptions.dataClasses || []).forEach(function (dataClass, i): void {
-            let colors: any;
-
-            dataClass = merge(dataClass);
-            dataClasses.push(dataClass);
-
-            if (!chart.styledMode && dataClass.color) {
-                return;
-            }
-
-            if (options.dataClassColor === 'category') {
-                if (!chart.styledMode) {
-                    colors = chart.options.colors;
-                    colorCount = colors.length;
-                    dataClass.color = colors[colorCounter];
-                }
-
-                dataClass.colorIndex = colorCounter;
-
-                // Increase and loop back to zero
-                colorCounter++;
-                if (colorCounter === colorCount) {
-                    colorCounter = 0;
-                }
-            } else {
-                dataClass.color = color(options.minColor).tweenTo(
-                    color(options.maxColor),
-                    len < 2 ? 0.5 : i / (len - 1) // #3219
-                );
-            }
-        });
     }
 
     /**
@@ -898,11 +845,7 @@ interface ColorAxis extends ColorAxisLike {
     // Nothing to add
 }
 
-extend(ColorAxis.prototype, {
-    initStops: ColorAxisLike.initStops,
-    normalizedValue: ColorAxisLike.normalizedValue,
-    toColor: ColorAxisLike.toColor
-});
+extend(ColorAxis.prototype, ColorAxisLike);
 
 /* *
  *
