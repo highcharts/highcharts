@@ -22,7 +22,7 @@ import type {
     MapNavigationButtonOptions,
     MapNavigationOptions
 } from './MapNavigationOptions';
-import type { MapNavigationChart } from './MapPointer';
+import type MapChart from '../Core/Chart/MapChart';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -97,7 +97,7 @@ class MapNavigation {
      *
      * */
 
-    public chart: MapNavigationChart = void 0 as any;
+    public chart: MapChart = void 0 as any;
     public navButtons: Array<SVGElement>;
     public navButtonsGroup: SVGElement = void 0 as any;
     public unbindDblClick?: Function;
@@ -122,7 +122,7 @@ class MapNavigation {
     public init(
         chart: Chart
     ): void {
-        this.chart = chart as MapNavigationChart;
+        this.chart = chart as MapChart;
     }
 
     /**
@@ -399,123 +399,9 @@ class MapNavigation {
  *
  * */
 
-// Add events to the Chart object itself
-extend<Chart|MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
-
-    /**
-     * Fit an inner box to an outer. If the inner box overflows left or right,
-     * align it to the sides of the outer. If it overflows both sides, fit it
-     * within the outer. This is a pattern that occurs more places in
-     * Highcharts, perhaps it should be elevated to a common utility function.
-     *
-     * @ignore
-     * @function Highcharts.Chart#fitToBox
-     *
-     * @param {Highcharts.BBoxObject} inner
-     *
-     * @param {Highcharts.BBoxObject} outer
-     *
-     * @return {Highcharts.BBoxObject}
-     *         The inner box
-     */
-    fitToBox: function (
-        this: MapNavigationChart,
-        inner: BBoxObject,
-        outer: BBoxObject
-    ): BBoxObject {
-        [['x', 'width'], ['y', 'height']].forEach(function (
-            dim: Array<string>
-        ): void {
-            const pos = dim[0],
-                size = dim[1];
-
-            if ((inner as any)[pos] + (inner as any)[size] >
-                (outer as any)[pos] + (outer as any)[size]
-            ) { // right
-                // the general size is greater, fit fully to outer
-                if ((inner as any)[size] > (outer as any)[size]) {
-                    (inner as any)[size] = (outer as any)[size];
-                    (inner as any)[pos] = (outer as any)[pos];
-                } else { // align right
-                    (inner as any)[pos] = (outer as any)[pos] +
-                        (outer as any)[size] - (inner as any)[size];
-                }
-            }
-            if ((inner as any)[size] > (outer as any)[size]) {
-                (inner as any)[size] = (outer as any)[size];
-            }
-            if ((inner as any)[pos] < (outer as any)[pos]) {
-                (inner as any)[pos] = (outer as any)[pos];
-            }
-        });
-
-        return inner;
-    },
-
-    /**
-     * Highcharts Maps only. Zoom in or out of the map. See also
-     * {@link Point#zoomTo}. See {@link Chart#fromLatLonToPoint} for how to get
-     * the `centerX` and `centerY` parameters for a geographic location.
-     *
-     * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
-     *
-     * @deprecated
-     * @function Highcharts.Chart#mapZoom
-     *
-     * @param {number} [howMuch]
-     *        How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
-     *        in to half the current view. 2 zooms to twice the current view. If
-     *        omitted, the zoom is reset.
-     *
-     * @param {number} [xProjected]
-     *        The projected x position to keep stationary when zooming, if
-     *        available space.
-     *
-     * @param {number} [yProjected]
-     *        The projected y position to keep stationary when zooming, if
-     *        available space.
-     *
-     * @param {number} [chartX]
-     *        Keep this chart position stationary if possible. This is used for
-     *        example in `mousewheel` events, where the area under the mouse
-     *        should be fixed as we zoom in.
-     *
-     * @param {number} [chartY]
-     *        Keep this chart position stationary if possible.
-     *
-     * @deprecated
-     */
-    mapZoom: function (
-        this: MapNavigationChart,
-        howMuch?: number,
-        xProjected?: number,
-        yProjected?: number,
-        chartX?: number,
-        chartY?: number
-    ): void {
-        if (this.mapView) {
-
-            if (isNumber(howMuch)) {
-                // Compliance, mapView.zoomBy uses different values
-                howMuch = Math.log(howMuch) / Math.log(0.5);
-            }
-
-            this.mapView.zoomBy(
-                howMuch,
-                isNumber(xProjected) && isNumber(yProjected) ?
-                    this.mapView.projection.inverse([xProjected, yProjected]) :
-                    void 0,
-                isNumber(chartX) && isNumber(chartY) ?
-                    [chartX, chartY] :
-                    void 0
-            );
-        }
-    }
-});
-
 // Extend the Chart.render method to add zooming and panning
 addEvent(Chart as any, 'beforeRender', function (
-    this: MapNavigationChart
+    this: MapChart
 ): void {
     // Render the plus and minus buttons. Doing this before the shapes makes
     // getBBox much quicker, at least in Chrome.
