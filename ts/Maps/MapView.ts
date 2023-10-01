@@ -41,8 +41,7 @@ import type {
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-import defaultOptions from './MapViewDefaults.js';
-import defaultInsetsOptions from './MapViewInsetsDefaults.js';
+import MapViewDefaults from './MapViewDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
 const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
@@ -344,7 +343,7 @@ class MapView {
         }
 
         const o = merge(
-            defaultOptions,
+            MapViewDefaults.mapView,
             { projection: recommendedProjection },
             recommendedMapView,
             options
@@ -1343,7 +1342,7 @@ class MapViewInset extends MapView {
 
         this.id = options.id;
         this.mapView = mapView;
-        this.options = merge(defaultInsetsOptions, options);
+        this.options = merge(MapViewDefaults.mapViewInsets, options);
 
         this.allBounds = [];
 
