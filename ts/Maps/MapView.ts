@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
@@ -18,6 +24,7 @@ import type {
     Polygon,
     TopoJSON
 } from './GeoJSON';
+import type MapChart from '../Core/Chart/MapChart';
 import type MapSeries from '../Series/Map/MapSeries';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -34,19 +41,15 @@ import type {
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewDefaults.js';
 import defaultInsetsOptions from './MapViewInsetsDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
 const { topo2geo } = GeoJSONComposition;
-import MapChart from '../Core/Chart/MapChart.js';
-const { maps } = MapChart;
 import MU from './MapUtilities.js';
 const {
     boundsFromPath,
     pointInPolygon
 } = MU;
-
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
@@ -59,8 +62,15 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     relativeLength
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 type MapDataType = string|GeoJSON|TopoJSON|MapPointOptions[];
 
@@ -71,24 +81,54 @@ type SVGTransformType = {
     translateY: number;
 };
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+const tileSize = 256;
+
 /**
  * The world size in terms of 10k meters in the Web Mercator projection, to
  * match a 256 square tile to zoom level 0.
  * @private
  */
 const worldSize = 400.979322;
-const tileSize = 256;
 
-// Compute the zoom from given bounds and the size of the playing field. Used in
-// two places, hence the local function.
-const zoomFromBounds = (b: MapBounds, playingField: BBoxObject): number => {
+/* *
+ *
+ *  Variables
+ *
+ * */
+
+let maps: AnyRecord = {};
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Compute the zoom from given bounds and the size of the playing field. Used in
+ * two places, hence the local function.
+ * @private
+ */
+function zoomFromBounds(
+    b: MapBounds,
+    playingField: BBoxObject
+): number {
     const { width, height } = playingField,
         scaleToField = Math.max(
             (b.x2 - b.x1) / (width / tileSize),
             (b.y2 - b.y1) / (height / tileSize)
         );
+
     return Math.log(worldSize / scaleToField) / Math.log(2);
-};
+}
 
 /*
 const mergeCollections = <
@@ -114,6 +154,12 @@ const mergeCollections = <
 };
 */
 
+/* *
+ *
+ *  Classes
+ *
+ * */
+
 /**
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
@@ -129,33 +175,42 @@ const mergeCollections = <
  *        MapView options
  */
 class MapView {
-    public allowTransformAnimation: boolean = true;
-    public center: LonLatArray;
-    public fitToGeometryCache?: MapBounds;
-    public geoMap?: GeoJSON;
-    public group?: SVGElement;
-    public insets: MapViewInset[] = [];
-    public minZoom?: number;
-    public options: MapViewOptions;
-    public padding: [number, number, number, number] = [0, 0, 0, 0];
-    public playingField: BBoxObject;
-    public projection: Projection;
-    public userOptions: DeepPartial<MapViewOptions>;
-    public zoom: number;
-    recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
-    recommendedMapView: DeepPartial<MapViewOptions>|undefined;
-
-    public chart: Chart;
-
-    protected eventsToUnbind: Array<Function> = [];
-
 
     /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        MapChartClass: typeof MapChart
+    ): void {
+
+        if (pushUnique(composedMembers, MapChartClass)) {
+            maps = MapChartClass.maps;
+
+            // Initialize MapView after initialization, but before firstRender
+            addEvent(MapChartClass, 'afterInit', function (): void {
+                /**
+                 * The map view handles zooming and centering on the map, and
+                 * various client-side projection capabilities.
+                 *
+                 * @name Highcharts.MapChart#mapView
+                 * @type {Highcharts.MapView|undefined}
+                 */
+                this.mapView = new MapView(this, this.options.mapView);
+            }, { order: 0 });
+        }
+
+    }
+
+    /**
      * Return the composite bounding box of a collection of bounding boxes
+     * @private
      */
-    public static compositeBounds = (
+    public static compositeBounds(
         arrayOfBounds: MapBounds[]
-    ): MapBounds|undefined => {
+    ): (MapBounds|undefined) {
         if (arrayOfBounds.length) {
             return arrayOfBounds
                 .slice(1)
@@ -168,9 +223,12 @@ class MapView {
                 }, merge(arrayOfBounds[0]));
         }
         return;
-    };
+    }
 
-    // Merge two collections of insets by the id
+    /**
+     * Merge two collections of insets by the id.
+     * @private
+     */
     private static mergeInsets(
         a: DeepPartial<MapViewInsetsOptions|undefined>[],
         b: DeepPartial<MapViewInsetsOptions|undefined>[]
@@ -197,23 +255,14 @@ class MapView {
         return insets;
     }
 
-    // Create MapViewInset instances from insets options
-    private createInsets(): void {
-        const options = this.options,
-            insets = options.insets;
-        if (insets) {
-            insets.forEach((item): void => {
-                const inset = new MapViewInset(
-                    this,
-                    merge(options.insetOptions, item)
-                );
-                this.insets.push(inset);
-            });
-        }
-    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     public constructor(
-        chart: Chart,
+        chart: MapChart,
         options?: DeepPartial<MapViewOptions>
     ) {
         let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
@@ -364,6 +413,54 @@ class MapView {
 
         this.setUpEvents();
 
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public allowTransformAnimation: boolean = true;
+    public center: LonLatArray;
+    public chart: MapChart;
+    protected eventsToUnbind: Array<Function> = [];
+    public fitToGeometryCache?: MapBounds;
+    public geoMap?: GeoJSON;
+    public group?: SVGElement;
+    public insets: MapViewInset[] = [];
+    public minZoom?: number;
+    public options: MapViewOptions;
+    public padding: [number, number, number, number] = [0, 0, 0, 0];
+    public playingField: BBoxObject;
+    public projection: Projection;
+    public recommendedProjection?: DeepPartial<ProjectionOptions>;
+    public recommendedMapView?: DeepPartial<MapViewOptions>;
+    public userOptions: DeepPartial<MapViewOptions>;
+    public zoom: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Create MapViewInset instances from insets options
+     * @private
+     */
+    private createInsets(): void {
+        const options = this.options,
+            insets = options.insets;
+        if (insets) {
+            insets.forEach((item): void => {
+                const inset = new MapViewInset(
+                    this,
+                    merge(options.insetOptions, item)
+                );
+                this.insets.push(inset);
+            });
+        }
     }
 
     /**
@@ -1232,14 +1329,11 @@ class MapView {
 // Putting this in the same file due to circular dependency with MapView
 class MapViewInset extends MapView {
 
-    public allBounds: MapBounds[];
-    public border?: SVGElement;
-    public geoBoundsProjectedBox?: MapBounds;
-    public geoBoundsProjectedPolygon?: Array<Array<number>>;
-    public hitZone?: Polygon;
-    public id?: string;
-    public options: MapViewInsetsOptions;
-    public mapView: MapView;
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     public constructor(
         mapView: MapView,
@@ -1267,8 +1361,34 @@ class MapViewInset extends MapView {
         }
     }
 
-    // Get the playing field in pixels
-    getField(padded: boolean = true): BBoxObject {
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public allBounds: MapBounds[];
+    public border?: SVGElement;
+    public geoBoundsProjectedBox?: MapBounds;
+    public geoBoundsProjectedPolygon?: Array<Array<number>>;
+    public hitZone?: Polygon;
+    public id?: string;
+    public options: MapViewInsetsOptions;
+    public mapView: MapView;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Get the playing field in pixels
+     * @private
+     */
+    public getField(
+        padded: boolean = true
+    ): BBoxObject {
         const hitZone = this.hitZone;
         if (hitZone) {
             const padding = padded ? this.padding : [0, 0, 0, 0],
@@ -1295,8 +1415,11 @@ class MapViewInset extends MapView {
 
     }
 
-    // Get the hit zone in pixels
-    getHitZone(): Polygon|undefined {
+    /**
+     * Get the hit zone in pixels.
+     * @private
+     */
+    public getHitZone(): Polygon|undefined {
         const { chart, mapView, options } = this,
             { coordinates } = options.field || {};
         if (coordinates) {
@@ -1318,13 +1441,16 @@ class MapViewInset extends MapView {
         }
     }
 
-    getProjectedBounds(): MapBounds|undefined {
+    public getProjectedBounds(): MapBounds|undefined {
         return MapView.compositeBounds(this.allBounds);
     }
 
-    // Determine whether a point on the main projected plane is inside the
-    // geoBounds of the inset.
-    isInside(point: ProjectedXY): boolean {
+    /**
+     * Determine whether a point on the main projected plane is inside the
+     * geoBounds of the inset.
+     * @private
+     */
+    public isInside(point: ProjectedXY): boolean {
         const { geoBoundsProjectedBox, geoBoundsProjectedPolygon } = this;
 
         return Boolean(
@@ -1343,8 +1469,11 @@ class MapViewInset extends MapView {
         );
     }
 
-    // Render the map view inset with the border path
-    render(): void {
+    /**
+     * Render the map view inset with the border path
+     * @private
+     */
+    public render(): void {
         const { chart, mapView, options } = this,
             borderPath = options.borderPath || options.field;
 
@@ -1408,22 +1537,18 @@ class MapViewInset extends MapView {
         this.eventsToUnbind.forEach((f): void => f());
     }
 
-    // No chart-level events for insets
-    setUpEvents(): void {}
+    /**
+     * No chart-level events for insets
+     * @private
+     */
+    public setUpEvents(): void {}
 
 }
 
-// Initialize the MapView after initialization, but before firstRender
-addEvent(MapChart, 'afterInit', function (): void {
-    /**
-     * The map view handles zooming and centering on the map, and various
-     * client-side projection capabilities.
-     *
-     * @name Highcharts.MapChart#mapView
-     * @type {Highcharts.MapView|undefined}
-     */
-    this.mapView = new MapView(this, this.options.mapView);
-}, { order: 0 });
-
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapView;
