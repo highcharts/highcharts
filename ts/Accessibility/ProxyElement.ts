@@ -179,7 +179,11 @@ class ProxyElement {
 
         this.eventProvider.removeAddedEvents();
         this.addProxyEventsToElement(this.innerElement, target.click);
-        this.refreshPosition();
+
+        // Refresh proxy button position only if chart is resizing, #18716
+        if (this.chart.isResizing) {
+            this.refreshPosition();
+        }
     }
 
 
