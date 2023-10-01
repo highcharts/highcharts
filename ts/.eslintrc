@@ -20,7 +20,10 @@
                 "properties": "always"
             }
         ],
-        "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }],
+        "capitalized-comments": ["warn", "always", {
+            "block": { "ignoreConsecutiveComments": true },
+            "line": { "ignorePattern": "^" }
+        }],
         "class-methods-use-this": 0,
         "comma-dangle": [
             2,
