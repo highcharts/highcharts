@@ -651,6 +651,7 @@ function getVersionPaths(version) {
  */
 async function uploadFiles(params) {
     const log = require('./log');
+    const { files, name, bucket } = params;
 
     params = Object.assign(
         {
@@ -665,8 +666,6 @@ async function uploadFiles(params) {
         },
         params
     );
-
-    const { files, name, bucket } = params;
 
     const nFiles = files.length === 1 ? '1 file' : `${files.length} files`;
 
