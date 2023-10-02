@@ -11,4 +11,14 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/BoostCanvas.js';
+import Highcharts from '../../Core/Globals.js';
+import BoostCanvas from '../../Extensions/BoostCanvas.js';
+const G: AnyRecord = Highcharts;
+/**
+ * Initialize the canvas boost.
+ *
+ * @function Highcharts.initCanvasBoost
+ */
+G.initCanvasBoost = function (): void {
+    BoostCanvas.compose(G.Chart, G.Series, G.seriesTypes);
+};

@@ -15,24 +15,17 @@
  *
  * */
 
-import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
+import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+
 import Chart from '../../Core/Chart/Chart.js';
-import type {
-    AnimationStepCallbackFunction
-} from '../../Core/Animation/AnimationOptions';
-
-const {
-    seriesTypes: {
-        map: MapSeries
-    }
-} = SeriesRegistry;
-
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { map: MapSeries } = SeriesRegistry.seriesTypes;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
+import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     defined,
@@ -40,6 +33,7 @@ const {
     merge,
     pick
 } = U;
+
 
 /* *
  *
@@ -140,7 +134,7 @@ class TiledWebMapSeries extends MapSeries {
      */
 
     public lonLatToTile(
-        lonLat: Highcharts.MapLonLatObject,
+        lonLat: MapLonLatObject,
         zoom: number
     ): PositionObject {
         const { lon, lat } = lonLat,
@@ -178,7 +172,7 @@ class TiledWebMapSeries extends MapSeries {
         xTile: number,
         yTile: number,
         zTile: number
-    ): Highcharts.MapLonLatObject {
+    ): MapLonLatObject {
         const lon = xTile / Math.pow(2, zTile) * 360 - 180,
             n = Math.PI - 2 * Math.PI * yTile / Math.pow(2, zTile),
             lat = (
@@ -730,7 +724,7 @@ class TiledWebMapSeries extends MapSeries {
             { transformGroups } = series,
             chart = this.chart,
             mapView = chart.mapView,
-            options = arguments[0],
+            options: TiledWebMapSeriesOptions = arguments[0],
             { provider } = options;
 
         if (transformGroups) {

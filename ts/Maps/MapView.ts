@@ -12,7 +12,12 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
+import type {
+    GeoJSON,
+    MapLonLatObject,
+    Polygon,
+    TopoJSON
+} from './GeoJSON';
 import type MapSeries from '../Series/Map/MapSeries';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -32,14 +37,10 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewOptionsDefault.js';
 import defaultInsetsOptions from './MapViewInsetsOptionsDefault.js';
-import GeoJSONModule from '../Extensions/GeoJSON.js';
-const {
-    topo2geo
-} = GeoJSONModule;
+import GeoJSONComposition from './GeoJSONComposition.js';
+const { topo2geo } = GeoJSONComposition;
 import MapChart from '../Core/Chart/MapChart.js';
-const {
-    maps
-} = MapChart;
+const { maps } = MapChart;
 import MU from './MapUtilities.js';
 const {
     boundsFromPath,
@@ -557,8 +558,8 @@ class MapView {
      *         The pixel position
      */
     public lonLatToPixels(
-        lonLat: Highcharts.MapLonLatObject
-    ): PositionObject|undefined {
+        lonLat: MapLonLatObject
+    ): (PositionObject|undefined) {
         const pos = this.lonLatToProjectedUnits(lonLat);
         if (pos) {
             return this.projectedUnitsToPixels(pos);
@@ -583,8 +584,8 @@ class MapView {
      *      projected values
      */
     public lonLatToProjectedUnits(
-        lonLat: Highcharts.MapLonLatObject
-    ): ProjectedXY|undefined {
+        lonLat: MapLonLatObject
+    ): (ProjectedXY|undefined) {
         const chart = this.chart,
             mapTransforms = chart.mapTransforms;
 
@@ -661,7 +662,7 @@ class MapView {
      */
     public projectedUnitsToLonLat(
         point: ProjectedXY
-    ): Highcharts.MapLonLatObject|undefined {
+    ): (MapLonLatObject|undefined) {
         const chart = this.chart,
             mapTransforms = chart.mapTransforms;
 
@@ -874,7 +875,7 @@ class MapView {
      */
     public pixelsToLonLat(
         pos: PositionObject
-    ): Highcharts.MapLonLatObject|undefined {
+    ): (MapLonLatObject|undefined) {
         return this.projectedUnitsToLonLat(this.pixelsToProjectedUnits(pos));
     }
 
