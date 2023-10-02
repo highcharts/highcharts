@@ -343,7 +343,7 @@ class MapView {
         }
 
         const o = merge(
-            MapViewDefaults.mapView,
+            MapViewDefaults,
             { projection: recommendedProjection },
             recommendedMapView,
             options
@@ -1336,13 +1336,17 @@ class MapViewInset extends MapView {
 
     public constructor(
         mapView: MapView,
-        options: DeepPartial<MapViewInsetsOptions>
+        options: Partial<MapViewInsetsOptions>
     ) {
         super(mapView.chart, options);
 
         this.id = options.id;
         this.mapView = mapView;
-        this.options = merge(MapViewDefaults.mapViewInsets, options);
+        this.options = merge(
+            { center: [0, 0] } as MapViewInsetsOptions,
+            mapView.options.insetOptions,
+            options
+        );
 
         this.allBounds = [];
 
