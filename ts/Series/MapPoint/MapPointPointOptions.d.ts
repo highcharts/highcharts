@@ -14,7 +14,7 @@
  *
  * */
 
-import { GeoJSONGeometryPoint } from '../../Maps/GeoJSON';
+import type { GeoJSONGeometryPoint } from '../../Maps/GeoJSON';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -31,5 +31,11 @@ export interface MapPointPointOptions extends ScatterPointOptions {
     x?: number;
     y?: (number|null);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapPointPointOptions;

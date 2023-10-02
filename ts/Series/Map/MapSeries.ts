@@ -688,7 +688,7 @@ class MapSeries extends ScatterSeries {
     ): void {
 
         delete this.bounds;
-        super.setData.call(this, data, false, void 0, updatePoints);
+        super.setData(data, false, void 0, updatePoints);
 
         this.processData();
         this.generatePoints();
@@ -790,8 +790,9 @@ class MapSeries extends ScatterSeries {
                                     processedData[i], val[ix], pointArrayMap[j]
                                 );
                             } else {
-                                (processedData[i] as any)[pointArrayMap[j]] =
-                                    val[ix];
+                                (processedData[i] as AnyRecord)[
+                                    pointArrayMap[j]
+                                ] = val[ix];
                             }
                         }
                     }
