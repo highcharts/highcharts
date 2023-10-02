@@ -8,10 +8,6 @@
     // Create the chart
     Highcharts.stockChart('container', {
 
-        chart: {
-            height: 300
-        },
-
         rangeSelector: {
             allButtonsEnabled: true,
             buttons: [{
