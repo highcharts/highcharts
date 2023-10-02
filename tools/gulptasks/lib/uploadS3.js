@@ -314,7 +314,7 @@ async function startS3Session(
     dryrun = void 0
 ) {
 
-    const envCredentials = await fromEnv.catch(() => null);
+    const envCredentials = await fromEnv().catch(() => null);
     /** @type {S3Session} */
     const session = {
         bucket,
