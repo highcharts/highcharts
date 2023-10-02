@@ -665,8 +665,20 @@ QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
     });
     assert.strictEqual(
         chart.xAxis[0].brokenAxis.hasBreaks,
+        false,
+        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: false.'
+    );
+
+    chart.xAxis[0].update({
+        breaks: [{
+            from: 1,
+            to: 2
+        }]
+    });
+    assert.strictEqual(
+        chart.xAxis[0].brokenAxis.hasBreaks,
         true,
-        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: true.'
+        'Axis.breaks with correct config results in Axis.brokenAxis.hasBreaks: true.'
     );
 });
 

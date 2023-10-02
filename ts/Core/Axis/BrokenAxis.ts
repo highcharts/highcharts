@@ -708,7 +708,9 @@ namespace BrokenAxis {
         ): void {
             const brokenAxis = this;
             const axis = brokenAxis.axis;
-            const hasBreaks = (isArray(breaks) && !!breaks.length);
+            const hasBreaks = isArray(breaks) &&
+                !!breaks.length &&
+                !!Object.keys(breaks[0]).length;
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
