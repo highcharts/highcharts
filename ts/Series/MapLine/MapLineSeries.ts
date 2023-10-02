@@ -20,9 +20,9 @@ import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -143,7 +143,6 @@ class MapLineSeries extends MapSeries {
 
 interface MapLineSeries {
     colorProp: 'stroke';
-    pointAttrToOptions: Record<string, string>;
     pointClass: typeof MapLinePoint;
 }
 extend(MapLineSeries.prototype, {
