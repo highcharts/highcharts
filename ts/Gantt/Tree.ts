@@ -90,17 +90,21 @@ const getListOfParents = function (
             {} as (Record<string, Array<Highcharts.TreePointOptionsObject>>)
         ),
         root = '';
+
     type TreeOptions = Highcharts.TreePointOptionsObject;
+
     // If parent does not exist, hoist parent to root of tree.
     Object.keys(listOfParents).forEach(
         (node: string): void => {
             if ((node !== root) && (ids.indexOf(node) === -1)) {
 
                 const adoptedByRoot = listOfParents[node].map(
+
                     function (orphan): TreeOptions {
                         const { parent, ...parentExcluded } = orphan;
                         return parentExcluded;
                     }
+
                 );
 
                 listOfParents[root].push(...adoptedByRoot);

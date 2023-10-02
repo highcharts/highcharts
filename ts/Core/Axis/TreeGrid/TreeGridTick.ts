@@ -263,12 +263,12 @@ function wrapRenderLabel(
         ),
         node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
         hasDescendants = node?.descendants && node.descendants > 0,
-        level = node?.depth || 0,
-        isSubNode = level < 2,
+        level = node?.depth,
         isTreeGrid = options.type === 'treegrid',
         shouldRender = axis.tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
         styledMode = axis.chart.styledMode;
+
     let collapsed,
         addClassName,
         removeClassName;
@@ -289,8 +289,7 @@ function wrapRenderLabel(
         isTreeGrid &&
         label &&
         label.element &&
-        hasDescendants &&
-        isSubNode
+        hasDescendants
     ) {
         collapsed = axis.treeGrid.isCollapsed(node);
 
@@ -347,6 +346,8 @@ function wrapRenderLabel(
                 object.attachedTreeGridEvents = true;
             }
         });
+    } else if (tick?.treeGrid?.labelIcon) {
+        tick?.treeGrid?.labelIcon.destroy();
     }
 }
 
