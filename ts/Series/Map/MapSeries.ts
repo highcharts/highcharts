@@ -32,6 +32,7 @@ import type {
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject, stop } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
@@ -39,9 +40,7 @@ import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapChart from '../../Core/Chart/MapChart.js';
-const {
-    splitPath
-} = MapChart;
+const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapView from '../../Maps/MapView.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -49,11 +48,9 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries,
+    scatter: ScatterSeries
+} = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -76,6 +73,7 @@ const {
  *  Declarations
  *
  * */
+
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
@@ -1241,9 +1239,7 @@ class MapSeries extends ScatterSeries {
         if (mapView) {
             const mainSvgTransform = mapView.getSVGTransform();
 
-            series.points.forEach(function (
-                point: (MapPoint&MapPoint.CacheObject)
-            ): void {
+            series.points.forEach((point: MapPoint): void => {
 
                 const svgTransform = (
                     isNumber(point.insetIndex) &&
