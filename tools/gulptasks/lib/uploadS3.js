@@ -313,8 +313,6 @@ async function startS3Session(
     region = (process.env.AWS_REGION || 'eu-west-1'),
     dryrun = void 0
 ) {
-
-    const envCredentials = await fromEnv().catch(() => null);
     /** @type {S3Session} */
     const session = {
         bucket,
@@ -322,10 +320,9 @@ async function startS3Session(
         region: new AWS.S3({
             region,
             credentials: (
-                envCredentials ||
                 profile ?
                     fromIni({ profile }) :
-                    void 0
+                    fromEnv() || void 0
             )
         })
     };
