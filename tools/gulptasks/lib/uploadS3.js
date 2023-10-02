@@ -665,7 +665,8 @@ async function uploadFiles(params) {
             },
             callback: (from, to) => {
                 log.message(`Uploaded ${from} --> ${to}`);
-            }
+            },
+            region: 'eu-west-1'
         },
         params
     );
@@ -682,7 +683,7 @@ async function uploadFiles(params) {
     const session = startS3Session(
         params.bucket,
         params.profile,
-        void 0,
+        params.region,
         params.dryrun
     );
 
