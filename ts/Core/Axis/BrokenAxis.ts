@@ -186,7 +186,7 @@ namespace BrokenAxis {
      */
     function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
-        if (axis.options.breaks) {
+        if (axis.brokenAxis?.hasBreaks) {
             axis.options.ordinal = false;
         }
     }
