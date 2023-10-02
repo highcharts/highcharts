@@ -34,7 +34,7 @@ Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
 
 2. The Highcharts Component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.
 ```css
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).

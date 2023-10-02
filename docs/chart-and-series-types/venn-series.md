@@ -50,7 +50,7 @@ The following data will create two sets A and B, where both sets will have a pro
             value: 2
         }]
 
-So far there is no relationship between the two sets, and the current data will create two seperated circles for A and B. Another data point can be added to define the relationship between A and B. The following point will define an intersection between A and B, where the area of overlap will have a size of 1.
+So far there is no relationship between the two sets, and the current data will create two separated circles for A and B. Another data point can be added to define the relationship between A and B. The following point will define an intersection between A and B, where the area of overlap will have a size of 1.
 
 
     {
