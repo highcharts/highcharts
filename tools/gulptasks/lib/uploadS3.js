@@ -12,10 +12,9 @@
 
 
 const AWS = require('@aws-sdk/client-s3');
-const AWSCredentials = require('@aws-sdk/credential-provider-ini');
+const { fromEnv, fromIni } = require('@aws-sdk/credential-providers');
 const FS = require('node:fs/promises');
 const Path = require('node:path/posix');
-
 
 /* *
  *
@@ -314,6 +313,8 @@ async function startS3Session(
     region = (process.env.AWS_REGION || 'eu-west-1'),
     dryrun = void 0
 ) {
+
+    const envCredentials = await fromEnv.catch(() => null);
     /** @type {S3Session} */
     const session = {
         bucket,
@@ -321,8 +322,9 @@ async function startS3Session(
         region: new AWS.S3({
             region,
             credentials: (
+                envCredentials ||
                 profile ?
-                    AWSCredentials.fromIni({ profile }) :
+                    fromIni({ profile }) :
                     void 0
             )
         })
