@@ -506,8 +506,8 @@ const configs: {
                 const { chart, board } = this;
 
                 if (chart && board && chart.zooming?.type) {
-                    const dimensions = chart.zooming.type
-                        .split('').map((c): String => c + 'Axis');
+                    const dimensions = chart.zooming.type.split('')
+                        .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
 
                     dimensions.forEach((dimension): void => {
                         const callbacks: Function[] = [];
@@ -517,7 +517,7 @@ const configs: {
                             if (cursor.type === 'position') {
                                 const eventTarget = event && event.target as unknown as Axis;
                                 if (eventTarget && chart) {
-                                    const axes = (chart as any)[dimension as any] as unknown as Axis[];
+                                    const axes = chart[dimension];
                                     let didZoom = false;
 
                                     axes.forEach((axis): void => {
