@@ -318,7 +318,7 @@ class MapNavigation {
 
                 extend(buttonOptions, {
                     width: button.width,
-                    height: 2 * button.height
+                    height: 2 * (button.height || 0)
                 });
 
                 if (!chart.hasLoaded) {
