@@ -546,6 +546,9 @@ async function uploadDirectory(
  * @param {Function} [filterCallback]
  * Callback to filter file content.
  *
+ * @param {object} s3Params
+ * Additional options for the S3 object.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -553,7 +556,8 @@ async function uploadFile(
     sourcePath,
     targetPath,
     session = defaultSession,
-    filterCallback = void 0
+    filterCallback = void 0,
+    s3Params = {}
 ) {
     const log = require('./log');
 
@@ -575,7 +579,7 @@ async function uploadFile(
         log.message(targetPath, 'would be uploaded');
     } else {
 
-        await putS3Object(targetPath, fileContent, session);
+        await putS3Object(targetPath, fileContent, s3Params, session);
 
         log.message(sourcePath, 'uploaded');
     }
@@ -650,7 +654,7 @@ function getVersionPaths(version) {
  */
 async function uploadFiles(params) {
     const log = require('./log');
-    const { files, name, bucket } = params;
+    const { files, name, bucket, s3Params } = params;
 
     params = Object.assign(
         {
@@ -682,12 +686,13 @@ async function uploadFiles(params) {
         params.dryrun
     );
 
+
     for (const fileChunk of getChunks(files, params.batchSize)) {
         const chunkPromises = [];
 
         for (const file of fileChunk) {
             chunkPromises.push(
-                uploadFile(file.from, file.to, session)
+                uploadFile(file.from, file.to, session, void 0, s3Params)
                     .then(() => params.callback(file.from, file.to))
                     .catch(params.onError)
             );
