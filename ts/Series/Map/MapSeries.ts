@@ -911,13 +911,13 @@ class MapSeries extends ScatterSeries {
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as any
             );
-        const state = point?.state || (point?.selected && 'select' || void 0);
+        const state = point.state;
 
         // Individual stroke width
         let pointStrokeWidth = this.getStrokeWidth(point.options);
 
         // Handle state specific border or line width
-        if (state) {
+        if (state !== 'normal') {
             const stateOptions = merge(
                     (this.options as any).states[state],
                     point.options.states &&
