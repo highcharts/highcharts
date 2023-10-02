@@ -126,17 +126,12 @@ class MapPoint extends ScatterPoint {
     ): MapPoint {
 
         const series = this.series,
-            point: MapPoint = (
-                super.applyOptions.call(this, options, x) as any
-            ),
+            point = super.applyOptions(options, x) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1],
-                mapKey = super.getNestedProperty.call(
-                    point,
-                    joinKey
-                ) as string,
+                mapKey = super.getNestedProperty(joinKey) as string,
                 mapPoint = typeof mapKey !== 'undefined' &&
                     series.mapMap[mapKey];
 
@@ -220,7 +215,7 @@ class MapPoint extends ScatterPoint {
             super.onMouseOver.call(this, e);
         } else {
             // #3401 Tooltip doesn't hide when hovering over null points
-            (this.series.onMouseOut as any)(e);
+            this.series.onMouseOut();
         }
     }
 

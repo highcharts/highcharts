@@ -21,6 +21,8 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
@@ -32,6 +34,7 @@ import type {
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject, stop } = A;
@@ -44,7 +47,6 @@ const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -148,7 +150,7 @@ class MapSeries extends ScatterSeries {
 
     public options: MapSeriesOptions = void 0 as any;
 
-    public pointAttrToOptions: unknown;
+    public pointAttrToOptions?: Record<string, string>;
 
     public points: Array<MapPoint> = void 0 as any;
 
@@ -313,7 +315,7 @@ class MapSeries extends ScatterSeries {
                             this.pointAttribs(
                                 point,
                                 point.selected && 'select' || void 0
-                            ) as any
+                            ) as CSSObject
                         );
                     }
 
@@ -511,11 +513,10 @@ class MapSeries extends ScatterSeries {
                     // Legacy one-dimensional array
                     } else if (
                         isArray(point.path) &&
-                        point.path[0] as any === 'M'
+                        (point.path as unknown as SVGPath.MoveTo)[0] === 'M'
                     ) {
-                        point.path = SVGRenderer.prototype.pathToSegments(
-                            point.path as any
-                        );
+                        point.path = this.chart.renderer
+                            .pathToSegments(point.path);
                     }
 
                     // The first time a map point is used, analyze its box
@@ -576,13 +577,13 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     private getStrokeWidth(
-        options: MapSeries['options']|MapPoint['options']
+        options: (MapSeriesOptions|MapPointOptions)
     ): (number|undefined) {
         const pointAttrToOptions = this.pointAttrToOptions;
 
-        return (options as any)[
+        return (options as AnyRecord)[
             pointAttrToOptions &&
-            (pointAttrToOptions as any)['stroke-width'] || 'borderWidth'
+            pointAttrToOptions['stroke-width'] || 'borderWidth'
         ];
     }
 
@@ -609,7 +610,7 @@ class MapSeries extends ScatterSeries {
         const attr = styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
-                this, point as any, state
+                this, point as unknown as ColumnPoint, state
             );
 
         // Individual stroke width
@@ -618,9 +619,10 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    (this.options as any).states[state],
+                    this.options.states &&
+                    this.options.states[state] as MapSeriesOptions,
                     point.options.states &&
-                    (point.options.states as any)[state] ||
+                    point.options.states[state] as MapPointOptions ||
                     {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
@@ -665,9 +667,6 @@ class MapSeries extends ScatterSeries {
         return attr;
     }
 
-    /**
-     * @private
-     */
     public updateData(): boolean {
         // #16782
         if (this.processedData) {
@@ -732,7 +731,7 @@ class MapSeries extends ScatterSeries {
 
         // Cache cos/sin of transform rotation angle
         if (mapTransforms) {
-            objectEach(mapTransforms, (transform: any): void => {
+            objectEach(mapTransforms, (transform): void => {
                 if (transform.rotation) {
                     transform.cosAngle = Math.cos(transform.rotation);
                     transform.sinAngle = Math.sin(transform.rotation);
@@ -776,7 +775,7 @@ class MapSeries extends ScatterSeries {
                         val.length > pointArrayMap.length &&
                         typeof val[0] === 'string'
                     ) {
-                        (processedData[i] as any)['hc-key'] = val[0];
+                        (processedData[i] as AnyRecord)['hc-key'] = val[0];
                         ++ix;
                     }
                     // Run through pointArrayMap and what's left of the
@@ -799,8 +798,11 @@ class MapSeries extends ScatterSeries {
                 } else {
                     processedData[i] = data[i];
                 }
-                if (joinBy && joinBy[0] === '_i') {
-                    (processedData[i] as any)._i = i;
+                if (
+                    joinBy &&
+                    joinBy[0] === '_i'
+                ) {
+                    (processedData[i] as AnyRecord)._i = i;
                 }
             }
         }
@@ -813,12 +815,12 @@ class MapSeries extends ScatterSeries {
                 mapPoint = mapData[i];
                 props = mapPoint.properties;
 
-                (mapPoint as any)._i = i;
+                (mapPoint as AnyRecord)._i = i;
                 // Copy the property over to root for faster access
                 if (joinBy[0] && props && props[joinBy[0]]) {
-                    (mapPoint as any)[joinBy[0]] = props[joinBy[0]];
+                    (mapPoint as AnyRecord)[joinBy[0]] = props[joinBy[0]];
                 }
-                mapMap[(mapPoint as any)[joinBy[0]]] = mapPoint;
+                mapMap[(mapPoint as AnyRecord)[joinBy[0]]] = mapPoint;
             }
             this.mapMap = mapMap;
 
@@ -855,7 +857,7 @@ class MapSeries extends ScatterSeries {
                     '|' +
                     dataUsed
                         .map(function (point): void {
-                            return point && (point as any)[joinBy[0]];
+                            return point && (point as AnyRecord)[joinBy[0]];
                         })
                         .join('|') +
                     '|'
