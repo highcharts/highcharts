@@ -664,6 +664,28 @@ class Series {
     }
 
     /**
+     * Determine whether the marker in a series has changed.
+     *
+     * @private
+     * @function Highcharts.Series#hasMarkerChanged
+     */
+    public hasMarkerChanged(
+        options: DeepPartial<SeriesOptions>,
+        oldOptions: DeepPartial<SeriesOptions>
+    ): boolean | undefined {
+        const series = this,
+            marker = options.marker,
+            oldMarker = oldOptions.marker || {};
+
+        return marker && (
+            (oldMarker.enabled && !marker.enabled) ||
+            oldMarker.symbol !== marker.symbol || // #10870, #15946
+            oldMarker.height !== marker.height || // #16274
+            oldMarker.width !== marker.width // #16274
+        );
+    }
+
+    /**
      * Return an auto incremented x value based on the pointStart and
      * pointInterval options. This is only used if an x value is not given
      * for the point that calls autoIncrement.
@@ -4268,20 +4290,10 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else {
-                const { marker } = seriesOptions,
-                    oldMarker = oldOptions.marker || {};
 
                 // If the  marker got disabled or changed its symbol, width or
                 // height - destroy
-                if (
-                    marker &&
-                    (
-                        (oldMarker.enabled && !marker.enabled) ||
-                        oldMarker.symbol !== marker.symbol || // #10870, #15946
-                        oldMarker.height !== marker.height || // #16274
-                        oldMarker.width !== marker.width // #16274
-                    )
-                ) {
+                if (this.hasMarkerChanged(seriesOptions, oldOptions)) {
                     kinds.graphic = 1;
                 }
 
