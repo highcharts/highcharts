@@ -9,6 +9,11 @@ permissions:
    contents: read # to fetch code (actions/checkout)
 
 jobs:
+  nightly_test_timezones:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ./.github/scripts/test_timezones.sh -b=ChromeHeadless
+
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:
@@ -73,4 +78,9 @@ jobs:
       - name: Upload reference images
         run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
 
+
+  distpatch_dist:
+    runs-on: ubuntu-latest
+    needs: [nightly_test_timezones, nightly_visual_diff]
+    steps:
       - run: gh workflow run nightly-dist.yml -f pushToDist=true
