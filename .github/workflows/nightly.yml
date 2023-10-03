@@ -12,6 +12,8 @@ jobs:
   nightly_test_timezones:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - run: ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
   nightly_visual_diff:
