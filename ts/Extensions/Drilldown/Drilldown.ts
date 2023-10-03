@@ -97,7 +97,6 @@ declare module '../../Core/Axis/TickLike' {
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         ddDupes?: Array<string>;
-        drilldown?: Drilldown.Additions;
         drilldownLevels?: Array<Drilldown.LevelObject>;
         drillUpButton?: SVGElement;
         addSeriesAsDrilldown(
@@ -177,6 +176,180 @@ let ddSeriesId = 1;
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+function applyCursorCSS(
+    element: SVGElement,
+    cursor: CursorValue,
+    addClass?: boolean,
+    styledMode?: boolean
+): void {
+    element[addClass ? 'addClass' : 'removeClass'](
+        'highcharts-drilldown-point'
+    );
+
+    if (!styledMode) {
+        element.css({ cursor: cursor });
+    }
+}
+
+/**
+ * This method creates an array of arrays containing a level number
+ * with the corresponding series/point.
+ *
+ * @requires  modules/breadcrumbs
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ *        Highcharts Chart object.
+ * @return {Array<Breadcrumbs.BreadcrumbOptions>}
+ *        List for Highcharts Breadcrumbs.
+ */
+function createBreadcrumbsList(
+    chart: Chart
+): Array<BreadcrumbOptions> {
+    const list: Array<BreadcrumbOptions> = [],
+        drilldownLevels = chart.drilldownLevels;
+
+    // The list is based on drilldown levels from the chart object
+    if (drilldownLevels && drilldownLevels.length) {
+        // Add the initial series as the first element.
+        if (!list[0]) {
+            list.push({
+                level: 0,
+                levelOptions: drilldownLevels[0].seriesOptions
+            });
+        }
+
+        drilldownLevels.forEach(function (level, i): void {
+            const lastBreadcrumb = list[list.length - 1];
+
+            // If level is already added to breadcrumbs list,
+            // don't add it again- drilling categories
+            // + 1 because of the wrong levels numeration
+            // in drilldownLevels array.
+            if (level.levelNumber + 1 > lastBreadcrumb.level) {
+                list.push({
+                    level: level.levelNumber + 1,
+                    levelOptions: merge({
+                        name: level.lowerSeries.name
+                    }, level.pointOptions)
+                });
+            }
+        });
+    }
+    return list;
+}
+
+function onPointClick(
+    this: Point,
+    e: MouseEvent
+): void {
+    const point = this,
+        series = point.series;
+
+    if (
+        series.xAxis &&
+        (series.chart.options.drilldown as any).allowPointDrilldown ===
+        false
+    ) {
+        // #5822, x changed
+        series.xAxis.drilldownCategory(point.x as any, e);
+    } else {
+        point.runDrilldown(void 0, void 0, e);
+    }
+}
+
+/* *
+ *
+ *  Classes
+ *
+ * */
+
+class ChartAdditions {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        chart: Drilldown.ChartComposition
+    ) {
+        this.chart = chart;
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Drilldown.ChartComposition;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * A function to fade in a group. First, the element is being hidden,
+     * then, using `opactiy`, is faded in. Used for example by `dataLabelsGroup`
+     * where simple SVGElement.fadeIn() is not enough, because of other features
+     * (e.g. InactiveState) using `opacity` to fadeIn/fadeOut.
+     * @requires module:modules/drilldown
+     *
+     * @private
+     * @param {undefined|SVGElement} [group]
+     * The SVG element to be faded in.
+     */
+    public fadeInGroup(
+        group?: SVGElement
+    ): void {
+        const chart = this.chart,
+            animationOptions = animObject(
+                (chart.options.drilldown as any).animation
+            );
+
+        if (group) {
+            group.hide();
+
+            syncTimeout(
+                function (): void {
+                    // Make sure neither the group, or the chart, were destroyed
+                    if (group && group.added) {
+                        group.fadeIn();
+                    }
+                },
+                Math.max(animationOptions.duration - 50, 0)
+            );
+        }
+    }
+
+    /**
+     * Update function to be called internally from Chart.update (#7600, #12855)
+     * @private
+     */
+    public update(
+        options: Partial<DrilldownOptions>,
+        redraw?: boolean
+    ): void {
+        const chart = this.chart;
+
+        merge(true, chart.options.drilldown, options);
+
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+}
+
+/* *
+ *
  *  Composition
  *
  * */
@@ -189,13 +362,8 @@ namespace Drilldown {
      *
      * */
 
-    export interface Additions {
-        chart: Chart;
-        update(
-            options: DrilldownOptions,
-            redraw?: boolean
-        ): void;
-        fadeInGroup(group?: SVGElement): void;
+    export declare class ChartComposition extends Chart {
+        drilldown?: ChartAdditions;
     }
 
     export interface EventObject {
@@ -241,9 +409,7 @@ namespace Drilldown {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @private */
     export function compose(
         ChartClass: typeof Chart,
         highchartsDefaultOptions: Options
@@ -251,10 +417,90 @@ namespace Drilldown {
 
         Breadcrumbs.compose(ChartClass, highchartsDefaultOptions);
 
+        if (pushUnique(composedMembers, ChartClass)) {
+            const ChartCompoClass = ChartClass as typeof ChartComposition;
+
+            addEvent(ChartCompoClass, 'afterDrilldown', onChartAfterDrilldown);
+            addEvent(ChartCompoClass, 'afterDrillUp', onChartAfterDrillUp);
+            addEvent(ChartCompoClass, 'afterInit', onChartAfterInit);
+            addEvent(ChartCompoClass, 'drillup', onChartDrillup);
+            addEvent(ChartCompoClass, 'drillupall', onChartDrillupall);
+            addEvent(ChartCompoClass, 'update', onChartUpdate);
+        }
+
         if (pushUnique(composedMembers, highchartsDefaultOptions)) {
             highchartsDefaultOptions.drilldown = DrilldownDefaults;
         }
 
+    }
+
+    /** @private */
+    function onChartAfterDrilldown(
+        this: ChartComposition
+    ): void {
+        const chart = this,
+            drilldownOptions = chart.options.drilldown,
+            breadcrumbsOptions =
+                drilldownOptions && drilldownOptions.breadcrumbs;
+
+        if (!chart.breadcrumbs) {
+            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
+        }
+        chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
+
+    }
+
+    /** @private */
+    function onChartAfterDrillUp(
+        this: ChartComposition
+    ): void {
+        const chart = this;
+        chart.breadcrumbs &&
+            chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
+    }
+
+
+    /**
+     * Add update function to be called internally from Chart.update (#7600,
+     * #12855)
+     * @private
+     */
+    function onChartAfterInit(
+        this: ChartComposition
+    ): void {
+        this.drilldown = new ChartAdditions(this);
+    }
+
+    /** @private */
+    function onChartDrillup(
+        this: ChartComposition
+    ): void {
+        if (this.resetZoomButton) {
+            this.resetZoomButton = this.resetZoomButton.destroy();
+        }
+    }
+
+    /** @private */
+    function onChartDrillupall(
+        this: ChartComposition
+    ): void {
+        if (this.resetZoomButton) {
+            this.showResetZoom();
+        }
+    }
+
+    /** @private */
+    function onChartUpdate(
+        this: ChartComposition,
+        e: { options: Options }
+    ): void {
+        const breadcrumbs = this.breadcrumbs,
+            breadcrumbOptions =
+                e.options.drilldown && e.options.drilldown.breadcrumbs;
+
+        if (breadcrumbs && breadcrumbOptions) {
+            breadcrumbs.update(breadcrumbOptions);
+        }
     }
 
 }
@@ -612,54 +858,6 @@ Chart.prototype.applyDrilldown = function (): void {
 };
 
 /**
- * This method creates an array of arrays containing a level number
- * with the corresponding series/point.
- *
- * @requires  modules/breadcrumbs
- *
- * @private
- * @param {Highcharts.Chart} chart
- *        Highcharts Chart object.
- * @return {Array<Breadcrumbs.BreadcrumbOptions>}
- *        List for Highcharts Breadcrumbs.
- */
-const createBreadcrumbsList = function (
-    chart: Chart
-): Array<BreadcrumbOptions> {
-    const list: Array<BreadcrumbOptions> = [],
-        drilldownLevels = chart.drilldownLevels;
-
-    // The list is based on drilldown levels from the chart object
-    if (drilldownLevels && drilldownLevels.length) {
-        // Add the initial series as the first element.
-        if (!list[0]) {
-            list.push({
-                level: 0,
-                levelOptions: drilldownLevels[0].seriesOptions
-            });
-        }
-
-        drilldownLevels.forEach(function (level, i): void {
-            const lastBreadcrumb = list[list.length - 1];
-
-            // If level is already added to breadcrumbs list,
-            // don't add it again- drilling categories
-            // + 1 because of the wrong levels numeration
-            // in drilldownLevels array.
-            if (level.levelNumber + 1 > lastBreadcrumb.level) {
-                list.push({
-                    level: level.levelNumber + 1,
-                    levelOptions: merge({
-                        name: level.lowerSeries.name
-                    }, level.pointOptions)
-                });
-            }
-        });
-    }
-    return list;
-};
-
-/**
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
  * will drill up to the parent series.
  *
@@ -913,61 +1111,7 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
     }
 };
 
-/**
- * A function to fade in a group. First, the element is being hidden,
- * then, using `opactiy`, is faded in. Used for example by `dataLabelsGroup`
- * where simple SVGElement.fadeIn() is not enough, because of other features
- * (e.g. InactiveState) using `opacity` to fadeIn/fadeOut.
- * @requires module:modules/drilldown
- *
- * @private
- * @param {undefined|SVGElement} [group]
- * The SVG element to be faded in.
- */
-function fadeInGroup(
-    this: Drilldown.Additions,
-    group?: SVGElement
-): void {
-    const animationOptions = animObject(
-        (this.chart.options.drilldown as any).animation
-    );
-
-    if (group) {
-        group.hide();
-
-        syncTimeout(
-            function (): void {
-                // Make sure neither the group, or the chart, were destroyed
-                if (group && group.added) {
-                    group.fadeIn();
-                }
-            },
-            Math.max(animationOptions.duration - 50, 0)
-        );
-    }
-}
-
 /* eslint-disable no-invalid-this */
-
-// Add update function to be called internally from Chart.update
-// (#7600, #12855)
-addEvent(Chart, 'afterInit', function (): void {
-    const chart = this;
-
-    chart.drilldown = {
-        chart,
-        fadeInGroup,
-        update: function (
-            options: Partial<DrilldownOptions>,
-            redraw?: boolean
-        ): void {
-            merge(true, chart.options.drilldown, options);
-            if (pick(redraw, true)) {
-                chart.redraw();
-            }
-        }
-    };
-});
 
 addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
@@ -1023,35 +1167,6 @@ addEvent(Breadcrumbs, 'up', function (
             isMultipleDrillUp = false;
         }
         chart.drillUp(isMultipleDrillUp);
-    }
-});
-
-addEvent(Chart, 'afterDrilldown', function (): void {
-
-    const chart = this,
-        drilldownOptions = chart.options.drilldown,
-        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
-
-    if (!chart.breadcrumbs) {
-        chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
-    }
-    chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
-
-});
-
-addEvent(Chart, 'afterDrillUp', function (): void {
-    const chart = this;
-    chart.breadcrumbs &&
-        chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
-});
-
-addEvent(Chart, 'update', function (e: any): void {
-    const breadcrumbs = this.breadcrumbs,
-        breadcrumbOptions = e.options.drilldown &&
-            e.options.drilldown.breadcrumbs;
-
-    if (breadcrumbs && breadcrumbOptions) {
-        breadcrumbs.update(e.options.drilldown.breadcrumbs);
     }
 });
 
@@ -1136,9 +1251,10 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
 };
 
 ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
-    let series = this,
-        chart = this.chart,
-        drilldownLevels = chart.drilldownLevels,
+    const series = this,
+        chart = this.chart as Drilldown.ChartComposition;
+
+    let drilldownLevels = chart.drilldownLevels,
         animateFrom: (SVGAttributes|undefined),
         animationOptions =
             animObject((chart.options.drilldown as any).animation),
@@ -1266,18 +1382,20 @@ if (PieSeries) {
             this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
-            const level: Drilldown.LevelObject =
-                (this.chart.drilldownLevels as any)[
-                    (this.chart.drilldownLevels as any).length - 1
-                ],
+            const series = this,
+                chart = series.chart as Drilldown.ChartComposition,
+                level: Drilldown.LevelObject =
+                    (chart.drilldownLevels as any)[
+                        (chart.drilldownLevels as any).length - 1
+                    ],
                 animationOptions =
-                    (this.chart.options.drilldown as any).animation;
+                    (chart.options.drilldown as any).animation;
 
-            if (this.is('item')) {
+            if (series.is('item')) {
                 animationOptions.duration = 0;
             }
             // Unable to drill down in the horizontal item series #13372
-            if (this.center) {
+            if (series.center) {
                 const animateFrom = level.shapeArgs,
                     start = (animateFrom as any).start,
                     angle = (animateFrom as any).end - start,
@@ -1305,12 +1423,12 @@ if (PieSeries) {
                         }
                     });
 
-                    if (this.chart.drilldown) {
-                        this.chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                    if (chart.drilldown) {
+                        chart.drilldown.fadeInGroup(series.dataLabelsGroup);
                     }
 
                     // Reset to prototype
-                    delete (this as Partial<typeof this>).animate;
+                    delete (series as Partial<typeof series>).animate;
                 }
             }
         }
@@ -1325,8 +1443,8 @@ if (MapSeries) {
          */
         animateDrilldown(init?: boolean): void {
             const series = this,
-                chart = this.chart,
-                group = this.group;
+                chart = series.chart as Drilldown.ChartComposition,
+                group = series.group;
 
             if (
                 chart &&
@@ -1382,7 +1500,7 @@ if (MapSeries) {
          */
         animateDrillupFrom(): void {
             const series = this,
-                chart = this.chart;
+                chart = series.chart as Drilldown.ChartComposition;
 
             if (chart && chart.mapView) {
                 chart.mapView.allowTransformAnimation = false;
@@ -1400,8 +1518,8 @@ if (MapSeries) {
          */
         animateDrillupTo(init?: boolean): void {
             const series = this,
-                chart = this.chart,
-                group = this.group;
+                chart = series.chart as Drilldown.ChartComposition,
+                group = series.group;
 
             if (chart && group) {
 
@@ -1618,7 +1736,7 @@ addEvent(Point, 'afterInit', function (): Point {
 
     if (point.drilldown && !point.unbindDrilldownClick) {
         // Add the click event to the point
-        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
+        point.unbindDrilldownClick = addEvent(point, 'click', onPointClick);
     }
 
     return point;
@@ -1630,7 +1748,7 @@ addEvent(Point, 'update', function (e: { options: Options }): void {
 
     if (options.drilldown && !point.unbindDrilldownClick) {
         // Add the click event to the point
-        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
+        point.unbindDrilldownClick = addEvent(point, 'click', onPointClick);
     } else if (
         !options.drilldown &&
         options.drilldown !== void 0 &&
@@ -1639,25 +1757,6 @@ addEvent(Point, 'update', function (e: { options: Options }): void {
         point.unbindDrilldownClick = point.unbindDrilldownClick();
     }
 });
-
-const handlePointClick = function (
-    this: Point,
-    e: MouseEvent
-): void {
-    const point = this,
-        series = point.series;
-
-    if (
-        series.xAxis &&
-        (series.chart.options.drilldown as any).allowPointDrilldown ===
-        false
-    ) {
-        // #5822, x changed
-        series.xAxis.drilldownCategory(point.x as any, e);
-    } else {
-        point.runDrilldown(void 0, void 0, e);
-    }
-};
 
 addEvent(Series, 'afterDrawDataLabels', function (): void {
     const css = (this.chart.options.drilldown as any).activeDataLabelStyle,
@@ -1695,22 +1794,6 @@ addEvent(Series, 'afterDrawDataLabels', function (): void {
     }, this);
 });
 
-
-const applyCursorCSS = function (
-    element: SVGElement,
-    cursor: CursorValue,
-    addClass?: boolean,
-    styledMode?: boolean
-): void {
-    element[addClass ? 'addClass' : 'removeClass'](
-        'highcharts-drilldown-point'
-    );
-
-    if (!styledMode) {
-        element.css({ cursor: cursor });
-    }
-};
-
 // Mark the trackers with a pointer
 addEvent(Series, 'afterDrawTracker', function (): void {
     const styledMode = this.chart.styledMode;
@@ -1729,18 +1812,6 @@ addEvent(Point, 'afterSetState', function (): void {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
-    }
-});
-
-addEvent(Chart, 'drillup', function (): void {
-    if (this.resetZoomButton) {
-        this.resetZoomButton = this.resetZoomButton.destroy();
-    }
-});
-
-addEvent(Chart, 'drillupall', function (): void {
-    if (this.resetZoomButton) {
-        this.showResetZoom();
     }
 });
 
