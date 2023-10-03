@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ./highcharts/package-lock.json
 
       - name: Install and build
         working-directory: ./highcharts
