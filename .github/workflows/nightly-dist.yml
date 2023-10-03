@@ -1,0 +1,54 @@
+name: Nightly distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      pushToDist:
+        description: 'Push nightly build to highcharts-dist'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+  nightly_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout highcharts
+        uses: actions/checkout@v4
+        with:
+          path: highcharts
+
+      - name: Checkout highcharts-dist
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-dist
+          token: ${{ secrets.PR_COMMENT_TOKEN }}
+          path: highcharts-dist
+          ref: 'nightly'
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install and build
+        working-directory: ./highcharts
+        run: |
+          npm i
+          npm run build -- --CI true
+          npx gulp dist-release --force-yes
+
+      - name: Run unit tests
+        run: npx ts-node test/ts-node-unit-tests/index.ts
+
+      - name: Upload to github
+        working-directory: ./highcharts-dist
+        if: ${{ inputs.pushToDist }}
+        run: |
+          git add .
+          git commit -m "Nightly build - ${{github.run_id}}"
+          git push -u origin nightly

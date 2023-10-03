@@ -4,12 +4,6 @@ on:
   schedule:
     - cron: "0 2 * * *" # 2am
   workflow_dispatch:
-    inputs:
-      pust_dist:
-        description: 'Push nightly build to highcharts-dist'
-        required: false
-        default: false
-        type: boolean
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -79,4 +73,4 @@ jobs:
       - name: Upload reference images
         run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
 
-
+      - run: gh workflow run nightly-dist.yml -f pushToDist=true
