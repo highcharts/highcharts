@@ -18,47 +18,47 @@
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type { BreadcrumbOptions } from './Breadcrumbs/BreadcrumbsOptions';
-import type ColorType from '../Core/Color/ColorType';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { BreadcrumbOptions } from '../Breadcrumbs/BreadcrumbsOptions';
+import type ColorType from '../../Core/Color/ColorType';
 import type {
     CSSObject,
     CursorValue
-} from '../Core/Renderer/CSSObject';
-import type DrilldownOptions from './Drilldown/DrilldownOptions';
-import type Options from '../Core/Options';
-import type MapPointType from '../Series/Map/MapPoint.js';
-import type MapSeriesType from '../Series/Map/MapSeries.js';
+} from '../../Core/Renderer/CSSObject';
+import type DrilldownOptions from './DrilldownOptions';
+import type Options from '../../Core/Options';
+import type MapPointType from '../../Series/Map/MapPoint.js';
+import type MapSeriesType from '../../Series/Map/MapSeries.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
-import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+} from '../../Core/Series/PointOptions';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../Core/Animation/AnimationUtilities.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Axis from '../Core/Axis/Axis.js';
-import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
-import Chart from '../Core/Chart/Chart.js';
-import Color from '../Core/Color/Color.js';
-import H from '../Core/Globals.js';
+import Axis from '../../Core/Axis/Axis.js';
+import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
+import Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color/Color.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import DrilldownDefaults from './Drilldown/DrilldownDefaults.js';
-import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+import DrilldownDefaults from './DrilldownDefaults.js';
+import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
     map: MapSeries,
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import Tick from '../Core/Axis/Tick.js';
-import U from '../Core/Utilities.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import Tick from '../../Core/Axis/Tick.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -79,7 +79,7 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         ddPoints?: Record<string, Array<(false|Point)>>;
         oldPos?: number;
@@ -88,17 +88,17 @@ declare module '../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../Core/Axis/TickLike' {
+declare module '../../Core/Axis/TickLike' {
     interface TickLike {
         drillable(): void;
     }
 }
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         ddDupes?: Array<string>;
-        drilldown?: Highcharts.ChartDrilldownObject;
-        drilldownLevels?: Array<Highcharts.DrilldownLevelObject>;
+        drilldown?: Drilldown.Additions;
+        drilldownLevels?: Array<Drilldown.LevelObject>;
         drillUpButton?: SVGElement;
         addSeriesAsDrilldown(
             point: Point,
@@ -113,25 +113,26 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/Options'{
+declare module '../../Core/Options'{
     interface Options {
         drilldown?: DrilldownOptions;
     }
 }
 
-declare module '../Core/Options' {
+declare module '../../Core/Options' {
     interface LangOptions {
+        /** @deprecated */
         drillUpText?: string;
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGElementLike' {
+declare module '../../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
     }
 }
 
-declare module '../Core/Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         drilldown?: string;
         doDrilldown(): void;
@@ -144,94 +145,25 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        drilldownLevel?: Highcharts.DrilldownLevelObject;
+        drilldownLevel?: Drilldown.LevelObject;
         isDrilling?: boolean;
         purgedOptions?: SeriesTypeOptions;
         /** @requires Extensions/Drilldown */
         animateDrilldown(init?: boolean): void;
         /** @requires Extensions/Drilldown */
-        animateDrillupFrom(level: Highcharts.DrilldownLevelObject): void;
+        animateDrillupFrom(level: Drilldown.LevelObject): void;
         /** @requires Extensions/Drilldown */
         animateDrillupTo(init?: boolean): void;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         _ddSeriesId?: number;
         _levelNumber?: number;
         drilldown?: string;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ChartDrilldownObject {
-            chart: Chart,
-            update(options: DrilldownOptions, redraw?: boolean): void;
-            fadeInGroup(group?: SVGElement): void;
-        }
-        interface ChartEventsOptions {
-            drilldown?: DrilldownCallbackFunction;
-            drillup?: DrillupCallbackFunction;
-            drillupall?: DrillupAllCallbackFunction;
-        }
-        interface DrilldownCallbackFunction {
-            (this: Chart, e: DrilldownEventObject): void;
-        }
-        interface DrilldownEventObject {
-            category?: number;
-            originalEvent?: Event;
-            point: Point;
-            points?: Array<(boolean|Point)>;
-            preventDefault: Function;
-            seriesOptions?: SeriesTypeOptions;
-            target: Chart;
-            type: 'drilldown';
-        }
-        interface DrilldownLevelObject {
-            bBox: (BBoxObject|Record<string, undefined>);
-            color?: ColorType;
-            colorIndex?: number;
-            levelNumber: number;
-            levelSeries: Array<Series>;
-            levelSeriesOptions: Array<SeriesOptions>;
-            lowerSeries: Series;
-            lowerSeriesOptions: SeriesOptions;
-            oldExtremes: Record<string, (number|undefined)>;
-            pointIndex: number;
-            pointOptions: (PointOptions|PointShortOptions);
-            seriesOptions: SeriesOptions;
-            seriesPurgedOptions: SeriesOptions;
-            shapeArgs?: SVGAttributes;
-            resetZoomButton: SVGElement;
-        }
-        interface DrillupAllCallbackFunction {
-            (this: Chart, e: DrillupAllEventObject): void;
-        }
-        interface DrillupAllEventObject {
-            preventDefault: Function;
-            target: Chart;
-            type: 'drillupall';
-        }
-        interface DrillupCallbackFunction {
-            (this: Chart, e: DrillupEventObject): void;
-        }
-        interface DrillupEventObject {
-            preventDefault: Function;
-            seriesOptions?: SeriesTypeOptions;
-            target: Chart;
-            type: 'drillup';
-        }
-        interface Tick {
-            drillable(): void;
-        }
     }
 }
 
@@ -250,6 +182,50 @@ let ddSeriesId = 1;
  * */
 
 namespace Drilldown {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface Additions {
+        chart: Chart;
+        update(
+            options: DrilldownOptions,
+            redraw?: boolean
+        ): void;
+        fadeInGroup(group?: SVGElement): void;
+    }
+
+    export interface EventObject {
+        category?: number;
+        originalEvent?: Event;
+        point: Point;
+        points?: Array<(boolean|Point)>;
+        preventDefault: Function;
+        seriesOptions?: SeriesTypeOptions;
+        target: Chart;
+        type: 'drilldown';
+    }
+
+    export interface LevelObject {
+        bBox: (BBoxObject|Record<string, undefined>);
+        color?: ColorType;
+        colorIndex?: number;
+        levelNumber: number;
+        levelSeries: Array<Series>;
+        levelSeriesOptions: Array<SeriesOptions>;
+        lowerSeries: Series;
+        lowerSeriesOptions: SeriesOptions;
+        oldExtremes: Record<string, (number|undefined)>;
+        pointIndex: number;
+        pointOptions: (PointOptions|PointShortOptions);
+        seriesOptions: SeriesOptions;
+        seriesPurgedOptions: SeriesOptions;
+        shapeArgs?: SVGAttributes;
+        resetZoomButton: SVGElement;
+    }
 
     /* *
      *
@@ -414,9 +390,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         pointIndex: number,
         levelSeries: Array<Series> = [],
         levelSeriesOptions: Array<SeriesOptions> = [],
-        level: (Highcharts.DrilldownLevelObject),
+        level: Drilldown.LevelObject,
         levelNumber: number,
-        last: (Highcharts.DrilldownLevelObject|undefined),
+        last: (Drilldown.LevelObject|undefined),
         colorProp: SeriesOptions;
 
 
@@ -469,7 +445,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     });
 
     // Add a record of properties for each drilldown level
-    level = extend<Highcharts.DrilldownLevelObject>({
+    level = extend<Drilldown.LevelObject>({
         levelNumber: levelNumber,
         seriesOptions: oldSeries.options,
         seriesPurgedOptions: oldSeries.purgedOptions as any,
@@ -531,7 +507,7 @@ Chart.prototype.applyDrilldown = function (): void {
         chart.hasCartesianSeries = drilldownLevels.some((level): boolean =>
             level.lowerSeries.isCartesian); // #19725
         (this.drilldownLevels as any).forEach(function (
-            level: Highcharts.DrilldownLevelObject
+            level: Drilldown.LevelObject
         ): void {
 
             if (
@@ -743,7 +719,7 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
 
     let i = drilldownLevels.length,
         seriesI: number,
-        level: Highcharts.DrilldownLevelObject,
+        level: Drilldown.LevelObject,
         oldExtremes: Record<string, (number|undefined)>;
 
     // Reset symbol and color counters after every drill-up. (#19134)
@@ -949,7 +925,7 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
  * The SVG element to be faded in.
  */
 function fadeInGroup(
-    this: Highcharts.ChartDrilldownObject,
+    this: Drilldown.Additions,
     group?: SVGElement
 ): void {
     const animationOptions = animObject(
@@ -1171,7 +1147,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
 
     if (!init) {
         (drilldownLevels as any).forEach(function (
-            level: Highcharts.DrilldownLevelObject
+            level: Drilldown.LevelObject
         ): void {
             if (
                 series.options._ddSeriesId ===
@@ -1229,7 +1205,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
  * @return {void}
  */
 ColumnSeries.prototype.animateDrillupFrom = function (
-    level: Highcharts.DrilldownLevelObject
+    level: Drilldown.LevelObject
 ): void {
     let animationOptions =
             animObject((this.chart.options.drilldown as any).animation),
@@ -1290,7 +1266,7 @@ if (PieSeries) {
             this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
-            const level: Highcharts.DrilldownLevelObject =
+            const level: Drilldown.LevelObject =
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
                 ],
@@ -1512,9 +1488,7 @@ Point.prototype.runDrilldown = function (
             typeof category !== 'undefined' &&
             this.series.xAxis.getDDPoints(category).slice(0)
         )
-    } as Highcharts.DrilldownEventObject, function (
-        e: Highcharts.DrilldownEventObject
-    ): void {
+    } as Drilldown.EventObject, (e: Drilldown.EventObject): void => {
         const chart = e.point.series && e.point.series.chart,
             seriesOptions = e.seriesOptions;
 

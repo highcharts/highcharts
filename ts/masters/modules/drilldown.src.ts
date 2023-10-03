@@ -11,7 +11,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Drilldown from '../../Extensions/Drilldown.js';
+import Drilldown from '../../Extensions/Drilldown/Drilldown.js';
 import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const G: AnyRecord = Highcharts;
 G.Breadcrumbs = Breadcrumbs;
