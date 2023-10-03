@@ -12,24 +12,24 @@
 
 'use strict';
 
-import type {
-    AlignObject,
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type {
-    BreadcrumbOptions,
-    BreadcrumbsOptions
-} from './Breadcrumbs/BreadcrumbsOptions';
-import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
+import type { BreadcrumbOptions } from './Breadcrumbs/BreadcrumbsOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type DrilldownOptions from './Drilldown/DrilldownOptions';
 import type Options from '../Core/Options';
+import type MapPointType from '../Series/Map/MapPoint.js';
+import type MapSeriesType from '../Series/Map/MapSeries.js';
 import type {
     PointOptions,
     PointShortOptions
@@ -42,26 +42,23 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
+import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
-import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
-import { Palette } from '../Core/Color/Palettes.js';
+import DrilldownDefaults from './Drilldown/DrilldownDefaults.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
+const {
+    column: ColumnSeries,
+    map: MapSeries,
+    pie: PieSeries
+} = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
-import '../Series/Column/ColumnSeries.js';
-import type MapPointType from '../Series/Map/MapPoint.js';
-import type MapSeriesType from '../Series/Map/MapSeries.js';
-import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
-
 const {
     addEvent,
     defined,
@@ -71,13 +68,16 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     syncTimeout
 } = U;
 
-const PieSeries = seriesTypes.pie,
-    MapSeries = seriesTypes.map;
-let ddSeriesId = 1;
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
@@ -115,7 +115,7 @@ declare module '../Core/Chart/ChartLike' {
 
 declare module '../Core/Options'{
     interface Options {
-        drilldown?: Highcharts.DrilldownOptions;
+        drilldown?: DrilldownOptions;
     }
 }
 
@@ -182,23 +182,6 @@ declare global {
             drillup?: DrillupCallbackFunction;
             drillupall?: DrillupAllCallbackFunction;
         }
-        interface DrilldownActiveDataLabelStyleOptions {
-            color?: string;
-            cursor?: string;
-            fontWeight?: string;
-            textDecoration?: string;
-        }
-        interface DrilldownDrillUpButtonOptions {
-            position: (AlignObject|DrilldownDrillUpButtonPositionOptions);
-            relativeTo?: ButtonRelativeToValue;
-            theme?: object;
-        }
-        interface DrilldownDrillUpButtonPositionOptions {
-            align?: AlignValue;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
         interface DrilldownCallbackFunction {
             (this: Chart, e: DrilldownEventObject): void;
         }
@@ -211,18 +194,6 @@ declare global {
             seriesOptions?: SeriesTypeOptions;
             target: Chart;
             type: 'drilldown';
-        }
-        interface DrilldownOptions {
-            activeAxisLabelStyle?: CSSObject;
-            activeDataLabelStyle?: (
-                CSSObject|DrilldownActiveDataLabelStyleOptions
-            );
-            allowPointDrilldown?: boolean;
-            animation?: (boolean|Partial<AnimationOptions>);
-            breadcrumbs?: BreadcrumbsOptions;
-            drillUpButton?: DrilldownDrillUpButtonOptions;
-            series?: Array<SeriesTypeOptions>;
-            mapZooming?: boolean;
         }
         interface DrilldownLevelObject {
             bBox: (BBoxObject|Record<string, undefined>);
@@ -264,455 +235,53 @@ declare global {
     }
 }
 
-/**
- * Gets fired when a drilldown point is clicked, before the new series is added.
- * Note that when clicking a category label to trigger multiple series
- * drilldown, one `drilldown` event is triggered per point in the category.
+/* *
  *
- * @callback Highcharts.DrilldownCallbackFunction
+ *  Variables
  *
- * @param {Highcharts.Chart} this
- *        The chart where the event occurs.
- *
- * @param {Highcharts.DrilldownEventObject} e
- *        The drilldown event.
- */
+ * */
 
-/**
- * The event arguments when a drilldown point is clicked.
- *
- * @interface Highcharts.DrilldownEventObject
- *//**
- * If a category label was clicked, which index.
- * @name Highcharts.DrilldownEventObject#category
- * @type {number|undefined}
- *//**
- * The original browser event (usually click) that triggered the drilldown.
- * @name Highcharts.DrilldownEventObject#originalEvent
- * @type {global.Event|undefined}
- *//**
- * Prevents the default behaviour of the event.
- * @name Highcharts.DrilldownEventObject#preventDefault
- * @type {Function}
- *//**
- * The originating point.
- * @name Highcharts.DrilldownEventObject#point
- * @type {Highcharts.Point}
- *//**
- * If a category label was clicked, this array holds all points corresponding to
- * the category. Otherwise it is set to false.
- * @name Highcharts.DrilldownEventObject#points
- * @type {boolean|Array<Highcharts.Point>|undefined}
- *//**
- * Options for the new series. If the event is utilized for async drilldown, the
- * seriesOptions are not added, but rather loaded async.
- * @name Highcharts.DrilldownEventObject#seriesOptions
- * @type {Highcharts.SeriesOptionsType|undefined}
- *//**
- * The event target.
- * @name Highcharts.DrilldownEventObject#target
- * @type {Highcharts.Chart}
- *//**
- * The event type.
- * @name Highcharts.DrilldownEventObject#type
- * @type {"drilldown"}
- */
+let ddSeriesId = 1;
 
-/**
- * This gets fired after all the series have been drilled up. This is especially
- * usefull in a chart with multiple drilldown series.
+/* *
  *
- * @callback Highcharts.DrillupAllCallbackFunction
+ *  Composition
  *
- * @param {Highcharts.Chart} this
- *        The chart where the event occurs.
- *
- * @param {Highcharts.DrillupAllEventObject} e
- *        The final drillup event.
- */
+ * */
 
-/**
- * The event arguments when all the series have been drilled up.
- *
- * @interface Highcharts.DrillupAllEventObject
- *//**
- * Prevents the default behaviour of the event.
- * @name Highcharts.DrillupAllEventObject#preventDefault
- * @type {Function}
- *//**
- * The event target.
- * @name Highcharts.DrillupAllEventObject#target
- * @type {Highcharts.Chart}
- *//**
- * The event type.
- * @name Highcharts.DrillupAllEventObject#type
- * @type {"drillupall"}
- */
+namespace Drilldown {
 
-/**
- * Gets fired when drilling up from a drilldown series.
- *
- * @callback Highcharts.DrillupCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart where the event occurs.
- *
- * @param {Highcharts.DrillupEventObject} e
- *        The drillup event.
- */
+    /* *
+     *
+     *  Constants
+     *
+     * */
 
-/**
- * The event arguments when drilling up from a drilldown series.
- *
- * @interface Highcharts.DrillupEventObject
- *//**
- * Prevents the default behaviour of the event.
- * @name Highcharts.DrillupEventObject#preventDefault
- * @type {Function}
- *//**
- * Options for the new series.
- * @name Highcharts.DrillupEventObject#seriesOptions
- * @type {Highcharts.SeriesOptionsType|undefined}
- *//**
- * The event target.
- * @name Highcharts.DrillupEventObject#target
- * @type {Highcharts.Chart}
- *//**
- * The event type.
- * @name Highcharts.DrillupEventObject#type
- * @type {"drillup"}
- */
+    const composedMembers: Array<unknown> = [];
 
-// Add language
-extend(
-    defaultOptions.lang,
-    /**
-     * @optionparent lang
-     */
-    {
-        /**
-         * The text for the button that appears when drilling down, linking back
-         * to the parent series. The parent series' name is inserted for
-         * `{series.name}`.
-         *
-         * @deprecated
-         * @since    3.0.8
-         * @product  highcharts highmaps
-         * @requires modules/drilldown
-         * @apioption lang.drillUpText
-         */
-    }
-);
-
-/**
- * Options for drill down, the concept of inspecting increasingly high
- * resolution data through clicking on chart items like columns or pie slices.
- *
- * The drilldown feature requires the drilldown.js file to be loaded,
- * found in the modules directory of the download package, or online at
- * [code.highcharts.com/modules/drilldown.js
- * ](https://code.highcharts.com/modules/drilldown.js).
- *
- * @sample {highcharts} highcharts/series-organization/drilldown
- *         Organization chart drilldown
- *
- * @product      highcharts highmaps
- * @requires     modules/drilldown
- * @optionparent drilldown
- */
-defaultOptions.drilldown = {
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
-     * When this option is false, clicking a single point will drill down
-     * all points in the same category, equivalent to clicking the X axis
-     * label.
-     *
-     * @sample {highcharts} highcharts/drilldown/allowpointdrilldown-false/
-     *         Don't allow point drilldown
-     *
-     * @type      {boolean}
-     * @default   true
-     * @since     4.1.7
-     * @product   highcharts
-     * @apioption drilldown.allowPointDrilldown
+     * @private
      */
+    export function compose(
+        ChartClass: typeof Chart,
+        highchartsDefaultOptions: Options
+    ): void {
 
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the way
-     * up through the drilldown levels.
-     *
-     * @since 10.0.0
-     * @product   highcharts
-     * @extends   navigation.breadcrumbs
-     * @optionparent drilldown.breadcrumbs
-     */
+        Breadcrumbs.compose(ChartClass, highchartsDefaultOptions);
 
-
-    /**
-     * An array of series configurations for the drill down. Each series
-     * configuration uses the same syntax as the [series](#series) option set.
-     * These drilldown series are hidden by default. The drilldown series is
-     * linked to the parent series' point by its `id`.
-     *
-     * @type      {Array<Highcharts.SeriesOptionsType>}
-     * @since     3.0.8
-     * @product   highcharts highmaps
-     * @apioption drilldown.series
-     */
-
-    /**
-     * Additional styles to apply to the X axis label for a point that
-     * has drilldown data. By default it is underlined and blue to invite
-     * to interaction.
-     *
-     * In styled mode, active label styles can be set with the
-     * `.highcharts-drilldown-axis-label` class.
-     *
-     * @sample {highcharts} highcharts/drilldown/labels/
-     *         Label styles
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
-     * @since   3.0.8
-     * @product highcharts highmaps
-     */
-    activeAxisLabelStyle: {
-        /** @ignore-option */
-        cursor: 'pointer',
-        /** @ignore-option */
-        color: Palette.highlightColor100,
-        /** @ignore-option */
-        fontWeight: 'bold',
-        /** @ignore-option */
-        textDecoration: 'underline'
-    },
-
-    /**
-     * Additional styles to apply to the data label of a point that has
-     * drilldown data. By default it is underlined and blue to invite to
-     * interaction.
-     *
-     * In styled mode, active data label styles can be applied with the
-     * `.highcharts-drilldown-data-label` class.
-     *
-     * @sample {highcharts} highcharts/drilldown/labels/
-     *         Label styles
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
-     * @since   3.0.8
-     * @product highcharts highmaps
-     */
-    activeDataLabelStyle: {
-        cursor: 'pointer',
-        color: Palette.highlightColor100,
-        fontWeight: 'bold',
-        textDecoration: 'underline'
-    },
-
-    /**
-     * Set the animation for all drilldown animations. Animation of a drilldown
-     * occurs when drilling between a column point and a column series,
-     * or a pie slice and a full pie series. Drilldown can still be used
-     * between series and points of different types, but animation will
-     * not occur.
-     *
-     * The animation can either be set as a boolean or a configuration
-     * object. If `true`, it will use the 'swing' jQuery easing and a duration
-     * of 500 ms. If used as a configuration object, the following properties
-     * are supported:
-     *
-     * - `duration`: The duration of the animation in milliseconds.
-     *
-     * - `easing`: A string reference to an easing function set on the `Math`
-     *   object. See
-     *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
-     *
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
-     * @since   3.0.8
-     * @product highcharts highmaps
-     */
-    animation: {
-        /** @ignore-option */
-        duration: 500
-    },
-
-    /**
-     *
-     * Options for the drill up button that appears when drilling down on a
-     * series. The text for the button is defined in
-     * [lang.drillUpText](#lang.drillUpText).
-     *
-     * This option is deprecated since 9.3.2, use `drilldown.breadcrumbs`
-     * instead.
-     *
-     * @sample highcharts/breadcrumbs/single-button
-     *         Breadcrumbs set up like a legacy button
-     * @sample {highcharts} highcharts/drilldown/drillupbutton/ Drill up button
-     * @sample {highmaps} highcharts/drilldown/drillupbutton/ Drill up button
-     *
-     * @since   3.0.8
-     * @product highcharts highmaps
-     *
-     * @deprecated
-     */
-    drillUpButton: {
-        /**
-         * What box to align the button to. Can be either `plotBox` or
-         * `spacingBox`.
-         *
-         * @type       {Highcharts.ButtonRelativeToValue}
-         * @default    plotBox
-         * @since      3.0.8
-         * @product    highcharts highmaps
-         * @apioption  drilldown.drillUpButton.relativeTo
-         */
-
-        /**
-         * A collection of attributes for the button. The object takes SVG
-         * attributes like `fill`, `stroke`, `stroke-width` or `r`, the border
-         * radius. The theme also supports `style`, a collection of CSS
-         * properties for the text. Equivalent attributes for the hover state
-         * are given in `theme.states.hover`.
-         *
-         * In styled mode, drill-up button styles can be applied with the
-         * `.highcharts-drillup-button` class.
-         *
-         * @sample {highcharts} highcharts/drilldown/drillupbutton/
-         *         Button theming
-         * @sample {highmaps} highcharts/drilldown/drillupbutton/
-         *         Button theming
-         *
-         * @type      {Object}
-         * @since     3.0.8
-         * @product   highcharts highmaps
-         * @apioption drilldown.drillUpButton.theme
-         */
-
-        /**
-         * Positioning options for the button within the `relativeTo` box.
-         * Available properties are `x`, `y`, `align` and `verticalAlign`.
-         *
-         * @type    {Highcharts.AlignObject}
-         * @since   3.0.8
-         * @product highcharts highmaps
-         */
-        position: {
-
-            /**
-             * Vertical alignment of the button.
-             *
-             * @type      {Highcharts.VerticalAlignValue}
-             * @default   top
-             * @product   highcharts highmaps
-             * @apioption drilldown.drillUpButton.position.verticalAlign
-             */
-
-            /**
-             * Horizontal alignment.
-             *
-             * @type {Highcharts.AlignValue}
-             */
-            align: 'right',
-
-            /**
-             * The X offset of the button.
-             */
-            x: -10,
-
-            /**
-             * The Y offset of the button.
-             */
-            y: 10
+        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
+            highchartsDefaultOptions.drilldown = DrilldownDefaults;
         }
-    },
 
-    /**
-     * Enable or disable zooming into a region of clicked map point you want to
-     * drill into. If mapZooming is set to false the drilldown/drillup
-     * animations only fade in/fade out without zooming to a specific map point.
-     *
-     * @sample    maps/demo/map-drilldown-preloaded/
-     *            Map drilldown without async maps loading
-     *
-     * @type      {boolean}
-     * @default   true
-     * @since 11.0.0
-     * @product   highmaps
-     * @apioption drilldown.mapZooming
-     */
-    mapZooming: true
-};
+    }
 
-
-/**
- * Fires when a drilldown point is clicked, before the new series is added. This
- * event is also utilized for async drilldown, where the seriesOptions are not
- * added by option, but rather loaded async. Note that when clicking a category
- * label to trigger multiple series drilldown, one `drilldown` event is
- * triggered per point in the category.
- *
- * Event arguments:
- *
- * - `category`: If a category label was clicked, which index.
- *
- * - `originalEvent`: The original browser event (usually click) that triggered
- *   the drilldown.
- *
- * - `point`: The originating point.
- *
- * - `points`: If a category label was clicked, this array holds all points
- *   corresponding to the category.
- *
- * - `seriesOptions`: Options for the new series.
- *
- * @sample {highcharts} highcharts/drilldown/async/
- *         Async drilldown
- *
- * @type      {Highcharts.DrilldownCallbackFunction}
- * @since     3.0.8
- * @product   highcharts highmaps
- * @context   Highcharts.Chart
- * @requires  modules/drilldown
- * @apioption chart.events.drilldown
- */
-
-/**
- * Fires when drilling up from a drilldown series.
- *
- * @type      {Highcharts.DrillupCallbackFunction}
- * @since     3.0.8
- * @product   highcharts highmaps
- * @context   Highcharts.Chart
- * @requires  modules/drilldown
- * @apioption chart.events.drillup
- */
-
-/**
- * In a chart with multiple drilldown series, this event fires after all the
- * series have been drilled up.
- *
- * @type      {Highcharts.DrillupAllCallbackFunction}
- * @since     4.2.4
- * @product   highcharts highmaps
- * @context   Highcharts.Chart
- * @requires  modules/drilldown
- * @apioption chart.events.drillupall
- */
-
-/**
- * The `id` of a series in the [drilldown.series](#drilldown.series) array to
- * use for a drilldown for this point.
- *
- * @sample {highcharts} highcharts/drilldown/basic/
- *         Basic drilldown
- *
- * @type      {string}
- * @since     3.0.8
- * @product   highcharts
- * @requires  modules/drilldown
- * @apioption series.line.data.drilldown
- */
+}
 
 /**
  * A general fadeIn method.
@@ -781,11 +350,11 @@ Chart.prototype.addSeriesAsDrilldown = function (
         if (
             chart.options.drilldown &&
             !chart.mapView.projection.hasGeoProjection &&
-            defaultOptions.drilldown
+            DrilldownDefaults
         ) {
             const userDrilldown = diffObjects(
                 chart.options.drilldown,
-                defaultOptions.drilldown
+                DrilldownDefaults
             );
 
             // set mapZooming to false if user didn't set any in chart config
@@ -1413,7 +982,7 @@ addEvent(Chart, 'afterInit', function (): void {
         chart,
         fadeInGroup,
         update: function (
-            options: Highcharts.DrilldownOptions,
+            options: Partial<DrilldownOptions>,
             redraw?: boolean
         ): void {
             merge(true, chart.options.drilldown, options);
@@ -1585,7 +1154,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         ));
 
         // Reset to prototype
-        delete (this as Partial<ColumnSeries>).animate;
+        delete (this as AnyRecord).animate;
     }
 
 };
@@ -1644,7 +1213,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         }
 
         // Reset to prototype
-        delete (this as Partial<ColumnSeries>).animate;
+        delete (this as AnyRecord).animate;
     }
 
 };
@@ -2200,3 +1769,138 @@ addEvent(Chart, 'drillupall', function (): void {
         this.showResetZoom();
     }
 });
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Drilldown;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Gets fired when a drilldown point is clicked, before the new series is added.
+ * Note that when clicking a category label to trigger multiple series
+ * drilldown, one `drilldown` event is triggered per point in the category.
+ *
+ * @callback Highcharts.DrilldownCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart where the event occurs.
+ *
+ * @param {Highcharts.DrilldownEventObject} e
+ *        The drilldown event.
+ */
+
+/**
+ * The event arguments when a drilldown point is clicked.
+ *
+ * @interface Highcharts.DrilldownEventObject
+ *//**
+ * If a category label was clicked, which index.
+ * @name Highcharts.DrilldownEventObject#category
+ * @type {number|undefined}
+ *//**
+ * The original browser event (usually click) that triggered the drilldown.
+ * @name Highcharts.DrilldownEventObject#originalEvent
+ * @type {global.Event|undefined}
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.DrilldownEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The originating point.
+ * @name Highcharts.DrilldownEventObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * If a category label was clicked, this array holds all points corresponding to
+ * the category. Otherwise it is set to false.
+ * @name Highcharts.DrilldownEventObject#points
+ * @type {boolean|Array<Highcharts.Point>|undefined}
+ *//**
+ * Options for the new series. If the event is utilized for async drilldown, the
+ * seriesOptions are not added, but rather loaded async.
+ * @name Highcharts.DrilldownEventObject#seriesOptions
+ * @type {Highcharts.SeriesOptionsType|undefined}
+ *//**
+ * The event target.
+ * @name Highcharts.DrilldownEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.DrilldownEventObject#type
+ * @type {"drilldown"}
+ */
+
+/**
+ * This gets fired after all the series have been drilled up. This is especially
+ * usefull in a chart with multiple drilldown series.
+ *
+ * @callback Highcharts.DrillupAllCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart where the event occurs.
+ *
+ * @param {Highcharts.DrillupAllEventObject} e
+ *        The final drillup event.
+ */
+
+/**
+ * The event arguments when all the series have been drilled up.
+ *
+ * @interface Highcharts.DrillupAllEventObject
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.DrillupAllEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.DrillupAllEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.DrillupAllEventObject#type
+ * @type {"drillupall"}
+ */
+
+/**
+ * Gets fired when drilling up from a drilldown series.
+ *
+ * @callback Highcharts.DrillupCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart where the event occurs.
+ *
+ * @param {Highcharts.DrillupEventObject} e
+ *        The drillup event.
+ */
+
+/**
+ * The event arguments when drilling up from a drilldown series.
+ *
+ * @interface Highcharts.DrillupEventObject
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.DrillupEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Options for the new series.
+ * @name Highcharts.DrillupEventObject#seriesOptions
+ * @type {Highcharts.SeriesOptionsType|undefined}
+ *//**
+ * The event target.
+ * @name Highcharts.DrillupEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.DrillupEventObject#type
+ * @type {"drillup"}
+ */
+
+''; // keeps doclets above in JS file
