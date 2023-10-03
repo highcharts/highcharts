@@ -635,19 +635,6 @@ workflows:
 #          requires: ["test-Win.Chrome"]
 #          browsers: "Mac.Firefox"
 #          notify_on_failure: true
-      - build_dist:
-          requires: [checkout_and_install, "test-Mac.Safari"]
-          context: highcharts-staging
-      - deploy_code:
-          requires: [build_dist]
-          context: highcharts-staging
-      - deploy_changelog:
-          add_build_metadata: true
-          requires: [build_dist]
-          context: highcharts-staging
-      - deploy_to_highcharts_dist:
-          requires: [build_dist]
-          context: highcharts-staging
 
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>
