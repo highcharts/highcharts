@@ -135,8 +135,11 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        pointFormat: 'Season 21: used in deck by <strong>{point.previous}</strong> of 1000 top players<br>' +
-            'Season 22: used in deck by <strong>{point.current}</strong> of 1000 top players'
+        pointFormat: 'Season 21: used in deck by ' +
+            '<strong>{point.previous}</strong> of 1000 top players<br>' +
+            'Season 22: used in deck by <strong>{point.current}</strong> ' +
+            'of 1000 top players',
+        shared: true
     },
 
     xAxis: {
@@ -165,7 +168,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 enabled: true,
-                inside: false,
+                color: 'contrast',
                 crop: false,
                 overflow: 'allow'
             }
