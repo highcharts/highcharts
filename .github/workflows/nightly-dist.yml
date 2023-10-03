@@ -44,6 +44,7 @@ jobs:
           npx gulp dist-release --force-yes
 
       - name: Run unit tests
+        working-directory: ./highcharts
         run: npx ts-node test/ts-node-unit-tests/index.ts
 
       - name: Upload to github
