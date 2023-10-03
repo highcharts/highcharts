@@ -27,7 +27,11 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: ./.github/scripts/test_timezones.sh -b=ChromeHeadless
+      - name: Run tests
+        run: |
+          ./.github/scripts/test_timezones.sh -b=ChromeHeadless
+          ./.github/scripts/test_timezones.sh -b=Mac.Safari
+          ./.github/scripts/test_timezones.sh -b=Win.Chrome
 
   nightly_visual_diff:
     runs-on: ubuntu-latest
