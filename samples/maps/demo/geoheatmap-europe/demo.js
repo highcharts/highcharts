@@ -27,6 +27,7 @@
 
         series: [{
             name: 'Europe',
+            borderColor: 'rgba(0, 0, 0, 0.4)',
             states: {
                 inactive: {
                     enabled: false
