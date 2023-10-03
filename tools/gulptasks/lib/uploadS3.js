@@ -680,13 +680,12 @@ async function uploadFiles(params) {
         return;
     }
 
-    const session = startS3Session(
+    const session = await startS3Session(
         params.bucket,
         params.profile,
         params.region,
         params.dryrun
     );
-
 
     for (const fileChunk of getChunks(files, params.batchSize)) {
         const chunkPromises = [];
