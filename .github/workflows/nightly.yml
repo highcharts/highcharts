@@ -11,6 +11,7 @@ permissions:
 jobs:
   nightly_test_timezones:
     runs-on: ubuntu-latest
+    environment: browserstack
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
