@@ -21,17 +21,17 @@
  * */
 
 import type NoDataOptions from './NoDataOptions';
+import type Options from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import D from '../../Core/Defaults.js';
-const { setOptions } = D;
 import NoDataDefaults from './NoDataDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
+    merge,
     pushUnique
 } = U;
 
@@ -175,7 +175,8 @@ function chartShowNoData(
 
 /** @private */
 function compose(
-    ChartClass: typeof Chart
+    ChartClass: typeof Chart,
+    highchartsDefaultOptions: Options
 ): void {
 
     if (pushUnique(composedMembers, ChartClass)) {
@@ -188,8 +189,8 @@ function compose(
         addEvent(ChartClass, 'render', onChartRender);
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
-        setOptions(NoDataDefaults);
+    if (pushUnique(composedMembers, highchartsDefaultOptions)) {
+        merge(true, highchartsDefaultOptions, NoDataDefaults);
     }
 
 }
