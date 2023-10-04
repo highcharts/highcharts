@@ -108,7 +108,8 @@ class EditMode {
                     },
                     row: {
                         enabled: true
-                    }
+                    },
+                    settingsButtonEnabled: true
                 }
             },
             options || {});
@@ -1079,6 +1080,10 @@ namespace EditMode {
         * Options of the sidebar.
         */
         sidebar?: SidebarPopup.Options;
+        /**
+         * Whether the settings buttons should be enabled.
+         */
+        settingsButtonEnabled?: boolean;
     }
 
     /**
