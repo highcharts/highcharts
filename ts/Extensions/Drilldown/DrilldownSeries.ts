@@ -127,34 +127,34 @@ function columnAnimateDrilldown(
     init?: boolean
 ): void {
     const series = this,
-        chart = this.chart as Drilldown.ChartComposition;
-
-    let drilldownLevels = chart.drilldownLevels,
-        animateFrom: (SVGAttributes|undefined),
+        chart = series.chart as Drilldown.ChartComposition,
+        drilldownLevels = chart.drilldownLevels,
         animationOptions =
-            animObject((chart.options.drilldown as any).animation),
+            animObject((chart.options.drilldown || {}).animation),
         xAxis = this.xAxis,
         styledMode = chart.styledMode;
 
     if (!init) {
-        (drilldownLevels as any).forEach(function (
+        let animateFrom: (SVGAttributes|undefined);
+
+        (drilldownLevels || []).forEach((
             level: Drilldown.LevelObject
-        ): void {
+        ): void => {
             if (
                 series.options._ddSeriesId ===
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                if (!styledMode) {
+                if (!styledMode && animateFrom) {
                     // Add the point colors to animate from
-                    (animateFrom as any).fill = level.color;
+                    animateFrom.fill = level.color;
                 }
             }
         });
 
         (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
-        this.points.forEach(function (point: Point): void {
+        series.points.forEach((point: Point): void => {
             const animateTo = point.shapeArgs;
 
             if (!styledMode) {
@@ -199,46 +199,49 @@ function columnAnimateDrillupFrom(
     this: ColumnSeries,
     level: Drilldown.LevelObject
 ): void {
-    let animationOptions =
-            animObject((this.chart.options.drilldown as any).animation),
-        group: (SVGElement|undefined) = this.group,
-        // For 3d column series all columns are added to one group
-        // so we should not delete the whole group. #5297
-        removeGroup = group !== this.chart.columnGroup,
-        series = this;
+    const series = this,
+        animationOptions =
+            animObject((series.chart.options.drilldown || {}).animation);
 
     // Cancel mouse events on the series group (#2787)
-    (series.trackerGroups as any).forEach(function (key: string): void {
-        if ((series as any)[key]) { // we don't always have dataLabelsGroup
-            (series as any)[key].on('mouseover');
+    (series.trackerGroups || []).forEach((key: string): void => {
+        // we don't always have dataLabelsGroup
+        if ((series as AnyRecord)[key]) {
+            (series as AnyRecord)[key].on('mouseover');
         }
     });
 
+    let group: (SVGElement|undefined) = series.group;
+
+    // For 3d column series all columns are added to one group
+    // so we should not delete the whole group. #5297
+    const removeGroup = group !== series.chart.columnGroup;
+
     if (removeGroup) {
-        delete (this as any).group;
+        delete (series as any).group;
     }
 
-    this.points.forEach(function (point: Point): void {
+    this.points.forEach((point: Point): void => {
         const graphic = point.graphic,
-            animateTo = level.shapeArgs,
-            complete = function (): void {
-                (graphic as any).destroy();
+            animateTo = level.shapeArgs;
+
+        if (graphic && animateTo) {
+            const complete = (): void => {
+                graphic.destroy();
                 if (group && removeGroup) {
                     group = group.destroy();
                 }
             };
 
-        if (graphic && animateTo) {
-
             delete point.graphic;
 
             if (!series.chart.styledMode) {
-                (animateTo as any).fill = level.color;
+                animateTo.fill = level.color;
             }
 
             if (animationOptions.duration) {
                 graphic.animate(
-                    animateTo as any,
+                    animateTo,
                     merge(animationOptions, { complete: complete })
                 );
             } else {
@@ -262,12 +265,13 @@ function columnAnimateDrillupTo(
     this: ColumnSeries,
     init?: boolean
 ): void {
+    const series = this,
+        level = series.drilldownLevel;
+
     if (!init) {
-        const newSeries = this,
-            level = newSeries.drilldownLevel;
 
         // First hide all items before animating in again
-        this.points.forEach(function (point: Point): void {
+        series.points.forEach((point): void => {
             const dataLabel = point.dataLabel;
 
             if (point.graphic) { // #3407
@@ -288,15 +292,15 @@ function columnAnimateDrillupTo(
 
 
         // Do dummy animation on first point to get to complete
-        syncTimeout(function (): void {
-            if (newSeries.points) { // May be destroyed in the meantime, #3389
+        syncTimeout((): void => {
+            if (series.points) { // May be destroyed in the meantime, #3389
                 // Unable to drillup with nodes, #13711
                 let pointsWithNodes: Array<Point> = [];
-                newSeries.data.forEach((el): void => {
+                series.data.forEach((el): void => {
                     pointsWithNodes.push(el);
                 });
-                if (newSeries.nodes) {
-                    pointsWithNodes = pointsWithNodes.concat(newSeries.nodes);
+                if (series.nodes) {
+                    pointsWithNodes = pointsWithNodes.concat(series.nodes);
                 }
                 pointsWithNodes.forEach((point, i): void => {
                     // Fade in other points
@@ -320,7 +324,7 @@ function columnAnimateDrillupTo(
                 });
             }
         }, Math.max(
-            (this.chart.options.drilldown as any).animation.duration - 50, 0
+            (series.chart.options.drilldown as any).animation.duration - 50, 0
         ));
 
         // Reset to prototype
@@ -334,7 +338,6 @@ function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
-
     const {
             column: ColumnSeriesClass,
             map: MapSeriesClass,
@@ -423,7 +426,7 @@ function mapAnimateDrilldown(
                 opacity: 1
             },
             chart.options.drilldown.animation,
-            function (): void {
+            (): void => {
                 if (series.options) {
                     series.options.inactiveOtherPoints = false;
                     series.options.enableMouseTracking =
@@ -493,12 +496,13 @@ function mapAnimateDrillupTo(
             }
         // Run the animation
         } else {
-            group.animate({
-                opacity: 1
-            }, (chart.options.drilldown as any).animation);
+            group.animate(
+                { opacity: 1 },
+                (chart.options.drilldown || {}).animation
+            );
 
             if (chart.drilldown) {
-                chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                chart.drilldown.fadeInGroup(series.dataLabelsGroup);
             }
         }
     }
@@ -526,12 +530,14 @@ function onPointAfterInit(
 function onPointAfterSetState(
     this: Point
 ): void {
-    const styledMode = this.series.chart.styledMode;
+    const point = this,
+        series = point.series,
+        styledMode = series.chart.styledMode;
 
-    if (this.drilldown && this.series.halo && this.state === 'hover') {
-        applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
-    } else if (this.series.halo) {
-        applyCursorCSS(this.series.halo, 'auto', false, styledMode);
+    if (point.drilldown && series.halo && point.state === 'hover') {
+        applyCursorCSS(series.halo, 'pointer', true, styledMode);
+    } else if (series.halo) {
+        applyCursorCSS(series.halo, 'auto', false, styledMode);
     }
 }
 
@@ -545,7 +551,7 @@ function onPointClick(
 
     if (
         series.xAxis &&
-        (series.chart.options.drilldown as any).allowPointDrilldown ===
+        (series.chart.options.drilldown || {}).allowPointDrilldown ===
         false
     ) {
         // #5822, x changed
@@ -579,14 +585,16 @@ function onPointUpdate(
 function onSeriesAfterDrawDataLabels(
     this: Series
 ): void {
-    const css = (this.chart.options.drilldown as any).activeDataLabelStyle,
-        renderer = this.chart.renderer,
-        styledMode = this.chart.styledMode;
+    const series = this,
+        chart = series.chart,
+        css = (chart.options.drilldown as any).activeDataLabelStyle,
+        renderer = chart.renderer,
+        styledMode = chart.styledMode;
 
-    this.points.forEach(function (point: Point): void {
+    for (const point of series.points) {
         const dataLabelsOptions = point.options.dataLabels,
             pointCSS = pick(
-                point.dlOptions as any,
+                point.dlOptions,
                 dataLabelsOptions && (dataLabelsOptions as any).style,
                 {}
             ) as CSSObject;
@@ -595,7 +603,7 @@ function onSeriesAfterDrawDataLabels(
 
             if (css.color === 'contrast' && !styledMode) {
                 pointCSS.color = renderer.getContrast(
-                    (point.color as any) || (this.color as any)
+                    (point.color as any) || (series.color as any)
                 );
             }
 
@@ -611,7 +619,7 @@ function onSeriesAfterDrawDataLabels(
                     .css(pointCSS);
             }
         }
-    }, this);
+    }
 }
 
 /**
@@ -621,13 +629,14 @@ function onSeriesAfterDrawDataLabels(
 function onSeriesAfterDrawTracker(
     this: Series
 ): void {
-    const styledMode = this.chart.styledMode;
+    const series = this,
+        styledMode = series.chart.styledMode;
 
-    this.points.forEach(function (point): void {
+    for (const point of series.points) {
         if (point.drilldown && point.graphic) {
             applyCursorCSS(point.graphic, 'pointer', true, styledMode);
         }
-    });
+    }
 }
 
 /** @private */
@@ -637,6 +646,7 @@ function pieAnimateDrilldown(
 ): void {
     const series = this,
         chart = series.chart as Drilldown.ChartComposition,
+        points = series.points,
         level: Drilldown.LevelObject =
             (chart.drilldownLevels as any)[
                 (chart.drilldownLevels as any).length - 1
@@ -652,12 +662,16 @@ function pieAnimateDrilldown(
         const animateFrom = level.shapeArgs,
             start = (animateFrom as any).start,
             angle = (animateFrom as any).end - start,
-            startAngle = angle / this.points.length,
+            startAngle = angle / series.points.length,
             styledMode = chart.styledMode;
 
         if (!init) {
-            this.points.forEach(function (point, i): void {
-                const animateTo = point.shapeArgs;
+            let animateTo: (SVGAttributes|undefined),
+                point: Point;
+
+            for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
+                point = points[i];
+                animateTo = point.shapeArgs;
 
                 if (!styledMode) {
                     (animateFrom as any).fill = level.color;
@@ -665,16 +679,15 @@ function pieAnimateDrilldown(
                 }
 
                 if (point.graphic) {
-                    point.graphic
-                        .attr(merge(animateFrom, {
-                            start: start + i * startAngle,
-                            end: start + (i + 1) * startAngle
-                        }))[animationOptions ? 'animate' : 'attr'](
-                            (animateTo as any),
-                            animationOptions
-                        );
+                    point.graphic.attr(merge(animateFrom, {
+                        start: start + i * startAngle,
+                        end: start + (i + 1) * startAngle
+                    }))[animationOptions ? 'animate' : 'attr'](
+                        (animateTo as any),
+                        animationOptions
+                    );
                 }
-            });
+            }
 
             if (chart.drilldown) {
                 chart.drilldown.fadeInGroup(series.dataLabelsGroup);
@@ -714,12 +727,12 @@ function pointRunDrilldown(
     category: (number|undefined),
     originalEvent: Event|undefined
 ): void {
-
-    const series = this.series,
+    const point = this,
+        series = point.series,
         chart = series.chart,
-        drilldown = chart.options.drilldown;
+        drilldown = chart.options.drilldown || {};
 
-    let i: number = ((drilldown as any).series || []).length,
+    let i: number = (drilldown.series || []).length,
         seriesOptions: (SeriesOptions|undefined);
 
     if (!chart.ddDupes) {
@@ -731,24 +744,26 @@ function pointRunDrilldown(
 
     while (i-- && !seriesOptions) {
         if (
-            (drilldown as any).series[i].id === this.drilldown &&
-            chart.ddDupes.indexOf(this.drilldown as any) === -1
+            drilldown.series &&
+            drilldown.series[i].id === point.drilldown &&
+            point.drilldown &&
+            chart.ddDupes.indexOf(point.drilldown) === -1
         ) {
-            seriesOptions = (drilldown as any).series[i];
-            chart.ddDupes.push(this.drilldown as any);
+            seriesOptions = drilldown.series[i];
+            chart.ddDupes.push(point.drilldown);
         }
     }
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
     // for  seriesOptions, and call addSeriesAsDrilldown async if necessary.
     fireEvent(chart, 'drilldown', {
-        point: this,
+        point,
         seriesOptions: seriesOptions,
         category: category,
         originalEvent: originalEvent,
         points: (
             typeof category !== 'undefined' &&
-            this.series.xAxis.getDDPoints(category).slice(0)
+            series.xAxis.getDDPoints(category).slice(0)
         )
     } as Drilldown.EventObject, (e: Drilldown.EventObject): void => {
         const chart = e.point.series && e.point.series.chart,
