@@ -442,7 +442,7 @@ class TreegraphSeries extends TreemapSeries {
             // If options for level exists, include them as well
             if (level && level.dataLabels) {
                 options = merge(options, level.dataLabels);
-                series._hasPointLabels = true;
+                series.hasDataLabels = (): boolean => true;
             }
 
             // Set dataLabel width to the width of the point shape.
@@ -529,39 +529,48 @@ class TreegraphSeries extends TreemapSeries {
      */
     public pointAttribs(point: TreegraphPoint): SVGAttributes {
         const series = this,
-            levelOptions =
+            levelOptions = point &&
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
-            options = point.options,
-            state = point.state,
+
+            options = point && point.options,
+            state = point?.state || 'normal',
             stateOptions = levelOptions.states?.[state] || {};
 
-        point.options.marker = merge(
-            series.options.marker,
-            levelOptions.marker,
-            point.options.marker
-        );
+        if (point) {
+            point.options.marker = merge(
+                series.options.marker,
+                levelOptions.marker,
+                point.options.marker
+            );
+        }
+
         const linkColor = pick(
-                stateOptions.link && stateOptions.link.color,
-                options.link && options.link.color,
-                levelOptions.link && levelOptions.link.color,
+                stateOptions && stateOptions.link && stateOptions.link.color,
+                options && options.link && options.link.color,
+                levelOptions && levelOptions.link && levelOptions.link.color,
                 series.options.link && series.options.link.color
             ),
             linkLineWidth = pick(
-                stateOptions.link && stateOptions.link.lineWidth,
-                options.link && options.link.lineWidth,
-                levelOptions.link && levelOptions.link.lineWidth,
+                stateOptions && stateOptions.link &&
+                stateOptions.link.lineWidth,
+                options && options.link && options.link.lineWidth,
+                levelOptions && levelOptions.link &&
+                levelOptions.link.lineWidth,
                 series.options.link && series.options.link.lineWidth
             ),
             attribs = seriesProto.pointAttribs.call(series, point);
 
-        if (point.isLink) {
-            attribs.stroke = linkColor;
-            attribs['stroke-width'] = linkLineWidth;
-            delete attribs.fill;
+        if (point) {
+            if (point.isLink) {
+                attribs.stroke = linkColor;
+                attribs['stroke-width'] = linkLineWidth;
+                delete attribs.fill;
+            }
+            if (!point.visible) {
+                attribs.opacity = 0;
+            }
         }
-        if (!point.visible) {
-            attribs.opacity = 0;
-        }
+
         return attribs;
     }
 

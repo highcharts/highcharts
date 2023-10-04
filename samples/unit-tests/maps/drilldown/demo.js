@@ -14,7 +14,7 @@ QUnit.test('Map drilldown animation', assert => {
             germanyTopo = JSON.parse(germanyTopojsonText),
             europeGeo = JSON.parse(europeGeojsonText),
             germanyGeo = JSON.parse(germanyGeojsonText),
-            duration = 400,
+            duration = 350,
             chart = Highcharts.mapChart('container', {
                 chart: {
                     animation: {
@@ -37,9 +37,7 @@ QUnit.test('Map drilldown animation', assert => {
                     }]
                 }],
                 drilldown: {
-                    animation: {
-                        duration: duration
-                    },
+                    animation: false,
                     series: [{
                         id: 'germany',
                         mapData: germanyTopo
@@ -48,6 +46,29 @@ QUnit.test('Map drilldown animation', assert => {
             });
         let startPos = chart.series[0].group.getBBox();
 
+        chart.series[0].points[0].doDrilldown();
+
+        assert.ok(
+            true,
+            `There shouldn't be any error (maximum call stack) in the console,
+            when drilldown animation is disabled (#19373).`
+        );
+
+        assert.ok(
+            startPos.x > chart.series[0].group.getBBox().x,
+            `There shouldn't be drilldown animation when animation is
+            disabled.`
+        );
+
+        chart.drillUp();
+
+        chart.update({
+            drilldown: {
+                animation: {
+                    duration: duration
+                }
+            }
+        }, false);
         chart.series[0].points[0].doDrilldown();
 
         setTimeout(function () {

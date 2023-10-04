@@ -21,12 +21,18 @@ Highcharts.chart('container', {
         categories: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+'],
         title: {
             text: 'Age groups'
+        },
+        labels: {
+            skew3d: true
         }
     },
     yAxis: {
         title: {
             margin: 20,
             text: 'Reported cases'
+        },
+        labels: {
+            skew3d: true
         }
     },
     tooltip: {

@@ -6,6 +6,8 @@ samples/highcharts/esm/async-await/demo.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 samples/highcharts/studies/data-layer/**/*.js
+samples/highcharts/common-js/browserify/demo.js
+samples/highcharts/esm/extending-members/demo.js
 test/cypress
 test/test-*.*
 test/*.ts

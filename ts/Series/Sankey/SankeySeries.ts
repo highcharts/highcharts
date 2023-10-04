@@ -29,7 +29,6 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import SankeyPoint from './SankeyPoint.js';
@@ -42,6 +41,8 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
@@ -458,25 +459,28 @@ class SankeySeries extends ColumnSeries {
             return y;
         };
 
-        let fromNode = point.fromNode,
+        const fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
+            { inverted } = chart,
             translationFactor = this.translationFactor,
-            linkHeight = Math.max(
-                (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any)
-            ),
             options = this.options,
+            linkColorMode = pick(point.linkColorMode, options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
             ),
+            nodeLeft = fromNode.nodeX,
+            right = toNode.nodeX,
+            outgoing = point.outgoing;
+
+        let linkHeight = Math.max(
+                (point.weight as any) * translationFactor,
+                (this.options.minLinkWidth as any)
+            ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),
-            nodeLeft = fromNode.nodeX,
             nodeW = this.nodeWidth,
-            right = toNode.nodeX,
-            outgoing = point.outgoing,
             straight = right > nodeLeft + nodeW;
 
         if (chart.inverted) {
@@ -600,10 +604,28 @@ class SankeySeries extends ColumnSeries {
         point.y = point.plotY = 1;
         point.x = point.plotX = 1;
 
-        if (!point.color) {
-            point.color = fromNode.color;
+        if (!point.options.color) {
+            if (linkColorMode === 'from') {
+                point.color = fromNode.color;
+            } else if (linkColorMode === 'to') {
+                point.color = toNode.color;
+            } else if (linkColorMode === 'gradient') {
+                const fromColor = color(fromNode.color).get(),
+                    toColor = color(toNode.color).get();
+                point.color = {
+                    linearGradient: {
+                        x1: 1,
+                        x2: 0,
+                        y1: 0,
+                        y2: 0
+                    },
+                    stops: [
+                        [0, inverted ? fromColor : toColor],
+                        [1, inverted ? toColor : fromColor]
+                    ]
+                };
+            }
         }
-
     }
 
     /**
@@ -636,7 +658,11 @@ class SankeySeries extends ColumnSeries {
             left = Math.floor(
                 this.colDistance * (node.column as any) +
                 borderWidth / 2
-            ) + relativeLength(node.options.offsetHorizontal || 0, nodeWidth) +
+            ) + relativeLength(node.options[
+                chart.inverted ?
+                    'offsetVertical' :
+                    'offsetHorizontal'
+            ] || 0, nodeWidth) +
             crisp,
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
@@ -655,7 +681,7 @@ class SankeySeries extends ColumnSeries {
                 width = node.options.width || options.width || nodeWidth,
                 height = node.options.height || options.height || nodeHeight;
 
-            // border radius should not greater than half the height of the node
+            // Border radius should not greater than half the height of the node
             // #18956
             const r = clamp(relativeLength((
                 typeof borderRadius === 'object' ?

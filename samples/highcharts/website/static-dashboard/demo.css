@@ -1,0 +1,289 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+* {
+    transition: background-color 100ms, color 100ms;
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #46465c;
+    --highcharts-neutral-color-20: #78758c;
+    --highcharts-neutral-color-5: #2f2b38;
+    --highcharts-neutral-color-3: #353545;
+}
+
+:root {
+    --highcharts-color-0: #8087e8;
+    --highcharts-color-1: #a3edba;
+    --highcharts-color-2: #f19e53;
+    --highcharts-color-3: #6699a1;
+    --highcharts-color-4: #e1d369;
+    --highcharts-color-5: #87b4e7;
+    --highcharts-color-6: #da6d85;
+    --highcharts-color-7: #bbbac5;
+    --highcharts-color-8: #feb56a;
+    --highcharts-color-9: #91e8e1;
+    --highcharts-background-color: #fff;
+}
+
+.highcharts-title {
+    fill: #fff;
+    font-size: 0.9em;
+}
+
+.highcharts-subtitle {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.7em;
+}
+
+.highcharts-subtitle p {
+    white-space: nowrap;
+}
+
+.highcharts-point {
+    fill-opacity: 1;
+    stroke-width: 0;
+}
+
+.highcharts-data-label text {
+    fill: var(--highcharts-neutral-color-5);
+    font-size: 0.6em;
+}
+
+.highcharts-description {
+    margin-top: 1em;
+}
+
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    padding: 0;
+}
+
+.highcharts-datagrid-row {
+    display: flex;
+    background: var(--highcharts-neutral-color-3);
+    width: 100%;
+}
+
+.highcharts-datagrid-row:nth-child(2n) {
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-tooltip-box {
+    fill: #241d3a;
+}
+
+.highcharts-datagrid-row.hovered {
+    background-color: #241d3a;
+    color: #0d0d0d;
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="0"] {
+    background-color: var(--highcharts-color-0);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="1"] {
+    background-color: var(--highcharts-color-1);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="2"] {
+    background-color: var(--highcharts-color-2);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="3"] {
+    background-color: var(--highcharts-color-3);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="4"] {
+    background-color: var(--highcharts-color-4);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="5"] {
+    background-color: var(--highcharts-color-5);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="6"] {
+    background-color: var(--highcharts-color-6);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="7"] {
+    background-color: var(--highcharts-color-7);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="8"] {
+    background-color: var(--highcharts-color-8);
+}
+
+.highcharts-datagrid-row.hovered[data-row-index="9"] {
+    background-color: var(--highcharts-color-9);
+}
+
+.highcharts-datagrid-column-headers .highcharts-datagrid-column-header {
+    font-size: 0.7em;
+    height: 20px !important;
+    padding: 8px 6px 12px !important;
+}
+
+.highcharts-datagrid-cell {
+    font-size: 0.7em;
+    height: 20px !important;
+    min-height: 20px !important;
+}
+
+.highcharts-datagrid-outer-container {
+    top: 20px !important;
+}
+
+.highcharts-datagrid-cell {
+    font-size: 0.7em;
+}
+
+#csv {
+    display: none;
+}
+
+#container {
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
+}
+
+#dashboard-col-1 .highcharts-dashboards-component,
+#dashboard-col-1 .highcharts-datagrid-outer-container {
+    background-color: transparent !important;
+}
+
+#container,
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    width: 250px !important;
+    height: 250px !important;
+    max-height: 250px !important;
+    min-height: 250px !important;
+    overflow: hidden;
+}
+
+.highcharts-datagrid-outer-container {
+    height: 115px !important;
+}
+
+.highcharts-datagrid-container {
+    height: 90px !important;
+}
+
+#dashboard-col-0 {
+    height: 145px;
+}
+
+#dashboard-col-1 .highcharts-dashboards-component {
+    height: 90px !important;
+}
+
+@media screen  and (min-width: 300px) {
+    #container,
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        width: 300px !important;
+        height: 300px !important;
+        max-height: 300px !important;
+    }
+
+    #dashboard-col-0 {
+        height: 190px;
+    }
+
+    #dashboard-col-1 .highcharts-dashboards-component {
+        height: 120px !important;
+    }
+
+    .highcharts-datagrid-outer-container {
+        height: 100px !important;
+    }
+
+    .highcharts-datagrid-container {
+        height: 110px !important;
+    }
+
+    .highcharts-datagrid-scroll-container {
+        height: 284px !important;
+    }
+}
+
+@media screen  and (min-width: 400px) {
+    #container,
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        width: 400px !important;
+        height: 400px !important;
+        max-height: 400px !important;
+    }
+
+    .highcharts-datagrid-column-headers .highcharts-datagrid-column-header {
+        font-size: 0.7em;
+        height: 30px !important;
+        padding: 8px 6px 12px !important;
+    }
+
+    .highcharts-datagrid-cell {
+        font-size: 0.7em;
+        height: 30px !important;
+        min-height: 30px !important;
+    }
+
+    .highcharts-datagrid-outer-container {
+        top: 30px !important;
+        height: 120px !important;
+    }
+
+    .highcharts-datagrid-container {
+        height: 120px !important;
+    }
+
+    #dashboard-col-0 {
+        height: 260px;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    #container,
+    .highcharts-dashboards,
+    .highcharts-dashboards-wrapper {
+        width: 500px !important;
+        height: 500px !important;
+        max-height: 500px !important;
+    }
+
+    #dashboard-col-0 {
+        height: 300px !important;
+    }
+
+    #dashboard-col-1 .highcharts-dashboards-component {
+        height: 180px !important;
+    }
+
+    .highcharts-datagrid-scroll-container {
+        height: 394px !important;
+    }
+
+    .highcharts-datagrid-outer-container {
+        top: 40px !important;
+        height: 140px !important;
+    }
+
+    .highcharts-datagrid-container {
+        height: 180px !important;
+    }
+
+    .highcharts-datagrid-column-headers .highcharts-datagrid-column-header {
+        font-size: 0.7em;
+        height: 40px !important;
+        padding: 8px 6px 12px !important;
+    }
+
+    .highcharts-datagrid-cell {
+        font-size: 0.7em;
+        height: 40px !important;
+        min-height: 40px !important;
+    }
+}

@@ -933,14 +933,12 @@ interface ColumnSeries {
     pointClass: typeof ColumnPoint;
 }
 extend(ColumnSeries.prototype, {
-    cropShoulder: 0,
-
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
     directTouch: true,
     getSymbol: noop,
 
-    // use separate negative stacks, unlike area stacks where a negative
+    // Use separate negative stacks, unlike area stacks where a negative
     // point is substracted from previous (#1910)
     negStacks: true,
 

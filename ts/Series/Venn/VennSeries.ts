@@ -164,7 +164,8 @@ class VennSeries extends ScatterSeries {
             }
         },
         /**
-         * @ignore-option
+         * @default   true
+         * @extends   plotOptions.series.inactiveOtherPoints
          * @private
          */
         inactiveOtherPoints: true,

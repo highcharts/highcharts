@@ -1,11 +1,72 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#csv {
-    display: none;
+h1#title {
+    padding-top: 10px;
+    margin: 0;
+    background-color: #3d3d3d;
+    text-align: center;
+    color: white;
 }
 
-#title h1 {
-    text-align: center;
+#kpi-vitamin-a .highcharts-dashboards-component-title::before,
+#kpi-iron .highcharts-dashboards-component-title::before {
+    width: 14px;
+    height: 14px;
+    border-radius: 28px;
+    display: inline-block;
+    padding: 0;
+    margin-right: 4px;
+    background-color: var(--highcharts-color-0);
+    content: " ";
+}
+
+#kpi-iron .highcharts-dashboards-component-title::before {
+    background-color: var(--highcharts-color-2);
+}
+
+#kpi-vitamin-a .highcharts-dashboards-component-kpi-subtitle,
+#kpi-iron .highcharts-dashboards-component-kpi-subtitle {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: var(--highcharts-neutral-color-60);
+}
+
+#kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
+#kpi-iron .highcharts-dashboards-component-kpi-value {
+    font-size: 4em;
+    font-weight: normal;
+    line-height: 2.4rem;
+    margin-top: 10px;
+    color: var(--highcharts-color-0);
+}
+
+#kpi-iron .highcharts-dashboards-component-kpi-value {
+    color: var(--highcharts-color-2);
+}
+
+#dashboard-col-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+#kpi-vitamin-a .highcharts-dashboards-component-kpi-value::after,
+#kpi-iron .highcharts-dashboards-component-kpi-value::after {
+    content: "micrograms";
+    display: block;
+    font-size: 1rem;
+}
+
+.highcharts-plot-line {
+    stroke-dasharray: 2px;
+    stroke: var(--highcharts-color-3);
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-color-3);
+}
+
+.highcharts-description {
+    padding: 0 20px;
 }

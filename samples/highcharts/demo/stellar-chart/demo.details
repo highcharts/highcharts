@@ -1,0 +1,12 @@
+---
+name: Stellar Chart
+authors:
+  - Hubert Kozi
+js_wrap: b
+alt_text: >-
+    Stellar chart shows the 240 closest planets to the Earth other than our solar system
+tags:
+  - Highcharts demo
+categories:
+  - Scatter and bubble charts
+...

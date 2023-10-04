@@ -1,10 +1,15 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
 import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
 
 DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardsPlugin.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+
 DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.HighchartsPlugin);
+DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.DataGridPlugin);
+
 
 const { test, only, skip } = QUnit;
 
@@ -15,15 +20,12 @@ const HighchartsComponent = Dashboards.ComponentRegistry.types.Highcharts;
 const eventTypes = [
     'load',
     'afterLoad',
-    'beforeRender',
+    'render',
     'afterRender',
-    'redraw',
-    'afterRedraw',
     'tableChanged',
     'setConnector',
     'update',
-    'afterUpdate',
-    'message'
+    'afterUpdate'
 ];
 
 const registeredEvents = [];
@@ -46,7 +48,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         return;
     }
 
-    const board = Dashboards.board(parentElement, {
+    const board = await Dashboards.board(parentElement, {
         gui: {
             enabled: true,
             layouts: [
@@ -88,7 +90,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 ]
             }
         ]
-    });
+    }, true);
     // Test the HighchartsComponent
     const highchartsComponent = board.mountedComponents[0].component;
 
@@ -104,7 +106,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
 
     assert.deepEqual(
         registeredEvents,
-        ['update',  'afterUpdate', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
+        ['update',  'afterUpdate', 'render', 'afterRender'],
         'After updating the HighchartsComponent events should be fired in the correct order.'
     );
 
@@ -133,12 +135,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
         registeredEvents,
         [
             'update',
-            'redraw',
-            'beforeRender',
-            'load',
-            'afterLoad',
-            'afterRender',
-            'afterRedraw'
+            'render',
+            'afterRender'
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
     );
@@ -156,7 +154,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
     // expectedEvents.push(
     //       "update",
     //       "redraw",
-    //       "beforeRender",
+    //       "render",
     //       "load",
     //       "afterLoad",
     //       "afterRender",
@@ -239,10 +237,7 @@ test('Board with data connectors and HighchartsComponent update', async function
             'update',
             'setConnector',
             'afterUpdate',
-            'redraw',
-            'beforeRender',
-            'load',
-            'afterLoad',
+            'render',
             'afterRender',
         ],
         'If connector is given in options, it will be attached during load'
@@ -270,8 +265,6 @@ test('Board with data connectors and HighchartsComponent update', async function
     // expectedEvents.push('message', 'message');
 
     // assert.deepEqual(registeredEvents, expectedEvents);
-
-    Component.removeInstance(componentWithConnector);
 });
 
 test('component resizing', function (assert) {
@@ -492,4 +485,53 @@ skip('toJSON', function (assert) {
     clone.render();
 
     assert.deepEqual(json, clone.toJSON());
+});
+
+test('DataGrid component with dataTable', async function (assert) {
+    const container = document.createElement('div');
+    container.id = 'container';
+
+    const { DataTable } = Dashboards;
+
+    const columns = {
+        product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+        weight: [100, 40, 0.5, 200],
+        price: [1.5, 2.53, 5, 4.5],
+        metaData: ['a', 'b', 'c', 'd']
+    };
+
+    const dashboard = await Dashboards.board('container', {
+        gui: {
+            layouts: [
+                {
+                    id: 'layout-1',
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    id: 'dashboard-col-1'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        components: [
+            {
+                cell: 'dashboard-col-1',
+                type: 'DataGrid',
+                dataGridOptions: {
+                    dataTable: new DataTable({
+                        columns
+                    })
+                }
+            }
+        ]
+    }, true);
+
+    assert.ok(
+        dashboard.mountedComponents[0].component.dataGrid.dataTable.columns.product,
+        'DataGrid component should have a dataTable with columns.'
+    );
 });

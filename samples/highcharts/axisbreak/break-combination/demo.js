@@ -1,6 +1,6 @@
 function breakEffect(axis, point, path, color) {
-    var renderer = axis.chart.renderer,
-        brkLine = point.brkLine;
+    const renderer = axis.chart.renderer;
+    let brkLine = point.brkLine;
 
     if (!brkLine) {
         point.brkLine = brkLine = renderer.path(path)
@@ -16,7 +16,7 @@ function breakEffect(axis, point, path, color) {
     }
 }
 function pointBreak(item) {
-    var point = item.point,
+    const point = item.point,
         brk = item.brk,
         axis = this,
         sA = point.shapeArgs,
@@ -30,7 +30,7 @@ function pointBreak(item) {
 }
 
 function pointInBreak(item) {
-    var point = item.point,
+    const point = item.point,
         brk = item.brk,
         axis = this,
         sA = point.shapeArgs,

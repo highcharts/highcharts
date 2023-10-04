@@ -695,7 +695,7 @@ QUnit.test('Point className on other elements', function (assert) {
     });
 
     assert.notEqual(
-        chart.series[0].points[1].connector.element
+        chart.series[0].points[1].dataLabel.connector.element
             .getAttribute('class')
             .indexOf('my-class'),
         -1,
@@ -794,4 +794,25 @@ QUnit.test('#14623: colorIndex Series.update()', assert => {
         4,
         'Point.colorIndex should be correct'
     );
+});
+
+QUnit.test('NaN x value (#19148).', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'area',
+                data: [1, 2, [NaN, 3], 4, 5]
+            }
+        ]
+    });
+
+    chart.series[0].points.forEach(point => {
+        if (Number.isInteger(point.x)) {
+            assert.strictEqual(
+                typeof point.graphic,
+                'object',
+                'The graphic should be created.'
+            );
+        }
+    });
 });

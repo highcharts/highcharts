@@ -100,12 +100,28 @@ function getBoostClipRect(
     chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
-    const clipBox = {
+    let clipBox = {
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
         height: chart.plotHeight
     };
+
+    // Clipping of individal series (#11906, #19039).
+    if ((target as Series).getClipBox) {
+        const { xAxis, yAxis } = target as Series;
+        clipBox = (target as Series).getClipBox();
+        if (chart.inverted) {
+            const lateral = clipBox.width;
+            clipBox.width = clipBox.height;
+            clipBox.height = lateral;
+            clipBox.x = yAxis.pos;
+            clipBox.y = xAxis.pos;
+        } else {
+            clipBox.x = xAxis.pos;
+            clipBox.y = yAxis.pos;
+        }
+    }
 
     if (target === chart) {
         const verticalAxes =
@@ -215,8 +231,11 @@ function isChartSeriesBoosting(
 
     boost.forceChartBoost = allowBoostForce && (
         (
+            // Even when the series that need a boost are less than or equal
+            // to 5, force a chart boost when all series are to be boosted.
+            // See #18815
             canBoostCount === allSeries.length &&
-            needBoostCount > 0
+            needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5
     );

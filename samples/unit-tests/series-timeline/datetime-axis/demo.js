@@ -180,7 +180,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     var point = timeline.points[0],
         dataLabel = point.dataLabel,
-        connector = point.connector;
+        connector = dataLabel.connector;
 
     assert.strictEqual(
         !chart.isInsidePlot(dataLabel.x, dataLabel.y),
@@ -220,7 +220,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     point = timeline.points[3];
     dataLabel = point.dataLabel;
-    connector = point.connector;
+    connector = dataLabel.connector;
 
     assert.strictEqual(
         dataLabel.opacity,

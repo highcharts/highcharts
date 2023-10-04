@@ -1,8 +1,8 @@
 version: 2.1
 orbs:
-  aws-s3: circleci/aws-s3@3.0.0
-  browser-tools: circleci/browser-tools@1.4.2
-  slack: circleci/slack@3.4.1
+  aws-s3: circleci/aws-s3@3
+  browser-tools: circleci/browser-tools@1
+  slack: circleci/slack@3
 
 parameters:
   run_reset_tests:
@@ -148,7 +148,9 @@ jobs:
         default: false
     steps:
       - << : *load_workspace
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           name: Check Chrome
@@ -174,7 +176,9 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -206,7 +210,9 @@ jobs:
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           background: true
       - run: npx cypress info
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           name: Check Chrome
@@ -278,7 +284,9 @@ jobs:
     description: Generate visual tests reference images
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -322,7 +330,9 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -378,7 +388,9 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - browser-tools/install-chrome
+      - run: sudo apt-get update
+      - browser-tools/install-chrome:
+          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -442,7 +454,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Compile build
-          command: npm run build -- --num-threads 2
+          command: npm run build -- --CI true
       - <<: *persist_workspace
 
   deploy_code:
@@ -452,20 +464,6 @@ jobs:
       - run:
           name: Upload code to S3
           command: npx gulp dist-upload-code --bucket ${HIGHCHARTS_S3_BUCKET}
-      - slack/status:
-          fail_only: true
-
-  deploy_api_docs:
-    <<: *defaults
-    steps:
-      - <<: *load_workspace
-      - run:
-          name: Generate api docs
-          command: npx gulp jsdoc
-      - run:
-          name: Upload api docs to S3
-          command: npx gulp upload-api --silent --noextensions
-      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
       - slack/status:
           fail_only: true
 
@@ -532,26 +530,8 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-common
-      - lint:
-          requires: [checkout_and_install]
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-      - generate_ts_declarations:
-          requires: [checkout_and_install]
-          filters:
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-      - visual_comparison_with_master:
-          requires: [lint]
-          filters:
-            branches:
-              ignore: 
-                - master
-                - /db\/.*/
-          context: highcharts-staging
       - generate_release_reference_images:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             branches:
               ignore: /.*/
@@ -559,9 +539,9 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_cypress:
-          requires: [lint]
+          requires: [checkout_and_install]
       - test_timezones:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             branches:
               only: [tools/ci-dist-release-yes]
@@ -570,23 +550,23 @@ workflows:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
-          requires: [lint]
-      - test_browsers:
-          name: "test-Mac.Safari"
-          requires: ["generate_ts_declarations"]
-          browsers: "Mac.Safari"
+          requires: [checkout_and_install]
+#      - test_browsers:
+#          name: "test-Mac.Safari"
+#          requires: ["test_cypress"]
+#          browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
 #          requires: ["test-Mac.Safari"]
 #          browsers: "Mac.Firefox"
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
-          browsers: "Win.Chrome"
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
+#          browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
-          requires: ["test-Mac.Safari", "test-Win.Chrome"]
+          requires: ["test_cypress"]
           filters:
             branches:
               only: [master]
@@ -647,12 +627,12 @@ workflows:
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
           notify_on_failure: true
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["test-Mac.Safari"]
-          browsers: "Win.Chrome"
-          notify_on_failure: true
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["test-Mac.Safari"]
+#          browsers: "Win.Chrome"
+#          notify_on_failure: true
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
@@ -663,9 +643,6 @@ workflows:
           requires: [checkout_and_install, "test-Mac.Safari"]
           context: highcharts-staging
       - deploy_code:
-          requires: [build_dist]
-          context: highcharts-staging
-      - deploy_api_docs:
           requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:

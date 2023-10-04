@@ -1,7 +1,55 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#csv {
-    display: none;
+h1,
+a {
+    text-align: center;
+}
+
+/* Center the 'a' element in the div */
+a.subtitle {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    color: var(--highcharts-color-0);
+    padding-bottom: 10px;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+p {
+    margin-top: 0;
+}
+
+.highcharts-point,
+.highcharts-area {
+    fill-opacity: 0.4;
+}
+
+#dashboard-col-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-0);
+    stroke: var(--highcharts-color-0);
+}
+
+#dashboard-col-2 .highcharts-color-0 {
+    fill: var(--highcharts-color-1);
+    stroke: var(--highcharts-color-1);
+}
+
+#dashboard-col-3 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+#dashboard-col-4 .highcharts-color-0 {
+    fill: var(--highcharts-color-3);
+    stroke: var(--highcharts-color-3);
+}
+
+.highcharts-description {
+    margin-top: 1em;
+    padding: 0 20px;
 }

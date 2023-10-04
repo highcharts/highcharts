@@ -225,21 +225,6 @@ class WordcloudSeries extends ColumnSeries {
      * Functions
      *
      */
-    public bindAxes(): void {
-        const wordcloudAxis = {
-            endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            title: void 0,
-            tickPositions: []
-        };
-
-        Series.prototype.bindAxes.call(this);
-        extend(this.yAxis.options, wordcloudAxis);
-        extend(this.xAxis.options, wordcloudAxis);
-    }
 
     public pointAttribs(point: WordcloudPoint): SVGAttributes {
         const attribs = H.seriesTypes.column.prototype
@@ -527,6 +512,7 @@ extend(WordcloudSeries.prototype, {
     animate: noop,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
+    isCartesian: false,
     pointClass: WordcloudPoint,
     setClip: noop,
 

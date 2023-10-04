@@ -13,11 +13,13 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
+
 
 import type DataEvent from './DataEvent';
 import type {
@@ -27,15 +29,16 @@ import type {
 import type DataTable from './DataTable.js';
 
 import DataConnector from './Connectors/DataConnector.js';
-import DataModifier from './Modifiers/DataModifier.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
 import U from '../Core/Utilities.js';
+
 
 /* *
  *
  *  Class
  *
  * */
+
 
 /**
  * Data pool to load connectors on-demand.
@@ -48,26 +51,52 @@ import U from '../Core/Utilities.js';
  */
 class DataPool implements DataEvent.Emitter {
 
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+
+    /**
+     * Semantic version string of the DataPool class.
+     * @internal
+     */
+    public static readonly version: string = '1.0.0';
+
+
     /* *
      *
      *  Constructor
      *
      * */
 
+
     public constructor(
         options: (DataPoolOptions|undefined) = DataPoolDefaults
     ) {
         options.connectors = (options.connectors || []);
 
-        this.options = options;
         this.connectors = {};
+        this.options = options;
+        this.waiting = {};
     }
+
 
     /* *
      *
      *  Properties
      *
      * */
+
+
+    /**
+     * Internal dictionary with the connectors and their names.
+     * @private
+     */
+    protected readonly connectors: Record<string, DataConnector>;
+
 
     /**
      * Pool options with all connectors.
@@ -77,13 +106,14 @@ class DataPool implements DataEvent.Emitter {
      */
     public readonly options: DataPoolOptions;
 
+
     /**
-     * Internal dictionary with the connectors and their names.
+     * Internal dictionary with the promise resolves waiting for connectors to
+     * be done loading.
      * @private
      */
-    protected readonly connectors: (
-        Record<string, (DataConnector|undefined)>
-    );
+    protected readonly waiting: Record<string, Array<[Function, Function]>>;
+
 
     /* *
      *
@@ -104,6 +134,7 @@ class DataPool implements DataEvent.Emitter {
         U.fireEvent(this, e.type, e);
     }
 
+
     /**
      * Loads the connector.
      *
@@ -120,19 +151,45 @@ class DataPool implements DataEvent.Emitter {
     ): Promise<DataConnector> {
         const connector = this.connectors[name];
 
+        // already loaded
         if (connector) {
-            // already loaded
             return Promise.resolve(connector);
         }
 
-        const connectorOptions = this.getConnectorOptions(name);
+        let waitingList = this.waiting[name];
 
-        if (connectorOptions) {
-            return this.loadConnector(connectorOptions);
+        // start loading
+        if (!waitingList) {
+            waitingList = this.waiting[name] = [];
+
+            const connectorOptions = this.getConnectorOptions(name);
+
+            if (!connectorOptions) {
+                throw new Error(`Connector not found. (${name})`);
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            this
+                .loadConnector(connectorOptions)
+                .then((connector): void => {
+                    delete this.waiting[name];
+                    for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
+                        waitingList[i][0](connector);
+                    }
+                })['catch']((error): void => {
+                    delete this.waiting[name];
+                    for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
+                        waitingList[i][1](error);
+                    }
+                });
         }
 
-        throw new Error(`Connector not found. (${name})`);
+        // add request to waiting list
+        return new Promise((resolve, reject): void => {
+            waitingList.push([resolve, reject]);
+        });
     }
+
 
     /**
      * Returns the names of all connectors.
@@ -152,6 +209,7 @@ class DataPool implements DataEvent.Emitter {
 
         return connectorIds;
     }
+
 
     /**
      * Loads the options of the connector.
@@ -176,6 +234,7 @@ class DataPool implements DataEvent.Emitter {
         }
     }
 
+
     /**
      * Loads the connector table.
      *
@@ -194,6 +253,7 @@ class DataPool implements DataEvent.Emitter {
             .getConnector(connectorId)
             .then((connector): DataTable => connector.table);
     }
+
 
     /**
      * Creates and loads the connector.
@@ -224,36 +284,22 @@ class DataPool implements DataEvent.Emitter {
 
             const connector = new ConnectorClass(options.options);
 
-            this.connectors[options.id] = connector;
-
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             connector
                 .load()
-                .then((connector): (DataConnector|Promise<DataConnector>) => {
-                    if (options?.options?.dataModifier) {
-                        const ModifierClass = DataModifier
-                            .types[options.options.dataModifier.type];
-
-                        return connector.table
-                            .setModifier(
-                                new ModifierClass(
-                                    options.options.dataModifier as AnyRecord
-                                )
-                            )
-                            .then((): DataConnector => connector);
-                    }
-
-                    return connector;
-                })
                 .then((connector): void => {
+                    this.connectors[options.id] = connector;
+
                     this.emit<DataPool.Event>({
                         type: 'afterLoad',
                         options
                     });
+
                     resolve(connector);
                 })['catch'](reject);
         });
     }
+
 
     /**
      * Registers a callback for a specific event.
@@ -275,6 +321,7 @@ class DataPool implements DataEvent.Emitter {
     ): Function {
         return U.addEvent(this, type, callback);
     }
+
 
     /**
      * Sets connector options with a specific name.
@@ -307,7 +354,9 @@ class DataPool implements DataEvent.Emitter {
         });
     }
 
+
 }
+
 
 /* *
  *
@@ -315,7 +364,9 @@ class DataPool implements DataEvent.Emitter {
  *
  * */
 
+
 namespace DataPool {
+
 
     /* *
      *
@@ -331,12 +382,15 @@ namespace DataPool {
         options: DataPoolConnectorOptions;
     }
 
+
 }
+
 
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default DataPool;

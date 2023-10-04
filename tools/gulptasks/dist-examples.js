@@ -204,11 +204,18 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     LogLib.success('Created', targetPath);
 
-    const localsidebar = getLocalSidebar(
-        sourcePath
-            .replaceAll('samples/', '')
-            .replaceAll('/demo', '')
-    );
+    let localsidebar;
+    try {
+        localsidebar = getLocalSidebar(
+            sourcePath
+                .replaceAll('samples/', '')
+                .replaceAll('/demo', '')
+        );
+    } catch (e) {
+        LogLib.warn(e);
+        LogLib.warn('Missing sidebar.html, using empty file');
+        localsidebar = '';
+    }
 
     LogLib.success('Created', targetPath);
     const indexContent = localsidebar

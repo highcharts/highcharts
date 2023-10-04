@@ -6,9 +6,9 @@ name: Dashboards Test
 on:
   # Triggers the workflow on push or pull request events but only for the default branch
   push:
-    branches: [ $default-branch ]
+    branches: [ 'master' ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ 'master' ]
     paths:
       - 'test/cypress/visual/**'
       - 'samples/cypress/dashboards/**'
@@ -16,7 +16,7 @@ on:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
       - 'css/**'
-      - '.github/workflows/**'
+      - '.github/workflows/dashboards-test.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -27,13 +27,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-            ref: master
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
       - name: Install Dependencies
         run: npm i
+
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test

@@ -29,11 +29,11 @@ function indicators() {
         ).then(response => response.json());
 
         // split the data set into ohlc and volume
-        var ohlc = [],
+        const ohlc = [],
             volume = [],
             dataLength = data.length;
 
-        for (var i = 0; i < dataLength; i += 1) {
+        for (let i = 0; i < dataLength; i += 1) {
             ohlc.push([
                 data[i][0], // the date
                 data[i][1], // open
@@ -178,9 +178,9 @@ function indicators() {
 function compare() {
     (async () => {
 
-        var seriesOptions = [],
-            seriesCounter = 0,
+        const seriesOptions = [],
             names = ['MSFT', 'AAPL', 'GOOG'];
+        let seriesCounter = 0;
 
         /**
          * Create the chart when all data is loaded
@@ -389,8 +389,8 @@ function compare() {
         }
 
         function success(url, data) {
-            var name = url.match(/(msft|aapl|goog)/u)[0].toUpperCase();
-            var i = names.indexOf(name);
+            const name = url.match(/(msft|aapl|goog)/u)[0].toUpperCase();
+            const i = names.indexOf(name);
             seriesOptions[i] = {
                 name: name,
                 data: data
@@ -956,7 +956,7 @@ function flags() {
             'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
         ).then(response => response.json());
 
-        var lastDate = data[data.length - 1][0],  // Get year of last data point
+        const lastDate = data[data.length - 1][0],  // Get year of last data point
             days = 24 * 36e5; // Milliseconds in a day
 
         // Create the chart

@@ -288,7 +288,6 @@ async function uploadZips(
  *
  * */
 
-
 /**
  * Uploads distribution files.
  *
@@ -303,6 +302,7 @@ async function distUpload() {
 
     const {
             bucket,
+            dryrun,
             helpme,
             profile,
             region,
@@ -346,38 +346,73 @@ async function distUpload() {
         )
     });
 
-    logLib.warn('Uploading products.js...');
-    await uploadFile(
-        path.join(buildFolder, '..'),
-        path.join(buildFolder, '..', 'products.js'),
-        targetStorage,
-        bucket,
-        '.'
-    );
-
-    const cdnVersionFolder = path.join(cdnFolder, release, '/');
-
-    logLib.warn(`Uploading to ${cdnFolder}...`);
-    await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
-
-    logLib.warn(`Uploading to ${cdnVersionFolder}...`);
-    await uploadFolder(
-        sourceFolder,
-        targetStorage,
-        bucket,
-        cdnVersionFolder,
-        HTTP_MAX_AGE.fiveYears
-    );
-
-    // Hack
+    // Upload css & gfx in base dashboards CDN
     const sourceCssFolder = path.join(sourceFolder, 'css');
     const sourceGfxFolder = path.join(sourceFolder, 'gfx');
+    const targetCssFolder = path.join(cdnFolder, 'css');
+    const targetGfxFolder = path.join(cdnFolder, 'gfx');
     logLib.warn('Uploading to css & gfx...');
-    await uploadFolder(sourceCssFolder, targetStorage, bucket, 'css');
-    await uploadFolder(sourceGfxFolder, targetStorage, bucket, 'gfx');
+    await uploadFolder(sourceCssFolder, targetStorage, bucket, targetCssFolder);
+    await uploadFolder(sourceGfxFolder, targetStorage, bucket, targetGfxFolder);
 
-    logLib.warn('Uploading to zips/...');
-    await uploadZips(buildFolder, targetStorage, bucket, 'zips/');
+    if (dryrun) {
+        // Dry run messages
+        logLib.warn('Skipping upload of products.js. (dry run)');
+
+        const [major, minor] = release.split('.');
+        const versions = [
+            release,
+            `${major}.${minor}`,
+            major
+        ];
+
+        for (const version of versions) {
+            const cdnVersionFolder = path.join(cdnFolder, version, '/');
+            logLib.warn(`Skipping upload to ${cdnVersionFolder}. (dry run)`);
+        }
+
+        logLib.warn(`Skipping upload to ${cdnFolder}. (dry run)`);
+        logLib.warn('Skipping upload to zips/. (dry run)');
+    } else {
+        logLib.warn('Uploading products.js...');
+        await uploadFile(
+            path.join(buildFolder, '..'),
+            path.join(buildFolder, '..', 'products.js'),
+            targetStorage,
+            bucket,
+            '.'
+        );
+
+        // Upload versioned paths
+        const [major, minor] = release.split('.');
+        const versions = [
+            release,
+            `${major}.${minor}`,
+            major
+        ];
+
+        for (const version of versions) {
+            const cdnVersionFolder = path.join(cdnFolder, version, '/');
+
+            logLib.warn(`Uploading to ${cdnVersionFolder}...`);
+            await uploadFolder(
+                sourceFolder,
+                targetStorage,
+                bucket,
+                cdnVersionFolder,
+                HTTP_MAX_AGE.fiveYears
+            );
+        }
+
+        // Upload to path without version
+        logLib.warn(`Uploading to ${cdnFolder}...`);
+        await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
+
+        // Upload zip
+        logLib.warn('Uploading to zips/...');
+        const targetZipFolder = path.join(cdnFolder, 'zips');
+        await uploadZips(buildFolder, targetStorage, bucket, targetZipFolder);
+    }
 
     logLib.success('Uploading Done.');
 

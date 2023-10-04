@@ -333,7 +333,7 @@ class Legend {
             chart.redraw();
         }
 
-        fireEvent(this, 'afterUpdate');
+        fireEvent(this, 'afterUpdate', { redraw });
     }
 
     /**

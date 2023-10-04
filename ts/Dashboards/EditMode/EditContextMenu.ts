@@ -136,25 +136,30 @@ class EditContextMenu extends Menu {
                 this.setVisible(false);
             }
         });
-
-        // Hide the context menu on window resize.
-        addEvent(window, 'resize', (event): void => {
-            contextMenu.setVisible(false);
-        });
     }
 
     public setVisible(visible: boolean): void {
-        const contextMenu = this;
+        const contextMenu = this,
+            contextButtonElement =
+                contextMenu.editMode.tools.contextButtonElement;
 
-        if (
-            contextMenu.container
-        ) {
+        if (contextMenu.container && contextButtonElement) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
                 contextMenu.isVisible = true;
+
+                contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'true'
+                );
             } else {
                 contextMenu.container.style.display = 'none';
                 contextMenu.isVisible = false;
+
+                contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
             }
         }
     }

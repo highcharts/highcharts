@@ -10,7 +10,7 @@ Options structure
 
 In Highcharts, the organization chart resembles the sankey chart in the way it is built `around nodes and links`. The nodes of an org chart are the positions or persons, while the links are the lines showing the relations between them. The `data` structure of the options defines the links.
 
-In the `nodes` array of the series, each node is identified by an `id` refering to the id in the link. Additional properties like `title`, `description` and `image` may be set in the individual node options.
+In the `nodes` array of the series, each node is identified by an `id` referring to the id in the link. Additional properties like `title`, `description` and `image` may be set in the individual node options.
 
 Data labels
 -----------
