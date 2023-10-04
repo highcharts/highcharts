@@ -29,11 +29,12 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { setOptions } = D;
 import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
-import D from '../Core/Defaults.js';
-const { setOptions } = D;
+import ParallelCoordinatesDefaults from './ParallelCoordinates/ParallelCoordinatesDefaults.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -86,12 +87,6 @@ declare module '../Core/Chart/ChartLike'{
         setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
-declare module '../Core/Chart/ChartOptions'{
-    interface ChartOptions {
-        parallelAxes?: DeepPartial<AxisOptions>;
-        parallelCoordinates?: boolean;
-    }
-}
 
 /**
  * Internal types
@@ -118,98 +113,8 @@ declare global {
 // Extensions for parallel coordinates plot.
 const ChartProto = Chart.prototype;
 
-const defaultXAxisOptions = {
-    lineWidth: 0,
-    tickLength: 0,
-    opposite: true,
-    type: 'category'
-};
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * @optionparent chart
- */
-const defaultParallelOptions: DeepPartial<ChartOptions> = {
-    /**
-     * Flag to render charts as a parallel coordinates plot. In a parallel
-     * coordinates plot (||-coords) by default all required yAxes are generated
-     * and the legend is disabled. This feature requires
-     * `modules/parallel-coordinates.js`.
-     *
-     * @sample {highcharts} /highcharts/demo/parallel-coordinates/
-     *         Parallel coordinates demo
-     * @sample {highcharts} highcharts/parallel-coordinates/polar/
-     *         Star plot, multivariate data in a polar chart
-     *
-     * @since    6.0.0
-     * @product  highcharts
-     * @requires modules/parallel-coordinates
-     */
-    parallelCoordinates: false,
-    /**
-     * Common options for all yAxes rendered in a parallel coordinates plot.
-     * This feature requires `modules/parallel-coordinates.js`.
-     *
-     * The default options are:
-     * ```js
-     * parallelAxes: {
-     *    lineWidth: 1,       // classic mode only
-     *    gridlinesWidth: 0,  // classic mode only
-     *    title: {
-     *        text: '',
-     *        reserveSpace: false
-     *    },
-     *    labels: {
-     *        x: 0,
-     *        y: 0,
-     *        align: 'center',
-     *        reserveSpace: false
-     *    },
-     *    offset: 0
-     * }
-     * ```
-     *
-     * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
-     *         Set the same tickAmount for all yAxes
-     *
-     * @extends   yAxis
-     * @since     6.0.0
-     * @product   highcharts
-     * @excluding alternateGridColor, breaks, id, gridLineColor,
-     *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
-     *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
-     *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops,
-     * @requires  modules/parallel-coordinates
-     */
-    parallelAxes: {
-        lineWidth: 1,
-        /**
-         * Titles for yAxes are taken from
-         * [xAxis.categories](#xAxis.categories). All options for `xAxis.labels`
-         * applies to parallel coordinates titles. For example, to style
-         * categories, use [xAxis.labels.style](#xAxis.labels.style).
-         *
-         * @excluding align, enabled, margin, offset, position3d, reserveSpace,
-         *            rotation, skew3d, style, text, useHTML, x, y
-         */
-        title: {
-            text: '',
-            reserveSpace: false
-        },
-        labels: {
-            x: 0,
-            y: 4,
-            align: 'center',
-            reserveSpace: false
-        },
-        offset: 0
-    }
-};
-
 setOptions({
-    chart: defaultParallelOptions
+    chart: ParallelCoordinatesDefaults.chart
 });
 
 /* eslint-disable no-invalid-this */
@@ -274,7 +179,7 @@ addEvent(Chart, 'init', function (
 
         options.yAxis = defaultYAxis.concat(newYAxes);
         options.xAxis = merge(
-            defaultXAxisOptions, // docs
+            ParallelCoordinatesDefaults.xAxis, // docs
             splat(options.xAxis || {})[0]
         );
     }
@@ -371,17 +276,17 @@ addEvent(Series, 'bindAxes', function (e: Event): void {
 
 // Translate each point using corresponding yAxis.
 addEvent(Series, 'afterTranslate', function (): void {
-    let series = this,
+    const series = this,
         chart = this.chart,
         points = series.points,
-        dataLength = points && points.length,
-        closestPointRangePx = Number.MAX_VALUE,
+        dataLength = points && points.length;
+
+    let closestPointRangePx = Number.MAX_VALUE,
         lastPlotX,
-        point,
-        i;
+        point;
 
     if (this.chart.hasParallelCoordinates) {
-        for (i = 0; i < dataLength; i++) {
+        for (let i = 0; i < dataLength; i++) {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
@@ -451,9 +356,10 @@ function addFormattedValue(
     this: Point,
     proceed: Function
 ): void {
-    let chart = this.series && this.series.chart,
-        config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
-        formattedValue,
+    const chart = this.series && this.series.chart,
+        config = proceed.apply(this, [].slice.call(arguments, 1));
+
+    let formattedValue,
         yAxisOptions,
         labelFormat,
         yAxis;
@@ -652,7 +558,7 @@ namespace ParallelAxis {
             if (axis.isXAxis) {
                 axis.options = merge(
                     axis.options,
-                    defaultXAxisOptions,
+                    ParallelCoordinatesDefaults.xAxis,
                     e.userOptions
                 );
             } else {
