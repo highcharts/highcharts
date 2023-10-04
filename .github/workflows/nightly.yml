@@ -63,7 +63,7 @@ jobs:
 
       - name: Run tests
         run: |
-          ./.github/scripts/test_timezones.sh -b=Mac.Safa
+          ./.github/scripts/test_timezones.sh -b=Mac.Safari
 
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
