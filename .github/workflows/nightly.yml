@@ -25,6 +25,18 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
+      - name: 'BrowserStack Env Setup'
+        uses: 'browserstack/github-actions/setup-env@master'
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USER }}
+          access-key: ${{ secrets.BROWSERSTACK_KEY }}
+
+      - name: 'BrowserStackLocal Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: 'karma-highcharts'
+
       - name: Build Highcharts
         run: npx gulp scripts
 
