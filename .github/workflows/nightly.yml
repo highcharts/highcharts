@@ -31,7 +31,7 @@ jobs:
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
-  nightly_test_timezones_macos:
+  nightly_test_timezones_bs:
     runs-on: ubuntu-latest
     environment: browserstack
     steps:
@@ -63,38 +63,13 @@ jobs:
 
       - name: Run tests
         run: |
+          ./.github/scripts/test_timezones.sh -b=Win.Chrome
           ./.github/scripts/test_timezones.sh -b=Mac.Safari
 
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: stop
-
-
-  nightly_test_timezones_windows:
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Build Highcharts
-        run: npx gulp scripts
-
-      - name: Run tests
-        run: |
-          ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
   nightly_visual_diff:
     runs-on: ubuntu-latest
