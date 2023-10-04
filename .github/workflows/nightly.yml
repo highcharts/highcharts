@@ -61,10 +61,13 @@ jobs:
           local-testing: start
           local-identifier: 'karma-highcharts'
 
-      - name: Run tests
+      - name: Run mac tests
+        run: |
+          ./.github/scripts/test_timezones.sh -b=Mac.Safari
+
+      - name: Run windows tests
         run: |
           ./.github/scripts/test_timezones.sh -b=Win.Chrome
-          ./.github/scripts/test_timezones.sh -b=Mac.Safari
 
       - name: 'BrowserStackLocal Stop'
         uses: 'browserstack/github-actions/setup-local@master'
