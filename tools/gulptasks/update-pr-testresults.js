@@ -247,7 +247,14 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
 
         if (approvedSamplesToRemove && approvedSamplesToRemove.length && !argv.dryrun) {
             const key = `${S3_REVIEWS_PATH}/all-reviews-${highchartsVersion}.json`;
-            return putS3Object(key, allReviews, { Bucket: VISUAL_TESTS_BUCKET });
+            return putS3Object(
+                key,
+                allReviews,
+                {
+                    Bucket: VISUAL_TESTS_BUCKET,
+                    ACL: void 0
+                }
+            );
         }
     }
     return Promise.resolve(allReviews);
@@ -347,7 +354,10 @@ async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = tr
                     files,
                     bucket: VISUAL_TESTS_BUCKET,
                     profile: argv.profile,
-                    name: `image diff on PR #${pr}`
+                    name: `image diff on PR #${pr}`,
+                    s3Params: {
+                        ACL: void 0 // use bucket permissions
+                    }
                 });
             } catch (err) {
                 logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +

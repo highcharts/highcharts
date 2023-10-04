@@ -136,7 +136,7 @@ const rangeSelector: RangeSelectorOptions = {
      * }]
      * ```
      *
-     * @sample {highstock} stock/rangeselector/datagrouping/
+     * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by buttons
      *
      * @type      {Array<*>}
@@ -217,7 +217,7 @@ const rangeSelector: RangeSelectorOptions = {
      *
      * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
      *
-     * @sample {highstock} stock/rangeselector/datagrouping/
+     * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by range selector buttons
      *
      * @type      {*}

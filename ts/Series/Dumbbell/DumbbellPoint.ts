@@ -66,11 +66,13 @@ class DumbbellPoint extends AreaRangePoint {
             chart = series.chart,
             seriesLowColor = series.options.lowColor,
             seriesMarker = series.options.marker,
+            seriesLowMarker = series.options.lowMarker,
             pointOptions = point.options,
             pointLowColor = pointOptions.lowColor,
             zoneColor = point.zone && point.zone.color,
             lowerGraphicColor = pick(
                 pointLowColor,
+                seriesLowMarker?.fillColor,
                 seriesLowColor,
                 pointOptions.color,
                 zoneColor,
