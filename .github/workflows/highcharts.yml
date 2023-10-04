@@ -24,6 +24,34 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
+  test_cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils
+
+      - name: Run visual test
+        uses: cypress-io/github-action@v6
+        with:
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          wait-on: 'http://localhost:3031/highcharts.js'
+          install: false
+
+
   ### HEADLESS LINUX ###
   test_headless:
     name: Test with headless browsers
