@@ -19,6 +19,7 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type Axis from '../../Core/Axis/Axis';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type { BreadcrumbOptions } from '../Breadcrumbs/BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart';
@@ -40,18 +41,17 @@ import type {
 } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Tick from '../../Core/Axis/Tick';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Axis from '../../Core/Axis/Axis.js';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
 import DrilldownSeries from './DrilldownSeries.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -138,6 +138,58 @@ let ddSeriesId = 1;
  *  Functions
  *
  * */
+
+/**
+ * Drill down to a given category. This is the same as clicking on an axis
+ * label. If multiple series with drilldown are present, all will drill down to
+ * the given category.
+ *
+ * See also `Point.doDrilldown` for drilling down on a single point instance.
+ *
+ * @function Highcharts.Axis#drilldownCategory
+ *
+ * @sample {highcharts} highcharts/drilldown/programmatic
+ *         Programmatic drilldown
+ *
+ * @param {number} x
+ *        The index of the category
+ * @param {global.MouseEvent} [originalEvent]
+ *        The original event, used internally.
+ */
+function axisDrilldownCategory(
+    this: Axis,
+    x: number,
+    originalEvent?: MouseEvent
+): void {
+    this.getDDPoints(x).forEach(function (point): void {
+        if (
+            point &&
+            point.series &&
+            point.series.visible &&
+            point.runDrilldown
+        ) { // #3197
+            point.runDrilldown(true, x, originalEvent);
+        }
+    });
+    this.chart.applyDrilldown();
+}
+
+/**
+ * Return drillable points for this specific X value.
+ *
+ * @private
+ * @function Highcharts.Axis#getDDPoints
+ * @param {number} x
+ *        Tick position
+ * @return {Array<(false|Highcharts.Point)>}
+ *         Drillable points
+ */
+function axisGetDDPoints(
+    this: Axis,
+    x: number
+): Array<(false|Point)> {
+    return (this.ddPoints && this.ddPoints[x] || []);
+}
 
 /**
  * This method creates an array of arrays containing a level number
@@ -962,14 +1014,24 @@ namespace Drilldown {
 
     /** @private */
     export function compose(
+        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         highchartsDefaultOptions: Options,
-        PointClass: typeof Point,
         SeriesClass: typeof Series,
-        seriesTypes: SeriesTypeRegistry
+        seriesTypes: SeriesTypeRegistry,
+        SVGRendererClass: typeof SVGRenderer,
+        TickClass: typeof Tick
     ): void {
+        const SVGElementClass = SVGRendererClass.prototype.Element;
 
-        DrilldownSeries.compose(PointClass, SeriesClass, seriesTypes);
+        DrilldownSeries.compose(SeriesClass, seriesTypes);
+
+        if (pushUnique(composedMembers, AxisClass)) {
+            const axisProto = AxisClass.prototype;
+
+            axisProto.drilldownCategory = axisDrilldownCategory;
+            axisProto.getDDPoints = axisGetDDPoints;
+        }
 
         if (pushUnique(composedMembers, Breadcrumbs)) {
             Breadcrumbs.compose(ChartClass, highchartsDefaultOptions);
@@ -1017,6 +1079,17 @@ namespace Drilldown {
             highchartsDefaultOptions.drilldown = DrilldownDefaults;
         }
 
+        if (pushUnique(composedMembers, SVGElementClass)) {
+            const elementProto = SVGElementClass.prototype;
+
+            elementProto.fadeIn = svgElementFadeIn;
+        }
+
+        if (pushUnique(composedMembers, TickClass)) {
+            const tickProto = TickClass.prototype;
+
+            tickProto.drillable = tickDrillable;
+        }
     }
 
     /** @private */
@@ -1138,7 +1211,7 @@ namespace Drilldown {
 
             // Add drillability to ticks, and always keep it drillability
             // updated (#3951)
-            objectEach(axis.ticks, Tick.prototype.drillable);
+            objectEach(axis.ticks, (tick): void => tick.drillable());
         });
     }
 
@@ -1156,140 +1229,95 @@ namespace Drilldown {
         }
     }
 
-}
+    /**
+     * A general fadeIn method.
+     *
+     * @requires module:modules/drilldown
+     *
+     * @function Highcharts.SVGElement#fadeIn
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     * The animation options for the element fade.
+     */
+    function svgElementFadeIn(
+        this: SVGElement,
+        animation?: (boolean|Partial<AnimationOptions>)
+    ): void {
+        this
+            .attr({
+                opacity: 0.1,
+                visibility: 'inherit'
+            })
+            .animate({
+                opacity: pick(this.newOpacity, 1) // newOpacity used in maps
+            }, animation || {
+                duration: 250
+            });
+    }
 
-/**
- * A general fadeIn method.
- *
- * @requires module:modules/drilldown
- *
- * @function Highcharts.SVGElement#fadeIn
- *
- * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
- * The animation options for the element fade.
- */
-SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<AnimationOptions>)
-): void {
-    this
-        .attr({
-            opacity: 0.1,
-            visibility: 'inherit'
-        })
-        .animate({
-            opacity: pick(this.newOpacity, 1) // newOpacity used in maps
-        }, animation || {
-            duration: 250
-        });
-};
+    /**
+     * Make a tick label drillable, or remove drilling on update.
+     *
+     * @private
+     * @function Highcharts.Axis#drillable
+     */
+    function tickDrillable(
+        this: Tick
+    ): void {
+        const pos = this.pos,
+            label = this.label,
+            axis = this.axis,
+            isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
+            ddPointsX = isDrillable && axis.getDDPoints(pos),
+            styledMode = axis.chart.styledMode;
 
-/**
- * Drill down to a given category. This is the same as clicking on an axis
- * label. If multiple series with drilldown are present, all will drill down to
- * the given category.
- *
- * See also `Point.doDrilldown` for drilling down on a single point instance.
- *
- * @function Highcharts.Axis#drilldownCategory
- *
- * @sample {highcharts} highcharts/drilldown/programmatic
- *         Programmatic drilldown
- *
- * @param {number} x
- *        The index of the category
- * @param {global.MouseEvent} [originalEvent]
- *        The original event, used internally.
- */
-Axis.prototype.drilldownCategory = function (
-    x: number,
-    originalEvent?: MouseEvent
-): void {
-    this.getDDPoints(x).forEach(function (point): void {
-        if (
-            point &&
-            point.series &&
-            point.series.visible &&
-            point.runDrilldown
-        ) { // #3197
-            point.runDrilldown(true, x, originalEvent);
-        }
-    });
-    this.chart.applyDrilldown();
-};
+        if (isDrillable) {
+            if (label && ddPointsX && ddPointsX.length) {
+                label.drillable = true;
 
-/**
- * Return drillable points for this specific X value.
- *
- * @private
- * @function Highcharts.Axis#getDDPoints
- * @param {number} x
- *        Tick position
- * @return {Array<(false|Highcharts.Point)>}
- *         Drillable points
- */
-Axis.prototype.getDDPoints = function (
-    x: number
-): Array<(false|Point)> {
-    return (this.ddPoints && this.ddPoints[x] || []);
-};
-
-
-/**
- * Make a tick label drillable, or remove drilling on update.
- *
- * @private
- * @function Highcharts.Axis#drillable
- */
-Tick.prototype.drillable = function (): void {
-    const pos = this.pos,
-        label = this.label,
-        axis = this.axis,
-        isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
-        ddPointsX = isDrillable && axis.getDDPoints(pos),
-        styledMode = axis.chart.styledMode;
-
-    if (isDrillable) {
-        if (label && ddPointsX && ddPointsX.length) {
-            label.drillable = true;
-
-            if (!label.basicStyles && !styledMode) {
-                label.basicStyles = merge(label.styles);
-            }
-
-            label.addClass('highcharts-drilldown-axis-label');
-
-            // #12656 - avoid duplicate of attach event
-            if (label.removeOnDrillableClick) {
-                removeEvent(label.element, 'click');
-            }
-
-            label.removeOnDrillableClick = addEvent(
-                label.element,
-                'click',
-                function (e: MouseEvent): void {
-                    e.preventDefault();
-                    axis.drilldownCategory(pos, e);
+                if (!label.basicStyles && !styledMode) {
+                    label.basicStyles = merge(label.styles);
                 }
-            );
 
-            if (!styledMode) {
-                label.css(
-                    (axis.chart.options.drilldown as any).activeAxisLabelStyle
+                label.addClass('highcharts-drilldown-axis-label');
+
+                // #12656 - avoid duplicate of attach event
+                if (label.removeOnDrillableClick) {
+                    removeEvent(label.element, 'click');
+                }
+
+                label.removeOnDrillableClick = addEvent(
+                    label.element,
+                    'click',
+                    function (e: MouseEvent): void {
+                        e.preventDefault();
+                        axis.drilldownCategory(pos, e);
+                    }
                 );
-            }
 
-        } else if (label && label.drillable && label.removeOnDrillableClick) {
-            if (!styledMode) {
-                label.styles = {}; // reset for full overwrite of styles
-                label.element.removeAttribute('style'); // #17933
-                label.css(label.basicStyles);
-            }
+                if (!styledMode && axis.chart.options.drilldown) {
+                    label.css(
+                        axis.chart.options.drilldown.activeAxisLabelStyle || {}
+                    );
+                }
 
-            label.removeOnDrillableClick(); // #3806
-            label.removeClass('highcharts-drilldown-axis-label');
+            } else if (
+                label &&
+                label.drillable && label.removeOnDrillableClick
+            ) {
+                if (!styledMode) {
+                    label.styles = {}; // reset for full overwrite of styles
+                    label.element.removeAttribute('style'); // #17933
+                    label.css(label.basicStyles);
+                }
+
+                label.removeOnDrillableClick(); // #3806
+                label.removeClass('highcharts-drilldown-axis-label');
+            }
         }
     }
-};
+
+}
 
 /* *
  *

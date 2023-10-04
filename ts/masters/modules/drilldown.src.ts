@@ -15,4 +15,12 @@ import Drilldown from '../../Extensions/Drilldown/Drilldown.js';
 import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const G: AnyRecord = Highcharts;
 G.Breadcrumbs = Breadcrumbs;
-Drilldown.compose(G.Chart, G.defaultOptions, G.Point, G.Series, G.seriesTypes);
+Drilldown.compose(
+    G.Axis,
+    G.Chart,
+    G.defaultOptions,
+    G.Series,
+    G.seriesTypes,
+    G.SVGRenderer,
+    G.Tick
+);
