@@ -85,11 +85,14 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
     chart.redraw();
+    /* No longer relevant after refactoring to xAxis-based stacks for
+        centerInCategory
     assert.strictEqual(
         Object.keys(chart.yAxis[0].stacking.stacks).length,
         1,
         '#14910: Group stack should not be removed on redraw'
     );
+    */
 
     chart.update({
         chart: {

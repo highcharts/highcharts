@@ -359,9 +359,9 @@ function seriesSetStackedPoints(
 ): void {
 
     const chart = this.chart,
-        stacking = stackingParam || this.options.stacking;
+        type = stackingParam || this.options.stacking;
 
-    if (!stacking || (
+    if (!type || (
         this.visible !== true &&
         chart.options.chart.ignoreHiddenSeries !== false
     )) {
@@ -377,11 +377,12 @@ function seriesSetStackedPoints(
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
         stackOption = seriesOptions.stack,
-        stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
+        stackKey = stackingParam ? `${series.type},${type}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        stacks = axis.stacking.stacks,
-        oldStacks = axis.stacking.oldStacks;
+        stacking = axis.stacking,
+        stacks = stacking.stacks,
+        oldStacks = stacking.oldStacks;
 
     let stackIndicator: (StackItemIndicatorObject|undefined),
         isNegative,
@@ -394,9 +395,9 @@ function seriesSetStackedPoints(
         y;
 
 
-    axis.stacking.stacksTouched += 1;
+    stacking.stacksTouched += 1;
 
-    // loop over the non-null y values and read them into a local array
+    // Loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
         x = (xData as any)[i];
         y = (yData as any)[i];
@@ -445,7 +446,7 @@ function seriesSetStackedPoints(
             if (!defined(stack.cumulative)) {
                 stack.base = pointKey;
             }
-            stack.touched = axis.stacking.stacksTouched;
+            stack.touched = stacking.stacksTouched;
 
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
@@ -461,7 +462,7 @@ function seriesSetStackedPoints(
         }
 
         // Add value to the stack total
-        if (stacking === 'percent') {
+        if (type === 'percent') {
 
             // Percent stacked column, totals are the same for the positive and
             // negative stacks
@@ -479,7 +480,7 @@ function seriesSetStackedPoints(
                     correctFloat((stack.total as any) + (Math.abs(y) || 0));
             }
 
-        } else if (stacking === 'group') {
+        } else if (type === 'group') {
             if (isArray(y)) {
                 y = y[0];
             }
@@ -493,7 +494,7 @@ function seriesSetStackedPoints(
             stack.total = correctFloat(stack.total + (y || 0));
         }
 
-        if (stacking === 'group') {
+        if (type === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
             stack.cumulative = (stack.total || 1) - 1;
         } else {
@@ -510,16 +511,16 @@ function seriesSetStackedPoints(
         }
     }
 
-    if (stacking === 'percent') {
-        axis.stacking.usePercentage = true;
+    if (type === 'percent') {
+        stacking.usePercentage = true;
     }
 
-    if (stacking !== 'group') {
+    if (type !== 'group') {
         this.stackedYData = stackedYData as any; // To be used in getExtremes
     }
 
     // Reset old stacks
-    axis.stacking.oldStacks = {};
+    stacking.oldStacks = {};
 }
 
 /* *
