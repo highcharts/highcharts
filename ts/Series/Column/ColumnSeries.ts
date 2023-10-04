@@ -401,7 +401,10 @@ class ColumnSeries extends Series {
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            const reversedStacks = this.yAxis.options.reversedStacks;
+            const reversedStacks = this.yAxis.options.reversedStacks,
+                visibleSeries = this.xAxis.series
+                    .filter((s): boolean => s.visible)
+                    .map((s): number => s.index);
             let indexInCategory = 0,
                 totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
 
@@ -411,7 +414,7 @@ class ColumnSeries extends Series {
             // grouping of points in each category. This is done in the
             // `setGroupedPoints` function.
             objectEach(
-                this.yAxis.stacking && this.yAxis.stacking.stacks,
+                this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
@@ -437,7 +440,7 @@ class ColumnSeries extends Series {
                                 // If there are multiple points with the same X
                                 // then gather all series in category, and
                                 // assign index
-                                let seriesIndexes = Object
+                                const seriesIndexes = Object
                                     .keys(stackItem.points)
                                     .filter((pointKey): boolean =>
                                         // Filter out duplicate X's
@@ -447,12 +450,16 @@ class ColumnSeries extends Series {
                                         stackItem.points[pointKey].length > 1
                                     )
                                     .map(parseFloat)
+                                    .filter((index): boolean =>
+                                        visibleSeries.indexOf(index) !== -1
+                                    )
                                     .sort((a, b): number => b - a);
 
                                 indexInCategory = seriesIndexes.indexOf(
                                     this.index
                                 );
                                 totalInCategory = seriesIndexes.length;
+
                             }
                         }
                     }

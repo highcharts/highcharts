@@ -106,6 +106,7 @@ QUnit.test('series.centerInCategory', function (assert) {
         '#15217: Tooltip should be positioned on top of the bar'
     );
 
+
     chart.update({
         chart: {
             inverted: false
@@ -117,9 +118,9 @@ QUnit.test('series.centerInCategory', function (assert) {
         }))
     });
 
-    assert.ok(
-        chart.series[3].points[0].shapeArgs.x + chart.plotLeft >
-            chart.xAxis[0].ticks[0].mark.element.getBBox().x,
+    assert.notEqual(
+        chart.series[0].points[0].shapeArgs.y,
+        chart.series[1].points[0].shapeArgs.y,
         '#14980: Toggling stacking with centerInCategory enabled should work'
     );
 

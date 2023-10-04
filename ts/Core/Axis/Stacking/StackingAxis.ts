@@ -86,8 +86,11 @@ declare module '../../Series/SeriesLike' {
             stack: StackItem,
             i: number
         ): void;
-        setGroupedPoints(): void;
+        setGroupedPoints(
+            axis: StackingAxis
+        ): void;
         setStackedPoints(
+            axis: StackingAxis,
             stackingParam?: string
         ): void;
     }
@@ -192,7 +195,7 @@ function onAxisDestroy(this: Axis): void {
  * @private
  */
 function onAxisInit(this: Axis): void {
-    if (this.coll === 'yAxis' && !this.stacking) {
+    if (!this.stacking) {
         this.stacking = new AxisAdditions(this as StackingAxis);
     }
 }
@@ -306,14 +309,15 @@ function seriesPercentStacker(
  * to handle grouping of points within the same category.
  *
  * @private
- * @function Highcharts.Series#setStackedPoints
+ * @function Highcharts.Series#setGroupedPoints
  * @return {void}
  */
 function seriesSetGroupedPoints(
-    this: Series
+    this: Series,
+    axis: StackingAxis
 ): void {
 
-    const stacking = this.yAxis.stacking;
+    const stacking = axis.stacking;
 
     if (
         this.options.centerInCategory &&
@@ -324,7 +328,11 @@ function seriesSetGroupedPoints(
         // With only one series, we don't need to consider centerInCategory
         this.chart.series.length > 1
     ) {
-        seriesProto.setStackedPoints.call(this, 'group');
+        seriesProto.setStackedPoints.call(
+            this,
+            axis,
+            'group'
+        );
 
     // After updating, if we now have proper stacks, we must delete the group
     // pseudo stacks (#14986)
@@ -346,6 +354,7 @@ function seriesSetGroupedPoints(
  */
 function seriesSetStackedPoints(
     this: Series,
+    axis: StackingAxis,
     stackingParam?: string
 ): void {
 
@@ -363,7 +372,7 @@ function seriesSetStackedPoints(
         xData = series.processedXData,
         yData = series.processedYData,
         stackedYData = [],
-        yDataLength = (yData as any).length,
+        yDataLength = yData.length,
         seriesOptions = series.options,
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
@@ -371,11 +380,8 @@ function seriesSetStackedPoints(
         stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        yAxis = stacking === 'group' ?
-            chart.yAxis[0] as StackingAxis :
-            series.yAxis as StackingAxis,
-        stacks = yAxis.stacking.stacks,
-        oldStacks = yAxis.stacking.oldStacks;
+        stacks = axis.stacking.stacks,
+        oldStacks = axis.stacking.oldStacks;
 
     let stackIndicator: (StackItemIndicatorObject|undefined),
         isNegative,
@@ -388,7 +394,7 @@ function seriesSetStackedPoints(
         y;
 
 
-    yAxis.stacking.stacksTouched += 1;
+    axis.stacking.stacksTouched += 1;
 
     // loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
@@ -420,8 +426,8 @@ function seriesSetStackedPoints(
                 stacks[key as any][x].total = null;
             } else {
                 stacks[key as any][x] = new StackItem(
-                    yAxis,
-                    (yAxis.options as YAxisOptions).stackLabels as any,
+                    axis,
+                    (axis.options as YAxisOptions).stackLabels as any,
                     !!isNegative,
                     x,
                     stackOption as any
@@ -439,7 +445,7 @@ function seriesSetStackedPoints(
             if (!defined(stack.cumulative)) {
                 stack.base = pointKey;
             }
-            stack.touched = yAxis.stacking.stacksTouched;
+            stack.touched = axis.stacking.stacksTouched;
 
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
@@ -505,7 +511,7 @@ function seriesSetStackedPoints(
     }
 
     if (stacking === 'percent') {
-        yAxis.stacking.usePercentage = true;
+        axis.stacking.usePercentage = true;
     }
 
     if (stacking !== 'group') {
@@ -513,7 +519,7 @@ function seriesSetStackedPoints(
     }
 
     // Reset old stacks
-    yAxis.stacking.oldStacks = {};
+    axis.stacking.oldStacks = {};
 }
 
 /* *
@@ -576,8 +582,8 @@ class AxisAdditions {
         i = len;
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-            actualSeries.setStackedPoints();
-            actualSeries.setGroupedPoints();
+            actualSeries.setGroupedPoints(axis);
+            actualSeries.setStackedPoints(axis);
         }
 
         // Loop up again to compute percent and stream stack

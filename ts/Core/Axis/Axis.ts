@@ -2535,11 +2535,11 @@ class Axis {
             );
         });
 
-        // set the new axisLength
+        // Set the new axisLength
         axis.setAxisSize();
         const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
 
-        // do we really need to go through all this?
+        // Do we really need to go through all this?
         if (
             isDirtyAxisLength ||
             isDirtyData ||
@@ -2551,7 +2551,7 @@ class Axis {
             axis.alignToOthers()
         ) {
 
-            if (axis.stacking) {
+            if (axis.coll === 'yAxis' && axis.stacking) {
                 axis.stacking.resetStacks();
                 axis.stacking.buildStacks();
             }
@@ -2564,11 +2564,16 @@ class Axis {
                 axis.minRange = void 0;
             }
 
-            // get data extremes if needed
+            // Get data extremes if needed
             axis.getSeriesExtremes();
 
-            // get fixed positions based on tickInterval
+            // Get fixed positions based on tickInterval
             axis.setTickInterval();
+
+            if (axis.coll === 'xAxis' && axis.stacking) {
+                axis.stacking.resetStacks();
+                axis.stacking.buildStacks();
+            }
 
             // Mark as dirty if it is not already set to dirty and extremes have
             // changed. #595.
