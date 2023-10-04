@@ -31,7 +31,7 @@ jobs:
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
-  nightly_test_timezones_bs:
+  nightly_test_bs:
     runs-on: ubuntu-latest
     environment: browserstack
     steps:
@@ -59,13 +59,16 @@ jobs:
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: start
-          local-identifier: 'karma-highcharts-timezones'
+          local-identifier: 'karma-highcharts'
 
-      - name: Run mac tests
+      - name: Run BrowserStack karma (Safari)
+        run: npx gulp test --single-run --splitbrowsers Mac.Safari
+
+      - name: Run mac timezone tests
         run: |
           ./.github/scripts/test_timezones.sh -b=Mac.Safari
 
-      - name: Run windows tests
+      - name: Run windows timezone tests
         run: |
           ./.github/scripts/test_timezones.sh -b=Win.Chrome
 
@@ -141,7 +144,7 @@ jobs:
 
   distpatch_dist:
     runs-on: ubuntu-latest
-    needs: [nightly_test_timezones_ubuntu, nightly_test_timezones_bs,  nightly_visual_diff]
+    needs: [nightly_test_timezones_ubuntu, nightly_test_bs,  nightly_visual_diff]
     steps:
       - run: gh workflow run nightly-dist.yml -f pushToDist=true
         env:

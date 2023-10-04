@@ -24,47 +24,6 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-
-  ### BROWSERSTACK ###
-  test_browserstack:
-    name: Test with BrowserStack
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    environment: browserstack
-    steps:
-      ### SETUP ###
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm i
-      - name: 'BrowserStack Env Setup'
-        uses: 'browserstack/github-actions/setup-env@master'
-        with:
-          username:  ${{ secrets.BROWSERSTACK_USER }}
-          access-key: ${{ secrets.BROWSERSTACK_KEY }}
-      - name: 'BrowserStackLocal Setup'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: start
-          local-identifier: 'karma-highcharts'
-      ### TASKS ###
-      - name: Build Highcharts
-        run: npx gulp scripts
-      # - name: Run BrowserStack Tests (Chrome)
-      #   run: npx gulp test --single-run --splitbrowsers Win.Chrome
-      # - name: Run BrowserStack Tests (Firefox)
-      #   run: npx gulp test --single-run --splitbrowsers Mac.Firefox
-      - name: Run BrowserStack (Safari)
-        run: npx gulp test --single-run --splitbrowsers Mac.Safari
-      ### CLEAN UP ###
-      - name: 'BrowserStackLocal Stop'
-        uses: 'browserstack/github-actions/setup-local@master'
-        with:
-          local-testing: stop
-
   ### HEADLESS LINUX ###
   test_headless:
     name: Test with headless browsers
