@@ -59,7 +59,7 @@ jobs:
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: start
-          local-identifier: 'karma-highcharts'
+          local-identifier: 'karma-highcharts-timezones'
 
       - name: Run mac tests
         run: |
