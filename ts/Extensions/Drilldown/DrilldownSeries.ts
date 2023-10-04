@@ -331,16 +331,16 @@ function columnAnimateDrillupTo(
 
 /** @private */
 function compose(
-    PointClass: typeof Point,
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
 
     const {
-        column: ColumnSeriesClass,
-        map: MapSeriesClass,
-        pie: PieSeriesClass
-    } = seriesTypes;
+            column: ColumnSeriesClass,
+            map: MapSeriesClass,
+            pie: PieSeriesClass
+        } = seriesTypes,
+        PointClass = SeriesClass.prototype.pointClass;
 
     if (ColumnSeriesClass && pushUnique(composedMembers, ColumnSeriesClass)) {
         const columnProto = ColumnSeriesClass.prototype;
