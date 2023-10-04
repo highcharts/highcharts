@@ -103,3 +103,5 @@ jobs:
     needs: [nightly_test_timezones, nightly_visual_diff]
     steps:
       - run: gh workflow run nightly-dist.yml -f pushToDist=true
+        env:
+          GH_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
