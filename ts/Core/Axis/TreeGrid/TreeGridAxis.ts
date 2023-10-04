@@ -323,12 +323,16 @@ function getTreeGridFromData(
             start: number,
             result: Record<string, GridNode>
         ): Record<string, GridNode> {
+
             const nodes = gridNode.nodes,
                 padding = 0.5;
 
-            let end = start + (start === -1 ? 0 : numberOfSeries - 1);
+            let
+                end = start + (start === -1 ? 0 : numberOfSeries - 1)
+            ;
 
-            const diff = (end - start) / 2,
+            const
+                diff = (end - start) / 2,
                 pos = start + diff;
 
             nodes.forEach(function (node: TreeGridNode): void {
@@ -340,7 +344,9 @@ function getTreeGridFromData(
                     // Remove the property once used
                     delete data.seriesIndex;
                 }
+
                 node.pos = pos;
+
             });
 
             result[pos] = gridNode;
@@ -433,6 +439,7 @@ function onBeforeRender(
                         (s.options.data || []).forEach(function (
                             data
                         ): void {
+
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
 
@@ -928,6 +935,7 @@ class TreeGridAxisAdditions {
         axis.series.forEach(function (series): void {
             const data = series.options.data;
             if (node.id && data) {
+
                 const point = chart.get(node.id),
                     dataPoint = data[series.data.indexOf(
                         point as GanttPoint

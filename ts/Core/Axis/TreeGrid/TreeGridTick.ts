@@ -36,6 +36,7 @@ import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
+    removeEvent,
     isObject,
     isNumber,
     pick,
@@ -250,6 +251,7 @@ function wrapRenderLabel(
         pos = tick.pos,
         axis = tick.axis,
         label = tick.label,
+        icon = tick?.treeGrid?.labelIcon,
         mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode,
         options = axis.options,
         labelOptions = pick(
@@ -267,6 +269,7 @@ function wrapRenderLabel(
         isTreeGrid = options.type === 'treegrid',
         shouldRender = axis.tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
+        prefixLevelClass = prefixClassName + 'level-',
         styledMode = axis.chart.styledMode;
 
     let collapsed,
@@ -279,7 +282,8 @@ function wrapRenderLabel(
             label &&
             label.element
         ) {
-            label.addClass(prefixClassName + 'level-' + level);
+            label.removeClass(new RegExp(prefixLevelClass + '.*'));
+            label.addClass(prefixLevelClass + level);
         }
     }
 
@@ -346,8 +350,8 @@ function wrapRenderLabel(
                 object.attachedTreeGridEvents = true;
             }
         });
-    } else if (tick?.treeGrid?.labelIcon) {
-        tick?.treeGrid?.labelIcon.destroy();
+    } else if (icon) {
+        icon.destroy();
     }
 }
 
