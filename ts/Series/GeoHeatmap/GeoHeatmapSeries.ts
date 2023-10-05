@@ -321,8 +321,7 @@ class GeoHeatmapSeries extends MapSeries {
             series = this,
             chart = series.chart,
             mapView = chart.mapView,
-            seriesOptions = series.options,
-            interpolation = seriesOptions.interpolation;
+            seriesOptions = series.options;
 
         if (series.getInterpolation().enabled && mapView && series.bounds) {
             const ctx = series.context || getContext(series),
