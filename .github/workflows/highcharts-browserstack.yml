@@ -18,6 +18,7 @@ jobs:
   test_bs:
     runs-on: ubuntu-latest
     environment: browserstack
+    name: Browserstack
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
