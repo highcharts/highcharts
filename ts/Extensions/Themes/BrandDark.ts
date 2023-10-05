@@ -45,7 +45,10 @@ namespace BrandDarkTheme {
     export const options: DeepPartial<Options> = {
         colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
             '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
-
+        colorAxis: {
+            minColor: 'rgba(0, 34, 255, 0.1)',
+            maxColor: 'rgba(0, 34, 255, 1)'
+        },
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
