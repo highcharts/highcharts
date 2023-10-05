@@ -399,14 +399,13 @@ class ColumnSeries extends Series {
         point: ColumnPoint,
         metrics: ColumnMetricsObject
     ): number {
-        const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            const reversedStacks = this.yAxis.options.reversedStacks,
-                visibleSeries = this.xAxis.series
-                    .filter((s): boolean => s.visible)
-                    .map((s): number => s.index);
+            const visibleSeries = this.xAxis.series
+                .filter((s): boolean => s.visible)
+                .map((s): number => s.index);
+
             let indexInCategory = 0,
-                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
+                totalInCategory = 0;
 
             // Loop over all the stacks on the Y axis. When stacking is enabled,
             // these are real point stacks. When stacking is not enabled, but
@@ -422,21 +421,8 @@ class ColumnSeries extends Series {
                         if (stackItem) {
                             const pointValues = stackItem.points[this.index];
 
-                            // If true `stacking` is enabled, count the total
-                            // number of non-null stacks in the category, and
-                            // note which index this point is within those
-                            // stacks.
-                            if (stacking) {
-                                if (pointValues) {
-                                    indexInCategory = totalInCategory;
-                                }
-                                if (stackItem.hasValidPoints) {
-                                    reversedStacks ? // #16169
-                                        totalInCategory++ : totalInCategory--;
-                                }
-
-                            // If `stacking` is not enabled, look for the index
-                            } else if (isArray(pointValues)) {
+                            // Look for the index
+                            if (isArray(pointValues)) {
                                 // If there are multiple points with the same X
                                 // then gather all series in category, and
                                 // assign index
@@ -588,7 +574,7 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
-            if (options.centerInCategory) {
+            if (options.centerInCategory && !options.stacking) {
                 barX = series.adjustForMissingColumns(
                     barX,
                     pointWidth,

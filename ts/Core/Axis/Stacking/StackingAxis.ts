@@ -317,8 +317,6 @@ function seriesSetGroupedPoints(
     axis: StackingAxis
 ): void {
 
-    const stacking = axis.stacking;
-
     if (
         this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
@@ -328,21 +326,12 @@ function seriesSetGroupedPoints(
         // With only one series, we don't need to consider centerInCategory
         this.chart.series.length > 1
     ) {
-        seriesProto.setStackedPoints.call(
-            this,
-            axis,
-            'group'
-        );
+        seriesProto.setStackedPoints.call(this, axis, 'group');
 
     // After updating, if we now have proper stacks, we must delete the group
-    // pseudo stacks (#14986)
-    } else if (stacking) {
-        objectEach(stacking.stacks, (type, key): void => {
-            if (key.slice(-5) === 'group') {
-                objectEach(type, (stack): void => stack.destroy());
-                delete stacking.stacks[key];
-            }
-        });
+    // pseudo stacks (#14980)
+    } else {
+        axis.stacking.resetStacks();
     }
 }
 
@@ -361,10 +350,15 @@ function seriesSetStackedPoints(
     const chart = this.chart,
         type = stackingParam || this.options.stacking;
 
-    if (!type || (
-        this.visible !== true &&
-        chart.options.chart.ignoreHiddenSeries !== false
-    )) {
+    if (
+        !type || (
+            this.visible !== true &&
+            chart.options.chart.ignoreHiddenSeries !== false
+        ) ||
+        // Group stacks (centerInCategory) belong on the x-axis, other stacks on
+        // the y-axis.
+        ({ group: 'xAxis' }[type] || 'yAxis') !== axis.coll
+    ) {
         return;
     }
 
@@ -583,7 +577,9 @@ class AxisAdditions {
         i = len;
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-            actualSeries.setGroupedPoints(axis);
+            if (axis.coll === 'xAxis') {
+                actualSeries.setGroupedPoints(axis);
+            }
             actualSeries.setStackedPoints(axis);
         }
 
