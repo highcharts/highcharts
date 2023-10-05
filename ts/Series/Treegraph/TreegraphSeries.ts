@@ -532,7 +532,7 @@ class TreegraphSeries extends TreemapSeries {
             levelOptions = point &&
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
 
-            options = point && point.options,
+            options = point?.options,
             state = point?.state || 'normal',
             stateOptions = levelOptions.states?.[state] || {};
 
@@ -545,18 +545,16 @@ class TreegraphSeries extends TreemapSeries {
         }
 
         const linkColor = pick(
-                stateOptions && stateOptions.link && stateOptions.link.color,
-                options && options.link && options.link.color,
-                levelOptions && levelOptions.link && levelOptions.link.color,
-                series.options.link && series.options.link.color
+                stateOptions?.link?.color,
+                options?.link?.color,
+                levelOptions?.link?.color,
+                series.options.link?.color
             ),
             linkLineWidth = pick(
-                stateOptions && stateOptions.link &&
-                stateOptions.link.lineWidth,
-                options && options.link && options.link.lineWidth,
-                levelOptions && levelOptions.link &&
-                levelOptions.link.lineWidth,
-                series.options.link && series.options.link.lineWidth
+                stateOptions?.link?.lineWidth,
+                options?.link?.lineWidth,
+                levelOptions?.link?.lineWidth,
+                series.options.link?.lineWidth
             ),
             attribs = seriesProto.pointAttribs.call(series, point);
 
