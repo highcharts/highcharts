@@ -37,6 +37,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           runTests: false
+          browser: chrome
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -49,6 +50,7 @@ jobs:
         with:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
+          browser: chrome
           install: false
 
 
