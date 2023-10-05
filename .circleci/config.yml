@@ -162,6 +162,8 @@ workflows:
     jobs:
       - checkout_and_install:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-common
