@@ -18,15 +18,15 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type Options from '../../Core/Options';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
-import Axis from '../../Core/Axis/Axis.js';
-import Chart from '../../Core/Chart/Chart.js';
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
-import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
