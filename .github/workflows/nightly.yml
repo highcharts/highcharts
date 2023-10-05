@@ -19,38 +19,11 @@ jobs:
       BROWSERSTACK_USER: ${{secrets.BROWSERSTACK_USER}}
 
   nightly_test_headless:
+    name: Nightly headless tests
+    uses: ./.github/workflows/highcharts-headless.yml
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Build Highcharts
-        run: npx gulp scripts
-
-      - name: Run timezone tests
-        run: |
-          ./.github/scripts/test_timezones.sh -b=ChromeHeadless
-
-      - name: Run Headless Chrome unit-tests
-        run: |
-          npx gulp test --single-run --splitbrowsers ChromeHeadless \
-          --tests "unit-tests/**/*"
-
-      - name: Verify samples
-        run: |
-          npx karma start test/karma-conf.js --single-run \
-          --splitbrowsers ChromeHeadless \
-          --tests "highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
-
+    with:
+      testTimezones: true
 
   nightly_visual_diff:
     runs-on: ubuntu-latest
