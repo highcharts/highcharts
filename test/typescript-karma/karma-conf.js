@@ -93,6 +93,7 @@ const browserStackBrowsers = {
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
+    const properties = getProperties();
 
     /**
      * @todo ./ts project is not ready for this. We have to remove global
@@ -118,7 +119,7 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        [properties['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
@@ -205,7 +206,6 @@ module.exports = function (config) {
     };
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
-        let properties = getProperties();
         const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {

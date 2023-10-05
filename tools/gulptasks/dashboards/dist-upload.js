@@ -297,7 +297,7 @@ async function uploadZips(
 async function distUpload() {
 
     const aws = require('@aws-sdk/client-s3');
-    const awsCredentials = require('@aws-sdk/credential-provider-ini');
+    const { fromIni } = require('@aws-sdk/credential-providers');
     const logLib = require('../lib/log');
 
     const {
@@ -341,7 +341,7 @@ async function distUpload() {
         region,
         credentials: (
             profile ?
-                awsCredentials.fromIni({ profile }) :
+                fromIni({ profile }) :
                 void 0
         )
     });

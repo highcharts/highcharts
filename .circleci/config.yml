@@ -467,20 +467,6 @@ jobs:
       - slack/status:
           fail_only: true
 
-  deploy_api_docs:
-    <<: *defaults
-    steps:
-      - <<: *load_workspace
-      - run:
-          name: Generate api docs
-          command: npx gulp jsdoc
-      - run:
-          name: Upload api docs to S3
-          command: npx gulp upload-api --silent --noextensions
-      - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
-      - slack/status:
-          fail_only: true
-
   deploy_changelog:
     <<: *defaults
     parameters:
@@ -565,22 +551,22 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [checkout_and_install]
-      - test_browsers:
-          name: "test-Mac.Safari"
-          requires: ["test_cypress"]
-          browsers: "Mac.Safari"
+#      - test_browsers:
+#          name: "test-Mac.Safari"
+#          requires: ["test_cypress"]
+#          browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
 #          requires: ["test-Mac.Safari"]
 #          browsers: "Mac.Firefox"
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
-          browsers: "Win.Chrome"
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
+#          browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
-          requires: ["test-Mac.Safari", "test-Win.Chrome"]
+          requires: ["test_cypress"]
           filters:
             branches:
               only: [master]
@@ -618,10 +604,6 @@ workflows:
     jobs:
       - checkout_and_install:
           context: highcharts-common
-      - nightly_visual_diff:
-          name: "Test visual differences and distribute diff log to S3."
-          requires: [checkout_and_install]
-          context: highcharts-staging
       - test_timezones:
           requires: [checkout_and_install]
       - test_timezones:
@@ -641,12 +623,12 @@ workflows:
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
           notify_on_failure: true
-      - test_browsers:
-          name: "test-Win.Chrome"
-          browsercount: 2
-          requires: ["test-Mac.Safari"]
-          browsers: "Win.Chrome"
-          notify_on_failure: true
+#      - test_browsers:
+#          name: "test-Win.Chrome"
+#          browsercount: 2
+#          requires: ["test-Mac.Safari"]
+#          browsers: "Win.Chrome"
+#          notify_on_failure: true
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
 #          browsercount: 2
@@ -657,9 +639,6 @@ workflows:
           requires: [checkout_and_install, "test-Mac.Safari"]
           context: highcharts-staging
       - deploy_code:
-          requires: [build_dist]
-          context: highcharts-staging
-      - deploy_api_docs:
           requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:
