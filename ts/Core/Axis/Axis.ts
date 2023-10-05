@@ -2518,7 +2518,8 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
-        const axis = this;
+        const axis = this,
+            { coll, stacking } = axis;
 
         let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
@@ -2551,9 +2552,8 @@ class Axis {
             axis.alignToOthers()
         ) {
 
-            if (axis.coll === 'yAxis' && axis.stacking) {
-                axis.stacking.resetStacks();
-                axis.stacking.buildStacks();
+            if (stacking && coll === 'yAxis') {
+                stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -2570,9 +2570,8 @@ class Axis {
             // Get fixed positions based on tickInterval
             axis.setTickInterval();
 
-            if (axis.coll === 'xAxis' && axis.stacking) {
-                axis.stacking.resetStacks();
-                axis.stacking.buildStacks();
+            if (stacking && coll === 'xAxis') {
+                stacking.buildStacks();
             }
 
             // Mark as dirty if it is not already set to dirty and extremes have
@@ -2583,8 +2582,8 @@ class Axis {
                     axis.min !== (axis.old && axis.old.min) ||
                     axis.max !== (axis.old && axis.old.max);
             }
-        } else if (axis.stacking) {
-            axis.stacking.cleanStacks();
+        } else if (stacking) {
+            stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data

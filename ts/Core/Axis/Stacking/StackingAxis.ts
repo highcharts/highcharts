@@ -567,6 +567,8 @@ class AxisAdditions {
         let actualSeries: Series,
             i: number;
 
+        this.resetStacks();
+
         stacking.usePercentage = false;
         i = len;
         while (i--) {
