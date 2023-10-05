@@ -18,33 +18,22 @@
  *
  * */
 
-import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
 import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
+import ParallelSeries from './ParallelSeries.js';
 import Series from '../../Core/Series/Series.js';
-import T from '../../Core/Templating.js';
-const { format } = T;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    erase,
-    extend,
-    insertItem,
-    isNumber,
     merge,
-    pick,
     pushUnique,
-    splat,
-    wrap
+    splat
 } = U;
 
 /* *
@@ -61,199 +50,6 @@ declare module '../../Core/Chart/ChartLike'{
         setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-// Bind each series to each yAxis. yAxis needs a reference to all series to
-// calculate extremes.
-addEvent(Series, 'bindAxes', function (e: Event): void {
-    if (this.chart.hasParallelCoordinates) {
-        const series = this;
-
-        this.chart.axes.forEach((axis): void => {
-            insertItem(series, axis.series);
-            axis.isDirty = true;
-        });
-        series.xAxis = this.chart.xAxis[0];
-        series.yAxis = this.chart.yAxis[0];
-
-        e.preventDefault();
-    }
-});
-
-
-// Translate each point using corresponding yAxis.
-addEvent(Series, 'afterTranslate', function (): void {
-    const series = this,
-        chart = this.chart,
-        points = series.points,
-        dataLength = points && points.length;
-
-    let closestPointRangePx = Number.MAX_VALUE,
-        lastPlotX,
-        point;
-
-    if (this.chart.hasParallelCoordinates) {
-        for (let i = 0; i < dataLength; i++) {
-            point = points[i];
-            if (defined(point.y)) {
-                if (chart.polar) {
-                    point.plotX = (
-                        chart.yAxis[i] as RadialAxis.AxisComposition
-                    ).angleRad || 0;
-                } else if (chart.inverted) {
-                    point.plotX = (
-                        chart.plotHeight -
-                        chart.yAxis[i].top +
-                        chart.plotTop
-                    );
-                } else {
-                    point.plotX = chart.yAxis[i].left - chart.plotLeft;
-                }
-                point.clientX = point.plotX;
-                point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, void 0, true);
-
-                // Range series (#15752)
-                if (isNumber((point as AreaRangePoint).high)) {
-                    point.plotHigh = chart.yAxis[i].translate(
-                        (point as AreaRangePoint).high,
-                        false,
-                        true,
-                        void 0,
-                        true
-                    );
-                }
-
-                if (typeof lastPlotX !== 'undefined') {
-                    closestPointRangePx = Math.min(
-                        closestPointRangePx,
-                        Math.abs(point.plotX - lastPlotX)
-                    );
-                }
-                lastPlotX = point.plotX;
-                point.isInside = chart.isInsidePlot(
-                    point.plotX,
-                    point.plotY as any,
-                    { inverted: chart.inverted }
-                );
-            } else {
-                point.isNull = true;
-            }
-        }
-        this.closestPointRangePx = closestPointRangePx;
-    }
-}, { order: 1 });
-
-// On destroy, we need to remove series from each axis.series
-addEvent(Series, 'destroy', function (): void {
-    if (this.chart.hasParallelCoordinates) {
-        (this.chart.axes || []).forEach(function (axis): void {
-            if (axis && axis.series) {
-                erase(axis.series, this);
-                axis.isDirty = axis.forceRedraw = true;
-            }
-        }, this);
-    }
-});
-
-/**
- * @private
- */
-function addFormattedValue(
-    this: Point,
-    proceed: Function
-): void {
-    const chart = this.series && this.series.chart,
-        config = proceed.apply(this, [].slice.call(arguments, 1));
-
-    let formattedValue,
-        yAxisOptions,
-        labelFormat,
-        yAxis;
-
-    if (
-        chart &&
-        chart.hasParallelCoordinates &&
-        !defined(config.formattedValue)
-    ) {
-        yAxis = chart.yAxis[this.x as any];
-        yAxisOptions = yAxis.options;
-
-        labelFormat = pick(
-            /**
-             * Parallel coordinates only. Format that will be used for point.y
-             * and available in [tooltip.pointFormat](#tooltip.pointFormat) as
-             * `{point.formattedValue}`. If not set, `{point.formattedValue}`
-             * will use other options, in this order:
-             *
-             * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if
-             *    set
-             *
-             * 2. If yAxis is a category, then category name will be displayed
-             *
-             * 3. If yAxis is a datetime, then value will use the same format as
-             *    yAxis labels
-             *
-             * 4. If yAxis is linear/logarithmic type, then simple value will be
-             *    used
-             *
-             * @sample {highcharts}
-             *         /highcharts/parallel-coordinates/tooltipvalueformat/
-             *         Different tooltipValueFormats's
-             *
-             * @type      {string}
-             * @default   undefined
-             * @since     6.0.0
-             * @product   highcharts
-             * @requires  modules/parallel-coordinates
-             * @apioption yAxis.tooltipValueFormat
-             */
-            yAxisOptions.tooltipValueFormat,
-            yAxisOptions.labels.format
-        );
-
-        if (labelFormat) {
-            formattedValue = format(
-                labelFormat,
-                extend(
-                    this,
-                    { value: this.y } as any
-                ),
-                chart
-            );
-        } else if (yAxis.dateTime) {
-            formattedValue = chart.time.dateFormat(
-                chart.time.resolveDTLFormat(
-                    (yAxisOptions.dateTimeLabelFormats as any)[
-                        (yAxis.tickPositions.info as any).unitName
-                    ]
-                ).main as any,
-                this.y as any
-            );
-        } else if (yAxisOptions.categories) {
-            formattedValue = yAxisOptions.categories[this.y as any];
-        } else {
-            formattedValue = this.y;
-        }
-
-        config.formattedValue = config.point.formattedValue = formattedValue;
-    }
-
-    return config;
-}
-
-['line', 'spline'].forEach(function (seriesName: string): void {
-    wrap(
-        H.seriesTypes[seriesName].prototype.pointClass.prototype,
-        'getLabelConfig',
-        addFormattedValue
-    );
-});
 
 /* *
  *
@@ -379,6 +175,7 @@ namespace ParallelCoordinates {
     ): void {
 
         ParallelAxis.compose(AxisClass);
+        ParallelSeries.compose(SeriesClass);
 
         if (pushUnique(composedMembers, ChartClass)) {
             const ChartCompo = ChartClass as typeof ChartComposition;
