@@ -17,10 +17,10 @@
  * */
 
 import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions';
+import type ColorType from '../Core/Color/ColorType';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import ColorType from '../Core/Color/ColorType';
-import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
