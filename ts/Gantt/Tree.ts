@@ -52,6 +52,10 @@ declare global {
     }
 }
 
+type TreeOptions = Highcharts.TreePointOptionsObject;
+type TreeOptArgs = Highcharts.TreeGetOptionsObject;
+type TreeNode = Highcharts.TreeNode;
+
 /**
  * Creates an object map from parent id to childrens index.
  *
@@ -68,15 +72,15 @@ declare global {
  *         Map from parent id to children index in data
  */
 const getListOfParents = function (
-    data: Array<Highcharts.TreePointOptionsObject>,
+    data: Array<TreeOptions>,
     ids: Array<string>
-): Record<string, Array<Highcharts.TreePointOptionsObject>> {
+): Record<string, Array<TreeOptions>> {
     const
         listOfParents = data.reduce(
             function (
-                prev: Record<string, Array<Highcharts.TreePointOptionsObject>>,
-                curr: Highcharts.TreePointOptionsObject
-            ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
+                prev: Record<string, Array<TreeOptions>>,
+                curr: TreeOptions
+            ): Record<string, Array<TreeOptions>> {
                 const parent = pick(curr.parent, '');
 
                 if (typeof prev[parent] === 'undefined') {
@@ -87,13 +91,9 @@ const getListOfParents = function (
 
                 return prev;
             },
-            {} as (Record<string, Array<Highcharts.TreePointOptionsObject>>)
+            {} as (Record<string, Array<TreeOptions>>)
         ),
         root = '';
-
-    type TreeOptions = Highcharts.TreePointOptionsObject;
-
-    console.log(ids, listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
     Object.keys(listOfParents).forEach(
@@ -122,12 +122,12 @@ const getNode = function (
     id: string,
     parent: (string|null),
     level: number,
-    data: (Highcharts.TreePointOptionsObject|null),
+    data: (TreeOptions|null),
     mapOfIdToChildren: (
-        Record<string, Array<Highcharts.TreePointOptionsObject>>
+        Record<string, Array<TreeOptions>>
     ),
-    options: Highcharts.TreeGetOptionsObject
-): Highcharts.TreeNode {
+    options: TreeOptArgs
+): TreeNode {
     let descendants = 0,
         height = 0,
         after = options && options.after,
@@ -141,7 +141,7 @@ const getNode = function (
         } as Highcharts.TreeNode,
         start: (number|undefined),
         end: (number|undefined),
-        children: Array<Highcharts.TreeNode>;
+        children: Array<TreeNode>;
 
     // Allow custom logic before the children has been created.
     if (typeof before === 'function') {
@@ -151,8 +151,8 @@ const getNode = function (
     // Call getNode recursively on the children. Calulate the height of the
     // node, and the number of descendants.
     children = ((mapOfIdToChildren[id] || [])).map(function (
-        child: Highcharts.TreePointOptionsObject
-    ): Highcharts.TreeNode {
+        child: TreeOptions
+    ): TreeNode {
         const node = getNode(
                 child.id as any,
                 id,
@@ -209,11 +209,11 @@ const getNode = function (
 };
 
 const getTree = function (
-    data: Array<Highcharts.TreePointOptionsObject>,
-    options: Highcharts.TreeGetOptionsObject
+    data: Array<TreeOptions>,
+    options: TreeOptArgs
 ): Highcharts.TreeNode {
     const ids = data.map(function (
-            d: Highcharts.TreePointOptionsObject
+            d: TreeOptions
         ): string {
             return d.id as any;
         }),

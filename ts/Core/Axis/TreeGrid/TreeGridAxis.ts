@@ -324,12 +324,12 @@ function getTreeGridFromData(
             result: Record<string, GridNode>
         ): Record<string, GridNode> {
 
-            const nodes = gridNode.nodes,
+            const
+                nodes = gridNode.nodes,
                 padding = 0.5;
 
             let
-                end = start + (start === -1 ? 0 : numberOfSeries - 1)
-            ;
+                end = start + (start === -1 ? 0 : numberOfSeries - 1);
 
             const
                 diff = (end - start) / 2,

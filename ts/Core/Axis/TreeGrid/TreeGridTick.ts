@@ -115,7 +115,7 @@ function onTickHoverExit(
     label.removeClass('highcharts-treegrid-node-active');
 
     if (!label.renderer.styledMode) {
-        label.css({ textDecoration: css.textDecoration });
+        label.css({ textDecoration: (css.textDecoration || 'none') });
     }
 }
 
@@ -206,32 +206,33 @@ function wrapGetLabelPosition(
             tick,
             [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
         );
-    let symbolOptions,
-        indentation,
+
+    let
         mapOfPosToGridNode,
         node,
         level;
 
     if (isTreeGrid) {
-        symbolOptions = (
-            lbOptions && isObject(lbOptions.symbol, true) ?
-                lbOptions.symbol :
-                {}
-        );
-        indentation = (
-            lbOptions && isNumber(lbOptions.indentation) ?
-                lbOptions.indentation :
-                0
-        );
+        const {
+                width = 0,
+                padding = 0
+            } = (
+                lbOptions && isObject(lbOptions.symbol, true) ?
+                    lbOptions.symbol :
+                    {}
+            ),
+            indentation = (
+                lbOptions && isNumber(lbOptions.indentation) ?
+                    lbOptions.indentation :
+                    0
+            );
+
         mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode;
         node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
         level = (node && node.depth) || 1;
         result.x += (
             // Add space for symbols
-            (
-                (symbolOptions.width || 0) +
-                ((symbolOptions.padding || 0) * 2)
-            ) +
+            (width + (padding * 2)) +
             // Apply indentation
             ((level - 1) * indentation)
         );
@@ -266,7 +267,7 @@ function wrapRenderLabel(
         node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
         hasDescendants = node?.descendants && node.descendants > 0,
         level = node?.depth,
-        isTreeGrid = options.type === 'treegrid',
+        isTreeGridElement = (options.type === 'treegrid') && label?.element,
         shouldRender = axis.tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
         prefixLevelClass = prefixClassName + 'level-',
@@ -276,25 +277,17 @@ function wrapRenderLabel(
         addClassName,
         removeClassName;
 
-    if (isTreeGrid && node) {
+    if (isTreeGridElement && node) {
+
         // Add class name for hierarchical styling.
-        if (
-            label &&
-            label.element
-        ) {
-            label.removeClass(new RegExp(prefixLevelClass + '.*'));
-            label.addClass(prefixLevelClass + level);
-        }
+        label
+            .removeClass(new RegExp(prefixLevelClass + '.*'))
+            .addClass(prefixLevelClass + level);
     }
 
     proceed.apply(tick, Array.prototype.slice.call(arguments, 1));
 
-    if (
-        isTreeGrid &&
-        label &&
-        label.element &&
-        hasDescendants
-    ) {
+    if (isTreeGridElement && hasDescendants) {
         collapsed = axis.treeGrid.isCollapsed(node);
 
         renderLabelIcon(
