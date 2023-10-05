@@ -560,6 +560,7 @@ class AxisAdditions {
         const stacking = this,
             axis = stacking.axis,
             axisSeries = axis.series,
+            isXAxis = axis.coll === 'xAxis',
             reversedStacks = axis.options.reversedStacks,
             len = axisSeries.length;
 
@@ -570,15 +571,17 @@ class AxisAdditions {
         i = len;
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-            if (axis.coll === 'xAxis') {
+            if (isXAxis) {
                 actualSeries.setGroupedPoints(axis);
             }
             actualSeries.setStackedPoints(axis);
         }
 
         // Loop up again to compute percent and stream stack
-        for (i = 0; i < len; i++) {
-            axisSeries[i].modifyStacks();
+        if (!isXAxis) {
+            for (i = 0; i < len; i++) {
+                axisSeries[i].modifyStacks();
+            }
         }
         fireEvent(axis, 'afterBuildStacks');
     }

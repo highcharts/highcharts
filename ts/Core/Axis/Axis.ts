@@ -2521,8 +2521,7 @@ class Axis {
         const axis = this;
 
         let isDirtyData: (boolean|undefined) = false,
-            isXAxisDirty = false,
-            centerInCategory: boolean|undefined;
+            isXAxisDirty = false;
 
         axis.series.forEach((series): void => {
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
@@ -2534,10 +2533,6 @@ class Axis {
                 (series.xAxis && series.xAxis.isDirty) ||
                 false
             );
-
-            if (series.options.centerInCategory) {
-                centerInCategory = true;
-            }
         });
 
         // Set the new axisLength
@@ -2575,7 +2570,7 @@ class Axis {
             // Get fixed positions based on tickInterval
             axis.setTickInterval();
 
-            if (axis.coll === 'xAxis' && axis.stacking && centerInCategory) {
+            if (axis.coll === 'xAxis' && axis.stacking) {
                 axis.stacking.resetStacks();
                 axis.stacking.buildStacks();
             }
