@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   nightly_test_bs:
-    uses: .github/workflows/highcharts-browserstack.yml
+    uses: ./.github/workflows/highcharts-browserstack.yml
     with:
       testTimezones: true
     secrets:
