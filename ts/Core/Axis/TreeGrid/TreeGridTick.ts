@@ -343,7 +343,16 @@ function wrapRenderLabel(
                 object.attachedTreeGridEvents = true;
             }
         });
+
     } else if (icon) {
+
+        if (label) {
+            removeEvent(label.element, 'mouseover');
+            removeEvent(label.element, 'mouseout');
+            removeEvent(label.element, 'click');
+            label.css({ cursor: 'default' });
+        }
+
         icon.destroy();
     }
 }
@@ -484,17 +493,15 @@ class TreeGridTickAdditions {
      * {@link Highcharts.Chart#redraw}
      */
     public expand(redraw?: boolean): void {
-        const tick = this.tick,
-            axis = tick.axis,
-            brokenAxis = axis.brokenAxis;
+        const
+            { pos, axis } = this.tick,
+            { treeGrid, brokenAxis } = axis,
+            posMappedNodes = treeGrid.mapOfPosToGridNode;
 
-        if (
-            brokenAxis &&
-            axis.treeGrid.mapOfPosToGridNode
-        ) {
-            const pos = tick.pos,
-                node = axis.treeGrid.mapOfPosToGridNode[pos],
-                breaks = axis.treeGrid.expand(node);
+        if (brokenAxis && posMappedNodes) {
+            const
+                node = posMappedNodes[pos],
+                breaks = treeGrid.expand(node);
 
             brokenAxis.setBreaks(breaks, pick(redraw, true));
         }
