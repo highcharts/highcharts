@@ -5,7 +5,8 @@ describe('Stock Tools annotation popup, #15725', () => {
 
     before(() => {
         cy.visit('/highcharts/cypress/stock-tools-gui/');
-    })
+    });
+
     it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
         cy.get('.highcharts-label-annotation')
             .first()

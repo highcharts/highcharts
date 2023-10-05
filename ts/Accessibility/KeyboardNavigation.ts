@@ -341,7 +341,11 @@ class KeyboardNavigation {
             );
 
         let preventDefault;
-        if ((e.target as HTMLElement)?.nodeName === 'INPUT') {
+        const target = (e.target as HTMLElement|undefined);
+        if (target &&
+            target.nodeName === 'INPUT' &&
+            !target.classList.contains('highcharts-a11y-proxy-element')
+        ) {
             return;
         }
 
