@@ -5,8 +5,7 @@ describe('Stock Tools annotation popup, #15725', () => {
 
     before(() => {
         cy.visit('/highcharts/cypress/stock-tools-gui/');
-    });
-
+    })
     it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
         cy.get('.highcharts-label-annotation')
             .first()
@@ -222,5 +221,24 @@ describe('Indicator popup searchbox, #16019.', () => {
     it('Indicators button should be inactive when popup is closed #16487', () => {
         cy.get('.highcharts-popup-close').click();
         cy.get('.highcharts-indicators').should('not.have.class', 'highcharts-active');
+    });
+});
+
+describe('Annotations popup text field', () => {
+    beforeEach(() => {
+        cy.viewport(1000, 800);
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
+    });
+
+
+    it('Should be able to type `space` char in the text field', () => {
+        cy.get('.highcharts-fibonacci').first().click();
+            cy.get('.highcharts-container')
+                .click(300, 100, { force: true })
+                .click(400, 100, { force: true })
+                .click(350, 200, { force: true })
+        cy.get('.highcharts-annotation').click();
+        cy.get('button.highcharts-annotation-edit-button').click();
+        cy.get('input[highcharts-data-name="typeOptions.line.fill"]').as('input').clear().type(' ').should('have.value', ' ')
     });
 });

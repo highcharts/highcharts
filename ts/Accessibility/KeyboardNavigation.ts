@@ -341,6 +341,9 @@ class KeyboardNavigation {
             );
 
         let preventDefault;
+        if ((e.target as HTMLElement)?.nodeName === 'INPUT') {
+            return;
+        }
 
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
