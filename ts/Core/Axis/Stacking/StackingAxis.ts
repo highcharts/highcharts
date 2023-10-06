@@ -141,13 +141,7 @@ function chartGetStacks(
     chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
-        if (
-            series.options.stacking &&
-            (
-                series.visible === true ||
-                chart.options.chart.ignoreHiddenSeries === false
-            )
-        ) {
+        if (series.options.stacking && series.reserveSpace) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
@@ -352,10 +346,7 @@ function seriesSetStackedPoints(
     const chart = this.chart,
         stacking = stackingParam || this.options.stacking;
 
-    if (!stacking || (
-        this.visible !== true &&
-        chart.options.chart.ignoreHiddenSeries !== false
-    )) {
+    if (!stacking || !this.reserveSpace) {
         return;
     }
 

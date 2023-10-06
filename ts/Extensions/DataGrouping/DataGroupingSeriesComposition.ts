@@ -285,9 +285,7 @@ function applyGrouping(
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
-        visible = (
-            series.visible || !chart.options.chart.ignoreHiddenSeries
-        ),
+        visible = series.reserveSpace,
         lastDataGrouping = this.currentDataGrouping;
 
     let currentDataGrouping,

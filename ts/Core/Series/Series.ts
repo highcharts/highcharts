@@ -432,7 +432,8 @@ class Series {
          * @type {Highcharts.SeriesOptionsType}
          */
         series.options = series.setOptions(userOptions);
-        const options = series.options;
+        const options = series.options,
+            visible = options.visible !== false;
 
         series.linkedSeries = [];
         // bind the axes
@@ -447,6 +448,7 @@ class Series {
              * @type {string}
              */
             name: options.name,
+            reserveSpace: visible || !chart.options.chart.ignoreHiddenSeries,
             state: '',
             /**
              * Read only. The series' visibility state as set by {@link
@@ -456,7 +458,7 @@ class Series {
              * @name Highcharts.Series#visible
              * @type {boolean}
              */
-            visible: options.visible !== false, // true by default
+            visible, // true by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
@@ -4633,32 +4635,34 @@ class Series {
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
-        // if called without an argument, toggle visibility
+        // If called without an argument, toggle visibility
         series.visible =
             vis =
             series.options.visible =
             series.userOptions.visible =
             typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
+        series.reserveSpace = vis || !ignoreHiddenSeries;
+
         const showOrHide = vis ? 'show' : 'hide';
 
-        // show or hide elements
-        [
-            'group',
-            'dataLabelsGroup',
-            'markerGroup',
-            'tracker',
-            'tt'
-        ].forEach(function (key: string): void {
-            if ((series as any)[key]) {
-                (series as any)[key][showOrHide]();
-            }
+        // Show or hide elements
+        (
+            [
+                'group',
+                'dataLabelsGroup',
+                'markerGroup',
+                'tracker',
+                'tt'
+            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt')[]
+        ).forEach((key): void => {
+            series[key]?.[showOrHide]();
         });
 
 
-        // hide tooltip (#1361)
+        // Hide tooltip (#1361)
         if (
             chart.hoverSeries === series ||
-            (chart.hoverPoint && chart.hoverPoint.series) === series
+            chart.hoverPoint?.series === series
         ) {
             series.onMouseOut();
         }
@@ -4668,20 +4672,20 @@ class Series {
             chart.legend.colorizeItem(series, vis);
         }
 
-
-        // rescale or adapt to resized chart
+        // Rescale or adapt to resized chart
         series.isDirty = true;
-        // in a stack, all other series are affected
+
+        // In a stack, all other series are affected
         if (series.options.stacking) {
-            chart.series.forEach(function (otherSeries): void {
+            chart.series.forEach((otherSeries): void => {
                 if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
             });
         }
 
-        // show or hide linked series
-        series.linkedSeries.forEach(function (otherSeries): void {
+        // Show or hide linked series
+        series.linkedSeries.forEach((otherSeries): void => {
             otherSeries.setVisible(vis, false);
         });
 

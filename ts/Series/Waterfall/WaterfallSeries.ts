@@ -517,10 +517,7 @@ class WaterfallSeries extends ColumnSeries {
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
-        if (
-            series.visible ||
-            !series.chart.options.chart.ignoreHiddenSeries
-        ) {
+        if (series.reserveSpace) {
             changed = waterfallStacks.changed;
             alreadyChanged = waterfallStacks.alreadyChanged;
 
