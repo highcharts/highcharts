@@ -57,10 +57,6 @@ namespace HighContrastDarkTheme {
             '#20AA09',
             '#E0C3E4'
         ],
-        colorAxis: {
-            minColor: 'rgba(0, 34, 255, 0.1)',
-            maxColor: 'rgba(0, 34, 255, 1)'
-        },
         chart: {
             backgroundColor: '#1f1f20',
             plotBorderColor: '#606063'

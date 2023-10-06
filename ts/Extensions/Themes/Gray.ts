@@ -41,10 +41,6 @@ namespace GrayTheme {
     export const options: DeepPartial<Options> = {
         colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
             '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
-        colorAxis: {
-            minColor: 'rgba(0, 34, 255, 0.1)',
-            maxColor: 'rgba(0, 34, 255, 1)'
-        },
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },

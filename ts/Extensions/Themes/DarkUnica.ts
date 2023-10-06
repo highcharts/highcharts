@@ -45,10 +45,6 @@ namespace DarkUnicaTheme {
             '#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
             '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
         ],
-        colorAxis: {
-            minColor: 'rgba(0, 34, 255, 0.1)',
-            maxColor: 'rgba(0, 34, 255, 1)'
-        },
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
