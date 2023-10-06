@@ -2431,7 +2431,8 @@ class Chart {
         // positions again
         const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
         // Height is more sensitive, use lower threshold
-        const redoVertical = tempHeight / chart.plotHeight > 1.05;
+        const redoVertical = tempHeight / chart.plotHeight > 1.05 ||
+            tempHeight / chart.plotHeight < 1; // #19604
 
         if (redoHorizontal || redoVertical) {
 

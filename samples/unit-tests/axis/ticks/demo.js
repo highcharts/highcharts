@@ -990,41 +990,94 @@ QUnit.test('Ticks and setSize', assert => {
 QUnit.test(
     'The tick interval after updating series visibility should stay the same (#13369)',
     function (assert) {
-        var chart = Highcharts.chart('container', {
-            xAxis: {
-                type: 'datetime'
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 160,
+                height: 250
             },
-            series: [
+            xAxis: {
+                min: -25,
+                max: 25,
+                labels: {
+                    reserveSpace: false
+                }
+            },
+            yAxis: {
+                title: {
+                    text: null
+                },
+                lineWidth: 1,
+                tickWidth: 1,
+                tickPixelInterval: 40,
+                min: 0,
+                max: 75
+            },
+
+            series: [{
+                data: [[-25, 75], [0, 0], [25, 75]]
+            }]
+        });
+
+        const ticksBeforeUpdate = chart.yAxis[0].tickPositions;
+
+        chart.series[0].update({
+            color: 'green'
+        });
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            ticksBeforeUpdate,
+            `After updating the series properties ticks shouldn't be changed
+            (#19604).`
+        );
+
+        chart.update({
+            xAxis: {
+                type: 'datetime',
+                min: null,
+                max: null,
+                labels: {
+                    reserveSpace: true
+                }
+            },
+            yAxis: {
+                tickPixelInterval: null,
+                min: null,
+                max: null
+            }
+        }, false);
+
+        chart.series[0].remove(false);
+
+        chart.addSeries({
+            type: 'scatter',
+            data: [
                 {
-                    type: 'scatter',
-                    data: [
-                        {
-                            x: Date.UTC(2020, 1, 1),
-                            y: 8
-                        },
-                        {
-                            x: Date.UTC(2020, 1, 2),
-                            y: 5
-                        },
-                        {
-                            x: Date.UTC(2020, 1, 3),
-                            y: 4
-                        }
-                    ]
+                    x: Date.UTC(2020, 1, 1),
+                    y: 8
                 },
                 {
-                    type: 'line',
-                    visible: false,
-                    data: [
-                        {
-                            x: Date.UTC(2020, 1, 1),
-                            y: 7.0
-                        },
-                        {
-                            x: Date.UTC(2020, 1, 3),
-                            y: 7.0
-                        }
-                    ]
+                    x: Date.UTC(2020, 1, 2),
+                    y: 5
+                },
+                {
+                    x: Date.UTC(2020, 1, 3),
+                    y: 4
+                }
+            ]
+        }, false);
+
+        chart.addSeries({
+            type: 'line',
+            visible: false,
+            data: [
+                {
+                    x: Date.UTC(2020, 1, 1),
+                    y: 7.0
+                },
+                {
+                    x: Date.UTC(2020, 1, 3),
+                    y: 7.0
                 }
             ]
         });
