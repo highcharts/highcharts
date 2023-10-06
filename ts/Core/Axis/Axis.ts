@@ -709,7 +709,7 @@ class Axis {
             // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
-                if (series.reserveSpace) {
+                if (series.reserveSpace()) {
 
                     const seriesOptions = series.options;
 
@@ -1347,7 +1347,7 @@ class Axis {
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
-                    series.reserveSpace
+                    series.reserveSpace()
                 ) {
                     closestDistance = defined(closestDistance) ?
                         Math.min(closestDistance, seriesClosest) :

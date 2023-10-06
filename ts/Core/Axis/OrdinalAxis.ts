@@ -955,7 +955,7 @@ namespace OrdinalAxis {
                     }
 
                     if (
-                        series.reserveSpace &&
+                        series.reserveSpace() &&
                         (
                             (series as ScatterSeries)
                                 .takeOrdinalPosition !== false || hasBreaks
@@ -1252,7 +1252,8 @@ namespace OrdinalAxis {
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
-                        reserveSpace: series.reserveSpace
+                        reserveSpace: Series.prototype.reserveSpace,
+                        visible: series.visible
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(

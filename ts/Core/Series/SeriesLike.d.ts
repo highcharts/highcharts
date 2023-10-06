@@ -45,11 +45,6 @@ export interface SeriesLike {
     opacity?: number;
     options: SeriesOptions;
     points: Array<PointLike>;
-    /**
-     * Whether to reserve space for the series, either because it is visible or
-     * because the `chart.ignoreHiddenSeries` option is false.
-     */
-    reserveSpace?: boolean;
     state?: StatesOptionsKey;
     type: string;
     userOptions: DeepPartial<SeriesOptions>;

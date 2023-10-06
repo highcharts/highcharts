@@ -141,7 +141,7 @@ function chartGetStacks(
     chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
-        if (series.options.stacking && series.reserveSpace) {
+        if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
@@ -346,7 +346,7 @@ function seriesSetStackedPoints(
     const chart = this.chart,
         stacking = stackingParam || this.options.stacking;
 
-    if (!stacking || !this.reserveSpace) {
+    if (!stacking || !this.reserveSpace()) {
         return;
     }
 

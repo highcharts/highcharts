@@ -182,7 +182,7 @@ class ZAxis extends Axis implements AxisLike {
         // loop through this axis' series
         this.series.forEach((series): void => {
 
-            if (series.reserveSpace) {
+            if (series.reserveSpace()) {
 
                 let threshold = series.options.threshold;
 

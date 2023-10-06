@@ -259,10 +259,10 @@ QUnit.test('getSeriesExtremes', function (assert) {
             isXAxis: true,
             series: [
                 {
-                    reserveSpace: true,
                     visible: true,
                     options: {},
-                    getXExtremes: Highcharts.Series.prototype.getXExtremes
+                    getXExtremes: Highcharts.Series.prototype.getXExtremes,
+                    reserveSpace: Highcharts.Series.prototype.reserveSpace
                 }
             ]
         };

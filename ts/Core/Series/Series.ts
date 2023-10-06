@@ -448,7 +448,6 @@ class Series {
              * @type {string}
              */
             name: options.name,
-            reserveSpace: visible || !chart.options.chart.ignoreHiddenSeries,
             state: '',
             /**
              * Read only. The series' visibility state as set by {@link
@@ -3409,6 +3408,16 @@ class Series {
     }
 
     /**
+     * Whether to reserve space for the series, either because it is visible or
+     * because the `chart.ignoreHiddenSeries` option is false.
+     *
+     * @private
+     */
+    public reserveSpace(): boolean {
+        return this.visible || !this.chart.options.chart.ignoreHiddenSeries;
+    }
+
+    /**
      * Find the nearest point from a pointer event. This applies to series that
      * use k-d-trees to get the nearest point. Native pointer events must be
      * normalized using `Pointer.normalize`, that adds `chartX` and `chartY`
@@ -4641,7 +4650,6 @@ class Series {
             series.options.visible =
             series.userOptions.visible =
             typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
-        series.reserveSpace = vis || !ignoreHiddenSeries;
 
         const showOrHide = vis ? 'show' : 'hide';
 

@@ -255,7 +255,7 @@ class ColumnSeries extends Series {
 
                 if (
                     otherSeries.type === series.type &&
-                    otherSeries.reserveSpace &&
+                    otherSeries.reserveSpace() &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
