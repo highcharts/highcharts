@@ -10,22 +10,123 @@
 
 'use strict';
 
-type XYArray = [number, number] & { isIntersection?: boolean };
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-const isInside = (
-    clipEdge1 : XYArray,
-    clipEdge2 : XYArray,
-    p : XYArray
-) : boolean =>
-    (clipEdge2[0] - clipEdge1[0]) * (p[1] - clipEdge1[1]) >
-    (clipEdge2[1] - clipEdge1[1]) * (p[0] - clipEdge1[0]);
+interface XYArray extends XYPair {
+    isIntersection?: boolean;
+}
 
-const intersection = (
+type XYPair = [number, number];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Simple line string clipping. Clip to bounds and insert intersection points.
+ * @private
+ */
+function clipLineString(
+    line: Array<XYArray>,
+    boundsPolygon: Array<XYArray>
+): XYArray[][] {
+    const ret: XYArray[][] = [],
+        l = clipPolygon(line, boundsPolygon, false);
+
+    for (let i = 1; i < l.length; i++) {
+        // Insert gap where two intersections follow each other
+        if (l[i].isIntersection && l[i - 1].isIntersection) {
+            ret.push(l.splice(0, i));
+            i = 0;
+        }
+
+        // Push the rest
+        if (i === l.length - 1) {
+            ret.push(l);
+        }
+    }
+
+    return ret;
+}
+
+/**
+ * Clip a polygon to another polygon using the Sutherland/Hodgman algorithm.
+ * @private
+ */
+function clipPolygon(
+    subjectPolygon: XYArray[],
+    boundsPolygon: XYArray[],
+    closed = true
+): Array<XYArray> {
+    let clipEdge1 = boundsPolygon[boundsPolygon.length - 1],
+        clipEdge2: XYArray,
+        prevPoint: XYArray,
+        currentPoint: XYArray,
+        outputList : XYArray[] = subjectPolygon;
+
+    for (let j = 0; j < boundsPolygon.length; j++) {
+        const inputList = outputList;
+
+        clipEdge2 = boundsPolygon[j];
+        outputList = [];
+        prevPoint = closed ?
+            // Polygon, wrap around
+            inputList[inputList.length - 1] :
+            // Open line string, don't wrap
+            inputList[0];
+
+        for (let i = 0; i < inputList.length; i++) {
+            currentPoint = inputList[i];
+            if (isInside(clipEdge1, clipEdge2, currentPoint)) {
+                if (!isInside(clipEdge1, clipEdge2, prevPoint)) {
+                    outputList.push(intersection(
+                        clipEdge1,
+                        clipEdge2,
+                        prevPoint,
+                        currentPoint
+                    ));
+                }
+                outputList.push(currentPoint);
+            } else if (isInside(clipEdge1, clipEdge2, prevPoint)) {
+                outputList.push(intersection(
+                    clipEdge1,
+                    clipEdge2,
+                    prevPoint,
+                    currentPoint
+                ));
+            }
+            prevPoint = currentPoint;
+        }
+        clipEdge1 = clipEdge2;
+    }
+    return outputList;
+}
+
+/** @private */
+function isInside(
+    clipEdge1: XYArray,
+    clipEdge2: XYArray,
+    p: XYArray
+): boolean {
+    return (
+        (clipEdge2[0] - clipEdge1[0]) * (p[1] - clipEdge1[1]) >
+        (clipEdge2[1] - clipEdge1[1]) * (p[0] - clipEdge1[0])
+    );
+}
+
+/** @private */
+function intersection(
     clipEdge1: XYArray,
     clipEdge2: XYArray,
     prevPoint: XYArray,
     currentPoint: XYArray
-) : XYArray => {
+): XYArray {
     const dc = [
             clipEdge1[0] - clipEdge2[0],
             clipEdge1[1] - clipEdge2[1]
@@ -45,83 +146,6 @@ const intersection = (
     intersection.isIntersection = true;
 
     return intersection;
-};
-
-namespace PolygonClip {
-
-    // Simple line string clipping. Clip to bounds and insert intersection
-    // points.
-    export const clipLineString = (
-        line: XYArray[],
-        boundsPolygon: XYArray[]
-    ): XYArray[][] => {
-        const ret: XYArray[][] = [],
-            l = clipPolygon(line, boundsPolygon, false);
-
-        for (let i = 1; i < l.length; i++) {
-            // Insert gap where two intersections follow each other
-            if (l[i].isIntersection && l[i - 1].isIntersection) {
-                ret.push(l.splice(0, i));
-                i = 0;
-            }
-
-            // Push the rest
-            if (i === l.length - 1) {
-                ret.push(l);
-            }
-        }
-
-        return ret;
-    };
-
-    // Clip a polygon to another polygon using the Sutherland/Hodgman algorithm.
-    export const clipPolygon = (
-        subjectPolygon: XYArray[],
-        boundsPolygon: XYArray[],
-        closed = true
-    ) : Array<XYArray> => {
-
-        let clipEdge1 = boundsPolygon[boundsPolygon.length - 1],
-            clipEdge2: XYArray,
-            prevPoint: XYArray,
-            currentPoint: XYArray,
-            outputList : XYArray[] = subjectPolygon;
-
-        for (let j = 0; j < boundsPolygon.length; j++) {
-            const inputList = outputList;
-            clipEdge2 = boundsPolygon[j];
-            outputList = [];
-            prevPoint = closed ?
-                // Polygon, wrap around
-                inputList[inputList.length - 1] :
-                // Open line string, don't wrap
-                inputList[0];
-            for (let i = 0; i < inputList.length; i++) {
-                currentPoint = inputList[i];
-                if (isInside(clipEdge1, clipEdge2, currentPoint)) {
-                    if (!isInside(clipEdge1, clipEdge2, prevPoint)) {
-                        outputList.push(intersection(
-                            clipEdge1,
-                            clipEdge2,
-                            prevPoint,
-                            currentPoint
-                        ));
-                    }
-                    outputList.push(currentPoint);
-                } else if (isInside(clipEdge1, clipEdge2, prevPoint)) {
-                    outputList.push(intersection(
-                        clipEdge1,
-                        clipEdge2,
-                        prevPoint,
-                        currentPoint
-                    ));
-                }
-                prevPoint = currentPoint;
-            }
-            clipEdge1 = clipEdge2;
-        }
-        return outputList;
-    };
 }
 
 /* *
@@ -129,5 +153,10 @@ namespace PolygonClip {
  *  Default Export
  *
  * */
+
+const PolygonClip = {
+    clipLineString,
+    clipPolygon
+};
 
 export default PolygonClip;
