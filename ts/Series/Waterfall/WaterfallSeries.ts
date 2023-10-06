@@ -472,9 +472,9 @@ class WaterfallSeries extends ColumnSeries {
             xData = series.xData,
             xLength = xData.length,
             actualStackX: (WaterfallAxis.StacksItemObject|undefined),
-            totalYVal,
-            actualSum,
-            prevSum,
+            totalYVal = 0,
+            actualSum = 0,
+            prevSum = 0,
             statesLen: number,
             posTotal,
             negTotal,
@@ -515,14 +515,8 @@ class WaterfallSeries extends ColumnSeries {
 
         if (axis.stacking && waterfallStacks) {
 
-            axis.stacking.usePercentage = false;
-            totalYVal = actualSum = prevSum = stackThreshold;
-
             // Code responsible for creating stacks for waterfall series
-            if (
-                series.visible ||
-                !series.chart.options.chart.ignoreHiddenSeries
-            ) {
+            if (series.reserveSpace()) {
                 changed = waterfallStacks.changed;
                 alreadyChanged = waterfallStacks.alreadyChanged;
 

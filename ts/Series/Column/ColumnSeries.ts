@@ -253,11 +253,9 @@ class ColumnSeries extends Series {
                     otherOptions = otherSeries.options;
                 let columnIndex;
 
-                if (otherSeries.type === series.type &&
-                    (
-                        otherSeries.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries
-                    ) &&
+                if (
+                    otherSeries.type === series.type &&
+                    otherSeries.reserveSpace() &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086

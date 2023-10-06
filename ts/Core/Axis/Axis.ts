@@ -709,10 +709,7 @@ class Axis {
             // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
-                if (
-                    series.visible ||
-                    !chart.options.chart.ignoreHiddenSeries
-                ) {
+                if (series.reserveSpace()) {
 
                     const seriesOptions = series.options;
 
@@ -1343,16 +1340,14 @@ class Axis {
         } else {
             const singleXs: number[] = [];
             this.series.forEach(function (series): void {
-                const seriesClosest = series.closestPointRange,
-                    visible = series.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries;
+                const seriesClosest = series.closestPointRange;
 
                 if (series.xData?.length === 1) {
                     singleXs.push(series.xData[0]);
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
-                    visible
+                    series.reserveSpace()
                 ) {
                     closestDistance = defined(closestDistance) ?
                         Math.min(closestDistance, seriesClosest) :

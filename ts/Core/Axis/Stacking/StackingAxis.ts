@@ -144,13 +144,7 @@ function chartGetStacks(
     chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
-        if (
-            series.options.stacking &&
-            (
-                series.visible === true ||
-                chart.options.chart.ignoreHiddenSeries === false
-            )
-        ) {
+        if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
@@ -339,14 +333,11 @@ function seriesSetStackedPoints(
     stackingParam?: string
 ): void {
 
-    const chart = this.chart,
-        type = stackingParam || this.options.stacking;
+    const type = stackingParam || this.options.stacking;
 
     if (
-        !type || (
-            this.visible !== true &&
-            chart.options.chart.ignoreHiddenSeries !== false
-        ) ||
+        !type ||
+        !this.reserveSpace() ||
         // Group stacks (centerInCategory) belong on the x-axis, other stacks on
         // the y-axis.
         ({ group: 'xAxis' }[type] || 'yAxis') !== axis.coll
