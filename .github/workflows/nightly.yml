@@ -27,7 +27,6 @@ jobs:
   nightly_test_headless:
     name: Nightly headless tests
     uses: ./.github/workflows/highcharts-headless.yml
-    runs-on: ubuntu-latest
     with:
       testTimezones: true
 
