@@ -107,7 +107,7 @@ class GanttChart extends Chart {
                     type: 'gantt'
                 },
                 title: {
-                    text: null as any
+                    text: ''
                 },
                 legend: {
                     enabled: false
@@ -201,6 +201,8 @@ namespace GanttChart {
      *
      * */
 
+    /* eslint-disable jsdoc/check-param-names */
+
     /**
      * The factory function for creating new gantt charts. Creates a new {@link
      * Highcharts.GanttChart|GanttChart} object with different default options
@@ -241,6 +243,8 @@ namespace GanttChart {
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);
     }
+
+    /* eslint-enable jsdoc/check-param-names */
 
 }
 

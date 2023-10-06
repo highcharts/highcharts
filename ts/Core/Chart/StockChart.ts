@@ -28,7 +28,10 @@ import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
-import type { SeriesTypePlotOptions } from '../Series/SeriesType';
+import type {
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
+} from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
@@ -275,7 +278,10 @@ class StockChart extends Chart {
                     text: null
                 },
                 tooltip: {
-                    split: pick((defaultOptions.tooltip as any).split, true),
+                    split: pick(
+                        defaultOptions.tooltip && defaultOptions.tooltip.split,
+                        true
+                    ),
                     crosshairs: true
                 },
                 legend: {
@@ -295,33 +301,31 @@ class StockChart extends Chart {
         userOptions.yAxis = yAxisOptions;
 
         // apply X axis options to both single and multi y axes
-        options.xAxis = splat(userOptions.xAxis || {}).map(function (
+        options.xAxis = splat(userOptions.xAxis || {}).map((
             xAxisOptions: AxisOptions,
             i: number
-        ): AxisOptions {
-            return merge(
-                getDefaultAxisOptions('xAxis', xAxisOptions),
-                defaultOptions.xAxis, // #3802
-                // #7690
-                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
-                xAxisOptions, // user options
-                getForcedAxisOptions('xAxis', userOptions)
-            );
-        });
+        ): AxisOptions => merge(
+            getDefaultAxisOptions('xAxis', xAxisOptions),
+            defaultOptions.xAxis, // #3802
+            // #7690
+            // @todo remove, default axis options are not arrays
+            defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
+            xAxisOptions, // user options
+            getForcedAxisOptions('xAxis', userOptions)
+        ));
 
         // apply Y axis options to both single and multi y axes
-        options.yAxis = splat(userOptions.yAxis || {}).map(function (
+        options.yAxis = splat(userOptions.yAxis || {}).map((
             yAxisOptions: YAxisOptions,
             i: number
-        ): YAxisOptions {
-            return merge(
-                getDefaultAxisOptions('yAxis', yAxisOptions),
-                defaultOptions.yAxis, // #3802
-                // #7690
-                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
-                yAxisOptions // user options
-            );
-        });
+        ): YAxisOptions => merge(
+            getDefaultAxisOptions('yAxis', yAxisOptions),
+            defaultOptions.yAxis, // #3802
+            // #7690
+            // @todo remove, default axis options are not arrays
+            defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
+            yAxisOptions // user options
+        ));
 
         super.init(options, callback);
     }
@@ -355,14 +359,15 @@ addEvent(Chart, 'update', function (
     this: StockChart,
     e: { options: Options }
 ): void {
-    const options = e.options;
+    const chart = this,
+        options = e.options;
 
     // Use case: enabling scrollbar from a disabled state.
     // Scrollbar needs to be initialized from a controller, Navigator in this
     // case (#6615)
-    if ('scrollbar' in options && this.navigator) {
-        merge(true, this.options.scrollbar, options.scrollbar);
-        this.navigator.update({});
+    if ('scrollbar' in options && chart.navigator) {
+        merge(true, chart.options.scrollbar, options.scrollbar);
+        chart.navigator.update({});
         delete options.scrollbar;
     }
 });
@@ -423,56 +428,56 @@ namespace StockChart {
         this: Axis,
         event: { e: PointerEvent; point: Point }
     ): void {
+        const axis = this;
 
         // Check if the label has to be drawn
         if (
-            !this.crosshair ||
-            !this.crosshair.label ||
-            !this.crosshair.label.enabled ||
-            !this.cross ||
-            !isNumber(this.min) ||
-            !isNumber(this.max)
+            !axis.crosshair ||
+            !axis.crosshair.label ||
+            !axis.crosshair.label.enabled ||
+            !axis.cross ||
+            !isNumber(axis.min) ||
+            !isNumber(axis.max)
         ) {
             return;
         }
 
-        let chart = this.chart,
-            log = this.logarithmic,
-            options = this.crosshair.label, // the label's options
-            horiz = this.horiz, // axis orientation
-            opposite = this.opposite, // axis position
-            left = this.left, // left position
-            top = this.top, // top position
-            width = this.width,
-            crossLabel = this.crossLabel, // the svgElement
+        const chart = axis.chart,
+            log = axis.logarithmic,
+            options = axis.crosshair.label, // the label's options
+            horiz = axis.horiz, // axis orientation
+            opposite = axis.opposite, // axis position
+            left = axis.left, // left position
+            top = axis.top, // top position
+            width = axis.width,
+            tickInside = axis.options.tickPosition === 'inside',
+            snap = axis.crosshair.snap !== false,
+            e = event.e || (axis.cross && axis.cross.e),
+            point = event.point;
+
+        let crossLabel = axis.crossLabel, // the svgElement
             posx,
             posy,
-            crossBox,
             formatOption = options.format,
             formatFormat = '',
             limit,
-            align,
-            tickInside = this.options.tickPosition === 'inside',
-            snap = (this.crosshair as any).snap !== false,
             offset = 0,
             // Use last available event (#5287)
-            e = event.e || (this.cross && this.cross.e),
-            point = event.point,
-            min = this.min,
-            max = this.max;
+            min = axis.min,
+            max = axis.max;
 
         if (log) {
-            min = log.lin2log(min);
-            max = log.lin2log(max);
+            min = log.lin2log(axis.min);
+            max = log.lin2log(axis.max);
         }
 
-        align = (horiz ? 'center' : opposite ?
-            (this.labelAlign === 'right' ? 'right' : 'left') :
-            (this.labelAlign === 'left' ? 'left' : 'center'));
+        const align = (horiz ? 'center' : opposite ?
+            (axis.labelAlign === 'right' ? 'right' : 'left') :
+            (axis.labelAlign === 'left' ? 'left' : 'center'));
 
         // If the label does not exist yet, create it.
         if (!crossLabel) {
-            crossLabel = this.crossLabel = chart.renderer
+            crossLabel = axis.crossLabel = chart.renderer
                 .label(
                     '',
                     0,
@@ -483,16 +488,16 @@ namespace StockChart {
                     'highcharts-crosshair-label highcharts-color-' + (
                         point && point.series ?
                             point.series.colorIndex :
-                            this.series[0] && this.series[0].colorIndex
+                            axis.series[0] && this.series[0].colorIndex
                     )
                 )
                 .attr({
-                    align: options.align || align as any,
+                    align: options.align || align,
                     padding: pick(options.padding, 8),
                     r: pick(options.borderRadius, 3),
                     zIndex: 2
                 })
-                .add(this.labelGroup);
+                .add(axis.labelGroup);
 
             // Presentational
             if (!chart.styledMode) {
@@ -518,14 +523,14 @@ namespace StockChart {
 
         if (horiz) {
             posx = snap ? (point.plotX || 0) + left : e.chartX;
-            posy = top + (opposite ? 0 : this.height);
+            posy = top + (opposite ? 0 : axis.height);
         } else {
-            posx = left + this.offset + (opposite ? width : 0);
+            posx = left + axis.offset + (opposite ? width : 0);
             posy = snap ? (point.plotY || 0) + top : e.chartY;
         }
 
         if (!formatOption && !options.formatter) {
-            if (this.dateTime) {
+            if (axis.dateTime) {
                 formatFormat = '%b %d, %Y';
             }
             formatOption =
@@ -534,8 +539,8 @@ namespace StockChart {
 
         // Show the label
         const value = snap ?
-            (this.isXAxis ? point.x : point.y) :
-            this.toValue(horiz ? e.chartX : e.chartY);
+            (axis.isXAxis ? point.x : point.y) :
+            axis.toValue(horiz ? e.chartX : e.chartY);
 
         // Crosshair should be rendered within Axis range (#7219) and the point
         // of currentPriceIndicator should be inside the plot area (#14879).
@@ -547,7 +552,7 @@ namespace StockChart {
         if (formatOption) {
             text = format(formatOption, { value }, chart);
         } else if (options.formatter && isNumber(value)) {
-            text = options.formatter.call(this, value);
+            text = options.formatter.call(axis, value);
         }
 
         crossLabel.attr({
@@ -557,7 +562,7 @@ namespace StockChart {
             visibility: isInside ? 'inherit' : 'hidden'
         });
 
-        crossBox = crossLabel.getBBox();
+        const crossBox = crossLabel.getBBox();
 
         // now it is placed we can correct its position
         if (isNumber(crossLabel.x) && !horiz && !opposite) {
@@ -578,13 +583,13 @@ namespace StockChart {
         if (horiz) {
             limit = {
                 left: left - crossBox.x,
-                right: left + this.width - crossBox.x
+                right: left + axis.width - crossBox.x
             };
         } else {
             limit = {
-                left: this.labelAlign === 'left' ? left : 0,
-                right: this.labelAlign === 'right' ?
-                    left + this.width :
+                left: axis.labelAlign === 'left' ? left : 0,
+                right: axis.labelAlign === 'right' ?
+                    left + axis.width :
                     chart.chartWidth
             };
         }
@@ -606,9 +611,9 @@ namespace StockChart {
             // calculated, #5702
             anchorX: horiz ?
                 posx :
-                (this.opposite ? 0 : chart.chartWidth),
+                (axis.opposite ? 0 : chart.chartWidth),
             anchorY: horiz ?
-                (this.opposite ? chart.chartHeight : 0) :
+                (axis.opposite ? chart.chartHeight : 0) :
                 posy + crossBox.height / 2
         });
     }
@@ -620,8 +625,10 @@ namespace StockChart {
     function onAxisAfterHideCrosshair(
         this: Axis
     ): void {
-        if (this.crossLabel) {
-            this.crossLabel = this.crossLabel.hide();
+        const axis = this;
+
+        if (axis.crossLabel) {
+            axis.crossLabel = axis.crossLabel.hide();
         }
     }
 
@@ -632,27 +639,29 @@ namespace StockChart {
      */
     function onAxisAutoLabelAlign(
         this: Axis,
-        e: Event
+        e: (Event&{align:string})
     ): void {
-        const { chart, options } = this,
+        const axis = this,
+            chart = axis.chart,
+            options = axis.options,
             panes = chart._labelPanes = chart._labelPanes || {},
             labelOptions = options.labels;
 
-        if (chart.options.isStock && this.coll === 'yAxis') {
+        if (chart.options.isStock && axis.coll === 'yAxis') {
             const key = options.top + ',' + options.height;
             // Do it only for the first Y axis of each pane
             if (!panes[key] && labelOptions.enabled) {
                 if (
                     labelOptions.distance === 15 && // default
-                    this.side === 1
+                    axis.side === 1
                 ) {
                     labelOptions.distance = 0;
                 }
                 if (typeof labelOptions.align === 'undefined') {
                     labelOptions.align = 'right';
                 }
-                panes[key] = this;
-                (e as any).align = 'right';
+                panes[key] = axis;
+                e.align = 'right';
 
                 e.preventDefault();
             }
@@ -666,13 +675,14 @@ namespace StockChart {
     function onAxisDestroy(
         this: Axis
     ): void {
-        const chart = this.chart,
+        const axis = this,
+            chart = axis.chart,
             key = (
-                this.options &&
-                (this.options.top + ',' + this.options.height)
+                axis.options &&
+                (axis.options.top + ',' + axis.options.height)
             );
 
-        if (key && chart._labelPanes && chart._labelPanes[key] === this) {
+        if (key && chart._labelPanes && chart._labelPanes[key] === axis) {
             delete chart._labelPanes[key];
         }
     }
@@ -685,57 +695,55 @@ namespace StockChart {
         this: Axis,
         e: (Event&Axis.PlotLinePathOptions)
     ): void {
-        let axis = this,
+        const axis = this,
             series = (
-                this.isLinked && !this.series ?
-                    (this.linkedParent as any).series :
-                    this.series
+                axis.isLinked && !axis.series && axis.linkedParent ?
+                    axis.linkedParent.series :
+                    axis.series
             ),
             chart = axis.chart,
             renderer = chart.renderer,
             axisLeft = axis.left,
             axisTop = axis.top,
-            x1,
-            y1,
-            x2,
-            y2,
             result = [] as SVGPath,
-            axes = [], // #3416 need a default array
-            axes2: Array<Axis>,
-            uniqueAxes: Array<Axis>,
             translatedValue = e.translatedValue,
             value = e.value,
             force = e.force,
+            /**
+             * Return the other axis based on either the axis option or on
+             * related series.
+             * @private
+             */
+            getAxis = (coll: string): Array<Axis> => {
+                const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+                    opt = (axis.options as AnyRecord)[otherColl];
+
+                // Other axis indexed by number
+                if (isNumber(opt)) {
+                    return [chart[otherColl][opt]];
+                }
+
+                // Other axis indexed by id (like navigator)
+                if (isString(opt)) {
+                    return [chart.get(opt) as Axis];
+                }
+
+                // Auto detect based on existing series
+                return series.map((s): Axis => s[otherColl]);
+            };
+
+        let x1,
+            y1,
+            x2,
+            y2,
+            axes = [], // #3416 need a default array
+            axes2: Array<Axis>,
+            uniqueAxes: Array<Axis>,
             transVal: number;
-
-        /**
-         * Return the other axis based on either the axis option or on related
-         * series.
-         * @private
-         */
-        function getAxis(coll: string): Array<Axis> {
-            const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
-                opt = (axis.options as any)[otherColl];
-
-            // Other axis indexed by number
-            if (isNumber(opt)) {
-                return [(chart as any)[otherColl][opt]];
-            }
-
-            // Other axis indexed by id (like navigator)
-            if (isString(opt)) {
-                return [chart.get(opt) as Axis];
-            }
-
-            // Auto detect based on existing series
-            return series.map(function (s: Series): Axis {
-                return (s as any)[otherColl];
-            });
-        }
 
         if (// For stock chart, by default render paths across the panes
             // except the case when `acrossPanes` is disabled by user (#6644)
-            (chart.options.isStock && (e as any).acrossPanes !== false) &&
+            (chart.options.isStock && e.acrossPanes !== false) &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
             axis.coll === 'xAxis' || axis.coll === 'yAxis'
         ) {
@@ -747,7 +755,7 @@ namespace StockChart {
 
             // Get the related axes based options.*Axis setting #2810
             axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-            axes2.forEach(function (A): void {
+            for (const A of axes2) {
                 if (
                     defined(A.options.id) ?
                         A.options.id.indexOf('navigator') === -1 :
@@ -764,7 +772,7 @@ namespace StockChart {
                         axes.push(A);
                     }
                 }
-            });
+            }
 
 
             // Remove duplicates in the axes array. If there are no axes in the
@@ -773,32 +781,30 @@ namespace StockChart {
             uniqueAxes = axes.length ?
                 [] :
                 [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-            axes.forEach(function (axis2): void {
+            for (const axis2 of axes) {
                 if (
                     uniqueAxes.indexOf(axis2) === -1 &&
                     // Do not draw on axis which overlap completely. #5424
-                    !find(uniqueAxes, function (unique: Axis): boolean {
-                        return (
-                            unique.pos === axis2.pos &&
-                            unique.len === axis2.len
-                        );
-                    })
+                    !find(uniqueAxes, (unique: Axis): boolean => (
+                        unique.pos === axis2.pos &&
+                        unique.len === axis2.len
+                    ))
                 ) {
                     uniqueAxes.push(axis2);
                 }
-            });
+            }
 
             transVal = pick(
                 translatedValue,
-                axis.translate(value as any, void 0, void 0, (e as any).old)
+                axis.translate(value || 0, void 0, void 0, e.old)
             );
             if (isNumber(transVal)) {
                 if (axis.horiz) {
-                    uniqueAxes.forEach(function (axis2): void {
+                    for (const axis2 of uniqueAxes) {
                         let skip;
 
                         y1 = axis2.pos;
-                        y2 = (y1 as any) + axis2.len;
+                        y2 = y1 + axis2.len;
                         x1 = x2 = Math.round(transVal + axis.transB);
 
                         // outside plot area
@@ -819,13 +825,13 @@ namespace StockChart {
                         if (!skip) {
                             result.push(['M', x1, y1], ['L', x2, y2]);
                         }
-                    });
+                    }
                 } else {
-                    uniqueAxes.forEach(function (axis2): void {
+                    for (const axis2 of uniqueAxes) {
                         let skip;
 
                         x1 = axis2.pos;
-                        x2 = (x1 as any) + axis2.len;
+                        x2 = x1 + axis2.len;
                         y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
                         // outside plot area
@@ -846,13 +852,13 @@ namespace StockChart {
                         if (!skip) {
                             result.push(['M', x1, y1], ['L', x2, y2]);
                         }
-                    });
+                    }
                 }
             }
-            (e as any).path = result.length > 0 ?
-                renderer.crispPolyLine(result as any, e.lineWidth || 1) :
+            e.path = result.length > 0 ?
+                renderer.crispPolyLine(result, e.lineWidth || 1) :
                 // #3557 getPlotLinePath in regular Highcharts also returns null
-                null;
+                void 0;
         }
     }
 
@@ -865,16 +871,18 @@ namespace StockChart {
         this: Series,
         e: { plotOptions: SeriesTypePlotOptions }
     ): void {
-        let overrides;
+        const series = this;
 
-        if (this.chart.options.isStock) {
-            if (this.is('column') || this.is('columnrange')) {
+        if (series.chart.options.isStock) {
+            let overrides: (SeriesTypeOptions|undefined);
+
+            if (series.is('column') || series.is('columnrange')) {
                 overrides = {
                     borderWidth: 0,
                     shadow: false
                 };
 
-            } else if (!this.is('scatter') && !this.is('sma')) {
+            } else if (!series.is('scatter') && !series.is('sma')) {
                 overrides = {
                     marker: {
                         enabled: false,
@@ -882,9 +890,10 @@ namespace StockChart {
                     }
                 };
             }
+
             if (overrides) {
-                e.plotOptions[this.type] = merge(
-                    e.plotOptions[this.type],
+                e.plotOptions[series.type] = merge(
+                    e.plotOptions[series.type],
                     overrides
                 );
             }
@@ -901,17 +910,20 @@ namespace StockChart {
     function seriesForceCropping(
         this: Series
     ): (boolean|undefined) {
-        const chart = this.chart,
-            options = this.options,
+        const series = this,
+            chart = series.chart,
+            options = series.options,
             dataGroupingOptions = options.dataGrouping,
             groupingEnabled = (
-                this.allowDG !== false &&
+                series.allowDG !== false &&
                 dataGroupingOptions &&
                 pick(dataGroupingOptions.enabled, chart.options.isStock)
             );
 
         return groupingEnabled;
     }
+
+    /* eslint-disable jsdoc/check-param-names */
 
     /**
      * Factory function for creating new stock charts. Creates a new
@@ -953,6 +965,8 @@ namespace StockChart {
         return new StockChart(a as any, b as any, c);
     }
 
+    /* eslint-enable jsdoc/check-param-names */
+
     /**
      * Function to crisp a line with multiple segments
      *
@@ -964,6 +978,7 @@ namespace StockChart {
         points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
         width: number
     ): SVGPath {
+
         // points format: [['M', 0, 0], ['L', 100, 0]]
         // normalize to a crisp line
         for (let i = 0; i < points.length; i = i + 2) {
@@ -981,6 +996,7 @@ namespace StockChart {
                     Math.round(start[2]) + (width % 2 / 2);
             }
         }
+
         return points;
     }
 
