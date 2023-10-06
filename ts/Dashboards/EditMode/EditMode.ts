@@ -83,6 +83,9 @@ class EditMode {
                 resize: {
                     enabled: true
                 },
+                settings: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
@@ -108,8 +111,7 @@ class EditMode {
                     },
                     row: {
                         enabled: true
-                    },
-                    settingsButtonEnabled: true
+                    }
                 }
             },
             options || {});
@@ -1051,6 +1053,10 @@ namespace EditMode {
          */
         resize?: Resizer.Options;
         /**
+         * Settings options.
+         */
+        settings?: SettingsOptions;
+        /**
          * Toolbar options.
          *
          * Try it:
@@ -1062,6 +1068,13 @@ namespace EditMode {
          * @internal
          */
         tools?: Tools;
+    }
+
+    /**
+     * Settings options
+     */
+    export interface SettingsOptions {
+        enabled?: boolean;
     }
 
     /**
@@ -1080,10 +1093,6 @@ namespace EditMode {
         * Options of the sidebar.
         */
         sidebar?: SidebarPopup.Options;
-        /**
-         * Whether the settings buttons should be enabled.
-         */
-        settingsButtonEnabled?: boolean;
     }
 
     /**

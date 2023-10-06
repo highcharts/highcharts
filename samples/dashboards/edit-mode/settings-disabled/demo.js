@@ -1,8 +1,8 @@
 Dashboards.board('container', {
     editMode: {
         enabled: true,
-        toolbars: {
-            settingsButtonEnabled: false
+        settings: {
+            enabled: false
         },
         contextMenu: {
             enabled: true

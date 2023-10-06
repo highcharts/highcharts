@@ -76,7 +76,7 @@ class CellEditToolbar extends EditToolbar {
             });
         }
 
-        if (options.toolbars?.settingsButtonEnabled) {
+        if (options.settings?.enabled) {
             items.push({
                 id: 'settings',
                 type: 'icon',
