@@ -90,13 +90,6 @@ jobs:
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
-      # TODO: is this covered by gulp test? it was separate in Circle
-      # - name: Verify samples
-      #   run: |
-      #     npx karma start test/karma-conf.js --single-run \
-      #     --splitbrowsers ChromeHeadless \
-      #     --tests "highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
-
   # ### HEADLESS MACOS ###
   # test_macos:
   #   name: Test with MacOS
