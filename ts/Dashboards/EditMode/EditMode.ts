@@ -1074,6 +1074,11 @@ namespace EditMode {
      * Settings options
      */
     export interface SettingsOptions {
+        /**
+         * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
         enabled?: boolean;
     }
 
