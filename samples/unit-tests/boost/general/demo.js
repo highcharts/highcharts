@@ -169,6 +169,29 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             2,
             'Null points should not be added to the series\' kd-tree (#19341)'
         );
+
+        chart.update({
+            xAxis: {
+                min: 0,
+                max: 10
+            },
+
+            yAxis: {
+                min: 0,
+                max: 10
+            }
+        });
+
+        chart.addSeries({
+            data: [1, 2, 3, 4, null, 6, 7],
+            boostThreshold: 5
+        });
+
+        assert.ok(
+            true,
+            `There shouldn't be any error in the console, after chart render
+            (#17014).`
+        );
     }
 );
 

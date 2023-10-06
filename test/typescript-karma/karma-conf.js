@@ -32,16 +32,7 @@ function getProperties() {
                 }
             });
         }
-
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
-        throw new Error(
-            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
-        );
-    }
+    } catch (e) {}
     return properties;
 }
 

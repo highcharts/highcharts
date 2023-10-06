@@ -913,8 +913,9 @@ namespace OrdinalAxis {
                 extremes = axis.getExtremes(),
                 min = extremes.min,
                 max = extremes.max,
-                hasBreaks = axis.isXAxis && !!axis.options.breaks,
+                hasBreaks = axis.brokenAxis?.hasBreaks,
                 isOrdinal = axis.options.ordinal;
+
             let len,
                 uniqueOrdinalPositions,
                 dist,
@@ -957,8 +958,7 @@ namespace OrdinalAxis {
                         series.reserveSpace &&
                         (
                             (series as ScatterSeries)
-                                .takeOrdinalPosition !== false ||
-                            hasBreaks
+                                .takeOrdinalPosition !== false || hasBreaks
                         )
                     ) {
 
@@ -1117,9 +1117,13 @@ namespace OrdinalAxis {
                     ), 1); // #3339
 
                     // Set the slope and offset of the values compared to the
-                    // indices in the ordinal positions
-                    ordinal.slope = slope = (max - min) / (maxIndex - minIndex);
-                    ordinal.offset = min - (minIndex * slope);
+                    // indices in the ordinal positions. Do not calculate slope
+                    // and offset for brokenAxis, as it messes up column metrics
+                    if (!hasBreaks) {
+                        ordinal.slope = slope =
+                            (max - min) / (maxIndex - minIndex);
+                        ordinal.offset = min - (minIndex * slope);
+                    }
 
                 } else {
                     ordinal.overscrollPointsRange = pick(

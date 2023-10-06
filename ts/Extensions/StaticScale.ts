@@ -16,16 +16,17 @@
  *
  * */
 
+import type Axis from '../Core/Axis/Axis';
+import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -49,26 +50,44 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-/* eslint-disable no-invalid-this */
-
-/**
- * For vertical axes only. Setting the static scale ensures that each tick unit
- * is translated into a fixed pixel height. For example, setting the static
- * scale to 24 results in each Y axis category taking up 24 pixels, and the
- * height of the chart adjusts. Adding or removing items will make the chart
- * resize.
+/* *
  *
- * @sample gantt/xrange-series/demo/
- *         X-range series with static scale
+ *  Constants
  *
- * @type      {number}
- * @default   50
- * @since     6.2.0
- * @product   gantt
- * @apioption yAxis.staticScale
- */
+ * */
 
-addEvent(Axis, 'afterSetOptions', function (): void {
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+/** @private */
+function compose(
+    AxisClass: typeof Axis,
+    ChartClass: typeof Chart
+): void {
+
+    if (pushUnique(composedMembers, AxisClass)) {
+        addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
+    }
+
+    if (pushUnique(composedMembers, ChartClass)) {
+        const chartProto = ChartClass.prototype;
+
+        chartProto.adjustHeight = chartAdjustHeight;
+
+        addEvent(ChartClass, 'render', chartProto.adjustHeight);
+    }
+
+}
+
+/** @private */
+function onAxisAfterSetOptions(
+    this: Axis
+): void {
     const chartOptions = this.chart.options.chart;
     if (
         !this.horiz &&
@@ -83,21 +102,24 @@ addEvent(Axis, 'afterSetOptions', function (): void {
     ) {
         this.staticScale = this.options.staticScale;
     }
-});
+}
 
-Chart.prototype.adjustHeight = function (): void {
-    if (this.redrawTrigger !== 'adjustHeight') {
-        (this.axes || []).forEach(function (axis): void {
-            let chart = axis.chart,
+/** @private */
+function chartAdjustHeight(
+    this: Chart
+): void {
+    const chart = this;
+
+    if (chart.redrawTrigger !== 'adjustHeight') {
+        for (const axis of (chart.axes || [])) {
+            const chart = axis.chart,
                 animate =
                     !!chart.initiatedScale &&
                     (chart.options as any).animation,
-                staticScale = axis.options.staticScale,
-                height,
-                diff;
+                staticScale = axis.options.staticScale;
 
             if (axis.staticScale && defined(axis.min)) {
-                height = pick(
+                let height = pick(
                     axis.brokenAxis && axis.brokenAxis.unitLength,
                     (axis.max as any) + axis.tickInterval - axis.min
                 ) * (staticScale as any);
@@ -106,7 +128,7 @@ Chart.prototype.adjustHeight = function (): void {
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale as any);
 
-                diff = height - chart.plotHeight;
+                let diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
@@ -129,10 +151,45 @@ Chart.prototype.adjustHeight = function (): void {
                     }
                 });
             }
-
-        });
+        }
         this.initiatedScale = true;
     }
     this.redrawTrigger = null as any;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const StaticScale = {
+    compose
 };
-addEvent(Chart, 'render', Chart.prototype.adjustHeight);
+
+export default StaticScale;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * For vertical axes only. Setting the static scale ensures that each tick unit
+ * is translated into a fixed pixel height. For example, setting the static
+ * scale to 24 results in each Y axis category taking up 24 pixels, and the
+ * height of the chart adjusts. Adding or removing items will make the chart
+ * resize.
+ *
+ * @sample gantt/xrange-series/demo/
+ *         X-range series with static scale
+ *
+ * @type      {number}
+ * @default   50
+ * @since     6.2.0
+ * @product   gantt
+ * @apioption yAxis.staticScale
+ */
+
+''; // keeps doclets above in JS file

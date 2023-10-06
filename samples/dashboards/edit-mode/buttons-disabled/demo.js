@@ -1,9 +1,19 @@
 Dashboards.board('container', {
     editMode: {
         enabled: true,
+        tools: {
+            addComponentBtn: {
+                enabled: false
+            },
+            rwdButtons: {
+                enabled: false
+            }
+        },
+        resize: {
+            enabled: false
+        },
         contextMenu: {
-            enabled: true,
-            width: 400
+            enabled: true
         }
     },
     gui: {
