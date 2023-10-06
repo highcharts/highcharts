@@ -2513,12 +2513,13 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
-        const axis = this;
+        const axis = this,
+            { coll, stacking } = axis;
 
         let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
-        axis.series.forEach(function (series): void {
+        axis.series.forEach((series): void => {
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
 
             // When x axis is dirty, we need new data extremes for y as
@@ -2530,11 +2531,11 @@ class Axis {
             );
         });
 
-        // set the new axisLength
+        // Set the new axisLength
         axis.setAxisSize();
         const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
 
-        // do we really need to go through all this?
+        // Do we really need to go through all this?
         if (
             isDirtyAxisLength ||
             isDirtyData ||
@@ -2546,9 +2547,8 @@ class Axis {
             axis.alignToOthers()
         ) {
 
-            if (axis.stacking) {
-                axis.stacking.resetStacks();
-                axis.stacking.buildStacks();
+            if (stacking && coll === 'yAxis') {
+                stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -2559,11 +2559,15 @@ class Axis {
                 axis.minRange = void 0;
             }
 
-            // get data extremes if needed
+            // Get data extremes if needed
             axis.getSeriesExtremes();
 
-            // get fixed positions based on tickInterval
+            // Get fixed positions based on tickInterval
             axis.setTickInterval();
+
+            if (stacking && coll === 'xAxis') {
+                stacking.buildStacks();
+            }
 
             // Mark as dirty if it is not already set to dirty and extremes have
             // changed. #595.
@@ -2573,8 +2577,8 @@ class Axis {
                     axis.min !== (axis.old && axis.old.min) ||
                     axis.max !== (axis.old && axis.old.max);
             }
-        } else if (axis.stacking) {
-            axis.stacking.cleanStacks();
+        } else if (stacking) {
+            stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data
