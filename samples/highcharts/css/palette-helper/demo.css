@@ -3,11 +3,40 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+#demo-content {
+    box-shadow: none;
+    background: none;
+}
+
 pre {
     border: 1px solid silver;
     border-radius: 0.25rem;
     color: green;
     padding: 1rem;
+    max-height: 30em;
+    overflow: auto;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    width: 3em;
+    height: 3em;
+    border: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 50%;
+    border: 1px solid #000;
+}
+
+input[type="color"]::-moz-color-swatch {
+    border-radius: 50%;
+    border: 1px solid #000;
 }
 
 #neutral-preview,
