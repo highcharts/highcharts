@@ -1,9 +1,44 @@
+/* global buriedDefaults */
 const { Color } = Highcharts;
 
 const rgbToHex = rgb => {
     const [r, g, b] = Color.parse(rgb).rgba;
     return '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 };
+
+const chartPreview = theme => {
+    Highcharts.setOptions(theme);
+
+    Highcharts.chart('container', {
+        chart: {
+            type: 'area',
+            zooming: {
+                type: 'x'
+            }
+        },
+        title: {
+            text: 'Chart preview'
+        },
+        series: [{
+            data: [1, 3, 2, 4]
+        }, {
+            data: [4, 2, 3, 1]
+        }]
+    });
+};
+
+const buildDefaults = () => {
+    buriedDefaults.yAxis = Highcharts.merge(
+        buriedDefaults.xAxis,
+        buriedDefaults.yAxis
+    );
+    return Highcharts.merge(
+        Highcharts.defaultOptions,
+        buriedDefaults
+    );
+};
+
+const defaultOptions = buildDefaults();
 
 const generate = () => {
 
@@ -117,7 +152,7 @@ const generate = () => {
                     // findColors(value, itemPath);
                 } else if (
                     typeof value === 'string' &&
-                    /#[1-9a-f]{6}/.test(value)
+                    /#[0-9a-f]{6}/.test(value)
                 ) {
                     const paletteKey = colorMap[value];
                     if (!paletteKey) {
@@ -133,9 +168,11 @@ const generate = () => {
         }
         return Object.keys(theme).length ? theme : undefined;
     };
-    const theme = findColors(Highcharts.defaultOptions);
+    const theme = findColors(defaultOptions);
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
+
+    chartPreview(theme);
 };
 
 [...document.querySelectorAll('input')]

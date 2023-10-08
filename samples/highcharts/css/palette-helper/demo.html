@@ -1,7 +1,17 @@
+<script>
+const buriedDefaults = {};
+window.addEventListener('HighchartsModuleLoaded', function(e) {
+    if (e.detail.path === 'Core/Axis/AxisDefaults.js') {
+        buriedDefaults.xAxis = e.detail.module.defaultXAxisOptions;
+        buriedDefaults.yAxis = e.detail.module.defaultYAxisOptions;
+    }
+});
+</script>
+
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<!--script src="https://code.highcharts.com/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/map.js"></script>
 <script src="https://code.highcharts.com/modules/stock.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script-->
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
 
 <div class="demo-content">
     <h1>Highcharts Palette Helper</h1>
@@ -42,4 +52,6 @@
         <div id="neutral-preview"></div>
         <div id="highlight-preview"></div>
     </div>
+
+    <div id="container"></div>
 </div>
