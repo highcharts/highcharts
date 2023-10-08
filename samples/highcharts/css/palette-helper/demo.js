@@ -1,28 +1,125 @@
 /* global buriedDefaults */
 const { Color } = Highcharts;
 
+let topology;
+
 const rgbToHex = rgb => {
     const [r, g, b] = Color.parse(rgb).rgba;
     return '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 };
 
-const chartPreview = theme => {
+const chartPreview = async theme => {
     Highcharts.setOptions(theme);
 
-    Highcharts.chart('container', {
-        chart: {
-            type: 'area',
-            zooming: {
-                type: 'x'
-            }
-        },
+    Highcharts.chart('container-chart', {
+
         title: {
             text: 'Chart preview'
         },
+
+        xAxis: {
+            width: '40%',
+            type: 'category'
+        },
+
+        yAxis: {
+            width: '40%',
+            title: {
+                text: 'kg'
+            }
+        },
+
         series: [{
-            data: [1, 3, 2, 4]
+            type: 'pie',
+            allowPointSelect: true,
+            keys: ['name', 'y', 'selected', 'sliced'],
+            data: [
+                ['Apples', 29.9, false],
+                ['Pears', 71.5, false],
+                ['Oranges', 106.4, false],
+                ['Plums', 129.2, false],
+                ['Bananas', 144.0, false],
+                ['Peaches', 176.0, false],
+                ['Prunes', 135.6, true, true],
+                ['Avocados', 148.5, false]
+            ],
+            showInLegend: true,
+            center: ['75%', '50%']
         }, {
-            data: [4, 2, 3, 1]
+            type: 'column',
+            keys: ['name', 'y'],
+            data: [
+                ['Apples', 29.9, false],
+                ['Pears', 71.5, false],
+                ['Oranges', 106.4, false],
+                ['Plums', 129.2, false],
+                ['Bananas', 144.0, false],
+                ['Peaches', 176.0, false],
+                ['Prunes', 135.6, true, true],
+                ['Avocados', 148.5, false]
+            ],
+            colorByPoint: true,
+            showInLegend: false
+        }]
+    });
+
+    // Map preview
+    if (!topology) {
+        topology = await fetch(
+            'https://code.highcharts.com/mapdata/custom/africa.topo.json'
+        ).then(response => response.json());
+    }
+
+    const data = [
+        ['ug', 10], ['ng', 11], ['st', 12], ['tz', 13], ['sl', 14], ['gw', 15],
+        ['cv', 16], ['sc', 17], ['tn', 18], ['mg', 19], ['ke', 20], ['cd', 21],
+        ['fr', 22], ['mr', 23], ['dz', 24], ['er', 25], ['gq', 26], ['mu', 27],
+        ['sn', 28], ['km', 29], ['et', 30], ['ci', 31], ['gh', 32], ['zm', 33],
+        ['na', 34], ['rw', 35], ['sx', 36], ['so', 37], ['cm', 38], ['cg', 39],
+        ['eh', 40], ['bj', 41], ['bf', 42], ['tg', 43], ['ne', 44], ['ly', 45],
+        ['lr', 46], ['mw', 47], ['gm', 48], ['td', 49], ['ga', 50], ['dj', 51],
+        ['bi', 52], ['ao', 53], ['gn', 54], ['zw', 55], ['za', 56], ['mz', 57],
+        ['sz', 58], ['ml', 59], ['bw', 60], ['sd', 61], ['ma', 62], ['eg', 63],
+        ['ls', 64], ['ss', 65], ['cf', 66]
+    ];
+
+    // Create the chart
+    Highcharts.mapChart('container-map', {
+        chart: {
+            map: topology
+        },
+
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
+
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/africa.topo.json">Africa</a>'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
         }]
     });
 };
@@ -40,7 +137,7 @@ const buildDefaults = () => {
 
 const defaultOptions = buildDefaults();
 
-const generate = () => {
+const generate = async () => {
 
     const palette = {};
 
@@ -172,9 +269,11 @@ const generate = () => {
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
 
-    chartPreview(theme);
+    await chartPreview(theme);
 };
 
-[...document.querySelectorAll('input')]
-    .forEach(input => input.addEventListener('change', generate));
-generate();
+(async () => {
+    [...document.querySelectorAll('input')]
+        .forEach(input => input.addEventListener('change', generate));
+    await generate();
+})();

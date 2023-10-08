@@ -57,3 +57,8 @@ input[type="color"]::-moz-color-swatch {
     border: 1px solid transparent;
     transition: background-color 250ms;
 }
+
+#container-map {
+    width: 400px;
+    margin: 0 auto;
+}
