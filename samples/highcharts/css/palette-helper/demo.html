@@ -5,6 +5,9 @@ window.addEventListener('HighchartsModuleLoaded', function(e) {
         buriedDefaults.xAxis = e.detail.module.defaultXAxisOptions;
         buriedDefaults.yAxis = e.detail.module.defaultYAxisOptions;
     }
+    if (e.detail.path === 'Core/Axis/Color/ColorAxis.js') {
+        buriedDefaults.colorAxis = e.detail.module.defaultColorAxisOptions;
+    }
 });
 </script>
 
@@ -55,4 +58,5 @@ window.addEventListener('HighchartsModuleLoaded', function(e) {
 
     <div id="container-chart"></div>
     <div id="container-map"></div>
+    <div id="container-stock"></div>
 </div>

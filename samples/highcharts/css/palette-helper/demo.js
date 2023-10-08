@@ -1,7 +1,7 @@
 /* global buriedDefaults */
 const { Color } = Highcharts;
 
-let topology;
+let topology, ohlc;
 
 const rgbToHex = rgb => {
     const [r, g, b] = Color.parse(rgb).rgba;
@@ -12,6 +12,15 @@ const chartPreview = async theme => {
     Highcharts.setOptions(theme);
 
     Highcharts.chart('container-chart', {
+
+        chart: {
+            zooming: {
+                type: 'x',
+                mouseWheel: {
+                    type: ''
+                }
+            }
+        },
 
         title: {
             text: 'Chart preview'
@@ -90,7 +99,7 @@ const chartPreview = async theme => {
         },
 
         title: {
-            text: 'Highcharts Maps basic demo'
+            text: 'Map preview'
         },
 
         subtitle: {
@@ -122,9 +131,46 @@ const chartPreview = async theme => {
             }
         }]
     });
+
+    // Stock preview
+    if (!ohlc) {
+        ohlc = await fetch(
+            'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+        ).then(response => response.json());
+    }
+    Highcharts.stockChart('container-stock', {
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Stock chart preview'
+        },
+
+        series: [{
+            type: 'candlestick',
+            name: 'AAPL Stock Price',
+            data: ohlc,
+            dataGrouping: {
+                units: [
+                    [
+                        'week', // unit name
+                        [1] // allowed multiples
+                    ], [
+                        'month',
+                        [1, 2, 3, 4, 6]
+                    ]
+                ]
+            }
+        }]
+    });
 };
 
 const buildDefaults = () => {
+    buriedDefaults.colorAxis = Highcharts.merge(
+        buriedDefaults.xAxis,
+        buriedDefaults.colorAxis
+    );
     buriedDefaults.yAxis = Highcharts.merge(
         buriedDefaults.xAxis,
         buriedDefaults.yAxis
