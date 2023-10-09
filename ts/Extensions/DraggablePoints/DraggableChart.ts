@@ -35,7 +35,7 @@ import type Series from '../../Core/Series/Series';
 import type {
     PointDropEventObject,
     SeriesDragDropPropsObject
-} from '../DraggablePoints';
+} from './DraggablePoints';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -125,10 +125,6 @@ export interface DragDropPositionObject {
     prevdY?: number;
 }
 
-interface DraggableChart extends Chart {
-
-}
-
 interface DragHandlesObject {
     group: SVGElement;
     point: string;
@@ -157,7 +153,7 @@ const composedMembers: Array<unknown> = [];
  *        The chart to add events to.
  */
 function addDragDropEvents(
-    chart: DraggableChart
+    chart: Chart
 ): void {
     const container = chart.container;
 
@@ -207,6 +203,90 @@ function addDragDropEvents(
 }
 
 /**
+ * Remove the chart's drag handles if they exist.
+ *
+ * @private
+ * @function Highcharts.Chart#hideDragHandles
+ */
+function chartHideDragHandles(
+    this: Chart
+): void {
+    const chart = this;
+
+    if (chart.dragHandles) {
+        objectEach(chart.dragHandles, function (val, key): void {
+            if (key !== 'group' && (val as SVGElement).destroy) {
+                (val as SVGElement).destroy();
+            }
+        });
+        if (chart.dragHandles.group && chart.dragHandles.group.destroy) {
+            chart.dragHandles.group.destroy();
+        }
+        delete chart.dragHandles;
+    }
+}
+
+/**
+ * Set the state of the guide box.
+ *
+ * @private
+ * @function Highcharts.Chart#setGuideBoxState
+ * @param {string} state
+ *        The state to set the guide box to.
+ * @param {Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>} [options]
+ *        Additional overall guideBox options to consider.
+ * @return {Highcharts.SVGElement}
+ *         The modified guide box.
+ */
+function chartSetGuideBoxState(
+    this: Chart,
+    state: string,
+    options?: Record<string, DragDropGuideBoxOptions>
+): SVGElement {
+    const guideBox = this.dragGuideBox,
+        guideBoxOptions = merge(DragDropDefaults.guideBox, options),
+        stateOptions = merge(
+            guideBoxOptions['default'], // eslint-disable-line dot-notation
+            guideBoxOptions[state]
+        );
+
+    return (guideBox as any)
+        .attr({
+            'class': stateOptions.className,
+            stroke: stateOptions.lineColor,
+            strokeWidth: stateOptions.lineWidth,
+            fill: stateOptions.color,
+            cursor: stateOptions.cursor,
+            zIndex: stateOptions.zIndex
+        })
+        // Use pointerEvents 'none' to avoid capturing the click event
+        .css({ pointerEvents: 'none' });
+}
+
+/**
+ * Check whether the zoomKey or panKey is pressed.
+ *
+ * @private
+ * @function zoomOrPanKeyPressed
+ * @param {global.Event} e
+ *        A mouse event.
+ * @return {boolean}
+ *         True if the zoom or pan keys are pressed. False otherwise.
+ */
+function chartZoomOrPanKeyPressed(
+    this: Chart,
+    e: Event
+): boolean {
+    // Check whether the panKey and zoomKey are set in chart.userOptions
+    const chart = this,
+        chartOptions = chart.options.chart || {},
+        panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
+        zoomKey = chart.zooming.key && chart.zooming.key + 'Key';
+
+    return ((e as any)[zoomKey as any] || (e as any)[panKey as any]);
+}
+
+/**
  * Composes the chart class with essential functions to support draggable
  * points.
  *
@@ -221,6 +301,12 @@ function compose(
 ): void {
 
     if (pushUnique(composedMembers, ChartClass)) {
+        const chartProto = ChartClass.prototype;
+
+        chartProto.hideDragHandles = chartHideDragHandles;
+        chartProto.setGuideBoxState = chartSetGuideBoxState;
+        chartProto.zoomOrPanKeyPressed = chartZoomOrPanKeyPressed;
+
         addEvent(ChartClass, 'render', onChartRender);
     }
 
@@ -533,7 +619,7 @@ function getPositionSnapshot(
  */
 function hasDraggedPastSensitivity(
     e: PointerEvent,
-    chart: DraggableChart,
+    chart: Chart,
     sensitivity: number
 ): boolean {
     const orig = (chart.dragDropData as any).origin,
@@ -605,7 +691,7 @@ function initDragDrop(
  */
 function isChartDraggable(
     chart: Chart
-): chart is DraggableChart {
+): boolean {
     let i = chart.series ? chart.series.length : 0;
 
     if (
@@ -905,7 +991,7 @@ function mouseUp(
  * @private
  */
 function onChartRender(
-    this: DraggableChart
+    this: Chart
 ): void {
     // If we don't have dragDrop events, see if we should add them
     if (!this.hasAddedDragDropEvents) {
