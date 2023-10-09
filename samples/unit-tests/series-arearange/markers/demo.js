@@ -14,6 +14,10 @@ QUnit.test('Markers for arearange.', function (assert) {
                 marker: {
                     enabled: true
                 },
+                lowMarker: {
+                    symbol: 'triangle',
+                    fillColor: '#ff0000'
+                },
                 data: [
                     [0, 10],
                     [10, 20],
@@ -45,6 +49,38 @@ QUnit.test('Markers for arearange.', function (assert) {
             'Top marker for point: x=' + point.x + ' exists.'
         );
     });
+
+
+    // Testing setState() #14024
+    chart.series[0].points[1].setState('hover');
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphics[0].attr('fill'),
+        '#ff0000',
+        'The lower marker should have a correct color on hover.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphics[0].symbol,
+        'triangle',
+        'The lower marker should have a correct symbol on hover.'
+    );
+
+    chart.series[0].points[1].setState('');
+
+    // #14024
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphics[0].attr('fill'),
+        '#ff0000',
+        'The lower marker should have a correct color without any state.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].graphics[1].symbol,
+        chart.series.symbol,
+        'The upper marker should have a correct symbol without any state.'
+    );
 
     // #6985
     chart.series[0].setData(randomData(400));
@@ -83,6 +119,10 @@ QUnit.test('Markers for arearange.', function (assert) {
             marker: {
                 enabled: undefined
             },
+            lowMarker: {
+                symbol: 'square',
+                fillColor: '#00ff00'
+            },
             boostThreshold: 1000
         }]
     });
@@ -113,6 +153,20 @@ QUnit.test('Markers for arearange.', function (assert) {
     assert.ok(
         xAxis.series[0].points[0].graphics[1].element,
         'Top point\'s graphic should exist when chart is zoomed, #18080.'
+    );
+
+    // #14024
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphics[0].symbol,
+        'square',
+        'After series.lowMarker.symbol update, the graphics[0] should have a correct symbol.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphics[0].fillColor,
+        '#00ff00',
+        'After series.lowMarker.fillColor update, the graphics[0] should have a correct color.'
     );
 
 });

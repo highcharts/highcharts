@@ -1828,7 +1828,9 @@ class SVGRenderer implements SVGRendererLike {
      * @private
      * @function Highcharts.SVGRenderer#pathToSegments
      */
-    public pathToSegments(path: Array<string|number>): SVGPath {
+    public pathToSegments(
+        path: (Array<string|number>|SVGPath)
+    ): SVGPath {
 
         const ret: SVGPath = [];
         const segment = [];

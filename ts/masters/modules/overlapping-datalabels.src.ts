@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/OverlappingDataLabels.js';
+import Highcharts from '../../Core/Globals.js';
+import OverlappingDataLabels from '../../Extensions/OverlappingDataLabels.js';
+const G: AnyRecord = Highcharts;
+OverlappingDataLabels.compose(G.Chart);
