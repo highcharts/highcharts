@@ -1,9 +1,10 @@
 /**
- * Config for the demo-site builder. Each key represents a page, i.e. 'Higcharts demos'.
- * Select which categories or tags to include with `tags` or `categories`.
- * `Filter` will further limit the selection to the specified tags (or categories)
- * `Path` specifies the relative path the page. In other words, what comes after `highcharts.com/demo`.
- * The key is also used for the page title
+ * Config for the demo-site builder. Each key represents a page, i.e.
+ * 'Highcharts demos'. Select which categories or tags to include with `tags` or
+ * `categories`. `Filter` will further limit the selection to the specified tags
+ * (or categories) `Path` specifies the relative path the page. In other words,
+ * what comes after `highcharts.com/demo`. The key is also used for the page
+ * title
  */
 module.exports = {
     Highcharts: {

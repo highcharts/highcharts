@@ -15,7 +15,12 @@ Dashboards.board('container', {
             tagName: 'div',
             children: [{
                 tagName: 'img',
-                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+                attributes: {
+                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+                }
+            }, {
+                tagName: 'p',
+                textContent: 'This is a paragraph between two images. Both are in the same cell.'
             }, {
                 tagName: 'img',
                 attributes: {

@@ -11,33 +11,29 @@
 
 'use strict';
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from '../Core/Axis/Axis';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
+import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
+import type { PathfinderAlgorithmFunction } from './PathfinderAlgorithms';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
-import H from '../Core/Globals.js';
+import PathfinderAlgorithms from './PathfinderAlgorithms.js';
+import PathfinderComposition from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    error,
-    extend,
-    merge,
     pick,
     splat
 } = U;
@@ -54,451 +50,26 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Options'{
-    interface Options {
-        connectors?: Highcharts.ConnectorsOptions;
-    }
-}
-
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-        getMarkerVector(
-            radians: number,
-            markerRadius: number,
-            anchor: PositionObject
-        ): PositionObject;
-        getPathfinderAnchorPoint(
-            markerOptions: Highcharts.ConnectorsMarkerOptions
-        ): PositionObject;
-        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-    }
-}
-
-declare module '../Core/Series/PointOptions' {
-    interface PointOptions {
-        connect?: (
-            Highcharts.PointConnectOptionsObject|
-            GanttDependencyOptions
-        );
-        connectors?: Highcharts.ConnectorsOptions;
-    }
-}
-
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         pathfinderRemoveRenderEvent?: Function;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        connectors?: Highcharts.ConnectorsOptions;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type PathfinderTypeValue = (
-            'straight'|
-            'fastAvoid'|
-            'simpleConnect'|
-            string
-        );
-        interface ConnectorsEndMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface ConnectorsOptions {
-            algorithmMargin?: number;
-            dashStyle?: DashStyleValue;
-            enabled?: boolean;
-            endMarker?: ConnectorsEndMarkerOptions;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            marker?: ConnectorsMarkerOptions;
-            radius?: number;
-            startMarker?: ConnectorsStartMarkerOptions;
-            type?: PathfinderTypeValue;
-        }
-        interface ConnectorsStartMarkerOptions {
-            align?: AlignValue;
-            color?: ColorType;
-            enabled?: boolean;
-            height?: number;
-            inside?: boolean;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            radius?: number;
-            symbol?: string;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-        }
-        interface PointConnectOptionsObject {
-            to?: string;
-        }
-        class Pathfinder {
-            public constructor(chart: Chart);
-            public algorithms: Record<string, PathfinderAlgorithmFunction>;
-            public chart: Chart;
-            public chartObstacles: Array<any>;
-            public chartObstacleMetrics: Record<string, number>;
-            public connections: Array<Connection>;
-            public group: SVGElement;
-            public lineObstacles: Array<any>;
-            public getAlgorithmStartDirection(
-                markerOptions: ConnectorsMarkerOptions
-            ): (boolean|undefined);
-            public getChartObstacles(
-                options: { algorithmMargin?: number }
-            ): Array<any>;
-            public getObstacleMetrics(
-                obstacles: Array<any>
-            ): Record<string, number>;
-            public init(chart: Chart): void;
-            public renderConnections(deferRender?: boolean): void;
-            public update(deferRender?: boolean): void;
-        }
-    }
-}
-
-/**
- * The default pathfinder algorithm to use for a chart. It is possible to define
- * your own algorithms by adding them to the
- * `Highcharts.Pathfinder.prototype.algorithms`
- * object before the chart has been created.
+/* *
  *
- * The default algorithms are as follows:
+ *  Constants
  *
- * `straight`:      Draws a straight line between the connecting
- *                  points. Does not avoid other points when drawing.
- *
- * `simpleConnect`: Finds a path between the points using right angles
- *                  only. Takes only starting/ending points into
- *                  account, and will not avoid other points.
- *
- * `fastAvoid`:     Finds a path between the points using right angles
- *                  only. Will attempt to avoid other points, but its
- *                  focus is performance over accuracy. Works well with
- *                  less dense datasets.
- *
- * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
- */
-
-''; // detach doclets above
-
-import pathfinderAlgorithms from './PathfinderAlgorithms.js';
+ * */
 
 const max = Math.max,
     min = Math.min;
 
-/*
- @todo:
-     - Document how to write your own algorithms
-     - Consider adding a Point.pathTo method that wraps creating a connection
-       and rendering it
-*/
-
-
-// Set default Pathfinder options
-extend(defaultOptions, {
-    /**
-     * The Pathfinder module allows you to define connections between any two
-     * points, represented as lines - optionally with markers for the start
-     * and/or end points. Multiple algorithms are available for calculating how
-     * the connecting lines are drawn.
-     *
-     * Connector functionality requires Highcharts Gantt to be loaded. In Gantt
-     * charts, the connectors are used to draw dependencies between tasks.
-     *
-     * @see [dependency](series.gantt.data.dependency)
-     *
-     * @sample gantt/pathfinder/demo
-     *         Pathfinder connections
-     *
-     * @declare      Highcharts.ConnectorsOptions
-     * @product      gantt
-     * @optionparent connectors
-     */
-    connectors: {
-
-        /**
-         * Enable connectors for this chart. Requires Highcharts Gantt.
-         *
-         * @type      {boolean}
-         * @default   true
-         * @since     6.2.0
-         * @apioption connectors.enabled
-         */
-
-        /**
-         * Set the default dash style for this chart's connecting lines.
-         *
-         * @type      {string}
-         * @default   solid
-         * @since     6.2.0
-         * @apioption connectors.dashStyle
-         */
-
-        /**
-         * Set the default color for this chart's Pathfinder connecting lines.
-         * Defaults to the color of the point being connected.
-         *
-         * @type      {Highcharts.ColorString}
-         * @since     6.2.0
-         * @apioption connectors.lineColor
-         */
-
-        /**
-         * Set the default pathfinder margin to use, in pixels. Some Pathfinder
-         * algorithms attempt to avoid obstacles, such as other points in the
-         * chart. These algorithms use this margin to determine how close lines
-         * can be to an obstacle. The default is to compute this automatically
-         * from the size of the obstacles in the chart.
-         *
-         * To draw connecting lines close to existing points, set this to a low
-         * number. For more space around existing points, set this number
-         * higher.
-         *
-         * @sample gantt/pathfinder/algorithm-margin
-         *         Small algorithmMargin
-         *
-         * @type      {number}
-         * @since     6.2.0
-         * @apioption connectors.algorithmMargin
-         */
-
-        /**
-         * Set the default pathfinder algorithm to use for this chart. It is
-         * possible to define your own algorithms by adding them to the
-         * Highcharts.Pathfinder.prototype.algorithms object before the chart
-         * has been created.
-         *
-         * The default algorithms are as follows:
-         *
-         * `straight`:      Draws a straight line between the connecting
-         *                  points. Does not avoid other points when drawing.
-         *
-         * `simpleConnect`: Finds a path between the points using right angles
-         *                  only. Takes only starting/ending points into
-         *                  account, and will not avoid other points.
-         *
-         * `fastAvoid`:     Finds a path between the points using right angles
-         *                  only. Will attempt to avoid other points, but its
-         *                  focus is performance over accuracy. Works well with
-         *                  less dense datasets.
-         *
-         * Default value: `straight` is used as default for most series types,
-         * while `simpleConnect` is used as default for Gantt series, to show
-         * dependencies between points.
-         *
-         * @sample gantt/pathfinder/demo
-         *         Different types used
-         *
-         * @type    {Highcharts.PathfinderTypeValue}
-         * @default undefined
-         * @since   6.2.0
-         */
-        type: 'straight',
-
-        /**
-         * The corner radius for the connector line
-         *
-         * @since next
-         */
-        radius: 0,
-
-        /**
-         * Set the default pixel width for this chart's Pathfinder connecting
-         * lines.
-         *
-         * @since 6.2.0
-         */
-        lineWidth: 1,
-
-        /**
-         * Marker options for this chart's Pathfinder connectors. Note that
-         * this option is overridden by the `startMarker` and `endMarker`
-         * options.
-         *
-         * @declare Highcharts.ConnectorsMarkerOptions
-         * @since   6.2.0
-         */
-        marker: {
-            /**
-             * Set the radius of the connector markers. The default is
-             * automatically computed based on the algorithmMargin setting.
-             *
-             * Setting marker.width and marker.height will override this
-             * setting.
-             *
-             * @type      {number}
-             * @since     6.2.0
-             * @apioption connectors.marker.radius
-             */
-
-            /**
-             * Set the width of the connector markers. If not supplied, this
-             * is inferred from the marker radius.
-             *
-             * @type      {number}
-             * @since     6.2.0
-             * @apioption connectors.marker.width
-             */
-
-            /**
-             * Set the height of the connector markers. If not supplied, this
-             * is inferred from the marker radius.
-             *
-             * @type      {number}
-             * @since     6.2.0
-             * @apioption connectors.marker.height
-             */
-
-            /**
-             * Set the color of the connector markers. By default this is the
-             * same as the connector color.
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     6.2.0
-             * @apioption connectors.marker.color
-             */
-
-            /**
-             * Set the line/border color of the connector markers. By default
-             * this is the same as the marker color.
-             *
-             * @type      {Highcharts.ColorString}
-             * @since     6.2.0
-             * @apioption connectors.marker.lineColor
-             */
-
-            /**
-             * Enable markers for the connectors.
-             */
-            enabled: false,
-
-            /**
-             * Horizontal alignment of the markers relative to the points.
-             *
-             * @type {Highcharts.AlignValue}
-             */
-            align: 'center',
-
-            /**
-             * Vertical alignment of the markers relative to the points.
-             *
-             * @type {Highcharts.VerticalAlignValue}
-             */
-            verticalAlign: 'middle',
-
-            /**
-             * Whether or not to draw the markers inside the points.
-             */
-            inside: false,
-
-            /**
-             * Set the line/border width of the pathfinder markers.
-             */
-            lineWidth: 1
-        },
-
-        /**
-         * Marker options specific to the start markers for this chart's
-         * Pathfinder connectors. Overrides the generic marker options.
-         *
-         * @declare Highcharts.ConnectorsStartMarkerOptions
-         * @extends connectors.marker
-         * @since   6.2.0
-         */
-        startMarker: {
-            /**
-             * Set the symbol of the connector start markers.
-             */
-            symbol: 'diamond'
-        },
-
-        /**
-         * Marker options specific to the end markers for this chart's
-         * Pathfinder connectors. Overrides the generic marker options.
-         *
-         * @declare Highcharts.ConnectorsEndMarkerOptions
-         * @extends connectors.marker
-         * @since   6.2.0
-         */
-        endMarker: {
-            /**
-             * Set the symbol of the connector end markers.
-             */
-            symbol: 'arrow-filled'
-        }
-    }
-});
-
-/**
- * Override Pathfinder connector options for a series. Requires Highcharts Gantt
- * to be loaded.
+/* *
  *
- * @declare   Highcharts.SeriesConnectorsOptionsObject
- * @extends   connectors
- * @since     6.2.0
- * @excluding enabled, algorithmMargin
- * @product   gantt
- * @apioption plotOptions.series.connectors
- */
-
-/**
- * Connect to a point. This option can be either a string, referring to the ID
- * of another point, or an object, or an array of either. If the option is an
- * array, each element defines a connection.
+ *  Functions
  *
- * @sample gantt/pathfinder/demo
- *         Different connection types
- *
- * @declare   Highcharts.XrangePointConnectorsOptionsObject
- * @type      {string|Array<string|*>|*}
- * @extends   plotOptions.series.connectors
- * @since     6.2.0
- * @excluding enabled
- * @product   gantt
- * @requires  highcharts-gantt
- * @apioption series.xrange.data.connect
- */
-
-/**
- * The ID of the point to connect to.
- *
- * @type      {string}
- * @since     6.2.0
- * @product   gantt
- * @apioption series.xrange.data.connect.to
- */
-
+ * */
 
 /**
  * Get point bounding box using plotX/plotY and shapeArgs. If using
@@ -514,8 +85,7 @@ extend(defaultOptions, {
  *         Result xMax, xMin, yMax, yMin.
  */
 function getPointBB(point: Point): (Record<string, number>|null) {
-    let shapeArgs = point.shapeArgs,
-        bb;
+    const shapeArgs = point.shapeArgs;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
@@ -528,7 +98,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     }
 
     // Otherwise use plotX/plotY and bb
-    bb = point.graphic && point.graphic.getBBox();
+    const bb = point.graphic && point.graphic.getBBox();
     return bb ? {
         xMin: (point.plotX as any) - bb.width / 2,
         xMax: (point.plotX as any) + bb.width / 2,
@@ -537,6 +107,40 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     } : null;
 }
 
+/**
+ * Compute smallest distance between two rectangles.
+ * @private
+ */
+function calculateObstacleDistance(
+    a: Record<string, number>,
+    b: Record<string, number>,
+    bbMargin?: number
+): number {
+    // Count the distance even if we are slightly off
+    const margin = pick(bbMargin, 10),
+        yOverlap = a.yMax + margin > b.yMin - margin &&
+                    a.yMin - margin < b.yMax + margin,
+        xOverlap = a.xMax + margin > b.xMin - margin &&
+                    a.xMin - margin < b.xMax + margin,
+        xDistance = yOverlap ? (
+            a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
+        ) : Infinity,
+        yDistance = xOverlap ? (
+            a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
+        ) : Infinity;
+
+    // If the rectangles collide, try recomputing with smaller margin.
+    // If they collide anyway, discard the obstacle.
+    if (xOverlap && yOverlap) {
+        return (
+            margin ?
+                calculateObstacleDistance(a, b, Math.floor(margin / 2)) :
+                Infinity
+        );
+    }
+
+    return min(xDistance, yDistance);
+}
 
 /**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
@@ -552,52 +156,21 @@ function getPointBB(point: Point): (Record<string, number>|null) {
  *         The calculated margin in pixels. At least 1.
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
-    let len = obstacles.length,
-        i = 0,
-        j,
-        obstacleDistance,
-        distances = [],
-        // Compute smallest distance between two rectangles
-        distance = function (
-            a: Record<string, number>,
-            b: Record<string, number>,
-            bbMargin?: number
-        ): number {
-            // Count the distance even if we are slightly off
-            const margin = pick(bbMargin, 10),
-                yOverlap = a.yMax + margin > b.yMin - margin &&
-                            a.yMin - margin < b.yMax + margin,
-                xOverlap = a.xMax + margin > b.xMin - margin &&
-                            a.xMin - margin < b.xMax + margin,
-                xDistance = yOverlap ? (
-                    a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
-                ) : Infinity,
-                yDistance = xOverlap ? (
-                    a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
-                ) : Infinity;
+    const len = obstacles.length,
+        distances = [];
 
-            // If the rectangles collide, try recomputing with smaller margin.
-            // If they collide anyway, discard the obstacle.
-            if (xOverlap && yOverlap) {
-                return (
-                    margin ?
-                        distance(a, b, Math.floor(margin / 2)) :
-                        Infinity
-                );
-            }
-
-            return min(xDistance, yDistance);
-        };
+    let onstacleDistance: number;
 
     // Go over all obstacles and compare them to the others.
-    for (; i < len; ++i) {
+    for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
-        for (j = i + 1; j < len; ++j) {
-            obstacleDistance = distance(obstacles[i], obstacles[j]);
+        for (let j = i + 1; j < len; ++j) {
+            onstacleDistance =
+                calculateObstacleDistance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
-            if (obstacleDistance < 80) { // Ignore large distances
-                distances.push(obstacleDistance);
+            if (onstacleDistance < 80) { // Ignore large distances
+                distances.push(onstacleDistance);
             }
         }
     }
@@ -618,7 +191,11 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     );
 }
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Pathfinder class.
@@ -631,6 +208,26 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  *        The chart to operate on.
  */
 class Pathfinder {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart,
+        PointClass: typeof Point
+    ): void {
+        PathfinderComposition.compose(ChartClass, Pathfinder, PointClass);
+    }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
         chart: Chart
     ) {
@@ -646,14 +243,15 @@ class Pathfinder {
     public chart: Chart = void 0 as any;
     public chartObstacles: Array<any> = void 0 as any;
     public chartObstacleMetrics: Record<string, number> = void 0 as any;
-    public connections: Array<Highcharts.Connection> = void 0 as any;
+    public connections: Array<Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
 
-    /**
-     * @name Highcharts.Pathfinder#algorithms
-     * @type {Highcharts.Dictionary<Function>}
-     */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Pathfinder object.
@@ -695,24 +293,21 @@ class Pathfinder {
         chart.series.forEach(function (series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
-                    const ganttPointOptions: GanttPointOptions = point.options;
+                    const ganttPointOptions: GanttPointOptions = point.options,
+                        connects = (
+                            point.options &&
+                            point.options.connect &&
+                            splat(point.options.connect)
+                        );
+
                     // For Gantt series the connect could be
                     // defined as a dependency
                     if (ganttPointOptions && ganttPointOptions.dependency) {
                         ganttPointOptions.connect = ganttPointOptions
                             .dependency;
                     }
-                    let to: (
-                            Axis|
-                            Series|
-                            Point|
-                            undefined
-                        ),
-                        connects = (
-                            point.options &&
-                            point.options.connect &&
-                            splat(point.options.connect)
-                        );
+
+                    let to: (Axis|Series|Point|undefined);
 
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (
@@ -731,7 +326,7 @@ class Pathfinder {
                                 // Add new connection
                                 pathfinder.connections.push(
                                     new (Connection as any)(
-                                        point, // from
+                                        point, // From
                                         to,
                                         typeof connect === 'string' ?
                                             {} :
@@ -850,10 +445,13 @@ class Pathfinder {
      *         An array of calculated obstacles. Each obstacle is defined as an
      *         object with xMin, xMax, yMin and yMax properties.
      */
-    public getChartObstacles(options: { algorithmMargin?: number }): Array<any> {
+    public getChartObstacles(
+        options: { algorithmMargin?: number }
+    ): Array<any> {
+        const series = this.chart.series,
+            margin = pick(options.algorithmMargin, 0);
+
         let obstacles = [],
-            series = this.chart.series,
-            margin = pick(options.algorithmMargin, 0),
             calculatedMargin: number;
 
         for (let i = 0, sLen = series.length; i < sLen; ++i) {
@@ -951,249 +549,70 @@ class Pathfinder {
      *         Returns true for X, false for Y, and undefined for autocalculate.
      */
     public getAlgorithmStartDirection(
-        markerOptions: Highcharts.ConnectorsMarkerOptions
+        markerOptions: ConnectorsMarkerOptions
     ): (boolean|undefined) {
-        let xCenter = markerOptions.align !== 'left' &&
-                        markerOptions.align !== 'right',
+        const xCenter = markerOptions.align !== 'left' &&
+                markerOptions.align !== 'right',
             yCenter = markerOptions.verticalAlign !== 'top' &&
-                        markerOptions.verticalAlign !== 'bottom',
-            undef;
+                markerOptions.verticalAlign !== 'bottom';
 
         return xCenter ?
-            (yCenter ? undef : false) : // x is centered
-            (yCenter ? true : undef); // x is off-center
+            (yCenter ? void 0 : false) : // When x is centered
+            (yCenter ? true : void 0); // When x is off-center
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface Pathfinder {
-    algorithms: Record<string, Highcharts.PathfinderAlgorithmFunction>;
+    algorithms: Record<string, PathfinderAlgorithmFunction>;
 }
-Pathfinder.prototype.algorithms = pathfinderAlgorithms;
-
-// Add to Highcharts namespace
-H.Pathfinder = Pathfinder as any;
-
-
-// Add pathfinding capabilities to Points
-extend(Point.prototype, /** @lends Point.prototype */ {
-
-    /**
-     * Get coordinates of anchor point for pathfinder connection.
-     *
-     * @private
-     * @function Highcharts.Point#getPathfinderAnchorPoint
-     *
-     * @param {Highcharts.ConnectorsMarkerOptions} markerOptions
-     *        Connection options for position on point.
-     *
-     * @return {Highcharts.PositionObject}
-     *         An object with x/y properties for the position. Coordinates are
-     *         in plot values, not relative to point.
-     */
-    getPathfinderAnchorPoint: function (
-        this: Point,
-        markerOptions: Highcharts.ConnectorsMarkerOptions
-    ): PositionObject {
-        let bb = getPointBB(this),
-            x,
-            y;
-
-        switch (markerOptions.align) { // eslint-disable-line default-case
-            case 'right':
-                x = 'xMax';
-                break;
-            case 'left':
-                x = 'xMin';
-        }
-
-        switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-            case 'top':
-                y = 'yMin';
-                break;
-            case 'bottom':
-                y = 'yMax';
-        }
-
-        return {
-            x: x ? (bb as any)[x] : ((bb as any).xMin + (bb as any).xMax) / 2,
-            y: y ? (bb as any)[y] : ((bb as any).yMin + (bb as any).yMax) / 2
-        };
-    },
-
-    /**
-     * Utility to get the angle from one point to another.
-     *
-     * @private
-     * @function Highcharts.Point#getRadiansToVector
-     *
-     * @param {Highcharts.PositionObject} v1
-     *        The first vector, as an object with x/y properties.
-     *
-     * @param {Highcharts.PositionObject} v2
-     *        The second vector, as an object with x/y properties.
-     *
-     * @return {number}
-     *         The angle in degrees
-     */
-    getRadiansToVector: function (
-        this: Point,
-        v1: PositionObject,
-        v2: PositionObject
-    ): number {
-        let box: (Record<string, number>|null);
-
-        if (!defined(v2)) {
-            box = getPointBB(this);
-            if (box) {
-                v2 = {
-                    x: (box.xMin + box.xMax) / 2,
-                    y: (box.yMin + box.yMax) / 2
-                };
-            }
-        }
-
-        return Math.atan2(v2.y - v1.y, v1.x - v2.x);
-    },
-
-    /**
-     * Utility to get the position of the marker, based on the path angle and
-     * the marker's radius.
-     *
-     * @private
-     * @function Highcharts.Point#getMarkerVector
-     *
-     * @param {number} radians
-     *        The angle in radians from the point center to another vector.
-     *
-     * @param {number} markerRadius
-     *        The radius of the marker, to calculate the additional distance to
-     *        the center of the marker.
-     *
-     * @param {Object} anchor
-     *        The anchor point of the path and marker as an object with x/y
-     *        properties.
-     *
-     * @return {Object}
-     *         The marker vector as an object with x/y properties.
-     */
-    getMarkerVector: function (
-        this: Point,
-        radians: number,
-        markerRadius: number,
-        anchor: PositionObject
-    ): PositionObject {
-        let twoPI = Math.PI * 2.0,
-            theta = radians,
-            bb = getPointBB(this),
-            rectWidth = (bb as any).xMax - (bb as any).xMin,
-            rectHeight = (bb as any).yMax - (bb as any).yMin,
-            rAtan = Math.atan2(rectHeight, rectWidth),
-            tanTheta = 1,
-            leftOrRightRegion = false,
-            rectHalfWidth = rectWidth / 2.0,
-            rectHalfHeight = rectHeight / 2.0,
-            rectHorizontalCenter = (bb as any).xMin + rectHalfWidth,
-            rectVerticalCenter = (bb as any).yMin + rectHalfHeight,
-            edgePoint = {
-                x: rectHorizontalCenter,
-                y: rectVerticalCenter
-            },
-            xFactor = 1,
-            yFactor = 1;
-
-        while (theta < -Math.PI) {
-            theta += twoPI;
-        }
-
-        while (theta > Math.PI) {
-            theta -= twoPI;
-        }
-
-        tanTheta = Math.tan(theta);
-
-        if ((theta > -rAtan) && (theta <= rAtan)) {
-            // Right side
-            yFactor = -1;
-            leftOrRightRegion = true;
-        } else if (theta > rAtan && theta <= (Math.PI - rAtan)) {
-            // Top side
-            yFactor = -1;
-        } else if (theta > (Math.PI - rAtan) || theta <= -(Math.PI - rAtan)) {
-            // Left side
-            xFactor = -1;
-            leftOrRightRegion = true;
-        } else {
-            // Bottom side
-            xFactor = -1;
-        }
-
-        // Correct the edgePoint according to the placement of the marker
-        if (leftOrRightRegion) {
-            edgePoint.x += xFactor * (rectHalfWidth);
-            edgePoint.y += yFactor * (rectHalfWidth) * tanTheta;
-        } else {
-            edgePoint.x += xFactor * (rectHeight / (2.0 * tanTheta));
-            edgePoint.y += yFactor * (rectHalfHeight);
-        }
-
-        if (anchor.x !== rectHorizontalCenter) {
-            edgePoint.x = anchor.x;
-        }
-        if (anchor.y !== rectVerticalCenter) {
-            edgePoint.y = anchor.y;
-        }
-
-        return {
-            x: edgePoint.x + (markerRadius * Math.cos(theta)),
-            y: edgePoint.y - (markerRadius * Math.sin(theta))
-        };
-    }
-});
-
 
 /**
- * Warn if using legacy options. Copy the options over. Note that this will
- * still break if using the legacy options in chart.update, addSeries etc.
- * @private
+ * @name Highcharts.Pathfinder#algorithms
+ * @type {Highcharts.Dictionary<Function>}
  */
-function warnLegacy(chart: Chart): void {
-    if (
-        (chart.options as any).pathfinder ||
-        chart.series.reduce(function (acc, series): boolean {
-            if (series.options) {
-                merge(
-                    true,
-                    (
-                        series.options.connectors = series.options.connectors ||
-                        {}
-                    ), (series.options as any).pathfinder
-                );
-            }
-            return acc || series.options && (series.options as any).pathfinder;
-        }, false)
-    ) {
-        merge(
-            true,
-            (chart.options.connectors = chart.options.connectors || {}),
-            (chart.options as any).pathfinder
-        );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
-    }
-}
+Pathfinder.prototype.algorithms = PathfinderAlgorithms;
 
-
-// Initialize Pathfinder for charts
-Chart.prototype.callbacks.push(function (
-    chart: Chart
-): void {
-    const options = chart.options;
-
-    if ((options.connectors as any).enabled !== false) {
-        warnLegacy(chart);
-        this.pathfinder = new Pathfinder(this);
-        this.pathfinder.update(true); // First draw, defer render
-    }
-});
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pathfinder;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * The default pathfinder algorithm to use for a chart. It is possible to define
+ * your own algorithms by adding them to the
+ * `Highcharts.Pathfinder.prototype.algorithms`
+ * object before the chart has been created.
+ *
+ * The default algorithms are as follows:
+ *
+ * `straight`:      Draws a straight line between the connecting
+ *                  points. Does not avoid other points when drawing.
+ *
+ * `simpleConnect`: Finds a path between the points using right angles
+ *                  only. Takes only starting/ending points into
+ *                  account, and will not avoid other points.
+ *
+ * `fastAvoid`:     Finds a path between the points using right angles
+ *                  only. Will attempt to avoid other points, but its
+ *                  focus is performance over accuracy. Works well with
+ *                  less dense datasets.
+ *
+ * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
+ */
+
+''; // Keeps doclets above in JS file

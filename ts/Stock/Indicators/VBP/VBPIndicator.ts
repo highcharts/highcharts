@@ -22,6 +22,7 @@ import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -529,6 +530,27 @@ class VBPIndicator extends SMAIndicator {
                 );
             }
         }
+    }
+
+    public getExtremes(): DataExtremesObject {
+        const prevCompare = this.options.compare,
+            prevCumulative = this.options.cumulative;
+        let ret: DataExtremesObject;
+
+        // Temporarily disable cumulative and compare while getting the extremes
+        if (this.options.compare) {
+            this.options.compare = void 0;
+            ret = super.getExtremes();
+            this.options.compare = prevCompare;
+        } else if (this.options.cumulative) {
+            this.options.cumulative = false;
+            ret = super.getExtremes();
+            this.options.cumulative = prevCumulative;
+        } else {
+            ret = super.getExtremes();
+        }
+
+        return ret;
     }
 
     public getValues <TLinkedSeries extends LineSeries>(

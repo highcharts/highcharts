@@ -19,22 +19,24 @@
  * */
 
 import type ColumnSeries from '../Series/Column/ColumnSeries';
-import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
+import type PieSeries from '../Series/Pie/PieSeries';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
+import G from '../Core/Globals.js';
+const { noop } = G;
 import Series from '../Core/Series/Series.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     isObject,
     merge,
+    pushUnique,
     relativeLength
 } = U;
 
@@ -74,27 +76,38 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
  *
  * */
 
+const composedMembers: Array<unknown> = [];
+
 const defaultBorderRadiusOptions: BorderRadiusOptionsObject = {
     radius: 0,
     scope: 'stack',
     where: void 0
 };
 
-const optionsToObject = (
-    options?: number|string|Partial<BorderRadiusOptionsObject>,
-    seriesBROptions?: Partial<BorderRadiusOptionsObject>
-): BorderRadiusOptionsObject => {
-    if (!isObject(options)) {
-        options = { radius: options || 0 };
-    }
-    return merge(defaultBorderRadiusOptions, seriesBROptions, options);
-};
+/* *
+ *
+ *  Variables
+ *
+ * */
 
-const applyBorderRadius = (
+let oldArc: SVGRenderer['symbols']['arc'] = noop as any;
+
+let oldRoundedRect: SVGRenderer['symbols']['roundedRect'] = noop as any;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function applyBorderRadius(
     path: SVGPath,
     i: number,
     r: number
-): void => {
+): void {
     const a = path[i];
 
     let b = path[i + 1];
@@ -193,327 +206,367 @@ const applyBorderRadius = (
         arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
 
     }
-};
+}
 
-/* *
- *
- *  Modifications
- *
- * */
+/**
+ * Extend arc with borderRadius.
+ * @private
+ */
+function arc(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options: SymbolOptions = {}
+): SVGPath {
+    const path = oldArc(x, y, w, h, options),
+        { innerR = 0, r = w, start = 0, end = 0 } = options;
 
-// Check if the module has already been imported
-// @todo implement as composition
-if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
-
-    SVGElement.symbolCustomAttribs.push(
-        'borderRadius',
-        'brBoxHeight',
-        'brBoxY'
-    );
-
-    // Extend arc with borderRadius
-    const arc = SVGRenderer.prototype.symbols.arc;
-    SVGRenderer.prototype.symbols.arc = function (
-        x: number,
-        y: number,
-        w: number,
-        h: number,
-        options: SymbolOptions = {}
-    ): SVGPath {
-        const path = arc(x, y, w, h, options),
-            { innerR = 0, r = w, start = 0, end = 0 } = options;
-
-        if (options.open || !options.borderRadius) {
-            return path;
-        }
-
-        const alpha = end - start,
-            sinHalfAlpha = Math.sin(alpha / 2),
-            borderRadius = Math.max(Math.min(
-                relativeLength(options.borderRadius || 0, r - innerR),
-                // Cap to half the sector radius
-                (r - innerR) / 2,
-                // For smaller pie slices, cap to the largest small circle that
-                // can be fitted within the sector
-                (r * sinHalfAlpha) / (1 + sinHalfAlpha)
-            ), 0),
-            // For the inner radius, we need an extra cap because the inner arc
-            // is shorter than the outer arc
-            innerBorderRadius = Math.min(
-                borderRadius,
-                2 * (alpha / Math.PI) * innerR
-            );
-
-        // Apply turn-by-turn border radius. Start at the end since we're
-        // splicing in arc segments.
-        let i = path.length - 1;
-        while (i--) {
-            applyBorderRadius(
-                path,
-                i,
-                i > 1 ? innerBorderRadius : borderRadius
-            );
-        }
-
+    if (options.open || !options.borderRadius) {
         return path;
-    };
+    }
 
-    // Extend roundedRect with individual cutting through rOffset
-    const roundedRect = SVGRenderer.prototype.symbols.roundedRect;
-    SVGRenderer.prototype.symbols.roundedRect = function (
-        x: number,
-        y: number,
-        width: number,
-        height: number,
-        options: SymbolOptions = {}
-    ): SVGPath {
-        const path = roundedRect(x, y, width, height, options),
-            { r = 0, brBoxHeight = height, brBoxY = y } = options,
-            brOffsetTop = y - brBoxY,
-            brOffsetBtm = (brBoxY + brBoxHeight) - (y + height),
-
-            // When the distance to the border-radius box is greater than the r
-            // itself, it means no border radius. The -0.1 accounts for float
-            // rounding errors.
-            rTop = (brOffsetTop - r) > -0.1 ? 0 : r,
-            rBtm = (brOffsetBtm - r) > -0.1 ? 0 : r,
-            cutTop = Math.max(rTop && brOffsetTop, 0),
-            cutBtm = Math.max(rBtm && brOffsetBtm, 0);
-
-        /*
-
-        The naming of control points:
-
-          / a -------- b \
-         /                \
-        h                  c
-        |                  |
-        |                  |
-        |                  |
-        g                  d
-         \                /
-          \ f -------- e /
-
-        */
-
-        const a: [number, number] = [x + rTop, y],
-            b: [number, number] = [x + width - rTop, y],
-            c: [number, number] = [x + width, y + rTop],
-            d: [number, number] = [
-                x + width, y + height - rBtm
-            ],
-            e: [number, number] = [
-                x + width - rBtm,
-                y + height
-            ],
-            f: [number, number] = [x + rBtm, y + height],
-            g: [number, number] = [x, y + height - rBtm],
-            h: [number, number] = [x, y + rTop];
-
-        const applyPythagoras = (
-            r: number,
-            altitude: number
-        ): number => Math.sqrt(
-            Math.pow(r, 2) - Math.pow(altitude, 2)
+    const alpha = end - start,
+        sinHalfAlpha = Math.sin(alpha / 2),
+        borderRadius = Math.max(Math.min(
+            relativeLength(options.borderRadius || 0, r - innerR),
+            // Cap to half the sector radius
+            (r - innerR) / 2,
+            // For smaller pie slices, cap to the largest small circle that
+            // can be fitted within the sector
+            (r * sinHalfAlpha) / (1 + sinHalfAlpha)
+        ), 0),
+        // For the inner radius, we need an extra cap because the inner arc
+        // is shorter than the outer arc
+        innerBorderRadius = Math.min(
+            borderRadius,
+            2 * (alpha / Math.PI) * innerR
         );
 
-        // Inside stacks, cut off part of the top
-        if (cutTop) {
-            const base = applyPythagoras(rTop, rTop - cutTop);
-            a[0] -= base;
-            b[0] += base;
-            c[1] = h[1] = y + rTop - cutTop;
-        }
-
-        // Column is lower than the radius. Cut off bottom inside the top
-        // radius.
-        if (height < rTop - cutTop) {
-            const base = applyPythagoras(rTop, rTop - cutTop - height);
-            c[0] = d[0] = x + width - rTop + base;
-            e[0] = Math.min(c[0], e[0]);
-            f[0] = Math.max(d[0], f[0]);
-            g[0] = h[0] = x + rTop - base;
-            c[1] = h[1] = y + height;
-        }
-
-        // Inside stacks, cut off part of the bottom
-        if (cutBtm) {
-            const base = applyPythagoras(rBtm, rBtm - cutBtm);
-            e[0] += base;
-            f[0] -= base;
-            d[1] = g[1] = y + height - rBtm + cutBtm;
-        }
-
-        // Cut off top inside the bottom radius
-        if (height < rBtm - cutBtm) {
-            const base = applyPythagoras(rBtm, rBtm - cutBtm - height);
-            c[0] = d[0] = x + width - rBtm + base;
-            b[0] = Math.min(c[0], b[0]);
-            a[0] = Math.max(d[0], a[0]);
-            g[0] = h[0] = x + rBtm - base;
-            d[1] = g[1] = y;
-        }
-
-        // Preserve the box for data labels
-        path.length = 0;
-        path.push(
-            ['M', ...a],
-            // top side
-            ['L', ...b],
-            // top right corner
-            ['A', rTop, rTop, 0, 0, 1, ...c],
-            // right side
-            ['L', ...d],
-            // bottom right corner
-            ['A', rBtm, rBtm, 0, 0, 1, ...e],
-            // bottom side
-            ['L', ...f],
-            // bottom left corner
-            ['A', rBtm, rBtm, 0, 0, 1, ...g],
-            // left side
-            ['L', ...h],
-            // top left corner
-            ['A', rTop, rTop, 0, 0, 1, ...a],
-            ['Z']
+    // Apply turn-by-turn border radius. Start at the end since we're
+    // splicing in arc segments.
+    let i = path.length - 1;
+    while (i--) {
+        applyBorderRadius(
+            path,
+            i,
+            i > 1 ? innerBorderRadius : borderRadius
         );
+    }
 
-        return path;
-    };
+    return path;
+}
 
-    addEvent(seriesTypes.pie, 'afterTranslate', function (): void {
-        const borderRadius = optionsToObject(this.options.borderRadius);
+/** @private */
+function columnSeriesOnAfterColumnTranslate(
+    this: ColumnSeries
+): void {
+    if (
+        this.options.borderRadius &&
+        !(this.chart.is3d && this.chart.is3d())
+    ) {
+        const { options, yAxis } = this,
+            percent = options.stacking === 'percent',
+            seriesDefault = defaultOptions.plotOptions
+                ?.[this.type]
+                ?.borderRadius,
+            borderRadius = optionsToObject(
+                options.borderRadius,
+                isObject(seriesDefault) ? seriesDefault : {}
+            ),
+            reversed = yAxis.options.reversed;
 
         for (const point of this.points) {
-            const shapeArgs = point.shapeArgs;
-            if (shapeArgs) {
-                shapeArgs.borderRadius = relativeLength(
-                    borderRadius.radius,
-                    (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0)
-                );
-            }
-        }
-    });
+            const { shapeArgs } = point;
+            if (point.shapeType === 'roundedRect' && shapeArgs) {
+                const {
+                    width = 0,
+                    height = 0,
+                    y = 0
+                } = shapeArgs;
 
-    addEvent(
-        Series as unknown as ColumnSeries,
-        'afterColumnTranslate',
-        function (): void {
-            if (
-                this.options.borderRadius &&
-                !(this.chart.is3d && this.chart.is3d())
-            ) {
-                const { options, yAxis } = this,
-                    percent = options.stacking === 'percent',
-                    seriesDefault = defaultOptions.plotOptions
-                        ?.[this.type]
-                        ?.borderRadius,
-                    borderRadius = optionsToObject(
-                        options.borderRadius,
-                        isObject(seriesDefault) ? seriesDefault : {}
-                    ),
-                    reversed = yAxis.options.reversed;
+                let brBoxY = y,
+                    brBoxHeight = height;
 
-                for (const point of this.points) {
-                    const { shapeArgs } = point;
-                    if (point.shapeType === 'roundedRect' && shapeArgs) {
-                        const {
-                            width = 0,
-                            height = 0,
-                            y = 0
-                        } = shapeArgs;
+                // It would be nice to refactor StackItem.getStackBox/
+                // setOffset so that we could get a reliable box out of
+                // it. Currently it is close if we remove the label
+                // offset, but we still need to run crispCol and also
+                // flip it if inverted, so atm it is simpler to do it
+                // like the below.
+                if (
+                    borderRadius.scope === 'stack' &&
+                    point.stackTotal
+                ) {
+                    const stackEnd = yAxis.translate(
+                            percent ? 100 : point.stackTotal,
+                            false,
+                            true,
+                            false,
+                            true
+                        ),
+                        stackThreshold = yAxis.translate(
+                            options.threshold || 0,
+                            false,
+                            true,
+                            false,
+                            true
+                        ),
+                        box = this.crispCol(
+                            0,
+                            Math.min(stackEnd, stackThreshold),
+                            0,
+                            Math.abs(stackEnd - stackThreshold)
+                        );
+                    brBoxY = box.y;
+                    brBoxHeight = box.height;
+                }
 
-                        let brBoxY = y,
-                            brBoxHeight = height;
+                const flip = (point.negative ? -1 : 1) *
+                    (reversed ? -1 : 1) === -1;
 
-                        // It would be nice to refactor StackItem.getStackBox/
-                        // setOffset so that we could get a reliable box out of
-                        // it. Currently it is close if we remove the label
-                        // offset, but we still need to run crispCol and also
-                        // flip it if inverted, so atm it is simpler to do it
-                        // like the below.
-                        if (
-                            borderRadius.scope === 'stack' &&
-                            point.stackTotal
-                        ) {
-                            const stackEnd = yAxis.translate(
-                                    percent ? 100 : point.stackTotal,
-                                    false,
-                                    true,
-                                    false,
-                                    true
-                                ),
-                                stackThreshold = yAxis.translate(
-                                    options.threshold || 0,
-                                    false,
-                                    true,
-                                    false,
-                                    true
-                                ),
-                                box = this.crispCol(
-                                    0,
-                                    Math.min(stackEnd, stackThreshold),
-                                    0,
-                                    Math.abs(stackEnd - stackThreshold)
-                                );
-                            brBoxY = box.y;
-                            brBoxHeight = box.height;
-                        }
+                // Handle the where option
+                let where = borderRadius.where;
 
-                        const flip = (point.negative ? -1 : 1) *
-                            (reversed ? -1 : 1) === -1;
+                // Waterfall, hanging columns should have rounding on
+                // all sides
+                if (
+                    !where &&
+                    this.is('waterfall') &&
+                    Math.abs(
+                        (point.yBottom || 0) -
+                        (this.translatedThreshold || 0)
+                    ) > this.borderWidth
+                ) {
+                    where = 'all';
+                }
 
-                        // Handle the where option
-                        let where = borderRadius.where;
+                if (!where) {
+                    where = 'end';
+                }
 
-                        // Waterfall, hanging columns should have rounding on
-                        // all sides
-                        if (
-                            !where &&
-                            this.is('waterfall') &&
-                            Math.abs(
-                                (point.yBottom || 0) -
-                                (this.translatedThreshold || 0)
-                            ) > this.borderWidth
-                        ) {
-                            where = 'all';
-                        }
+                // Get the radius
+                const r = Math.min(
+                    relativeLength(borderRadius.radius, width),
+                    width / 2,
+                    // Cap to the height, but not if where is `end`
+                    where === 'all' ? height / 2 : Infinity
+                ) || 0;
 
-                        if (!where) {
-                            where = 'end';
-                        }
-
-                        // Get the radius
-                        const r = Math.min(
-                            relativeLength(borderRadius.radius, width),
-                            width / 2,
-                            // Cap to the height, but not if where is `end`
-                            where === 'all' ? height / 2 : Infinity
-                        ) || 0;
-
-                        // If the `where` option is 'end', cut off the
-                        // rectangles by making the border-radius box one r
-                        // greater, so that the imaginary radius falls outside
-                        // the rectangle.
-                        if (where === 'end') {
-                            if (flip) {
-                                brBoxY -= r;
-                                brBoxHeight += r;
-                            } else {
-                                brBoxHeight += r;
-                            }
-                        }
-
-                        extend(shapeArgs, { brBoxHeight, brBoxY, r });
-
+                // If the `where` option is 'end', cut off the
+                // rectangles by making the border-radius box one r
+                // greater, so that the imaginary radius falls outside
+                // the rectangle.
+                if (where === 'end') {
+                    if (flip) {
+                        brBoxY -= r;
+                        brBoxHeight += r;
+                    } else {
+                        brBoxHeight += r;
                     }
                 }
+
+                extend(shapeArgs, { brBoxHeight, brBoxY, r });
+
             }
-        },
-        {
-            // After columnrange and polar column modifications
-            order: 9
         }
+    }
+}
+
+/** @private */
+function compose(
+    ColumnSeriesClass: typeof ColumnSeries,
+    PieSeriesClass: typeof PieSeries,
+    SVGElementClass: typeof SVGElement,
+    SVGRendererClass: typeof SVGRenderer
+): void {
+
+    if (pushUnique(composedMembers, ColumnSeriesClass)) {
+        addEvent(
+            ColumnSeriesClass,
+            'afterColumnTranslate',
+            columnSeriesOnAfterColumnTranslate,
+            {
+                // After columnrange and polar column modifications
+                order: 9
+            }
+        );
+    }
+
+    if (pushUnique(composedMembers, PieSeriesClass)) {
+        addEvent(PieSeriesClass, 'afterTranslate', pieSeriesOnAfterTranslate);
+    }
+
+    if (pushUnique(composedMembers, SVGElementClass)) {
+        SVGElementClass.symbolCustomAttribs.push(
+            'borderRadius',
+            'brBoxHeight',
+            'brBoxY'
+        );
+    }
+
+    if (pushUnique(composedMembers, SVGRendererClass)) {
+        const symbols = SVGRendererClass.prototype.symbols;
+
+        oldArc = symbols.arc;
+        oldRoundedRect = symbols.roundedRect;
+
+        symbols.arc = arc;
+        symbols.roundedRect = roundedRect;
+    }
+
+}
+
+/** @private */
+function optionsToObject(
+    options?: number|string|Partial<BorderRadiusOptionsObject>,
+    seriesBROptions?: Partial<BorderRadiusOptionsObject>
+): BorderRadiusOptionsObject {
+    if (!isObject(options)) {
+        options = { radius: options || 0 };
+    }
+    return merge(defaultBorderRadiusOptions, seriesBROptions, options);
+}
+
+/** @private */
+function pieSeriesOnAfterTranslate(
+    this: PieSeries
+): void {
+    const borderRadius = optionsToObject(this.options.borderRadius);
+
+    for (const point of this.points) {
+        const shapeArgs = point.shapeArgs;
+        if (shapeArgs) {
+            shapeArgs.borderRadius = relativeLength(
+                borderRadius.radius,
+                (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0)
+            );
+        }
+    }
+}
+
+/**
+ * Extend roundedRect with individual cutting through rOffset.
+ * @private
+ */
+function roundedRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    options: SymbolOptions = {}
+): SVGPath {
+    const path = oldRoundedRect(x, y, width, height, options),
+        { r = 0, brBoxHeight = height, brBoxY = y } = options,
+        brOffsetTop = y - brBoxY,
+        brOffsetBtm = (brBoxY + brBoxHeight) - (y + height),
+
+        // When the distance to the border-radius box is greater than the r
+        // itself, it means no border radius. The -0.1 accounts for float
+        // rounding errors.
+        rTop = (brOffsetTop - r) > -0.1 ? 0 : r,
+        rBtm = (brOffsetBtm - r) > -0.1 ? 0 : r,
+        cutTop = Math.max(rTop && brOffsetTop, 0),
+        cutBtm = Math.max(rBtm && brOffsetBtm, 0);
+
+    /*
+
+    The naming of control points:
+
+      / a -------- b \
+     /                \
+    h                  c
+    |                  |
+    |                  |
+    |                  |
+    g                  d
+     \                /
+      \ f -------- e /
+
+    */
+
+    const a: [number, number] = [x + rTop, y],
+        b: [number, number] = [x + width - rTop, y],
+        c: [number, number] = [x + width, y + rTop],
+        d: [number, number] = [
+            x + width, y + height - rBtm
+        ],
+        e: [number, number] = [
+            x + width - rBtm,
+            y + height
+        ],
+        f: [number, number] = [x + rBtm, y + height],
+        g: [number, number] = [x, y + height - rBtm],
+        h: [number, number] = [x, y + rTop];
+
+    const applyPythagoras = (
+        r: number,
+        altitude: number
+    ): number => Math.sqrt(
+        Math.pow(r, 2) - Math.pow(altitude, 2)
     );
+
+    // Inside stacks, cut off part of the top
+    if (cutTop) {
+        const base = applyPythagoras(rTop, rTop - cutTop);
+        a[0] -= base;
+        b[0] += base;
+        c[1] = h[1] = y + rTop - cutTop;
+    }
+
+    // Column is lower than the radius. Cut off bottom inside the top
+    // radius.
+    if (height < rTop - cutTop) {
+        const base = applyPythagoras(rTop, rTop - cutTop - height);
+        c[0] = d[0] = x + width - rTop + base;
+        e[0] = Math.min(c[0], e[0]);
+        f[0] = Math.max(d[0], f[0]);
+        g[0] = h[0] = x + rTop - base;
+        c[1] = h[1] = y + height;
+    }
+
+    // Inside stacks, cut off part of the bottom
+    if (cutBtm) {
+        const base = applyPythagoras(rBtm, rBtm - cutBtm);
+        e[0] += base;
+        f[0] -= base;
+        d[1] = g[1] = y + height - rBtm + cutBtm;
+    }
+
+    // Cut off top inside the bottom radius
+    if (height < rBtm - cutBtm) {
+        const base = applyPythagoras(rBtm, rBtm - cutBtm - height);
+        c[0] = d[0] = x + width - rBtm + base;
+        b[0] = Math.min(c[0], b[0]);
+        a[0] = Math.max(d[0], a[0]);
+        g[0] = h[0] = x + rBtm - base;
+        d[1] = g[1] = y;
+    }
+
+    // Preserve the box for data labels
+    path.length = 0;
+    path.push(
+        ['M', ...a],
+        // top side
+        ['L', ...b],
+        // top right corner
+        ['A', rTop, rTop, 0, 0, 1, ...c],
+        // right side
+        ['L', ...d],
+        // bottom right corner
+        ['A', rBtm, rBtm, 0, 0, 1, ...e],
+        // bottom side
+        ['L', ...f],
+        // bottom left corner
+        ['A', rBtm, rBtm, 0, 0, 1, ...g],
+        // left side
+        ['L', ...h],
+        // top left corner
+        ['A', rTop, rTop, 0, 0, 1, ...a],
+        ['Z']
+    );
+
+    return path;
 }
 
 /* *
@@ -523,6 +576,7 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
  * */
 
 const BorderRadius = {
+    compose,
     optionsToObject
 };
 

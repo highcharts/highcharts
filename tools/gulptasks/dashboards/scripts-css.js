@@ -56,6 +56,11 @@ function dashboardsScriptsCSS() {
 
         fslib.copyFile(
             dataGridCSS,
+            path.join('code', 'dashboards', dataGridCSS)
+        );
+
+        fslib.copyFile(
+            dataGridCSS,
             path.join('code', 'datagrid', dataGridCSS)
         );
 

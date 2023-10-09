@@ -1,0 +1,12 @@
+---
+name: Multiple KPI gauge
+authors:
+  - Torstein Hønsi
+resources:
+  - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Gauges
+...
