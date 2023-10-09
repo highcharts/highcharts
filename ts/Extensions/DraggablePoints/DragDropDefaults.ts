@@ -18,16 +18,22 @@
  *
  * */
 
+import type {
+    DragDropGuideBoxOptions,
+    DragDropHandleOptions,
+    DragDropOptions
+} from './DragDropOptions';
+
 /* *
  *
  *  Declarations
  *
  * */
 
-interface DragDropDefaults extends Highcharts.DragDropOptionsObject {
+interface DragDropDefaults extends DragDropOptions {
     dragSensitivity: number;
-    dragHandle: Highcharts.DragDropHandleOptionsObject;
-    guideBox: Record<string, Highcharts.DragDropGuideBoxOptionsObject>;
+    dragHandle: DragDropHandleOptions;
+    guideBox: Record<string, DragDropGuideBoxOptions>;
 }
 
 /* *
