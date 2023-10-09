@@ -11,7 +11,7 @@ import type {
     PointDragCallbackFunction,
     PointDragStartCallbackFunction,
     PointDropCallbackFunction
-} from '../DraggablePoints';
+} from './DraggablePoints';
 
 /* *
  *
