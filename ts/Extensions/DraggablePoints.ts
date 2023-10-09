@@ -25,10 +25,13 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../Series/Bullet/BulletPoint';
 import Chart from '../Core/Chart/Chart.js';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
+import type {
+    DragDropGuideBoxOptions,
+    DragDropHandleOptions,
+    DragDropOptions
+} from './DraggablePoints/DragDropOptions';
 import type EventCallback from '../Core/EventCallback';
 import type GanttPoint from '../Series/Gantt/GanttPoint';
 import type { MapLonLatObject } from '../Maps/GeoJSON';
@@ -54,7 +57,6 @@ const {
     seriesTypes
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import { CursorValue } from '../Core/Renderer/CSSObject';
 const {
     addEvent,
     clamp,
@@ -68,9 +70,9 @@ const {
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         /** @requires modules/draggable-points */
-        dragDropData?: Highcharts.DragDropDataObject;
+        dragDropData?: DragDropDataObject;
         /** @requires modules/draggable-points */
-        dragHandles?: Highcharts.DragHandlesObject;
+        dragHandles?: DragHandlesObject;
         /** @requires modules/draggable-points */
         dragGuideBox?: SVGElement;
         /** @requires modules/draggable-points */
@@ -84,7 +86,7 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/draggable-points */
         setGuideBoxState(
             state: string,
-            options?: Record<string, Highcharts.DragDropGuideBoxOptionsObject>
+            options?: Record<string, DragDropGuideBoxOptions>
         ): SVGElement;
         /** @requires modules/draggable-points */
         hideDragHandles(): void;
@@ -103,9 +105,9 @@ declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/draggable-points */
         getDropValues(
-            origin: Highcharts.DragDropPositionObject,
+            origin: DragDropPositionObject,
             newPos: PointerEvent,
-            updateProps: Record<string, Highcharts.SeriesDragDropPropsObject>
+            updateProps: Record<string, SeriesDragDropPropsObject>
         ): Record<string, number>;
         /** @requires modules/draggable-points */
         showDragHandles(): void;
@@ -114,14 +116,14 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/PointOptions' {
     interface PointOptions {
-        dragDrop?: Highcharts.DragDropOptionsObject;
+        dragDrop?: DragDropOptions;
     }
 }
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         /** @requires modules/draggable-points */
-        dragDropProps?: (Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>|null);
+        dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
         /** @requires modules/draggable-points */
         getGuideBox(points: Array<Point>): SVGElement;
     }
@@ -129,131 +131,98 @@ declare module '../Core/Series/SeriesLike' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        dragDrop?: Highcharts.DragDropOptionsObject;
+        dragDrop?: DragDropOptions;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DragDropDataObject {
-            draggedPastSensitivity?: boolean;
-            groupedPoints: Array<Point>;
-            isDragging: boolean;
-            isHoveringHandle?: string;
-            newPoints?: Record<string, DragDropPointObject>;
-            origin: DragDropPositionObject;
-            point: Point;
-            updateProp?: string;
-        }
-        interface DragDropGuideBoxOptionsObject {
-            className?: string;
-            color?: ColorType;
-            cursor?: string;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            zIndex?: number;
-        }
-        interface DragDropHandleOptionsObject {
-            className?: string;
-            color?: ColorType;
-            cursor?: CursorValue;
-            lineColor?: ColorString;
-            lineWidth?: number;
-            pathFormatter?: Function;
-            zIndex?: number;
-        }
-        interface DragDropOptionsObject {
-            draggableX?: boolean;
-            draggableY?: boolean;
-            dragHandle?: DragDropHandleOptionsObject;
-            dragMaxX?: number;
-            dragMaxY?: number;
-            dragMinX?: number;
-            dragMinY?: number;
-            dragPrecisionX?: number;
-            dragPrecisionY?: number;
-            dragSensitivity?: number;
-            groupBy?: string;
-            guideBox?: Record<string, DragDropGuideBoxOptionsObject>;
-            liveRedraw?: boolean;
-        }
-        interface DragDropPointObject {
-            point: Point;
-            newValues: Record<string, number>;
-        }
-        interface DragDropPositionObject {
-            chartX: number;
-            chartY: number;
-            guideBox?: BBoxObject;
-            points: Record<string, Record<string, number>>;
-            prevdX?: number;
-            prevdY?: number;
-        }
-        interface DragHandlesObject {
-            group: SVGElement;
-            point: string;
-        }
-        interface PointDragCallbackFunction {
-            (this: Point, event: PointDragEventObject): void;
-        }
-        interface PointDragDropObject {
-            newValues: Record<string, number>;
-            point: Point;
-        }
-        interface PointDragEventObject {
-            newPoint?: PointDragDropObject;
-            newPointId?: string;
-            newPoints: Record<string, PointDragDropObject>;
-            origin: DragDropPositionObject;
-            preventDefault: Function;
-            target: Point;
-            type: 'drag';
-        }
-        interface PointDragStartCallbackFunction {
-            (this: Point, event: PointDragStartEventObject): void;
-        }
-        interface PointDragStartEventObject extends MouseEvent {
-            updateProp?: string;
-        }
-        interface PointDropCallbackFunction {
-            (this: Point, event: PointDropEventObject): void;
-        }
-        interface PointDropEventObject {
-            newPoint?: PointDragDropObject;
-            newPointId?: string;
-            newPoints: Record<string, PointDragDropObject>;
-            numNewPoints: number;
-            origin: DragDropPositionObject;
-            preventDefault: Function;
-            target: Point;
-            type: 'drop';
-        }
-        interface PointEventsOptionsObject {
-            drag?: PointDragCallbackFunction;
-            dragStart?: PointDragStartCallbackFunction;
-            drop?: PointDropCallbackFunction;
-        }
-        interface SeriesDragDropPropsObject {
-            axis: string;
-            beforeResize?: Function;
-            handleOptions?: DragDropHandleOptionsObject;
-            move: boolean;
-            optionName: string;
-            resize: boolean;
-            resizeSide: (string|SeriesDragDropPropsResizeSideFunction);
-            validateIndividualDrag?: Function;
-            handleFormatter(point: Point): (SVGPath|null);
-            handlePositioner(point: Point): PositionObject;
-            propValidate(val: number, point: Point): boolean;
-        }
-        interface SeriesDragDropPropsResizeSideFunction {
-            (...args: Array<any>): string;
-        }
-    }
+export interface DragDropPointObject {
+    point: Point;
+    newValues: Record<string, number>;
+}
+
+export interface DragDropPositionObject {
+    chartX: number;
+    chartY: number;
+    guideBox?: BBoxObject;
+    points: Record<string, Record<string, number>>;
+    prevdX?: number;
+    prevdY?: number;
+}
+
+export interface DragDropDataObject {
+    draggedPastSensitivity?: boolean;
+    groupedPoints: Array<Point>;
+    isDragging: boolean;
+    isHoveringHandle?: string;
+    newPoints?: Record<string, DragDropPointObject>;
+    origin: DragDropPositionObject;
+    point: Point;
+    updateProp?: string;
+}
+
+interface DragHandlesObject {
+    group: SVGElement;
+    point: string;
+}
+
+export interface PointDragCallbackFunction {
+    (this: Point, event: PointDragEventObject): void;
+}
+
+export interface PointDragDropObject {
+    newValues: Record<string, number>;
+    point: Point;
+}
+
+export interface PointDragEventObject {
+    newPoint?: PointDragDropObject;
+    newPointId?: string;
+    newPoints: Record<string, PointDragDropObject>;
+    origin: DragDropPositionObject;
+    preventDefault: Function;
+    target: Point;
+    type: 'drag';
+}
+
+export interface PointDragStartEventObject extends MouseEvent {
+    updateProp?: string;
+}
+
+export interface PointDragStartCallbackFunction {
+    (this: Point, event: PointDragStartEventObject): void;
+}
+
+export interface PointDropCallbackFunction {
+    (this: Point, event: PointDropEventObject): void;
+}
+
+export interface PointDropEventObject {
+    newPoint?: PointDragDropObject;
+    newPointId?: string;
+    newPoints: Record<string, PointDragDropObject>;
+    numNewPoints: number;
+    origin: DragDropPositionObject;
+    preventDefault: Function;
+    target: Point;
+    type: 'drop';
+}
+
+interface SeriesDragDropPropsObject {
+    axis: string;
+    beforeResize?: Function;
+    handleOptions?: DragDropHandleOptions;
+    move: boolean;
+    optionName: string;
+    resize: boolean;
+    resizeSide: (string|SeriesDragDropPropsResizeSideFunction);
+    validateIndividualDrag?: Function;
+    handleFormatter(point: Point): (SVGPath|null);
+    handlePositioner(point: Point): PositionObject;
+    propValidate(val: number, point: Point): boolean;
+}
+
+interface SeriesDragDropPropsResizeSideFunction {
+    (...args: Array<any>): string;
 }
 
 /**
@@ -1130,7 +1099,7 @@ function isSeriesDraggable(series: Series): (boolean|undefined) {
 
     // Add optionNames from dragDropProps to the array of props to check for
     objectEach(series.dragDropProps, function (
-        val: Partial<Highcharts.SeriesDragDropPropsObject>
+        val: Partial<SeriesDragDropPropsObject>
     ): void {
         if (val.optionName) {
             props.push(val.optionName);
@@ -1199,7 +1168,7 @@ function isPointMovable(point: Point): (boolean|undefined) {
         hasMovableY;
 
     objectEach(updateProps, function (
-        p: Highcharts.SeriesDragDropPropsObject
+        p: SeriesDragDropPropsObject
     ): void {
         if (p.axis === 'x' && p.move) {
             hasMovableX = true;
@@ -1356,8 +1325,8 @@ function getPositionSnapshot(
     e: PointerEvent,
     points: Array<Point>,
     guideBox?: SVGElement
-): Highcharts.DragDropPositionObject {
-    const res: Highcharts.DragDropPositionObject = {
+): DragDropPositionObject {
+    const res: DragDropPositionObject = {
         chartX: e.chartX,
         chartY: e.chartY,
         guideBox: guideBox && {
@@ -1376,7 +1345,7 @@ function getPositionSnapshot(
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
         objectEach(point.series.dragDropProps, function (
-            val: (Highcharts.SeriesDragDropPropsObject|null),
+            val: (SeriesDragDropPropsObject|null),
             key: string
         ): void {
             const axis = (point.series as any)[(val as any).axis + 'Axis'];
@@ -1563,23 +1532,23 @@ function initDragDrop(
  *         reference, as well as the new data values.
  */
 function getNewPoints(
-    dragDropData: Highcharts.DragDropDataObject,
+    dragDropData: DragDropDataObject,
     newPos: PointerEvent
-): Record<string, Highcharts.DragDropPointObject> {
+): Record<string, DragDropPointObject> {
     const point = dragDropData.point,
         series = point.series,
         chart = series.chart,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         updateProps: (
-            Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>
+            Record<string, Partial<SeriesDragDropPropsObject>>
         ) = {},
         resizeProp = dragDropData.updateProp,
-        hashmap: Record<string, Highcharts.DragDropPointObject> = {};
+        hashmap: Record<string, DragDropPointObject> = {};
 
     // Go through the data props that can be updated on this series and find out
     // which ones we want to update.
     objectEach(point.series.dragDropProps, function (
-        val: Partial<Highcharts.SeriesDragDropPropsObject>,
+        val: Partial<SeriesDragDropPropsObject>,
         key: string
     ): void {
         // If we are resizing, skip if this key is not the correct one or it
@@ -1648,7 +1617,7 @@ function updatePoints(
     chart: Chart,
     animation?: (boolean|Partial<AnimationOptions>)
 ): void {
-    const newPoints: Record<string, Highcharts.DragDropPointObject> =
+    const newPoints: Record<string, DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
         animOptions = animObject(animation);
 
@@ -1656,7 +1625,7 @@ function updatePoints(
 
     // Update the points
     objectEach(newPoints, function (
-        newPoint: Highcharts.DragDropPointObject
+        newPoint: DragDropPointObject
     ): void {
         newPoint.point.update(newPoint.newValues, false);
     });
@@ -1691,7 +1660,7 @@ function updatePoints(
 function resizeGuideBox(point: Point, dX: number, dY: number): void {
     const series = point.series,
         chart = series.chart,
-        dragDropData: Highcharts.DragDropDataObject = chart.dragDropData as any,
+        dragDropData: DragDropDataObject = chart.dragDropData as any,
         resizeProp =
             (series.dragDropProps as any)[dragDropData.updateProp as any],
         // dragDropProp.resizeSide holds info on which side to resize.
@@ -1741,7 +1710,7 @@ function dragMove(
         options = merge(series.options.dragDrop, point.options.dragDrop),
         draggableX = options.draggableX,
         draggableY = options.draggableY,
-        origin: Highcharts.DragDropPositionObject = (data as any).origin,
+        origin: DragDropPositionObject = (data as any).origin,
         updateProp: string = (data as any).updateProp;
     let dX = e.chartX - origin.chartX,
         dY = e.chartY - origin.chartY;
@@ -1795,7 +1764,7 @@ function dragMove(
  */
 Chart.prototype.setGuideBoxState = function (
     state: string,
-    options?: Record<string, Highcharts.DragDropGuideBoxOptionsObject>
+    options?: Record<string, DragDropGuideBoxOptions>
 ): SVGElement {
     const guideBox = this.dragGuideBox,
         guideBoxOptions = merge(DragDropDefaults.guideBox, options),
@@ -1847,9 +1816,9 @@ Chart.prototype.setGuideBoxState = function (
  *         An object with updated data values.
  */
 Point.prototype.getDropValues = function (
-    origin: Highcharts.DragDropPositionObject,
+    origin: DragDropPositionObject,
     newPos: PointerEvent,
-    updateProps: Record<string, Highcharts.SeriesDragDropPropsObject>
+    updateProps: Record<string, SeriesDragDropPropsObject>
 ): Record<string, number> {
     const point = this,
         series = point.series,
@@ -1992,7 +1961,7 @@ Point.prototype.getDropValues = function (
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
     objectEach(updateProps, function (
-        val: Highcharts.SeriesDragDropPropsObject,
+        val: SeriesDragDropPropsObject,
         key: string
     ): void {
         const oldVal = (pointOrigin.point as any)[key],
@@ -2187,7 +2156,7 @@ function onResizeHandleMouseDown(
     // We started a drag
     initDragDrop(e, point);
     (chart.dragDropData as any).updateProp =
-        (e as Highcharts.PointDragStartEventObject).updateProp = updateProp;
+        (e as PointDragStartEventObject).updateProp = updateProp;
     point.firePointEvent('dragStart', e);
 
     // Prevent default to avoid point click for dragging too
@@ -2214,10 +2183,10 @@ Point.prototype.showDragHandles = function (): void {
     // Go through each updateProp and see if we are supposed to create a handle
     // for it.
     objectEach(series.dragDropProps, function (
-        val: Highcharts.SeriesDragDropPropsObject,
+        val: SeriesDragDropPropsObject,
         key: string
     ): void {
-        const handleOptions: Highcharts.DragDropHandleOptionsObject = merge(
+        const handleOptions: DragDropHandleOptions = merge(
                 DragDropDefaults.dragHandle,
                 val.handleOptions,
                 options.dragHandle
@@ -2453,10 +2422,10 @@ function mouseMove(
 
     const dragDropData = chart.dragDropData;
     let point: Point,
-        seriesDragDropOpts: Highcharts.DragDropOptionsObject,
-        newPoints: Record<string, Highcharts.DragDropPointObject>,
+        seriesDragDropOpts: DragDropOptions,
+        newPoints: Record<string, DragDropPointObject>,
         numNewPoints = 0,
-        newPoint: (Highcharts.DragDropPointObject|null|undefined);
+        newPoint: (DragDropPointObject|null|undefined);
 
     if (dragDropData && dragDropData.isDragging && dragDropData.point.series) {
         point = dragDropData.point;
@@ -2531,7 +2500,7 @@ function mouseUp(
         dragDropData.point.series
     ) {
         const point = dragDropData.point,
-            newPoints: Record<string, Highcharts.DragDropPointObject> =
+            newPoints: Record<string, DragDropPointObject> =
                 dragDropData.newPoints as any,
             numNewPoints = countProps(newPoints),
             newPoint = numNewPoints === 1 ?
@@ -2557,7 +2526,7 @@ function mouseUp(
             numNewPoints: numNewPoints,
             newPoint: newPoint && newPoint.newValues,
             newPointId: newPoint && newPoint.point.id
-        } as Partial<Highcharts.PointDropEventObject>, function (): void {
+        } as Partial<PointDropEventObject>, function (): void {
             updatePoints(chart);
         });
     }
