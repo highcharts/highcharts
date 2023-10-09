@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 
 export const config = {
-    sizes: [10, 100, 200, 400, 800]
+    sizes: [10, 400, 2000, 8000]
 };
 
 export function before(size: number) {
@@ -16,17 +16,17 @@ export function before(size: number) {
             gap = Math.floor(size * 0.1);
 
 
-        for(let i = 0;i < size + gap; i++) {
+        for (let i = 0;i < size + gap; i++) {
             if (i > gap && i < gap * 2) {
                 continue;
             }
             data.push([
                 firstPoint + i * dayInMilis,
-                Math.random(),
-                Math.random(),
-                Math.random(),
-                Math.random(),
-            ])
+                Math.floor(100* Math.random()),
+                Math.floor(100* Math.random()),
+                Math.floor(100* Math.random()),
+                Math.floor(100* Math.random()),
+            ]);
         }
         return data;
     }
@@ -69,15 +69,20 @@ export default async function benchmarkTest(
     accessibility: {
       enabled: false
     },
-    xAxis: {
-        ordinal: false
+    plotOptions: {
+        series: {
+            animation: false,
+            dataLabels: {
+                defer: false
+            }
+        }
     },
     series: [{
       data: data,
       type: 'candlestick',
-      // dataGrouping: {
-      //   enabled: true
-      // }
+      dataGrouping: {
+        enabled: true
+      }
     }]
   });
   performance.mark('End');
