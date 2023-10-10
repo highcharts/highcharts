@@ -6,7 +6,7 @@ on:
     paths:
       - 'ts/Stock/**'
       - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmark*'
+      - 'test/ts-node-unit-tests/benchmark/Stock/'
       - '.github/workflows/stock-benchmark.yml'
 
 permissions:
@@ -37,7 +37,7 @@ jobs:
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern 
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Stock/
 
       - name: Checkout current branch
         uses: actions/checkout@v3
