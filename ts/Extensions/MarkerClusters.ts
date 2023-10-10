@@ -36,7 +36,6 @@ import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -49,8 +48,6 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -554,44 +551,6 @@ function getStateId(): string {
 //     }
 // }
 /* eslint-enable require-jsdoc */
-
-declare module '../Core/Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        /** @requires Extensions/MarkerClusters */
-        cluster: SymbolFunction;
-    }
-}
-// Cluster symbol.
-symbols.cluster = function (
-    x: number,
-    y: number,
-    width: number,
-    height: number
-): SVGPath {
-    const w = width / 2,
-        h = height / 2,
-        outerWidth = 1,
-        space = 1,
-        inner = symbols.arc(x + w, y + h, w - space * 4, h - space * 4, {
-            start: Math.PI * 0.5,
-            end: Math.PI * 2.5,
-            open: false
-        }),
-        outer1 = symbols.arc(x + w, y + h, w - space * 3, h - space * 3, {
-            start: Math.PI * 0.5,
-            end: Math.PI * 2.5,
-            innerR: w - outerWidth * 2,
-            open: false
-        }),
-        outer2 = symbols.arc(x + w, y + h, w - space, h - space, {
-            start: Math.PI * 0.5,
-            end: Math.PI * 2.5,
-            innerR: w,
-            open: false
-        });
-
-    return outer2.concat(outer1, inner);
-};
 
 Scatter.prototype.animateClusterPoint = function (
     clusterObj: Highcharts.ClusterAndNoiseObject
@@ -1325,15 +1284,15 @@ Scatter.prototype.preventClusterCollisions = function (
         gridXPx = gridX * gridSize,
         gridYPx = gridY * gridSize,
         propsPx = valuesToPixels(series, props),
-        xPixel = propsPx.x,
-        yPixel = propsPx.y,
         gridsToCheckCollision = [],
-        pointsLen = 0,
-        radius = 0,
         clusterMarkerOptions =
             (series.options.cluster || {}).marker,
         zoneOptions = (series.options.cluster || {}).zones,
         gridOffset = series.getGridOffset(),
+        xPixel = propsPx.x,
+        yPixel = propsPx.y,
+        pointsLen = 0,
+        radius = 0,
         nextXPixel,
         nextYPixel,
         signX,
