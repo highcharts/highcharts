@@ -76,7 +76,7 @@ jobs:
 
             const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
 
-            await createOrUpdateComment(github, context, 'Benchmark report', benchmarkMD || 'No table to show');
+            await createOrUpdateComment(github, context, 'Benchmark report - Dashboards', benchmarkMD || 'No table to show');
 
 
       - name: Add to summary
