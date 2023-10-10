@@ -397,22 +397,20 @@ function flipResizeSide(side: string): string {
  */
 function getGroupedPoints(point: Point): Array<Point> {
     const series = point.series,
+        data = series.options.data || [],
         groupKey = (series.options.dragDrop as any).groupBy;
     let points: Array<Point> = [];
 
     if (series.boosted) { // #11156
-        (series.options.data as any).forEach(function (
-            pointOptions: (PointOptions|PointShortOptions),
-            i: number
-        ): void {
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             points.push(
                 (new series.pointClass()).init( // eslint-disable-line new-cap
                     series,
-                    pointOptions
+                    data[i]
                 )
             );
             points[points.length - 1].index = i;
-        });
+        }
 
     } else {
         points = series.points;
@@ -420,10 +418,10 @@ function getGroupedPoints(point: Point): Array<Point> {
 
     return (point.options as any)[groupKey] ?
         // If we have a grouping option, filter the points by that
-        points.filter(function (comparePoint: Point): boolean {
-            return (comparePoint.options as any)[groupKey] ===
-                (point.options as any)[groupKey];
-        }) :
+        points.filter((comparePoint: Point): boolean => (
+            (comparePoint.options as any)[groupKey] ===
+                (point.options as any)[groupKey]
+        )) :
         // Otherwise return the point by itself only
         [point];
 }
