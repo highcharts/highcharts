@@ -54,7 +54,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Benchmark
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Dashboards/
 
       - name: Benchmark comparison
         run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
