@@ -311,12 +311,6 @@ class PlotLineOrBand {
         zIndex?: number
     ): void {
         const plotLine = this,
-            /**
-             * PlotLine axis
-             *
-             * @name Highcharts.Axis
-             * @type {PlotLineOrBandAxis.Composition}
-             */
             axis = plotLine.axis,
             renderer = axis.chart.renderer;
 
