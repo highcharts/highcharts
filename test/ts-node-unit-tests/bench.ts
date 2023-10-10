@@ -1,5 +1,5 @@
 import { readdirSync, existsSync } from 'node:fs';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 
@@ -24,6 +24,30 @@ const TEST_TIMEOUT_SECONDS = 30;
 
 const errors = [];
 let testCounter: number = 0;
+
+type walkResult = Array<string | walkResult>
+
+/**
+ * Grab file extensions
+ */
+
+const getDirRecursive = async (dir: string): Promise<Array<string>> => {
+    try {
+        const items = await readdir(dir);
+        let files = [];
+        for (const item of items) {
+            if ((await lstat(`${dir}/${item}`)).isDirectory())
+                files = [
+                    ...files,
+                    ...(await getDirRecursive(`${dir}/${item}`))
+                ];
+            else files.push(`${dir}/${item}`);
+        }
+        return files;
+    } catch (e) {
+        return e;
+    }
+};
 
 async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
     const worker = new Worker(join(__dirname, './bench-worker.ts'), {
@@ -148,8 +172,12 @@ async function benchmark(){
     }
 
     if (existsSync(BENCH_PATH)) {
-        const testFiles = readdirSync(BENCH_PATH)
-        .filter(file => {
+        const result = await getDirRecursive(BENCH_PATH);
+        debugger;
+        console.log(result);
+        const testArray = result.flat(Infinity);
+
+        const testFiles = testArray.filter(file => {
             if (pattern && typeof pattern === 'string') {
                 return new RegExp(pattern).test(file);
             }
@@ -158,11 +186,12 @@ async function benchmark(){
         });
 
         for (const testFile of testFiles) {
-            const testFilePath = join(BENCH_PATH, testFile);
+            const testFilePath = testFile;
             const data = await runRest(testFilePath);
 
+            console.log(data);
             await writeFile(
-                join(reportDir, `${testFile.replace('.bench.ts', '')}.json`),
+                join(reportDir, `${testFile.replace(`/${BENCH_PATH}|.bench.ts/`, '')}.json`),
                 JSON.stringify(data, undefined, 2)
             );
 
