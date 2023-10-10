@@ -56,7 +56,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
     'js/Extensions/Exporting/Fullscreen.js',
-    'js/Extensions/MarkerClusters.js',
+    'js/Extensions/MarkerClusters/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
     'js/Extensions/SeriesLabel/SeriesLabel.js',
