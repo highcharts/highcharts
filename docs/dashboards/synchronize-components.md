@@ -13,7 +13,7 @@ The events, that can be synchronized between components are:
 * [visibility](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
 * [extremes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
 * [highlight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
-* [crossfilter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter/) (Can only be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
+* [crossfilter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter/) (Can be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
 
 ### Sync declaration
 ```
