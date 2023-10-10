@@ -156,6 +156,7 @@ function renderLabelIcon(
     // Set the new position, and show or hide
     icon[shouldRender ? 'show' : 'hide'](); // #14904, #1338
 
+
     // Presentational attributes
     if (!renderer.styledMode) {
         icon
@@ -205,12 +206,14 @@ function wrapGetLabelPosition(
             tick,
             [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
         );
+
     let
         mapOfPosToGridNode,
         node,
         level;
 
     if (isTreeGrid) {
+
         const
             { width = 0, padding = 0 } = (
                 lbOptions && isObject(lbOptions.symbol, true) ?
@@ -269,11 +272,13 @@ function wrapRenderLabel(
         prefixClassName = 'highcharts-treegrid-node-',
         prefixLevelClass = prefixClassName + 'level-',
         styledMode = chart.styledMode;
+
     let collapsed,
         addClassName,
         removeClassName;
 
     if (isTreeGridElement && node) {
+
         // Add class name for hierarchical styling.
         label
             .removeClass(new RegExp(prefixLevelClass + '.*'))
@@ -339,6 +344,7 @@ function wrapRenderLabel(
                 object.attachedTreeGridEvents = true;
             }
         });
+
     } else if (icon) {
 
         if (label) {
@@ -493,6 +499,7 @@ class TreeGridTickAdditions {
             { pos, axis } = this.tick,
             { treeGrid, brokenAxis } = axis,
             posMappedNodes = treeGrid.mapOfPosToGridNode;
+
 
         if (brokenAxis && posMappedNodes) {
             const

@@ -36,6 +36,7 @@ export interface TreeGetOptionsObject {
     before?: Function;
 }
 
+
 export interface TreeNode {
     children: Array<TreeNode>;
     data: (TreePointOptionsObject|null);
@@ -101,6 +102,7 @@ function getListOfParents(
             return prev;
         }, {} as Record<string, Array<TreePointOptionsObject>>);
 
+
     Object.keys(listOfParents).forEach(
         (node: string): void => {
 
@@ -108,6 +110,7 @@ function getListOfParents(
 
                 const adoptedByRoot = listOfParents[node].map(
                     function (orphan): TreePointOptionsObject {
+
                         const { parent, ...parentExcluded } = orphan;
                         return parentExcluded;
                     }
@@ -119,6 +122,7 @@ function getListOfParents(
             }
         }
     );
+
     return listOfParents;
 }
 
@@ -141,10 +145,12 @@ function getNode(
             parent: (parent || '')
         };
 
+
     let descendants = 0,
         height = 0,
         start: (number|undefined),
         end: (number|undefined);
+
 
     // Allow custom logic before the children has been created.
     if (typeof before === 'function') {
@@ -153,7 +159,9 @@ function getNode(
 
     // Call getNode recursively on the children. Calulate the height of the
     // node, and the number of descendants.
+
     const children = ((mapOfIdToChildren[id] || [])).map((child): TreeNode => {
+
         const node = getNode(
                 child.id as any,
                 id,
@@ -217,6 +225,7 @@ function getTree(
     options: TreeGetOptionsObject
 ): TreeNode {
     const mapOfIdToChildren = getListOfParents(data);
+
 
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 }
