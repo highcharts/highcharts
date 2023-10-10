@@ -29,7 +29,8 @@ const {
     isObject,
     pick,
     defined,
-    merge
+    merge,
+    isNumber
 } = U;
 
 /* *
@@ -68,42 +69,24 @@ const optionsToObject = (
 /**
  * @private
  */
-const fitToBox = function (
-    inner: BBoxObject,
-    outer: BBoxObject
-): BBoxObject {
-    if (inner.x + inner.width > outer.x + outer.width) {
-        if (inner.width > outer.width) {
-            inner.width = outer.width;
-            inner.x = outer.x;
-        } else {
-            inner.x = outer.x + outer.width - inner.width;
-        }
-    }
-    if (inner.width > outer.width) {
-        inner.width = outer.width;
-    }
-    if (inner.x < outer.x) {
-        inner.x = outer.x;
-    }
+const fitToRange = (
+    outerStart:number,
+    outerWidth:number,
+    innerStart:number,
+    innerWidth: number
+): {
+    rangeStart: number,
+    rangeWidth: number
+} => {
+    const outerEnd = outerStart + outerWidth,
+        rangeStart = U.clamp(innerStart, outerStart, outerEnd),
+        rangeWidth = rangeStart === outerStart ? outerWidth :
+            U.clamp(innerWidth, outerStart - innerStart, outerEnd - innerStart);
 
-    // y and height
-    if (inner.y + inner.height > outer.y + outer.height) {
-        if (inner.height > outer.height) {
-            inner.height = outer.height;
-            inner.y = outer.y;
-        } else {
-            inner.y = outer.y + outer.height - inner.height;
-        }
-    }
-    if (inner.height > outer.height) {
-        inner.height = outer.height;
-    }
-    if (inner.y < outer.y) {
-        inner.y = outer.y;
-    }
-
-    return inner;
+    return {
+        rangeStart,
+        rangeWidth
+    };
 };
 
 let wheelTimer: number,
@@ -113,27 +96,84 @@ let wheelTimer: number,
 /**
  * @private
  */
-const zoomBy = function (
+const zoomOnX = function (
     chart: Chart,
-    howMuch: number,
-    centerXArg: number,
-    centerYArg: number,
+    zoomX: boolean,
     mouseX: number,
-    mouseY: number,
-    options: MouseWheelZoomOptions
+    howMuch: number,
+    centerXArg: number
 ): boolean {
-    const xAxis = chart.xAxis[0],
-        yAxis = chart.yAxis[0],
-        yOptions = yAxis.options,
-        type = pick(options.type, chart.zooming.type, ''),
-        zoomX = /x/.test(type),
-        zoomY = /y/.test(type);
+    const xAxis = chart.xAxis[0];
 
     let hasZoomed = false;
 
     if (defined(xAxis.max) && defined(xAxis.min) &&
-        defined(yAxis.max) && defined(yAxis.min) &&
-        defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
+        defined(xAxis.dataMax) && defined(xAxis.dataMin)) {
+
+        let fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5;
+        if (xAxis.reversed && !chart.inverted ||
+            chart.inverted && !xAxis.reversed) {
+            // We are taking into account that xAxis automatically gets
+            // reversed when chart.inverted
+            fixToX = 1 - fixToX;
+        }
+
+        const xRange = xAxis.max - xAxis.min,
+            centerX = pick(centerXArg, xAxis.min + xRange / 2),
+            newXRange = xRange * howMuch,
+            newXMin = centerX - newXRange * fixToX,
+            dataRangeX = pick(xAxis.options.max, xAxis.dataMax) -
+                pick(xAxis.options.min, xAxis.dataMin),
+            outerX = pick(xAxis.options.min, xAxis.dataMin) -
+                dataRangeX * xAxis.options.minPadding,
+            outerWidth = dataRangeX + dataRangeX * xAxis.options.minPadding +
+                dataRangeX * xAxis.options.maxPadding,
+            newExt = fitToRange(
+                outerX,
+                outerWidth,
+                newXMin,
+                newXRange
+            ),
+            zoomOut = (
+                newExt.rangeStart <= pick(xAxis.options.min, outerX) &&
+                newExt.rangeWidth >= outerWidth &&
+                newExt.rangeStart + newExt.rangeWidth <=
+                    pick(xAxis.options.max, Number.MIN_VALUE)
+            );
+
+        if (zoomX) {
+            if (defined(howMuch) && !zoomOut) { // Zoom
+                xAxis.setExtremes(
+                    newExt.rangeStart,
+                    newExt.rangeStart + newExt.rangeWidth,
+                    false
+                );
+                hasZoomed = true;
+            } else { // Reset zoom
+                xAxis.setExtremes(void 0, void 0, false);
+            }
+        }
+    }
+
+    return hasZoomed;
+};
+
+/**
+* @private
+*/
+const zoomOnY = function (
+    chart: Chart,
+    zoomY: boolean,
+    mouseY: number,
+    howMuch: number,
+    centerYArg: number
+) : boolean {
+    const yAxis = chart.yAxis[0],
+        yOptions = yAxis.options;
+
+    let hasZoomed = false;
+
+    if (defined(yAxis.max) && defined(yAxis.min) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
         if (zoomY) {
@@ -173,91 +213,96 @@ const zoomBy = function (
             }, 400);
         }
 
-        if (chart.inverted) {
-            const emulateRoof = yAxis.pos + yAxis.len;
-
-            // Get the correct values
-            centerXArg = xAxis.toValue(mouseY);
-            centerYArg = yAxis.toValue(mouseX);
-
-            // Swapping x and y for simplicity when chart is inverted.
-            const tmp = mouseX;
-            mouseX = mouseY;
-            mouseY = emulateRoof - tmp + yAxis.pos;
-        }
-
-        let fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5;
-        if (xAxis.reversed && !chart.inverted ||
-            chart.inverted && !xAxis.reversed) {
-            // We are taking into account that xAxis automatically gets
-            // reversed when chart.inverted
-            fixToX = 1 - fixToX;
-        }
-
         let fixToY = 1 - (mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5);
         if (yAxis.reversed) {
             fixToY = 1 - fixToY;
         }
 
-        const xRange = xAxis.max - xAxis.min,
-            centerX = pick(centerXArg, xAxis.min + xRange / 2),
-            newXRange = xRange * howMuch,
-            yRange = yAxis.max - yAxis.min,
-            centerY = pick(centerYArg, yAxis.min + yRange / 2),
+        const yRange = yAxis.max as any - (yAxis.min as any),
+            centerY = isNumber(centerYArg) ? centerYArg :
+                yAxis.min + yRange / 2,
             newYRange = yRange * howMuch,
-            newXMin = centerX - newXRange * fixToX,
             newYMin = centerY - newYRange * fixToY,
-            dataRangeX = xAxis.dataMax - xAxis.dataMin,
-            dataRangeY = yAxis.dataMax - yAxis.dataMin,
-            outerX = xAxis.dataMin - dataRangeX * xAxis.options.minPadding,
-            outerWidth = dataRangeX + dataRangeX * xAxis.options.minPadding +
-                dataRangeX * xAxis.options.maxPadding,
-            outerY = yAxis.dataMin - dataRangeY * yAxis.options.minPadding,
+            dataRangeY = pick(yAxis.options.max, yAxis.dataMax) -
+                pick(yAxis.options.min, yAxis.dataMin),
+            outerY = pick(yAxis.options.min, yAxis.dataMin) -
+                dataRangeY * yAxis.options.minPadding,
             outerHeight = dataRangeY + dataRangeY * yAxis.options.minPadding +
                 dataRangeY * yAxis.options.maxPadding,
-            newExt = fitToBox({
-                x: newXMin,
-                y: newYMin,
-                width: newXRange,
-                height: newYRange
-            }, {
-                x: outerX,
-                y: outerY,
-                width: outerWidth,
-                height: outerHeight
-            }),
+            newExt = fitToRange(
+                outerY,
+                outerHeight,
+                newYMin,
+                newYRange
+            ),
             zoomOut = (
-                newExt.x <= outerX &&
-                newExt.width >=
-                outerWidth &&
-                newExt.y <= outerY &&
-                newExt.height >= outerHeight
+                newExt.rangeStart <= pick(yAxis.options.min, outerY) &&
+                newExt.rangeWidth >= outerHeight &&
+                newExt.rangeStart + newExt.rangeWidth <=
+                    pick(yAxis.options.max, Number.MIN_VALUE)
             );
 
-        // Zoom
-        if (defined(howMuch) && !zoomOut) {
-            if (zoomX) {
-                xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
+        if (zoomY) {
+            if (defined(howMuch) && !zoomOut) { // Zoom
+                yAxis.setExtremes(
+                    newExt.rangeStart,
+                    newExt.rangeStart + newExt.rangeWidth,
+                    false
+                );
                 hasZoomed = true;
-            }
-            if (zoomY) {
-                yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-                hasZoomed = true;
-            }
-
-        // Reset zoom
-        } else {
-            if (zoomX) {
-                xAxis.setExtremes(void 0, void 0, false);
-            }
-            if (zoomY) {
+            } else { // Reset zoom
                 yAxis.setExtremes(void 0, void 0, false);
             }
         }
+    }
 
-        if (hasZoomed) {
-            chart.redraw(false);
-        }
+    return hasZoomed;
+};
+
+
+/**
+ * @private
+ */
+const zoomBy = function (
+    chart: Chart,
+    howMuch: number,
+    centerXArg: number,
+    centerYArg: number,
+    mouseX: number,
+    mouseY: number,
+    options: MouseWheelZoomOptions
+): boolean {
+    const xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        type = pick(
+            options.type,
+            chart.zooming.type,
+            ''
+        ),
+        zoomX = /x/.test(type),
+        zoomY = /y/.test(type);
+
+
+    if (chart.inverted) {
+        const emulateRoof = yAxis.pos + yAxis.len;
+
+        // Get the correct values
+        centerXArg = xAxis.toValue(mouseY);
+        centerYArg = yAxis.toValue(mouseX);
+
+        // Swapping x and y for simplicity when chart is inverted.
+        const tmp = mouseX;
+        mouseX = mouseY;
+        mouseY = emulateRoof - tmp + yAxis.pos;
+    }
+
+    const hasZoomedX = zoomOnX(chart, zoomX, mouseX, howMuch, centerXArg),
+        hasZoomedY = zoomOnY(chart, zoomY, mouseY, howMuch, centerYArg),
+        hasZoomed = hasZoomedX || hasZoomedY;
+
+
+    if (hasZoomed) {
+        chart.redraw(false);
     }
 
     return hasZoomed;
