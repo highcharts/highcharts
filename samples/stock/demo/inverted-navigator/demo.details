@@ -1,0 +1,11 @@
+---
+name: Inverted navigator
+authors:
+  - Pawel fus, Askel Eirik Johansson
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Various
+use_png_thumbnail: true
+...
