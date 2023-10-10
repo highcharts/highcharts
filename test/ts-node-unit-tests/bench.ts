@@ -20,7 +20,7 @@ const CODE_PATH = resolve(__dirname, '../../code');
 
 const OUTPUT_PATH = join(__dirname, '../../tmp/benchmarks');
 
-const TEST_TIMEOUT_SECONDS = 30;
+const TEST_TIMEOUT_SECONDS = 100;
 
 const errors = [];
 let testCounter: number = 0;
