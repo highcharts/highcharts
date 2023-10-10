@@ -115,7 +115,7 @@ function onTickHoverExit(
     label.removeClass('highcharts-treegrid-node-active');
 
     if (!label.renderer.styledMode) {
-        label.css({ textDecoration: css.textDecoration });
+        label.css({ textDecoration: (css.textDecoration || 'none') });
     }
 }
 

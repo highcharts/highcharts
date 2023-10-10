@@ -335,14 +335,7 @@
     QUnit.test('Point.update', assert => {
         const today = +new Date();
         const day = 24 * 60 * 60 * 1000;
-        const {
-            series: [
-                {
-                    points,
-                    points: [point]
-                }
-            ]
-        } = Highcharts.ganttChart('container', {
+        const chart = Highcharts.ganttChart('container', {
             series: [
                 {
                     data: [
@@ -382,7 +375,14 @@
             start: today + day,
             end: today + 2 * day
         };
-
+        const {
+            series: [
+                {
+                    points,
+                    points: [point]
+                }
+            ]
+        } = chart;
         // Run Point.update
         point.update(updateValues);
 
@@ -411,6 +411,16 @@
             2,
             'Collapsed graphics should not be rendered (#12617)'
         );
+
+        // Changing id of a parent
+        points[1].update({ id: '_moving' });
+
+        assert.strictEqual(
+            chart.series[0].yAxis.treeGrid.tree.children.length,
+            5,
+            'Orphaned nodes should appear as direct children of root'
+        );
+
     });
 
     QUnit.test('Collapsing subtasks', assert => {
