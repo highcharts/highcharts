@@ -50,7 +50,6 @@ const {
     clamp,
     isNumber,
     merge,
-    objectEach,
     pick,
     pushUnique
 } = U;
@@ -504,6 +503,7 @@ function pointGetDropValues(
         options = merge(series.options.dragDrop, point.options.dragDrop),
         result: Record<string, number> = {},
         pointOrigin = origin.points[point.id];
+
     let updateSingleProp: (boolean|undefined);
 
     // Find out if we only have one prop to update
@@ -637,11 +637,9 @@ function pointGetDropValues(
 
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
-    objectEach(updateProps, function (
-        val: SeriesDragDropPropsObject,
-        key: string
-    ): void {
-        const oldVal = (pointOrigin.point as any)[key],
+    for (const key of Object.keys(updateProps)) {
+        const val = updateProps[key],
+            oldVal = (pointOrigin.point as any)[key],
             axis: Axis = (series as any)[val.axis + 'Axis'],
             newVal = mapView ?
                 limitToMapRange(newPos, val.axis.toUpperCase(), key) :
@@ -666,7 +664,7 @@ function pointGetDropValues(
         ) {
             result[key] = newVal;
         }
-    });
+    }
 
     return result;
 }
@@ -685,15 +683,14 @@ function pointShowDragHandles(
         series = point.series,
         chart = series.chart,
         { inverted, renderer } = chart,
-        options = merge(series.options.dragDrop, point.options.dragDrop);
+        options = merge(series.options.dragDrop, point.options.dragDrop),
+        dragDropProps = series.dragDropProps || {};
 
     // Go through each updateProp and see if we are supposed to create a handle
     // for it.
-    objectEach(series.dragDropProps, function (
-        val: SeriesDragDropPropsObject,
-        key: string
-    ): void {
-        const handleOptions: DragDropHandleOptions = merge(
+    for (const key of Object.keys(dragDropProps)) {
+        const val = dragDropProps[key] as SeriesDragDropPropsObject,
+            handleOptions: DragDropHandleOptions = merge(
                 DragDropDefaults.dragHandle,
                 val.handleOptions,
                 options.dragHandle
@@ -801,7 +798,7 @@ function pointShowDragHandles(
                 }
             );
         }
-    });
+    }
 }
 
 /**
@@ -828,7 +825,7 @@ function seriesGetGuideBox(
         changed: (boolean|undefined);
 
     // Find bounding box of all points
-    points.forEach(function (point: Point): void {
+    for (const point of points) {
         const bBox = (
             point.graphic && point.graphic.getBBox() || point.shapeArgs
         );
@@ -873,7 +870,7 @@ function seriesGetGuideBox(
                 maxY
             );
         }
-    });
+    }
 
     return changed ? chart.renderer.rect(
         minX,

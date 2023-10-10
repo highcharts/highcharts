@@ -55,7 +55,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
-    objectEach,
     pick,
     pushUnique
 } = U;
@@ -211,16 +210,14 @@ function addDragDropEvents(
 function chartHideDragHandles(
     this: Chart
 ): void {
-    const chart = this;
+    const chart = this,
+        dragHandles = (chart.dragHandles || {}) as AnyRecord;
 
-    if (chart.dragHandles) {
-        objectEach(chart.dragHandles, function (val, key): void {
-            if (key !== 'group' && (val as SVGElement).destroy) {
-                (val as SVGElement).destroy();
+    if (dragHandles) {
+        for (const key of Object.keys(dragHandles)) {
+            if (dragHandles[key].destroy) {
+                dragHandles[key].destroy();
             }
-        });
-        if (chart.dragHandles.group && chart.dragHandles.group.destroy) {
-            chart.dragHandles.group.destroy();
         }
         delete chart.dragHandles;
     }
@@ -466,14 +463,15 @@ function getNewPoints(
             Record<string, Partial<SeriesDragDropPropsObject>>
         ) = {},
         resizeProp = dragDropData.updateProp,
-        hashmap: Record<string, DragDropPointObject> = {};
+        hashmap: Record<string, DragDropPointObject> = {},
+        dragDropProps = point.series.dragDropProps;
 
     // Go through the data props that can be updated on this series and find out
     // which ones we want to update.
-    objectEach(point.series.dragDropProps, function (
-        val: Partial<SeriesDragDropPropsObject>,
-        key: string
-    ): void {
+    // eslint-disable-next-line guard-for-in
+    for (const key in dragDropProps) {
+        const val = dragDropProps[key];
+
         // If we are resizing, skip if this key is not the correct one or it
         // is not resizable.
         if (
@@ -483,7 +481,7 @@ function getNewPoints(
                 val.optionName && (options as any)[val.optionName] === false
             )
         ) {
-            return;
+            continue;
         }
 
         // If we are resizing, we now know it is good. If we are moving, check
@@ -504,24 +502,24 @@ function getNewPoints(
                 updateProps[key] = val;
             }
         }
-    });
+    }
 
     // Go through the points to be updated and get new options for each of them
-    (
+    for (
+        const p of
         // If resizing).forEach(only update the point we are resizing
         resizeProp ?
             [point] :
             dragDropData.groupedPoints
-    ).forEach(
-        function (p: Point): void {
-            hashmap[p.id] = {
-                point: p,
-                newValues: p.getDropValues(
-                    dragDropData.origin, newPos, updateProps as any
-                )
-            };
-        }
-    );
+    ) {
+        hashmap[p.id] = {
+            point: p,
+            newValues: p.getDropValues(
+                dragDropData.origin, newPos, updateProps as any
+            )
+        };
+    }
+
     return hashmap;
 }
 
@@ -563,16 +561,15 @@ function getPositionSnapshot(
     };
 
     // Loop over the points and add their props
-    points.forEach(function (point: Point): void {
-        const pointProps: Record<string, number> = {};
+    for (const point of points) {
+        const dragDropProps = point.series.dragDropProps || {},
+            pointProps: Record<string, number> = {};
 
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
-        objectEach(point.series.dragDropProps, function (
-            val: (SeriesDragDropPropsObject|null),
-            key: string
-        ): void {
-            const axis = (point.series as any)[(val as any).axis + 'Axis'];
+        for (const key of Object.keys(dragDropProps)) {
+            const val = dragDropProps[key],
+                axis = (point.series as any)[(val as any).axis + 'Axis'];
 
             pointProps[key] = (point as any)[key];
             // Record how far cursor was from the point when drag started.
@@ -589,10 +586,10 @@ function getPositionSnapshot(
                     axis.toPixels(point[key as keyof typeof point]) -
                     (axis.horiz ? e.chartX : e.chartY);
             }
-        });
+        }
         (pointProps as any).point = point; // Store reference to point
         res.points[point.id] = pointProps;
-    });
+    }
 
     return res;
 }
@@ -653,6 +650,7 @@ function initDragDrop(
     const groupedPoints = getGroupedPoints(point),
         series = point.series,
         chart = series.chart;
+
     let guideBox;
 
     // If liveRedraw is disabled, show the guide box with the default state
@@ -728,18 +726,21 @@ function isPointMovable(point: Point): (boolean|undefined) {
         seriesDragDropOptions = series.options.dragDrop || {},
         pointDragDropOptions = point.options && point.options.dragDrop,
         updateProps = series.dragDropProps;
-    let hasMovableX,
+
+    let p: Partial<SeriesDragDropPropsObject>,
+        hasMovableX,
         hasMovableY;
 
-    objectEach(updateProps, function (
-        p: SeriesDragDropPropsObject
-    ): void {
+    // eslint-disable-next-line guard-for-in
+    for (const key in updateProps) {
+        p = updateProps[key];
+
         if (p.axis === 'x' && p.move) {
             hasMovableX = true;
         } else if (p.axis === 'y' && p.move) {
             hasMovableY = true;
         }
-    });
+    }
 
     // We can only move the point if draggableX/Y is set, even if all the
     // individual prop options are set.
@@ -754,7 +755,7 @@ function isPointMovable(point: Point): (boolean|undefined) {
             pointDragDropOptions.draggableY === false
         ) &&
         (
-            (series.yAxis && series.xAxis) ||
+            !!(series.yAxis && series.xAxis) ||
             chart.mapView
         )
     );
@@ -772,16 +773,18 @@ function isPointMovable(point: Point): (boolean|undefined) {
  *         True if the series is using drag/drop.
  */
 function isSeriesDraggable(series: Series): (boolean|undefined) {
-    const props = ['draggableX', 'draggableY'];
+    const props = ['draggableX', 'draggableY'],
+        dragDropProps = series.dragDropProps || {};
+
+    let val: Partial<SeriesDragDropPropsObject>;
 
     // Add optionNames from dragDropProps to the array of props to check for
-    objectEach(series.dragDropProps, function (
-        val: Partial<SeriesDragDropPropsObject>
-    ): void {
+    for (const key of Object.keys(dragDropProps)) {
+        val = dragDropProps[key];
         if (val.optionName) {
             props.push(val.optionName);
         }
-    });
+    }
 
     // Loop over all options we have that could enable dragDrop for this
     // series. If any of them are truthy, this series is draggable.
@@ -1113,19 +1116,20 @@ function updatePoints(
 
     chart.isDragDropAnimating = true;
 
+    let newPoint: DragDropPointObject;
+
     // Update the points
-    objectEach(newPoints, function (
-        newPoint: DragDropPointObject
-    ): void {
+    for (const key of Object.keys(newPoints)) {
+        newPoint = newPoints[key];
         newPoint.point.update(newPoint.newValues, false);
-    });
+    }
 
     chart.redraw(animOptions);
 
     // Clear the isAnimating flag after animation duration is complete.
     // The complete handler for animation seems to have bugs at this time, so
     // we have to use a timeout instead.
-    setTimeout(function (): void {
+    setTimeout((): void => {
         delete chart.isDragDropAnimating;
         if (chart.hoverPoint && !chart.dragHandles) {
             chart.hoverPoint.showDragHandles();
