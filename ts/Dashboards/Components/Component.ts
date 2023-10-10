@@ -1154,7 +1154,8 @@ namespace Component {
 
     /**
      * The sync can be an object configuration containing: `highlight`,
-     * `visibility` or `extremes`.
+     * `visibility` or `extremes`. For the Navigator Component `crossfilter`
+     * sync can be used.
      * ```
      * Example:
      * {
@@ -1219,6 +1220,8 @@ namespace Component {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
          */
         sync: SyncOptions;
         /**
