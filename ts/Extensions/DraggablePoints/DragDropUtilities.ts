@@ -60,15 +60,13 @@ function addEvents<T>(
     options?: U.EventOptions
 ): Function {
     const removeFuncs: Array<Function> = types.map(
-        function (type: string): Function {
-            return addEvent(el, type, fn, options);
-        }
+        (type: string): Function => addEvent(el, type, fn, options)
     );
 
     return function (): void {
-        removeFuncs.forEach(function (fn: Function): void {
+        for (const fn of removeFuncs) {
             fn();
-        });
+        }
     };
 }
 
@@ -85,14 +83,7 @@ function addEvents<T>(
  *         Number of own properties on the object.
  */
 function countProps(obj: object): number {
-    let count = 0;
-
-    for (const p in obj) {
-        if (Object.hasOwnProperty.call(obj, p)) {
-            count++;
-        }
-    }
-    return count;
+    return Object.keys(obj).length;
 }
 
 /**
