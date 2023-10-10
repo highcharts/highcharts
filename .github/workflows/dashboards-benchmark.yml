@@ -6,7 +6,7 @@ on:
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmark*'
+      - 'test/ts-node-unit-tests/benchmark/Dashboards/*'
       - '.github/workflows/dashboards-benchmark.yml'
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Dashboards/
 
       - name: Checkout current branch
         uses: actions/checkout@v3

@@ -173,8 +173,6 @@ async function benchmark(){
 
     if (existsSync(BENCH_PATH)) {
         const result = await getDirRecursive(BENCH_PATH);
-        debugger;
-        console.log(result);
         const testArray = result.flat(Infinity);
 
         const testFiles = testArray.filter(file => {

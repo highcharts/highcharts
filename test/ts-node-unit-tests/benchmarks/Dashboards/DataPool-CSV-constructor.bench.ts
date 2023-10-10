@@ -1,4 +1,4 @@
-import type { BenchmarkContext, BenchmarkResult } from '../benchmark';
+import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
 
