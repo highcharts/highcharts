@@ -78,7 +78,6 @@ const {
     svg,
     win
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -89,6 +88,7 @@ import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
+import Tick from '../Axis/Tick.js';
 const {
     addEvent,
     attr,
@@ -2383,7 +2383,7 @@ class Chart {
                 });
             };
 
-        let correction = 0; // correction for X axis labels
+        let expectedSpace = 0; // Correction for X axis labels
 
         // Title
         chart.setTitle();
@@ -2405,21 +2405,51 @@ class Chart {
         const tempWidth = chart.plotWidth;
 
         axes.some(function (axis: Axis): (boolean|undefined) {
+            // Left side must be align: right and right side must
+            // have align: left for labels
+            axis.reserveSpaceDefault = (
+                axis.side === 0 ||
+                axis.side === 2 ||
+                { 1: 'left', 3: 'right' }[axis.side] === axis.labelAlign
+            );
+
+            // Set the explicit or automatic label alignment
+            axis.labelAlign = axis.options.labels.align ||
+                axis.autoLabelAlign(axis.labelRotation as any);
+
             if (
                 axis.horiz &&
                 axis.visible &&
                 axis.options.labels.enabled &&
                 axis.series.length
             ) {
-                // 21 is the most common correction for X axis labels
-                correction = 21;
-                return true;
-            }
-        } as any);
+                // Calculate extecped space based on dummy tick
+                const dummyTick = new Tick(axis, -1, '', true),
+                    label = dummyTick.createLabel(
+                        { x: 0, y: 0 },
+                        'xy',
+                        axis.options.labels
+                    );
 
-        // use Math.max to prevent negative plotHeight
-        chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
-        const tempHeight = chart.plotHeight;
+                if (
+                    label &&
+                    pick(
+                        axis.options.labels.reserveSpace,
+                        isNumber(axis.options.crossing) ? false : null,
+                        axis.labelAlign === 'center' ? true : null,
+                        axis.reserveSpaceDefault
+                    )
+                ) {
+                    expectedSpace = label.getBBox().height +
+                        axis.options.labels.distance;
+                    return true;
+                }
+            }
+            return void 0;
+        });
+
+        // Use Math.max to prevent negative plotHeight
+        chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
 
         // Get margins by pre-rendering axes
         axes.forEach(function (axis): void {
@@ -2427,30 +2457,8 @@ class Chart {
         });
         chart.getAxisMargins();
 
-        // If the plot area size has changed significantly, calculate tick
-        // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-        // Height is more sensitive, use lower threshold
-        const redoVertical = tempHeight / chart.plotHeight > 1.05 ||
-            tempHeight / chart.plotHeight < 1; // #19604
-
-        if (redoHorizontal || redoVertical) {
-
-            axes.forEach(function (axis): void {
-                if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
-                ) {
-                    // update to reflect the new margins
-                    axis.setTickInterval(true);
-                }
-            });
-            chart.getMargins(); // second pass to check for new labels
-        }
-
         // Draw the borders and backgrounds
         chart.drawChartBox();
-
 
         // Axes
         if (chart.hasCartesianSeries) {
