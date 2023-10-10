@@ -12,6 +12,6 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import MarkerClusterSymbols from '../../Extensions/MarkerClusters/MarkerClusterSymbols.js';
-import '../../Extensions/MarkerClusters.js';
+import '../../Extensions/MarkerClusters/MarkerClusters.js';
 const G: AnyRecord = Highcharts;
 MarkerClusterSymbols.compose(G.SVGRenderer);
