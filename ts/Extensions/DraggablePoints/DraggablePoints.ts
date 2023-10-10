@@ -359,7 +359,7 @@ function onPointMouseOut(
 ): void {
     const point = this;
 
-    setTimeout(function (): void {
+    setTimeout((): void => {
         if (point.series) {
             mouseOut(point);
         }
@@ -381,9 +381,7 @@ function onPointMouseOver(
 ): void {
     const point = this;
 
-    setTimeout(function (): void {
-        mouseOver(point);
-    }, 12);
+    setTimeout((): void => mouseOver(point), 12);
 }
 
 /**
@@ -502,20 +500,8 @@ function pointGetDropValues(
         mapView = chart.mapView,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         result: Record<string, number> = {},
-        pointOrigin = origin.points[point.id];
-
-    let updateSingleProp: (boolean|undefined);
-
-    // Find out if we only have one prop to update
-    for (const key in updateProps) {
-        if (Object.hasOwnProperty.call(updateProps, key)) {
-            if (typeof updateSingleProp !== 'undefined') {
-                updateSingleProp = false;
-                break;
-            }
-            updateSingleProp = true;
-        }
-    }
+        pointOrigin = origin.points[point.id],
+        updateSingleProp = Object.keys(updateProps).length === 1;
 
     /**
      * Utility function to apply precision and limit a value within the
@@ -528,7 +514,10 @@ function pointGetDropValues(
      * @return {number}
      *         Limited value
      */
-    const limitToRange = function (val: number, direction: string): number {
+    const limitToRange = (
+        val: number,
+        direction: string
+    ): number => {
         const defaultPrecision =
             (series as any)[direction.toLowerCase() + 'Axis']
                 .categories ? 1 : 0,
@@ -543,6 +532,7 @@ function pointGetDropValues(
                 (options as any)['dragMax' + direction] as number,
                 Infinity
             );
+
         let res = val;
 
         if (precision) {
@@ -564,11 +554,11 @@ function pointGetDropValues(
      * @return {number | undefined}
      *         Limited value
      */
-    const limitToMapRange = function (
+    const limitToMapRange = (
         newPos: PointerEvent,
         direction: string,
         key: string
-    ): number | undefined {
+    ): (number|undefined) => {
         if (mapView) {
             const precision = pick<number|undefined, number>(
                     (options as any)['dragPrecision' + direction],
@@ -686,6 +676,8 @@ function pointShowDragHandles(
         options = merge(series.options.dragDrop, point.options.dragDrop),
         dragDropProps = series.dragDropProps || {};
 
+    let dragHandles = chart.dragHandles;
+
     // Go through each updateProp and see if we are supposed to create a handle
     // for it.
     for (const key of Object.keys(dragDropProps)) {
@@ -707,6 +699,7 @@ function pointShowDragHandles(
             // updating of this prop.
             validate = val.validateIndividualDrag ?
                 val.validateIndividualDrag(point) : true;
+
         let pos,
             handle,
             path;
@@ -723,17 +716,19 @@ function pointShowDragHandles(
             (options as any)[val.optionName] !== false
         ) {
 
-            // Create group if it doesn't exist
-            if (!chart.dragHandles) {
-                chart.dragHandles = {
+            // Create handle if it doesn't exist
+            if (!dragHandles) {
+                dragHandles = chart.dragHandles = {
                     group: renderer
                         .g('drag-drop-handles')
-                        .add(series.markerGroup || series.group)
-                } as any;
-            }
+                        .add(series.markerGroup || series.group),
+                    point: point.id
+                };
 
             // Store which point this is
-            (chart.dragHandles as any).point = point.id;
+            } else {
+                dragHandles.point = point.id;
+            }
 
             // Find position and path of handle
             pos = handlePositioner(point);
@@ -750,11 +745,11 @@ function pointShowDragHandles(
                     'ew-resize' : 'ns-resize');
 
             // Create and add the handle element if it doesn't exist
-            handle = (chart.dragHandles as any)[val.optionName];
+            handle = (dragHandles as AnyRecord)[val.optionName];
             if (!handle) {
-                handle = (chart.dragHandles as any)[val.optionName] = renderer
+                handle = (dragHandles as AnyRecord)[val.optionName] = renderer
                     .path()
-                    .add((chart.dragHandles as any).group);
+                    .add(dragHandles.group);
             }
 
             // Move and update handle
@@ -770,30 +765,25 @@ function pointShowDragHandles(
             handle.attr(handleAttrs);
 
             // Add events
+            addEvents(handle.element, ['touchstart', 'mousedown'], (
+                e: PointerEvent
+            ): void => {
+                onResizeHandleMouseDown(
+                    getNormalizedEvent(e, chart),
+                    point,
+                    key
+                );
+            }, {
+                passive: false
+            });
+            addEvent(dragHandles.group.element, 'mouseover', (): void => {
+                chart.dragDropData = chart.dragDropData || {} as any;
+                (chart.dragDropData as any).isHoveringHandle = point.id;
+            });
             addEvents(
-                handle.element,
-                ['touchstart', 'mousedown'],
-                function (e: PointerEvent): void {
-                    onResizeHandleMouseDown(
-                        getNormalizedEvent(e, chart),
-                        point,
-                        key
-                    );
-                },
-                { passive: false }
-            );
-            addEvent(
-                (chart.dragHandles as any).group.element,
-                'mouseover',
-                function (): void {
-                    chart.dragDropData = chart.dragDropData || ({} as any);
-                    (chart.dragDropData as any).isHoveringHandle = point.id;
-                }
-            );
-            addEvents(
-                (chart.dragHandles as any).group.element,
+                dragHandles.group.element,
                 ['touchend', 'mouseout'],
-                function (): void {
+                (): void => {
                     onResizeHandleMouseOut(point);
                 }
             );

@@ -37,13 +37,9 @@ import DraggableChart from './DraggableChart.js';
 const { flipResizeSide } = DraggableChart;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    clamp,
     isNumber,
     merge,
-    objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -79,11 +75,11 @@ const column = {
         move: false,
         resize: true,
         // Force guideBox start coordinates
-        beforeResize: function (
+        beforeResize: (
             guideBox: SVGElement,
             pointVals: Record<string, number>,
             point: ColumnPoint
-        ): void {
+        ): void => {
             // We need to ensure that guideBox always starts at threshold.
             // We flip whether or not we update the top or bottom of the guide
             // box at threshold, but if we drag the mouse fast, the top has not
@@ -119,10 +115,10 @@ const column = {
         },
         // Flip the side of the resize handle if column is below threshold.
         // Make sure we remove the handle on the other side.
-        resizeSide: function (
+        resizeSide: (
             pointVals: Record<string, number>,
             point: ColumnPoint
-        ): string {
+        ): string => {
             const chart = point.series.chart,
                 dragHandles = chart.dragHandles,
                 side = pointVals.y >= (point.series.options.threshold || 0) ?
@@ -137,7 +133,9 @@ const column = {
             return side;
         },
         // Position handle at bottom if column is below threshold
-        handlePositioner: function (point: ColumnPoint): PositionObject {
+        handlePositioner: (
+            point: ColumnPoint
+        ): PositionObject => {
             const bBox = (
                     point.shapeArgs ||
                     (point.graphic && point.graphic.getBBox()) ||
@@ -156,7 +154,9 @@ const column = {
             };
         },
         // Horizontal handle
-        handleFormatter: function (point: ColumnPoint): SVGPath {
+        handleFormatter: (
+            point: ColumnPoint
+        ): SVGPath => {
             const shapeArgs = point.shapeArgs || {},
                 radius: number = shapeArgs.r || 0, // Rounding of bar corners
                 width: number = shapeArgs.width || 0,
@@ -194,21 +194,19 @@ const boxplot = {
         move: true,
         resize: true,
         resizeSide: 'bottom',
-        handlePositioner: function (
+        handlePositioner: (
             point: BoxPlotPoint
-        ): PositionObject {
-            return {
-                x: point.shapeArgs.x || 0,
-                y: point.lowPlot
-            };
-        },
+        ): PositionObject => ({
+            x: point.shapeArgs.x || 0,
+            y: point.lowPlot
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: BoxPlotPoint
-        ): boolean {
-            return val <= point.q1;
-        }
+        ): boolean => (
+            val <= point.q1
+        )
     },
     /**
      * Allow Q1 value to be dragged individually.
@@ -224,21 +222,19 @@ const boxplot = {
         move: true,
         resize: true,
         resizeSide: 'bottom',
-        handlePositioner: function (
+        handlePositioner: (
             point: BoxPlotPoint
-        ): PositionObject {
-            return {
-                x: point.shapeArgs.x || 0,
-                y: point.q1Plot
-            };
-        },
+        ): PositionObject => ({
+            x: point.shapeArgs.x || 0,
+            y: point.q1Plot
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: BoxPlotPoint
-        ): boolean {
-            return val <= point.median && val >= point.low;
-        }
+        ): boolean => (
+            val <= point.median && val >= point.low
+        )
     },
     median: {
         // Median cannot be dragged individually, just move the whole
@@ -260,21 +256,19 @@ const boxplot = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: BoxPlotPoint
-        ): PositionObject {
-            return {
-                x: point.shapeArgs.x || 0,
-                y: point.q3Plot
-            };
-        },
+        ): PositionObject => ({
+            x: point.shapeArgs.x || 0,
+            y: point.q3Plot
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: BoxPlotPoint
-        ): boolean {
-            return val <= point.high && val >= point.median;
-        }
+        ): boolean => (
+            val <= point.high && val >= point.median
+        )
     },
     /**
      * Allow high value to be dragged individually.
@@ -290,21 +284,19 @@ const boxplot = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: BoxPlotPoint
-        ): PositionObject {
-            return {
-                x: point.shapeArgs.x || 0,
-                y: point.highPlot
-            };
-        },
+        ): PositionObject => ({
+            x: point.shapeArgs.x || 0,
+            y: point.highPlot
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: BoxPlotPoint
-        ): boolean {
-            return val >= point.q3;
-        }
+        ): boolean => (
+            val >= point.q3
+        )
     }
 };
 
@@ -326,9 +318,9 @@ const bullet = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: BulletPoint
-        ): PositionObject {
+        ): PositionObject => {
             const bBox: BBoxObject =
                 (point.targetGraphic as any).getBBox();
 
@@ -358,21 +350,19 @@ const ohlc = {
         move: true,
         resize: true,
         resizeSide: 'bottom',
-        handlePositioner: function (
+        handlePositioner: (
             point: OHLCPoint
-        ): PositionObject {
-            return {
-                x: (point.shapeArgs as any).x,
-                y: point.plotLow as any
-            };
-        },
+        ): PositionObject => ({
+            x: (point.shapeArgs as any).x,
+            y: point.plotLow as any
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: OHLCPoint
-        ): boolean {
-            return val <= point.open && val <= point.close;
-        }
+        ): boolean => (
+            val <= point.open && val <= point.close
+        )
     },
     /**
      * Allow high value to be dragged individually.
@@ -388,21 +378,19 @@ const ohlc = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: OHLCPoint
-        ): PositionObject {
-            return {
-                x: (point.shapeArgs as any).x,
-                y: point.plotHigh as any
-            };
-        },
+        ): PositionObject => ({
+            x: (point.shapeArgs as any).x,
+            y: point.plotHigh as any
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: OHLCPoint
-        ): boolean {
-            return val >= point.open && val >= point.close;
-        }
+        ): boolean => (
+            val >= point.open && val >= point.close
+        )
     },
     /**
      * Allow open value to be dragged individually.
@@ -417,24 +405,24 @@ const ohlc = {
         axis: 'y',
         move: true,
         resize: true,
-        resizeSide: function (point: OHLCPoint): string {
-            return point.open >= point.close ? 'top' : 'bottom';
-        },
-        handlePositioner: function (
+        resizeSide: (
             point: OHLCPoint
-        ): PositionObject {
-            return {
-                x: (point.shapeArgs as any).x,
-                y: point.plotOpen
-            };
-        },
+        ): string => (
+            point.open >= point.close ? 'top' : 'bottom'
+        ),
+        handlePositioner: (
+            point: OHLCPoint
+        ): PositionObject => ({
+            x: (point.shapeArgs as any).x,
+            y: point.plotOpen
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: OHLCPoint
-        ): boolean {
-            return val <= point.high && val >= point.low;
-        }
+        ): boolean => (
+            val <= point.high && val >= point.low
+        )
     },
     /**
      * Allow close value to be dragged individually.
@@ -449,24 +437,24 @@ const ohlc = {
         axis: 'y',
         move: true,
         resize: true,
-        resizeSide: function (point: OHLCPoint): string {
-            return point.open >= point.close ? 'bottom' : 'top';
-        },
-        handlePositioner: function (
+        resizeSide: (
             point: OHLCPoint
-        ): PositionObject {
-            return {
-                x: (point.shapeArgs as any).x,
-                y: point.plotClose
-            };
-        },
+        ): string => (
+            point.open >= point.close ? 'bottom' : 'top'
+        ),
+        handlePositioner: (
+            point: OHLCPoint
+        ): PositionObject => ({
+            x: (point.shapeArgs as any).x,
+            y: point.plotClose
+        }),
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: OHLCPoint
-        ): boolean {
-            return val <= point.high && val >= point.low;
-        }
+        ): boolean => (
+            val <= point.high && val >= point.low
+        )
     }
 };
 
@@ -474,12 +462,13 @@ const ohlc = {
 const waterfall = {
     x: column.x,
     y: merge(column.y, {
-        handleFormatter: function (
+        handleFormatter: (
             point: WaterfallPoint
-        ): (SVGPath|null) {
-            return point.isSum || point.isIntermediateSum ? null :
-                column.y.handleFormatter(point);
-        }
+        ): (SVGPath|null) => (
+            point.isSum || point.isIntermediateSum ?
+                null :
+                column.y.handleFormatter(point)
+        )
     })
 };
 
@@ -503,9 +492,9 @@ const columnrange = {
         move: true,
         resize: true,
         resizeSide: 'bottom',
-        handlePositioner: function (
+        handlePositioner: (
             point: ColumnRangePoint
-        ): PositionObject {
+        ): PositionObject => {
             const bBox = (
                 point.shapeArgs || (point.graphic as any).getBBox()
             );
@@ -516,12 +505,12 @@ const columnrange = {
             };
         },
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: ColumnRangePoint
-        ): boolean {
-            return val <= point.high;
-        }
+        ): boolean => (
+            val <= point.high
+        )
     },
     /**
      * Allow high value to be dragged individually.
@@ -537,9 +526,9 @@ const columnrange = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: ColumnRangePoint
-        ): PositionObject {
+        ): PositionObject => {
             const bBox = (
                 point.shapeArgs || (point.graphic as any).getBBox()
             );
@@ -550,12 +539,12 @@ const columnrange = {
             };
         },
         handleFormatter: column.y.handleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: ColumnRangePoint
-        ): boolean {
-            return val >= point.low;
-        }
+        ): boolean => (
+            val >= point.low
+        )
     }
 };
 
@@ -576,9 +565,9 @@ const arearange = {
         move: true,
         resize: true,
         resizeSide: 'bottom',
-        handlePositioner: function (
+        handlePositioner: (
             point: AreaRangePoint
-        ): PositionObject {
+        ): PositionObject => {
             const bBox = (
                 point.graphics &&
                 point.graphics[0] &&
@@ -607,9 +596,9 @@ const arearange = {
         move: true,
         resize: true,
         resizeSide: 'top',
-        handlePositioner: function (
+        handlePositioner: (
             point: AreaRangePoint
-        ): PositionObject {
+        ): PositionObject => {
             const bBox = (
                 point.graphics &&
                 point.graphics[1] &&
@@ -646,18 +635,18 @@ const xrange = {
         move: true,
         resize: true,
         resizeSide: 'left',
-        handlePositioner: function (
+        handlePositioner: (
             point: XRangePoint
-        ): PositionObject {
-            return xrangeHandlePositioner(point, 'x');
-        },
+        ): PositionObject => (
+            xrangeHandlePositioner(point, 'x')
+        ),
         handleFormatter: horizHandleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: XRangePoint
-        ): boolean {
-            return val <= (point.x2 as any);
-        }
+        ): boolean => (
+            val <= (point.x2 as any)
+        )
     },
     /**
      * Allow x2 value to be dragged individually.
@@ -673,18 +662,18 @@ const xrange = {
         move: true,
         resize: true,
         resizeSide: 'right',
-        handlePositioner: function (
+        handlePositioner: (
             point: XRangePoint
-        ): PositionObject {
-            return xrangeHandlePositioner(point, 'x2');
-        },
+        ): PositionObject => (
+            xrangeHandlePositioner(point, 'x2')
+        ),
         handleFormatter: horizHandleFormatter,
-        propValidate: function (
+        propValidate: (
             val: number,
             point: XRangePoint
-        ): boolean {
-            return val >= (point.x as any);
-        }
+        ): boolean => (
+            val >= (point.x as any)
+        )
     }
 };
 
@@ -702,11 +691,11 @@ const gantt = {
     start: merge(xrange.x, {
         optionName: 'draggableStart',
         // Do not allow individual drag handles for milestones
-        validateIndividualDrag: function (
+        validateIndividualDrag: (
             point: GanttPoint
-        ): boolean {
-            return !point.milestone;
-        }
+        ): boolean => (
+            !point.milestone
+        )
     }),
     /**
      * Allow end value to be dragged individually.
@@ -719,11 +708,11 @@ const gantt = {
     end: merge(xrange.x2, {
         optionName: 'draggableEnd',
         // Do not allow individual drag handles for milestones
-        validateIndividualDrag: function (
+        validateIndividualDrag: (
             point: GanttPoint
-        ): boolean {
-            return !point.milestone;
-        }
+        ): boolean => (
+            !point.milestone
+        )
     })
 };
 
@@ -792,6 +781,7 @@ function xrangeHandlePositioner(
         inverted = series.chart.inverted,
         offsetY = series.columnMetrics ? series.columnMetrics.offset :
             -(point.shapeArgs as any).height / 2;
+
     // Using toPixels handles axis.reversed, but doesn't take
     // chart.inverted into account.
     let newX = xAxis.toPixels((point as any)[xProp], true),

@@ -158,42 +158,36 @@ function addDragDropEvents(
 
     // Only enable if we have a draggable chart
     if (isChartDraggable(chart)) {
-        addEvents(
-            container,
-            ['mousedown', 'touchstart'],
-            function (e: PointerEvent): void {
-                mouseDown(getNormalizedEvent(e, chart), chart);
-            }
-        );
-        addEvents(
-            container,
-            ['mousemove', 'touchmove'],
-            function (e: PointerEvent): void {
-                mouseMove(getNormalizedEvent(e, chart), chart);
-            },
-            { passive: false }
-        );
-        addEvent(
-            container,
-            'mouseleave',
-            function (e: PointerEvent): void {
-                mouseUp(getNormalizedEvent(e, chart), chart);
-            }
-        );
-        chart.unbindDragDropMouseUp = addEvents(
-            doc,
-            ['mouseup', 'touchend'],
-            function (e: PointerEvent): void {
-                mouseUp(getNormalizedEvent(e, chart), chart);
-            },
-            { passive: false }
-        );
+        addEvents(container, ['mousedown', 'touchstart'], (
+            e: PointerEvent
+        ): void => {
+            mouseDown(getNormalizedEvent(e, chart), chart);
+        });
+        addEvents(container, ['mousemove', 'touchmove'], (
+            e: PointerEvent
+        ): void => {
+            mouseMove(getNormalizedEvent(e, chart), chart);
+        }, {
+            passive: false
+        });
+        addEvent(container, 'mouseleave', (
+            e: PointerEvent
+        ): void => {
+            mouseUp(getNormalizedEvent(e, chart), chart);
+        });
+        chart.unbindDragDropMouseUp = addEvents(doc, ['mouseup', 'touchend'], (
+            e: PointerEvent
+        ): void => {
+            mouseUp(getNormalizedEvent(e, chart), chart);
+        }, {
+            passive: false
+        });
 
         // Add flag to avoid doing this again
         chart.hasAddedDragDropEvents = true;
 
         // Add cleanup to make sure we don't pollute document
-        addEvent(chart, 'destroy', function (): void {
+        addEvent(chart, 'destroy', (): void => {
             if (chart.unbindDragDropMouseUp) {
                 chart.unbindDragDropMouseUp();
             }
