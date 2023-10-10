@@ -120,11 +120,6 @@ const chartPreview = async theme => {
         series: [{
             data: data,
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#BADA55'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.name}'
@@ -135,7 +130,7 @@ const chartPreview = async theme => {
     // Stock preview
     if (!ohlc) {
         ohlc = await fetch(
-            'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlc.json'
         ).then(response => response.json());
     }
     Highcharts.stockChart('container-stock', {
@@ -312,6 +307,21 @@ const generate = async () => {
         return Object.keys(theme).length ? theme : undefined;
     };
     const theme = findColors(defaultOptions);
+
+    // Further extend the theme with some colors that are computed at runtime
+    // and not available through the options structure.
+    Highcharts.merge(true, theme, {
+        chart: {
+            selectionMarkerFill: new Color(palette.highlightColor80)
+                .setOpacity(0.25)
+                .get()
+        },
+        navigator: {
+            maskFill: new Color(palette.highlightColor60)
+                .setOpacity(0.3)
+                .get()
+        }
+    });
 
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
 

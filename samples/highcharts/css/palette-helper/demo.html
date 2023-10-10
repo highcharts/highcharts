@@ -14,6 +14,7 @@ window.addEventListener('HighchartsModuleLoaded', function(e) {
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/map.js"></script>
 <script src="https://code.highcharts.com/modules/stock.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
 <div class="demo-content">
@@ -44,19 +45,18 @@ window.addEventListener('HighchartsModuleLoaded', function(e) {
         Highlight color
     </label>
 
-
-    <h4>CSS output</h4>
-    <pre id="css"></pre>
-    <h4>JavaScript output</h4>
-    <pre id="js"></pre>
-
     <h4>Palette preview</h4>
     <div id="preview">
         <div id="neutral-preview"></div>
         <div id="highlight-preview"></div>
     </div>
 
-    <div id="container-chart"></div>
-    <div id="container-map"></div>
-    <div id="container-stock"></div>
+    <div id="container-chart" class="container"></div>
+    <div id="container-map" class="container"></div>
+    <div id="container-stock" class="container"></div>
+
+    <h4>CSS output</h4>
+    <pre id="css"></pre>
+    <h4>JavaScript output</h4>
+    <pre id="js"></pre>
 </div>

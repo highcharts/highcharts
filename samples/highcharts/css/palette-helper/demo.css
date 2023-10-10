@@ -31,12 +31,10 @@ input[type="color"] {
 
 input[type="color"]::-webkit-color-swatch {
     border-radius: 50%;
-    border: 1px solid #000;
 }
 
 input[type="color"]::-moz-color-swatch {
     border-radius: 50%;
-    border: 1px solid #000;
 }
 
 #neutral-preview,
@@ -50,12 +48,17 @@ input[type="color"]::-moz-color-swatch {
 #highlight-preview div {
     display: inline-block;
     width: 50%;
-    height: 3em;
+    height: 2em;
     box-sizing: border-box;
     padding: 3px;
     vertical-align: middle;
     border: 1px solid transparent;
     transition: background-color 250ms;
+}
+
+.container {
+    border: 1px solid rgba(160, 160, 160, 0.5);
+    margin: 0.5em 0;
 }
 
 #container-map {
