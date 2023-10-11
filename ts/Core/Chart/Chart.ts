@@ -2424,13 +2424,13 @@ class Chart {
                 axis.series.length
             ) {
                 // Calculate extecped space based on dummy tick
-                const dummyTick = new Tick(axis, -1, '', true),
-                    label = dummyTick.createLabel(
+                const mockTick = new Tick(axis, -1, '', true),
+                    label = mockTick.createLabel(
                         { x: 0, y: 0 },
                         'xy',
                         axis.options.labels
                     );
-
+                mockTick.destroy();
                 if (
                     label &&
                     pick(
@@ -2442,6 +2442,8 @@ class Chart {
                 ) {
                     expectedSpace = label.getBBox().height +
                         axis.options.labels.distance;
+
+                    label.destroy();
                     return true;
                 }
             }
@@ -2450,12 +2452,33 @@ class Chart {
 
         // Use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
+        const tempHeight = chart.plotHeight;
 
         // Get margins by pre-rendering axes
         axes.forEach(function (axis): void {
             axis.setScale();
         });
         chart.getAxisMargins();
+
+        // If the plot area size has changed significantly, calculate tick
+        // positions again
+        const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
+        // Height is more sensitive, use lower threshold
+        const redoVertical = tempHeight / chart.plotHeight > 1.05;
+
+        if (redoHorizontal || redoVertical) {
+
+            axes.forEach(function (axis): void {
+                if (
+                    (axis.horiz && redoHorizontal) ||
+                    (!axis.horiz && redoVertical)
+                ) {
+                    // Update to reflect the new margins
+                    axis.setTickInterval(true);
+                }
+            });
+            chart.getMargins(); // Second pass to check for new labels
+        }
 
         // Draw the borders and backgrounds
         chart.drawChartBox();

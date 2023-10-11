@@ -239,7 +239,7 @@ QUnit.test(
             ]
         });
 
-        assert.strictEqual(iteratorAB, 4, 'All after breaks called');
+        assert.strictEqual(iteratorAB, 7, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
     }
 );
