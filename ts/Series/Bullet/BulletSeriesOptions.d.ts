@@ -29,7 +29,8 @@ export interface BulletSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BulletSeriesOptions;

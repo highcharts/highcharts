@@ -302,6 +302,186 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
 
 };
 
+/**
+ * A `boxplot` series. If the [type](#series.boxplot.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.boxplot
+ * @excluding dataParser, dataURL, marker, stack, stacking, states,
+ *            boostThreshold, boostBlending
+ * @product   highcharts
+ * @requires  highcharts-more
+ * @apioption series.boxplot
+ */
+
+/**
+ * An array of data points for the series. For the `boxplot` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of arrays with 6 or 5 values. In this case, the values correspond
+ *    to `x,low,q1,median,q3,high`. If the first value is a string, it is
+ *    applied as the name of the point, and the `x` value is inferred. The `x`
+ *    value can also be omitted, in which case the inner arrays should be of
+ *    length 5. Then the `x` value is automatically calculated, either starting
+ *    at 0 and incremented by 1, or from `pointStart` and `pointInterval` given
+ *    in the series options.
+ *    ```js
+ *    data: [
+ *        [0, 3, 0, 10, 3, 5],
+ *        [1, 7, 8, 7, 2, 9],
+ *        [2, 6, 9, 5, 1, 3]
+ *    ]
+ *    ```
+ *
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.boxplot.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 4,
+ *        q1: 9,
+ *        median: 9,
+ *        q3: 1,
+ *        high: 10,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        low: 5,
+ *        q1: 7,
+ *        median: 3,
+ *        q3: 6,
+ *        high: 2,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
+ *
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
+ * @extends   series.line.data
+ * @excluding marker
+ * @product   highcharts
+ * @apioption series.boxplot.data
+ */
+
+/**
+ * The `high` value for each data point, signifying the highest value
+ * in the sample set. The top whisker is drawn here.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.boxplot.data.high
+ */
+
+/**
+ * The `low` value for each data point, signifying the lowest value
+ * in the sample set. The bottom whisker is drawn here.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.boxplot.data.low
+ */
+
+/**
+ * The median for each data point. This is drawn as a line through the
+ * middle area of the box.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.boxplot.data.median
+ */
+
+/**
+ * The lower quartile for each data point. This is the bottom of the
+ * box.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.boxplot.data.q1
+ */
+
+/**
+ * The higher quartile for each data point. This is the top of the box.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.boxplot.data.q3
+ */
+
+/**
+ * The dash style of the box.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.boxDashStyle
+ */
+
+/**
+ * The dash style of the median.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.medianDashStyle
+ */
+
+/**
+ * The dash style of the stem.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.stemDashStyle
+ */
+
+/**
+ * The dash style of the whiskers.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.whiskerDashStyle
+ */
+
+''; // keeps doclets above separate
+
 /* *
  *
  *  Default Export
