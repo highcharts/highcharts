@@ -92,6 +92,56 @@ const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
 
 };
 
+/**
+ * A `bellcurve` series. If the [type](#series.bellcurve.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to
+ * [plotOptions.bellcurve](#plotOptions.bellcurve).
+ *
+ * @extends   series,plotOptions.bellcurve
+ * @since     6.0.0
+ * @product   highcharts
+ * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
+ * @requires  modules/bellcurve
+ * @apioption series.bellcurve
+ */
+
+/**
+ * An integer identifying the index to use for the base series, or a string
+ * representing the id of the series.
+ *
+ * @type      {number|string}
+ * @apioption series.bellcurve.baseSeries
+ */
+
+/**
+ * @see [fillColor](#series.bellcurve.fillColor)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.color
+ */
+
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillOpacity](#series.bellcurve.fillOpacity)
+ *
+ * @apioption series.bellcurve.fillColor
+ */
+
+/**
+ * @see [color](#series.bellcurve.color)
+ * @see [fillColor](#series.bellcurve.fillColor)
+ *
+ * @default   {highcharts} 0.75
+ * @default   {highstock} 0.75
+ * @apioption series.bellcurve.fillOpacity
+ */
+
+''; // keeps doclets above separate
+
 /* *
  *
  *  Default Export
