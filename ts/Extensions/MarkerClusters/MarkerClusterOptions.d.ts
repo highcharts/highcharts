@@ -20,7 +20,7 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import Point from '../../Core/Series/Point';
+import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
     PointMarkerOptions,
@@ -63,40 +63,40 @@ export interface MarkerClusterEventsOptions {
 }
 
 export interface MarkerClusterLayoutAlgorithmOptions {
-    type?: (MarkerClusterAlgorithmValue | Function);
-    gridSize: number;
-    processedGridSize?: number;
     distance: number;
-    processedDistance?: number;
+    gridSize: number;
     iterations?: number;
     kmeansThreshold: number;
+    processedDistance?: number;
+    processedGridSize?: number;
+    type?: (MarkerClusterAlgorithmValue | Function);
 }
 
 export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
-    radius: number;
     lineWidth: number;
+    radius: number;
 }
 
 export interface MarkerClusterOptions {
-    enabled?: boolean;
     allowOverlap?: boolean;
-    minimumClusterSize?: number;
-    drillToCluster?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
+    dataLabels?: DataLabelOptions;
+    drillToCluster?: boolean;
+    enabled?: boolean;
+    events?: MarkerClusterEventsOptions;
     layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
     marker: MarkerClusterMarkerOptions;
-    dataLabels?: DataLabelOptions;
-    zones?: Array<MarkerClusterZonesOptions>;
+    minimumClusterSize?: number;
     states?: PointStatesOptions<Point>;
-    events?: MarkerClusterEventsOptions;
+    zones?: Array<MarkerClusterZonesOptions>;
 }
 
 export interface MarkerClusterZonesOptions {
-    from: number;
-    to: number;
-    marker: PointMarkerOptions;
-    zoneIndex: number;
     className?: string;
+    from: number;
+    marker: PointMarkerOptions;
+    to: number;
+    zoneIndex: number;
 }
 
 /* *
