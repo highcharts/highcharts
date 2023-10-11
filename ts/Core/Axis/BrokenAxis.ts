@@ -293,11 +293,36 @@ namespace BrokenAxis {
                 threshold = axis.isXAxis ?
                     axis.min :
                     pick(series.options.threshold, axis.min);
+
+                // array of breaks that have been "zoomed-out"
+                // which means that they were shown previously, but now
+                // after zoom, they are not (#19885).
+                const breaksOut = axis?.options?.breaks?.filter(
+                    function (brk): boolean {
+                        let isOut = false;
+
+                        // iterate to see if "brk" is visible
+                        for (let i = 0; i < breaks.length; i++) {
+                            const otherBreak = breaks[i];
+                            if (
+                                otherBreak.from === brk.from &&
+                                otherBreak.to === brk.to
+                            ) {
+                                isOut = false;
+                                break;
+                            }
+                        }
+
+                        return isOut;
+                    }
+                );
+
                 points.forEach(function (point: Point): void {
                     y = pick(
                         (point as any)['stack' + key.toUpperCase()],
                         (point as any)[key]
                     );
+
                     breaks.forEach(function (brk: AxisBreakObject): void {
                         if (isNumber(threshold) && isNumber(y)) {
 
@@ -326,6 +351,12 @@ namespace BrokenAxis {
                             }
                         }
                     });
+
+                    breaksOut?.forEach(
+                        function (brk: AxisBreakOptions | undefined): void {
+                            fireEvent(axis, 'pointBreakOut', { point, brk });
+                        }
+                    );
                 });
             });
         }
