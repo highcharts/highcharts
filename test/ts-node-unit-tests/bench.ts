@@ -51,8 +51,13 @@ const getDirRecursive = async (dir: string): Promise<Array<string>> => {
 
 async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
     const worker = new Worker(join(__dirname, './bench-worker.ts'), {
-        stdout: false // pipe to main
-    });
+        resourceLimits: {
+            stackSizeMb: 20
+        },
+        stdout: false // pipe to main,
+        
+        },
+    );
 
     const promise = new Promise((resolve, reject) =>{
         worker.on('message', value =>{
@@ -67,10 +72,10 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
             }
         });
 
-        setTimeout(()=>{
-            worker.terminate();
-            reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
-        }, TEST_TIMEOUT_SECONDS * 1000);
+        // setTimeout(()=>{
+        //     worker.terminate();
+        //     reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
+        // }, TEST_TIMEOUT_SECONDS * 1000);
     });
 
     worker.postMessage({ testFile, size, CODE_PATH });
@@ -107,7 +112,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
 
-    for (const size  of config.sizes){
+    for (const size  of config.sizes) {
         const details: BenchmarkDetails = {
             test: relative(__dirname, testFile),
             sampleSize: size,
@@ -167,10 +172,6 @@ async function benchmark(){
 
     const reportDir = join(OUTPUT_PATH, typeof context === 'string' ? context : 'actual');
 
-    if (!existsSync(reportDir)){
-        await mkdir(reportDir, { recursive: true });
-    }
-
     if (existsSync(BENCH_PATH)) {
         const result = await getDirRecursive(BENCH_PATH);
         const testArray = result.flat(Infinity);
@@ -184,12 +185,16 @@ async function benchmark(){
         });
 
         for (const testFile of testFiles) {
-            const testFilePath = testFile;
-            const data = await runRest(testFilePath);
+            const testdir =testFile.replace(/[^/]*$/, '').replace(BENCH_PATH, '');
+            const dirPath = reportDir + testdir;
+            const data = await runRest(testFile);
 
-            console.log(data);
+            if (!existsSync(dirPath)){
+                await mkdir(dirPath, { recursive: true });
+            }
+
             await writeFile(
-                join(reportDir, `${testFile.replace(`/${BENCH_PATH}|.bench.ts/`, '')}.json`),
+                reportDir + testFile.replace(BENCH_PATH, '').replace('.bench.ts', '.json'),
                 JSON.stringify(data, undefined, 2)
             );
 

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 
 export const config = {
-    sizes: [10, 400, 2000, 8000]
+    sizes: [1000, 10_000, 100_000]
 };
 
 export function before(size: number) {
@@ -13,19 +13,20 @@ export function before(size: number) {
         const data: Array<Array<number>> = [],
             firstPoint = Date.UTC(2022, 0),
             dayInMilis  = 8.64e7,
-            gap = Math.floor(size * 0.1);
+            gap = Math.floor(size * 0.1),
+            iEnd = size + gap;
 
 
-        for (let i = 0;i < size + gap; i++) {
+        for (let i = 0; i < iEnd; i++) {
             if (i > gap && i < gap * 2) {
                 continue;
             }
             data.push([
                 firstPoint + i * dayInMilis,
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
+                Math.floor(100 * Math.random()),
+                Math.floor(100 * Math.random()),
+                Math.floor(100 * Math.random()),
+                Math.floor(100 * Math.random())
             ]);
         }
         return data;
@@ -33,7 +34,7 @@ export function before(size: number) {
 
     return {
         fileName: `${size}-ohlc.json`,
-        func: generateOHLC.bind(undefined, [size])
+        func: generateOHLC.bind(undefined, size)
   };
 }
 
