@@ -63,7 +63,7 @@ const {
 declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         newMax?: number;
-        range?: (null|number|RangeSelectorButtonOptions);
+        range?: (number|RangeSelectorButtonOptions);
     }
 }
 

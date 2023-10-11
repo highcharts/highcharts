@@ -181,8 +181,6 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    // Prevents unnecessary padding with `hc-more`
-    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;

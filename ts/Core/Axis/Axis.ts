@@ -244,21 +244,23 @@ class Axis {
     public left: number = void 0 as any;
     public len: number = void 0 as any;
     public linkedParent?: Axis;
-    public max: (null|number) = void 0 as any;
+    public max?: number = void 0;
     public maxLabelDimensions?: SizeObject;
     public maxLabelLength: number = void 0 as any;
-    public min: (null|number) = void 0 as any;
+    public min?: number = void 0;
     public minorTickInterval: number = void 0 as any;
     public minorTicks: Record<string, Tick> = void 0 as any;
     public minPixelPadding: number = void 0 as any;
     public minPointOffset?: number;
+    // When the minRange is undefined, it is not yet evaluated. When it is null,
+    // it is deliberately not a number because we have user extremes.
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
     public offset: number = void 0 as any;
     public old?: { // @todo create a type
         len: number;
-        max: number|null;
-        min: number|null;
+        max?: number;
+        min?: number;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -501,9 +503,9 @@ class Axis {
          * {@link Axis#getExtremes}.
          *
          * @name Highcharts.Axis#max
-         * @type {number|null}
+         * @type {number|undefined}
          */
-        axis.max = null;
+        axis.max = void 0;
 
         /**
          * The minimum value of the axis. In a logarithmic axis, this is the
@@ -511,9 +513,9 @@ class Axis {
          * {@link Axis#getExtremes}.
          *
          * @name Highcharts.Axis#min
-         * @type {number|null}
+         * @type {number|undefined}
          */
-        axis.min = null;
+        axis.min = void 0;
 
         /**
          * The processed crosshair options.
@@ -693,8 +695,7 @@ class Axis {
      * @emits Highcharts.Axis#event:getSeriesExtremes
      */
     public getSeriesExtremes(): void {
-        const axis = this,
-            chart = axis.chart;
+        const axis = this;
 
         let xExtremes;
 
@@ -1624,30 +1625,36 @@ class Axis {
      */
     public setTickInterval(secondPass?: boolean): void {
         const axis = this,
-            chart = axis.chart,
-            log = axis.logarithmic,
-            options = axis.options,
-            isXAxis = axis.isXAxis,
-            isLinked = axis.isLinked,
-            tickPixelIntervalOption = options.tickPixelInterval,
-            categories = axis.categories,
-            softThreshold = axis.softThreshold;
+            {
+                categories,
+                chart,
+                dataMax,
+                dataMin,
+                isXAxis,
+                logarithmic,
+                options,
+                softThreshold,
+                threshold
+            } = axis,
+            minRange = axis.minRange || 0,
+            { ceiling, floor, linkedTo, softMax, softMin } = options,
+            linkedParent = isNumber(linkedTo) && chart[axis.coll]?.[linkedTo],
+            tickPixelIntervalOption = options.tickPixelInterval;
 
         let maxPadding = options.maxPadding,
             minPadding = options.minPadding,
-            length,
+            range = 0,
             linkedParentExtremes,
             // Only non-negative tickInterval is valid, #12961
             tickIntervalOption =
                 isNumber(options.tickInterval) && options.tickInterval >= 0 ?
                     options.tickInterval : void 0,
-            threshold = isNumber(axis.threshold) ? axis.threshold : null,
             thresholdMin,
             thresholdMax,
             hardMin,
             hardMax;
 
-        if (!axis.dateTime && !categories && !isLinked) {
+        if (!axis.dateTime && !categories && !linkedParent) {
             this.getTickAmount();
         }
 
@@ -1656,11 +1663,9 @@ class Axis {
         hardMax = pick(axis.userMax, options.max);
 
         // Linked axis gets the extremes from the parent axis
-        if (isLinked) {
-            axis.linkedParent = (chart as any)[axis.coll][
-                options.linkedTo as any
-            ];
-            linkedParentExtremes = (axis.linkedParent as any).getExtremes();
+        if (linkedParent) {
+            axis.linkedParent = linkedParent;
+            linkedParentExtremes = linkedParent.getExtremes();
             axis.min = pick(
                 linkedParentExtremes.min,
                 linkedParentExtremes.dataMin
@@ -1669,191 +1674,191 @@ class Axis {
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== (axis.linkedParent as any).options.type) {
+            if (options.type !== linkedParent.options.type) {
                 // Can't link axes of different type
-                error(11, 1 as any, chart);
+                error(11, true, chart);
             }
 
         // Initial min and max from the extreme data values
         } else {
 
             // Adjust to hard threshold
-            if (softThreshold && defined(threshold)) {
-                if ((axis.dataMin as any) >= (threshold as any)) {
+            if (
+                softThreshold &&
+                defined(threshold) &&
+                isNumber(dataMax) &&
+                isNumber(dataMin)
+            ) {
+                if (dataMin >= threshold) {
                     thresholdMin = threshold;
                     minPadding = 0;
-                } else if ((axis.dataMax as any) <= (threshold as any)) {
+                } else if (dataMax <= threshold) {
                     thresholdMax = threshold;
                     maxPadding = 0;
                 }
             }
 
-            axis.min = pick(hardMin, thresholdMin, axis.dataMin as any);
-            axis.max = pick(hardMax, thresholdMax, axis.dataMax as any);
+            axis.min = pick(hardMin, thresholdMin, dataMin);
+            axis.max = pick(hardMax, thresholdMax, dataMax);
 
         }
 
-        if (log) {
-            if (
-                axis.positiveValuesOnly &&
-                !secondPass &&
-                Math.min(
-                    axis.min as any, pick(axis.dataMin, axis.min as any)
-                ) <= 0
-            ) { // #978
-                // Can't plot negative values on log axis
-                error(10, 1 as any, chart);
+        if (isNumber(axis.max) && isNumber(axis.min)) {
+            if (logarithmic) {
+                if (
+                    axis.positiveValuesOnly &&
+                    !secondPass &&
+                    Math.min(
+                        axis.min, pick(dataMin, axis.min)
+                    ) <= 0
+                ) { // #978
+                    // Can't plot negative values on log axis
+                    error(10, true, chart);
+                }
+                // The correctFloat cures #934, float errors on full tens. But
+                // it was too aggressive for #4360 because of conversion back to
+                // lin, therefore use precision 15.
+                axis.min = correctFloat(logarithmic.log2lin(axis.min), 16);
+                axis.max = correctFloat(logarithmic.log2lin(axis.max), 16);
             }
-            // The correctFloat cures #934, float errors on full tens. But it
-            // was too aggressive for #4360 because of conversion back to lin,
-            // therefore use precision 15.
-            axis.min = correctFloat(log.log2lin(axis.min as any), 16);
-            axis.max = correctFloat(log.log2lin(axis.max as any), 16);
+
+            // Handle zoomed range
+            if (axis.range && isNumber(dataMin)) {
+                // #618, #6773:
+                axis.userMin = axis.min = hardMin = Math.max(
+                    dataMin,
+                    axis.minFromRange() || 0
+                );
+                axis.userMax = hardMax = axis.max;
+
+                axis.range = void 0; // Don't use it when running setExtremes
+            }
         }
 
-        // handle zoomed range
-        if (axis.range && defined(axis.max)) {
-            // #618, #6773:
-            axis.userMin = axis.min = hardMin =
-                Math.max(axis.dataMin as any, axis.minFromRange() as any);
-            axis.userMax = hardMax = axis.max as any;
-
-            axis.range = null; // don't use it when running setExtremes
-        }
-
-        // Hook for Highcharts Stock Scroller.
-        // Consider combining with beforePadding.
+        // Hook for Highcharts Stock Scroller and bubble axis padding
         fireEvent(axis, 'foundExtremes');
-
-        // Hook for adjusting this.min and this.max. Used by bubble series.
-        if (axis.beforePadding) {
-            axis.beforePadding();
-        }
 
         // Adjust min and max for the minimum range
         axis.adjustForMinRange();
 
-        // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (!isNumber(axis.userMin)) {
-            if (
-                isNumber(options.softMin) && options.softMin < (axis.min as any)
-            ) {
-                axis.min = hardMin = options.softMin; // #6894
-            }
-        }
-        if (!isNumber(axis.userMax)) {
-            if (
-                isNumber(options.softMax) && options.softMax > (axis.max as any)
-            ) {
-                axis.max = hardMax = options.softMax; // #6894
-            }
-        }
+        if (isNumber(axis.min) && isNumber(axis.max)) {
 
-        // Pad the values to get clear of the chart's edges. To avoid
-        // tickInterval taking the padding into account, we do this after
-        // computing tick interval (#1337).
-        if (
-            !categories &&
-            !axis.axisPointRange &&
-            !(axis.stacking && axis.stacking.usePercentage) &&
-            !isLinked &&
-            defined(axis.min) &&
-            defined(axis.max)
-        ) {
-            length = axis.max - axis.min;
-            if (length) {
-                if (!defined(hardMin) && minPadding) {
-                    axis.min -= length * minPadding;
+            // Handle options for floor, ceiling, softMin and softMax (#6359)
+            if (
+                !isNumber(axis.userMin) &&
+                isNumber(softMin) &&
+                softMin < axis.min
+            ) {
+                axis.min = hardMin = softMin; // #6894
+            }
+            if (
+                !isNumber(axis.userMax) &&
+                isNumber(softMax) &&
+                softMax > axis.max
+            ) {
+                axis.max = hardMax = softMax; // #6894
+            }
+
+            // Pad the values to get clear of the chart's edges. To avoid
+            // tickInterval taking the padding into account, we do this after
+            // computing tick interval (#1337).
+            if (
+                !categories &&
+                !axis.axisPointRange &&
+                !axis.stacking?.usePercentage &&
+                !linkedParent
+            ) {
+                range = axis.max - axis.min;
+                if (range) {
+                    if (!defined(hardMin) && minPadding) {
+                        axis.min -= range * minPadding;
+                    }
+
+                    if (!defined(hardMax) && maxPadding) {
+                        axis.max += range * maxPadding;
+                    }
                 }
-                if (!defined(hardMax) && maxPadding) {
-                    axis.max += length * maxPadding;
+            }
+
+            if (!isNumber(axis.userMin) && isNumber(floor)) {
+                axis.min = Math.max(axis.min, floor);
+            }
+            if (!isNumber(axis.userMax) && isNumber(ceiling)) {
+                axis.max = Math.min(axis.max, ceiling);
+            }
+
+            // When the threshold is soft, adjust the extreme value only if the
+            // data extreme and the padded extreme land on either side of the
+            // threshold. For example, a series of [0, 1, 2, 3] would make the
+            // yAxis add a tick for -1 because of the default `minPadding` and
+            // `startOnTick` options. This is prevented by the `softThreshold`
+            // option.
+
+            if (
+                softThreshold &&
+                isNumber(dataMin) &&
+                isNumber(dataMax)
+            ) {
+                const numThreshold = threshold || 0;
+                if (
+                    !defined(hardMin) &&
+                    axis.min < numThreshold &&
+                    dataMin >= numThreshold
+                ) {
+                    axis.min = options.minRange ?
+                        Math.min(numThreshold, axis.max - minRange) :
+                        numThreshold;
+
+                } else if (
+                    !defined(hardMax) &&
+                    axis.max > numThreshold &&
+                    dataMax <= numThreshold
+                ) {
+                    axis.max = options.minRange ?
+                        Math.max(numThreshold, axis.min + minRange) :
+                        numThreshold;
                 }
             }
-        }
 
-        if (!isNumber(axis.userMin) && isNumber(options.floor)) {
-            axis.min = Math.max(axis.min as any, options.floor);
-        }
-        if (!isNumber(axis.userMax) && isNumber(options.ceiling)) {
-            axis.max = Math.min(axis.max as any, options.ceiling);
-        }
-
-        // When the threshold is soft, adjust the extreme value only if the data
-        // extreme and the padded extreme land on either side of the threshold.
-        // For example, a series of [0, 1, 2, 3] would make the yAxis add a tick
-        // for -1 because of the default minPadding and startOnTick options.
-        // This is prevented by the softThreshold option.
-        if (softThreshold && defined(axis.dataMin)) {
-            threshold = threshold || (0 as any);
-            if (
-                !defined(hardMin) &&
-                (axis.min as any) < (threshold as any) &&
-                (axis.dataMin as any) >= (threshold as any)
-            ) {
-                axis.min = axis.options.minRange ?
-                    Math.min(threshold as any, (axis.max as any) -
-                    (axis.minRange as any)) :
-                    (threshold as any);
-
-            } else if (
-                !defined(hardMax) &&
-                (axis.max as any) > (threshold as any) &&
-                (axis.dataMax as any) <= (threshold as any)
-            ) {
-                axis.max = axis.options.minRange ?
-                    Math.max(threshold as any, (axis.min as any) +
-                    (axis.minRange as any)) :
-                    (threshold as any);
+            // If min is bigger than highest, or if max less than lowest value,
+            // the chart should not render points. (#14417)
+            if (!chart.polar && axis.min > axis.max) {
+                if (defined(options.min)) {
+                    axis.max = axis.min;
+                } else if (defined(options.max)) {
+                    axis.min = axis.max;
+                }
             }
+            range = axis.max - axis.min;
         }
 
-        // If min is bigger than highest, or if max less than lowest value, the
-        // chart should not render points. (#14417)
-        if (
-            isNumber(axis.min) &&
-            isNumber(axis.max) &&
-            !this.chart.polar &&
-            (axis.min > axis.max)
-        ) {
-            if (defined(axis.options.min)) {
-                axis.max = axis.min;
-            } else if (defined(axis.options.max)) {
-                axis.min = axis.max;
-            }
-        }
-
-        // get tickInterval
+        // Get tickInterval
         if (
             axis.min === axis.max ||
-            typeof axis.min === 'undefined' ||
-            typeof axis.max === 'undefined'
+            !isNumber(axis.min) ||
+            !isNumber(axis.max)
         ) {
             axis.tickInterval = 1;
 
         } else if (
-            isLinked &&
-            axis.linkedParent &&
+            linkedParent &&
             !tickIntervalOption &&
-            tickPixelIntervalOption ===
-                axis.linkedParent.options.tickPixelInterval
+            tickPixelIntervalOption === linkedParent.options.tickPixelInterval
         ) {
-            axis.tickInterval = tickIntervalOption =
-                axis.linkedParent.tickInterval;
+            axis.tickInterval = tickIntervalOption = linkedParent.tickInterval;
 
         } else {
             axis.tickInterval = pick(
                 tickIntervalOption,
                 this.tickAmount ?
-                    (((axis.max as any) - (axis.min as any)) /
-                    Math.max(this.tickAmount - 1, 1)) :
+                    range / Math.max(this.tickAmount - 1, 1) :
                     void 0,
                 // For categoried axis, 1 is default, for linear axis use
                 // tickPix
                 categories ?
                     1 :
-                    // don't let it be more than the data range
-                    ((axis.max as any) - (axis.min as any)) *
-                    tickPixelIntervalOption /
+                    // Don't let it be more than the data range
+                    range * tickPixelIntervalOption /
                     Math.max(axis.len, tickPixelIntervalOption)
             );
         }
@@ -1862,17 +1867,13 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
-            const hasExtremesChanged = axis.min !==
-                (axis.old && axis.old.min) ||
-                axis.max !== (axis.old && axis.old.max);
+            const hasExtremesChanged = axis.min !== axis.old?.min ||
+                axis.max !== axis.old?.max;
 
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = (
-                    series.forceCropping &&
-                    series.forceCropping()
-                );
+                series.forceCrop = series.forceCropping?.();
                 series.processData(hasExtremesChanged);
             });
 
@@ -1882,10 +1883,10 @@ class Axis {
             fireEvent(this, 'postProcessData', { hasExtremesChanged });
         }
 
-        // set the translation factor used in translate function
+        // Set the translation factor used in translate function
         axis.setAxisTranslation();
 
-        // hook for ordinal axes and radial axes
+        // Hook for ordinal axes and radial axes
         fireEvent(this, 'initialAxisTranslation');
 
         // In column-like charts, don't cramp in more ticks than there are
