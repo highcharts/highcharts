@@ -60,82 +60,93 @@ Dashboards.board('container', {
             }]
         }]
     },
-    components: [
-        {
-            cell: 'dashboard-col-1',
-            type: 'Highcharts',
-            connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y',
-                USD: 'custom.usd'
-            },
-            sync: {
-                highlight: true
-            },
-            chartOptions: {
-                chart: {
-                    animation: false,
-                    type: 'line',
-                    zooming: false,
-                    events: {
-                        redraw: function () {
-                            if (!this.series[1].options.yAxis) {
-                                this.series[1].update({
-                                    yAxis: 1
-                                });
-                            }
+    components: [{
+        cell: 'dashboard-col-1',
+        type: 'Highcharts',
+        connector: {
+            id: 'EUR-USD'
+        },
+        columnAssignment: {
+            Day: 'x',
+            EUR: 'custom.eur',
+            Rate: 'y',
+            USD: 'custom.usd'
+        },
+        sync: {
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                animation: false,
+                type: 'line',
+                zooming: false,
+                events: {
+                    redraw: function () {
+                        if (!this.series[1].options.yAxis) {
+                            this.series[1].update({
+                                yAxis: 1
+                            });
                         }
                     }
-                },
+                }
+            },
+            title: {
+                text: 'EUR to USD'
+            },
+            subtitle: {
+                text: 'Euro foreign exchange reference rate to US dollar'
+            },
+            tooltip: {
+                shared: true,
+                split: true,
+                stickOnContact: true
+            },
+            xAxis: {
+                type: 'datetime',
+                accessibility: {
+                    description: 'Date and time',
+                    rangeDescription: 'Range: Monday, 14 Aug to Friday, 18 Aug'
+                }
+            },
+            yAxis: [{
                 title: {
-                    text: 'EUR to USD'
+                    text: 'EUR / USD'
                 },
-                subtitle: {
-                    text: 'Euro foreign exchange reference rate to US dollar'
+                accessibility: {
+                    description: 'Euro or US Dollars',
+                    rangeDescription: 'Range: 0 to 32'
+                }
+            }, {
+                title: {
+                    text: 'Rate'
                 },
-                tooltip: {
-                    shared: true,
-                    split: true
+                accessibility: {
+                    description: 'Exchange rate',
+                    rangeDescription: 'Range: 1.086 to 1.094'
                 },
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: [{
-                    title: {
-                        text: 'EUR / USD'
-                    }
-                }, {
-                    title: {
-                        text: 'Rate'
-                    },
-                    opposite: true
-                }]
-            }
-        }, {
-            cell: 'dashboard-col-2',
-            type: 'DataGrid',
-            connector: {
-                id: 'EUR-USD'
-            },
-            sync: {
-                highlight: true
-            },
-            dataGridOptions: {
-                editable: false,
-                columns: {
-                    Day: {
-                        cellFormatter: function () {
-                            return new Date(this.value)
-                                .toISOString()
-                                .substring(0, 10);
-                        }
+                opposite: true
+            }]
+        }
+    }, {
+        cell: 'dashboard-col-2',
+        type: 'DataGrid',
+        connector: {
+            id: 'EUR-USD'
+        },
+        sync: {
+            highlight: true
+        },
+        dataGridOptions: {
+            editable: false,
+            columns: {
+                Day: {
+                    cellFormatter: function () {
+                        return new Date(this.value)
+                            .toISOString()
+                            .substring(0, 10);
                     }
                 }
             }
         }
-    ]
+    }]
 });
