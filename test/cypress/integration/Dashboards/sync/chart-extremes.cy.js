@@ -96,7 +96,7 @@ describe('Chart extreme sync zooming when min or max stays the same', () => {
             const chart = $el.mountedComponents[0].component.chart,
                 chart2 = $el.mountedComponents[1].component.chart;
 
-            $el.mountedComponents[0].component.chart.xAxis[0].setExtremes(0, 5);
+            chart.xAxis[0].setExtremes(0, 5);
 
             assert.closeTo(
                 chart2.xAxis[0].min,
