@@ -19,11 +19,13 @@
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
+import BoxPlotSeriesDefaults from './BoxPlotSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -31,6 +33,12 @@ const {
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The boxplot series type.
@@ -41,313 +49,34 @@ const {
  *
  * @augments Highcharts.Series
  */
-
-/* *
- *
- *  Class
- *
- * */
-
 class BoxPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
-    /**
-     * A box plot is a convenient way of depicting groups of data through their
-     * five-number summaries: the smallest observation (sample minimum), lower
-     * quartile (Q1), median (Q2), upper quartile (Q3), and largest observation
-     * (sample maximum).
-     *
-     * @sample highcharts/demo/box-plot/
-     *         Box plot
-     *
-     * @extends      plotOptions.column
-     * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
-     *               states, boostThreshold, boostBlending
-     * @product      highcharts
-     * @requires     highcharts-more
-     * @optionparent plotOptions.boxplot
-     */
-
-    public static defaultOptions: BoxPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
-
-        /**
-         * @type {number|null}
-         */
-        threshold: null,
-
-        tooltip: {
-            pointFormat:
-                '<span style="color:{point.color}">\u25CF</span> <b>' +
-                '{series.name}</b><br/>' +
-                'Maximum: {point.high}<br/>' +
-                'Upper quartile: {point.q3}<br/>' +
-                'Median: {point.median}<br/>' +
-                'Lower quartile: {point.q1}<br/>' +
-                'Minimum: {point.low}<br/>'
-        },
-
-        /**
-         * The length of the whiskers, the horizontal lines marking low and
-         * high values. It can be a numerical pixel value, or a percentage
-         * value of the box width. Set `0` to disable whiskers.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         True by default
-         *
-         * @type    {number|string}
-         * @since   3.0
-         * @product highcharts
-         */
-        whiskerLength: '50%',
-
-        /**
-         * The fill color of the box.
-         *
-         * In styled mode, the fill color can be set with the
-         * `.highcharts-boxplot-box` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default #ffffff
-         * @since   3.0
-         * @product highcharts
-         */
-        fillColor: Palette.backgroundColor,
-
-        /**
-         * The width of the line surrounding the box. If any of
-         * [stemWidth](#plotOptions.boxplot.stemWidth),
-         * [medianWidth](#plotOptions.boxplot.medianWidth)
-         * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
-         * the lineWidth also applies to these lines.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @since   3.0
-         * @product highcharts
-         */
-        lineWidth: 1,
-
-        /**
-         * The color of the median line. If `undefined`, the general series
-         * color applies.
-         *
-         * In styled mode, the median stroke width can be set with the
-         * `.highcharts-boxplot-median` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
-         * @since     3.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.medianColor
-         */
-
-        /**
-         * The pixel width of the median line. If `null`, the
-         * [lineWidth](#plotOptions.boxplot.lineWidth) is used.
-         *
-         * In styled mode, the median stroke width can be set with the
-         * `.highcharts-boxplot-median` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @type    {number|null}
-         * @since   3.0
-         * @product highcharts
-         */
-        medianWidth: 2,
-
-        /*
-        // States are not working and are removed from docs.
-        // Refer to: #2340
-        states: {
-            hover: {
-                brightness: -0.3
-            }
-        },
-        */
-
-        /**
-         * The color of the stem, the vertical line extending from the box to
-         * the whiskers. If `undefined`, the series color is used.
-         *
-         * In styled mode, the stem stroke can be set with the
-         * `.highcharts-boxplot-stem` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since     3.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.stemColor
-         */
-
-        /**
-         * The dash style of the box.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
-         * @since 8.1.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.boxDashStyle
-         */
-
-        /**
-         * The dash style of the median.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
-         * @since 8.1.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.medianDashStyle
-         */
-
-        /**
-         * The dash style of the stem, the vertical line extending from the
-         * box to the whiskers.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
-         * @since     3.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.stemDashStyle
-         */
-
-        /**
-         * The dash style of the whiskers.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
-         * @since 8.1.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.whiskerDashStyle
-         */
-
-        /**
-         * The width of the stem, the vertical line extending from the box to
-         * the whiskers. If `undefined`, the width is inherited from the
-         * [lineWidth](#plotOptions.boxplot.lineWidth) option.
-         *
-         * In styled mode, the stem stroke width can be set with the
-         * `.highcharts-boxplot-stem` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type      {number}
-         * @since     3.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.stemWidth
-         */
-
-        /**
-         * @default   high
-         * @apioption plotOptions.boxplot.colorKey
-         */
-
-        /**
-         * The color of the whiskers, the horizontal lines marking low and high
-         * values. When `undefined`, the general series color is used.
-         *
-         * In styled mode, the whisker stroke can be set with the
-         * `.highcharts-boxplot-whisker` class .
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since     3.0
-         * @product   highcharts
-         * @apioption plotOptions.boxplot.whiskerColor
-         */
-
-        /**
-         * The line width of the whiskers, the horizontal lines marking low and
-         * high values. When `undefined`, the general
-         * [lineWidth](#plotOptions.boxplot.lineWidth) applies.
-         *
-         * In styled mode, the whisker stroke width can be set with the
-         * `.highcharts-boxplot-whisker` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-         *         Box plot styling
-         * @sample {highcharts} highcharts/css/boxplot/
-         *         Box plot in styled mode
-         *
-         * @since   3.0
-         * @product highcharts
-         */
-        whiskerWidth: 2
-
-    });
+    public static defaultOptions: BoxPlotSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        BoxPlotSeriesDefaults
+    );
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<BoxPlotPoint> = void 0 as any;
 
     public options: BoxPlotSeriesOptions = void 0 as any;
 
     public points: Array<BoxPlotPoint> = void 0 as any;
 
-
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -382,39 +111,40 @@ class BoxPlotSeries extends ColumnSeries {
         });
     }
 
-    // eslint-disable-next-line valid-jsdoc
     /**
      * Draw the data points
      * @private
      */
     public drawPoints(): void {
-        let series = this,
+        const series = this,
             points = series.points,
             options = series.options,
             chart = series.chart,
             renderer = chart.renderer,
-            q1Plot,
+            // error bar inherits this series type but doesn't do quartiles
+            doQuartiles = series.doQuartiles !== false,
+            whiskerLength = series.options.whiskerLength;
+
+        let q1Plot,
             q3Plot,
             highPlot,
             lowPlot,
             medianPlot,
-            medianPath: SVGPath,
+            medianPath: (SVGPath|undefined),
             crispCorr,
             crispX = 0,
-            boxPath: SVGPath,
+            boxPath: (SVGPath|undefined),
+            graphic: (SVGElement|undefined),
             width,
             left,
             right,
             halfWidth,
-            // error bar inherits this series type but doesn't do quartiles
-            doQuartiles = series.doQuartiles !== false,
-            pointWiskerLength,
-            whiskerLength = series.options.whiskerLength;
+            pointWiskerLength;
 
-        points.forEach(function (point: BoxPlotPoint): void {
+        for (const point of points) {
+            graphic = point.graphic;
 
-            let graphic = point.graphic,
-                verb = graphic ? 'animate' : 'attr',
+            const verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
                 boxAttr: SVGAttributes = {},
                 stemAttr: SVGAttributes = {},
@@ -594,7 +324,7 @@ class BoxPlotSeries extends ColumnSeries {
                 ];
                 point.medianShape[verb]({ d });
             }
-        });
+        }
 
     }
 
@@ -607,9 +337,10 @@ class BoxPlotSeries extends ColumnSeries {
 
 /* *
  *
- * Class Prototype
+ *  Class Prototype
  *
  * */
+
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<string>;
@@ -629,31 +360,29 @@ extend(BoxPlotSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
 
-SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
-
-/**
- * @private
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;
     }
 }
 
+SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
+
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
+
 export default BoxPlotSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 
@@ -835,4 +564,4 @@ export default BoxPlotSeries;
  * @apioption series.boxplot.data.whiskerDashStyle
  */
 
-''; // adds doclets above to transpiled file
+''; // keeps doclets above in JS file
