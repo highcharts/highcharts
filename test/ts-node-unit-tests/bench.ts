@@ -72,10 +72,10 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
             }
         });
 
-        // setTimeout(()=>{
-        //     worker.terminate();
-        //     reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
-        // }, TEST_TIMEOUT_SECONDS * 1000);
+        setTimeout(()=>{
+            worker.terminate();
+            reject(new Error(`Test ${testFile} timed out after ${TEST_TIMEOUT_SECONDS} seconds`));
+        }, TEST_TIMEOUT_SECONDS * 1000);
     });
 
     worker.postMessage({ testFile, size, CODE_PATH });
