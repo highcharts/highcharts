@@ -83,6 +83,9 @@ class EditMode {
                 resize: {
                     enabled: true
                 },
+                settings: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
@@ -1057,6 +1060,10 @@ namespace EditMode {
          */
         resize?: Resizer.Options;
         /**
+         * Settings options.
+         */
+        settings?: SettingsOptions;
+        /**
          * Toolbar options.
          *
          * Try it:
@@ -1068,6 +1075,18 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+    }
+
+    /**
+     * Settings options
+     */
+    export interface SettingsOptions {
+        /**
+         * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
     }
 
     /**
