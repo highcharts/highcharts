@@ -14,12 +14,35 @@ export type BeforeReturnType = {
 parentPort.on('message', async value =>{
     function getTestData(before: BeforeFunction, size: number){
         const { fileName, func } = before(size);
-        let data = func();
+        const file = resolve(
+            __dirname,
+            'test-data',
+            fileName
+        );
 
-        return data;
+        try {
+            const content = require('fs').readFileSync(file);
+            if (fileName.endsWith('.json')) {
+                return JSON.parse(content);
+            }
+
+            return content;
+        } catch {
+            console.log(`Generating data for sample size: ${size}`);
+            let data = func();
+
+            require('fs').writeFileSync(
+                file,
+                fileName.endsWith('.json') ?
+                    JSON.stringify(data) :
+                    data
+            );
+
+            return data;
+        }
     }
 
-    if (value.testFile && value.size){
+    if(value.testFile && value.size){
         const { default: test, before } = await import(value.testFile);
 
         try {
