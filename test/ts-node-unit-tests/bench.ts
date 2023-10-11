@@ -174,9 +174,8 @@ async function benchmark(){
 
     if (existsSync(BENCH_PATH)) {
         const result = await getDirRecursive(BENCH_PATH);
-        const testArray = result.flat(Infinity);
 
-        const testFiles = testArray.filter(file => {
+        const testFiles = result.filter(file => {
             if (pattern && typeof pattern === 'string') {
                 return new RegExp(pattern).test(file);
             }
