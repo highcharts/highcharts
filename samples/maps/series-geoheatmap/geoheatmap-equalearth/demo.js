@@ -1,5 +1,4 @@
 (async () => {
-
     // Load the base world map
     const topology = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
