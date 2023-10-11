@@ -33,7 +33,7 @@ export function before(size: number) {
 
     return {
         fileName: `${size}-ohlc.json`,
-        func: generateOHLC.bind(undefined, [size])
+        func: generateOHLC.bind(undefined, size)
   };
 }
 
