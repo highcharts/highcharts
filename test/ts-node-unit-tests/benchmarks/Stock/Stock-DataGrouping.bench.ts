@@ -1,35 +1,14 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
+import { generateOHLC } from './Stock-DataGrouping-Ordinal.bench';
 
 
 export const config = {
-    sizes: [10, 400, 2000, 8000]
+    sizes: [1000, 10_000, 100_000, 1_000_000]
 };
 
 export function before(size: number) {
-    function generateOHLC(size: number){
-
-        const data: Array<Array<number>> = [],
-            firstPoint = Date.UTC(2022, 0),
-            dayInMilis  = 8.64e7,
-            gap = Math.floor(size * 0.1);
-
-
-        for (let i = 0;i < size + gap; i++) {
-            if (i > gap && i < gap * 2) {
-                continue;
-            }
-            data.push([
-                firstPoint + i * dayInMilis,
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
-                Math.floor(100* Math.random()),
-            ]);
-        }
-        return data;
-    }
 
     return {
         fileName: `${size}-ohlc.json`,
