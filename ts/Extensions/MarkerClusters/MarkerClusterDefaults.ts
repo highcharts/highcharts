@@ -58,6 +58,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @private
  */
 const cluster: MarkerClusterOptions = {
+
     /**
      * Whether to enable the marker-clusters module.
      *
@@ -67,6 +68,7 @@ const cluster: MarkerClusterOptions = {
      *         Scatter marker clusters
      */
     enabled: false,
+
     /**
      * When set to `false` prevent cluster overlapping - this option
      * works only when `layoutAlgorithm.type = "grid"`.
@@ -75,6 +77,7 @@ const cluster: MarkerClusterOptions = {
      *         Prevent overlapping
      */
     allowOverlap: true,
+
     /**
      * Options for the cluster marker animation.
      * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
@@ -84,10 +87,12 @@ const cluster: MarkerClusterOptions = {
         /** @ignore-option */
         duration: 500
     },
+
     /**
      * Zoom the plot area to the cluster points range when a cluster is clicked.
      */
     drillToCluster: true,
+
     /**
      * The minimum amount of points to be combined into a cluster.
      * This value has to be greater or equal to 2.
@@ -96,12 +101,14 @@ const cluster: MarkerClusterOptions = {
      *         At least three points in the cluster
      */
     minimumClusterSize: 2,
+
     /**
      * Options for layout algorithm. Inside there
      * are options to change the type of the algorithm, gridSize,
      * distance or iterations.
      */
     layoutAlgorithm: {
+
         /**
          * Type of the algorithm used to combine points into a cluster.
          * There are three available algorithms:
@@ -178,6 +185,7 @@ const cluster: MarkerClusterOptions = {
          * @see [cluster.minimumClusterSize](#plotOptions.scatter.cluster.minimumClusterSize)
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.type
          */
+
         /**
          * When `type` is set to the `grid`,
          * `gridSize` is a size of a grid square element either as a number
@@ -187,6 +195,7 @@ const cluster: MarkerClusterOptions = {
          * @type    {number|string}
          */
         gridSize: 50,
+
         /**
          * When `type` is set to `kmeans`,
          * `iterations` are the number of iterations that this algorithm will be
@@ -195,6 +204,7 @@ const cluster: MarkerClusterOptions = {
          * @type    {number}
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.iterations
          */
+
         /**
          * When `type` is set to `kmeans`,
          * `distance` is a maximum distance between point and cluster center
@@ -205,6 +215,7 @@ const cluster: MarkerClusterOptions = {
          * @type    {number|string}
          */
         distance: 40,
+
         /**
          * When `type` is set to `undefined` and there are more visible points
          * than the kmeansThreshold the `grid` algorithm is used to find
@@ -212,7 +223,9 @@ const cluster: MarkerClusterOptions = {
          * large datasets and better clusters arrangement after the zoom.
          */
         kmeansThreshold: 100
+
     },
+
     /**
      * Options for the cluster marker.
      * @type      {Highcharts.PointMarkerOptionsObject}
@@ -229,6 +242,7 @@ const cluster: MarkerClusterOptions = {
         /** @internal */
         lineColor: Palette.backgroundColor
     },
+
     /**
      * Fires when the cluster point is clicked and `drillToCluster` is enabled.
      * One parameter, `event`, is passed to the function. The default action
@@ -323,9 +337,11 @@ const cluster: MarkerClusterOptions = {
         /** @internal */
         inside: true
     }
+
 };
 
 const tooltip: Partial<TooltipOptions> = {
+
     /**
      * The HTML of the cluster point's in the tooltip. Works only with
      * marker-clusters module and analogously to
@@ -346,6 +362,7 @@ const tooltip: Partial<TooltipOptions> = {
      */
     clusterFormat: '<span>Clustered points: ' +
         '{point.clusterPointsAmount}</span><br/>'
+
 };
 
 /* *
