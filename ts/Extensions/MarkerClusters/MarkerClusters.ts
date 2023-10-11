@@ -43,6 +43,7 @@ const { animObject } = A;
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
+import MarkerClusterScatter from './MarkerClusterScatter.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -91,10 +92,6 @@ declare module '../../Core/Series/SeriesLike' {
         /** @requires modules/marker-clusters */
         animateClusterPoint(
             clusterObj: ClusterAndNoiseObject
-        ): void;
-        /** @requires modules/marker-clusters */
-        onDrillToCluster(
-            event: PointClickEvent
         ): void;
         /** @requires modules/marker-clusters */
         getClusterDistancesFromPoint(
@@ -163,7 +160,7 @@ interface GroupMapOptionsObject extends SeriesOptions {
     y?: number;
 }
 
-interface MarkerClusterAlgorithmFunction {
+export interface MarkerClusterAlgorithmFunction {
     (
         processedXData: Array<number>,
         processedYData: Array<number>,
@@ -231,8 +228,6 @@ export interface MarkerClusterSplitDataObject {
     options?: (PointOptions|PointShortOptions);
 }
 
-/* eslint-disable no-invalid-this */
-
 /* *
  *
  *  Constants
@@ -251,8 +246,6 @@ const composedMembers: Array<unknown> = [];
  *  Functions
  *
  * */
-
-import './MarkerClusterScatter.js';
 
 /** @private */
 function compose(
@@ -277,6 +270,14 @@ function compose(
 
     if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
+    }
+
+    const {
+        scatter: ScatterSeries
+    } = SeriesClass.types;
+
+    if (ScatterSeries) {
+        MarkerClusterScatter.compose(ScatterSeries);
     }
 
 }
@@ -352,8 +353,7 @@ function onPointDrillToCluster(
     const point = event.point || event.target,
         series = point.series,
         clusterOptions = series.options.cluster,
-        onDrillToCluster =
-            ((clusterOptions || {}).events || {}).drillToCluster;
+        onDrillToCluster = ((clusterOptions || {}).events || {}).drillToCluster;
 
     if (isFunction(onDrillToCluster)) {
         onDrillToCluster.call(this, event);
