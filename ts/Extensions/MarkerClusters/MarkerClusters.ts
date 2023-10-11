@@ -21,31 +21,32 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type MapPointSeries from '../../Series/MapPoint/MapPointSeries';
 import type {
     MarkerClusterLayoutAlgorithmOptions,
     MarkerClusterOptions,
     MarkerClusterZonesOptions
 } from './MarkerClusterOptions';
+import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
-import Point from '../../Core/Series/Point.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -59,6 +60,7 @@ const {
     isNumber,
     merge,
     objectEach,
+    pushUnique,
     relativeLength,
     syncTimeout
 } = U;
@@ -242,10 +244,15 @@ interface MarkerClusterSplitDataObject {
 
 /* eslint-disable no-invalid-this */
 
-import Axis from '../../Core/Axis/Axis.js';
+/* *
+ *
+ *  Constants
+ *
+ * */
 
-const Scatter = seriesTypes.scatter,
-    baseGeneratePoints = Series.prototype.generatePoints;
+const composedMembers: Array<unknown> = [];
+
+const Scatter = seriesTypes.scatter;
 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
@@ -1567,6 +1574,7 @@ Scatter.prototype.hideClusteredData = function (): void {
     });
 };
 
+const baseGeneratePoints = Scatter.prototype.generatePoints;
 // Override the generatePoints method by adding a reference to grouped data.
 Scatter.prototype.generatePoints = function (): void {
     const series = this,
@@ -1814,11 +1822,79 @@ Scatter.prototype.generatePoints = function (): void {
     }
 };
 
-// Handle animation.
-addEvent(Chart, 'render', function (): void {
+// Destroy grouped data on series destroy.
+addEvent(Scatter, 'destroy', Scatter.prototype.destroyClusteredData);
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function compose(
+    AxisClass: typeof Axis,
+    ChartClass: typeof Chart,
+    SeriesClass: typeof Series
+): void {
+    const PointClass = SeriesClass.prototype.pointClass;
+
+    if (pushUnique(composedMembers, AxisClass)) {
+        addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
+    }
+
+    if (pushUnique(composedMembers, ChartClass)) {
+        addEvent(ChartClass, 'render', onChartRender);
+    }
+
+    if (pushUnique(composedMembers, PointClass)) {
+        addEvent(PointClass, 'drillToCluster', onPointDrillToCluster);
+        addEvent(PointClass, 'update', onPointUpdate);
+    }
+
+    if (pushUnique(composedMembers, SeriesClass)) {
+        addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
+    }
+
+}
+
+/**
+ * Destroy the old tooltip after zoom.
+ * @private
+ */
+function onAxisSetExtremes(
+    this: Axis
+): void {
+    const chart = this.chart;
+
+    let animationDuration = 0;
+
+    chart.series.forEach(function (series): void {
+        if (series.markerClusterInfo) {
+            animationDuration = (
+                animObject((series.options.cluster || {}).animation).duration ||
+                0
+            );
+        }
+    });
+
+    syncTimeout((): void => {
+        if (chart.tooltip) {
+            chart.tooltip.destroy();
+        }
+    }, animationDuration);
+
+}
+
+/**
+ * Handle animation.
+ * @private
+ */
+function onChartRender(
+    this: Chart
+): void {
     const chart = this;
 
-    (chart.series || []).forEach(function (series): void {
+    for (const series of (chart.series || [])) {
         if (series.markerClusterInfo) {
             const options = series.options.cluster,
                 pointsState = (series.markerClusterInfo || {}).pointsState,
@@ -1832,40 +1908,64 @@ addEvent(Chart, 'render', function (): void {
                 oldState &&
                 Object.keys(oldState).length
             ) {
-                series.markerClusterInfo.clusters.forEach(
-                    function (cluster): void {
-                        series.animateClusterPoint(cluster);
-                    }
-                );
-
-                series.markerClusterInfo.noise.forEach(function (noise): void {
+                for (const cluster of series.markerClusterInfo.clusters) {
+                    series.animateClusterPoint(cluster);
+                }
+                for (const noise of series.markerClusterInfo.noise) {
                     series.animateClusterPoint(noise);
-                });
+                }
             }
         }
-    });
-});
+    }
 
-// Override point prototype to throw a warning when trying to update
-// clustered point.
-addEvent(Point, 'update', function (): (boolean | void) {
-    if (this.dataGroup) {
+}
+
+/** @private */
+function onPointDrillToCluster(
+    this: Point,
+    event: PointClickEvent
+): void {
+    const point = event.point || event.target,
+        series = point.series,
+        clusterOptions = series.options.cluster,
+        onDrillToCluster =
+            ((clusterOptions || {}).events || {}).drillToCluster;
+
+    if (isFunction(onDrillToCluster)) {
+        onDrillToCluster.call(this, event);
+    }
+}
+
+/**
+ * Override point prototype to throw a warning when trying to update
+ * clustered point.
+ * @private
+ */
+function onPointUpdate(
+    this: Point
+): (boolean | void) {
+    const point = this;
+
+    if (point.dataGroup) {
         error(
             'Highcharts marker-clusters module: ' +
             'Running `Point.update` when point belongs to clustered series' +
             ' is not supported.',
             false,
-            this.series.chart
+            point.series.chart
         );
         return false;
     }
-});
 
-// Destroy grouped data on series destroy.
-addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
+}
 
-// Add classes, change mouse cursor.
-addEvent(Series, 'afterRender', function (): void {
+/**
+ * Add classes, change mouse cursor.
+ * @private
+ */
+function onSeriesAfterRender(
+    this: Series
+): void {
     const series = this,
         clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
 
@@ -1899,41 +1999,20 @@ addEvent(Series, 'afterRender', function (): void {
             }
         });
     }
-});
 
-addEvent(Point, 'drillToCluster', function (
-    event: PointClickEvent
-): void {
-    const point = event.point || event.target,
-        series = point.series,
-        clusterOptions = series.options.cluster,
-        onDrillToCluster =
-            ((clusterOptions || {}).events || {}).drillToCluster;
+}
 
-    if (isFunction(onDrillToCluster)) {
-        onDrillToCluster.call(this, event);
-    }
-});
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-// Destroy the old tooltip after zoom.
-addEvent(Axis, 'setExtremes', function (): void {
-    let chart = this.chart,
-        animationDuration = 0,
-        animation;
+const MarkerClusters = {
+    compose
+};
 
-    chart.series.forEach(function (series): void {
-        if (series.markerClusterInfo) {
-            animation = animObject((series.options.cluster || {}).animation);
-            animationDuration = animation.duration || 0;
-        }
-    });
-
-    syncTimeout(function (): void {
-        if (chart.tooltip) {
-            chart.tooltip.destroy();
-        }
-    }, animationDuration);
-});
+export default MarkerClusters;
 
 /* *
  *
