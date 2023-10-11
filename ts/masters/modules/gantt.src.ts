@@ -27,12 +27,13 @@ G.Connection = Connection;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
 G.Navigator = Navigator;
+G.Pathfinder = Pathfinder;
 G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 // Compositions
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
-Pathfinder.compose(G.Point);
+Pathfinder.compose(G.Chart, G.Point);
 Navigator.compose(G.Axis, G.Chart, G.Series);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);

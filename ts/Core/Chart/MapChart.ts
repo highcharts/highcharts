@@ -17,6 +17,8 @@
  * */
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
+import type MapPoint from '../../Series/Map/MapPoint';
+import type MapPointer from '../../Maps/MapPointer';
 import type MapView from '../../Maps/MapView';
 import type Options from '../Options';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -27,16 +29,29 @@ const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
+    isNumber,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './ChartLike'{
     interface ChartLike {
         mapView?: MapView;
     }
 }
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -48,6 +63,13 @@ declare module './ChartLike'{
  * @extends Highcharts.Chart
  */
 class MapChart extends Chart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Initializes the chart. The constructor's arguments are passed on
      * directly.
@@ -102,11 +124,91 @@ class MapChart extends Chart {
 
         super.init(options, callback);
     }
+
+    /**
+     * Highcharts Maps only. Zoom in or out of the map. See also
+     * {@link Point#zoomTo}. See {@link Chart#fromLatLonToPoint} for how to get
+     * the `centerX` and `centerY` parameters for a geographic location.
+     *
+     * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
+     *
+     * @deprecated
+     * @function Highcharts.Chart#mapZoom
+     *
+     * @param {number} [howMuch]
+     *        How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
+     *        in to half the current view. 2 zooms to twice the current view. If
+     *        omitted, the zoom is reset.
+     *
+     * @param {number} [xProjected]
+     *        The projected x position to keep stationary when zooming, if
+     *        available space.
+     *
+     * @param {number} [yProjected]
+     *        The projected y position to keep stationary when zooming, if
+     *        available space.
+     *
+     * @param {number} [chartX]
+     *        Keep this chart position stationary if possible. This is used for
+     *        example in `mousewheel` events, where the area under the mouse
+     *        should be fixed as we zoom in.
+     *
+     * @param {number} [chartY]
+     *        Keep this chart position stationary if possible.
+     */
+    public mapZoom(
+        howMuch?: number,
+        xProjected?: number,
+        yProjected?: number,
+        chartX?: number,
+        chartY?: number
+    ): void {
+        if (this.mapView) {
+
+            if (isNumber(howMuch)) {
+                // Compliance, mapView.zoomBy uses different values
+                howMuch = Math.log(howMuch) / Math.log(0.5);
+            }
+
+            this.mapView.zoomBy(
+                howMuch,
+                isNumber(xProjected) && isNumber(yProjected) ?
+                    this.mapView.projection.inverse([xProjected, yProjected]) :
+                    void 0,
+                isNumber(chartX) && isNumber(chartY) ?
+                    [chartX, chartY] :
+                    void 0
+            );
+        }
+    }
+
 }
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface MapChart extends Chart {
+    hoverPoint?: MapPoint;
+    pointer: MapPointer;
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace MapChart {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
     /**
      * Contains all loaded map data for Highmaps.
      *
@@ -116,6 +218,12 @@ namespace MapChart {
      * @type {Record<string,*>}
      */
     export const maps: AnyRecord = {};
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * The factory function for creating new map charts. Creates a new {@link
@@ -144,8 +252,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        a: (string|HTMLDOMElement|Partial<Options>),
+        b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);
@@ -158,15 +266,16 @@ namespace MapChart {
      *
      * @function Highcharts.splitPath
      *
-     * @param {string|Array<string|number>} path
+     * @param {string|Array<(string|number)>} path
+     *        Path to split.
      *
      * @return {Highcharts.SVGPathArray}
      * Splitted SVG path
      */
     export function splitPath(
-        path: string|Array<string|number>
+        path: (string|Array<(string|number)>)
     ): SVGPath {
-        let arr: Array<string|number>;
+        let arr: Array<(string|number)>;
 
         if (typeof path === 'string') {
             path = path
@@ -192,6 +301,7 @@ namespace MapChart {
 
         return SVGRenderer.prototype.pathToSegments(arr);
     }
+
 }
 
 /* *

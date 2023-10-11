@@ -23,7 +23,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
+import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -724,7 +724,7 @@ class TiledWebMapSeries extends MapSeries {
             { transformGroups } = series,
             chart = this.chart,
             mapView = chart.mapView,
-            options = arguments[0],
+            options: TiledWebMapSeriesOptions = arguments[0],
             { provider } = options;
 
         if (transformGroups) {

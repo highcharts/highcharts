@@ -41,4 +41,10 @@ export interface MapPointOptions extends ScatterPointOptions {
     value?: (number|null);
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default MapPointOptions;
