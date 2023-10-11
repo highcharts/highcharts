@@ -27,6 +27,7 @@ import type {
     MarkerClusterOptions,
     MarkerClusterZonesOptions
 } from './MarkerClusterOptions';
+import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
@@ -251,6 +252,7 @@ const composedMembers: Array<unknown> = [];
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
+    highchartsDefaultOptions: Options,
     SeriesClass: typeof Series
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
@@ -277,7 +279,7 @@ function compose(
     } = SeriesClass.types;
 
     if (ScatterSeries) {
-        MarkerClusterScatter.compose(ScatterSeries);
+        MarkerClusterScatter.compose(highchartsDefaultOptions, ScatterSeries);
     }
 
 }
@@ -293,14 +295,14 @@ function onAxisSetExtremes(
 
     let animationDuration = 0;
 
-    chart.series.forEach(function (series): void {
+    for (const series of chart.series) {
         if (series.markerClusterInfo) {
             animationDuration = (
                 animObject((series.options.cluster || {}).animation).duration ||
                 0
             );
         }
-    });
+    }
 
     syncTimeout((): void => {
         if (chart.tooltip) {
@@ -394,9 +396,7 @@ function onSeriesAfterRender(
         clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
 
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
-        series.markerClusterInfo.clusters.forEach(function (
-            cluster: ClusterAndNoiseObject
-        ): void {
+        for (const cluster of series.markerClusterInfo.clusters) {
             if (cluster.point && cluster.point.graphic) {
                 cluster.point.graphic.addClass('highcharts-cluster-point');
 
@@ -421,7 +421,7 @@ function onSeriesAfterRender(
                     );
                 }
             }
-        });
+        }
     }
 
 }
