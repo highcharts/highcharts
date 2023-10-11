@@ -198,10 +198,7 @@ namespace BrokenAxis {
         const axis = this,
             brokenAxis = axis.brokenAxis;
 
-        if (
-            brokenAxis &&
-            brokenAxis.hasBreaks
-        ) {
+        if (brokenAxis?.hasBreaks) {
             const tickPositions = axis.tickPositions,
                 info = axis.tickPositions.info,
                 newPositions = [];
@@ -251,15 +248,8 @@ namespace BrokenAxis {
                 const nullGap = point.y === null && connectNulls === false;
                 const isPointInBreak = (
                     !nullGap && (
-                        (
-                            xAxis &&
-                            xAxis.brokenAxis &&
-                            xAxis.brokenAxis.isInAnyBreak(point.x, true)
-                        ) || (
-                            yAxis &&
-                            yAxis.brokenAxis &&
-                            yAxis.brokenAxis.isInAnyBreak(point.y, true)
-                        )
+                        xAxis?.brokenAxis?.isInAnyBreak(point.x, true) ||
+                        yAxis?.brokenAxis?.isInAnyBreak(point.y, true)
                     )
                 );
                 // Set point.visible if in any break.
@@ -295,15 +285,11 @@ namespace BrokenAxis {
             eventName: string,
             y: (number|null|undefined);
 
-        if (
-            axis && // #5950
-            axis.brokenAxis &&
-            axis.brokenAxis.hasBreaks
-        ) {
+        if (axis?.brokenAxis?.hasBreaks) {
             const brokenAxis = axis.brokenAxis;
 
             keys.forEach(function (key: string): void {
-                breaks = brokenAxis && brokenAxis.breakArray || [];
+                breaks = brokenAxis?.breakArray || [];
                 threshold = axis.isXAxis ?
                     axis.min :
                     pick(series.options.threshold, axis.min);
@@ -334,6 +320,7 @@ namespace BrokenAxis {
                             )) {
                                 eventName = 'pointInBreak';
                             }
+
                             if (eventName) {
                                 fireEvent(axis, eventName, { point, brk });
                             }
@@ -357,7 +344,7 @@ namespace BrokenAxis {
      */
     function seriesGappedPath(this: LineSeries): SVGPath {
         const currentDataGrouping = this.currentDataGrouping,
-            groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
+            groupingSize = currentDataGrouping?.gapSize,
             points = this.points.slice(),
             yAxis = this.yAxis;
 
