@@ -161,7 +161,7 @@ class SeriesComponent extends AccessibilityComponent {
         ): void {
             const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
-                series.visible;
+                series.visible && series.data.length !== 0;
 
             if (shouldDescribeSeries) {
                 describeSeries(series);
