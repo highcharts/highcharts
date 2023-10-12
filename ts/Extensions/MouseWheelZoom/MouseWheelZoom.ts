@@ -20,7 +20,6 @@ import type Chart from '../../Core/Chart/Chart';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
@@ -30,8 +29,13 @@ const {
     pick,
     defined,
     merge,
-    isNumber
+    isNumber,
+    clamp
 } = U;
+
+import NBU from '../Annotations/NavigationBindingsUtilities.js';
+import Axis from '../../Core/Axis/Axis';
+const { getAssignedAxis } = NBU;
 
 /* *
  *
@@ -79,9 +83,9 @@ const fitToRange = (
     rangeWidth: number
 } => {
     const outerEnd = outerStart + outerWidth,
-        rangeStart = U.clamp(innerStart, outerStart, outerEnd),
+        rangeStart = clamp(innerStart, outerStart, outerEnd),
         rangeWidth = rangeStart === outerStart ? outerWidth :
-            U.clamp(innerWidth, outerStart - innerStart, outerEnd - innerStart);
+            clamp(innerWidth, outerStart - innerStart, outerEnd - innerStart);
 
     return {
         rangeStart,
@@ -98,13 +102,12 @@ let wheelTimer: number,
  */
 const zoomOnX = function (
     chart: Chart,
+    xAxis: Axis,
     zoomX: boolean,
     mouseX: number,
     howMuch: number,
     centerXArg: number
 ): boolean {
-    const xAxis = chart.xAxis[0];
-
     let hasZoomed = false;
 
     if (defined(xAxis.max) && defined(xAxis.min) &&
@@ -162,14 +165,13 @@ const zoomOnX = function (
 * @private
 */
 const zoomOnY = function (
-    chart: Chart,
+    yAxis: Axis,
     zoomY: boolean,
     mouseY: number,
     howMuch: number,
     centerYArg: number
 ) : boolean {
-    const yAxis = chart.yAxis[0],
-        yOptions = yAxis.options;
+    const yOptions = yAxis.options;
 
     let hasZoomed = false;
 
@@ -266,15 +268,13 @@ const zoomOnY = function (
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
-    centerXArg: number,
-    centerYArg: number,
+    xAxis: Axis,
+    yAxis: Axis,
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
 ): boolean {
-    const xAxis = chart.xAxis[0],
-        yAxis = chart.yAxis[0],
-        type = pick(
+    const type = pick(
             options.type,
             chart.zooming.type,
             ''
@@ -282,6 +282,8 @@ const zoomBy = function (
         zoomX = /x/.test(type),
         zoomY = /y/.test(type);
 
+    let centerXArg = xAxis.toValue(mouseX),
+        centerYArg = yAxis.toValue(mouseY);
 
     if (chart.inverted) {
         const emulateRoof = yAxis.pos + yAxis.len;
@@ -296,8 +298,21 @@ const zoomBy = function (
         mouseY = emulateRoof - tmp + yAxis.pos;
     }
 
-    const hasZoomedX = zoomOnX(chart, zoomX, mouseX, howMuch, centerXArg),
-        hasZoomedY = zoomOnY(chart, zoomY, mouseY, howMuch, centerYArg),
+    const hasZoomedX = zoomOnX(
+            chart,
+            xAxis,
+            zoomX,
+            mouseX,
+            howMuch,
+            centerXArg
+        ),
+        hasZoomedY = zoomOnY(
+            yAxis,
+            zoomY,
+            mouseY,
+            howMuch,
+            centerYArg
+        ),
         hasZoomed = hasZoomedX || hasZoomedY;
 
 
@@ -330,7 +345,13 @@ function onAfterGetContainer(this: Chart): void {
             ) && allowZoom) {
 
                 const wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
-                    delta = e.detail || ((e.deltaY || 0) / 120);
+                    delta = e.detail || ((e.deltaY || 0) / 120),
+                    xAxis = getAssignedAxis(
+                        this.pointer.getCoordinates(e).xAxis
+                    ).axis,
+                    yAxis = getAssignedAxis(
+                        this.pointer.getCoordinates(e).yAxis
+                    ).axis;
 
                 const hasZoomed = zoomBy(
                     chart,
@@ -338,8 +359,8 @@ function onAfterGetContainer(this: Chart): void {
                         wheelSensitivity,
                         delta
                     ),
-                    chart.xAxis[0].toValue(e.chartX),
-                    chart.yAxis[0].toValue(e.chartY),
+                    xAxis,
+                    yAxis,
                     e.chartX,
                     e.chartY,
                     wheelZoomOptions
