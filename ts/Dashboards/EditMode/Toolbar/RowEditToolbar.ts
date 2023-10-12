@@ -54,8 +54,10 @@ class RowEditToolbar extends EditToolbar {
         options: EditMode.Options,
         iconURLPrefix: string
     ): MenuItem.Options[] {
-        const dragDropElement = options.dragDrop?.enabled ?
-            [{
+        const items: MenuItem.Options[] = [];
+
+        if (options.dragDrop?.enabled) {
+            items.push({
                 id: 'drag',
                 type: 'icon' as const,
                 icon: iconURLPrefix + 'drag.svg',
@@ -70,21 +72,25 @@ class RowEditToolbar extends EditToolbar {
                         }
                     }
                 }
-            }] :
-            [];
-        const settingsElement = {
-            id: 'settings',
-            type: 'icon' as const,
-            icon: iconURLPrefix + 'settings.svg',
-            events: {
-                click: function (this: MenuItem, e: any): void {
-                    this.menu.parent.editMode.setEditOverlay();
+            });
+        }
 
-                    (this.menu.parent as RowEditToolbar).onRowOptions(e);
+        if (options.settings?.enabled) {
+            items.push({
+                id: 'settings',
+                type: 'icon' as const,
+                icon: iconURLPrefix + 'settings.svg',
+                events: {
+                    click: function (this: MenuItem, e: any): void {
+                        this.menu.parent.editMode.setEditOverlay();
+
+                        (this.menu.parent as RowEditToolbar).onRowOptions(e);
+                    }
                 }
-            }
-        };
-        const destroyElement = {
+            });
+        }
+
+        items.push({
             id: 'destroy',
             type: 'icon' as const,
             className: EditGlobals.classNames.menuDestroy,
@@ -111,8 +117,9 @@ class RowEditToolbar extends EditToolbar {
                     });
                 }
             }
-        };
-        return [...dragDropElement, settingsElement, destroyElement];
+        });
+
+        return items;
     }
     /* *
      *

@@ -55,8 +55,10 @@ class CellEditToolbar extends EditToolbar {
         options: EditMode.Options,
         iconURLPrefix: string
     ): MenuItem.Options[] {
-        const dragOptions = options.dragDrop?.enabled ?
-            [{
+        const items: MenuItem.Options[] = [];
+
+        if (options.dragDrop?.enabled) {
+            items.push({
                 id: 'drag',
                 type: 'icon' as const,
                 icon: iconURLPrefix + 'drag.svg',
@@ -71,12 +73,11 @@ class CellEditToolbar extends EditToolbar {
                         }
                     }
                 }
-            }] :
-            [];
+            });
+        }
 
-        return [
-            ...dragOptions,
-            {
+        if (options.settings?.enabled) {
+            items.push({
                 id: 'settings',
                 type: 'icon',
                 icon: iconURLPrefix + 'settings.svg',
@@ -87,36 +88,39 @@ class CellEditToolbar extends EditToolbar {
                         (this.menu.parent as CellEditToolbar).onCellOptions();
                     }
                 }
-            },
-            {
-                id: 'destroy',
-                type: 'icon',
-                className: EditGlobals.classNames.menuDestroy,
-                icon: iconURLPrefix + 'destroy.svg',
-                events: {
-                    click: function (this: MenuItem, e: any): void {
-                        const parentNode = this.menu.parent as CellEditToolbar,
-                            editMode = this.menu.parent.editMode,
-                            popup = editMode.confirmationPopup;
+            });
+        }
 
-                        popup.show({
-                            confirmButton: {
-                                value: editMode.lang.confirmButton,
-                                callback: parentNode.onCellDestroy,
-                                context: parentNode
-                            },
-                            cancelButton: {
-                                value: editMode.lang.cancelButton,
-                                callback: (): void => {
-                                    popup.closePopup();
-                                }
-                            },
-                            text: editMode.lang.confirmDestroyCell
-                        });
-                    }
+        items.push({
+            id: 'destroy',
+            type: 'icon',
+            className: EditGlobals.classNames.menuDestroy,
+            icon: iconURLPrefix + 'destroy.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    const parentNode = this.menu.parent as CellEditToolbar,
+                        editMode = this.menu.parent.editMode,
+                        popup = editMode.confirmationPopup;
+
+                    popup.show({
+                        confirmButton: {
+                            value: editMode.lang.confirmButton,
+                            callback: parentNode.onCellDestroy,
+                            context: parentNode
+                        },
+                        cancelButton: {
+                            value: editMode.lang.cancelButton,
+                            callback: (): void => {
+                                popup.closePopup();
+                            }
+                        },
+                        text: editMode.lang.confirmDestroyCell
+                    });
                 }
             }
-        ];
+        });
+
+        return items;
     }
 
     /* *
