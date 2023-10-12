@@ -1,7 +1,7 @@
 ---
 name: Inverted navigator
 authors:
-  - Pawel fus, Askel Eirik Johansson
+  - Askel Eirik Johansson
 js_wrap: b
 tags:
   - Highcharts Stock demo
