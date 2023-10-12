@@ -181,18 +181,17 @@ class DotPlotSeries extends ColumnSeries {
                 }
             }
 
-            let i = 0;
+            let i = -1;
 
             for (const graphic of graphics) {
-                if (!graphic) {
-                    return;
-                }
-
-                if (!graphic.isActive) {
-                    graphic.destroy();
-                    graphics.splice(i++, 1);
-                } else {
-                    graphic.isActive = false;
+                ++i;
+                if (graphic) {
+                    if (!graphic.isActive) {
+                        graphic.destroy();
+                        graphics.splice(i, 1);
+                    } else {
+                        graphic.isActive = false;
+                    }
                 }
             }
         }
