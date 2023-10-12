@@ -63,7 +63,6 @@ export function generateOHLC(size: number){
             Math.floor(100* Math.random()),
         ]);
     }
-    console.log(data);
     return data;
 }
 export function generateCSV(rows:number, columns: number){
