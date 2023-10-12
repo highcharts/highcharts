@@ -33,6 +33,7 @@ const {
     erase,
     extend,
     insertItem,
+    isArray,
     isNumber,
     pick,
     pushUnique,
@@ -281,7 +282,7 @@ namespace ParallelSeries {
                     ).main as any,
                     this.y as any
                 );
-            } else if (yAxisOptions.categories) {
+            } else if (isArray(yAxisOptions.categories)) {
                 formattedValue = yAxisOptions.categories[this.y as any];
             } else {
                 formattedValue = this.y;

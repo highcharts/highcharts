@@ -120,7 +120,7 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    categories?: Array<string>;
+    categories?: Array<string>|true;
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
@@ -149,7 +149,7 @@ export interface AxisOptions {
     minorGridLineDashStyle: DashStyleValue;
     minorGridLineWidth: number;
     minorTickColor: ColorType;
-    minorTickInterval?: ('auto'|null|number);
+    minorTickInterval?: ('auto'|number);
     minorTickLength: number;
     minorTickPosition: AxisTickPositionValue;
     minorTicks?: boolean;

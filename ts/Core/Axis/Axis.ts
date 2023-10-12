@@ -215,8 +215,8 @@ class Axis {
     public coll: AxisCollectionKey = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
-    public dataMax?: (null|number);
-    public dataMin?: (null|number);
+    public dataMax?: number;
+    public dataMin?: number;
     public displayBtn?: boolean;
     public eventArgs?: any;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
@@ -389,8 +389,8 @@ class Axis {
             userOptions.side,
             axis.side,
             (axis.horiz ?
-                (axis.opposite ? 0 : 2) : // top : bottom
-                (axis.opposite ? 1 : 3)) // right : left
+                (axis.opposite ? 0 : 2) : // Top : bottom
+                (axis.opposite ? 1 : 3)) // Right : left
         );
 
         /**
@@ -430,8 +430,7 @@ class Axis {
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
-        axis.hasNames =
-            type === 'category' || (options.categories as any) === true;
+        axis.hasNames = type === 'category' || options.categories === true;
 
         /**
          * If categories are present for the axis, names are used instead of
@@ -448,7 +447,8 @@ class Axis {
          * @type {Array<string>}
          * @readonly
          */
-        axis.categories = options.categories || (axis.hasNames ? [] : void 0);
+        axis.categories = (isArray(options.categories) && options.categories) ||
+            (axis.hasNames ? [] : void 0);
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
             (axis.names as any).keys = {};
@@ -548,14 +548,14 @@ class Axis {
          * @name Highcharts.Axis#series
          * @type {Array<Highcharts.Series>}
          */
-        axis.series = axis.series || []; // populated by Series
+        axis.series = axis.series || []; // Populated by Series
 
         // Reversed axis
         if (
             chart.inverted &&
             !axis.isZAxis &&
             isXAxis &&
-            typeof axis.reversed === 'undefined'
+            !defined(axis.reversed)
         ) {
             axis.reversed = true;
         }
@@ -592,7 +592,7 @@ class Axis {
                 AxisDefaults.defaultLeftAxisOptions
             ][this.side],
             merge(
-                // if set in setOptions (#1053):
+                // If set in setOptions (#1053):
                 defaultOptions[this.coll],
                 userOptions
             )
@@ -632,7 +632,7 @@ class Axis {
             lang = defaultOptions.lang,
             numericSymbols = lang.numericSymbols,
             numSymMagnitude = lang.numericSymbolMagnitude || 1000,
-            // make sure the same symbol is added for all labels on a linear
+            // Make sure the same symbol is added for all labels on a linear
             // axis
             numericSymbolDetector = axis.logarithmic ?
                 Math.abs(value) :
@@ -645,7 +645,7 @@ class Axis {
         if (categories) {
             ret = `${this.value}`;
 
-        } else if (dateTimeLabelFormat) { // datetime axis
+        } else if (dateTimeLabelFormat) { // Datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
 
         } else if (i && numericSymbolDetector >= 1000) {
@@ -674,9 +674,9 @@ class Axis {
         }
 
         if (typeof ret === 'undefined') {
-            if (Math.abs(value) >= 10000) { // add thousands separators
+            if (Math.abs(value) >= 10000) { // Add thousands separators
                 ret = numberFormatter(value, -1);
-            } else { // small numbers
+            } else { // Small numbers
                 ret = numberFormatter(value, -1, void 0, ''); // #2466
             }
         }
@@ -704,11 +704,11 @@ class Axis {
             axis.hasVisibleSeries = false;
 
             // Reset properties in case we're redrawing (#3353)
-            axis.dataMin = axis.dataMax = axis.threshold = null as any;
+            axis.dataMin = axis.dataMax = axis.threshold = void 0;
             axis.softThreshold = !axis.isXAxis;
 
             // Loop through this axis' series
-            axis.series.forEach(function (series): void {
+            axis.series.forEach((series): void => {
 
                 if (series.reserveSpace()) {
 
@@ -722,8 +722,8 @@ class Axis {
                     axis.hasVisibleSeries = true;
 
                     // Validate threshold in logarithmic axes
-                    if (axis.positiveValuesOnly && (threshold as any) <= 0) {
-                        threshold = null as any;
+                    if (axis.positiveValuesOnly && (threshold || 0) <= 0) {
+                        threshold = void 0;
                     }
 
                     // Get dataMin and dataMax for X axes
@@ -837,7 +837,7 @@ class Axis {
         const minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
-                axis.brokenAxis && axis.brokenAxis.hasBreaks ||
+                axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
             ) && axis.lin2val;
 
@@ -853,7 +853,7 @@ class Axis {
         // In vertical axes, the canvas coordinates start from 0 at the top like
         // in SVG.
         if (cvsCoord) {
-            sign *= -1; // canvas coordinates inverts the value
+            sign *= -1; // Canvas coordinates inverts the value
             cvsOffset = axis.len;
         }
 
@@ -864,19 +864,19 @@ class Axis {
         }
 
         // From pixels to value
-        if (backwards) { // reverse translation
+        if (backwards) { // Reverse translation
 
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
-            // from chart pixel to value:
+            // From chart pixel to value:
             returnValue = val / localA + localMin;
-            if (doPostTranslate) { // log, ordinal and broken axis
+            if (doPostTranslate) { // Log, ordinal and broken axis
                 returnValue = axis.lin2val(returnValue);
             }
 
         // From value to pixels
         } else {
-            if (doPostTranslate) { // log, ordinal and broken axis
+            if (doPostTranslate) { // Log, ordinal and broken axis
                 val = axis.val2lin(val);
             }
             const value = sign * (val - localMin) * localA;
@@ -934,7 +934,7 @@ class Axis {
         paneCoordinates?: boolean
     ): number {
         return this.translate(
-            pixel - (paneCoordinates ? 0 : this.pos as any),
+            pixel - (paneCoordinates ? 0 : this.pos),
             true,
             !this.horiz,
             void 0,
@@ -955,7 +955,9 @@ class Axis {
      * @return {Highcharts.SVGPathArray|null}
      * The SVG path definition for the plot line.
      */
-    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
+    public getPlotLinePath(
+        options: Axis.PlotLinePathOptions
+    ): (SVGPath|undefined) {
         const axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
@@ -993,12 +995,12 @@ class Axis {
         }
 
         const evt: Partial<Axis.PlotLinePathOptions> = {
-            value: value,
-            lineWidth: lineWidth,
-            old: old,
-            force: force,
+            value,
+            lineWidth,
+            old,
+            force,
             acrossPanes: options.acrossPanes,
-            translatedValue: translatedValue
+            translatedValue
         };
         fireEvent(this, 'getPlotLinePath', evt, function (
             e: Axis.PlotLinePathOptions
@@ -1015,7 +1017,7 @@ class Axis {
 
             x1 = x2 = Math.round(translatedValue + transB);
             y1 = y2 = Math.round(cHeight - translatedValue - transB);
-            if (!isNumber(translatedValue)) { // no min or max
+            if (!isNumber(translatedValue)) { // No min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
@@ -1038,7 +1040,7 @@ class Axis {
                 );
         });
 
-        return (evt.path || null);
+        return evt.path;
     }
 
     /**
@@ -1123,16 +1125,16 @@ class Axis {
      * @return {number|"auto"|null}
      * Legacy option
      */
-    public getMinorTickInterval(): ('auto'|null|number) {
-        const options = this.options;
+    public getMinorTickInterval(): ('auto'|undefined|number) {
+        const { minorTicks, minorTickInterval } = this.options;
 
-        if (options.minorTicks === true) {
-            return pick(options.minorTickInterval, 'auto');
+        if (minorTicks === true) {
+            return pick(minorTickInterval, 'auto');
         }
-        if (options.minorTicks === false) {
-            return null;
+        if (minorTicks === false) {
+            return;
         }
-        return options.minorTickInterval as any;
+        return minorTickInterval;
     }
 
     /**
@@ -1150,8 +1152,8 @@ class Axis {
             tickPositions = axis.tickPositions,
             minorTickInterval = axis.minorTickInterval,
             pointRangePadding = axis.pointRangePadding || 0,
-            min = (axis.min as any) - pointRangePadding, // #1498
-            max = (axis.max as any) + pointRangePadding, // #1498
+            min = (axis.min || 0) - pointRangePadding, // #1498
+            max = (axis.max || 0) + pointRangePadding, // #1498
             range = max - min;
 
         let minorTickPositions = [] as Array<number>,
@@ -1233,19 +1235,17 @@ class Axis {
             options = axis.options,
             logarithmic = axis.logarithmic;
 
-        let min = axis.min,
-            max = axis.max,
+        let { max, min, minRange } = axis,
             zoomOffset,
             spaceAvailable: boolean,
             closestDataRange: number,
-            minArgs: Array<(number|null|undefined)>,
-            maxArgs: Array<(number|null|undefined)>,
-            minRange;
+            minArgs: Array<(number|undefined)>,
+            maxArgs: Array<(number|undefined)>;
 
         // Set the automatic minimum range based on the closest point distance
         if (
             axis.isXAxis &&
-            typeof axis.minRange === 'undefined' &&
+            typeof minRange === 'undefined' &&
             !logarithmic
         ) {
 
@@ -1255,7 +1255,9 @@ class Axis {
                 defined(options.floor) ||
                 defined(options.ceiling)
             ) {
-                axis.minRange = null; // don't do this again
+                // Setting it to null, as opposed to undefined, signals we don't
+                // run this block again as per the condition above.
+                minRange = null;
 
             } else {
 
@@ -1270,26 +1272,30 @@ class Axis {
                     )
                 ) || 0;
 
-                axis.minRange = Math.min(
+                minRange = Math.min(
                     closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }
         }
 
-        // if minRange is exceeded, adjust
-        if ((max as any) - (min as any) < (axis.minRange as any)) {
+        // If minRange is exceeded, adjust
+        if (
+            isNumber(max) &&
+            isNumber(min) &&
+            isNumber(minRange) &&
+            max - min < minRange
+        ) {
 
             spaceAvailable =
                 (axis.dataMax as any) - (axis.dataMin as any) >=
-                (axis.minRange as any);
-            minRange = axis.minRange;
-            zoomOffset = ((minRange as any) - (max as any) + (min as any)) / 2;
+                minRange;
+            zoomOffset = (minRange - max + min) / 2;
 
-            // if min and max options have been set, don't go beyond it
+            // If min and max options have been set, don't go beyond it
             minArgs = [
-                (min as any) - zoomOffset,
-                pick(options.min, (min as any) - zoomOffset)
+                min - zoomOffset,
+                pick(options.min, min - zoomOffset)
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
@@ -1300,8 +1306,8 @@ class Axis {
             min = arrayMax(minArgs);
 
             maxArgs = [
-                min + (minRange as any),
-                pick(options.max, min + (minRange as any))
+                min + minRange,
+                pick(options.max, min + minRange)
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
@@ -1312,15 +1318,16 @@ class Axis {
 
             max = arrayMin(maxArgs);
 
-            // now if the max is adjusted, adjust the min back
-            if (max - min < (minRange as any)) {
-                minArgs[0] = max - (minRange as any);
-                minArgs[1] = pick(options.min, max - (minRange as any));
+            // Now if the max is adjusted, adjust the min back
+            if (max - min < minRange) {
+                minArgs[0] = max - minRange;
+                minArgs[1] = pick(options.min, max - minRange);
                 min = arrayMax(minArgs);
             }
         }
 
         // Record modified extremes
+        axis.minRange = minRange;
         axis.min = min;
         axis.max = max;
     }
@@ -1410,7 +1417,7 @@ class Axis {
 
         // Write the last point's name to the names array
         if (typeof x !== 'undefined') {
-            this.names[x] = point.name as any;
+            this.names[x] = point.name;
             // Backwards mapping is much faster than array searching (#7725)
             (this.names as any).keys[point.name as any] = x;
         } else if (point.x) {
@@ -1440,7 +1447,7 @@ class Axis {
             names.length = 0;
 
             this.minRange = this.userMinRange; // Reset
-            (this.series || []).forEach(function (series): void {
+            (this.series || []).forEach((series): void => {
 
                 // Reset incrementer (#5928)
                 series.xIncrement = null;
@@ -1468,8 +1475,7 @@ class Axis {
                     let x;
 
                     if (
-                        point &&
-                        point.options &&
+                        point?.options &&
                         typeof point.name !== 'undefined' // #9562
                     ) {
                         x = axis.nameToX(point);
@@ -1539,8 +1545,8 @@ class Axis {
                             !isXAxis :
                             isXAxis;
 
-                        // minPointOffset is the value padding to the left of
-                        // the axis in order to make room for points with a
+                        // The `minPointOffset` is the value padding to the left
+                        // of the axis in order to make room for points with a
                         // pointRange, typically columns. When the
                         // pointPlacement option is 'between' or 'on', this
                         // padding does not apply.
@@ -1575,16 +1581,16 @@ class Axis {
             axis.pointRangePadding =
                 pointRangePadding = pointRangePadding * ordinalCorrection;
 
-            // pointRange means the width reserved for each point, like in a
+            // The `pointRange` is the width reserved for each point, like in a
             // column chart
             axis.pointRange = Math.min(
                 pointRange,
                 axis.single && hasCategories ? 1 : range
             );
 
-            // closestPointRange means the closest distance between points. In
-            // columns it is mostly equal to pointRange, but in lines pointRange
-            // is 0 while closestPointRange is some other value
+            // The `closestPointRange` is the closest distance between points.
+            // In columns it is mostly equal to pointRange, but in lines
+            // pointRange is 0 while closestPointRange is some other value
             if (isXAxis && closestPointRange) {
                 axis.closestPointRange = closestPointRange;
             }
@@ -1607,8 +1613,8 @@ class Axis {
      * @function Highcharts.Axis#minFromRange
      */
     public minFromRange(): (number|undefined) {
-        const axis = this;
-        return (axis.max as any) - (axis.range as any);
+        const { max, min } = this;
+        return isNumber(max) && isNumber(min) && max - min || void 0;
     }
 
     /**
@@ -1630,6 +1636,7 @@ class Axis {
                 chart,
                 dataMax,
                 dataMin,
+                dateTime,
                 isXAxis,
                 logarithmic,
                 options,
@@ -1654,7 +1661,7 @@ class Axis {
             hardMin,
             hardMax;
 
-        if (!axis.dateTime && !categories && !linkedParent) {
+        if (!dateTime && !categories && !linkedParent) {
             this.getTickAmount();
         }
 
@@ -1664,7 +1671,7 @@ class Axis {
 
         // Linked axis gets the extremes from the parent axis
         if (linkedParent) {
-            axis.linkedParent = linkedParent;
+            axis.linkedParent = linkedParent as Axis;
             linkedParentExtremes = linkedParent.getExtremes();
             axis.min = pick(
                 linkedParentExtremes.min,
@@ -1793,7 +1800,6 @@ class Axis {
             // yAxis add a tick for -1 because of the default `minPadding` and
             // `startOnTick` options. This is prevented by the `softThreshold`
             // option.
-
             if (
                 softThreshold &&
                 isNumber(dataMin) &&
@@ -1901,7 +1907,7 @@ class Axis {
             options.minTickInterval,
             // In datetime axes, don't go below the data interval, except when
             // there are scatter-like series involved (#13369).
-            axis.dateTime &&
+            dateTime &&
             !axis.series.some((s): boolean|undefined => s.noSharedTooltip) ?
                 axis.closestPointRange : 0
         );
@@ -1910,7 +1916,7 @@ class Axis {
         }
 
         // For linear axes, normalize the interval
-        if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
+        if (!dateTime && !logarithmic && !tickIntervalOption) {
             axis.tickInterval = getNormalizedTickInterval(
                 axis,
                 axis.tickInterval
@@ -1959,7 +1965,7 @@ class Axis {
         ) ? 0.5 : 0; // #3202
 
 
-        // get minorTickInterval
+        // Get minorTickInterval
         this.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
             this.tickInterval ?
@@ -1976,7 +1982,7 @@ class Axis {
             !this.tickAmount &&
             (
                 // Data is on integer (#6563)
-                parseInt(this.min as any, 10) === this.min ||
+                this.min % 1 === 0 ||
 
                 // Between integers and decimals are not allowed (#6274)
                 options.allowDecimals !== false
@@ -2006,7 +2012,7 @@ class Axis {
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
             if (
-                (!axis.ordinal || !axis.ordinal.positions) &&
+                !axis.ordinal?.positions &&
                 (
                     (this.max - this.min) /
                     this.tickInterval >
@@ -2025,7 +2031,7 @@ class Axis {
                     this.min,
                     this.max,
                     options.startOfWeek,
-                    axis.ordinal && axis.ordinal.positions,
+                    axis.ordinal?.positions,
                     this.closestPointRange,
                     true
                 );
@@ -2188,9 +2194,10 @@ class Axis {
         const axis = this,
             alignedAxes: Axis[] = [this],
             options = axis.options,
+            chartOptions = this.chart.options.chart,
             alignThresholds = (
                 this.coll === 'yAxis' &&
-                this.chart.options.chart.alignThresholds
+                chartOptions.alignThresholds
             ),
             thresholdAlignments: number[] = [];
 
@@ -2199,12 +2206,8 @@ class Axis {
         if (
             (
                 // Only if alignTicks or alignThresholds is true
-                (
-                    this.chart.options.chart.alignTicks !== false &&
-                    options.alignTicks
-                ) || (
-                    alignThresholds
-                )
+                (chartOptions.alignTicks !== false && options.alignTicks) ||
+                alignThresholds
             ) &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
@@ -2370,7 +2373,7 @@ class Axis {
                 tickAmount,
                 thresholdAlignment
             } = axis,
-            currentTickAmount = tickPositions && tickPositions.length,
+            currentTickAmount = tickPositions?.length,
             threshold = pick(axis.threshold, axis.softThreshold ? 0 : null);
 
         let len,
@@ -2575,8 +2578,8 @@ class Axis {
             if (!axis.isDirty) {
                 axis.isDirty =
                     isDirtyAxisLength ||
-                    axis.min !== (axis.old && axis.old.min) ||
-                    axis.max !== (axis.old && axis.old.max);
+                    axis.min !== axis.old?.min ||
+                    axis.max !== axis.old?.max;
             }
         } else if (stacking) {
             stacking.cleanStacks();
@@ -2631,16 +2634,14 @@ class Axis {
     public setExtremes(
         newMin?: number,
         newMax?: number,
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: any
     ): void {
         const axis = this,
             chart = axis.chart;
 
-        redraw = pick(redraw, true); // defaults to true
-
-        axis.series.forEach(function (serie): void {
+        axis.series.forEach((serie): void => {
             delete serie.kdTree;
         });
 
@@ -2651,7 +2652,7 @@ class Axis {
         });
 
         // Fire the event
-        fireEvent(axis, 'setExtremes', eventArguments, function (): void {
+        fireEvent(axis, 'setExtremes', eventArguments, (): void => {
 
             axis.userMin = newMin;
             axis.userMax = newMax;
@@ -2781,7 +2782,7 @@ class Axis {
 
         // Direction agnostic properties
         this.len = Math.max(horiz ? width : height, 0); // Math.max fixes #905
-        this.pos = horiz ? left : top; // distance from SVG origin
+        this.pos = horiz ? left : top; // Distance from SVG origin
     }
 
     /**

@@ -95,7 +95,6 @@ namespace DarkGreenTheme {
                 }
             },
             lineColor: '#A0A0A0',
-            minorTickInterval: null,
             tickColor: '#A0A0A0',
             tickWidth: 1,
             title: {
