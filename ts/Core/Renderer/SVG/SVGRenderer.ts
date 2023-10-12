@@ -140,6 +140,38 @@ let hasInternalReferenceBug: (boolean|undefined);
  */
 class SVGRenderer implements SVGRendererLike {
 
+    /**
+     * The default button theme
+     */
+    public static buttonTheme: ButtonThemeObject = {
+        fill: Palette.neutralColor3,
+        stroke: Palette.neutralColor20,
+        'stroke-width': 1,
+        style: {
+            color: Palette.neutralColor80,
+            cursor: 'pointer',
+            fontSize: '0.8em',
+            fontWeight: 'normal'
+        },
+        states: {
+            hover: {
+                fill: Palette.neutralColor10
+            },
+            select: {
+                fill: Palette.highlightColor10,
+                style: {
+                    color: Palette.neutralColor100,
+                    fontWeight: 'bold'
+                }
+            },
+            disabled: {
+                style: {
+                    color: Palette.neutralColor20
+                }
+            }
+        }
+    };
+
     /* *
      *
      *  Constructors
@@ -755,71 +787,42 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            states = theme.states || {};
+            args = arguments;
 
         let curState = 0;
 
-        theme = merge(theme);
-        delete theme.states;
+        theme = merge(SVGRenderer.buttonTheme, theme);
 
-        const normalStyle = merge({
-            color: Palette.neutralColor80,
-            cursor: 'pointer',
-            fontSize: '0.8em',
-            fontWeight: 'normal'
-        }, theme.style);
+        const states = theme.states || {},
+            normalStyle = theme.style || {};
+        delete theme.states;
         delete theme.style;
 
-        // Remove stylable attributes. Pass in the ButtonThemeObject and get the
-        // SVGAttributes subset back.
-        let normalState = AST.filterUserAttributes(theme);
-
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState));
+        label.attr({ padding: 8, r: 2 });
 
-        // Presentational. The string type is a mistake, it is just for
-        // compliance with SVGAttribute and is not used in button theme.
-        let hoverStyle: CSSObject|string|undefined,
-            selectStyle: CSSObject|string|undefined,
-            disabledStyle: CSSObject|string|undefined;
+        // Presentational
+        const stateAttribs: Array<SVGAttributes> = [
+                AST.filterUserAttributes(theme)
+            ],
+            // The string type is a mistake, it is just for compliance with
+            // SVGAttribute and is not used in button theme.
+            stateStyles: Array<CSSObject|string|undefined> = [normalStyle];
 
         if (!styledMode) {
-
-            // Normal state - prepare the attributes
-            normalState = merge({
-                fill: Palette.neutralColor3,
-                stroke: Palette.neutralColor20,
-                'stroke-width': 1
-            }, normalState);
-
-            // Hover state
-            hoverState = merge(normalState, {
-                fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || states.hover || {}));
-            hoverStyle = hoverState.style;
-            delete hoverState.style;
-
-            // Pressed state
-            selectState = merge(normalState, {
-                fill: Palette.highlightColor10,
-                style: {
-                    color: Palette.neutralColor100,
-                    fontWeight: 'bold'
-                }
-            }, AST.filterUserAttributes(selectState || states.select || {}));
-            selectStyle = selectState.style;
-            delete selectState.style;
-
-            // Disabled state
-            disabledState = merge(normalState, {
-                style: {
-                    color: Palette.neutralColor20
-                }
-            }, AST.filterUserAttributes(
-                disabledState || states.disabled || {}
-            ));
-            disabledStyle = disabledState.style;
-            delete disabledState.style;
+            (
+                ['hover', 'select', 'disabled'] as
+                Array<'hover'|'select'|'disabled'>
+            ).forEach((stateName, i): void => {
+                stateAttribs.push(merge(
+                    stateAttribs[0],
+                    AST.filterUserAttributes(
+                        args[i + 5] || states[stateName] || {}
+                    )
+                ));
+                stateStyles.push(stateAttribs[i + 1].style);
+                delete stateAttribs[i + 1].style;
+            });
         }
 
         // Add the events. IE9 and IE10 need mouseover and mouseout to function
@@ -857,19 +860,8 @@ class SVGRenderer implements SVGRendererLike {
                 );
 
             if (!styledMode) {
-                label
-                    .attr([
-                        normalState,
-                        hoverState,
-                        selectState,
-                        disabledState
-                    ][state || 0]);
-                const css = [
-                    normalStyle,
-                    hoverStyle,
-                    selectStyle,
-                    disabledStyle
-                ][state || 0];
+                label.attr(stateAttribs[state || 0]);
+                const css = stateStyles[state || 0];
                 if (isObject(css)) {
                     label.css(css);
                 }
@@ -880,7 +872,7 @@ class SVGRenderer implements SVGRendererLike {
         // Presentational attributes
         if (!styledMode) {
             label
-                .attr(normalState)
+                .attr(stateAttribs[0])
                 .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
 
             // HTML labels don't need to handle pointer events because click and
