@@ -212,7 +212,7 @@ const eventsData = [{
     x: -164975530000,
     y: 1,
     lbl: 'Shinkansen',
-    details: 'The first high-speed rail commercial passenger service. Among the key people credited with the construction of the first Shinkansen are Hideo Shima, the Chief Engineer, and Shinji Sogō, the first President of Japanese National Railways (JNR) who managed to persuade politicians to back the plan. Other significant people responsible for its technical development were Tadanao Miki, Tadashi Matsudaira, and Hajime Kawanabe based at the Railway Technical Research Institute (RTRI), part of JNR. They were responsible for much of the technical development of the first line, the Tōkaidō Shinkansen. All three had worked on aircraft design during World War II.[14]'
+    details: 'The first high-speed rail commercial passenger service. Among the key people credited with the construction of the first Shinkansen are Hideo Shima, the Chief Engineer, and Shinji Sogō, the first President of Japanese National Railways (JNR) who managed to persuade politicians to back the plan. Other significant people responsible for its technical development were Tadanao Miki, Tadashi Matsudaira, and Hajime Kawanabe based at the Railway Technical Research Institute (RTRI), part of JNR. They were responsible for much of the technical development of the first line, the Tōkaidō Shinkansen. All three had worked on aircraft design during World War II.'
 }, {
     x: 119021270000,
     y: 1,
@@ -241,6 +241,7 @@ const eventsData = [{
 }, {
     x: 1255094870000,
     y: 1,
+    labelrank: 100,
     lbl: 'Highcharts',
     details: 'Highcharts started as Torstein’s humble quest for a simple charting tool for updating his homepage with snow depth measurements from Vikjafjellet, the local mountain where his family keeps a cabin. Frustrated with the common flash plug-ins, and other proprietary solutions at the time, he decided to build a standards-based solution of his own, and share it with the world. It turns out he was doing more than scratching his itch. Since its launch in 2009, Highcharts has remained the secure choice for cutting-edge charting tools in a highly competitive data visualization market. Later in 2011, the first version og Highcharts Stock was released.'
 }, {
@@ -275,12 +276,8 @@ Highcharts.stockChart('container', {
     rangeSelector: {
         buttons: [{
             type: 'year',
-            count: 1,
-            text: '1y'
-        }, {
-            type: 'year',
             count: 30,
-            text: '20y'
+            text: '30y'
         }, {
             type: 'year',
             count: 100,
@@ -323,9 +320,6 @@ Highcharts.stockChart('container', {
     tooltip: {
         shared: false,
         useHTML: true,
-        styles: {
-            'white-space': 'normal'
-        },
         formatter: function () {
             let tooltipString = '<div>';
 
@@ -347,7 +341,6 @@ Highcharts.stockChart('container', {
         }
     },
     series: [{
-        // pointStart: -10950249600000,
         pointStart: Date.UTC(1600, 0, 1),
         pointInterval: 5,
         pointIntervalUnit: 'year',
@@ -361,9 +354,11 @@ Highcharts.stockChart('container', {
             0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75,
             0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75,
             0.75, 0.75, 0.75, 0.75, 0.75, 0.75
-
         ],
         states: {
+            inactive: {
+                enabled: false
+            },
             hover: {
                 halo: {
                     size: 0
