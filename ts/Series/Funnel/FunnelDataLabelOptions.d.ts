@@ -28,4 +28,10 @@ export interface FunnelDataLabelOptions extends PieDataLabelOptions {
     position?: string;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default FunnelDataLabelOptions;
