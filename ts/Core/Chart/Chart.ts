@@ -2433,13 +2433,13 @@ class Chart {
                 mockTick.destroy();
                 if (
                     label &&
+                    !chart.pane &&
                     pick(
                         axis.options.labels.reserveSpace,
                         isNumber(axis.options.crossing) ? false : null,
                         axis.labelAlign === 'center' ? true : null,
                         axis.reserveSpaceDefault
-                    ) &&
-                    !chart.pane
+                    )
                 ) {
                     expectedSpace = label.getBBox().height +
                         axis.options.labels.distance;
@@ -2447,6 +2447,7 @@ class Chart {
                     label.destroy();
                     return true;
                 }
+                label?.destroy();
             }
             return void 0;
         });
