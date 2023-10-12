@@ -1,18 +1,8 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
+import { generateColumnData } from '../../data-generators';
 
-export function generateColumnData(rows: number, columns: number){
-    const data = [];
-    for (let i = 0; i < rows; i++) {
-        const row = [];
-        for (let j = 0; j < columns; j++) {
-            row.push(Math.random());
-        }
-        data.push(row);
-    }
-    return data;
-}
 
 export const config = {
     sizes: [100, 1000, 10_000, 100_000, 1_000_000, 2_500_000]
