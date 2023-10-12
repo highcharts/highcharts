@@ -1,7 +1,7 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
-import { generateOHLC } from './Stock-DataGrouping-Ordinal.bench';
+import { generateOHLC } from '../../data-generators';
 
 
 export const config = {

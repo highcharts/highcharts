@@ -127,8 +127,5 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {
-    "latest": "^0.2.0"
-  }
+  "license": "SEE LICENSE IN <license.txt>"
 }
