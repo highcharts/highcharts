@@ -2438,7 +2438,8 @@ class Chart {
                         isNumber(axis.options.crossing) ? false : null,
                         axis.labelAlign === 'center' ? true : null,
                         axis.reserveSpaceDefault
-                    )
+                    ) &&
+                    !chart.pane
                 ) {
                     expectedSpace = label.getBBox().height +
                         axis.options.labels.distance;
