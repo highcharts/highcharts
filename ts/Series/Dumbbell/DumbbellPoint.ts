@@ -60,8 +60,8 @@ class DumbbellPoint extends AreaRangePoint {
      * @param {Highcharts.Point} this The point to inspect.
      *
      */
-    setState(): void {
-        let point = this,
+    public setState(): void {
+        const point = this,
             series = point.series,
             chart = series.chart,
             seriesLowColor = series.options.lowColor,
@@ -78,12 +78,12 @@ class DumbbellPoint extends AreaRangePoint {
                 zoneColor,
                 point.color,
                 series.color
-            ),
-            verb = 'attr',
+            );
+        let verb = 'attr',
             upperGraphicColor,
             origProps: Partial<DumbbellPoint>;
 
-        this.pointSetState.apply(this, arguments);
+        this.pointSetState.apply(point, arguments);
 
         if (!point.state) {
             verb = 'animate';
@@ -118,10 +118,12 @@ class DumbbellPoint extends AreaRangePoint {
     }
 
     public destroy(): void {
+        const point = this;
+
         // #15560
-        if (!this.graphic) {
-            this.graphic = this.connector;
-            this.connector = void 0 as any;
+        if (!point.graphic) {
+            point.graphic = point.connector;
+            point.connector = void 0 as any;
         }
         return super.destroy();
     }
@@ -129,9 +131,10 @@ class DumbbellPoint extends AreaRangePoint {
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface DumbbellPoint{
     pointSetState: typeof AreaRangePoint.prototype.setState;
 }
