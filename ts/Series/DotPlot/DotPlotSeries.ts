@@ -71,7 +71,7 @@ class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -83,7 +83,7 @@ class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -98,11 +98,7 @@ class DotPlotSeries extends ColumnSeries {
             crisp = borderWidth % 2 ? 0.5 : 1;
 
         for (const point of series.points) {
-            let yPos: number,
-                attr: SVGAttributes,
-                graphics: Array<SVGElement|undefined>,
-                pointAttr,
-                pointMarkerOptions = point.marker || {},
+            const pointMarkerOptions = point.marker || {},
                 symbol = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions as any).symbol
@@ -111,14 +107,18 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
                 ),
+                isSquare = symbol !== 'rect';
+
+            let yPos: number,
+                attr: SVGAttributes,
+                graphics: Array<SVGElement|undefined>,
                 size: number,
                 yTop: number,
-                isSquare = symbol !== 'rect',
                 x: number,
                 y: number;
 
             point.graphics = graphics = point.graphics || [];
-            pointAttr = point.pointAttr ?
+            const pointAttr = point.pointAttr ?
                 (
                     (point.pointAttr as any)[
                         point.selected ? 'selected' : ''
@@ -180,18 +180,21 @@ class DotPlotSeries extends ColumnSeries {
                     graphics[i] = graphic;
                 }
             }
-            graphics.forEach((graphic, i): void => {
+
+            let i = 0;
+
+            for (const graphic of graphics) {
                 if (!graphic) {
                     return;
                 }
 
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    graphics.splice(i, 1);
+                    graphics.splice(i++, 1);
                 } else {
                     graphic.isActive = false;
                 }
-            });
+            }
         }
     }
 
