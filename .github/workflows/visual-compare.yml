@@ -25,7 +25,7 @@ jobs:
           ref: master
 
       - name: Error if merge fails
-        run: echo "::error::Was not able to merge with master"
+        run: echo "::error::Was not able to merge with master" && exit 1
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
