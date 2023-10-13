@@ -24,6 +24,9 @@ jobs:
         with:
           ref: master
 
+      - name: Error if merge fails
+        run: echo "::error::Was not able to merge with master"
+
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
@@ -49,7 +52,7 @@ jobs:
           fetch-depth: 0
 
       - name: Merge master into PR branch
-        run: git merge origin/master --ff-only
+        run: git merge origin/master
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
