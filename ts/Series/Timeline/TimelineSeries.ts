@@ -161,8 +161,9 @@ class TimelineSeries extends LineSeries {
                 styles = {
                     width: targetDLWidth + 'px',
                     // Apply ellipsis when data label height is exceeded.
-                    textOverflow: dataLabel.width / targetDLWidth *
-                        dataLabel.height / 2 > availableSpace * multiplier ?
+                    textOverflow: (dataLabel.width || 0) / targetDLWidth *
+                        (dataLabel.height || 0) / 2 > availableSpace *
+                        multiplier ?
                         'ellipsis' : 'none'
                 };
             } else {
