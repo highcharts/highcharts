@@ -24,19 +24,15 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sankey: {
-            prototype: {
-                pointClass: SankeyPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    sankey: { prototype: { pointClass: SankeyPoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-const { wrap } = U;
+const {
+    pInt,
+    wrap
+} = U;
 
 /* *
  *
@@ -76,37 +72,39 @@ class DependencyWheelPoint extends SankeyPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Return a text path that the data label uses.
      * @private
      */
     public getDataLabelPath(label: SVGLabel): SVGElement {
-        const renderer = this.series.chart.renderer,
-            shapeArgs = this.shapeArgs,
-            upperHalf = this.angle < 0 || this.angle > Math.PI,
+        const point = this,
+            renderer = point.series.chart.renderer,
+            shapeArgs = point.shapeArgs,
+            upperHalf = point.angle < 0 || point.angle > Math.PI,
             start = shapeArgs.start || 0,
             end = shapeArgs.end || 0;
 
         // First time
-        if (!this.dataLabelPath) {
+        if (!point.dataLabelPath) {
             // Destroy the path with the label
-            wrap(label, 'destroy', (proceed): undefined => {
-                if (this.dataLabelPath) {
-                    this.dataLabelPath = this.dataLabelPath.destroy();
+            wrap(label, 'destroy', function (
+                this: SVGLabel,
+                proceed
+            ): undefined {
+                if (point.dataLabelPath) {
+                    point.dataLabelPath = point.dataLabelPath.destroy();
                 }
-                return proceed.call(label);
+                return proceed.call(this);
             });
 
         // Subsequent times
         } else {
-            this.dataLabelPath = this.dataLabelPath.destroy();
-            delete this.dataLabelPath;
+            point.dataLabelPath = point.dataLabelPath.destroy();
+            delete point.dataLabelPath;
         }
 
         // All times
-        this.dataLabelPath = renderer
+        point.dataLabelPath = renderer
             .arc({
                 open: true,
                 longArc: Math.abs(
@@ -117,7 +115,7 @@ class DependencyWheelPoint extends SankeyPoint {
                 x: shapeArgs.x,
                 y: shapeArgs.y,
                 r: (
-                    shapeArgs.r + (label.options.distance || 0)
+                    (shapeArgs.r || 0) + pInt(label.options?.distance || 0)
                 ),
                 start: (upperHalf ? start : end),
                 end: (upperHalf ? end : start),
@@ -125,15 +123,13 @@ class DependencyWheelPoint extends SankeyPoint {
             })
             .add(renderer.defs);
 
-        return this.dataLabelPath;
+        return point.dataLabelPath;
     }
 
     public isValid(): boolean {
         // No null points here
         return true;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

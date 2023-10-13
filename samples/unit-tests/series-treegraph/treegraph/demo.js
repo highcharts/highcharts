@@ -39,9 +39,9 @@ QUnit.test('Treegraph series',
             'The point A should not be X positioned on 0 (#19038)'
         );
 
-        assert.strictEqual(
-            series.data[1].dataLabel.visibility,
-            'hidden',
+        assert.ok(
+            !series.data[1].dataLabel ||
+                series.data[1].dataLabel.visibility === 'hidden',
             'Hidden points should have hidden data labels (#18891)'
         );
 
@@ -133,6 +133,18 @@ QUnit.test('Treegraph series',
             collapseButtonOpacity,
             1,
             'CollapseButton should be visible when point is expanded (#19368).'
+        );
+
+        series.update({
+            showInLegend: true,
+            legendSymbol: 'lineMarker'
+        });
+
+        assert.ok(
+            chart.series[0].legendItem.symbol.element &&
+            chart.series[0].legendItem.line.element,
+            `Legend symbol and line should be rendered when
+            legendSymbol is set to lineMarker (#19671).`
         );
     }
 );

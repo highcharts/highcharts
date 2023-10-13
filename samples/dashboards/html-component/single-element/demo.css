@@ -1,6 +1,5 @@
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#dashboard-3 h1 {
-    height: 400px;
-    text-align: center;
+.highcharts-dashboards-component img {
+    height: 200px;
 }

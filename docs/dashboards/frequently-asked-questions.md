@@ -165,13 +165,22 @@ If you have to change the displayed name in the chart options (and wish to sync 
 ```
 See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
-How to style the Highcharts Component?
+How to style the Dashboard?
 -----------------------------------------------------------------------
-Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default. 
+Dashboards has a default theme, which is applied to all of its components.
+You need to import the default CSS stylesheet to your project, so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
-The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
 ```css
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 ```
 
-To customize your styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+
+But you can also customize the style of the dashboard by adding your own CSS stylesheet.
+More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/style-by-css).
+
+
+
+Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
+To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)

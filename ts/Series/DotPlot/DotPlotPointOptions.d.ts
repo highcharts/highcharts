@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
@@ -20,12 +21,15 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *  Declarations
  *
  * */
+
 export interface DotPlotPointOptions extends ColumnPointOptions {
+    // nothing to add yet
 }
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
+
 export default DotPlotPointOptions;

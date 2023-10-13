@@ -196,7 +196,7 @@ function anchorPoints(
     series: Series,
     groupedXData: Array<number>,
     xMax: number
-): any {
+): void {
     const options = series.options,
         dataGroupingOptions = options.dataGrouping,
         totalRange = (
@@ -285,9 +285,7 @@ function applyGrouping(
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
-        visible = (
-            series.visible || !chart.options.chart.ignoreHiddenSeries
-        ),
+        reserveSpace = series.reserveSpace(),
         lastDataGrouping = this.currentDataGrouping;
 
     let currentDataGrouping,
@@ -399,8 +397,6 @@ function applyGrouping(
                 });
             }
 
-            anchorPoints(series, groupedXData, xMax);
-
             // Record what data grouping values were used
             for (i = 1; i < groupPositions.length; i++) {
                 // The grouped gapSize needs to be the largest distance between
@@ -420,8 +416,11 @@ function applyGrouping(
             (currentDataGrouping as any).gapSize = gapSize;
             series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
+            series.currentDataGrouping = currentDataGrouping;
 
-            if (visible) {
+            anchorPoints(series, groupedXData, xMax);
+
+            if (reserveSpace) {
                 adjustExtremes(xAxis, groupedXData);
             }
 
@@ -436,8 +435,7 @@ function applyGrouping(
                     groupedXData,
                     groupedYData as any,
                     xAxis.min as any,
-                    xAxis.max as any,
-                    1 // Ordinal xAxis will remove left-most points otherwise
+                    xAxis.max as any
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
@@ -450,7 +448,6 @@ function applyGrouping(
             series.groupMap = null as any;
         }
         series.hasGroupedData = hasGroupedData;
-        series.currentDataGrouping = currentDataGrouping;
 
         series.preventGraphAnimation =
             (lastDataGrouping && lastDataGrouping.totalRange) !==

@@ -48,7 +48,6 @@ const {
  * @name Highcharts.seriesTypes.errorbar
  *
  * @augments Highcharts.Series
- *
  */
 class ErrorBarSeries extends BoxPlotSeries {
 
@@ -80,24 +79,27 @@ class ErrorBarSeries extends BoxPlotSeries {
      * */
 
     public getColumnMetrics(): ColumnMetricsObject {
+        const series = this;
+
         // Get the width and X offset, either on top of the linked series
         // column or standalone
         return (
-            (this.linkedParent && this.linkedParent.columnMetrics) ||
-            ColumnSeries.prototype.getColumnMetrics.call(this)
+            (series.linkedParent && series.linkedParent.columnMetrics) ||
+            ColumnSeries.prototype.getColumnMetrics.call(series)
         );
     }
 
     public drawDataLabels(): void {
-        const valKey = this.pointValKey;
+        const series = this,
+            valKey = series.pointValKey;
 
         if (AreaRangeSeries) {
-            AreaRangeSeries.prototype.drawDataLabels.call(this);
+            AreaRangeSeries.prototype.drawDataLabels.call(series);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            this.data.forEach(function (point: ErrorBarPoint): void {
+            for (const point of series.data) {
                 point.y = (point as any)[valKey];
-            });
+            }
         }
     }
 
@@ -109,11 +111,10 @@ class ErrorBarSeries extends BoxPlotSeries {
 }
 
 addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
-    this.points.forEach((point): void => {
+    for (const point of this.points) {
         point.plotLow = point.plotY;
-    });
+    }
 }, { order: 0 });
-
 
 /* *
  *

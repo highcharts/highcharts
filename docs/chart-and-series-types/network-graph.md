@@ -63,7 +63,7 @@ Since version 7.1 additional configuration options are available:
 
 *   **approximation** - when rendering a huge number of nodes, recommended to approximate repulsive forces to decrease complexity from O(N^2) to O(N log N).
 *   **theta** - used in Barnes-Hut approximation to determine when the force on nodes should be approximated or calculated directly.
-*   **integration** - forces integration type. Changes how force is applied on nodes changing the animation too. Note that different integrations have different default `attracitveForce` and `repulsiveForce` options.
+*   **integration** - forces integration type. Changes how force is applied on nodes changing the animation too. Note that different integrations have different default `attractiveForce` and `repulsiveForce` options.
 *   **maxSpeed** - max speed that node can have in one iteration, preventing small and disconnected nodes to run too fast. Verlet integration only
 
 _See the demo below, for a network graph with custom algorithm options applied_

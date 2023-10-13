@@ -3,7 +3,6 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
 
 /* *
  *
@@ -39,7 +38,8 @@ async function dashboardsScripts() {
         processLib.isRunning('scripts-dashboards', true);
 
         fsLib.deleteDirectory(bundleTargetFolder, true);
-        fsLib.deleteDirectory('js/', true);
+        fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
+        fsLib.deleteDirectory('js', true);
 
         // Transpile
         await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
@@ -77,7 +77,7 @@ async function dashboardsScripts() {
                 version: (release || ''),
                 assetPrefix: release ?
                     `https://code.highcharts.com/dashboards/${release}` :
-                    '/code'
+                    '/code/dashboards'
             })
             .fnFirstBuild();
 
@@ -95,11 +95,11 @@ async function dashboardsScripts() {
     }
 }
 
-require('../scripts-css');
+require('./scripts-css');
 require('./scripts-dts');
 
 gulp.task('dashboards/scripts', gulp.series(
-    'scripts-css',
     dashboardsScripts,
+    'dashboards/scripts-css',
     'dashboards/scripts-dts'
 ));
