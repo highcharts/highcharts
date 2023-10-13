@@ -97,7 +97,7 @@ abstract class Component {
      * Creates HTML text element like header or title
      *
      * @param tagName
-     * HTML tag name used as wrapper of text like `h1`, `h2` or `p`.
+     * HTML tag name used as wrapper of text like `h2` or `p`.
      * @param elementName
      * Name of element
      * @param textOptions
@@ -860,7 +860,7 @@ abstract class Component {
 
         if (shouldExist) {
             const newTitle = Component.createTextElement(
-                'h1',
+                'h2',
                 'title',
                 titleOptions
             );

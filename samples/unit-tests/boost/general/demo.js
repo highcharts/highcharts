@@ -279,7 +279,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'The boost clip-path should have the same size as the chart area, #14444.',
+    'The boost clip-path should have appropriate size, #14444, #17820.',
     function (assert) {
         function generataSeries() {
             const series = Array.from(Array(100)).map(function () {
@@ -351,6 +351,30 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.yAxis[0].height,
             `After setting the axis position manually, the boost clip-path
             shouldn\'t be bigger than the axis size.`
+        );
+
+        // #17820
+        chart.update({
+            chart: {
+                inverted: false
+            },
+            navigator: {
+                enabled: true,
+                height: 80,
+                series: {
+                    boostThreshold: 1,
+                    color: 'red',
+                    type: 'line',
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.navigator.top + chart.navigator.height - chart.plotTop,
+            'Clip rect should take into account navigator boosted series, #17820.'
         );
     }
 );

@@ -1,23 +1,18 @@
-name: Dashboards benchmark
+name: Stock benchmark
 on:
   pull_request:
     branches:
       - 'master'
     paths:
-      - 'ts/Dashboards/**'
-      - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmark/Dashboards/*'
-      - '.github/workflows/dashboards-benchmark.yml'
+      - 'ts/Stock/**'
+      - 'test/ts-node-unit-tests/benchmark/Stock/'
+      - '.github/workflows/stock-benchmark.yml'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  dashboard_benchmark:
+  stock-benchmark:
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:
@@ -38,12 +33,10 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Build Dashboards
-        run: npx gulp dashboards/scripts
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Dashboards/
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Stock/
 
       - name: Checkout current branch
         uses: actions/checkout@v3
@@ -54,11 +47,8 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - name: Build Dashboards
-        run: npx gulp dashboards/scripts
-
       - name: Benchmark
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Dashboards/
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Stock/
 
       - name: Benchmark comparison
         run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
@@ -80,7 +70,7 @@ jobs:
 
             const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
 
-            await createOrUpdateComment(github, context, 'Benchmark report - Dashboards', benchmarkMD || 'No table to show');
+            await createOrUpdateComment(github, context, 'Benchmark report - Stock', benchmarkMD || 'No table to show');
 
 
       - name: Add to summary
