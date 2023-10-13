@@ -15,6 +15,7 @@
  * */
 
 import type MapSeriesOptions from '../Map/MapSeriesOptions';
+import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesProviderRegistry';
 
 /* *
  *
@@ -27,7 +28,7 @@ interface TiledWebMapSeriesOptions extends MapSeriesOptions {
 }
 
 interface ProviderOptions {
-    type?: string,
+    type?: TilesProviderRegistryName,
     theme?: string,
     subdomain?: string,
     url?: string,

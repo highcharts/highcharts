@@ -32,7 +32,6 @@
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
-    "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
@@ -42,7 +41,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.282.0",
-    "@aws-sdk/credential-provider-ini": "^3.282.0",
+    "@aws-sdk/credential-providers": "^3.421.0",
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@cypress-audit/lighthouse": "^1.4.2",
@@ -57,7 +56,6 @@
     "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
-    "aws-sdk": "^2.1306.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "cloudflare": "^2.9.1",
@@ -120,12 +118,10 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint",
-      "git add"
+      "eslint"
     ],
     "*.css": [
-      "stylelint",
-      "git add"
+      "stylelint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"
