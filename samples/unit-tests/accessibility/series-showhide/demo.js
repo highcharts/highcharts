@@ -8,11 +8,14 @@ QUnit.test(
                     },
                     {
                         data: [4, 5, 6]
+                    }, {
+                        // Empty series
                     }
                 ]
             }),
             seriesA = chart.series[0],
             seriesB = chart.series[1],
+            seriesC = chart.series[2],
             getSeriesAriaHidden = function (series) {
                 return Highcharts.A11yChartUtilities.getSeriesA11yElement(
                     series
@@ -28,6 +31,11 @@ QUnit.test(
             getSeriesAriaHidden(seriesB),
             'false',
             'Series should not be hidden from AT'
+        );
+        assert.strictEqual(
+            getSeriesAriaHidden(seriesC),
+            'true',
+            'Series without data should be hidden from AT'
         );
 
         seriesB.hide();
@@ -65,7 +73,7 @@ QUnit.test(
         assert.strictEqual(
             chart.accessibility.proxyProvider.groups
                 .legend.proxyElements.length,
-            2,
+            3,
             '#15902: Proxy items should be recreated after removing legend item'
         );
     }
