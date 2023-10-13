@@ -177,30 +177,6 @@ QUnit.test(
             iteratorAB = 0,
             iteratorPBO = 0;
 
-        function pointBreakColumn(e) {
-            const point = e.point,
-                brk = e.brk,
-                shapeArgs = point.shapeArgs,
-                x = shapeArgs.x,
-                y = this.translate(brk.from, 0, 1, 0, 1),
-                w = shapeArgs.width,
-                key = ['brk', brk.from, brk.to],
-                path = ['M', x, y, 'L', x + w * 0.25, y + 4, 'L', x + w * 0.75, y - 4, 'L', x + w, y];
-
-            if (!point[key]) {
-                point[key] = this.chart.renderer.path(path)
-                    .attr({
-                        'stroke-width': 2,
-                        stroke: point.series.options.borderColor
-                    })
-                    .add(point.graphic.parentGroup);
-            } else {
-                point[key].attr({
-                    d: path
-                });
-            }
-        }
-
         const chart = Highcharts.chart('container', {
             chart: {
                 width: 500,
