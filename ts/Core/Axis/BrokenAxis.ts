@@ -282,7 +282,6 @@ namespace BrokenAxis {
 
         let breaks: Array<AxisBreakObject>,
             threshold: (number|null|undefined),
-            eventName: string,
             y: (number|null|undefined);
 
         if (axis?.brokenAxis?.hasBreaks) {
@@ -299,7 +298,7 @@ namespace BrokenAxis {
                 // after zoom, they are not (#19885).
                 const breaksOut = axis?.options?.breaks?.filter(
                     function (brk): boolean {
-                        let isOut = false;
+                        let isOut = true;
 
                         // iterate to see if "brk" is visible
                         for (let i = 0; i < breaks.length; i++) {
@@ -325,8 +324,7 @@ namespace BrokenAxis {
 
                     breaks.forEach(function (brk: AxisBreakObject): void {
                         if (isNumber(threshold) && isNumber(y)) {
-
-                            eventName = false as any;
+                            let eventName = '';
 
                             if (
                                 (threshold < brk.from && y > brk.to) ||
