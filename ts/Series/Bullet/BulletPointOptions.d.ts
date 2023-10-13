@@ -18,7 +18,6 @@ import type BulletTargetOptions from './BulletTargetOptions';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 
-
 /* *
  *
  *  Declarations
@@ -33,7 +32,8 @@ export interface BulletPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BulletPointOptions;
