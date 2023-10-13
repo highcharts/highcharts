@@ -30,16 +30,18 @@ import type DotPlotPoint from './DotPlotPoint';
 import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import ColumnSeries from '../Column/ColumnSeries.js';
+
+import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
     pick
 } = U;
-
-import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -54,29 +56,22 @@ import '../Column/ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-
 class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
-    public static defaultOptions: DotPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        itemPadding: 0.2,
-        marker: {
-            symbol: 'circle',
-            states: {
-                hover: {},
-                select: {}
-            }
-        }
-    } as DotPlotSeriesOptions);
+    public static defaultOptions: DotPlotSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        DotPlotSeriesDefaults
+    );
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
@@ -88,25 +83,22 @@ class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
     public drawPoints(): void {
         const series = this,
+            options = series.options,
             renderer = series.chart.renderer,
-            seriesMarkerOptions = this.options.marker,
-            itemPaddingTranslated = this.yAxis.transA *
-                (series.options.itemPadding as any),
-            borderWidth = this.borderWidth,
+            seriesMarkerOptions = options.marker,
+            itemPaddingTranslated = series.yAxis.transA *
+                (options.itemPadding as any),
+            borderWidth = series.borderWidth,
             crisp = borderWidth % 2 ? 0.5 : 1;
 
-        this.points.forEach(function (point: DotPlotPoint): void {
-            let yPos: number,
-                attr: SVGAttributes,
-                graphics: Array<SVGElement|undefined>,
-                pointAttr,
-                pointMarkerOptions = point.marker || {},
+        for (const point of series.points) {
+            const pointMarkerOptions = point.marker || {},
                 symbol = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions as any).symbol
@@ -115,14 +107,18 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
                 ),
+                isSquare = symbol !== 'rect';
+
+            let yPos: number,
+                attr: SVGAttributes,
+                graphics: Array<SVGElement|undefined>,
                 size: number,
                 yTop: number,
-                isSquare = symbol !== 'rect',
                 x: number,
                 y: number;
 
             point.graphics = graphics = point.graphics || [];
-            pointAttr = point.pointAttr ?
+            const pointAttr = point.pointAttr ?
                 (
                     (point.pointAttr as any)[
                         point.selected ? 'selected' : ''
@@ -184,23 +180,32 @@ class DotPlotSeries extends ColumnSeries {
                     graphics[i] = graphic;
                 }
             }
-            graphics.forEach((graphic, i): void => {
-                if (!graphic) {
-                    return;
-                }
 
-                if (!graphic.isActive) {
-                    graphic.destroy();
-                    graphics.splice(i, 1);
-                } else {
-                    graphic.isActive = false;
+            let i = -1;
+
+            for (const graphic of graphics) {
+                ++i;
+                if (graphic) {
+                    if (!graphic.isActive) {
+                        graphic.destroy();
+                        graphics.splice(i, 1);
+                    } else {
+                        graphic.isActive = false;
+                    }
                 }
-            });
-        });
+            }
+        }
     }
+
 }
 
-interface DotPlotSeries extends ColumnSeries {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DotPlotSeries {
     pointAttr?: SVGAttributes;
     pointClass: typeof DotPlotPoint;
 }
@@ -225,7 +230,7 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 

@@ -28,4 +28,10 @@ export interface BellcurvePointOptions extends AreaSplinePointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default BellcurvePointOptions;

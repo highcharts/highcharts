@@ -1,4 +1,4 @@
-const dash = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {

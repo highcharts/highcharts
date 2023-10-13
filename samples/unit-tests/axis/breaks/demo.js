@@ -530,7 +530,7 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
 });
 
 QUnit.test(
-    'Axis breaks and column width in Highcharts Stock (#5979)',
+    'Axis breaks and column metrics in Highcharts Stock.',
     function (assert) {
         var data = [];
         for (
@@ -566,7 +566,284 @@ QUnit.test(
 
         assert.ok(
             chart.series[0].points[0].graphic.attr('width') > 7,
-            'Width is great enough'
+            'Width is great enough, #5979.'
+        );
+
+        // #16368
+        chart.xAxis[0].update({
+            breaks: undefined
+        });
+
+        chart.series[0].update({
+            data: [
+                [
+                    1630421539000,
+                    36.25
+                ],
+                [
+                    1630422102000,
+                    35.8
+                ],
+                [
+                    1630424354000,
+                    36
+                ],
+                [
+                    1630425480000,
+                    35.5
+                ],
+                [
+                    1630426043000,
+                    35.45
+                ],
+                [
+                    1630427732000,
+                    36.4
+                ],
+                [
+                    1630428295000,
+                    36.15
+                ],
+                [
+                    1630429984000,
+                    35.95
+                ],
+                [
+                    1630430547000,
+                    36.15
+                ],
+                [
+                    1630431110000,
+                    36.1
+                ],
+                [
+                    1630433362000,
+                    34.05
+                ]
+            ]
+        });
+
+        const initialWidth = chart.series[0].points[0].shapeArgs.width;
+
+        chart.xAxis[0].update({
+            breaks: []
+        });
+
+        assert.strictEqual(
+            initialWidth,
+            chart.series[0].points[0].shapeArgs.width,
+            'Presence of axis.breaks option should not affect the columns width, #16368.'
+        );
+
+        chart.series[0].update({
+            type: 'candlestick',
+            data: [
+                [
+                    1630417035000,
+                    37.15,
+                    37.15,
+                    37.15,
+                    37.15
+                ],
+                [
+                    1630418161000,
+                    37.2,
+                    37.2,
+                    35.5,
+                    35.5
+                ],
+                [
+                    1630418724000,
+                    34.6,
+                    35.3,
+                    34.4,
+                    35
+                ],
+                [
+                    1630419287000,
+                    35,
+                    35,
+                    34.95,
+                    34.95
+                ],
+                [
+                    1630419850000,
+                    35.1,
+                    35.1,
+                    35.1,
+                    35.1
+                ],
+                [
+                    1630420413000,
+                    35.3,
+                    36.25,
+                    35.3,
+                    36.25
+                ],
+                [
+                    1630421539000,
+                    36.25,
+                    36.35,
+                    36.25,
+                    36.35
+                ],
+                [
+                    1630422102000,
+                    35.8,
+                    35.8,
+                    35.8,
+                    35.8
+                ],
+                [
+                    1630424354000,
+                    36,
+                    36,
+                    35.75,
+                    35.75
+                ],
+                [
+                    1630425480000,
+                    35.5,
+                    35.5,
+                    35.45,
+                    35.45
+                ],
+                [
+                    1630426043000,
+                    35.45,
+                    35.45,
+                    35.45,
+                    35.45
+                ],
+                [
+                    1630427732000,
+                    36.4,
+                    36.4,
+                    36.15,
+                    36.15
+                ],
+                [
+                    1630428295000,
+                    36.15,
+                    36.15,
+                    35.95,
+                    35.95
+                ],
+                [
+                    1630429984000,
+                    35.95,
+                    36.15,
+                    35.95,
+                    36.15
+                ],
+                [
+                    1630430547000,
+                    36.15,
+                    36.15,
+                    36.15,
+                    36.15
+                ],
+                [
+                    1630431110000,
+                    36.1,
+                    36.1,
+                    34.05,
+                    34.4
+                ],
+                [
+                    1630433362000,
+                    34.05,
+                    34.05,
+                    34.05,
+                    34.05
+                ],
+                [
+                    1630499233000,
+                    35.45,
+                    35.55,
+                    35.45,
+                    35.55
+                ],
+                [
+                    1630502611000,
+                    35.55,
+                    35.55,
+                    34.65,
+                    34.65
+                ],
+                [
+                    1630507115000,
+                    34.6,
+                    35.1,
+                    34.6,
+                    35.1
+                ],
+                [
+                    1630507678000,
+                    35.1,
+                    35.9,
+                    35.1,
+                    35.9
+                ],
+                [
+                    1630508241000,
+                    36,
+                    37.05,
+                    36,
+                    37.05
+                ],
+                [
+                    1630509367000,
+                    37.05,
+                    37.05,
+                    37.05,
+                    37.05
+                ],
+                [
+                    1630511056000,
+                    37.05,
+                    37.05,
+                    37.05,
+                    37.05
+                ],
+                [
+                    1630513308000,
+                    37.05,
+                    38,
+                    37.05,
+                    38
+                ],
+                [
+                    1630513871000,
+                    38.05,
+                    39.15,
+                    38.05,
+                    39.15
+                ],
+                [
+                    1630514434000,
+                    39.15,
+                    39.75,
+                    39.15,
+                    39.75
+                ]
+            ]
+        }, false);
+
+        chart.xAxis[0].update({
+            breaks: [{
+                from: 1630433362000,
+                to: 1630499233000
+            }]
+        }, false);
+
+        chart.xAxis[0].setExtremes();
+
+        const point1 = chart.series[0].points[0].shapeArgs,
+            point2 = chart.series[0].points[1].shapeArgs;
+        assert.ok(
+            point1.x + point2.width < point2.x,
+            'Points should not overlap after applying breaks property, #16368.'
         );
     }
 );
@@ -599,8 +876,20 @@ QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
     });
     assert.strictEqual(
         chart.xAxis[0].brokenAxis.hasBreaks,
+        false,
+        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: false.'
+    );
+
+    chart.xAxis[0].update({
+        breaks: [{
+            from: 1,
+            to: 2
+        }]
+    });
+    assert.strictEqual(
+        chart.xAxis[0].brokenAxis.hasBreaks,
         true,
-        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: true.'
+        'Axis.breaks with correct config results in Axis.brokenAxis.hasBreaks: true.'
     );
 });
 
