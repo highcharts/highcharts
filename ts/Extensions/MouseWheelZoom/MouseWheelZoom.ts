@@ -185,10 +185,12 @@ const zoomOnDirection = function (
             newMin = center - newRange * fixToDir,
             dataRange = pick(axis.options.max, axis.dataMax) -
                 pick(axis.options.min, axis.dataMin),
-            outerMin = pick(axis.options.min, axis.dataMin) -
+            minPaddingOffset = axis.options.min ? 0 :
                 dataRange * axis.options.minPadding,
-            outerRange = dataRange + dataRange * axis.options.minPadding +
+            maxPaddingOffset = axis.options.max ? 0 :
                 dataRange * axis.options.maxPadding,
+            outerMin = pick(axis.options.min, axis.dataMin) - minPaddingOffset,
+            outerRange = dataRange + maxPaddingOffset + minPaddingOffset,
             newExt = fitToRange(
                 outerMin,
                 outerRange,
@@ -196,10 +198,12 @@ const zoomOnDirection = function (
                 newRange
             ),
             zoomOut = (
-                newExt.rangeStart <= pick(axis.options.min, outerMin) &&
-                newExt.rangeWidth >= outerRange &&
-                newExt.rangeStart + newExt.rangeWidth <=
-                    pick(axis.options.max, Number.MIN_VALUE)
+                newExt.rangeStart < pick(axis.options.min, outerMin) ||
+                newExt.rangeStart === axis.min &&
+                (newExt.rangeWidth > outerRange &&
+                newExt.rangeStart + newExt.rangeWidth <
+                pick(axis.options.max, Number.MIN_VALUE)) ||
+                newExt.rangeWidth === axis.max - axis.min
             );
 
         if (defined(howMuch) && !zoomOut) { // Zoom
