@@ -214,7 +214,7 @@ const chart = Highcharts.chart('container', {
             useHTML: true,
             animate: true,
             format: '{chart.options.countries.(value).ucCode}<br>' +
-                '<span class="f32"><span class="flag {value}"></span></span>',
+                '<span class="f32"><span style="height:32px;" class="flag {value}"></span></span>',
             style: {
                 textAlign: 'center'
             }
