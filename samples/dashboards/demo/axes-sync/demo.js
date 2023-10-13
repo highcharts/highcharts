@@ -50,7 +50,7 @@ Highcharts.setOptions({
     xAxis: {
         type: 'datetime',
         accessibility: {
-            description: 'Date time years'
+            description: 'Years'
         }
     }
 });
