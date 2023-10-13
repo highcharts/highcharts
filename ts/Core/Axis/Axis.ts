@@ -1640,9 +1640,9 @@ class Axis {
                 isXAxis,
                 logarithmic,
                 options,
-                softThreshold,
-                threshold
+                softThreshold
             } = axis,
+            threshold = isNumber(axis.threshold) ? axis.threshold : void 0,
             minRange = axis.minRange || 0,
             { ceiling, floor, linkedTo, softMax, softMin } = options,
             linkedParent = isNumber(linkedTo) && chart[axis.coll]?.[linkedTo],
