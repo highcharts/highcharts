@@ -124,7 +124,7 @@ const eventsData = [{
 }, {
     x: -5877164120000,
 
-    name: 'First manned hot air balloon.',
+    name: 'First manned hot air balloon',
     custom: {
         location: 'France',
         details: 'The French brothers Joseph-Michel and Jacques-Étienne Montgolfier developed a hot-air balloon in Annonay, Ardèche, France, and demonstrated it publicly on September 19, 1783, making an unmanned flight lasting 10 minutes. After experimenting with unmanned balloons and flights with animals, the first balloon flight with humans aboard, a tethered flight, performed on or around October 15, 1783, by Jean-Francois Pilatre de Rozier, who made at least one tethered flight from the yard of the Reveillon workshop in the Faubourg Saint-Antoine.'
@@ -216,7 +216,7 @@ const eventsData = [{
 }, {
     x: -2626796120000,
 
-    name: 'zinc–carbon battery',
+    name: 'Zinc–carbon battery',
     custom: {
         details: 'Carl Gassner invents the zinc–carbon battery, the first dry cell battery, making portable electronics practical.'
     }
@@ -237,7 +237,7 @@ const eventsData = [{
 }, {
     x: -2090053930000,
 
-    name: 'first successful powered airplane',
+    name: 'First successful powered airplane',
     custom: {
         details: 'First sustained and controlled heavier-than-air powered flight achieved by an airplane flown at Kitty Hawk, North Carolina by Orville and Wilbur Wright.'
     }
@@ -251,7 +251,7 @@ const eventsData = [{
 }, {
     x: -1301049130000,
 
-    name: 'turbo-jet engine',
+    name: 'Turbo-jet engine',
     custom: {
         details: 'Frank Whittle formally submitted his ideas for a turbo-jet engine. In October 1929, he developed his ideas further. On 16 January 1930, Whittle submitted his first patent (granted in 1932).'
     }
@@ -430,7 +430,7 @@ Highcharts.stockChart('container', {
         pointIntervalUnit: 'year',
         data: eventsData,
         dataLabels: {
-            format: '{x:%Y}: {point.name}'
+            format: '<b>{x:%Y}: {point.name}</b>'
         },
         showInNavigator: false
     }, {
