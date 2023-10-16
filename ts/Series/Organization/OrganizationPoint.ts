@@ -22,16 +22,11 @@ import type OrganizationPointOptions from './OrganizationPointOptions';
 import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
 import type SankeyPoint from './../Sankey/SankeyPoint';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sankey: {
-            prototype: {
-                pointClass: SankeyPointClass
-            }
-        }
-    }
-} = SeriesRegistry;
+    sankey: { prototype: { pointClass: SankeyPointClass } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -39,11 +34,15 @@ const {
     pick
 } = U;
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
  * Get columns offset including all sibiling and cousins etc.
- *
  * @private
- * @param node Point
  */
 function getOffset(node: SankeyPoint): number {
     let offset = node.linksFrom.length;
@@ -102,8 +101,8 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
-    init(): OrganizationPoint {
-        SankeyPointClass.prototype.init.apply(this, arguments);
+    public init(): OrganizationPoint {
+        super.init.apply(this, arguments);
 
         if (!this.isNode) {
             this.dataLabelOnNull = true;
@@ -127,6 +126,7 @@ class OrganizationPoint extends SankeyPointClass {
      */
     public setNodeColumn(): void {
         super.setNodeColumn();
+
         const node = this,
             fromNode = node.getFromNode().fromNode;
 
@@ -140,6 +140,9 @@ class OrganizationPoint extends SankeyPointClass {
             fromNode &&
             (fromNode.options as any).layout === 'hanging'
         ) {
+            let i = -1,
+                link: SankeyPoint;
+
             // Default all children of the hanging node
             // to have hanging layout
             (node.options as any).layout = pick(
@@ -147,10 +150,10 @@ class OrganizationPoint extends SankeyPointClass {
                 'hanging'
             );
             node.hangsFrom = fromNode;
-            let i = -1;
+
             find(
                 fromNode.linksFrom,
-                function (link, index): boolean {
+                (link, index): boolean => {
                     const found = link.toNode === node;
                     if (found) {
                         i = index;
@@ -161,8 +164,8 @@ class OrganizationPoint extends SankeyPointClass {
 
             // For all siblings' children (recursively)
             // increase the column offset to prevent overlapping
-            for (let j = 0; j < fromNode.linksFrom.length; j++) {
-                let link = fromNode.linksFrom[j];
+            for (let j = 0; j < fromNode.linksFrom.length; ++j) {
+                link = fromNode.linksFrom[j];
 
                 if (link.toNode.id === node.id) {
                     // Break
