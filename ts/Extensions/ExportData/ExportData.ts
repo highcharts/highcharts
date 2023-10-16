@@ -1201,10 +1201,6 @@ function getBlobFromContent(
     type: string
 ): (string|undefined) {
     const nav = win.navigator,
-        webKit = (
-            nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
         domurl = win.URL || win.webkitURL || win;
 
     try {
@@ -1215,14 +1211,10 @@ function getBlobFromContent(
             return blob.getBlob('image/svg+xml') as any;
         }
 
-        // Safari requires data URI since it doesn't allow navigation to blob
-        // URLs.
-        if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        }
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
     } catch (e) {
         // Ignore
     }
