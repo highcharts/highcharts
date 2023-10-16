@@ -45,12 +45,16 @@ Highcharts.setOptions({
         },
         labels: {
             format: '{value}%'
+        },
+        accessibility: {
+            description: 'value in percents'
         }
     },
     xAxis: {
         type: 'datetime',
         accessibility: {
-            description: 'Years'
+            description: 'Years',
+            rangeDescription: 'Data ranges from 2000-01-01 to 2021-01-01.'
         }
     }
 });
