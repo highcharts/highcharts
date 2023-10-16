@@ -218,7 +218,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @apioption series.solidgauge.data.radius
  */
 
-''; // keeps doclets above in transpiled file
+''; // keeps doclets above separate
 
 /* *
  *
