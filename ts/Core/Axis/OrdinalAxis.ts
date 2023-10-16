@@ -1160,6 +1160,11 @@ namespace OrdinalAxis {
             let start = 0,
                 end = sortedArray.length - 1,
                 middle;
+            
+
+            for(let i = 0; i < 10; i++) {
+                let a = i;
+            }
 
             while (start < end) {
                 middle = Math.ceil((start + end) / 2);
