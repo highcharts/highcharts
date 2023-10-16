@@ -1002,7 +1002,9 @@ namespace DataLabel {
             inverted = chart.inverted,
             xAxis = this.xAxis,
             reversed = xAxis.reversed,
-            labelCenter = inverted ? dataLabel.height / 2 : dataLabel.width / 2,
+            labelCenter = (
+                (inverted ? dataLabel.height : dataLabel.width) || 0
+            ) / 2,
             pointWidth = point.pointWidth,
             halfWidth = pointWidth ? pointWidth / 2 : 0;
 

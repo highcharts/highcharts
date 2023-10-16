@@ -155,19 +155,12 @@ abstract class GUIElement {
         options: GUIElement.GetElementContainerOptions
     ): HTMLElement {
         const guiElement = this;
-        let elem = createElement(
-            'div',
-            options.attribs || {},
-            options.style || {},
-            options.parentContainer
-        );
+        let elem: HTMLDOMElement;
 
         if (options.render) {
             if (options.attribs && !options.attribs.id) {
                 delete options.attribs.id;
             }
-        } else if (options.element instanceof HTMLElement) {
-            elem = options.element;
         } else if (typeof options.elementId === 'string') {
             const div = document.getElementById(options.elementId);
 
@@ -176,6 +169,17 @@ abstract class GUIElement {
             } else {
                 error('Element ' + options.elementId + ' does not exist');
             }
+        }
+
+        if (options.element instanceof HTMLElement) {
+            elem = options.element;
+        } else {
+            elem = createElement(
+                'div',
+                options.attribs || {},
+                options.style || {},
+                options.parentContainer
+            );
         }
 
         // Set bindedGUIElement event on GUIElement container.
