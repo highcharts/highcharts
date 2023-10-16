@@ -31,7 +31,6 @@ import type {
 } from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type {
-    LabelsItemsOptions,
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
@@ -39,7 +38,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
-    ChartResetZoomButtonOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
@@ -47,8 +45,7 @@ import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
-    SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypeOptions
 } from '../Series/SeriesType';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -93,6 +90,7 @@ const {
     addEvent,
     attr,
     createElement,
+    clamp,
     css,
     defined,
     diffObjects,
@@ -2423,6 +2421,31 @@ class Chart {
                 axis.options.labels.enabled &&
                 axis.series.length
             ) {
+                // Create the axisGroup and gridGroup elements on first
+                // iteration
+                if (!axis.axisGroup) {
+                    if (axis.coll === 'colorAxis') {
+                        axis.axisParent =
+                            axis.legendItem && axis.legendItem.group;
+                    }
+
+                    axis.gridGroup = axis.createGroup(
+                        'grid',
+                        '-grid',
+                        axis.options.gridZIndex
+                    );
+                    axis.axisGroup = axis.createGroup(
+                        'axis',
+                        '',
+                        axis.options.zIndex
+                    );
+                    axis.labelGroup = axis.createGroup(
+                        'axis-labels',
+                        '-labels',
+                        axis.options.labels.zIndex
+                    );
+                }
+
                 // Calculate extecped space based on dummy tick
                 const mockTick = new Tick(axis, -1, '', true),
                     label = mockTick.createLabel(
@@ -2437,12 +2460,13 @@ class Chart {
                     pick(
                         axis.options.labels.reserveSpace,
                         isNumber(axis.options.crossing) ? false : null,
-                        axis.labelAlign === 'center' ? true : null,
                         axis.reserveSpaceDefault
                     )
                 ) {
                     expectedSpace = label.getBBox().height +
-                        axis.options.labels.distance;
+                        axis.options.labels.distance +
+                        axis.options.tickLength +
+                        clamp(axis.options.offset || 0, 0, Infinity);
 
                     label.destroy();
                     return true;

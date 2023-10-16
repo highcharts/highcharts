@@ -988,85 +988,126 @@ QUnit.test('Ticks and setSize', assert => {
 });
 
 QUnit.test(
-    'The tick interval after updating series visibility should stay the same (#13369)',
+    'Expected space for ticks, calculation of chart plot height (#19896).',
     function (assert) {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                height: 370
-            },
+        const optionsToCheck = [{
             xAxis: {
                 labels: {
                     reserveSpace: false
                 }
-            },
-            yAxis: {
-                min: 0,
-                max: 75
-            },
-            series: [{
-                data: [[-25, 75], [0, 0], [25, 75]]
-            }]
-        });
-
-        const ticksBeforeUpdate = chart.yAxis[0].tickPositions;
-
-        chart.series[0].update({
-        });
-
-        assert.deepEqual(
-            chart.yAxis[0].tickPositions,
-            ticksBeforeUpdate,
-            `After updating the series properties ticks shouldn't be changed
-            (#19604).`
-        );
-
-        chart.update({
-            xAxis: {
-                type: 'datetime',
-                min: null,
-                max: null,
-                labels: {
-                    reserveSpace: true
-                }
-            },
-            yAxis: {
-                tickPixelInterval: null,
-                min: null,
-                max: null
             }
-        }, false);
-
-        chart.series[0].remove(false);
-
-        chart.addSeries({
-            type: 'scatter',
-            data: [
-                {
-                    x: Date.UTC(2020, 1, 1),
-                    y: 8
-                },
-                {
-                    x: Date.UTC(2020, 1, 2),
-                    y: 5
-                },
-                {
-                    x: Date.UTC(2020, 1, 3),
-                    y: 4
+        }, {
+            yAxis: {
+                crossing: 0
+            }
+        }, {
+            xAxis: {
+                labels: {
+                    distance: 15
                 }
-            ]
-        }, false);
+            }
+        }, {
+            xAxis: {
+                tickLength: 20
+            }
+        }, {
+            xAxis: {
+                offset: 20
+            }
+        }, {
+            xAxis: {
+                offset: -20
+            }
+        },
+        {
+            xAxis: {
+                labels: {
+                    style: {
+                        fontSize: 11
+                    }
+                }
+            }
+        }, {
+            chart: {
+                styledMode: true
+            },
+            xAxis: {
+                className: 'test-classname'
+            }
+        }];
 
-        chart.addSeries({
-            type: 'line',
-            visible: false,
-            data: [
+        const toDotNot = (input, parentKey) => Object.keys(input || {})
+            .reduce((acc, key) => {
+                const value = input[key],
+                    outputKey = parentKey ? `${parentKey}.${key}` : `${key}`;
+                return ({ ...acc, [outputKey]: value });
+            }, {});
+
+        optionsToCheck.forEach(options => {
+            const chart = Highcharts.chart('container', Highcharts.merge({
+                chart: {
+                    height: 370
+                },
+                yAxis: {
+                    min: 0,
+                    max: 75
+                },
+                series: [{
+                    data: [
+                        [-25, 75],
+                        [0, 0],
+                        [25, 75]
+                    ]
+                }]
+            }, options));
+
+            const ticksBeforeUpdate = chart.yAxis[0].tickPositions;
+
+            chart.series[0].update({});
+
+            assert.deepEqual(
+                chart.yAxis[0].tickPositions,
+                ticksBeforeUpdate,
+                `Ticks with ${JSON.stringify(toDotNot(options))} should stay
+                the same after updating series (#19604).`
+            );
+        });
+
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'datetime'
+            },
+            series: [
                 {
-                    x: Date.UTC(2020, 1, 1),
-                    y: 7.0
+                    type: 'scatter',
+                    data: [
+                        {
+                            x: Date.UTC(2020, 1, 1),
+                            y: 8
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 2),
+                            y: 5
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 3),
+                            y: 4
+                        }
+                    ]
                 },
                 {
-                    x: Date.UTC(2020, 1, 3),
-                    y: 7.0
+                    type: 'line',
+                    visible: false,
+                    data: [
+                        {
+                            x: Date.UTC(2020, 1, 1),
+                            y: 7.0
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 3),
+                            y: 7.0
+                        }
+                    ]
                 }
             ]
         });
@@ -1078,7 +1119,8 @@ QUnit.test(
         assert.deepEqual(
             initialTickInterval,
             chart.xAxis[0].tickPositions,
-            'Using the scatter and line series the tick interval should stay the same.'
+            `Using the scatter and line series the tick interval should stay
+            the same after updating series visibility (#13369).`
         );
 
         chart.addSeries({
@@ -1099,7 +1141,8 @@ QUnit.test(
         assert.deepEqual(
             chart.xAxis[0].tickPositions,
             [1580515200000, 1580688000000],
-            'After adding columns series the tick interval should change to make a place for columns.'
+            `After adding columns series the tick interval should change to make
+            a place for columns.`
         );
     }
 );
