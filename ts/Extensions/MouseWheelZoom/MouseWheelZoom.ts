@@ -70,7 +70,18 @@ const optionsToObject = (
 };
 
 /**
+ * Fit the new extremes inside axis bounds.
  * @private
+ * @param {Highcharts.Chart} outerStart
+ * Beggining of bounds range.
+ * @param {Highcharts.Axis} outerWidth
+ * Width of bounds range.
+ * @param {Highcharts.Chart} innerStart
+ * Beggining of new extremes.
+ * @param {Highcharts.Axis} innerWidth
+ * Width of new extremes.
+ * @return {Object}
+ * Object containing rangeStart and rangeWidth.
  */
 const fitToRange = (
     outerStart: number,
@@ -107,9 +118,91 @@ let wheelTimer: number,
     endOnTick: boolean|undefined;
 
 /**
+ * Temporarly disable `axis.startOnTick` and `axis.endOnTick` to allow zooming
+ * for small values.
+ * @private
+*/
+const waitForAutomaticExtremes = function (
+    axis: Axis
+) : void {
+    const axisOptions = axis.options;
+
+    // Options interfering with yAxis zoom by setExtremes() returning
+    // integers by default.
+    if (defined(wheelTimer)) {
+        clearTimeout(wheelTimer);
+    }
+
+    if (!defined(startOnTick)) {
+        startOnTick = axisOptions.startOnTick;
+        endOnTick = axisOptions.endOnTick;
+    }
+
+    // Temporarily disable start and end on tick, because they would
+    // prevent small increments of zooming.
+    if (startOnTick || endOnTick) {
+        axisOptions.startOnTick = false;
+        axisOptions.endOnTick = false;
+    }
+    wheelTimer = setTimeout((): void => {
+        if (defined(startOnTick) && defined(endOnTick)) {
+            // Repeat merge after the wheel zoom is finished, #19178
+            axisOptions.startOnTick = startOnTick;
+            axisOptions.endOnTick = endOnTick;
+
+            // Set the extremes to the same as they already are, but now
+            // with the original startOnTick and endOnTick. We need
+            // `forceRedraw` otherwise it will detect that the values
+            // haven't changed. We do not use a simple yAxis.update()
+            // because it will destroy the ticks and prevent animation.
+            const { min, max } = axis.getExtremes();
+            axis.forceRedraw = true;
+            axis.setExtremes(min, max);
+            startOnTick = endOnTick = void 0;
+        }
+    }, 400);
+};
+
+/**
+* Calulate the ratio of mouse position on the axis to it's length. If mousePos
+* doesn't exist, returns 0.5;
 * @private
 */
+const calucateFixToDirection = function (
+    chart: Chart,
+    axis: Axis,
+    mousePos: number
+) : number {
+    const fixToDir = mousePos ? ((mousePos - axis.pos) / axis.len) : 0.5,
+        isXAxis = axis.isXAxis;
 
+    if (isXAxis && (!axis.reversed !== !chart.inverted) ||
+            !isXAxis && axis.reversed) {
+        // We are taking into account that xAxis automatically gets
+        // reversed when chart.inverted
+        return 1 - fixToDir;
+    }
+
+    return fixToDir;
+};
+
+/**
+* Check if zoom is out of the current axis, if not, change the extremes to
+* previously calulated values based on how much zoom should be applied.
+* @private
+* @param {Highcharts.Chart} chart
+* Chart object.
+* @param {Highcharts.Axis} axis
+* Axis to zoom.
+* @param {number} mousePos
+* Mouse position on the plot.
+* @param {number} howMuch
+* Amount of zoom to apply.
+* @param {number} centerArg
+* Mouse position in axis units.
+* @return {boolean}
+* True if axis extremes were changed.
+*/
 const zoomOnDirection = function (
     chart: Chart,
     axis: Axis,
@@ -117,70 +210,21 @@ const zoomOnDirection = function (
     howMuch: number,
     centerArg: number
 ) : boolean {
-    const isXAxis = axis.isXAxis,
-        axisOptions = axis.options;
+    const isXAxis = axis.isXAxis;
 
-    let hasZoomed = false,
-        fixToDir;
+    let hasZoomed = false;
 
     if (defined(axis.max) && defined(axis.min) &&
         defined(axis.dataMax) && defined(axis.dataMin)) {
 
-        if (isXAxis) {
-            fixToDir = mousePos ? ((mousePos - axis.pos) / axis.len) : 0.5;
-
-            if (axis.reversed && !chart.inverted ||
-                chart.inverted && !axis.reversed) {
-                // We are taking into account that xAxis automatically gets
-                // reversed when chart.inverted
-                fixToDir = 1 - fixToDir;
-            }
-        } else {
-            // Options interfering with yAxis zoom by setExtremes() returning
-            // integers by default.
-            if (defined(wheelTimer)) {
-                clearTimeout(wheelTimer);
-            }
-
-            if (!defined(startOnTick)) {
-                startOnTick = axisOptions.startOnTick;
-                endOnTick = axisOptions.endOnTick;
-            }
-
-            // Temporarily disable start and end on tick, because they would
-            // prevent small increments of zooming.
-            if (startOnTick || endOnTick) {
-                axisOptions.startOnTick = false;
-                axisOptions.endOnTick = false;
-            }
-            wheelTimer = setTimeout((): void => {
-                if (defined(startOnTick) && defined(endOnTick)) {
-                    // Repeat merge after the wheel zoom is finished, #19178
-                    axisOptions.startOnTick = startOnTick;
-                    axisOptions.endOnTick = endOnTick;
-
-                    // Set the extremes to the same as they already are, but now
-                    // with the original startOnTick and endOnTick. We need
-                    // `forceRedraw` otherwise it will detect that the values
-                    // haven't changed. We do not use a simple yAxis.update()
-                    // because it will destroy the ticks and prevent animation.
-                    const { min, max } = axis.getExtremes();
-                    axis.forceRedraw = true;
-                    axis.setExtremes(min, max);
-                    startOnTick = endOnTick = void 0;
-                }
-            }, 400);
-
-            fixToDir = 1 - (mousePos ? (mousePos - axis.pos) / axis.len : 0.5);
-
-            if (axis.reversed) {
-                fixToDir = 1 - fixToDir;
-            }
+        if (!isXAxis) {
+            waitForAutomaticExtremes(axis);
         }
 
         const range = axis.max - axis.min,
             center = isNumber(centerArg) ? centerArg :
                 axis.min + range / 2,
+            fixToDir = calucateFixToDirection(chart, axis, mousePos),
             newRange = range * howMuch,
             newMin = center - newRange * fixToDir,
             dataRange = pick(axis.options.max, axis.dataMax) -
