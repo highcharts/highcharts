@@ -209,10 +209,9 @@ class HistogramSeries extends ColumnSeries {
             frequencies.map((elem): number => parseFloat(elem as any))
         );
 
-        baseData.forEach((y): void => {
-            const x = correctFloat(fitToBin(y));
-            bins[x]++;
-        });
+        for (const y of baseData) {
+            bins[correctFloat(fitToBin(y))]++;
+        }
 
         for (const key of Object.keys(bins)) {
             data.push({
@@ -230,21 +229,20 @@ class HistogramSeries extends ColumnSeries {
     }
 
     public setDerivedData(): void {
-        const series = this,
-            yData = (series.baseSeries as any).yData;
+        const yData = (this.baseSeries as any).yData;
 
         if (!yData.length) {
-            series.setData([]);
+            this.setData([]);
             return;
         }
 
-        const data = series.derivedData(
+        const data = this.derivedData(
             yData,
-            series.binsNumber(),
-            series.options.binWidth as any
+            this.binsNumber(),
+            this.options.binWidth as any
         );
 
-        series.setData(data, false);
+        this.setData(data, false);
     }
 
 }
