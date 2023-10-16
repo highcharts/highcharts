@@ -486,7 +486,7 @@ class HeatmapSeries extends ScatterSeries {
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
         series.generatePoints();
-        series.points.forEach(function (point): void {
+        for (const point of series.points) {
             const cellAttr = point.getCellAttributes();
 
             let x = Math.min(cellAttr.x1, cellAttr.x2),
@@ -532,7 +532,7 @@ class HeatmapSeries extends ScatterSeries {
                 }
             );
 
-        });
+        }
 
         fireEvent(series, 'afterTranslate');
     }
@@ -542,9 +542,8 @@ class HeatmapSeries extends ScatterSeries {
 }
 
 addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
-    const series = this;
-    series.isDirtyCanvas = true;
-    series.drawPoints();
+    this.isDirtyCanvas = true;
+    this.drawPoints();
 });
 
 /* *

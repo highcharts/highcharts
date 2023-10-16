@@ -102,8 +102,7 @@ class ItemSeries extends PieSeries {
      * @private
      */
     public animate(init?: boolean): void {
-        const series = this,
-            group = series.group;
+        const group = this.group;
 
         if (group) {
             if (init) {
@@ -113,20 +112,18 @@ class ItemSeries extends PieSeries {
             } else {
                 group.animate({
                     opacity: 1
-                }, series.options.animation);
+                }, this.options.animation);
             }
         }
     }
 
     public drawDataLabels(): void {
-        const series = this;
-
-        if (series.center && series.slots) {
+        if (this.center && this.slots) {
             super.drawDataLabels();
 
         // or it's just a dot chart with no natural place to put the data labels
         } else {
-            for (const point of series.points) {
+            for (const point of this.points) {
                 point.destroyElements({ dataLabel: 1 });
             }
         }
@@ -278,11 +275,10 @@ class ItemSeries extends PieSeries {
     }
 
     public getRows(): number {
-        const series = this,
-            chart = series.chart,
-            total = series.total || 0;
+        const chart = this.chart,
+            total = this.total || 0;
 
-        let rows = series.options.rows,
+        let rows = this.options.rows,
             cols: number,
             ratio: number;
 
@@ -464,28 +460,26 @@ class ItemSeries extends PieSeries {
     }
 
     public translate(positions?: Array<number>): void {
-        const series = this;
-
         // Initialize chart without setting data, #13379.
         if (
-            series.total === 0 && // check if that is a (semi-)circle
-            isNumber(series.options.startAngle) &&
-            isNumber(series.options.endAngle)
+            this.total === 0 && // check if that is a (semi-)circle
+            isNumber(this.options.startAngle) &&
+            isNumber(this.options.endAngle)
         ) {
-            series.center = series.getCenter();
+            this.center = this.getCenter();
         }
-        if (!series.slots) {
-            series.slots = [];
+        if (!this.slots) {
+            this.slots = [];
         }
         if (
-            isNumber(series.options.startAngle) &&
-            isNumber(series.options.endAngle)
+            isNumber(this.options.startAngle) &&
+            isNumber(this.options.endAngle)
         ) {
             super.translate(positions);
-            series.slots = series.getSlots();
+            this.slots = this.getSlots();
         } else {
-            series.generatePoints();
-            fireEvent(series, 'afterTranslate');
+            this.generatePoints();
+            fireEvent(this, 'afterTranslate');
         }
     }
 

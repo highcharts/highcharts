@@ -70,19 +70,17 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const series = this;
-
         // #17970, if point is null remove its color, because it may be updated
-        if (series.isNull || series.value === null) {
-            delete series.color;
+        if (this.isNull || this.value === null) {
+            delete this.color;
         }
 
         super.applyOptions(options, x);
 
-        series.formatPrefix = series.isNull || series.value === null ?
+        this.formatPrefix = this.isNull || this.value === null ?
             'null' : 'point';
 
-        return series;
+        return this;
     }
 
     /** @private */
@@ -218,12 +216,10 @@ class HeatmapPoint extends ScatterPoint {
      * @private
      */
     public isValid(): boolean {
-        const series = this;
-
         // undefined is allowed
         return (
-            series.value !== Infinity &&
-            series.value !== -Infinity
+            this.value !== Infinity &&
+            this.value !== -Infinity
         );
     }
 
