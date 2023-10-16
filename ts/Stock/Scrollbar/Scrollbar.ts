@@ -862,6 +862,7 @@ class Scrollbar {
             eventType === 'touchend' ||
             // Internal events
             !defined(eventType)
+
         );
     }
 
