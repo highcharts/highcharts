@@ -18,7 +18,7 @@ Edit mode can now be enabled by the burger menu in the upper right corner.
 
 ![edit-mode-context-menu.png](edit-mode-context-menu.png)
 
-When edit mode is enabled, the appearance of the dashboard changes. When hovering over a cell a blue border appears arount it. The border of the row containing the cell turns green. Additionally, both the row and the cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
+When edit mode is enabled, the appearance of the dashboard changes. When hovering over a cell a blue border appears around it. The border of the row containing the cell turns green. Additionally, both the row and the cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 

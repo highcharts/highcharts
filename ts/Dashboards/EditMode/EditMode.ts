@@ -83,23 +83,38 @@ class EditMode {
                 resize: {
                     enabled: true
                 },
+                settings: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
                 },
                 tools: {
                     addComponentBtn: {
+                        enabled: true,
                         icon: this.iconsURLPrefix + 'add.svg'
                     },
-                    rwdIcons: {
-                        small: this.iconsURLPrefix + 'smartphone.svg',
-                        medium: this.iconsURLPrefix + 'tablet.svg',
-                        large: this.iconsURLPrefix + 'computer.svg'
+                    rwdButtons: {
+                        enabled: true,
+                        icons: {
+                            small: this.iconsURLPrefix + 'smartphone.svg',
+                            medium: this.iconsURLPrefix + 'tablet.svg',
+                            large: this.iconsURLPrefix + 'computer.svg'
+                        }
                     }
                 },
                 confirmationPopup: {
                     close: {
                         icon: this.iconsURLPrefix + 'close.svg'
+                    }
+                },
+                toolbars: {
+                    cell: {
+                        enabled: true
+                    },
+                    row: {
+                        enabled: true
                     }
                 }
             },
@@ -160,7 +175,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboard-icons/';
+    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -315,12 +330,12 @@ class EditMode {
         );
 
         // Init rowToolbar.
-        if (!editMode.rowToolbar) {
+        if (editMode.options.toolbars?.row?.enabled && !editMode.rowToolbar) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
         }
 
         // Init cellToolbar.
-        if (!editMode.cellToolbar) {
+        if (editMode.options.toolbars?.cell?.enabled && !editMode.cellToolbar) {
             editMode.cellToolbar = new CellEditToolbar(editMode);
         }
 
@@ -716,10 +731,7 @@ class EditMode {
         );
 
         // Create context menu button
-        if (
-            options.contextMenu &&
-            options.contextMenu.enabled
-        ) {
+        if (options.contextMenu?.enabled) {
             this.tools.contextButtonElement = EditRenderer.renderContextButton(
                 this.tools.container,
                 editMode
@@ -727,29 +739,36 @@ class EditMode {
         }
 
         // Create rwd menu
-        this.createRwdMenu();
+        if (options.tools?.rwdButtons?.enabled) {
+            this.createRwdMenu();
+        }
 
-        // Create add button
-        const addIconURL = options?.tools?.addComponentBtn?.icon;
+        // Create add component button
+        if (
+            options.tools?.addComponentBtn?.enabled &&
+            options.toolbars?.cell?.enabled
+        ) {
+            const addIconURL = options.tools.addComponentBtn.icon;
 
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon: addIconURL,
-                text: this.lang.addComponent,
-                callback: (): void => {
-                    // Sidebar trigger
-                    if (editMode.sidebar) {
-                        editMode.sidebar.show();
-                        editMode.setEditOverlay();
+            this.addComponentBtn = EditRenderer.renderButton(
+                this.tools.container,
+                {
+                    className: EditGlobals.classNames.editToolsBtn,
+                    icon: addIconURL,
+                    text: this.lang.addComponent,
+                    callback: (): void => {
+                        // Sidebar trigger
+                        if (editMode.sidebar) {
+                            editMode.sidebar.show();
+                            editMode.setEditOverlay();
+                        }
+                    },
+                    style: {
+                        display: 'none'
                     }
-                },
-                style: {
-                    display: 'none'
                 }
-            }
-        );
+            );
+        }
     }
 
     /**
@@ -760,8 +779,7 @@ class EditMode {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
-        const rwdIcons =
-            (options && options.tools && options.tools.rwdIcons) || {};
+        const rwdIcons = options?.tools?.rwdButtons?.icons || {};
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
@@ -881,6 +899,10 @@ class EditMode {
      */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
+        if (this.dragDrop) {
+            this.dragDrop.mouseCellContext = void 0;
+        }
+        this.mouseCellContext = void 0;
         this.hideContextPointer();
     }
 
@@ -1022,7 +1044,7 @@ namespace EditMode {
          * The URL prefix for the icons used in the edit mode like the context
          * menu icons, the row and cell edit toolbar icons, etc.
          *
-         * @default https://code.highcharts.com/dashboards/@product.version@/gfx/dashboard-icons/
+         * @default @product.assetPrefix@/gfx/dashboards-icons/
          */
         iconsURLPrefix?: string;
         /**
@@ -1038,13 +1060,33 @@ namespace EditMode {
          */
         resize?: Resizer.Options;
         /**
+         * Settings options.
+         */
+        settings?: SettingsOptions;
+        /**
          * Toolbar options.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
          */
         toolbars?: Toolbars;
         /**
-         * @internal
+         * Tools options.
          */
         tools?: Tools;
+    }
+
+    /**
+     * Settings options
+     */
+    export interface SettingsOptions {
+        /**
+         * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
     }
 
     /**
@@ -1053,6 +1095,9 @@ namespace EditMode {
     export interface Toolbars {
         /**
         * Options of the cell toolbar.
+        *
+        * When the cell toolbar is disabled, the Add Component button is not
+        * displayed.
         */
         cell?: CellEditToolbar.Options;
         /**
@@ -1066,29 +1111,83 @@ namespace EditMode {
     }
 
     /**
-    * @internal
+    * Tools options.
     */
     export interface Tools {
-        contextMenu?: EditContextMenu;
-        contextButtonElement?: HTMLDOMElement;
+        /**
+        * Add Component button options.
+        */
         addComponentBtn?: AddComponentBtn;
+        /**
+         * RWD buttons options.
+         */
+        rwdButtons?: RwdButtons;
+        /**
+        * @internal
+        */
+        contextMenu?: EditContextMenu;
+        /**
+        * @internal
+        */
+        contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
         container?: HTMLDOMElement;
-        rwdIcons?: RwdIcons;
     }
 
     /**
-    * @internal
+    * Add Component Button options.
     */
     export interface AddComponentBtn {
+        /**
+         * Whether the Add Component button should be visible.
+         *
+         * Note that the Add Component button is always disabled when cell
+         * toolbars are disabled.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * URL to the Add Component button icon.
+         */
         icon: string;
     }
 
     /**
-    * @internal
-    */
+     * RWD buttons options.
+     */
+    export interface RwdButtons {
+        /**
+         * Whether the RWD buttons should be visible.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * RWD buttons icons options.
+         */
+        icons: RwdIcons;
+    }
+
+    /**
+     * RWD Buttons icons options.
+     */
     export interface RwdIcons {
+        /**
+         * URL to small RWD button icon.
+         */
         small: string;
+        /**
+         * URL to medium RWD button icon.
+         */
         medium: string;
+        /**
+         * URL to large RWD button icon.
+         */
         large: string;
     }
 

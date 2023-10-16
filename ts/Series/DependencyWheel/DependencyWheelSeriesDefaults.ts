@@ -22,7 +22,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 
@@ -34,7 +34,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  *         Dependency wheel
  *
  * @extends      plotOptions.sankey
- * @exclude      dataSorting
+ * @exclude      dataSorting, nodeAlignment
  * @since        7.1.0
  * @product      highcharts
  * @requires     modules/dependency-wheel
@@ -138,20 +138,6 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
 };
 
-/* *
- *
- *  Default Export
- *
- * */
-
-export default DependencyWheelSeriesDefaults;
-
-/* *
- *
- *  API Options
- *
- * */
-
 /**
  * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -211,4 +197,12 @@ export default DependencyWheelSeriesDefaults;
  * @apioption series.dependencywheel.nodes.dataLabels
  */
 
-''; // adds doclets above to the transpiled file
+''; // keeps doclets above separate
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DependencyWheelSeriesDefaults;

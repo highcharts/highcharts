@@ -69,7 +69,7 @@ class StackItem {
         options: StackLabelOptions,
         negativeValue: boolean,
         x: number,
-        stackOption?: StackOverflowValue
+        stackOption?: number|string
     ) {
         const inverted = axis.chart.inverted,
             reversed = axis.reversed;
@@ -135,7 +135,7 @@ class StackItem {
     public rotation?: number;
     public shadow?: SVGElement;
     public shadowGroup?: SVGElement;
-    public stack?: StackOverflowValue;
+    public stack?: string|number;
     public textAlign: AlignValue;
     public total: number | null;
     public touched?: number;
@@ -293,7 +293,7 @@ class StackItem {
                     isNumber(label.x) &&
                     isNumber(label.y) &&
                     chart.isInsidePlot(
-                        label.x - padding + label.width,
+                        label.x - padding + (label.width || 0),
                         label.y
                     ) &&
                     chart.isInsidePlot(label.x + padding, label.y);

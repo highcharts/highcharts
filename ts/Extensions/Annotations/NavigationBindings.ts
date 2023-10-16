@@ -986,7 +986,7 @@ class NavigationBindings {
 
             if (
                 parentEditables &&
-                option &&
+                defined(option) &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (

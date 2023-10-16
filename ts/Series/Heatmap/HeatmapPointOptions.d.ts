@@ -34,4 +34,10 @@ export interface HeatmapPointOptions extends ScatterPointOptions {
     value?: (number|null);
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default HeatmapPointOptions;

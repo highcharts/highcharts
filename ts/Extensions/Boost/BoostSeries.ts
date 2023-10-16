@@ -62,7 +62,8 @@ const {
     isArray,
     isNumber,
     pick,
-    wrap
+    wrap,
+    defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 
@@ -472,7 +473,16 @@ function createAndAttachRenderer(
 
         boost.clipRect = chart.renderer.clipRect();
 
-        (boost.targetFo || boost.target).clip(boost.clipRect);
+        (boost.targetFo || boost.target)
+            .attr({
+                // Set the z index of the boost target to that of the last
+                // series using it. This logic is not perfect, as it will not
+                // handle interleaved series with boost enabled or disabled. But
+                // it will cover the most common use case of one or more
+                // successive boosted or non-boosted series (#9819).
+                zIndex: series.options.zIndex
+            })
+            .clip(boost.clipRect);
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
@@ -1023,7 +1033,7 @@ function seriesRenderCanvas(this: Series): void {
             low: number = false as any,
             isYInside = true;
 
-        if (typeof d === 'undefined') {
+        if (!defined(d)) {
             return true;
         }
 
@@ -1055,7 +1065,7 @@ function seriesRenderCanvas(this: Series): void {
                 isYInside = (y || 0) >= yMin && y <= yMax;
             }
 
-            if (x >= xMin && x <= xMax && isYInside) {
+            if (y !== null && x >= xMin && x <= xMax && isYInside) {
 
                 clientX = xAxis.toPixels(x, true);
 

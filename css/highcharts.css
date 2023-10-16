@@ -484,8 +484,9 @@ text.highcharts-data-label {
     stroke: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-column-series rect.highcharts-point {
-    /* rect to prevent stroke on 3D columns */
+.highcharts-column-series path.highcharts-point,
+.highcharts-bar-series path.highcharts-point {
+    /* path to prevent stroke on 3D columns and bars */
     stroke: var(--highcharts-background-color);
 }
 
@@ -1139,7 +1140,7 @@ text.highcharts-drilldown-data-label,
 }
 
 /* A11y module */
-.highcharts-a11y-proxy-button {
+.highcharts-a11y-proxy-element {
     border-width: 0;
     background-color: transparent;
     cursor: pointer;

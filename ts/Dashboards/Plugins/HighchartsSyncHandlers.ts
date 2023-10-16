@@ -27,14 +27,58 @@ import type {
     Series
 } from './HighchartsTypes';
 import type DataCursor from '../../Data/DataCursor';
-import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Sync from '../Components/Sync/Sync';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type DataTable from '../../Data/DataTable';
 
 import ComponentType from '../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
+
+/**
+ * Utility function that returns the first row index
+ * if the table has been modified by a range modifier
+ *
+ * @param {DataTable} table
+ * The table to get the offset from.
+     *
+ * @param {RangeModifierOptions} modifierOptions
+ * The modifier options to use
+ *
+ * @return {number}
+ * The row offset of the modified table.
+ */
+function getModifiedTableOffset(
+    table: DataTable,
+    modifierOptions: RangeModifierOptions
+): number {
+    const { ranges } = modifierOptions;
+
+    if (ranges) {
+        const minRange = ranges.reduce(
+            (minRange, currentRange): RangeModifierRangeOptions => {
+                if (currentRange.minValue > minRange.minValue) {
+                    minRange = currentRange;
+                }
+                return minRange;
+
+            }, ranges[0]
+        );
+
+        const tableRowIndex = table.getRowIndexBy(
+            minRange.column,
+            minRange.minValue
+        );
+
+        if (tableRowIndex) {
+            return tableRowIndex;
+        }
+    }
+
+    return 0;
+}
 
 /* *
  *
@@ -67,8 +111,11 @@ const configs: {
                                                 mouseOver: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
-                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    if (modifier && modifier.options.type === 'Range') {
+                                                        offset = getModifiedTableOffset(
+                                                            table,
+                                                            modifier.options as RangeModifierOptions
+                                                        );
                                                     }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
@@ -80,8 +127,11 @@ const configs: {
                                                 mouseOut: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
-                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    if (modifier && modifier.options.type === 'Range') {
+                                                        offset = getModifiedTableOffset(
+                                                            table,
+                                                            modifier.options as RangeModifierOptions
+                                                        );
                                                     }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
@@ -126,7 +176,7 @@ const configs: {
                         const { chart, connector, board } = component;
                         const table = connector && connector.table;
                         if (
-                            table && // Has a store
+                            table && // Has a connector
                             board &&
                             chart
                         ) {
@@ -386,8 +436,8 @@ const configs: {
 
                     const modifier = table.getModifier();
 
-                    if (modifier && 'getModifiedTableOffset' in modifier) {
-                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                    if (modifier && modifier.options.type === 'Range') {
+                        offset = getModifiedTableOffset(table, modifier.options as RangeModifierOptions);
                     }
 
                     if (chart && chart.series.length) {
@@ -455,8 +505,11 @@ const configs: {
 
                 const { chart, board } = this;
 
-                if (chart && board) {
-                    ['xAxis', 'yAxis'].forEach((dimension): void => {
+                if (chart && board && chart.zooming?.type) {
+                    const dimensions = chart.zooming.type.split('')
+                        .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
+
+                    dimensions.forEach((dimension): void => {
                         const callbacks: Function[] = [];
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
                             const { cursor, event } = e;
@@ -464,36 +517,31 @@ const configs: {
                             if (cursor.type === 'position') {
                                 const eventTarget = event && event.target as unknown as Axis;
                                 if (eventTarget && chart) {
-                                    const axes = (chart as any)[dimension] as unknown as Axis[];
+                                    const axes = chart[dimension];
                                     let didZoom = false;
 
                                     axes.forEach((axis): void => {
                                         if (
                                             eventTarget.coll === axis.coll &&
-                                            eventTarget !== axis
+                                            eventTarget !== axis &&
+                                            eventTarget.min !== null &&
+                                            eventTarget.max !== null && (
+                                                axis.max !== eventTarget.max ||
+                                                axis.min !== eventTarget.min
+                                            )
                                         ) {
-                                            if (eventTarget.min !== null && eventTarget.max !== null) {
-                                                if (
-                                                    axis.max !== eventTarget.max &&
-                                                    axis.min !== eventTarget.min
-                                                ) {
-                                                    axis
-                                                        .setExtremes(
-                                                            eventTarget.min,
-                                                            eventTarget.max,
-                                                            false,
-                                                            void 0,
-                                                            {
-                                                                trigger: 'dashboards-sync'
-                                                            }
-                                                        );
-
-                                                    didZoom = true;
-
+                                            axis.setExtremes(
+                                                eventTarget.min,
+                                                eventTarget.max,
+                                                false,
+                                                void 0,
+                                                {
+                                                    trigger: 'dashboards-sync'
                                                 }
-                                            }
-                                        }
+                                            );
 
+                                            didZoom = true;
+                                        }
                                     });
 
                                     if (didZoom && !chart.resetZoomButton) {

@@ -45,7 +45,7 @@ declare module '../Components/ComponentType' {
 /**
  * Connects DataGrid with the Dashboard plugin.
  *
- * @param {Highcharts} dataGrid DataGrid core to connect.
+ * @param {Dashboards.DataGrid} dataGrid DataGrid core to connect.
  */
 function connectDataGrid(
     DataGridClass: typeof DataGrid
@@ -56,7 +56,7 @@ function connectDataGrid(
 /**
  * Callback function of the Dashboard plugin.
  *
- * @param {Dashboard.DashboardPlugin.Event} e
+ * @param {Dashboards.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
@@ -88,9 +88,9 @@ const DataGridCustom = {
     connectDataGrid
 };
 
-const DataGridPlugin: PluginHandler.DashboardPlugin<typeof DataGridCustom> = {
+const DataGridPlugin: PluginHandler.DashboardsPlugin<typeof DataGridCustom> = {
     custom: DataGridCustom,
-    name: 'DataGrid.DashboardPlugin',
+    name: 'DataGrid.DashboardsPlugin',
     onRegister,
     onUnregister
 };

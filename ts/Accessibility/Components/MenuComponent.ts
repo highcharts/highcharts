@@ -174,7 +174,7 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute(
+            this.exportButtonProxy.innerElement.setAttribute(
                 'aria-expanded',
                 stateStr
             );
@@ -200,7 +200,7 @@ class MenuComponent extends AccessibilityComponent {
         ) {
             if (focusEl.focusBorder) {
                 chart.setFocusToElement(
-                    focusEl, this.exportButtonProxy.buttonElement
+                    focusEl, this.exportButtonProxy.innerElement
                 );
             } else if (a11y) {
                 a11y.keyboardNavigation.tabindexContainer.focus();
@@ -221,6 +221,7 @@ class MenuComponent extends AccessibilityComponent {
             this.exportButtonProxy = proxyProvider.addProxyElement(
                 'chartMenu',
                 { click: buttonEl },
+                'button',
                 {
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.menuButtonLabel',
@@ -243,7 +244,7 @@ class MenuComponent extends AccessibilityComponent {
     public createProxyGroup(): void {
         const chart = this.chart;
         if (chart && this.proxyProvider) {
-            this.proxyProvider.addGroup('chartMenu', 'div');
+            this.proxyProvider.addGroup('chartMenu');
         }
     }
 
@@ -341,7 +342,7 @@ class MenuComponent extends AccessibilityComponent {
                 const proxy = component.exportButtonProxy;
                 const svgEl = component.chart.exportingGroup;
                 if (proxy && svgEl) {
-                    chart.setFocusToElement(svgEl, proxy.buttonElement);
+                    chart.setFocusToElement(svgEl, proxy.innerElement);
                 }
             },
 

@@ -1,0 +1,7 @@
+---
+name: Geo heatmap of aerosols
+authors:
+  - Magdalena Gut, Piotr Madej
+js_wrap: b
+new_until: 2023-06-30
+...

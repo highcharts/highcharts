@@ -76,7 +76,9 @@ const EditGlobals: EditGlobals = {
 
         // Confirmation popup
         confirmationPopup: PREFIX + 'confirmation-popup',
+        popupButtonContainer: PREFIX + 'confirmation-popup-button-container',
         popupContentContainer: PREFIX + 'confirmation-popup-content',
+        popupCancelBtn: PREFIX + 'confirmation-popup-cancel-btn',
         popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
         popupCloseButton: PREFIX + 'popup-close',
 
@@ -104,15 +106,20 @@ const EditGlobals: EditGlobals = {
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
         // Custom dropdown with icons
+        collapsedElement: PREFIX + 'collapsed-element',
         dropdown: PREFIX + 'dropdown',
         dropdownContent: PREFIX + 'dropdown-content',
         dropdownButton: PREFIX + 'dropdown-button',
         dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
-        rotateElement: PREFIX + 'rotate-element',
         icon: PREFIX + 'icon'
     },
     lang: {
+        accessibility: {
+            contextMenu: {
+                button: 'Context menu'
+            }
+        },
         addComponent: 'Add component',
         cancelButton: 'Cancel',
         caption: 'Caption',
@@ -123,8 +130,8 @@ const EditGlobals: EditGlobals = {
         chartType: 'Chart type',
         connectorName: 'Connector name',
         confirmButton: 'Confirm',
-        confirmDestroyCell: 'Do you want to destroy the cell?',
-        confirmDestroyRow: 'Do you want to destroy the row?',
+        confirmDestroyCell: 'Do you really want to destroy the cell?',
+        confirmDestroyRow: 'Do you really want to destroy the row?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
@@ -135,7 +142,6 @@ const EditGlobals: EditGlobals = {
         off: 'off',
         on: 'on',
         pointFormat: 'Point format',
-        scaleElements: 'Scale elements',
         settings: 'Settings',
         small: 'Small',
         style: 'Styles',
@@ -214,14 +220,16 @@ namespace EditGlobals {
         menuItem: string;
         menuVerticalSeparator: string;
         popupCloseButton: string;
+        popupCancelBtn: string;
         popupConfirmBtn: string;
+        popupButtonContainer: string;
         popupContentContainer: string;
         resizePointer: string;
         resizeSnap: string;
         resizeSnapX: string;
         resizeSnapY: string;
         resizerMenuBtnActive: string;
-        rotateElement: string;
+        collapsedElement: string;
         rowContextHighlight: string;
         separator: string;
         sidebarCloseButton: string;
@@ -235,6 +243,10 @@ namespace EditGlobals {
     }
 
     export interface LangOptions {
+        /**
+         * Accessibility language options for the dashboard.
+         */
+        accessibility: EditGlobals.LangAccessibilityOptions;
         /**
          * @default 'Add component'
          */
@@ -270,13 +282,17 @@ namespace EditGlobals {
         /**
          * @default 'Connector name'
          */
+        connectorName: string;
+        /**
+         * @default 'Confirm'
+         */
         confirmButton: string;
         /**
-         * @default 'Do you want to destroy the cell?'
+         * @default 'Do you really want to destroy the cell?'
          */
         confirmDestroyCell: string;
         /**
-         * @default 'Do you want to destroy the row?'
+         * @default 'Do you really want to destroy the row?'
          */
         confirmDestroyRow: string;
         /**
@@ -320,13 +336,13 @@ namespace EditGlobals {
          */
         pointFormat: string;
         /**
-         * @default 'Scale elements'
-         */
-        scaleElements: string;
-        /**
          * @default 'Settings'
          */
         settings: string;
+        /**
+         * @default 'Small'
+         */
+        small: string;
         /**
          * @default 'Styles'
          */
@@ -339,10 +355,21 @@ namespace EditGlobals {
          * @default 'View in full screen'
          */
         viewFullscreen: string;
-        [key: string]: string;
+        [key: string]: any;
     }
 
-    export type TLangKeys = 'editMode'|'verticalSeparator';
+    export interface LangAccessibilityOptions {
+        contextMenu: LangAccessibilityOptionsContextMenu;
+    }
+
+    export interface LangAccessibilityOptionsContextMenu {
+        /**
+         * @default 'Context menu'
+         */
+        button: string;
+    }
+
+    export type TLangKeys = 'editMode' | 'verticalSeparator';
 }
 
 export default EditGlobals;

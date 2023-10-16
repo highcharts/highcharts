@@ -16,7 +16,33 @@ test_board();
 function test_board() {
     Dashboards.board('container', {
         dataPool: {
-            connectors: []
-        }
+            connectors: [{
+                id: "My Data",
+                type: "CSV",
+                options: {
+                    csv: ''
+                }
+            }]
+        },
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'cell1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            cell: 'cell1',
+            title: {
+                className: 'custom-title',
+                text: 'My title',
+                style: {
+                    color: 'red'
+                }
+            }
+        }]
     });
 }

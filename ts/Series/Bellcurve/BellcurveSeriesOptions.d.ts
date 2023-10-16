@@ -30,8 +30,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedComposition.SeriesOptions {
     baseSeries?: (number|string);
     data?: undefined;
-    intervals?: number;
-    pointsInInterval?: number;
+    intervals: number;
+    pointsInInterval: number;
     states?: SeriesStatesOptions<BellcurveSeries>;
 }
 

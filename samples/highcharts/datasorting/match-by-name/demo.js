@@ -28,7 +28,7 @@ function getYear2000() {
     ];
 }
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },

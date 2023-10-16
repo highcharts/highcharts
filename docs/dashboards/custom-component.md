@@ -19,7 +19,7 @@ class YouTubeComponent extends Component {
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new `YouTubeComponent` class needs to be addded to the registry, using the `ComponentRegistry.registerComponent` method.
+At the end, the new `YouTubeComponent` class needs to be added to the registry, using the `ComponentRegistry.registerComponent` method.
 
 The custom code looks like below:
 
@@ -83,7 +83,7 @@ Dashboards.board({
 
 ---
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
 
 This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
 

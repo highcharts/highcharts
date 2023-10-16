@@ -261,9 +261,10 @@ namespace Exporting {
     const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
-        /^font$/, // more specific props are set
+        /^font$/, // More specific props are set
         /[lL]ogical(Width|Height)$/,
         /^parentRule$/,
+        /^(cssRules|ownerRules)$/, // #19516 read-only properties
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
@@ -372,17 +373,17 @@ namespace Exporting {
                 this: SVGElement,
                 e: (Event|AnyRecord)
             ): void {
-                // consistent with onclick call (#3495)
+                // Consistent with onclick call (#3495)
                 if (e) {
                     e.stopPropagation();
                 }
                 chart.contextMenu(
                     button.menuClassName,
-                    menuItems as any,
-                    button.translateX,
-                    button.translateY,
-                    button.width,
-                    button.height,
+                    menuItems,
+                    button.translateX || 0,
+                    button.translateY || 0,
+                    button.width || 0,
+                    button.height || 0,
                     button
                 );
                 button.setState(2);
@@ -470,7 +471,7 @@ namespace Exporting {
             }), true, 'spacingBox');
 
         (chart.buttonOffset as any) += (
-            (button.width + btnOptions.buttonSpacing) *
+            ((button.width || 0) + (btnOptions as any).buttonSpacing) *
             (btnOptions.align === 'right' ? -1 : 1)
         );
 

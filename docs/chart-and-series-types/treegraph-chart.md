@@ -1,6 +1,6 @@
 Treegraph chart
 ===
-A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are:
+A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data structure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are:
 
 * genealogy trees
 * directories in computer science
@@ -32,7 +32,7 @@ The following is an example of how the tree is built in Highcharts:
 
 ### Algorithms
 
-Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](https://link.springer.com/chapter/10.1007/3-540-36151-0_32) algorithm for calculating the nodes position in the tree graph.
+Algorithms decide the positioning of the points. Currently there is one algorithm available, which is the [Walker](https://link.springer.com/chapter/10.1007/3-540-36151-0_32) algorithm for calculating the nodes position in the tree graph.
 
 API options
 -----------
@@ -59,7 +59,7 @@ In contrast to treemap series, the connections between the nodes are represented
         }]
     }]
 
-To change the configuraiton of a specific link, you have to specify the link object in the point configuration, like this:
+To change the configuration of a specific link, you have to specify the link object in the point configuration, like this:
 
     data: [{
         name: 'parent',

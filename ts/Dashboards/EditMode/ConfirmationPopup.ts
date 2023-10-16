@@ -64,6 +64,11 @@ class ConfirmationPopup extends BaseForm {
         editMode: EditMode,
         options?: ConfirmationPopup.Options
     ) {
+        iconsURL =
+            options && options.close && options.close.icon ?
+                options.close.icon :
+                iconsURL;
+
         super(parentDiv, iconsURL);
 
         this.editMode = editMode;
@@ -77,9 +82,9 @@ class ConfirmationPopup extends BaseForm {
     * */
 
     /**
-     * Options for confirmation popup.
+     * Container for buttons.
      */
-    public options?: ConfirmationPopup.Options;
+    public buttonContainer: HTMLDOMElement|undefined;
     /**
      * Container for popup content.
      */
@@ -88,6 +93,10 @@ class ConfirmationPopup extends BaseForm {
      * The EditMode instance.
      */
     public editMode: EditMode;
+    /**
+     * Options for confirmation popup.
+     */
+    public options?: ConfirmationPopup.Options;
 
     /* *
     *
@@ -153,18 +162,27 @@ class ConfirmationPopup extends BaseForm {
             title: options.text || ''
         });
 
+        // Render button wrapper
+        this.buttonContainer = createElement(
+            'div', {
+                className: EditGlobals.classNames.popupButtonContainer
+            }, {},
+            this.container
+        );
+
         // Render cancel buttons
         EditRenderer.renderButton(
-            this.contentContainer,
+            this.buttonContainer,
             {
                 text: options.cancelButton.value,
+                className: EditGlobals.classNames.popupCancelBtn,
                 callback: options.cancelButton.callback
             }
         );
 
         // Confirm
         EditRenderer.renderButton(
-            this.contentContainer,
+            this.buttonContainer,
             {
                 text: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,

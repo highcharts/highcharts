@@ -110,8 +110,7 @@ function shouldRun() {
             ' since the last source code changes.' +
             ' Run `npx gulp` and try again.' +
             ' If this error occures contantly ' +
-            ' without a reason, then remove ' +
-            '`node_modules/_gulptasks_*.json` files.'
+            ' without a reason, try `npx gulp test-ts --force`.'
         );
 
         throw new Error('Code out of sync');
@@ -262,4 +261,4 @@ Available arguments for 'gulp test':
     });
 }
 
-gulp.task('test-ts', gulp.series('scripts', testTS));
+gulp.task('test-ts', gulp.series('dashboards/scripts', 'scripts', testTS));

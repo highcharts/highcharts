@@ -309,11 +309,11 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
     );
 
     const extendedOrdinalPositionsLength =
-        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+        chart.xAxis[0].ordinal.index.raw.length;
     chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
     assert.notStrictEqual(
         extendedOrdinalPositionsLength,
-        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        chart.xAxis[0].ordinal.index.raw.length,
         `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
     );
@@ -355,8 +355,9 @@ QUnit.test('findIndexOf', assert => {
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
-        transA: -0.04,
+        transA: 0.04,
         min: 3.24,
+        max: 7,
         len: 500,
         translationSlope: 0.2,
         minPixelPadding: 0,
@@ -367,17 +368,19 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         },
         series: [{
             points: [{
-                isInside: true, // #18459
                 x: 3,
                 plotX: -20
             }, {
-                isInside: true, // #18459
                 x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
         }]
     };
     axis.ordinal.axis = axis;
+
+    axis.ordinal.getExtendedPositions = function () {
+        return axis.ordinal.extendedOrdinalPositions;
+    };
 
     // On the chart there are 5 points equaly spaced.
     // The distance between them equals 100px.
@@ -421,9 +424,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     );
     assert.strictEqual(
         lin2val(-520 / axis.transA + axis.min),
-        -2,
+        -520 / axis.transA + axis.min, // #16784
         `For the pixel value lower than any point in EOP array, the function
-        should calculate an approximate value based on previous distance.`
+        should return requested value.`
     );
     assert.strictEqual(
         lin2val(380 / axis.transA + axis.min),
@@ -439,9 +442,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     );
     assert.strictEqual(
         lin2val(1000 / axis.transA + axis.min),
-        12.2,
+        1000 / axis.transA + axis.min, // #16784
         `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should calculate value for that point.`
+        array, the function should return requested value.`
     );
 });
 
@@ -459,6 +462,10 @@ QUnit.test('val2lin- unit tests', function (assert) {
     function val2lin(val, toIndex) {
         return Highcharts.Axis.prototype.val2lin.call(axis, val, toIndex);
     }
+
+    axis.ordinal.getExtendedPositions = function () {
+        return axis.ordinal.extendedOrdinalPositions;
+    };
 
     assert.equal(
         val2lin(5, true),
@@ -719,7 +726,7 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 });
 
-QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
+QUnit.test('Moving annotations on ordinal axis.', assert => {
     const data = [
         [
             1622640600000,
@@ -804,6 +811,23 @@ QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
         x - 50,
         chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
         0.1,
-        'Annotation dragged on ordinal axis charts should follow mouse pointer.'
+        'Annotation dragged on ordinal axis charts should follow mouse pointer, #18459.'
+    );
+
+    chart.xAxis[0].setExtremes(1622813400000, 1623245400000);
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true
+        }
+    });
+
+    const val = chart.xAxis[0].toValue(-150, true);
+    const pixels = chart.xAxis[0].toPixels(val, true);
+
+    assert.close(
+        pixels,
+        -150,
+        0.0001,
+        'toValue <-> toPixels translation should return the same initial value, #16784. '
     );
 });

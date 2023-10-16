@@ -64,8 +64,8 @@ class Resizer {
         },
         type: 'xy',
         snap: {
-            width: 20,
-            height: 20
+            width: 9,
+            height: 17
         }
     };
 
@@ -100,9 +100,7 @@ class Resizer {
         this.startX = 0;
         this.tempSiblingsWidth = [];
 
-        this.addSnaps(
-            this.options
-        );
+        this.addSnaps();
     }
 
     /* *
@@ -167,6 +165,12 @@ class Resizer {
      */
     public tempSiblingsWidth: Array<Cell>;
 
+    /**
+     * Reference to ResizeObserver, which allows running 'unobserve'.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /* *
      *
      *  Functions
@@ -176,26 +180,24 @@ class Resizer {
     /**
      * Add Snap - create snaps and add events.
      *
-     * @param {Resizer.Options} options
-     * Reference to options of snaps
-     *
      */
-    public addSnaps(options: Resizer.Options): void {
-        const minWidth = options.styles.minWidth;
-        const minHeight = options.styles.minHeight;
+    public addSnaps(): void {
+        const iconsURLPrefix = this.editMode.iconsURLPrefix;
         const snapWidth = this.options.snap.width || 0;
         const snapHeight = this.options.snap.height || 0;
         const dashboardContainer = this.editMode.board.container;
 
         // Right snap
         this.snapRight = createElement(
-            'div',
+            'img',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapX
+                    EditGlobals.classNames.resizeSnapX,
+                src: iconsURLPrefix + 'resize-handle.svg'
             },
             {
                 width: snapWidth + 'px',
+                height: snapHeight + 'px',
                 left: -9999 + 'px'
             },
             dashboardContainer
@@ -203,12 +205,14 @@ class Resizer {
 
         // Bottom snap
         this.snapBottom = createElement(
-            'div',
+            'img',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
-                    EditGlobals.classNames.resizeSnapY
+                    EditGlobals.classNames.resizeSnapY,
+                src: iconsURLPrefix + 'resize-handle.svg'
             },
             {
+                width: snapWidth + 'px',
                 height: snapHeight + 'px',
                 top: -9999 + 'px',
                 left: '0px'
@@ -426,12 +430,19 @@ class Resizer {
         //     }
         // }
 
-        // Update snaps, when resize the window
-        addEvent(window, 'resize', (): void => {
+        const runReflow = (): void => {
             if (resizer.currentCell) {
                 resizer.setSnapPositions(resizer.currentCell);
             }
-        });
+        };
+
+        if (typeof ResizeObserver === 'function') {
+            this.resizeObserver = new ResizeObserver(runReflow);
+            this.resizeObserver.observe(resizer.editMode.board.container);
+        } else {
+            const unbind = addEvent(window, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
+        }
     }
     /**
      * General method used on resizing.
@@ -497,6 +508,8 @@ class Resizer {
         // Unbind events
         removeEvent(document, 'mousemove');
         removeEvent(document, 'mouseup');
+
+        this.resizeObserver?.unobserve(this.editMode.board.container);
 
         for (let i = 0, iEnd = snaps.length; i < iEnd; ++i) {
             snap = (this as any)[snaps[i]];

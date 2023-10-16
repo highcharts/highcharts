@@ -51,16 +51,16 @@ const SOURCE_GLOBS = [
     'js/Extensions/Data.js',
     'js/Extensions/DataGrouping/DataGrouping.js',
     'js/Extensions/DataGrouping/DataGroupingSeriesComposition.js',
-    'js/Extensions/DraggablePoints.js',
-    'js/Extensions/Drilldown.js',
+    'js/Extensions/DraggablePoints/DraggablePoints.js',
+    'js/Extensions/Drilldown/Drilldown.js',
     'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
     'js/Extensions/Exporting/Fullscreen.js',
-    'js/Extensions/GeoJSON.js',
-    'js/Extensions/MarkerClusters.js',
+    'js/Extensions/MarkerClusters/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
     'js/Extensions/SeriesLabel/SeriesLabel.js',
+    'js/Maps/GeoJSONComposition.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
     'js/Series/AreaRange/AreaRangeSeries.js',
@@ -69,7 +69,8 @@ const SOURCE_GLOBS = [
     'js/Series/Organization/OrganizationSeries.js',
     'js/Series/PackedBubble/PackedBubbleSeries.js',
     'js/Series/Sankey/SankeySeries.js',
-    'js/Series/Timeline/TimelineSeries.js'
+    'js/Series/Timeline/TimelineSeries.js',
+    'js/Series/GeoHeatmap/GeoHeatmapSeries.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

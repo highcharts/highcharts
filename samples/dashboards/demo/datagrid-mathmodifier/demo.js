@@ -1,12 +1,20 @@
 // Create Dashboard
+const data = [
+    ['Day', 'EUR', 'Rate'],
+    [1691971200000, 11, 1.0930],
+    [1692057600000, 23, 1.0926],
+    [1692144000000, 15, 1.0916],
+    [1692230400000, 27, 1.0900],
+    [1692316800000, 13, 1.0867]
+];
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'EUR-USD',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv: document.getElementById('csv').innerText,
-                firstRowAsNames: true,
+                data,
                 // Add MathModifier to create USD column with exchange valuta
                 dataModifier: {
                     type: 'Math',
@@ -23,8 +31,30 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    },
                     id: 'dashboard-col-1'
                 }, {
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    },
                     id: 'dashboard-col-2'
                 }]
             }]
@@ -46,25 +76,44 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            title: {
-                text: 'Chart',
-                style: {
-                    textAlign: 'center'
-                }
-            },
             chartOptions: {
                 chart: {
                     animation: false,
                     type: 'line',
-                    zooming: false
+                    zooming: false,
+                    events: {
+                        redraw: function () {
+                            if (!this.series[1].options.yAxis) {
+                                this.series[1].update({
+                                    yAxis: 1
+                                });
+                            }
+                        }
+                    }
+                },
+                title: {
+                    text: 'EUR to USD'
+                },
+                subtitle: {
+                    text: 'Euro foreign exchange reference rate to US dollar'
                 },
                 tooltip: {
                     shared: true,
                     split: true
                 },
                 xAxis: {
-                    type: 'category'
-                }
+                    type: 'datetime'
+                },
+                yAxis: [{
+                    title: {
+                        text: 'EUR / USD'
+                    }
+                }, {
+                    title: {
+                        text: 'Rate'
+                    },
+                    opposite: true
+                }]
             }
         }, {
             cell: 'dashboard-col-2',
@@ -75,13 +124,18 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            columns: {
-                // Disable Math column for editing
-                USD: {
-                    editable: false
+            dataGridOptions: {
+                editable: false,
+                columns: {
+                    Day: {
+                        cellFormatter: function () {
+                            return new Date(this.value)
+                                .toISOString()
+                                .substring(0, 10);
+                        }
+                    }
                 }
-            },
-            editable: true
+            }
         }
     ]
 });

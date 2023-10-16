@@ -30,7 +30,8 @@ const {
     addEvent,
     createElement,
     uniqueKey,
-    objectEach
+    objectEach,
+    error
 } = U;
 
 abstract class GUIElement {
@@ -145,57 +146,53 @@ abstract class GUIElement {
     * */
 
     /**
-     * Create or set existing HTML element as a GUIElement container.
+     * Create or get existing HTML element as a GUIElement container.
      *
      * @param {GUIElement.ContainerOptions} options
      * Options.
      */
-    protected setElementContainer(
-        options: GUIElement.SetElementContainerOptions
-    ): void {
+    protected getElementContainer(
+        options: GUIElement.GetElementContainerOptions
+    ): HTMLElement {
         const guiElement = this;
+        let elem: HTMLDOMElement;
 
-        let elem;
-
-        // @ToDo use try catch block
-        if (options.render && options.parentContainer) {
-
-            // Purge empty id attribute.
+        if (options.render) {
             if (options.attribs && !options.attribs.id) {
                 delete options.attribs.id;
             }
+        } else if (typeof options.elementId === 'string') {
+            const div = document.getElementById(options.elementId);
 
-            guiElement.container = createElement(
+            if (div) {
+                guiElement.container = div;
+            } else {
+                error('Element ' + options.elementId + ' does not exist');
+            }
+        }
+
+        if (options.element instanceof HTMLElement) {
+            elem = options.element;
+        } else {
+            elem = createElement(
                 'div',
                 options.attribs || {},
                 options.style || {},
                 options.parentContainer
             );
-        } else if (options.element instanceof HTMLElement) { // @ToDo check if this is enough
-            guiElement.container = options.element;
-        } else if (typeof options.elementId === 'string') {
-            elem = document.getElementById(options.elementId);
-
-            if (elem) {
-                guiElement.container = elem;
-            } else {
-                // Error
-            }
-        } else {
-            // Error
         }
 
         // Set bindedGUIElement event on GUIElement container.
-        if (guiElement.container) {
-            guiElement.removeBindedEventFn = addEvent(
-                guiElement.container,
-                'bindedGUIElement',
-                function (e: GUIElement.BindedGUIElementEvent): void {
-                    e.guiElement = guiElement;
-                    e.stopImmediatePropagation();
-                }
-            );
-        }
+        guiElement.removeBindedEventFn = addEvent(
+            elem,
+            'bindedGUIElement',
+            function (e: GUIElement.BindedGUIElementEvent): void {
+                e.guiElement = guiElement;
+                e.stopImmediatePropagation();
+            }
+        );
+
+        return elem;
     }
 
     /**
@@ -259,7 +256,7 @@ abstract class GUIElement {
 }
 
 namespace GUIElement {
-    export interface SetElementContainerOptions {
+    export interface GetElementContainerOptions {
         render?: boolean;
         parentContainer?: HTMLDOMElement;
         attribs?: HTMLAttributes;

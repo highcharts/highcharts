@@ -42,7 +42,7 @@ class CellEditToolbar extends EditToolbar {
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
-        outline: true,
+        outline: false,
         outlineClassName: EditGlobals.classNames.editToolbarCellOutline,
         menu: {
             className: EditGlobals.classNames.editToolbarCell,
@@ -55,8 +55,10 @@ class CellEditToolbar extends EditToolbar {
         options: EditMode.Options,
         iconURLPrefix: string
     ): MenuItem.Options[] {
-        const dragOptions = options.dragDrop?.enabled ?
-            [{
+        const items: MenuItem.Options[] = [];
+
+        if (options.dragDrop?.enabled) {
+            items.push({
                 id: 'drag',
                 type: 'icon' as const,
                 icon: iconURLPrefix + 'drag.svg',
@@ -71,50 +73,54 @@ class CellEditToolbar extends EditToolbar {
                         }
                     }
                 }
-            }] :
-            [];
+            });
+        }
 
-        return [
-            ...dragOptions,
-            {
+        if (options.settings?.enabled) {
+            items.push({
                 id: 'settings',
                 type: 'icon',
                 icon: iconURLPrefix + 'settings.svg',
                 events: {
                     click: function (this: MenuItem, e: any): void {
+                        this.menu.parent.editMode.setEditOverlay();
+
                         (this.menu.parent as CellEditToolbar).onCellOptions();
                     }
                 }
-            },
-            {
-                id: 'destroy',
-                type: 'icon',
-                className: EditGlobals.classNames.menuDestroy,
-                icon: iconURLPrefix + 'destroy.svg',
-                events: {
-                    click: function (this: MenuItem, e: any): void {
-                        const parentNode = this.menu.parent as CellEditToolbar,
-                            editMode = this.menu.parent.editMode,
-                            popup = editMode.confirmationPopup;
+            });
+        }
 
-                        popup.show({
-                            confirmButton: {
-                                value: editMode.lang.confirmButton,
-                                callback: parentNode.onCellDestroy,
-                                context: parentNode
-                            },
-                            cancelButton: {
-                                value: editMode.lang.cancelButton,
-                                callback: (): void => {
-                                    popup.closePopup();
-                                }
-                            },
-                            text: editMode.lang.confirmDestroyCell
-                        });
-                    }
+        items.push({
+            id: 'destroy',
+            type: 'icon',
+            className: EditGlobals.classNames.menuDestroy,
+            icon: iconURLPrefix + 'destroy.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    const parentNode = this.menu.parent as CellEditToolbar,
+                        editMode = this.menu.parent.editMode,
+                        popup = editMode.confirmationPopup;
+
+                    popup.show({
+                        confirmButton: {
+                            value: editMode.lang.confirmButton,
+                            callback: parentNode.onCellDestroy,
+                            context: parentNode
+                        },
+                        cancelButton: {
+                            value: editMode.lang.cancelButton,
+                            callback: (): void => {
+                                popup.closePopup();
+                            }
+                        },
+                        text: editMode.lang.confirmDestroyCell
+                    });
                 }
             }
-        ];
+        });
+
+        return items;
     }
 
     /* *
@@ -159,7 +165,9 @@ class CellEditToolbar extends EditToolbar {
 
     public showToolbar(cell: Cell): void {
         const toolbar = this,
-            cellCnt = cell.container;
+            cellCnt = cell.container,
+            toolbarWidth = 30,
+            toolbarMargin = 10;
 
         let x, y;
 
@@ -173,8 +181,8 @@ class CellEditToolbar extends EditToolbar {
                 toolbar.editMode.board.container
             );
 
-            x = cellOffsets.right;
-            y = cellOffsets.top;
+            x = cellOffsets.right - toolbarWidth - toolbarMargin;
+            y = cellOffsets.top + toolbarMargin;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {

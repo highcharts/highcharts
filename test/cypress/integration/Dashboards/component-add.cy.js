@@ -103,6 +103,13 @@ describe('Add components through UI', () => {
                 'Highcharts',
                 `New component's type should be 'Highcharts'.`
             );
+
+            // check values connector
+            assert.equal(
+                component.chart.series.length > 0,
+                true,
+                `Highcharts should display values from CSV data table.`
+            );
         });
     });
 
@@ -122,6 +129,13 @@ describe('Add components through UI', () => {
                 component.type,
                 'DataGrid',
                 `New component's type should be 'DataGrid'.`
+            );
+
+            // check values connector
+            assert.deepEqual(
+                m[m.length - 2].component.dataGrid.columnNames,
+                component.dataGrid.columnNames,
+                `DataGrid should display values from CSV data table.`
             );
         });
     });
@@ -174,5 +188,27 @@ describe('Add components through UI', () => {
                 `New component's type should be 'Highcharts'.`
             );
         });
+    });
+});
+
+describe('Edit mode with toolbars disabled', () => {
+    before(() => {
+        cy.visit('/dashboards/edit-mode/toolbars-disabled');
+        cy.toggleEditMode();
+    });
+
+    it('Add component button should not exist.', () => {
+        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').should('not.exist');
+    });
+});
+
+describe('Edit mode with buttons disabled', () => {
+    before(() => {
+        cy.visit('/dashboards/edit-mode/buttons-disabled');
+        cy.toggleEditMode();
+    });
+
+    it('Edit tools buttons should not exist.', () => {
+        cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
 });

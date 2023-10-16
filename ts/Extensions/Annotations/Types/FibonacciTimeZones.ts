@@ -258,8 +258,8 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                     }
 
                     return {
-                        x: plotLeft + x - graphic.width / 2,
-                        y: plotTop + y - graphic.height / 2
+                        x: plotLeft + x - (graphic.width || 0) / 2,
+                        y: plotTop + y - (graphic.height || 0) / 2
                     };
                 },
                 events: {

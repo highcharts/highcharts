@@ -305,7 +305,12 @@ abstract class EventEmitter {
         }
 
         const emitter = this,
-            pointer = emitter.chart.pointer;
+            pointer = emitter.chart.pointer,
+            // Using experimental property on event object to check if event was
+            // created by touch on screen on hybrid device (#18122)
+            firesTouchEvents = (
+                (e as any)?.sourceCapabilities?.firesTouchEvents
+            ) || false;
 
         e = pointer.normalize(e);
 
@@ -316,7 +321,7 @@ abstract class EventEmitter {
         emitter.chart.hasDraggedAnnotation = true;
         emitter.removeDrag = addEvent(
             doc,
-            isTouchDevice ? 'touchmove' : 'mousemove',
+            isTouchDevice || firesTouchEvents ? 'touchmove' : 'mousemove',
             function (e: AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
@@ -329,11 +334,11 @@ abstract class EventEmitter {
                 prevChartX = e.chartX;
                 prevChartY = e.chartY;
             },
-            isTouchDevice ? { passive: false } : void 0
+            isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
         emitter.removeMouseUp = addEvent(
             doc,
-            isTouchDevice ? 'touchend' : 'mouseup',
+            isTouchDevice || firesTouchEvents ? 'touchend' : 'mouseup',
             function (e: AnnotationEventObject): void {
                 // Sometimes the target is the annotation and sometimes its the
                 // controllable
@@ -356,7 +361,7 @@ abstract class EventEmitter {
                 ), 'afterUpdate');
                 emitter.onMouseUp(e);
             },
-            isTouchDevice ? { passive: false } : void 0
+            isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
     }
 

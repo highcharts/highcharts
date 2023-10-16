@@ -101,7 +101,14 @@ class PlotLineOrBand {
      * */
 
     public axis: PlotLineOrBandAxis.Composition;
-    public id?: string;
+
+    /**
+     * The id of the plot line or plot band.
+     *
+     * @name Highcharts.PlotLineOrBand#id
+     * @type {string}
+     */
+    public id?: string = void 0 as any;
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
@@ -126,9 +133,21 @@ class PlotLineOrBand {
         fireEvent(this, 'render');
 
         const plotLine = this,
+            /**
+             * Related axis.
+             *
+             * @name Highcharts.PlotLineOrBand#axis
+             * @type {Highcharts.Axis}
+             */
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
+            /**
+             * Options of the plot line or band.
+             *
+             * @name Highcharts.PlotLineOrBand#options
+             * @type {AxisPlotBandsOptions|AxisPlotLinesOptions}
+             */
             options = plotLine.options as (PlotBandOptions|PlotLineOptions),
             color = options.color,
             zIndex = pick(options.zIndex, 0),
@@ -212,7 +231,6 @@ class PlotLineOrBand {
                 .attr(attribs)
                 .add(group);
         }
-
 
         // Set the path or return
         if (isLine) {
@@ -298,7 +316,7 @@ class PlotLineOrBand {
 
         let label = plotLine.label;
 
-        // add the SVG element
+        // Add the SVG element
         if (!label) {
             /**
              * SVG element of the label.
@@ -319,8 +337,7 @@ class PlotLineOrBand {
                     'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
                         '-label ' + ((optionsLabel as any).className || ''),
                     zIndex
-                })
-                .add();
+                });
 
             if (!axis.chart.styledMode) {
                 label.css(merge({
@@ -328,9 +345,11 @@ class PlotLineOrBand {
                     textOverflow: 'ellipsis'
                 }, optionsLabel.style));
             }
+
+            label.add();
         }
 
-        // get the bounding box and align the label
+        // Get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
         const xBounds = (path as any).xBounds ||
             [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];

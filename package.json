@@ -19,8 +19,10 @@
     "webpack"
   ],
   "scripts": {
-    "dest": "npx gulp dashboards/test",
-    "dulp": "npx gulp dashboards/scripts",
+    "dapi": "gulp --series dashboards/api-docs dashboards/api-server",
+    "dbuild": "gulp dashboards/dist",
+    "dgulp": "gulp dashboards/scripts-watch",
+    "dtest": "gulp dashboards/test",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
@@ -30,33 +32,35 @@
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
-    "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
+    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.282.0",
-    "@aws-sdk/credential-provider-ini": "^3.282.0",
+    "@aws-sdk/credential-providers": "^3.421.0",
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
-    "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.2",
+    "@cypress-audit/lighthouse": "^1.4.2",
+    "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.3",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.5",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.6",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
     "@types/jquery": "^3.5.16",
     "@types/qunit": "^2.19.4",
     "@types/trusted-types": "^2.0.2",
+    "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
-    "aws-sdk": "^2.1306.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
-    "cypress": "^12.5.0",
+    "cypress": "^13.2.0",
     "cypress-visual-regression": "^2.1.1",
     "dtslint": "^4.2.1",
     "eslint": "^8.33.0",
@@ -73,7 +77,6 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "^5.1.0",
     "gzip-size": "6.0.0",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.2",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "^8.0.3",
     "js-yaml": "3.14.1",
@@ -92,6 +95,7 @@
     "lint-staged": "^13.1.0",
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
+    "node-fetch": "^2.6.12",
     "plugin-error": "^2.0.1",
     "pngjs": "^6.0.0",
     "pretty": "^2.0.0",
@@ -114,12 +118,10 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint",
-      "git add"
+      "eslint"
     ],
     "*.css": [
-      "stylelint",
-      "git add"
+      "stylelint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

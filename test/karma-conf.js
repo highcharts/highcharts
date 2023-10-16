@@ -23,10 +23,10 @@ function getProperties() {
 
     try {
         // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER || process.env.BROWSERSTACK_USERNAME;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY || process.env.BROWSERSTACK_ACCESS_KEY;
 
-        if (!process.env.BROWSERSTACK_USER) {
+        if (!properties['browserstack.username']) {
             // fallback to good old property file
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
@@ -558,8 +558,11 @@ module.exports = function (config) {
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
             build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
-            name: `circle-ci-karma-highcharts-${randomString}`,
-            localIdentifier: randomString, // to avoid instances interfering with each other.
+            name: `karma-highcharts-${randomString}`,
+            startTunnel: false,
+            tunnelIdentifier: 'karma-highcharts',
+            localIdentifier: 'karma-highcharts', // to avoid instances interfering with each other.
+            forcelocal: true,
             video: false,
             retryLimit: 1,
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.

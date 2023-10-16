@@ -98,32 +98,6 @@ class LinkPoint extends ColumnPoint {
         return link;
     }
 
-    public update(
-        options: TreegraphPointOptions | LinkPointOptions,
-        redraw?: boolean,
-        animation?: boolean,
-        runEvent?: boolean
-    ): void {
-        const oldOptions: Partial<this> = {
-            id: this.id,
-            formatPrefix: this.formatPrefix
-        } as Partial<this>;
-
-        Point.prototype.update.call(
-            this,
-            options,
-            this.isLink ? false : redraw, // Hold the redraw for nodes
-            animation,
-            runEvent
-        );
-
-        this.visible = this.toNode.visible;
-        extend(this, oldOptions);
-        if (pick(redraw, true)) {
-            this.series.chart.redraw(animation);
-        }
-    }
-
 }
 
 /* *

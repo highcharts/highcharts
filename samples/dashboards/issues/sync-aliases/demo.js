@@ -58,7 +58,9 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
-            Date: 'x'
+            Date: 'x',
+            air: 'y',
+            water: 'y'
         },
         chartOptions: {
             chart: {
@@ -88,6 +90,17 @@ Dashboards.board('container', {
         editable: true,
         sync: {
             extremes: true
+        },
+        dataGridOptions: {
+            columns: {
+                Date: {
+                    cellFormatter: function () {
+                        return new Date(this.value)
+                            .toISOString()
+                            .substring(0, 10);
+                    }
+                }
+            }
         }
     }
     ]

@@ -16,4 +16,8 @@ describe('Component error handling', () => {
   it('Highcharts Component that has wrong configuration, should throw error', () => {
     cy.get('#dashboard-col-2 h1').should('have.class', titleClassError);
   });
+
+  it('Highcharts Component that has wrong configuration, should throw error', () => {
+    cy.get('#dashboard-col-3 h1').should('have.class', titleClassError);
+  });
 });

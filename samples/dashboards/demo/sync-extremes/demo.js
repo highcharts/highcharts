@@ -1,41 +1,88 @@
-const chartOptions = {
-    xAxis: {
-        type: 'category'
-    },
-    chart: {
-        type: 'column',
-        zoomType: 'x'
-    },
-    title: {
-        text: ''
-    }
-};
-
-const csv = document.getElementById('csv').innerText;
+const data = [
+    ['Delhi', 31.18, 1484, 250],
+    ['Tokyo', 37.33, 2194, 2017],
+    ['Shanghai', 27.79, 14922, 118],
+    ['Sao Paulo', 22.23, 7946, 760],
+    ['Mexico City', 21.91, 1485, 3930],
+    ['Dhaka', 21.74, 2161, 32],
+    ['Cairo', 21.32, 2734, 23],
+    ['Beijing', 20.89, 12796, 2303],
+    ['Mumbai', 20.67, 4355, 14],
+    ['Osaka', 19.11, 225, 3],
+    ['Karachi', 16.45, 3530, 10],
+    ['Chongqing', 16.38, 5472, 2797],
+    ['Istanbul', 15.41, 5343, 537],
+    ['Buenos Aires', 15.25, 4758, 25],
+    ['Kolkata', 14.974, 1886, 9],
+    ['Kinshasa', 14.97, 9965, 240],
+    ['Lagos', 14.86, 2706, 41],
+    ['Manila', 14.16, 619, 108],
+    ['Tianjin', 13.79, 5609, 1078],
+    ['Guangzhou', 13.64, 19870, 21]
+];
 
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'Population',
-            type: 'CSV',
+            type: 'JSON',
             options: {
-                csv,
-                firstRowAsNames: true
+                columnNames: ['City', 'Population (mln)', 'Metro Area (km²)', 'Highest Elevation (m)'],
+                firstRowAsNames: false,
+                data
             }
         }]
     },
     gui: {
         layouts: [{
             rows: [{
-                cells: [
-                    { id: 'dashboard-col-0' },
-                    { id: 'dashboard-col-1' },
-                    { id: 'dashboard-col-2' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-0',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
+                        }
+
+                    }
+                }, {
+                    id: 'dashboard-col-1',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
+                        }
+
+
+                    }
+                }, {
+                    id: 'dashboard-col-2',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
+                        }
+                    }
+                }]
             }, {
-                cells: [
-                    { id: 'dashboard-col-3' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-3'
+                }]
             }]
         }]
     },
@@ -52,17 +99,58 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
-            Population: 'y',
-            'Metro Area(km2)': null,
-            'Highest Elevation(m)': null
+            City: 'x',
+            'Population (mln)': 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y:.2f}</b> mln',
+                stickOnContact: true
+            },
+            legend: {
+                enabled: false
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Population, Highcharts interactive chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Population of cities.
+                The values are introduced in millions.`
+            }
+        }
     },
     {
         cell: 'dashboard-col-1',
         title: {
-            text: 'Metropolitan area'
+            text: 'Metropolitan Area'
         },
         sync: {
             extremes: true
@@ -72,12 +160,53 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
-            Population: null,
-            'Metro Area(km2)': 'y',
-            'Highest Elevation(m)': null
+            City: 'x',
+            'Metro Area (km²)': 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> km²',
+                stickOnContact: true
+            },
+            title: {
+                text: ''
+            },
+            legend: {
+                enabled: false
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Metropolitan Area, Highcharts interactive chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Metropolitan area.
+                The values are introduced in square kilometers.`
+            }
+        }
     },
     {
         cell: 'dashboard-col-2',
@@ -92,12 +221,53 @@ Dashboards.board('container', {
         },
         type: 'Highcharts',
         columnAssignment: {
-            Town: 'x',
-            Population: null,
-            'Metro Area(km2)': null,
-            'Highest Elevation(m)': 'y'
+            City: 'x',
+            'Highest Elevation (m)': 'y'
         },
-        chartOptions
+        chartOptions: {
+            xAxis: {
+                type: 'category',
+                accessibility: {
+                    description: 'Cities'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'bar',
+                zoomType: 'x'
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            tooltip: {
+                pointFormat: '<b>{point.y}</b> m',
+                stickOnContact: true
+            },
+            title: {
+                text: ''
+            },
+            legend: {
+                enabled: false
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Highest Elevation, Highcharts interactive chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Highest Elevation of
+                    cities. The values are introduced in meters.`
+            }
+        }
     },
     {
         cell: 'dashboard-col-3',

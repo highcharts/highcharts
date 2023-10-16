@@ -23,6 +23,8 @@ import type AreaPoint from '../Area/AreaPoint';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type PointMarkerOptions from '../../Core/Series/PointOptions';
+import { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -38,6 +40,7 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
     defined,
@@ -111,7 +114,6 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
      */
-
 
     /**
      * Pixel width of the arearange graph line.
@@ -435,7 +437,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw upper labels
-            if (upperDataLabelOptions.enabled || this._hasPointLabels) {
+            if (upperDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 // Set preliminary values for plotY and dataLabel
                 // and draw the upper labels
                 i = length;
@@ -497,7 +499,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw lower labels
-            if (lowerDataLabelOptions.enabled || this._hasPointLabels) {
+            if (lowerDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 i = length;
                 while (i--) {
                     point = data[i];
@@ -558,6 +560,41 @@ class AreaRangeSeries extends AreaSeries {
         columnProto.alignDataLabel.apply(this, arguments);
     }
 
+    public modifyMarkerSettings(): {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    } {
+        const series = this,
+            originalMarkerSettings = {
+                marker: series.options.marker,
+                symbol: series.symbol
+            };
+
+        if (series.options.lowMarker) {
+            const {
+                options: { marker, lowMarker }
+            } = series;
+
+            series.options.marker = merge(marker, lowMarker);
+
+            if (lowMarker.symbol) {
+                series.symbol = lowMarker.symbol;
+            }
+        }
+
+        return originalMarkerSettings;
+    }
+
+    public restoreMarkerSettings(originalSettings: {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    }): void {
+        const series = this;
+
+        series.options.marker = originalSettings.marker;
+        series.symbol = originalSettings.symbol;
+    }
+
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -565,8 +602,13 @@ class AreaRangeSeries extends AreaSeries {
         let i: number,
             point: AreaRangePoint;
 
+        const originalSettings = series.modifyMarkerSettings();
+
         // Draw bottom points
         areaProto.drawPoints.apply(series, arguments);
+
+        // Restore previous state
+        series.restoreMarkerSettings(originalSettings);
 
         // Prepare drawing top points
         i = 0;
@@ -644,6 +686,21 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    public hasMarkerChanged(
+        options: DeepPartial<AreaRangeSeriesOptions>,
+        oldOptions: DeepPartial<AreaRangeSeriesOptions>
+    ): boolean | undefined {
+        const series = this,
+            lowMarker = options.lowMarker,
+            oldMarker = oldOptions.lowMarker || {};
+
+        return (lowMarker && (
+            lowMarker.enabled === false ||
+            oldMarker.symbol !== lowMarker.symbol || // #10870, #15946
+            oldMarker.height !== lowMarker.height || // #16274
+            oldMarker.width !== lowMarker.width // #16274
+        )) || super.hasMarkerChanged(options, oldOptions);
+    }
 }
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
@@ -854,6 +911,30 @@ export default AreaRangeSeries;
  * @default   {highcharts} 0.75
  * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
+ */
+
+/**
+ * Options for the lower markers of the arearange-like series. When `lowMarker`
+ * is not defined, options inherit form the marker.
+ *
+ * @see [marker](#series.arearange.marker)
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker
+ */
+
+/**
+ *
+ * @sample {highcharts} highcharts/series-arearange/lowmarker/
+ *         Area range chart with `lowMarker` option
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker.symbol
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker.symbol
  */
 
 /**

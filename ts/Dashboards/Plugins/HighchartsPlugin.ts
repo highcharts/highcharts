@@ -20,12 +20,12 @@
  * */
 
 import type PluginHandler from '../PluginHandler';
-import type { Highcharts } from './HighchartsTypes';
+import type { Highcharts as H } from './HighchartsTypes';
 
 import HighchartsComponent from './HighchartsComponent.js';
-import KPIComponent from '../Components/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
-
+import KPIComponent from '../Components/KPIComponent.js';
+import NavigatorComponent from './NavigatorComponent.js';
 
 /* *
  *
@@ -36,6 +36,8 @@ import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
         Highcharts: typeof HighchartsComponent;
+        KPI: typeof KPIComponent;
+        Navigator: typeof NavigatorComponent;
     }
 }
 
@@ -52,16 +54,17 @@ declare module '../Components/ComponentType' {
  * Highcharts core to connect.
  */
 function connectHighcharts(
-    highcharts: typeof Highcharts
+    highcharts: H
 ): void {
     HighchartsComponent.charter = highcharts;
     KPIComponent.charter = highcharts;
+    NavigatorComponent.charter = highcharts;
 }
 
 /**
  * Callback function of the Dashboard plugin.
  *
- * @param {Dashboard.DashboardPlugin.Event} e
+ * @param {Dashboards.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
@@ -70,6 +73,7 @@ function onRegister(
     const { Sync, ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
     ComponentRegistry.registerComponent('KPI', KPIComponent);
+    ComponentRegistry.registerComponent('Navigator', NavigatorComponent);
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,
@@ -112,9 +116,9 @@ const HighchartsCustom = {
     connectHighcharts
 };
 
-const HighchartsPlugin: PluginHandler.DashboardPlugin<typeof HighchartsCustom> = {
+const HighchartsPlugin: PluginHandler.DashboardsPlugin<typeof HighchartsCustom> = {
     custom: HighchartsCustom,
-    name: 'Highcharts.DashboardPlugin',
+    name: 'Highcharts.DashboardsPlugin',
     onRegister,
     onUnregister
 };
