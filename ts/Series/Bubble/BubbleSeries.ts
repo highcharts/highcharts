@@ -119,6 +119,30 @@ function axisBeforePadding(
 
     // Handle padding on the second pass, or on redraw
     this.series.forEach((series): void => {
+        // Skip padding for dataLabels with 'crop','overflow' (issue #13240)
+        const skipBubblePadding = (dataLabels: any): boolean => {
+            if (Array.isArray(dataLabels)) {
+                for (const label of dataLabels) {
+                    if (label.overflow === 'allow' && label.crop === false) {
+                        return true;
+                    }
+                }
+            } else if (
+                dataLabels &&
+                dataLabels.overflow === 'allow' &&
+                dataLabels.crop === false
+            ) {
+                return true;
+            }
+            return false;
+        };
+
+        if (
+            series.type !== 'bubble' ||
+            skipBubblePadding(series.options?.dataLabels)
+        ) {
+            return;
+        }
 
         if (series.bubblePadding && series.reserveSpace()) {
             // Correction for #1673
