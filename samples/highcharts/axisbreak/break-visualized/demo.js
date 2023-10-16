@@ -64,9 +64,26 @@ function pointBreakColumn(e) {
     }
 }
 
+/**
+ * Remove the zigzag line after the column is no longer on the break.
+ */
+function pointBreakOut(e) {
+    const point = e.point,
+        brk = e.brk,
+        key = ['brk', brk.from, brk.to];
+
+    if (point[key]) {
+        point[key].destroy();
+        delete point[key];
+    }
+}
+
 Highcharts.chart('container', {
     chart: {
-        type: 'column'
+        type: 'column',
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Visualized axis break'
@@ -84,7 +101,8 @@ Highcharts.chart('container', {
             to: 3000
         }],
         events: {
-            pointBreak: pointBreakColumn
+            pointBreak: pointBreakColumn,
+            pointBreakOut: pointBreakOut
         }
     },
     series: [{
