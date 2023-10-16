@@ -56,7 +56,7 @@ async function distMinify() {
         }
 
 
-        const targetES = (argv.target || 'ECMASCRIPT6_STRICT'),
+        const targetES = (argv.target || 'ECMASCRIPT_2020'),
             outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
 
