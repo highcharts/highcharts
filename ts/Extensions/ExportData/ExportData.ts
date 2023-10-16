@@ -187,7 +187,7 @@ function wrapLoading(
     fn: Function
 ): void {
     // Prefer requestAnimationFrame if available
-    const timeoutFn = window.requestAnimationFrame || setTimeout;
+    const timeoutFn = win.requestAnimationFrame || setTimeout;
 
     // Outer timeout avoids menu freezing on click
     timeoutFn((): void => {
