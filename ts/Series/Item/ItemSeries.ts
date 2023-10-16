@@ -25,7 +25,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
-import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
 import ItemSeriesDefaults from './ItemSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -69,31 +68,6 @@ class ItemSeries extends PieSeries {
      *
      * */
 
-    /**
-     * An item chart is an infographic chart where a number of items are laid
-     * out in either a rectangular or circular pattern. It can be used to
-     * visualize counts within a group, or for the circular pattern, typically
-     * a parliament.
-     *
-     * The circular layout has much in common with a pie chart. Many of the item
-     * series options, like `center`, `size` and data label positioning, are
-     * inherited from the pie series and don't apply for rectangular layouts.
-     *
-     * @sample       highcharts/demo/parliament-chart
-     *               Parliament chart (circular item chart)
-     * @sample       highcharts/series-item/rectangular
-     *               Rectangular item chart
-     * @sample       highcharts/series-item/symbols
-     *               Infographic with symbols
-     *
-     * @extends      plotOptions.pie
-     * @since        7.1.0
-     * @product      highcharts
-     * @excluding    borderColor, borderWidth, depth, linecap, shadow,
-     *               slicedOffset
-     * @requires     modules/item-series
-     * @optionparent plotOptions.item
-     */
     public static defaultOptions: ItemSeriesOptions = merge(
         PieSeries.defaultOptions,
         ItemSeriesDefaults
@@ -160,17 +134,18 @@ class ItemSeries extends PieSeries {
 
     public drawPoints(): void {
         const series = this,
-            chart = series.chart,
-            options = series.options,
-            renderer = chart.renderer,
+            options = this.options,
+            renderer = series.chart.renderer,
             seriesMarkerOptions: ItemPointMarkerOptions = options.marker as any,
-            borderWidth: number = series.borderWidth as any,
+            borderWidth: number = this.borderWidth as any,
             crisp = borderWidth % 2 ? 0.5 : 1,
-            rows = series.getRows(),
-            cols = Math.ceil((series.total as any) / rows),
-            cellWidth = chart.plotWidth / cols,
-            cellHeight = chart.plotHeight / rows,
-            itemSize = series.itemSize || Math.min(cellWidth, cellHeight);
+            rows = this.getRows(),
+            cols = Math.ceil((this.total as any) / rows),
+            cellWidth = this.chart.plotWidth / cols,
+            cellHeight = this.chart.plotHeight / rows,
+            itemSize = this.itemSize || Math.min(cellWidth, cellHeight);
+
+        let i = 0;
 
         /* @todo: remove if not needed
         this.slots.forEach(slot => {
@@ -219,7 +194,7 @@ class ItemSeries extends PieSeries {
                         .add(series.group);
                 }
 
-                for (let i = 0; i < (point.y || 0); ++i) {
+                for (let val = 0; val < (point.y || 0); ++val) {
 
                     // Semi-circle
                     if (series.center && series.slots) {
@@ -260,7 +235,7 @@ class ItemSeries extends PieSeries {
                         extend(attr, pointAttr);
                     }
 
-                    let graphic = graphics[i];
+                    let graphic = graphics[val];
 
                     if (graphic) {
                         graphic.animate(attr);
@@ -280,7 +255,8 @@ class ItemSeries extends PieSeries {
                             .add(point.graphic);
                     }
                     graphic.isActive = true;
-                    graphics[i] = graphic;
+                    graphics[val] = graphic;
+                    ++i;
                 }
             }
 
@@ -313,12 +289,12 @@ class ItemSeries extends PieSeries {
         // Get the row count that gives the most square cells
         if (!rows) {
             ratio = chart.plotWidth / chart.plotHeight;
-            rows = Math.sqrt(total as any);
+            rows = Math.sqrt(total);
 
             if (ratio > 1) {
                 rows = Math.ceil(rows);
                 while (rows > 0) {
-                    cols = (total as any) / rows;
+                    cols = total / rows;
                     if (cols / rows > ratio) {
                         break;
                     }
@@ -487,7 +463,7 @@ class ItemSeries extends PieSeries {
         return slots;
     }
 
-    public translate(_positions?: Array<number>): void {
+    public translate(positions?: Array<number>): void {
         const series = this;
 
         // Initialize chart without setting data, #13379.
@@ -505,7 +481,7 @@ class ItemSeries extends PieSeries {
             isNumber(series.options.startAngle) &&
             isNumber(series.options.endAngle)
         ) {
-            super.translate.apply(series, arguments);
+            super.translate(positions);
             series.slots = series.getSlots();
         } else {
             series.generatePoints();
