@@ -379,11 +379,16 @@ Highcharts.stockChart('container', {
         type: 'timeline',
         pointStart: Date.UTC(1600, 0, 1),
         pointIntervalUnit: 'year',
+        marker: {
+            enabled: true,
+            radius: 4,
+            symbol: 'circle'
+        },
         data: eventsData,
         dataLabels: {
             format: '<b>{x:%Y}: {point.name}</b>'
         },
-        showInNavigator: false
+        showInNavigator: true
     }, {
         showInNavigator: true,
         dataLabels: {
