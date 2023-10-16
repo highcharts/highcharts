@@ -30,4 +30,10 @@ export interface SunburstPointOptions extends TreemapPointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SunburstPointOptions;
