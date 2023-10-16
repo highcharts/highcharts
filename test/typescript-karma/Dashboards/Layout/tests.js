@@ -365,7 +365,7 @@ test('IDs of rows, cells and layouts', function (assert) {
     const row = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'row')[0];
     const cell = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')[0];
 
-    assert.strictEqual(layout.getAttribute('id'), null); // id should not exist
-    assert.strictEqual(cell.getAttribute('id'), null); // id should not exist
-    assert.strictEqual(row.getAttribute('id'), null); // id should not exist
+    assert.strictEqual(layout.getAttribute('id'), null, 'Layout\'s id should not exist');
+    assert.strictEqual(cell.getAttribute('id'), null, 'Cell\'s id should not exist');
+    assert.strictEqual(row.getAttribute('id'), null, 'Row\'s id should not exist');
 })
