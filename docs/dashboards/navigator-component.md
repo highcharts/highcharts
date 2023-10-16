@@ -61,7 +61,7 @@ In the
 you see the setup to limit the amount of data points. You have to define column
 ranges with the help of the NavigatorComponent and a shared DataConnector.
 
-``` JavaScript
+```js
 Dashboard.board('container', {
   components: [
     {

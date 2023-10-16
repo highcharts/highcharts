@@ -68,7 +68,7 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
 @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
-If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options). By default, some columns have this option disabled, if the data was created by [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier).
+If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/embed/dashboards/datagrid-component/datagrid-options). By default, some columns have this option disabled, if the data was created by [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier).
 
 You can read more about the DataGrid Component [here](https://www.highcharts.com/docs/dashboards/datagrid-component).
 
