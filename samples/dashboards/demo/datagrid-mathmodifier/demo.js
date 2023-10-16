@@ -101,6 +101,19 @@ Dashboards.board('container', {
                 split: true,
                 stickOnContact: true
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Euro foreign exchange reference rate 
+                    to US dollar`
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the 3 linear series, the 
+                first of which corresponds to a certain value on a given day in 
+                Euro, the second to the Euro to US Dollar exchange rate, and 
+                the third to the same amount converted to US Dollars according 
+                to the given exchange rate.`
+            },
             xAxis: {
                 type: 'datetime',
                 accessibility: {
