@@ -340,13 +340,6 @@ Highcharts.stockChart('container', {
     },
     navigator: {
         opposite: true,
-        series: {
-            type: 'line',
-            marker: {
-                enabled: true
-            },
-            lineWidth: 0
-        },
         xAxis: {
             ordinal: false,
             reversed: false,
@@ -362,18 +355,18 @@ Highcharts.stockChart('container', {
     yAxis: {
         visible: false,
         min: 0,
-        max: 2,
-        labels: {
-            enabled: false
-        },
-        gridLineWidth: 0
+        max: 2
     },
     tooltip: {
-        useHTML: true,
-        headerFormat: '<b>{point.key}</b>',
-        pointFormat: '<div style="width: 140px;">Year: {point.x:%Y}</div>' +
-            '{#if point.custom.location}<div style="width: 140px;">Location: {point.custom.location}</div>{/if}' +
-            '{#if point.custom.details}<div style="width: 300px;">{point.custom.details}</div>{/if}'
+        style: {
+            width: '300px'
+        },
+        headerFormat: '<b>{point.key}</b><br>',
+        pointFormat:
+            'Year: {point.x:%Y}<br>' +
+            '{#if point.custom.location}' +
+                'Location:{point.custom.location}<br>{/if}' +
+            '{point.custom.details}'
     },
     series: [{
         type: 'timeline',
@@ -387,35 +380,7 @@ Highcharts.stockChart('container', {
         data: eventsData,
         dataLabels: {
             format: '<b>{x:%Y}: {point.name}</b>'
-        },
-        showInNavigator: true
-    }, {
-        showInNavigator: true,
-        dataLabels: {
-            enabled: true,
-            align: 'left',
-            format: '{point.options.name}',
-            backgroundColor: '#999999',
-            style: {
-                width: '300px',
-                color: '#FFFFFF',
-                textOutline: 'none'
-            }
-        },
-        dataGrouping: {
-            enabled: false
-        },
-        pointWidth: 1,
-        threshold: 0.75,
-        marker: {
-            states: {
-                hover: {
-                    enabled: false
-                }
-            }
-        },
-        type: 'column',
-        data: eventsData
+        }
     }]
 }, function (chart) {
 
