@@ -29,24 +29,48 @@ import TreemapNode from '../Treemap/TreemapNode.js';
  *  Class
  *
  * */
-interface SunburstNode {
-    series: SunburstSeries;
-    children: Array<SunburstNode>;
-}
+
 class SunburstNode extends TreemapNode {
+
     /* *
-    *
-    *  Class properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     color?: ColorType;
     colorIndex?: number;
     shapeArgs?: SunburstNode.NodeValuesObject;
     sliced?: boolean;
     values?: SunburstNode.NodeValuesObject;
+
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface SunburstNode {
+    series: SunburstSeries;
+    children: Array<SunburstNode>;
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace SunburstNode {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface NodeValuesObject
         extends CU.RadianAngles,
         TreemapNode.NodeValuesObject,
@@ -60,5 +84,13 @@ namespace SunburstNode {
         radius: number;
         siblings: number;
     }
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SunburstNode;
