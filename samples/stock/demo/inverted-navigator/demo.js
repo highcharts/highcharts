@@ -341,7 +341,6 @@ Highcharts.stockChart('container', {
     navigator: {
         opposite: true,
         xAxis: {
-            ordinal: false,
             reversed: false,
             tickPixelInterval: 50
         }
@@ -365,7 +364,7 @@ Highcharts.stockChart('container', {
         pointFormat:
             'Year: {point.x:%Y}<br>' +
             '{#if point.custom.location}' +
-                'Location:{point.custom.location}<br>{/if}' +
+                'Location: {point.custom.location}<br>{/if}' +
             '{point.custom.details}'
     },
     series: [{
