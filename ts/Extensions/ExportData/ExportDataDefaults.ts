@@ -265,7 +265,9 @@ const lang: LangOptions = {
      * @since 8.2.0
      * @requires modules/export-data
      */
-    hideData: 'Hide data table'
+    hideData: 'Hide data table',
+
+    exportInProgress: 'Exporting...'
 };
 
 /* *
