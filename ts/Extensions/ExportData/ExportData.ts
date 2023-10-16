@@ -176,6 +176,33 @@ function chartDownloadCSV(
 }
 
 /**
+ * Wrapper function for the download functions,
+ * which handles showing and hiding the loading message
+ *
+ * @private
+ *
+ */
+function wrapLoading(
+    this: Chart,
+    fn: Function
+): void {
+    // Prefer requestAnimationFrame if available
+    const timeoutFn = window.requestAnimationFrame || setTimeout;
+
+    // Outer timeout avoids menu freezing on click
+    timeoutFn((): void => {
+        this.showLoading(this.options.lang.exportInProgress);
+        timeoutFn((): void => {
+            try {
+                fn.call(this);
+            } finally {
+                this.hideLoading();
+            }
+        });
+    });
+}
+
+/**
  * Generates a data URL of an XLS document for local download in the browser.
  * This is the default action for a click on the 'Download XLS' button.
  *
@@ -1120,19 +1147,19 @@ function compose(
                 downloadCSV: {
                     textKey: 'downloadCSV',
                     onclick: function (): void {
-                        this.downloadCSV();
+                        wrapLoading.call(this, this.downloadCSV);
                     }
                 },
                 downloadXLS: {
                     textKey: 'downloadXLS',
                     onclick: function (): void {
-                        this.downloadXLS();
+                        wrapLoading.call(this, this.downloadXLS);
                     }
                 },
                 viewData: {
                     textKey: 'viewData',
                     onclick: function (): void {
-                        this.toggleDataTable();
+                        wrapLoading.call(this, this.toggleDataTable);
                     }
                 }
             } as Record<string, Exporting.MenuObject>);

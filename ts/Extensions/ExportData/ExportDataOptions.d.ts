@@ -31,6 +31,7 @@ declare module '../../Core/Options' {
         exportData?: ExportDataLangOptions;
         viewData?: string;
         hideData?: string;
+        exportInProgress?: string;
     }
 }
 
@@ -79,6 +80,7 @@ export interface LangOptions {
     exportData?: ExportDataLangOptions;
     viewData?: string;
     hideData?: string;
+    exportInProgress?: string;
 }
 
 /* *
