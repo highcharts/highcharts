@@ -280,7 +280,7 @@ class FunnelSeries extends PieSeries {
             y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
             y = dlBox.y - dlBox.height + dataLabelHeight +
-                options.padding;
+                (options.padding || 0);
         }
 
         if (
