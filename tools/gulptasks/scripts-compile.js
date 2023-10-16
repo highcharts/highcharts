@@ -56,7 +56,7 @@ function scriptsCompile(filePathes) {
                 argv.target ||
                 inputPath.includes('/es5/') ?
                     'ECMASCRIPT5_STRICT' :
-                    'ECMASCRIPT6_STRICT'
+                    'ECMASCRIPT_2020'
             ),
             outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
