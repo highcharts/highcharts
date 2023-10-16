@@ -13,7 +13,6 @@ const
         groupPadding: 0,
         pointPadding: 0
     },
-
     // A gradient background for the inner circle (aka pane.)
     toggleableGradient = {
         pattern: undefined,
@@ -23,7 +22,6 @@ const
             [1, '#45445d']
         ]
     },
-
     // A function which (re)sets the inner circles background to our gradient.
     setGradient = function () {
         const chart = this.series.chart;
@@ -362,6 +360,9 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '0.9em'
                         },
+                        itemHoverStyle: {
+                            fontSize: '1.1em'
+                        },
                         width: '34%'
                     },
                     subtitle: {
@@ -370,8 +371,7 @@ Highcharts.chart('container', {
                         }
                     }
                 }
-            },
-            {
+            }, {
                 condition: {
                     minWidth: 520
                 },
@@ -381,6 +381,9 @@ Highcharts.chart('container', {
                         itemStyle: {
                             fontSize: '1.1em'
                         },
+                        itemHoverStyle: {
+                            fontSize: '1.25em'
+                        },
                         width: '30%'
                     },
                     subtitle: {
@@ -389,8 +392,7 @@ Highcharts.chart('container', {
                         }
                     }
                 }
-            },
-            {
+            }, {
                 condition: {
                     minWidth: 600
                 },
@@ -399,6 +401,9 @@ Highcharts.chart('container', {
                         borderWidth: 1.5,
                         itemStyle: {
                             fontSize: '1.2em'
+                        },
+                        itemHoverStyle: {
+                            fontSize: '1.4em'
                         },
                         width: '26%'
                     },
@@ -426,6 +431,9 @@ Highcharts.chart('container', {
                         symbolHeight: 12,
                         itemStyle: {
                             fontSize: '1.4em'
+                        },
+                        itemHoverStyle: {
+                            fontSize: '1.6em'
                         }
                     },
                     plotOptions: {
