@@ -154,28 +154,6 @@ const composedMembers: Array<unknown> = [];
  * */
 
 /**
- * Generates a data URL of CSV for local download in the browser. This is the
- * default action for a click on the 'Download CSV' button.
- *
- * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
- *
- * @function Highcharts.Chart#downloadCSV
- *
- * @requires modules/exporting
- */
-function chartDownloadCSV(
-    this: Exporting.ChartComposition
-): void {
-    const csv = this.getCSV(true);
-
-    downloadURL(
-        getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        this.getFilename() + '.csv'
-    );
-}
-
-/**
  * Wrapper function for the download functions,
  * which handles showing and hiding the loading message
  *
@@ -201,6 +179,29 @@ function wrapLoading(
         });
     });
 }
+
+/**
+ * Generates a data URL of CSV for local download in the browser. This is the
+ * default action for a click on the 'Download CSV' button.
+ *
+ * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
+ *
+ * @function Highcharts.Chart#downloadCSV
+ *
+ * @requires modules/exporting
+ */
+function chartDownloadCSV(
+    this: Exporting.ChartComposition
+): void {
+    const csv = this.getCSV(true);
+
+    downloadURL(
+        getBlobFromContent(csv, 'text/csv') ||
+            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        this.getFilename() + '.csv'
+    );
+}
+
 
 /**
  * Generates a data URL of an XLS document for local download in the browser.
