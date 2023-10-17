@@ -358,12 +358,8 @@ class NetworkgraphSeries extends Series {
      * jaggy when approaching equilibrium.
      * @private
      */
-    public markerAttribs(
-        point: NetworkgraphPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
-        const attribs =
-            Series.prototype.markerAttribs.call(this, point, state);
+    public markerAttribs(point: NetworkgraphPoint): SVGAttributes {
+        const attribs = Series.prototype.markerAttribs.call(this, point);
 
         // series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {

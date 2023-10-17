@@ -2631,10 +2631,7 @@ class Series {
                         'rect' as SymbolKey
                     );
 
-                    markerAttribs = series.markerAttribs(
-                        point,
-                        point.selected ? 'select' : 'normal'
-                    );
+                    markerAttribs = series.markerAttribs(point);
 
                     // Set starting position for point sliding animation.
                     if (series.enabledDataSorting) {
@@ -2736,19 +2733,14 @@ class Series {
      * @param {Highcharts.Point} point
      * The Point to inspect.
      *
-     * @param {string} [state]
-     * The state, can be either `hover`, `select` or undefined.
-     *
      * @return {Highcharts.SVGAttributes}
      * A hash containing those attributes that are not settable from CSS.
      */
-    public markerAttribs(
-        point: Point,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public markerAttribs(point: Point): SVGAttributes {
         const seriesOptions = this.options,
             seriesMarkerOptions = seriesOptions.marker,
             pointMarkerOptions = point.marker || {},
+            state = point.state,
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
@@ -2763,7 +2755,7 @@ class Series {
             );
 
         // Handle hover and select states
-        if (state && state !== 'normal') {
+        if (state !== 'normal') {
             seriesStateOptions = (seriesMarkerOptions as any).states[state];
             pointStateOptions = pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state];

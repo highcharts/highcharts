@@ -1414,7 +1414,7 @@ class Point {
         point.state = state;
 
         if (hasMarkers) {
-            markerAttribs = series.markerAttribs(point, state);
+            markerAttribs = series.markerAttribs(point);
         }
 
         // Apply hover styles to the existing point

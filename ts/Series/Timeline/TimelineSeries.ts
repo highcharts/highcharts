@@ -364,16 +364,14 @@ class TimelineSeries extends LineSeries {
         ));
     }
 
-    public markerAttribs(
-        point: TimelinePoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public markerAttribs(point: TimelinePoint): SVGAttributes {
         let series = this,
             seriesMarkerOptions: PointMarkerOptions = (
                 series.options.marker as any
             ),
             seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
             pointMarkerOptions = point.marker || {},
+            state = point.state,
             symbol = (
                 pointMarkerOptions.symbol || seriesMarkerOptions.symbol
             ),
@@ -393,7 +391,7 @@ class TimelineSeries extends LineSeries {
         // Call default markerAttribs method, when the xAxis type
         // is set to datetime.
         if (series.xAxis.dateTime) {
-            return super.markerAttribs.call(this, point, state);
+            return super.markerAttribs.call(this, point);
         }
 
         // Handle hover and select states
