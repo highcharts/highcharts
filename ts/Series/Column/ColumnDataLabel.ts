@@ -88,19 +88,26 @@ namespace ColumnDataLabel {
             inside = pick(options.inside, !!this.options.stacking),
             overshoot;
 
+        // Check for specific overflow and crop conditions (issue #13240)
+        const executeAlignmentLogic =
+            !(options.overflow === 'allow' && options.crop === false);
+
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
-            if (alignTo.y < 0) {
-                alignTo.height += alignTo.y;
-                alignTo.y = 0;
-            }
 
-            // If parts of the box overshoots outside the plot area, modify the
-            // box to center the label inside
-            overshoot = alignTo.y + alignTo.height - yLen;
-            if (overshoot > 0 && overshoot < alignTo.height) {
-                alignTo.height -= overshoot;
+            if (executeAlignmentLogic) {
+                if (alignTo.y < 0) {
+                    alignTo.height += alignTo.y;
+                    alignTo.y = 0;
+                }
+
+                // If parts of the box overshoots outside the plot area, modify
+                // the box to center the label inside
+                overshoot = alignTo.y + alignTo.height - yLen;
+                if (overshoot > 0 && overshoot < alignTo.height) {
+                    alignTo.height -= overshoot;
+                }
             }
 
             if (inverted) {
@@ -123,7 +130,6 @@ namespace ColumnDataLabel {
                 }
             }
         }
-
 
         // When alignment is undefined (typically columns and bars), display the
         // individual point below or above the point depending on the threshold
