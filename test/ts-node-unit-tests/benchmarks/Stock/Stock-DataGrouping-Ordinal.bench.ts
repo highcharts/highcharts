@@ -5,7 +5,7 @@ import { generateOHLC } from '../../data-generators';
 
 
 export const config = {
-    sizes: [1000, 10_000, 100_000]
+    sizes: [1000, 10_000, 100_000, 1_000_000]
 };
 
 export function before(size: number) {

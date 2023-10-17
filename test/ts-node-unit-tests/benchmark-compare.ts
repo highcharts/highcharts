@@ -78,10 +78,9 @@ async function compare (base: BenchResults, actual: BenchResults){
     const filtered: Record<'base'|'actual', BenchResults> = actual.reduce((carry,entry) =>{
         const baseEntry = base.find(b => b.sampleSize === entry.sampleSize);
 
-        if (baseEntry){
+        if (baseEntry) {
             // Compare
             const diff = baseEntry.avg - entry.avg;
-            const percentage = (diff / baseEntry.avg) * 100;
             const baseOutliers = getOutliers(baseEntry.results, baseEntry.Q1, baseEntry.Q3);
             const actualOutliers = getOutliers(entry.results, entry.Q1, entry.Q3);
 
@@ -178,11 +177,13 @@ async function compare (base: BenchResults, actual: BenchResults){
 
     // test, averages, diff
     const markdownTableRows = actual.map((entry, i) =>{
-      return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(entry.avg - base[i].avg)} |`;
+        const diff = entry.avg - base[i].avg;
+
+        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / base[i].avg)}%`;
     });
 
-    const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff |
-| --- | --- | --- | --- |`;
+    const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff | Percent diff |
+| --- | --- | --- | --- | --- |`;
 
     await appendFile(
         join(TMP_FILE_PATH, 'table.md'),
