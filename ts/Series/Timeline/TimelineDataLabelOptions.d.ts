@@ -36,11 +36,13 @@ import type TimelineSeries from './TimelineSeries';
 export interface TimelineDataLabelFormatterCallback extends DataLabelFormatterCallback {
     (this: (Point.PointLabelObject|TimelineDataLabelContextObject)): string;
 }
+
 export interface TimelineDataLabelContextObject extends Point.PointLabelObject {
     key?: string;
     point: TimelinePoint;
     series: TimelineSeries;
 }
+
 export interface TimelineDataLabelOptions extends DataLabelOptions {
     alternate?: boolean;
     connectorColor?: ColorType;
@@ -49,5 +51,11 @@ export interface TimelineDataLabelOptions extends DataLabelOptions {
     formatter?: TimelineDataLabelFormatterCallback;
     width?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TimelineDataLabelOptions;

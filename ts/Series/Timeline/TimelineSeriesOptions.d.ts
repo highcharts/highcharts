@@ -39,4 +39,10 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<TimelineSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default TimelineSeriesOptions;

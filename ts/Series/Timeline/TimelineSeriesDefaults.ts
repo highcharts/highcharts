@@ -56,8 +56,11 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @optionparent plotOptions.timeline
  */
 const TimelineSeriesDefaults: TimelineSeriesOptions = {
+
     colorByPoint: true,
+
     stickyTracking: false,
+
     ignoreHiddenPoint: true,
 
     /**
@@ -143,7 +146,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          */
         distance: void 0,
 
-        // eslint-disable-next-line valid-jsdoc
+        // eslint-disable-next-line jsdoc/require-description
         /**
          * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
          * @default function () {
