@@ -124,18 +124,10 @@ Dashboards.board('container', {
             yAxis: [{
                 title: {
                     text: 'EUR / USD'
-                },
-                accessibility: {
-                    description: 'Euro or US Dollars',
-                    rangeDescription: 'Range: 0 to 32'
                 }
             }, {
                 title: {
                     text: 'Rate'
-                },
-                accessibility: {
-                    description: 'Exchange rate',
-                    rangeDescription: 'Range: 1.086 to 1.094'
                 },
                 opposite: true
             }]
