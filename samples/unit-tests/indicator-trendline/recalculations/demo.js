@@ -54,4 +54,22 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'red',
         'Line color changed'
     );
+
+    chart.series[0].setData([
+        [1, 1],
+        [1, 2],
+        [2, 2],
+        [2, 4],
+        [3, 3],
+        [3, 2],
+        [4, 8]
+    ]);
+    const trendLineYData = chart.series[1].yData;
+
+    assert.deepEqual(
+        correctFloat(trendLineYData[0], 2) === 0.9 &&
+            correctFloat(trendLineYData[trendLineYData.length - 1], 2) === 6.6,
+        true,
+        'Correct values for duplicated xAxis main series values, #19793.'
+    );
 });
