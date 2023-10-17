@@ -141,32 +141,46 @@ QUnit.test('Align dataLabel', function (assert) {
         ]
     });
 
-    const point = chart.series[2].points[0], // Access the point data
-        dataLabel = point.dataLabel,
-        dataLabelBBox = dataLabel.element.getBBox();
+    const targetPoint = {
+        x: 1,
+        y: 0,
+        z: 10
+    };
 
-    // Calculate the position of the dataLabel, considering possible displacements
-    const dataLabelPosX = dataLabelBBox.x + dataLabel.options.x,
-        dataLabelPosY = dataLabelBBox.y + dataLabel.options.y;
+    const point = chart.series.find(series =>
+        series.data.some(p =>
+            p.x === targetPoint.x &&
+            p.y === targetPoint.y &&
+            p.z === targetPoint.z
+        )
+    ).points.find(p =>
+        p.x === targetPoint.x &&
+        p.y === targetPoint.y &&
+        p.z === targetPoint.z
+    );
 
-    // Check if the dataLabel is outside the plotArea
-    const isOutsidePlotArea =
-        dataLabelPosX < chart.plotLeft ||
-        dataLabelPosY < chart.plotTop ||
-        dataLabelPosX + dataLabelBBox.width >
-        chart.plotLeft + chart.plotWidth ||
-        dataLabelPosY + dataLabelBBox.height >
-        chart.plotTop + chart.plotHeight;
+    const dataLabel = point.dataLabel;
+    const bubbleCenter = {
+        x: point.plotX,
+        y: point.plotY
+    };
 
-    // Assert if the dataLabel exists
     assert.ok(
         dataLabel,
         'Data label exists'
     );
 
-    // Assert if the dataLabel is outside the plotArea
-    assert.ok(
-        isOutsidePlotArea,
-        'Data label is outside the plotArea'
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        bubbleCenter.x,
+        1, // Assuming 1 pixel tolerance
+        `Data label for point (${point.x}, ${point.y}) is horizontally centered (#13240)`
+    );
+
+    assert.close(
+        dataLabel.y + dataLabel.height / 2,
+        bubbleCenter.y,
+        1, // Assuming 1 pixel tolerance
+        `Data label for point (${point.x}, ${point.y}) is vertically centered (#13240)`
     );
 });
