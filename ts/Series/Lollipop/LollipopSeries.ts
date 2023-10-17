@@ -159,6 +159,31 @@ class LollipopSeries extends Series {
             i++;
         }
     }
+
+    /**
+     * Extend the series' translate method to use grouping option.
+     * @private
+     *
+     * @function Highcharts.Series#translate
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     */
+    public translate(): void {
+        const series = this;
+
+        colProto.translate.apply(series, arguments);
+
+        // Correct x position
+        for (const point of series.points) {
+            const { pointWidth, shapeArgs } = point;
+
+            if (shapeArgs?.x) {
+                shapeArgs.x += pointWidth / 2;
+                point.plotX = shapeArgs.x || 0;
+            }
+        }
+    }
 }
 
 /* *
@@ -175,7 +200,6 @@ interface LollipopSeries {
     getColumnMetrics: typeof colProto['getColumnMetrics'];
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
-    translate: typeof colProto['translate'];
 }
 
 extend(LollipopSeries.prototype, {
@@ -185,8 +209,7 @@ extend(LollipopSeries.prototype, {
     drawDataLabels: colProto.drawDataLabels,
     getColumnMetrics: colProto.getColumnMetrics,
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
-    pointClass: LollipopPoint,
-    translate: colProto.translate
+    pointClass: LollipopPoint
 });
 
 /* *
