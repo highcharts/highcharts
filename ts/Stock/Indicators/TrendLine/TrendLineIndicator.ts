@@ -112,42 +112,75 @@ class TrendLineIndicator extends SMAIndicator {
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            xValLength: number = xVal.length,
+            uniqueXVal: Array<number> = [...new Set(xVal)],
+            uniqueXLen: number = uniqueXVal.length,
             index: number = (params.index as any);
 
-        let sumX = (xValLength - 1) * xValLength / 2,
+        let sumX = (uniqueXLen - 1) * uniqueXLen / 2,
             sumY = 0,
             sumXY = 0,
             sumX2 =
-                ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
+                ((uniqueXLen - 1) * (uniqueXLen) * (2 * uniqueXLen - 1)) / 6,
             alpha: number,
             i: number,
-            y: number;
+            y: number,
+            xValues = uniqueXVal,
+            yValues = yVal;
+
+        // If there are duplicates, adjust the xVal and yVal arrays to uniqe
+        // set of xVal and averaged yVal (for duplicates of X), #19793.
+        if (uniqueXLen !== xVal.length) {
+            const xyPairs = {} as any;
+            yValues = [];
+
+            xVal.forEach((x, i): void => {
+                if (!xyPairs[x]) {
+                    xyPairs[x] = [yVal[i]];
+                } else {
+                    xyPairs[x] = [...xyPairs[x], yVal[i]];
+                }
+            });
+
+            // Calculate the averages for yVal
+            for (const key in xyPairs) {
+                if (xyPairs[key].length > 1) {
+                    const sum =
+                        xyPairs[key].reduce((a: number, b: number): number =>
+                            a + b
+                        , 0);
+
+                    const avgY = sum / xyPairs[key].length;
+                    yValues.push(avgY as any);
+                } else {
+                    yValues.push(xyPairs[key][0]);
+                }
+            }
+        }
 
         // Get sums:
-        for (i = 0; i < xValLength; i++) {
-            y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
+        for (i = 0; i < uniqueXLen; i++) {
+            y = isArray(yValues[i]) ? yValues[i][index] : (yValues[i] as any);
             sumY += y;
             sumXY += i * y;
         }
 
         // Get slope and offset:
-        alpha = (xValLength * sumXY - sumX * sumY) /
-            (xValLength * sumX2 - sumX * sumX);
+        alpha = (uniqueXLen * sumXY - sumX * sumY) /
+            (uniqueXLen * sumX2 - sumX * sumX);
 
         if (isNaN(alpha)) {
             alpha = 0;
         }
 
-        const beta = (sumY - alpha * sumX) / xValLength;
+        const beta = (sumY - alpha * sumX) / uniqueXLen;
 
         // Calculate linear regression:
-        for (i = 0; i < xValLength; i++) {
+        for (i = 0; i < uniqueXLen; i++) {
             y = alpha * i + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [xVal[i], y];
-            xData[i] = xVal[i];
+            LR[i] = [xValues[i], y];
+            xData[i] = xValues[i];
             yData[i] = y;
         }
 
