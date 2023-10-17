@@ -28,7 +28,8 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
-    isArray
+    isArray,
+    pushUnique
 } = U;
 
 /* *
@@ -113,10 +114,15 @@ class TrendLineIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             uniqueXVal: Array<number> = [...new Set(xVal)],
-            uniqueXLen: number = uniqueXVal.length,
             index: number = (params.index as any);
 
-        let sumX = (uniqueXLen - 1) * uniqueXLen / 2,
+        // Generate an array of unique xValues
+        xVal.forEach((x: number): void => {
+            pushUnique(uniqueXVal, x);
+        });
+
+        let uniqueXLen: number = uniqueXVal.length,
+            sumX = (uniqueXLen - 1) * uniqueXLen / 2,
             sumY = 0,
             sumXY = 0,
             sumX2 =
