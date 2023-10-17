@@ -32,7 +32,6 @@ Dashboards.board('container', {
                         large: {
                             width: '50%'
                         }
-
                     },
                     id: 'dashboard-col-0'
                 }, {
@@ -78,11 +77,18 @@ Dashboards.board('container', {
                     enabled: false
                 },
                 title: {
-                    text: 'Vitamin A in Various Foods',
+                    text: 'Vitamin A Content in Various Foods',
                     align: 'left'
                 },
-                subtitle: {
-                    text: ''
+                accessibility: {
+                    typeDescription: 'Packed bubble chart with 5 points.',
+                    description: `The chart displays points in the form of 
+                    different-sized bubbles, representing types of food, the 
+                    size of which corresponds to their vitamin A content.`,
+                    point: {
+                        descriptionFormat: `Vitamin A content in {name}: 
+                        {value} micrograms`
+                    }
                 },
                 legend: {
                     enabled: false
