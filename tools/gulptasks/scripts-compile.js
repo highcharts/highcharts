@@ -22,7 +22,7 @@ function scriptsCompile(filePathes) {
         logLib = require('./lib/log'),
         path = require('path'),
         processLib = require('./lib/process'),
-        { minify } = require('@swc/core'),
+        swc = require('@swc/core'),
         argv = require('yargs').argv;
 
     filePathes = filePathes instanceof Array ?
@@ -64,29 +64,24 @@ function scriptsCompile(filePathes) {
 
         // Compile file, https://swc.rs/docs/usage/core
         const code = fs.readFileSync(inputPath, 'utf-8');
-        promise = minify(code, {
+        promise = swc.minify(code, {
             compress: {
                 // hoist_funs: true
             },
-            mangle: true
+            mangle: true,
+            sourceMap: true
         })
 
             .then(result => {
+                // Write compiled file
                 fs.writeFileSync(
                     outputPath,
-                    result.code.replace('@license ', '')
+                    result.code.replace('@license ', '') +
+                    `//# sourceMappingURL=${path.basename(outputMapPath)}`
                 );
-            })
 
-            // Fix source map reference
-            .then(result => {
-                const outputMapFileName = path.basename(outputMapPath);
-
-                // Still no option for it
-                fs.appendFileSync(
-                    outputPath,
-                    `//# sourceMappingURL=${outputMapFileName}`
-                );
+                // Write source map
+                fs.writeFileSync(outputMapPath, result.map);
 
                 logLib.success(
                     `Compiled ${inputPath} => ${outputPath}`,
