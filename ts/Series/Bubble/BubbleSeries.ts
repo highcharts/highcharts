@@ -119,30 +119,6 @@ function axisBeforePadding(
 
     // Handle padding on the second pass, or on redraw
     this.series.forEach((series): void => {
-        // Skip padding for dataLabels with 'crop','overflow' (issue #13240)
-        const skipBubblePadding = (dataLabels: any): boolean => {
-            if (Array.isArray(dataLabels)) {
-                for (const label of dataLabels) {
-                    if (label.overflow === 'allow' && label.crop === false) {
-                        return true;
-                    }
-                }
-            } else if (
-                dataLabels &&
-                dataLabels.overflow === 'allow' &&
-                dataLabels.crop === false
-            ) {
-                return true;
-            }
-            return false;
-        };
-
-        if (
-            series.type !== 'bubble' ||
-            skipBubblePadding(series.options?.dataLabels)
-        ) {
-            return;
-        }
 
         if (series.bubblePadding && series.reserveSpace()) {
             // Correction for #1673
@@ -839,6 +815,7 @@ class BubbleSeries extends ScatterSeries {
  * */
 
 interface BubbleSeries {
+    alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
@@ -847,6 +824,7 @@ interface BubbleSeries {
 }
 
 extend(BubbleSeries.prototype, {
+    alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,
