@@ -2813,7 +2813,7 @@ class Series {
         const seriesMarkerOptions = this.options.marker,
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
-            state = point?.state || 'normal',
+            state = point?.state,
             pointColorOption = pointOptions?.color,
             pointColor = point?.color,
             zoneColor = point?.zone?.color;
@@ -2828,12 +2828,6 @@ class Series {
                 (seriesMarkerOptions as any).lineWidth
             ),
             opacity;
-
-        opacity = pick(
-            (pointMarkerOptions as any).opacity ||
-            (seriesMarkerOptions as any).opacity ||
-            1
-        );
 
         color = (
             pointColorOption ||
