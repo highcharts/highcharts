@@ -141,23 +141,7 @@ QUnit.test('Align dataLabel', function (assert) {
         ]
     });
 
-    const targetPoint = {
-        x: 1,
-        y: 0,
-        z: 10
-    };
-
-    const point = chart.series.find(series =>
-        series.data.some(p =>
-            p.x === targetPoint.x &&
-            p.y === targetPoint.y &&
-            p.z === targetPoint.z
-        )
-    ).points.find(p =>
-        p.x === targetPoint.x &&
-        p.y === targetPoint.y &&
-        p.z === targetPoint.z
-    );
+    const point = chart.series[2].points[0];
 
     const dataLabel = point.dataLabel;
     const bubbleCenter = {
