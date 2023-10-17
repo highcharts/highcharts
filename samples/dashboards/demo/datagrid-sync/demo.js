@@ -8,9 +8,6 @@ const data = [
 ];
 
 const chartOptions = {
-    xAxis: {
-        type: 'category'
-    },
     chart: {
         animation: false,
         type: 'column'
@@ -24,9 +21,26 @@ const chartOptions = {
     subtitle: {
         text: 'Drag points to update the data grid'
     },
+    accessibility: {
+        point: {
+            descriptionFormat: 'Vitamin A content in {name}: {y} micrograms.'
+        }
+    },
+    tooltip: {
+        stickOnContact: true
+    },
+    xAxis: {
+        accessibility: {
+            description: 'categories of food',
+            rangeDescription: ''
+        }
+    },
     yAxis: {
         title: {
             text: ''
+        },
+        accessibility: {
+            description: 'amount of Vitamin A in micrograms'
         }
     },
     legend: {
