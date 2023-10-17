@@ -113,7 +113,7 @@ class TrendLineIndicator extends SMAIndicator {
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            uniqueXVal: Array<number> = [...new Set(xVal)],
+            uniqueXVal: Array<number> = [],
             index: number = (params.index as any);
 
         // Generate an array of unique xValues
