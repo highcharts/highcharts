@@ -24,7 +24,10 @@ const chartOptions = {
     accessibility: {
         point: {
             descriptionFormat: 'Vitamin A content in {name}: {y} micrograms.'
-        }
+        },
+        description: `The first bar chart presenting the ability to edit the
+        connector values by manually changing the height of the bars in the 
+        series, which is possible with allowConnectorUpdate option set to true.`
     },
     tooltip: {
         stickOnContact: true
@@ -140,6 +143,11 @@ Dashboards.board('container', {
             subtitle: {
                 useHTML: true,
                 text: 'Dragging points <em>will not update</em> the grid'
+            },
+            accessibility: {
+                description: `The second bar chart showing disabled editing of
+                connector values by manually changing the height of bars in a 
+                series; allowConnectorUpdate option set to false.`
             }
         })
     }, {
