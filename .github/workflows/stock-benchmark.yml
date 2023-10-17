@@ -5,6 +5,8 @@ on:
       - 'master'
     paths:
       - 'ts/Stock/**'
+      - 'ts/Core/Axis/OrdinalAxis.ts'
+      - 'ts/Extensions/Annotations/**'
       - 'test/ts-node-unit-tests/benchmark/Stock/'
       - '.github/workflows/stock-benchmark.yml'
 
