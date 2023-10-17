@@ -22,6 +22,7 @@ function scriptsCompile(filePathes) {
         logLib = require('./lib/log'),
         path = require('path'),
         processLib = require('./lib/process'),
+        { minify } = require('@swc/core'),
         argv = require('yargs').argv;
 
     filePathes = filePathes instanceof Array ?
@@ -61,39 +62,39 @@ function scriptsCompile(filePathes) {
             outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
 
-        // Compile file
-        // See https://github.com/google/closure-compiler/wiki/Flags-and-Options
-        promise = processLib.exec(
-            'npx google-closure-compiler' +
-            ' --assume_function_wrapper' +
-            ' --compilation_level SIMPLE' +
-            ` --create_source_map "${outputMapPath}"` +
-            // ' --emit_use_strict' + // not supported in GCC 2022
-            ' --env CUSTOM' +
-            ` --js "${inputPath}"` +
-            ` --js_output_file "${outputPath}"` +
-            ` --language_in ${target}` +
-            ` --language_out ${target}`,
-            // ' --platform native', // use native compiler // not GCC 2022
-            { silent: 2 }
+        // Compile file, https://swc.rs/docs/usage/core
+        const code = fs.readFileSync(inputPath, 'utf-8');
+        promise = minify(code, {
+            compress: {
+                // hoist_funs: true
+            },
+            mangle: true
+        })
 
-        // Fix source map reference
-        ).then(result => {
-            const outputMapFileName = path.basename(outputMapPath);
+            .then(result => {
+                fs.writeFileSync(
+                    outputPath,
+                    result.code.replace('@license ', '')
+                );
+            })
 
-            // Still no option for it
-            fs.appendFileSync(
-                outputPath,
-                `//# sourceMappingURL=${outputMapFileName}`
-            );
+            // Fix source map reference
+            .then(result => {
+                const outputMapFileName = path.basename(outputMapPath);
 
-            logLib.success(
-                `Compiled ${inputPath} => ${outputPath}`,
-                `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
-            );
+                // Still no option for it
+                fs.appendFileSync(
+                    outputPath,
+                    `//# sourceMappingURL=${outputMapFileName}`
+                );
 
-            return result;
-        });
+                logLib.success(
+                    `Compiled ${inputPath} => ${outputPath}`,
+                    `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+                );
+
+                return result;
+            });
 
         if (i % 2 || argv.CI) {
             promiseChain1 = promiseChain1.then(() => promise);
