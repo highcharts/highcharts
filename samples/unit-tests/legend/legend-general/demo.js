@@ -180,3 +180,31 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Legend items symbols using linecap (#19545).', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'area'
+        },
+        series: [{
+            data: [3, 1, 4, 5, 2]
+        }, {
+            data: [3, 5, 2, 4, 1],
+            linecap: 'square'
+        }]
+    });
+
+    const firstLegendItemSymbol = chart.legend.allItems[0].legendItem.symbol;
+
+    assert.equal(
+        firstLegendItemSymbol.getBBox().height / 2,
+        firstLegendItemSymbol.r,
+        'The first legend item symbol should be round.'
+    );
+
+    assert.equal(
+        chart.legend.allItems[1].legendItem.symbol.r,
+        0,
+        'The second legend item symbol should be square.'
+    );
+});

@@ -207,7 +207,8 @@ namespace LegendSymbol {
                 (legend.baseline as any) - symbolHeight + 1, // #3988
                 symbolWidth,
                 symbolHeight,
-                pick(legend.options.symbolRadius, symbolHeight / 2)
+                this.options.linecap !== 'square' ?
+                    pick(legend.options.symbolRadius, symbolHeight / 2) : 0
             )
             .addClass('highcharts-point')
             .attr({
