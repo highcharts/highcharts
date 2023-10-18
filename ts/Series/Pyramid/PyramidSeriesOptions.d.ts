@@ -30,4 +30,10 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
     states?: SeriesStatesOptions<PyramidSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PyramidSeriesOptions;
