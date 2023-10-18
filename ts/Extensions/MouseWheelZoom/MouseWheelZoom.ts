@@ -17,6 +17,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type Axis from '../../Core/Axis/Axis';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
@@ -33,7 +34,6 @@ const {
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import Axis from '../../Core/Axis/Axis';
 const { getAssignedAxis } = NBU;
 
 /* *
@@ -73,11 +73,11 @@ const optionsToObject = (
  * Fit a segment inside a range.
  * @private
  * @param {number} outerStart
- * Beggining of the range.
+ * Beginning of the range.
  * @param {number} outerWidth
  * Width of the range.
  * @param {number} innerStart
- * Beggining of the segment.
+ * Beginning of the segment.
  * @param {number} innerWidth
  * Width of the segment.
  * @return {Object}
@@ -171,9 +171,13 @@ const waitForAutomaticExtremes = function (
 const getMouseAxisRatio = function (
     chart: Chart,
     axis: Axis,
-    mousePos: number
+    mousePos: number | undefined
 ) : number {
-    const mouseAxisRatio = mousePos ? ((mousePos - axis.pos) / axis.len) : 0.5,
+    if (!defined(mousePos)) {
+        return 0.5;
+    }
+
+    const mouseAxisRatio = (mousePos - axis.pos) / axis.len,
         isXAxis = axis.isXAxis;
 
     if (isXAxis && (!axis.reversed !== !chart.inverted) ||
