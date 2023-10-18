@@ -19,8 +19,11 @@
     be created, based on configuration, saved in the local storage.
   </div>
   <button id="export">Export Dashboards</button>
-  <button id="destroy">Destroy Dashboards</button>
-  <button id="import">Create Dashboards</button>
+  <button id="destroy" disabled>Destroy Dashboards</button>
+  <button id="import" disabled>Create Dashboards</button>
+  <div class="ls-status">Status: 
+    <span id="ls-status-content">the local storage is empty</span>.
+  </div>
 </div>
 
 <pre id="csv">Food,Vitamin A

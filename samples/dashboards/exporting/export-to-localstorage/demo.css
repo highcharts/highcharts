@@ -20,3 +20,11 @@
 .buttons-wrapper button {
     margin: 10px 10px 30px;
 }
+
+.ls-status {
+    font-weight: bold;
+}
+
+#ls-status-content {
+    color: red;
+}

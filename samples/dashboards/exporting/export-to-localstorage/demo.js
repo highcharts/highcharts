@@ -1,5 +1,5 @@
 const csvData = document.getElementById('csv').innerText;
-const board = Dashboards.board('container', {
+let board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'Vitamin',
@@ -102,12 +102,13 @@ const board = Dashboards.board('container', {
 });
 
 /**
- * Demo UI buttons section
+ * Demo UI section
  */
 
 const exportBtn = document.getElementById('export');
 const importBtn = document.getElementById('import');
 const destroyBtn = document.getElementById('destroy');
+const statusSpan = document.getElementById('ls-status-content');
 
 exportBtn.addEventListener('click', () => {
     localStorage.setItem(
@@ -118,13 +119,24 @@ exportBtn.addEventListener('click', () => {
             2
         )
     );
+    destroyBtn.disabled = false;
+    statusSpan.innerHTML = 'saved dashboards options in the local storage';
+    statusSpan.style.color = '#191';
 });
 
 destroyBtn.addEventListener('click', () => {
     board.destroy();
+    importBtn.disabled = false;
+    statusSpan.innerHTML = 'destroyed existing dashboards';
+    statusSpan.style.color = '#971';
 });
 
 importBtn.addEventListener('click', () => {
-    const dashboardsConfig = localStorage.getItem('highcharts-dashboards-config');
-    Dashboards.board('container', JSON.parse(dashboardsConfig));
+    const dashboardsConfig =
+        localStorage.getItem('highcharts-dashboards-config');
+    board = Dashboards.board('container', JSON.parse(dashboardsConfig));
+    importBtn.disabled = true;
+    statusSpan.innerHTML =
+        'created new dashboards using the options from the local storage';
+    statusSpan.style.color = '#179';
 });
