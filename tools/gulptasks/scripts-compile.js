@@ -60,13 +60,7 @@ function scriptsCompile(filePaths, config = {}) {
         }
 
 
-        const target = (
-                argv.target ||
-                inputPath.includes('/es5/') ?
-                    'ECMASCRIPT5_STRICT' :
-                    'ECMASCRIPT_2020'
-            ),
-            outputPath = inputPath.replace('.src.js', '.js'),
+        const outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
 
         // Compile file, https://swc.rs/docs/usage/core
