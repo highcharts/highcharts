@@ -101,6 +101,24 @@ class LollipopSeries extends Series {
             connectorWidth: 1,
             /** @ignore-option */
             groupPadding: 0.2,
+
+            /**
+             * Whether to group non-stacked lollipop points or to let them
+             * render independent of each other. Non-grouped lollipop points
+             * will be laid out individually and overlap each other.
+             *
+             * @sample highcharts/series-lollipop/enabled-grouping/
+             *         Multiple lollipop series with grouping
+             * @sample highcharts/series-lollipop/disabled-grouping/
+             *         Multiple lollipop series with disabled grouping
+             *
+             * @type      {boolean}
+             * @default   true
+             * @since     8.0.0
+             * @product   highcharts highstock
+             * @apioption plotOptions.lollipop.grouping
+             */
+
             /** @ignore-option */
             pointPadding: 0.1,
             /** @ignore-option */

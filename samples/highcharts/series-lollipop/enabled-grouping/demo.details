@@ -1,0 +1,6 @@
+---
+ name: Multiple lollipop series with grouping
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...
