@@ -96,4 +96,10 @@ export interface TreemapSeriesUpButtonPositionOptions {
     y?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default TreemapSeriesOptions;

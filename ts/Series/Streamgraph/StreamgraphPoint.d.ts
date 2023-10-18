@@ -10,7 +10,7 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 
@@ -31,7 +31,7 @@ declare class StreamgraphPoint extends AreaSplinePoint {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
