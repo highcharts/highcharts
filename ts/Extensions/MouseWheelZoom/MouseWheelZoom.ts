@@ -70,16 +70,16 @@ const optionsToObject = (
 };
 
 /**
- * Fit the new extremes inside axis bounds.
+ * Fit a segment inside a range.
  * @private
- * @param {Highcharts.Chart} outerStart
- * Beggining of bounds range.
- * @param {Highcharts.Axis} outerWidth
- * Width of bounds range.
- * @param {Highcharts.Chart} innerStart
- * Beggining of new extremes.
- * @param {Highcharts.Axis} innerWidth
- * Width of new extremes.
+ * @param {number} outerStart
+ * Beggining of the range.
+ * @param {number} outerWidth
+ * Width of the range.
+ * @param {number} innerStart
+ * Beggining of the segment.
+ * @param {number} innerWidth
+ * Width of the segment.
  * @return {Object}
  * Object containing rangeStart and rangeWidth.
  */
@@ -168,27 +168,26 @@ const waitForAutomaticExtremes = function (
 * doesn't exist, returns 0.5;
 * @private
 */
-const calucateFixToDirection = function (
+const getMouseAxisRatio = function (
     chart: Chart,
     axis: Axis,
     mousePos: number
 ) : number {
-    const fixToDir = mousePos ? ((mousePos - axis.pos) / axis.len) : 0.5,
+    const mouseAxisRatio = mousePos ? ((mousePos - axis.pos) / axis.len) : 0.5,
         isXAxis = axis.isXAxis;
 
     if (isXAxis && (!axis.reversed !== !chart.inverted) ||
             !isXAxis && axis.reversed) {
         // We are taking into account that xAxis automatically gets
         // reversed when chart.inverted
-        return 1 - fixToDir;
+        return 1 - mouseAxisRatio;
     }
 
-    return fixToDir;
+    return mouseAxisRatio;
 };
 
 /**
-* Check if zoom is out of the current axis, if not, change the extremes to
-* previously calulated values based on how much zoom should be applied.
+* Perform zooming on the passed axis.
 * @private
 * @param {Highcharts.Chart} chart
 * Chart object.
@@ -224,9 +223,9 @@ const zoomOnDirection = function (
         const range = axis.max - axis.min,
             center = isNumber(centerArg) ? centerArg :
                 axis.min + range / 2,
-            fixToDir = calucateFixToDirection(chart, axis, mousePos),
+            mouseAxisRatio = getMouseAxisRatio(chart, axis, mousePos),
             newRange = range * howMuch,
-            newMin = center - newRange * fixToDir,
+            newMin = center - newRange * mouseAxisRatio,
             dataRange = pick(axis.options.max, axis.dataMax) -
                 pick(axis.options.min, axis.dataMin),
             minPaddingOffset = axis.options.min ? 0 :
