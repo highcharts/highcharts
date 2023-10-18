@@ -1,48 +1,48 @@
 QUnit.test('Data grouping anchor for points in the middle of the data set.', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        yAxis: [{
-            height: '33.33%',
-            offset: 0
-        }, {
-            height: '33.33%',
-            top: '33.33%',
-            offset: 0
-        }, {
-            height: '33.33%',
-            top: '66.66%',
-            offset: 0
-        }],
-        plotOptions: {
-            series: {
-                data: [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
-                pointInterval: 3600 * 1000,
-                dataGrouping: {
-                    approximation: 'average',
-                    enabled: true,
-                    forced: true,
-                    units: [
-                        ['hour', [2]]
-                    ]
+            yAxis: [{
+                height: '33.33%',
+                offset: 0
+            }, {
+                height: '33.33%',
+                top: '33.33%',
+                offset: 0
+            }, {
+                height: '33.33%',
+                top: '66.66%',
+                offset: 0
+            }],
+            plotOptions: {
+                series: {
+                    data: [1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4],
+                    pointInterval: 3600 * 1000,
+                    dataGrouping: {
+                        approximation: 'average',
+                        enabled: true,
+                        forced: true,
+                        units: [
+                            ['hour', [2]]
+                        ]
+                    }
                 }
-            }
-        },
-        series: [{
-            type: 'column',
-            yAxis: 0
-        }, {
-            yAxis: 1,
-            type: 'column',
-            dataGrouping: {
-                anchor: 'middle'
-            }
-        }, {
-            yAxis: 2,
-            type: 'column',
-            dataGrouping: {
-                anchor: 'end'
-            }
-        }]
-    }),
+            },
+            series: [{
+                type: 'column',
+                yAxis: 0
+            }, {
+                yAxis: 1,
+                type: 'column',
+                dataGrouping: {
+                    anchor: 'middle'
+                }
+            }, {
+                yAxis: 2,
+                type: 'column',
+                dataGrouping: {
+                    anchor: 'end'
+                }
+            }]
+        }),
         hour = 3600 * 1000;
 
     assert.strictEqual(
@@ -295,7 +295,7 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[chart.series[0].points.length - 1].x,
         11.7 * hour,
-        `When the smoothed enabled, the last point 
+        `When the smoothed enabled, the last point
         should be placed where the last group point is.`
     );
     assert.strictEqual(
@@ -305,15 +305,15 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
         the point from the main series should match the navigator series.`
     );
 });
-QUnit.skip('Data grouping anchor for single point in the dataset', function (assert) {
+QUnit.test('Data grouping anchor for single point in the dataset', function (assert) {
     const data = [
         1,
         2
     ];
-        const chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
             chart: {
                 height: 800,
-                type: "column"
+                type: 'column'
             },
             yAxis: [{
                 height: '33.33%',
