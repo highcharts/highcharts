@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
@@ -22,15 +23,15 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type WordcloudSeries from './WordcloudSeries';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-
+import type WordcloudSeries from './WordcloudSeries';
 
 /* *
  *
  *  Declarations
  *
  * */
+
 export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
     allowExtendPlayingField?: boolean;
     data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
@@ -54,4 +55,5 @@ export interface WordcloudSeriesRotationOptions {
  *  Default Export
  *
  * */
+
 export default WordcloudSeriesOptions;
