@@ -16,37 +16,44 @@ const gulp = require('gulp');
  * @return {Promise}
  * Promise to keep
  */
-function scriptsCompile(filePathes) {
+function scriptsCompile(filePaths, config = {}) {
     const fs = require('fs'),
         fsLib = require('./lib/fs'),
         logLib = require('./lib/log'),
         path = require('path'),
-        processLib = require('./lib/process'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
 
-    filePathes = filePathes instanceof Array ?
-        filePathes :
+    const esModulesFolder = config.esModulesFolder || '/es-modules/',
+        targetFolder = config.bundleTargetFolder || 'code';
+
+    filePaths = filePaths instanceof Array ?
+        filePaths :
         typeof argv.files === 'string' ?
-            argv.files.split(',').map(filePath => path.join('code', filePath)) :
-            fsLib.getFilePaths('code', true);
+            argv.files
+                .split(',')
+                .map(filePath => path.join(targetFolder, filePath)) :
+            fsLib.getFilePaths(targetFolder, true);
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
 
     for (
         let i = 0,
-            iEnd = filePathes.length,
+            iEnd = filePaths.length,
             inputPath,
             promise;
         i < iEnd;
         ++i
     ) {
-        inputPath = filePathes[i];
+        inputPath = filePaths[i];
 
         if (
-            inputPath.includes('/dashboards/') ||
-            inputPath.includes('/es-modules/') ||
+            (
+                inputPath.includes('/dashboards/') &&
+                config.cdnFolder !== 'dashboards/'
+            ) ||
+            inputPath.includes(esModulesFolder) ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
