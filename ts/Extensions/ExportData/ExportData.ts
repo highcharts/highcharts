@@ -164,17 +164,19 @@ function wrapLoading(
     this: Chart,
     fn: Function
 ): void {
+    const showMessage = Boolean(this.options.exporting?.showExportInProgress);
+
     // Prefer requestAnimationFrame if available
     const timeoutFn = win.requestAnimationFrame || setTimeout;
 
     // Outer timeout avoids menu freezing on click
     timeoutFn((): void => {
-        this.showLoading(this.options.lang.exportInProgress);
+        showMessage && this.showLoading(this.options.lang.exportInProgress);
         timeoutFn((): void => {
             try {
                 fn.call(this);
             } finally {
-                this.hideLoading();
+                showMessage && this.hideLoading();
             }
         });
     });

@@ -204,7 +204,18 @@ const exporting: ExportingOptions = {
      * @since    6.0.4
      * @requires modules/export-data
      */
-    useRowspanHeaders: true
+    useRowspanHeaders: true,
+
+    /**
+     * Display a message when export is in progress.
+     * Uses [Chart.setLoading()](/class-reference/Highcharts.Chart#setLoading)
+     *
+     * The message can be altered by changing [](#lang.exporting.exportInProgress)
+     *
+     * @since next
+     * @requires modules/export-data
+     */
+    showExportInProgress: true
 };
 
 /**
@@ -266,7 +277,12 @@ const lang: LangOptions = {
      * @requires modules/export-data
      */
     hideData: 'Hide data table',
-
+    /**
+     * Text to show when export is in progress.
+     *
+     * @since next
+     * @requires modules/export-data
+     */
     exportInProgress: 'Exporting...'
 };
 
