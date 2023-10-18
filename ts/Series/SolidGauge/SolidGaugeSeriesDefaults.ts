@@ -58,7 +58,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
     /**
      * Whether the strokes of the solid gauge should be `round` or `square`.
      *
-     * @sample {highcharts} highcharts/demo/gauge-activity/
+     * @sample {highcharts} highcharts/demo/gauge-multiple-kpi/
      *         Rounded gauge
      *
      * @type       {string}
@@ -103,8 +103,8 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      * `borderRadius` of 50% behaves like `rounded`, except the shape is not
      * extended past its value.
      *
-     * @sample {highcharts} highcharts/demo/gauge-activity/
-     *         Activity Gauge
+     * @sample {highcharts} highcharts/demo/gauge-multiple-kpi/
+     *         Gauge showing multiple KPIs
      *
      * @type      {boolean}
      * @default   false
@@ -218,7 +218,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @apioption series.solidgauge.data.radius
  */
 
-''; // keeps doclets above in transpiled file
+''; // keeps doclets above separate
 
 /* *
  *

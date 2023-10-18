@@ -26,16 +26,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
-    colsize?: number;
-    interpolation?: boolean;
-    marker?: HeatmapPointMarkerOptions;
-    nullColor?: ColorType;
-    pointPadding?: number;
-    rowsize?: number;
-    states?: SeriesStatesOptions<HeatmapSeries>;
-}
-
 declare module '../../Core/Series/StatesOptions' {
     interface StateHoverOptions {
         height?: number;
@@ -68,5 +58,21 @@ declare module '../../Core/Series/SeriesOptions' {
         brightness?: number;
     }
 }
+
+export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
+    colsize?: number;
+    interpolation?: boolean;
+    marker?: HeatmapPointMarkerOptions;
+    nullColor?: ColorType;
+    pointPadding?: number;
+    rowsize?: number;
+    states?: SeriesStatesOptions<HeatmapSeries>;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HeatmapSeriesOptions;

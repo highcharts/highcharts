@@ -1642,8 +1642,8 @@ class Tooltip {
         const anchorPos = this.getAnchor(points);
         const labelBBox = label.getBBox();
 
-        anchorPos[0] += chart.plotLeft - label.translateX;
-        anchorPos[1] += chart.plotTop - label.translateY;
+        anchorPos[0] += chart.plotLeft - (label.translateX || 0);
+        anchorPos[1] += chart.plotTop - (label.translateY || 0);
 
         // When the mouse pointer is between the anchor point and the label,
         // the label should stick.
@@ -1787,19 +1787,22 @@ class Tooltip {
                 chart,
                 container,
                 distance,
-                options
+                options,
+                renderer
             } = this,
+            {
+                height = 0,
+                width = 0
+            } = this.getLabel(),
             pointer = chart.pointer,
-            label = this.getLabel(),
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
-                label.width,
-                label.height,
+                width,
+                height,
                 point
-            ),
-            renderer = this.renderer;
+            );
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
@@ -1819,8 +1822,8 @@ class Tooltip {
             pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
-                label.width + pad,
-                label.height + pad,
+                width + pad,
+                height + pad,
                 false
             );
 

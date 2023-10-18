@@ -134,5 +134,41 @@ QUnit.test('Treegraph series',
             1,
             'CollapseButton should be visible when point is expanded (#19368).'
         );
+
+        series.update({
+            showInLegend: true,
+            legendSymbol: 'lineMarker'
+        });
+
+        assert.ok(
+            chart.series[0].legendItem.symbol.element &&
+            chart.series[0].legendItem.line.element,
+            `Legend symbol and line should be rendered when
+            legendSymbol is set to lineMarker (#19671).`
+        );
+
+        const seriesData = [
+            ['Parent element', undefined],
+            ['Nested element 1', 'Parent element'],
+            ['Nested element 2', 'Parent element']
+        ];
+
+        chart.addSeries({
+            type: 'treegraph',
+            keys: ['id', 'parent'],
+            data: []
+        });
+
+        for (let i = 0; i < 3; i++) {
+            chart.series[1].addPoint(seriesData[i]);
+        }
+
+        assert.deepEqual(
+            seriesData,
+            chart.userOptions.series[1].data.map(point => ([
+                point.id || point[0], point.parent || point[1]
+            ])),
+            'The initial data should match the rendered data (#19552).'
+        );
     }
 );

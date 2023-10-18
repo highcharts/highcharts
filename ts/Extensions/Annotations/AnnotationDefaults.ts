@@ -681,6 +681,13 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * Fires when the annotation is dragged.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
+     * @apioption annotations.events.drag
+     */
+
+    /**
      * Event callback when annotation is removed from the chart.
      *
      * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}

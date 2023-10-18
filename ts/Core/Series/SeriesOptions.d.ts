@@ -176,7 +176,7 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
 }
 
 export interface SeriesStateInactiveOptions extends StateInactiveOptions {
-    // nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStateNormalOptions extends StateNormalOptions {

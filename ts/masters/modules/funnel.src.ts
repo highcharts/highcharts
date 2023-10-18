@@ -10,5 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/Funnel/FunnelSeries.js';
+import Highcharts from '../../Core/Globals.js';
+import FunnelSeries from '../../Series/Funnel/FunnelSeries.js';
 import '../../Series/Pyramid/PyramidSeries.js';
+const G: AnyRecord = Highcharts;
+FunnelSeries.compose(G.Chart);

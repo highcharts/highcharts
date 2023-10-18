@@ -26,17 +26,9 @@ import type TilemapSeries from './TilemapSeries';
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
+    series: { prototype: { pointClass: Point } },
     seriesTypes: {
-        heatmap: {
-            prototype: {
-                pointClass: HeatmapPoint
-            }
-        }
+        heatmap: { prototype: { pointClass: HeatmapPoint } }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -72,8 +64,6 @@ class TilemapPoint extends HeatmapPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      * @function Highcharts.Point#haloPath
@@ -81,8 +71,6 @@ class TilemapPoint extends HeatmapPoint {
     public haloPath(): SVGPath {
         return this.series.tileShape.haloPath.apply(this, arguments);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -95,6 +83,7 @@ class TilemapPoint extends HeatmapPoint {
 interface TilemapPoint {
     setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
+
 extend(TilemapPoint.prototype, {
     setState: Point.prototype.setState,
     setVisible: ColorAxisComposition.pointSetVisible
