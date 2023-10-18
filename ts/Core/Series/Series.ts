@@ -2827,7 +2827,7 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity;
+            opacity = 1;
 
         color = (
             pointColorOption ||

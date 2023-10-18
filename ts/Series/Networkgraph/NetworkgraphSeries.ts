@@ -376,13 +376,12 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public pointAttribs(point?: NetworkgraphPoint): SVGAttributes {
-        // By default, only `selected` state is passed on
-        let pointState = point?.state || 'normal',
-            attribs = Series.prototype.pointAttribs.call(
-                this,
-                point
-            ),
-            stateOptions = (this.options.states as any)[pointState];
+        let stateOptions,
+            attribs = Series.prototype.pointAttribs.call(this, point);
+
+        if (point?.state && point?.state !== 'normal') {
+            stateOptions = this.options.states?.[point.state] as any;
+        }
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
@@ -529,10 +528,7 @@ interface NetworkgraphSeries
     createNode: NodesComposition.SeriesComposition['createNode'];
     drawGraph?(): void;
     drawDataLabels(): void;
-    pointAttribs(
-        point?: NetworkgraphPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes;
+    pointAttribs(point?: NetworkgraphPoint): SVGAttributes;
     render(): void;
     setState(
         state: StatesOptionsKey,
