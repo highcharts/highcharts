@@ -27,17 +27,14 @@ QUnit.test('Data grouping anchor for points in the middle of the data set.', fun
                 }
             },
             series: [{
-                type: 'column',
                 yAxis: 0
             }, {
                 yAxis: 1,
-                type: 'column',
                 dataGrouping: {
                     anchor: 'middle'
                 }
             }, {
                 yAxis: 2,
-                type: 'column',
                 dataGrouping: {
                     anchor: 'end'
                 }
@@ -353,17 +350,17 @@ QUnit.test('Data grouping anchor for single point in the dataset', function (ass
                 }
             },
             series: [{
-                data: data,
+                data,
                 yAxis: 0
 
             }, {
-                data: data,
+                data,
                 yAxis: 1,
                 dataGrouping: {
                     anchor: 'middle'
                 }
             }, {
-                data: data,
+                data,
                 yAxis: 2,
                 dataGrouping: {
                     anchor: 'end'
