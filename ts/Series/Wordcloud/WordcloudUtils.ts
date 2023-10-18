@@ -41,8 +41,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 /**
  * Detects if there is a collision between two rectangles.
  *
@@ -107,28 +105,23 @@ function getAxesFromPolygon(
     if (!axes.length) {
         axes = [];
         points = points = polygon.concat([polygon[0]]);
-        points.reduce(
-            function findAxis(
-                p1: WordcloudUtils.PolygonPointObject,
-                p2: WordcloudUtils.PolygonPointObject
-            ): WordcloudUtils.PolygonPointObject {
-                const normals = getNormals(p1, p2),
-                    axis = normals[0]; // Use the left normal as axis.
+        points.reduce((p1, p2): WordcloudUtils.PolygonPointObject => {
+            const normals = getNormals(p1, p2),
+                axis = normals[0]; // Use the left normal as axis.
 
-                // Check that the axis is unique.
-                if (!find(axes, (
-                    existing
-                ): boolean =>
-                    existing[0] === axis[0] &&
-                    existing[1] === axis[1]
-                )) {
-                    axes.push(axis);
-                }
-
-                // Return p2 to be used as p1 in next iteration.
-                return p2;
+            // Check that the axis is unique.
+            if (!find(axes, (
+                existing
+            ): boolean =>
+                existing[0] === axis[0] &&
+                existing[1] === axis[1]
+            )) {
+                axes.push(axis);
             }
-        );
+
+            // Return p2 to be used as p1 in next iteration.
+            return p2;
+        });
         polygon.axes = axes;
     }
     return axes;
@@ -236,8 +229,7 @@ function intersectsAnyWord(
     point: WordcloudPoint,
     points: Array<WordcloudPoint>
 ): boolean {
-    let intersects = false,
-        rect: PolygonBoxObject = point.rect as any,
+    const rect: PolygonBoxObject = point.rect as any,
         polygon: WordcloudUtils.PolygonObject = point.polygon as any,
         lastCollidedWith = point.lastCollidedWith,
         isIntersecting = function (p: WordcloudPoint): boolean {
@@ -253,6 +245,8 @@ function intersectsAnyWord(
             }
             return result;
         };
+
+    let intersects = false;
 
     // If the point has already intersected a different point, chances are
     // they are still intersecting. So as an enhancement we check this
@@ -279,6 +273,7 @@ function intersectsAnyWord(
             return result;
         });
     }
+
     return intersects;
 }
 
@@ -302,10 +297,11 @@ function archimedeanSpiral(
     attempt: number,
     params?: WordcloudSeries.WordcloudSpiralParamsObject
 ): (boolean|PositionObject) {
-    let field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
-        result: (boolean|PositionObject) = false,
+    const field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
         maxDelta = (field.width * field.width) + (field.height * field.height),
         t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
+
+    let result: (boolean|PositionObject) = false;
 
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
@@ -340,13 +336,12 @@ function squareSpiral(
     attempt: number,
     params?: WordcloudSeries.WordcloudSpiralParamsObject
 ): (boolean|PositionObject) {
-    let a = attempt * 4,
+    const a = attempt * 4,
         k = Math.ceil((Math.sqrt(a) - 1) / 2),
-        t = 2 * k + 1,
+        isBoolean = (x: unknown): x is boolean => (typeof x === 'boolean');
+
+    let t = 2 * k + 1,
         m = Math.pow(t, 2),
-        isBoolean = function (x: unknown): x is boolean {
-            return typeof x === 'boolean';
-        },
         result: (boolean|PositionObject) = false;
 
     t -= 1;
@@ -443,9 +438,6 @@ function getRandomPosition(size: number): number {
  *
  * @param {Object} field
  * The playing field.
- *
- * @param {Highcharts.Series} series
- * Series object.
  *
  * @return {number}
  * Returns the value to scale the playing field up to the size of the target
@@ -604,20 +596,19 @@ function getSpiral(
     fn: WordcloudSeries.WordcloudSpiralFunction,
     params: WordcloudSeries.WordcloudSpiralParamsObject
 ): WordcloudSeries.WordcloudSpiralFunction {
-    let length = 10000,
-        i: number,
+    const length = 10000,
         arr: Array<ReturnType<WordcloudSeries.WordcloudSpiralFunction>> = [];
 
-    for (i = 1; i < length; i++) {
+    for (let i = 1; i < length; i++) {
         // @todo unnecessary amount of precaclulation
         arr.push(fn(i, params));
     }
 
-    return function (
+    return (
         attempt: number
-    ): ReturnType<WordcloudSeries.WordcloudSpiralFunction> {
-        return attempt <= length ? arr[attempt - 1] : false;
-    };
+    ): ReturnType<WordcloudSeries.WordcloudSpiralFunction> => (
+        attempt <= length ? arr[attempt - 1] : false
+    );
 }
 
 /**
@@ -694,21 +685,21 @@ function intersectionTesting(
     point: WordcloudPoint,
     options: WordcloudSeries.WordcloudTestOptionsObject
 ): (boolean|PositionObject) {
-    let placed = options.placed,
+    const placed = options.placed,
         field = options.field,
         rectangle = options.rectangle,
         polygon = options.polygon,
         spiral = options.spiral,
-        attempt = 1,
-        delta: PositionObject = {
-            x: 0,
-            y: 0
-        },
         // Make a copy to update values during intersection testing.
         rect = point.rect = extend<PolygonBoxObject>(
             {} as any,
             rectangle
         );
+    let attempt = 1,
+        delta: PositionObject = {
+            x: 0,
+            y: 0
+        };
 
     point.polygon = polygon;
     point.rotation = options.rotation;
@@ -986,7 +977,7 @@ namespace WordcloudUtils {
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
 
