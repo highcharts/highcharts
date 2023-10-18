@@ -127,6 +127,7 @@ exportBtn.addEventListener('click', () => {
 destroyBtn.addEventListener('click', () => {
     board.destroy();
     importBtn.disabled = false;
+    exportBtn.disabled = destroyBtn.disabled = true;
     statusSpan.innerHTML = 'destroyed existing dashboards';
     statusSpan.style.color = '#971';
 });
@@ -135,6 +136,7 @@ importBtn.addEventListener('click', () => {
     const dashboardsConfig =
         localStorage.getItem('highcharts-dashboards-config');
     board = Dashboards.board('container', JSON.parse(dashboardsConfig));
+    exportBtn.disabled = destroyBtn.disabled = false;
     importBtn.disabled = true;
     statusSpan.innerHTML =
         'created new dashboards using the options from the local storage';
