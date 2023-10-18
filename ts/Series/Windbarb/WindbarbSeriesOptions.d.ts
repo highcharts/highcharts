@@ -12,18 +12,20 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
+
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import WindbarbSeries from './WindbarbSeries.js';
+import type WindbarbSeries from './WindbarbSeries';
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
+
 export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
     onSeries?: (string|null);
     states?: SeriesStatesOptions<WindbarbSeries>;
@@ -34,7 +36,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- * Export default
+ *  Default Export
  *
  * */
+
 export default WindbarbSeriesOptions;
