@@ -100,6 +100,7 @@ module.exports = {
             'dashboards/mathmodifier-module',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
+            'dashboards/get-options',
             'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [
