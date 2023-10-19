@@ -256,10 +256,17 @@ function saveRun() {
 
 /**
  * Checks if tests should run
- * @return {boolean}
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }}} config
+ *
+ * @return {Promise<boolean>}
  * True if outdated
  */
-function shouldRun() {
+async function shouldRun({
+    configFile,
+    codeDirectory,
+    jsDirectory,
+    testsDirectory
+}) {
 
     const fs = require('fs');
     const fsLib = require('./lib/fs');
@@ -272,34 +279,25 @@ function shouldRun() {
         latestTestsHash: ''
     };
 
-    if (fs.existsSync(CONFIGURATION_FILE)) {
+    if (fs.existsSync(configFile)) {
         configuration = JSON.parse(
-            fs.readFileSync(CONFIGURATION_FILE).toString()
+            fs.readFileSync(configFile).toString()
         );
     }
 
     const latestCodeHash = fsLib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringLib.removeComments
+        codeDirectory, true, stringLib.removeComments
     );
     const latestJsHash = fsLib.getDirectoryHash(
-        JS_DIRECTORY, true, stringLib.removeComments
+        jsDirectory, true, stringLib.removeComments
     );
     const latestTestsHash = fsLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, stringLib.removeComments
+        testsDirectory, true, stringLib.removeComments
     );
 
     if (latestCodeHash === configuration.latestCodeHash &&
         latestJsHash !== configuration.latestJsHash
     ) {
-
-        logLib.failure(
-            '✖ The files have not been built' +
-            ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.' +
-            ' If this error occures contantly ' +
-            ' without a reason, then remove ' +
-            '`node_modules/_gulptasks_*.json` files.'
-        );
 
         throw new Error('Code out of sync');
     }
@@ -413,7 +411,28 @@ Set a different disconnect timeout from default config
         argv.testsAbsolutePath
     );
 
-    if (forceRun || shouldRun()) {
+    const shouldRunTests = forceRun ||
+        (await shouldRun({
+            configFile: CONFIGURATION_FILE,
+            codeDirectory: CODE_DIRECTORY,
+            jsDirectory: JS_DIRECTORY,
+            testsDirectory: TESTS_DIRECTORY
+        }).catch(error => {
+            log.failure(error.message);
+
+            log.failure(
+                '✖ The files have not been built' +
+                ' since the last source code changes.' +
+                ' Run `npx gulp` and try again.' +
+                ' If this error occures contantly ' +
+                ' without a reason, then remove ' +
+                '`node_modules/_gulptasks_*.json` files.'
+            );
+
+            return false;
+        }));
+
+    if (shouldRunTests) {
 
         log.message('Run `gulp test --help` for available options');
 
@@ -470,3 +489,8 @@ Set a different disconnect timeout from default config
 }
 
 gulp.task('test', gulp.series('test-docs', 'scripts', test));
+
+module.exports = {
+    test,
+    shouldRun
+};

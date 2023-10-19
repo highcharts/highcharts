@@ -5,6 +5,8 @@
 const gulp = require('gulp');
 const path = require('path');
 
+const { shouldRun } = require('./test');
+
 /* *
  *
  *  Constants
@@ -64,74 +66,6 @@ function saveRun() {
     FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
 }
 
-/**
- * Check if we have to rebuild sources, or we are good.
- * We are good for example when changing demos, tooling etc.
- * without touching the source code (TS files).
- *
- * @return {boolean}
- *         True if outdated
- */
-function shouldRun() {
-
-    const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const stringLib = require('./lib/string');
-
-    let configuration = {
-        latestCodeHash: '',
-        latestJsHash: '',
-        latestTestsHash: ''
-    };
-
-    if (fs.existsSync(CONFIGURATION_FILE)) {
-        configuration = JSON.parse(
-            fs.readFileSync(CONFIGURATION_FILE).toString()
-        );
-    }
-
-    const latestCodeHash = fsLib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringLib.removeComments
-    );
-    const latestJsHash = fsLib.getDirectoryHash(
-        JS_DIRECTORY, true, stringLib.removeComments
-    );
-    const latestTestsHash = fsLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, stringLib.removeComments
-    );
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestJsHash !== configuration.latestJsHash
-    ) {
-
-        logLib.failure(
-            '✖ The files have not been built' +
-            ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.' +
-            ' If this error occures contantly ' +
-            ' without a reason, try `npx gulp test-ts --force`.'
-        );
-
-        throw new Error('Code out of sync');
-    }
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestTestsHash === configuration.latestTestsHash
-    ) {
-
-        logLib.success(
-            '✓ Source code and unit tests have not been modified' +
-            ' since the last successful test run.'
-        );
-
-        return false;
-    }
-
-    return true;
-}
-
-
 /* *
  *
  *  Tasks
@@ -144,17 +78,16 @@ function shouldRun() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function testTS() {
+async function testTS() {
 
-    const LogLib = require('./lib/log');
+    const log = require('./lib/log');
     const Yargs = require('yargs');
 
-    return new Promise((resolve, reject) => {
 
-        const argv = Yargs.argv;
+    const argv = Yargs.argv;
 
-        if (argv.help) {
-            LogLib.message(`
+    if (argv.help) {
+        log.message(`
 HIGHCHARTS TYPESCRIPT TEST RUNNER
 
 Available arguments for 'gulp test':
@@ -206,59 +139,73 @@ Available arguments for 'gulp test':
     specified by config.imageCapture.resultsOutputPath.
 
 `);
-            return;
-        }
+        return;
+    }
 
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
+    const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
 
-        if (forceRun || shouldRun()) {
+    const shouldRunTests = forceRun ||
+        (await shouldRun({
+            configFile: CONFIGURATION_FILE,
+            codeDirectory: CODE_DIRECTORY,
+            jsDirectory: JS_DIRECTORY,
+            testsDirectory: TESTS_DIRECTORY
+        }).catch(error => {
+            log.failure(error.message);
 
-            LogLib.message('Run `gulp test --help` for available options');
+            log.failure(
+                '✖ The files have not been built' +
+                ' since the last source code changes.' +
+                ' Run `npx gulp` and try again.' +
+                ' If this error occures contantly ' +
+                ' without a reason, try `npx gulp test-ts --force`.'
+            );
 
-            const KarmaServer = require('karma').Server;
-            const PluginError = require('plugin-error');
+            return false;
+        }));
 
-            new KarmaServer(
-                {
-                    configFile: KARMA_CONFIG_FILE,
-                    singleRun: !argv.wait,
-                    client: {
-                        cliArgs: argv
-                    }
-                },
-                err => {
+    if (shouldRunTests) {
 
-                    if (err !== 0) {
+        log.message('Run `gulp test --help` for available options');
 
-                        if (argv.speak) {
-                            LogLib.say('Tests failed!');
-                        }
+        const KarmaServer = require('karma').Server;
+        const PluginError = require('plugin-error');
 
-                        reject(new PluginError('karma', {
-                            message: 'Tests failed'
-                        }));
+        new KarmaServer(
+            {
+                configFile: KARMA_CONFIG_FILE,
+                singleRun: !argv.wait,
+                client: {
+                    cliArgs: argv
+                }
+            },
+            err => {
 
-                        return;
-                    }
-
-                    try {
-                        saveRun();
-                    } catch (catchedError) {
-                        LogLib.warn(catchedError);
-                    }
+                if (err !== 0) {
 
                     if (argv.speak) {
-                        LogLib.say('Tests succeeded!');
+                        log.say('Tests failed!');
                     }
 
-                    resolve();
-                }
-            ).start();
-        } else {
+                    throw (new PluginError('karma', {
+                        message: 'Tests failed'
+                    }));
 
-            resolve();
-        }
-    });
+                }
+
+                try {
+                    saveRun();
+                } catch (catchedError) {
+                    log.warn(catchedError);
+                }
+
+                if (argv.speak) {
+                    log.say('Tests succeeded!');
+                }
+
+            }
+        ).start();
+    }
 }
 
 gulp.task('test-ts', gulp.series('dashboards/scripts', 'scripts', testTS));
