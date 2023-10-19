@@ -22,7 +22,7 @@ import type ColorType from '../Color/ColorType';
 import type Options from '../Options';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
-import type SVGElement3DLike from '../Renderer/SVG/SVGElement3DLike';
+import type SVGElement3D from '../Renderer/SVG/SVGElement3D';
 
 import Axis from '../Axis/Axis.js';
 import Chart from './Chart.js';
@@ -61,7 +61,7 @@ declare module '../Animation/FxLike' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         chart3d?: Chart3D.Additions;
-        frameShapes?: Record<string, SVGElement3DLike>;
+        frameShapes?: Record<string, SVGElement3D>;
         is3d(): boolean;
     }
 }

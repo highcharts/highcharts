@@ -26,9 +26,9 @@ import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -39,6 +39,7 @@ const {
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import SVGElement3DCylinder from './SVGElement3DCylinder.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -51,24 +52,12 @@ const {
  *
  * */
 
-interface CylinderMethodsObject extends SVGElement3DLikeCuboid {
-    parts: Array<string>;
-    pathType: string;
-    fillSetter(fill: ColorType): SVGElement;
-}
-
 interface CylinderPathsObject extends SVGPath3D {
     back: SVGPath;
     bottom: SVGPath;
     front: SVGPath;
     top: SVGPath;
     zIndexes: Record<string, number>;
-}
-
-declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
-    interface SVGElement3DLike {
-        cylinder?: CylinderMethodsObject;
-    }
 }
 
 declare module '../../Core/Renderer/SVG/SVGRendererLike' {
@@ -112,31 +101,7 @@ const rendererProto = RendererRegistry.getRendererType().prototype,
 const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
 
-// cylinder extends cuboid
-const cylinderMethods = merge(rendererProto.elements3d.cuboid, {
-    parts: ['top', 'bottom', 'front', 'back'],
-    pathType: 'cylinder',
-
-    fillSetter: function (
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement {
-        this.singleSetterForParts('fill', null, {
-            front: fill,
-            back: fill,
-            top: color(fill).brighten(0.1).get(),
-            bottom: color(fill).brighten(-0.1).get()
-        });
-
-        // fill for animation getter (#6776)
-        this.color = this.fill = fill;
-
-        return this;
-    }
-});
-
-rendererProto.elements3d.cylinder = cylinderMethods;
-
+rendererProto.Element3D.types.cylinder = SVGElement3DCylinder;
 rendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
     return this.element3d('cylinder', shapeArgs);
 };
