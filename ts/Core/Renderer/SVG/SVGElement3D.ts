@@ -84,7 +84,7 @@ class SVGElement3D extends SVGElement {
             zIndexes = (paths as any).zIndexes;
 
         // build parts
-        (elem3d.parts as any).forEach(function (part: string): void {
+        for (const part of elem3d.parts) {
             const attribs: SVGAttributes3D = {
                 'class': 'highcharts-3d-' + part,
                 zIndex: zIndexes[part] || 0
@@ -99,7 +99,7 @@ class SVGElement3D extends SVGElement {
             elem3d[part] = renderer.path((paths as any)[part])
                 .attr(attribs)
                 .add(elem3d);
-        });
+        }
 
         elem3d.attr({
             'stroke-linejoin': 'round',
@@ -189,6 +189,8 @@ class SVGElement3D extends SVGElement {
         this.processParts(null, null, 'destroy');
         return super.destroy();
     }
+
+    // Following functions are SVGElement3DCuboid (= base)
 
     public attr(
         args: (string|SVGAttributes3D),
