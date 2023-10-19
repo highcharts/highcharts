@@ -160,7 +160,7 @@ async function setupBoard() {
                                     id: 'kpi-data',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -174,7 +174,7 @@ async function setupBoard() {
                                     id: 'kpi-temperature',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -188,7 +188,7 @@ async function setupBoard() {
                                     id: 'kpi-max-temperature',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -202,35 +202,7 @@ async function setupBoard() {
                                     id: 'kpi-rain',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
                                             width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
-                                }, {
-                                    id: 'kpi-ice',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
-                                }, {
-                                    id: 'kpi-frost',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -537,68 +509,6 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-ice',
-            type: 'KPI',
-            chartOptions: {
-                ...KPIChartOptions,
-                title: {
-                    text: 'Days with Ice',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'ID';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
-            cell: 'kpi-frost',
-            type: 'KPI',
-            chartOptions: {
-                ...KPIChartOptions,
-                title: {
-                    text: 'Days with Frost',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'FD';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
             cell: 'selection-grid',
             type: 'DataGrid',
             connector: {
@@ -815,8 +725,8 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiTemperature,
         kpiMaxTemperature,
         kpiRain,
-        kpiIce,
-        kpiFrost,
+        // kpiIce,
+        // kpiFrost,
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
@@ -898,10 +808,10 @@ async function updateBoard(board, city, column, scale, newData) {
         .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
     kpiRain.chart.series[0].points[0]
         .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
-    kpiIce.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
-    kpiFrost.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
+    // kpiIce.chart.series[0].points[0]
+    //     .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
+    // kpiFrost.chart.series[0].points[0]
+    //     .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
 
     // Update data grid and city chart
     if (newData) {
