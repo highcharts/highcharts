@@ -225,108 +225,6 @@ function checkDocsConsistency() {
 
 }
 
-/**
- * Saves test run information
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }} config
- * Configuration
- *
- * @return {void}
- */
-function saveRun({
-    configFile,
-    codeDirectory,
-    jsDirectory,
-    testsDirectory
-}) {
-
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const StringLib = require('./lib/string');
-
-    const latestCodeHash = FSLib.getDirectoryHash(
-        codeDirectory, true, StringLib.removeComments
-    );
-    const latestJsHash = FSLib.getDirectoryHash(
-        jsDirectory, true, StringLib.removeComments
-    );
-    const latestTestsHash = FSLib.getDirectoryHash(
-        testsDirectory, true, StringLib.removeComments
-    );
-
-    const configuration = {
-        latestCodeHash,
-        latestJsHash,
-        latestTestsHash
-    };
-
-    FS.writeFileSync(configFile, JSON.stringify(configuration));
-}
-
-/**
- * Checks if tests should run
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }}} config
- * Configuration
- *
- * @return {Promise<boolean>}
- * True if outdated
- */
-async function shouldRun({
-    configFile,
-    codeDirectory,
-    jsDirectory,
-    testsDirectory
-}) {
-
-    const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const stringLib = require('./lib/string');
-
-    let configuration = {
-        latestCodeHash: '',
-        latestJsHash: '',
-        latestTestsHash: ''
-    };
-
-    if (fs.existsSync(configFile)) {
-        configuration = JSON.parse(
-            fs.readFileSync(configFile).toString()
-        );
-    }
-
-    const latestCodeHash = fsLib.getDirectoryHash(
-        codeDirectory, true, stringLib.removeComments
-    );
-    const latestJsHash = fsLib.getDirectoryHash(
-        jsDirectory, true, stringLib.removeComments
-    );
-    const latestTestsHash = fsLib.getDirectoryHash(
-        testsDirectory, true, stringLib.removeComments
-    );
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestJsHash !== configuration.latestJsHash
-    ) {
-
-        throw new Error('Code out of sync');
-    }
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestTestsHash === configuration.latestTestsHash
-    ) {
-
-        logLib.success(
-            '✓ Source code and unit tests not have been modified' +
-            ' since the last successful test run.'
-        );
-
-        return false;
-    }
-
-    return true;
-}
-
-
 /* *
  *
  *  Tasks
@@ -342,6 +240,8 @@ async function shouldRun({
 async function test() {
     const argv = require('yargs').argv;
     const log = require('./lib/log');
+
+    const { shouldRun, saveRun } = require('./lib/test');
 
     if (argv.help) {
         log.message(`
@@ -499,9 +399,3 @@ Set a different disconnect timeout from default config
 }
 
 gulp.task('test', gulp.series('test-docs', 'scripts', test));
-
-module.exports = {
-    test,
-    shouldRun,
-    saveRun
-};

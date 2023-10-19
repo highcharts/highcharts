@@ -5,7 +5,6 @@
 const gulp = require('gulp');
 const path = require('path');
 
-const { shouldRun, saveRun } = require('./test');
 
 /* *
  *
@@ -47,9 +46,9 @@ const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
  *         Promise to keep
  */
 async function testTS() {
-
     const log = require('./lib/log');
     const Yargs = require('yargs');
+    const { shouldRun, saveRun } = require('./lib/test');
 
 
     const argv = Yargs.argv;
