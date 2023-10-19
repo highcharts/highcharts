@@ -5,7 +5,7 @@
 const gulp = require('gulp');
 const path = require('path');
 
-const { shouldRun } = require('./test');
+const { shouldRun, saveRun } = require('./test');
 
 /* *
  *
@@ -33,38 +33,6 @@ const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
  *
  * */
 
-/**
- * Save latest hashes of:
- * - code build
- * - js build
- * - test result
- *
- * @return {void}
- */
-function saveRun() {
-
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const StringLib = require('./lib/string');
-
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
-    );
-    const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
-    );
-    const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
-    );
-
-    const configuration = {
-        latestCodeHash,
-        latestJsHash,
-        latestTestsHash
-    };
-
-    FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
-}
 
 /* *
  *
@@ -144,13 +112,15 @@ Available arguments for 'gulp test':
 
     const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
 
+    const runConfig = {
+        configFile: CONFIGURATION_FILE,
+        codeDirectory: CODE_DIRECTORY,
+        jsDirectory: JS_DIRECTORY,
+        testsDirectory: TESTS_DIRECTORY
+    };
+
     const shouldRunTests = forceRun ||
-        (await shouldRun({
-            configFile: CONFIGURATION_FILE,
-            codeDirectory: CODE_DIRECTORY,
-            jsDirectory: JS_DIRECTORY,
-            testsDirectory: TESTS_DIRECTORY
-        }).catch(error => {
+        (await shouldRun(runConfig).catch(error => {
             log.failure(error.message);
 
             log.failure(
@@ -194,7 +164,7 @@ Available arguments for 'gulp test':
                 }
 
                 try {
-                    saveRun();
+                    saveRun(runConfig);
                 } catch (catchedError) {
                     log.warn(catchedError);
                 }
