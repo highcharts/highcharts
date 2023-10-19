@@ -15,6 +15,49 @@ const colorStopsTemperature = [
 
 setupBoard();
 
+const KPIChartOptions = {
+    chart: {
+        height: 166,
+        margin: [8, 8, 16, 8],
+        spacing: [8, 8, 8, 8],
+        styledMode: true,
+        type: 'solidgauge'
+    },
+    pane: {
+        background: {
+            innerRadius: '90%',
+            outerRadius: '120%',
+            shape: 'arc'
+        },
+        center: ['50%', '70%'],
+        endAngle: 90,
+        startAngle: -90
+    },
+    series: [{
+        data: [0],
+        dataLabels: {
+            format: '{y:.0f}',
+            y: -34
+        },
+        animation: false,
+        animationLimit: 0,
+        enableMouseTracking: false,
+        innerRadius: '90%',
+        radius: '120%'
+    }],
+    yAxis: {
+        labels: {
+            distance: 4,
+            y: 12
+        },
+        max: 10,
+        min: 0,
+        stops: colorStopsDays,
+        tickAmount: 2,
+        visible: true
+    }
+};
+
 async function setupBoard() {
     let activeCity = 'New York',
         activeColumn = 'TX',
@@ -402,51 +445,11 @@ async function setupBoard() {
             cell: 'kpi-temperature',
             type: 'KPI',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Average Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 50,
-                    min: -10,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
                 }
             },
             events: {
@@ -473,51 +476,11 @@ async function setupBoard() {
             cell: 'kpi-max-temperature',
             type: 'KPI',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Maximal Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 50,
-                    min: -10,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
                 }
             },
             events: {
@@ -547,51 +510,11 @@ async function setupBoard() {
             cell: 'kpi-rain',
             type: 'KPI',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
                 }
             },
             events: {
@@ -617,51 +540,11 @@ async function setupBoard() {
             cell: 'kpi-ice',
             type: 'KPI',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Days with Ice',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
                 }
             },
             events: {
@@ -688,51 +571,11 @@ async function setupBoard() {
             cell: 'kpi-frost',
             type: 'KPI',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Days with Frost',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
                 }
             },
             events: {
