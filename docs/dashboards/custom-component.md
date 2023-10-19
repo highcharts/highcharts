@@ -282,7 +282,7 @@ Dashboards.board('container', {
             min: 10,
             component: 'Highcharts',
             options: {
-                title: ''
+                title: '',
                 chartOptions: {
                     ...
                 }
