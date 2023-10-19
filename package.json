@@ -24,6 +24,7 @@
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
+    "test:precommit": "npx gulp test-ts && npx gulp test",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",

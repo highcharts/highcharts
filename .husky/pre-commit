@@ -3,7 +3,5 @@
 
 npx lint-staged && \
 npx gulp lint-ts && \
-# npx gulp dashboards/test && \
-npx gulp test && \
-npx gulp test-ts && \
+npm run test:precommit && \
 npx ts-node ./test/ts-node-unit-tests
