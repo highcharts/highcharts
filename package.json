@@ -24,7 +24,7 @@
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
-    "test:precommit": "npx gulp test-ts && npx gulp test",
+    "test:precommit": "npx gulp test-ts && npx gulp test && npx ts-node ./test/ts-node-unit-tests",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
@@ -33,6 +33,7 @@
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
+    "lint": "cd ts && npx eslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
@@ -120,6 +121,9 @@
   "lint-staged": {
     "*.js": [
       "eslint"
+    ],
+    "./ts/**/*.ts": [
+      "npm run lint"
     ],
     "*.css": [
       "stylelint"
