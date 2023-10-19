@@ -130,50 +130,6 @@
     }
 }
 
-#toggle-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
-    background-color: var(--highcharts-neutral-color-5);
-    padding-top: 10px;
-    color: var(--highcharts-neutral-color-100);
-}
-
-#toggle-container label {
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-#toggle-container #mode-toggle {
-    appearance: none;
-    width: 40px;
-    height: 20px;
-    background-color: var(--highcharts-neutral-color-100);
-    border-radius: 20px;
-    position: relative;
-}
-
-#toggle-container #mode-toggle:checked {
-    background-color: var(--highcharts-neutral-color-100);
-}
-
-#toggle-container #mode-toggle::before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    background-color: var(--highcharts-neutral-color-0);
-    border-radius: 50%;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    transition: 0.2s;
-}
-
-#toggle-container #mode-toggle:checked::before {
-    left: 21px;
-}
-
 /* *
  *
  *  City Chart

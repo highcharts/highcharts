@@ -1,20 +1,4 @@
 /* eslint-disable jsdoc/require-description */
-
-// left arrow
-Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
-    'M', x + w / 2 - 1, y,
-    'L', x + w / 2 - 1, y + h,
-    x - w / 2 - 1, y + h / 2,
-    'Z'
-];
-// right arrow
-Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
-    'M', x + w / 2 + 1, y,
-    'L', x + w / 2 + 1, y + h,
-    x + w + w / 2 + 1, y + h / 2,
-    'Z'
-];
-
 const MathModifier = Dashboards.DataModifier.types.Math;
 
 const colorStopsDays = [
@@ -1132,29 +1116,3 @@ async function updateBoard(board, city, column, scale, newData) {
         });
     }
 }
-
-const toggle = document.getElementById('mode-toggle');
-
-toggle.addEventListener('click', () => {
-    changeTheme();
-});
-
-function isDarkModeEnabled() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-toggle.checked = isDarkModeEnabled();
-
-function changeTheme() {
-    const toggleContainer = document.getElementById('toggle-container'),
-        container = document.getElementById('container'),
-        className = toggle.checked ? 'highcharts-dark' : 'highcharts-light';
-
-    container.className = className;
-    toggleContainer.className = className;
-}
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    toggle.checked = isDarkModeEnabled();
-    changeTheme();
-});
