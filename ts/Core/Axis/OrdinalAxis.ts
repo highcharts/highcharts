@@ -914,9 +914,8 @@ namespace OrdinalAxis {
                 min = extremes.min,
                 max = extremes.max,
                 hasBreaks = axis.brokenAxis?.hasBreaks,
-                isOrdinal = axis.options.ordinal,
-                ignoreHiddenSeries =
-                    axis.chart.options.chart.ignoreHiddenSeries;
+                isOrdinal = axis.options.ordinal;
+
             let len,
                 uniqueOrdinalPositions,
                 dist,
@@ -956,7 +955,7 @@ namespace OrdinalAxis {
                     }
 
                     if (
-                        (!ignoreHiddenSeries || series.visible !== false) &&
+                        series.reserveSpace() &&
                         (
                             (series as ScatterSeries)
                                 .takeOrdinalPosition !== false || hasBreaks
@@ -1252,7 +1251,9 @@ namespace OrdinalAxis {
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
-                        applyGrouping: Series.prototype.applyGrouping
+                        applyGrouping: Series.prototype.applyGrouping,
+                        reserveSpace: Series.prototype.reserveSpace,
+                        visible: series.visible
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(

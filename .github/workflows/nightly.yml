@@ -5,16 +5,31 @@ on:
     - cron: "0 2 * * *" # 2am
   workflow_dispatch:
     inputs:
-      pust_dist:
-        description: 'Push nightly build to highcharts-dist'
+      pushToDist:
+        description: 'Whether to update the nightly branch on highcharts-dist'
         required: false
-        default: false
+        default: true
         type: boolean
 
 permissions:
    contents: read # to fetch code (actions/checkout)
 
 jobs:
+  nightly_test_bs:
+    name: Browserstack tests
+    uses: ./.github/workflows/highcharts-browserstack.yml
+    with:
+      testTimezones: true
+    secrets:
+      BROWSERSTACK_KEY: ${{secrets.BROWSERSTACK_KEY}}
+      BROWSERSTACK_USER: ${{secrets.BROWSERSTACK_USER}}
+
+  nightly_test_headless:
+    name: Nightly headless tests
+    uses: ./.github/workflows/highcharts-headless.yml
+    with:
+      testTimezones: true
+
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:
@@ -80,3 +95,45 @@ jobs:
         run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
 
 
+  nightly_dist:
+    runs-on: ubuntu-latest
+    needs: [nightly_test_headless, nightly_test_bs,  nightly_visual_diff]
+    steps:
+      - name: Checkout highcharts
+        uses: actions/checkout@v4
+        with:
+          path: highcharts
+
+      - name: Checkout highcharts-dist
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-dist
+          token: ${{ secrets.PR_COMMENT_TOKEN }}
+          path: highcharts-dist
+          ref: 'nightly'
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./highcharts/package-lock.json
+
+      - name: Install and build
+        working-directory: ./highcharts
+        run: |
+          npm i
+          npm run build -- --CI true
+          npx gulp dist-release --force-yes
+
+      - name: Upload to github
+        working-directory: ./highcharts-dist
+        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
+        run: |
+          git config --global user.name "CircleCI"
+          git config --global user.email "technical+circleci_mu@highsoft.com"
+          git config --global core.editor vi
+          git add .
+          git commit -m "Nightly build - ${{github.run_id}}"
+          git push -u origin nightly

@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColumnPyramidSeries from './ColumnPyramidSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -29,7 +30,7 @@ export interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read # to fetch code (actions/checkout)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   file_size_comparison:
     runs-on: ubuntu-latest
@@ -19,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
+
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
@@ -45,7 +50,12 @@ jobs:
           fetch-depth: 0
 
       - name: Merge master into PR branch
-        run: git merge origin/master --ff-only
+        id: mergeMaster
+        run: git merge origin/master
+
+      - name: Error if merge fails
+        if: ${{ always() && steps.mergeMaster.outcome == 'failure' }}
+        run: echo "::error::Was not able to merge cleanly with master"
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
@@ -109,7 +119,12 @@ jobs:
           fetch-depth: 0
 
       - name: Merge master into PR branch
-        run: git merge origin/master --ff-only
+        id: mergeMaster
+        run: git merge origin/master
+
+      - name: Error if merge fails
+        if: ${{ always() && steps.mergeMaster.outcome == 'failure' }}
+        run: echo "::error::Was not able to merge cleanly with master"
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3

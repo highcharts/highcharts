@@ -709,10 +709,7 @@ class Axis {
             // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
-                if (
-                    series.visible ||
-                    !chart.options.chart.ignoreHiddenSeries
-                ) {
+                if (series.reserveSpace()) {
 
                     const seriesOptions = series.options;
 
@@ -1003,7 +1000,7 @@ class Axis {
             translatedValue: translatedValue
         };
         fireEvent(this, 'getPlotLinePath', evt, function (
-            e:(Axis.PlotLinePathOptions)
+            e: Axis.PlotLinePathOptions
         ): void {
 
             translatedValue = pick(
@@ -1032,15 +1029,15 @@ class Axis {
 
                 y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
-            (e as any).path = skip && !force ?
-                null :
+            e.path = skip && !force ?
+                void 0 :
                 chart.renderer.crispLine(
                     [['M', x1, y1], ['L', x2, y2]],
                     lineWidth || 1
                 );
         });
 
-        return (evt as any).path;
+        return (evt.path || null);
     }
 
     /**
@@ -1343,16 +1340,14 @@ class Axis {
         } else {
             const singleXs: number[] = [];
             this.series.forEach(function (series): void {
-                const seriesClosest = series.closestPointRange,
-                    visible = series.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries;
+                const seriesClosest = series.closestPointRange;
 
                 if (series.xData?.length === 1) {
                     singleXs.push(series.xData[0]);
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
-                    visible
+                    series.reserveSpace()
                 ) {
                     closestDistance = defined(closestDistance) ?
                         Math.min(closestDistance, seriesClosest) :
@@ -2518,12 +2513,13 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
-        const axis = this;
+        const axis = this,
+            { coll, stacking } = axis;
 
         let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
-        axis.series.forEach(function (series): void {
+        axis.series.forEach((series): void => {
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
 
             // When x axis is dirty, we need new data extremes for y as
@@ -2535,11 +2531,11 @@ class Axis {
             );
         });
 
-        // set the new axisLength
+        // Set the new axisLength
         axis.setAxisSize();
         const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
 
-        // do we really need to go through all this?
+        // Do we really need to go through all this?
         if (
             isDirtyAxisLength ||
             isDirtyData ||
@@ -2551,9 +2547,8 @@ class Axis {
             axis.alignToOthers()
         ) {
 
-            if (axis.stacking) {
-                axis.stacking.resetStacks();
-                axis.stacking.buildStacks();
+            if (stacking && coll === 'yAxis') {
+                stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -2564,11 +2559,15 @@ class Axis {
                 axis.minRange = void 0;
             }
 
-            // get data extremes if needed
+            // Get data extremes if needed
             axis.getSeriesExtremes();
 
-            // get fixed positions based on tickInterval
+            // Get fixed positions based on tickInterval
             axis.setTickInterval();
+
+            if (stacking && coll === 'xAxis') {
+                stacking.buildStacks();
+            }
 
             // Mark as dirty if it is not already set to dirty and extremes have
             // changed. #595.
@@ -2578,8 +2577,8 @@ class Axis {
                     axis.min !== (axis.old && axis.old.min) ||
                     axis.max !== (axis.old && axis.old.max);
             }
-        } else if (axis.stacking) {
-            axis.stacking.cleanStacks();
+        } else if (stacking) {
+            stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data
@@ -4480,6 +4479,8 @@ namespace Axis {
         force?: (boolean|string);
         lineWidth?: number;
         old?: boolean;
+        /** @internal */
+        path?: SVGPath;
         reverse?: boolean;
         translatedValue?: number;
         value?: number;

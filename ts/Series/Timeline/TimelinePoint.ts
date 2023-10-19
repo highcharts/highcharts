@@ -89,8 +89,8 @@ class TimelinePoint extends Series.prototype.pointClass {
             chart = point.series.chart,
             bBox = connector.getBBox(),
             plotPos = {
-                x: bBox.x + dataLabel.translateX,
-                y: bBox.y + dataLabel.translateY
+                x: bBox.x + (dataLabel.translateX || 0),
+                y: bBox.y + (dataLabel.translateY || 0)
             },
             isVisible;
 
@@ -146,58 +146,66 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public getConnectorPath(): SVGPath {
-        let point = this,
-            chart = point.series.chart,
-            xAxisLen = point.series.xAxis.len,
+        const {
+                plotX = 0,
+                plotY = 0,
+                series,
+                dataLabel
+            } = this,
+            chart = series.chart,
+            xAxisLen = series.xAxis.len,
             inverted = chart.inverted,
-            direction = inverted ? 'x2' : 'y2',
-            dl: SVGLabel = point.dataLabel as any,
-            targetDLPos = dl.targetPosition,
-            coords: Record<string, (number|string)> = {
-                x1: point.plotX as any,
-                y1: point.plotY as any,
-                x2: point.plotX as any,
-                y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
-            },
-            negativeDistance = (
-                (dl.alignAttr || dl)[direction[0]] <
-                    point.series.yAxis.len / 2
-            ),
-            path: SVGPath;
+            direction: 'x2'|'y2' = inverted ? 'x2' : 'y2';
 
-        // Recalculate coords when the chart is inverted.
-        if (inverted) {
-            coords = {
-                x1: point.plotY as any,
-                y1: xAxisLen - (point.plotX as any),
-                x2: targetDLPos.x || dl.x,
-                y2: xAxisLen - (point.plotX as any)
+        if (dataLabel) {
+            const targetDLPos = dataLabel.targetPosition,
+                negativeDistance = (
+                    (dataLabel.alignAttr || dataLabel)[direction[0]] <
+                        series.yAxis.len / 2
+                );
+
+            let coords: Record<'x1'|'y1'|'x2'|'y2', (number)> = {
+                x1: plotX,
+                y1: plotY,
+                x2: plotX,
+                y2: isNumber(targetDLPos.y) ? targetDLPos.y : dataLabel.y
             };
+
+            // Recalculate coords when the chart is inverted.
+            if (inverted) {
+                coords = {
+                    x1: plotY,
+                    y1: xAxisLen - plotX,
+                    x2: targetDLPos.x || dataLabel.x,
+                    y2: xAxisLen - plotX
+                };
+            }
+
+            // Subtract data label width or height from expected coordinate so
+            // that the connector would start from the appropriate edge.
+            if (negativeDistance) {
+                coords[direction] += dataLabel[
+                    inverted ? 'width' : 'height'
+                ] || 0;
+            }
+
+            // Change coordinates so that they will be relative to data label.
+            objectEach(coords, (_coord, i): void => {
+                coords[i] -= (dataLabel.alignAttr || dataLabel)[i[0]];
+            });
+
+            return chart.renderer.crispLine(
+                [
+                    ['M', coords.x1, coords.y1],
+                    ['L', coords.x2, coords.y2]
+                ],
+                (
+                    dataLabel.options as TimelineDataLabelOptions
+                )?.connectorWidth || 0
+            );
         }
 
-        // Subtract data label width or height from expected coordinate so
-        // that the connector would start from the appropriate edge.
-        if (negativeDistance) {
-            coords[direction] += dl[inverted ? 'width' : 'height'];
-        }
-
-        // Change coordinates so that they will be relative to data label.
-        objectEach(coords, function (
-            _coord: (number|string),
-            i: string
-        ): void {
-            (coords[i] as any) -= (dl.alignAttr || dl)[i[0]];
-        });
-
-        path = chart.renderer.crispLine(
-            [
-                ['M', coords.x1, coords.y1],
-                ['L', coords.x2, coords.y2]
-            ] as SVGPath,
-            (dl.options as TimelineDataLabelOptions)?.connectorWidth || 0
-        );
-
-        return path;
+        return [];
     }
 
     public init(): TimelinePoint {
