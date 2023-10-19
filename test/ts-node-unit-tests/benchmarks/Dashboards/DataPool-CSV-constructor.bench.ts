@@ -1,6 +1,7 @@
-import type { BenchmarkContext, BenchmarkResult } from '../benchmark';
+import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
+import { generateCSV } from '../../data-generators';
 
 
 export const config = {
@@ -8,23 +9,6 @@ export const config = {
 };
 
 export function before(size: number) {
-    function generateCSV(rows:number, columns: number){
-        let csv = 'id';
-        for (let column = 0; column < columns; column++) {
-            csv += `,col${column}`;
-        }
-        csv += '\n';
-
-        for (let row = 0; row < rows; row++) {
-            csv += `${row}`;
-            for (let j = 0; j < columns; j++) {
-                csv += `,${Math.random()}`;
-            }
-            csv += '\n';
-        }
-
-        return csv;
-    }
 
     return {
         fileName: `${size}-rows.csv`,

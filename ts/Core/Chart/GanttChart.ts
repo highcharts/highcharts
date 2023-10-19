@@ -35,8 +35,6 @@ const {
     splat
 } = U;
 
-import '../../Series/Gantt/GanttSeries.js';
-
 /* *
  *
  * Declarations
@@ -65,6 +63,13 @@ declare module '../Options' {
  * @extends Highcharts.Chart
  */
 class GanttChart extends Chart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Initializes the chart. The constructor's arguments are passed on
      * directly.
@@ -102,7 +107,7 @@ class GanttChart extends Chart {
                     type: 'gantt'
                 },
                 title: {
-                    text: null as any
+                    text: ''
                 },
                 legend: {
                     enabled: false
@@ -134,10 +139,10 @@ class GanttChart extends Chart {
             !isArray(userOptions.xAxis) ?
                 [userOptions.xAxis || {}, {}] :
                 userOptions.xAxis
-        ).map(function (
+        ).map((
             xAxisOptions,
             i
-        ): DeepPartial<AxisOptions> {
+        ): DeepPartial<AxisOptions> => {
             if (i === 1) { // Second xAxis
                 defaultLinkedTo = 0;
             }
@@ -158,35 +163,46 @@ class GanttChart extends Chart {
         });
 
         // apply Y axis options to both single and multi y axes
-        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
+        options.yAxis = (splat(userOptions.yAxis || {})).map((
             yAxisOptions: YAxisOptions
-        ): YAxisOptions {
-            return merge(
-                defaultOptions.yAxis, // #3802
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
+        ): YAxisOptions => merge(
+            defaultOptions.yAxis, // #3802
+            { // defaults
+                grid: {
+                    enabled: true
+                },
 
-                    staticScale: 50,
+                staticScale: 50,
 
-                    reversed: true,
+                reversed: true,
 
-                    // Set default type treegrid, but only if 'categories' is
-                    // undefined
-                    type: yAxisOptions.categories ?
-                        yAxisOptions.type : 'treegrid'
-                } as YAxisOptions,
-                yAxisOptions // user options
-            );
-        });
+                // Set default type treegrid, but only if 'categories' is
+                // undefined
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+
+            } as YAxisOptions,
+            yAxisOptions // user options
+        ));
         super.init(options, callback);
     }
 }
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace GanttChart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable jsdoc/check-param-names */
+
     /**
      * The factory function for creating new gantt charts. Creates a new {@link
      * Highcharts.GanttChart|GanttChart} object with different default options
@@ -227,6 +243,15 @@ namespace GanttChart {
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);
     }
+
+    /* eslint-enable jsdoc/check-param-names */
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GanttChart;

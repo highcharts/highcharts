@@ -34,4 +34,10 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
 
 export type TilemapShapeValue = ('circle'|'diamond'|'hexagon'|'square');
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default TilemapSeriesOptions;

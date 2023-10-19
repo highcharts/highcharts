@@ -156,7 +156,6 @@ class MapNavigation {
      *  Properties
      *
      * */
-
     public chart: MapChart;
     public navButtons: Array<SVGElement>;
     public navButtonsGroup: SVGElement = void 0 as any;
@@ -319,7 +318,7 @@ class MapNavigation {
 
                 extend(buttonOptions, {
                     width: button.width,
-                    height: 2 * button.height
+                    height: 2 * (button.height || 0)
                 });
 
                 if (!chart.hasLoaded) {

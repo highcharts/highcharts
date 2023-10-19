@@ -1,18 +1,7 @@
-import type { BenchmarkContext, BenchmarkResult } from '../benchmark';
+import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
-
-export function generateColumnData(rows: number, columns: number){
-    const data = [];
-    for (let i = 0; i < rows; i++) {
-        const row = [];
-        for (let j = 0; j < columns; j++) {
-            row.push(Math.random());
-        }
-        data.push(row);
-    }
-    return data;
-}
+import { generateColumnData } from './DataTable-loading-columns.bench';
 
 export const config = {
     sizes: [100, 1000, 10_000, 100_000, 1_000_000, 2_500_000]
@@ -20,8 +9,8 @@ export const config = {
 
 export function before(size: number) {
     return {
-        fileName: `data-${size}-columns.json`,
-        func: () => generateColumnData(5, size)
+        fileName: `data-${size}-rows.json`,
+        func: () => generateColumnData(size, 5)
     };
 }
 

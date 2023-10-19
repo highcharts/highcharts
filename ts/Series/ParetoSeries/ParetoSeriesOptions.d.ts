@@ -30,7 +30,7 @@ interface ParetoSeriesOptions extends LineSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
