@@ -114,79 +114,42 @@ class TrendLineIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             uniqueXVal: Array<number> = [],
-            index: number = (params.index as any);
+            index: number = params.index || 3;
 
+        let yValues: Array<number> = [];
+
+        // If data is created from arrays (i.e OHLC), create a new array
+        // consisting of series.yData[i][params.index] values.
+        if (isArray(yVal[0])) {
+            yVal.forEach((val): number => yValues.push(val[index]));
+        } else {
+            yValues = yVal as any;
+        }
         // Generate an array of unique xValues
-        xVal.forEach((x: number): void => {
-            pushUnique(uniqueXVal, x);
-        });
+        xVal.forEach((x: number): boolean => pushUnique(uniqueXVal, x));
 
-        let uniqueXLen: number = uniqueXVal.length,
-            sumX = (uniqueXLen - 1) * uniqueXLen / 2,
-            sumY = 0,
-            sumXY = 0,
-            sumX2 =
-                ((uniqueXLen - 1) * (uniqueXLen) * (2 * uniqueXLen - 1)) / 6,
-            alpha: number,
-            i: number,
-            y: number,
-            xValues = uniqueXVal,
-            yValues = yVal;
+        let numerator = 0,
+            denominator = 0,
+            meanX = xVal.reduce((acc, x): number => acc + x, 0) / xVal.length,
+            meanY =
+                yValues.reduce((acc, y): number => acc + y, 0) / yValues.length;
 
-        // If there are duplicates, adjust the xVal and yVal arrays to uniqe
-        // set of xVal and averaged yVal (for duplicates of X), #19793.
-        if (uniqueXLen !== xVal.length) {
-            const xyPairs = {} as any;
-            yValues = [];
-
-            xVal.forEach((x, i): void => {
-                if (!xyPairs[x]) {
-                    xyPairs[x] = [yVal[i]];
-                } else {
-                    xyPairs[x] = [...xyPairs[x], yVal[i]];
-                }
-            });
-
-            // Calculate the averages for yVal
-            for (const key in xyPairs) {
-                if (xyPairs[key].length > 1) {
-                    const sum =
-                        xyPairs[key].reduce((a: number, b: number): number =>
-                            a + b
-                        , 0);
-
-                    const avgY = sum / xyPairs[key].length;
-                    yValues.push(avgY as any);
-                } else {
-                    yValues.push(xyPairs[key][0]);
-                }
-            }
+        for (let i = 0; i < xVal.length; i++) {
+            numerator += (xVal[i] - meanX) * (yValues[i] - meanY);
+            denominator += Math.pow(xVal[i] - meanX, 2);
         }
 
-        // Get sums:
-        for (i = 0; i < uniqueXLen; i++) {
-            y = isArray(yValues[i]) ? yValues[i][index] : (yValues[i] as any);
-            sumY += y;
-            sumXY += i * y;
-        }
-
-        // Get slope and offset:
-        alpha = (uniqueXLen * sumXY - sumX * sumY) /
-            (uniqueXLen * sumX2 - sumX * sumX);
-
-        if (isNaN(alpha)) {
-            alpha = 0;
-        }
-
-        const beta = (sumY - alpha * sumX) / uniqueXLen;
+        const alpha = numerator / denominator,
+            beta = meanY - alpha * meanX;
 
         // Calculate linear regression:
-        for (i = 0; i < uniqueXLen; i++) {
-            y = alpha * i + beta;
+        for (let i = 0; i < uniqueXVal.length; i++) {
+            const x = uniqueXVal[i],
+                y = alpha * x + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [xValues[i], y];
-            xData[i] = xValues[i];
+            LR[i] = [x, y];
+            xData[i] = x;
             yData[i] = y;
         }
 
