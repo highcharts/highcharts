@@ -227,22 +227,30 @@ function checkDocsConsistency() {
 
 /**
  * Saves test run information
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }} config
+ * Configuration
+ *
  * @return {void}
  */
-function saveRun() {
+function saveRun({
+    configFile,
+    codeDirectory,
+    jsDirectory,
+    testsDirectory
+}) {
 
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const StringLib = require('./lib/string');
 
     const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+        codeDirectory, true, StringLib.removeComments
     );
     const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+        jsDirectory, true, StringLib.removeComments
     );
     const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
+        testsDirectory, true, StringLib.removeComments
     );
 
     const configuration = {
@@ -251,12 +259,13 @@ function saveRun() {
         latestTestsHash
     };
 
-    FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
+    FS.writeFileSync(configFile, JSON.stringify(configuration));
 }
 
 /**
  * Checks if tests should run
  * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }}} config
+ * Configuration
  *
  * @return {Promise<boolean>}
  * True if outdated
@@ -410,14 +419,15 @@ Set a different disconnect timeout from default config
         argv.tests ||
         argv.testsAbsolutePath
     );
+    const runConfig = {
+        configFile: CONFIGURATION_FILE,
+        codeDirectory: CODE_DIRECTORY,
+        jsDirectory: JS_DIRECTORY,
+        testsDirectory: TESTS_DIRECTORY
+    };
 
     const shouldRunTests = forceRun ||
-        (await shouldRun({
-            configFile: CONFIGURATION_FILE,
-            codeDirectory: CODE_DIRECTORY,
-            jsDirectory: JS_DIRECTORY,
-            testsDirectory: TESTS_DIRECTORY
-        }).catch(error => {
+        (await shouldRun(runConfig).catch(error => {
             log.failure(error.message);
 
             log.failure(
@@ -473,7 +483,7 @@ Set a different disconnect timeout from default config
                 }
 
                 try {
-                    saveRun();
+                    saveRun(runConfig);
                 } catch (catchedError) {
                     log.warn(catchedError);
                 }
@@ -492,5 +502,6 @@ gulp.task('test', gulp.series('test-docs', 'scripts', test));
 
 module.exports = {
     test,
-    shouldRun
+    shouldRun,
+    saveRun
 };
