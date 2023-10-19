@@ -179,6 +179,12 @@
     stroke: none;
 }
 
+#city-chart .highcharts-color-1 {
+    color: #adadff;
+    fill: #adadff;
+    stroke: #adadff;
+}
+
 /* *
  *
  *  KPI
@@ -188,7 +194,6 @@
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
-    cursor: pointer;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
@@ -225,22 +230,6 @@
 #kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
     fill: var(--color-gauge);
     stroke: none;
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component,
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover text,
-#kpi-layout .highcharts-dashboards-cell-state-active text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
 }
 
 #kpi-layout .highcharts-title {

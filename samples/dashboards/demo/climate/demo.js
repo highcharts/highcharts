@@ -424,18 +424,6 @@ async function setupBoard() {
                     widthAdjust: 0
                 }
             },
-            events: {
-                click: function () {
-                    activeColumn = 'TN';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                }
-            },
             states: {
                 active: {
                     enabled: true
@@ -455,21 +443,6 @@ async function setupBoard() {
                     widthAdjust: 0
                 }
             },
-            events: {
-                click: function () {
-                    activeColumn = 'TX';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                },
-                afterLoad: function () {
-                    this.cell.setActiveState();
-                }
-            },
             states: {
                 active: {
                     enabled: true
@@ -487,17 +460,6 @@ async function setupBoard() {
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'RR1';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale
-                    );
                 }
             },
             states: {
@@ -523,12 +485,6 @@ async function setupBoard() {
                 columns: {
                     time: {
                         show: false
-                    },
-                    FD: {
-                        headerFormat: 'Days with Frost'
-                    },
-                    ID: {
-                        headerFormat: 'Days with Ice'
                     },
                     RR1: {
                         headerFormat: 'Days with Rain'
@@ -564,7 +520,14 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {},
+            columnAssignment: {
+                time: 'x',
+                RR1: 'value',
+                TNC: activeScale === 'C' ? 'y' : null,
+                TNF: !activeScale === 'C' ? 'y' : null,
+                TXC: activeScale === 'C' ? 'y' : null,
+                TXF: !activeScale === 'C' ? 'y' : null
+            },
             sync: {
                 highlight: true
             },
@@ -579,15 +542,13 @@ async function setupBoard() {
                 credits: {
                     enabled: false
                 },
-                legend: {
-                    enabled: false
-                },
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
                     max: 50,
                     min: 0,
-                    stops: colorStopsTemperature
+                    stops: colorStopsTemperature,
+                    showInLegend: false
                 },
                 plotOptions: {
                     series: {
@@ -597,14 +558,9 @@ async function setupBoard() {
                         }
                     }
                 },
-                series: [{
-                    name: activeCity,
-                    animation: false,
-                    animationLimit: 0
-                }],
                 title: {
                     margin: 20,
-                    text: 'Maximal Temperature',
+                    text: 'Climate',
                     x: 15,
                     y: 5
                 },
@@ -725,10 +681,7 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiTemperature,
         kpiMaxTemperature,
         kpiRain,
-        // kpiIce,
-        // kpiFrost,
-        selectionGrid,
-        cityChart
+        selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -742,6 +695,7 @@ async function updateBoard(board, city, column, scale, newData) {
         });
 
         selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+        console.log(cityTable.modified.getColumns());
     }
 
     // Update range selection
@@ -808,18 +762,12 @@ async function updateBoard(board, city, column, scale, newData) {
         .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
     kpiRain.chart.series[0].points[0]
         .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
-    // kpiIce.chart.series[0].points[0]
-    //     .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
-    // kpiFrost.chart.series[0].points[0]
-    //     .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
 
     // Update data grid and city chart
     if (newData) {
         const showCelsius = scale === 'C';
         const sharedColumnAssignment = {
             time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
             RR1: column === 'RR1' ? 'y' : null,
             TNC: column === 'TNC' ? 'y' : null,
             TNF: column === 'TNF' ? 'y' : null,
@@ -846,26 +794,6 @@ async function updateBoard(board, city, column, scale, newData) {
                 }
             },
             columnAssignment: sharedColumnAssignment
-        });
-
-        // Update city chart selection
-        await cityChart.update({
-            columnAssignment: sharedColumnAssignment,
-            chartOptions: {
-                chart: {
-                    type: column[0] === 'T' ? 'spline' : 'column'
-                },
-                chartOptions: {
-                    chart: {
-                        type: column[0] === 'T' ? 'spline' : 'column'
-                    },
-                    colorAxis: {
-                        min: colorMin,
-                        max: colorMax,
-                        stops: colorStops
-                    }
-                }
-            }
         });
     }
 }
