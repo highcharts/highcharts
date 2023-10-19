@@ -13,6 +13,7 @@ const
         groupPadding: 0,
         pointPadding: 0
     },
+
     // A gradient background for the inner circle (aka pane.)
     toggleableGradient = {
         pattern: undefined,
@@ -22,6 +23,7 @@ const
             [1, '#45445d']
         ]
     },
+
     // A function which (re)sets the inner circles background to our gradient.
     setGradient = function () {
         const chart = this.series.chart;
