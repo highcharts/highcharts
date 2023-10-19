@@ -20,6 +20,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
+import type Fx from '../../Animation/Fx';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
 import type SVGArc3D from './SVGArc3D';
@@ -32,7 +33,6 @@ import A from '../../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
 const {
     charts,
@@ -106,7 +106,6 @@ const composedMembers: Array<unknown> = [],
  *  Functions
  *
  * */
-
 
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180

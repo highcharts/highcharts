@@ -112,13 +112,11 @@ class SVGElement3DFunnel extends SVGElement3D {
                     }]
                 }]
             });
-            funnel3d.sideGroups.forEach(function (
-                groupName: string
-            ): void {
+            for (const groupName of funnel3d.sideGroups) {
                 funnel3d[groupName].attr({
                     filter: 'url(#' + filterId + ')'
                 });
-            });
+            }
 
             // styled mode
             if (funnel3d.renderer.styledMode) {
@@ -128,11 +126,9 @@ class SVGElement3DFunnel extends SVGElement3D {
                         ' {filter:url(#' + filterId + ')}'
                 });
 
-                (funnel3d.sideGroups as any).forEach(function (
-                    group: SVGElement
-                ): void {
-                    group.addClass('highcharts-' + filterId);
-                });
+                for (const groupName of funnel3d.sideGroups) {
+                    funnel3d[groupName].addClass('highcharts-' + filterId);
+                }
             }
         }
 
@@ -184,9 +180,7 @@ class SVGElement3DFunnel extends SVGElement3D {
         // gradient support
         if ((fillColor as any).linearGradient) {
             // color in steps, as each gradient will generate a key
-            funnel3d.sideGroups.forEach(function (
-                sideGroupName: string
-            ): void {
+            for (const sideGroupName of funnel3d.sideGroups) {
                 const box = funnel3d[sideGroupName].gradientBox,
                     gradient: NonNullable<GradientColor['linearGradient']> =
                         (fillColor as any).linearGradient,
@@ -202,12 +196,10 @@ class SVGElement3DFunnel extends SVGElement3D {
                         }
                     );
 
-                funnel3d.sideParts[sideGroupName].forEach(function (
-                    partName: string
-                ): void {
+                for (const partName of funnel3d.sideParts[sideGroupName]) {
                     partsWithColor[partName] = alteredGradient;
-                });
-            });
+                }
+            }
         } else {
             merge(true, partsWithColor, {
                 frontUpper: fillColor as any,
@@ -220,9 +212,7 @@ class SVGElement3DFunnel extends SVGElement3D {
             });
 
             if ((fillColor as any).radialGradient) {
-                funnel3d.sideGroups.forEach(function (
-                    sideGroupName: string
-                ): void {
+                for (const sideGroupName of funnel3d.sideGroups) {
                     const gradBox = funnel3d[sideGroupName].gradientBox,
                         centerX = gradBox.x + gradBox.width / 2,
                         centerY = gradBox.y + gradBox.height / 2,
@@ -231,14 +221,12 @@ class SVGElement3DFunnel extends SVGElement3D {
                             gradBox.height
                         );
 
-                    funnel3d.sideParts[sideGroupName].forEach(
-                        function (partName: string): void {
-                            funnel3d[partName].setRadialReference([
-                                centerX, centerY, diameter
-                            ]);
-                        }
-                    );
-                });
+                    for (const partName of funnel3d.sideParts[sideGroupName]) {
+                        funnel3d[partName].setRadialReference([
+                            centerX, centerY, diameter
+                        ]);
+                    }
+                }
             }
         }
 
@@ -249,37 +237,33 @@ class SVGElement3DFunnel extends SVGElement3D {
 
         // change gradientUnits to userSpaceOnUse for linearGradient
         if ((fillColor as any).linearGradient) {
-            [funnel3d.frontLower, funnel3d.frontUpper]
-                .forEach(function (
-                    part: Record<string, SVGElement>
-                ): void {
-                    const elem: SVGElement = part.element,
-                        grad = (
-                            elem &&
-                            funnel3d.renderer.gradients[elem.gradient]
-                        );
+            for (const part of [funnel3d.frontLower, funnel3d.frontUpper]) {
+                const elem: SVGElement = part.element,
+                    grad = (
+                        elem &&
+                        funnel3d.renderer.gradients[elem.gradient]
+                    );
 
-                    if (
-                        grad &&
-                        grad.attr('gradientUnits') !== 'userSpaceOnUse'
-                    ) {
-                        grad.attr({
-                            gradientUnits: 'userSpaceOnUse'
-                        });
-                    }
-                });
+                if (
+                    grad &&
+                    grad.attr('gradientUnits') !== 'userSpaceOnUse'
+                ) {
+                    grad.attr({
+                        gradientUnits: 'userSpaceOnUse'
+                    });
+                }
+            }
         }
 
         return funnel3d;
     }
 
     public adjustForGradient(): void {
-        let funnel3d = this,
-            bbox: BBoxObject;
+        const funnel3d = this;
 
-        funnel3d.sideGroups.forEach(function (
-            sideGroupName: string
-        ): void {
+        let bbox: BBoxObject;
+
+        for (const sideGroupName of funnel3d.sideGroups) {
             // use common extremes for groups for matching gradients
             let topLeftEdge = {
                     x: Number.MAX_VALUE,
@@ -291,9 +275,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                 };
 
             // get extremes
-            funnel3d.sideParts[sideGroupName].forEach(function (
-                partName: string
-            ): void {
+            for (const partName of funnel3d.sideParts[sideGroupName]) {
                 const part = funnel3d[partName];
 
                 bbox = part.getBBox(true);
@@ -305,7 +287,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                     x: Math.max(bottomRightEdge.x, bbox.x + bbox.width),
                     y: Math.max(bottomRightEdge.y, bbox.y + bbox.height)
                 };
-            });
+            }
 
             // store for color fillSetter
             funnel3d[sideGroupName].gradientBox = {
@@ -314,7 +296,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                 y: topLeftEdge.y,
                 height: bottomRightEdge.y - topLeftEdge.y
             };
-        });
+        }
     }
 
     public zIndexSetter(): boolean {
