@@ -63,7 +63,8 @@ const {
     isArray,
     isNumber,
     pick,
-    wrap
+    wrap,
+    defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 
@@ -1021,7 +1022,7 @@ function seriesRenderCanvas(this: Series): void {
             low: number = false as any,
             isYInside = true;
 
-        if (typeof d === 'undefined') {
+        if (!defined(d)) {
             return true;
         }
 

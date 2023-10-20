@@ -25,7 +25,13 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  * */
 
 export interface VariablePiePointOptions extends PiePointOptions {
-    // nothing here yet
+    // nothing to add yet
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VariablePiePointOptions;

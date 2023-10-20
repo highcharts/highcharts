@@ -1,0 +1,11 @@
+---
+name: Area Race Chart
+authors:
+  - Askel Eirik Johansson
+js_wrap: b
+new_until: 2023-11-31
+tags:
+  - Highcharts demo
+categories:
+  - Area charts
+...

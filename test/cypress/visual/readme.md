@@ -6,11 +6,11 @@ To run these tests locally you must genererate reference images by running
 (in the reference branch)
 
 ```sh
-npx cypress run --env type=base --config specPattern="**/visual/*.cy.js"
+npx cypress run --env type=base --config-file test/cypress/configs/dashboards.visual.config.mjs
 ```
 
 And afterwards, in the comparison branch:
 
 ```sh
-npx cypress run --env type=actual --config specPattern="**/visual/*.cy.js"
+npx cypress run --env type=actual --config-file test/cypress/configs/dashboards.visual.config.mjs
 ```

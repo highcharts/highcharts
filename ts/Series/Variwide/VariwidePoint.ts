@@ -23,11 +23,7 @@ import type VariwideSeries from './VariwideSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    column: {
-        prototype: {
-            pointClass: ColumnPoint
-        }
-    }
+    column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;

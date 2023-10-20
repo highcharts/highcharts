@@ -52,9 +52,9 @@ names. That way also row objects can have different key-value pairs, but
 identical data.
 
 ```TypeScript
-table.setColumnAlias('movie_title', 'title');
+table.aliases['movie_title'] = 'title';
 table.getColumn('movie_title')[0] === table.getColumn('title')[0];
-table.deleteColumnAlias('movie_title');
+delete table.aliases['movie_title'];
 table.getColumn('movie_title') === undefined;
 ```
 
@@ -146,8 +146,8 @@ In case of a series that only accepts data points as objects, you might need to
 set up column aliases to retrieve the expected structure.
 
 ```TypeScript
-table.setColumnAlias('name', 'year');
-table.setColumnAlias('label', 'title');
+table.aliases.name = 'year';
+table.aliases.label = 'title';
 const chart = new Highcharts.chart('container', {
     series: [{
         type: 'timeline',

@@ -63,13 +63,25 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
                         }
                     },
                     id: 'dashboard-col-0'
                 }, {
                     responsive: {
                         small: {
-                            width: '100%'
+                            width: '1/3'
+                        },
+                        medium: {
+                            width: '1/3'
+                        },
+                        large: {
+                            width: '1/3'
                         }
                     },
                     id: 'dashboard-col-1'

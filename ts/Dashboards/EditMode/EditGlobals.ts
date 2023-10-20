@@ -115,6 +115,11 @@ const EditGlobals: EditGlobals = {
         icon: PREFIX + 'icon'
     },
     lang: {
+        accessibility: {
+            contextMenu: {
+                button: 'Context menu'
+            }
+        },
         addComponent: 'Add component',
         cancelButton: 'Cancel',
         caption: 'Caption',
@@ -239,6 +244,10 @@ namespace EditGlobals {
 
     export interface LangOptions {
         /**
+         * Accessibility language options for the dashboard.
+         */
+        accessibility: EditGlobals.LangAccessibilityOptions;
+        /**
          * @default 'Add component'
          */
         addComponent: string;
@@ -270,6 +279,10 @@ namespace EditGlobals {
          * @default 'Chart type'
          */
         chartType: string;
+        /**
+         * @default 'Connector name'
+         */
+        connectorName: string;
         /**
          * @default 'Confirm'
          */
@@ -327,6 +340,10 @@ namespace EditGlobals {
          */
         settings: string;
         /**
+         * @default 'Small'
+         */
+        small: string;
+        /**
          * @default 'Styles'
          */
         style: string;
@@ -338,10 +355,21 @@ namespace EditGlobals {
          * @default 'View in full screen'
          */
         viewFullscreen: string;
-        [key: string]: string;
+        [key: string]: any;
     }
 
-    export type TLangKeys = 'editMode'|'verticalSeparator';
+    export interface LangAccessibilityOptions {
+        contextMenu: LangAccessibilityOptionsContextMenu;
+    }
+
+    export interface LangAccessibilityOptionsContextMenu {
+        /**
+         * @default 'Context menu'
+         */
+        button: string;
+    }
+
+    export type TLangKeys = 'editMode' | 'verticalSeparator';
 }
 
 export default EditGlobals;

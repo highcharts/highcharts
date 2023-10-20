@@ -101,7 +101,14 @@ class PlotLineOrBand {
      * */
 
     public axis: PlotLineOrBandAxis.Composition;
-    public id?: string;
+
+    /**
+     * The id of the plot line or plot band.
+     *
+     * @name Highcharts.PlotLineOrBand#id
+     * @type {string}
+     */
+    public id?: string = void 0 as any;
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
@@ -126,9 +133,21 @@ class PlotLineOrBand {
         fireEvent(this, 'render');
 
         const plotLine = this,
+            /**
+             * Related axis.
+             *
+             * @name Highcharts.PlotLineOrBand#axis
+             * @type {Highcharts.Axis}
+             */
             axis = plotLine.axis,
             horiz = axis.horiz,
             log = axis.logarithmic,
+            /**
+             * Options of the plot line or band.
+             *
+             * @name Highcharts.PlotLineOrBand#options
+             * @type {AxisPlotBandsOptions|AxisPlotLinesOptions}
+             */
             options = plotLine.options as (PlotBandOptions|PlotLineOptions),
             color = options.color,
             zIndex = pick(options.zIndex, 0),
@@ -212,7 +231,6 @@ class PlotLineOrBand {
                 .attr(attribs)
                 .add(group);
         }
-
 
         // Set the path or return
         if (isLine) {

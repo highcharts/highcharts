@@ -345,12 +345,23 @@ QUnit.test('Polar and clipping', assert => {
         chart: {
             polar: true
         },
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        yAxis: {
+            max: 3,
+            endOnTick: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [2, 4, 2],
+            clip: false
+        }]
     });
+
+    assert.strictEqual(
+        chart.series[1].group.element.getAttribute('clip-path'),
+        'none',
+        'Series.clip:false should be respected in polar chart'
+    );
 
     const oldLen = chart.container.querySelectorAll('defs clipPath').length;
 

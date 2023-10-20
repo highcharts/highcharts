@@ -1,5 +1,5 @@
 import HTMLComponent from '../../../../code/es-modules/Dashboard/Component/HTMLComponent.js';
-import KPIComponent from '../../../../code/es-modules/Dashboard/Component/KPIComponent.js';
+import KPIComponent from '../../../../code/es-modules/Dashboard/Plugins/KPIComponent.js';
 import ThresholdComponent from '../../../../code/es-modules/Dashboard/Component/ThresholdComponent.js';
 
 import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';

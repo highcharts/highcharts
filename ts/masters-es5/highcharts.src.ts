@@ -10,6 +10,9 @@
 import Highcharts from '../masters/highcharts.src.js';
 import MSPointer from '../Core/MSPointer.js';
 declare global {
+    interface Math {
+        sign(x: number): number;
+    }
     interface ObjectConstructor {
         setPrototypeOf?<T>(o: T, proto: object | null): T;
     }

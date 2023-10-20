@@ -32,4 +32,10 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     states?: SeriesStatesOptions<DependencyWheelSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default DependencyWheelSeriesOptions;

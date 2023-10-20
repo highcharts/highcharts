@@ -27,4 +27,10 @@ export interface HistogramPointOptions extends ColumnPointOptions {
     x2?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default HistogramPointOptions;

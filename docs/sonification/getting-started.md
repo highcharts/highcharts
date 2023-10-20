@@ -211,7 +211,7 @@ You can add both instrument and [speech tracks](https://www.highcharts.com/docs/
 
 **Context Tracks:**
 
-[Context tracks](https://www.highcharts.com/docs/sonification/context-cues) are tracks that are not tied to a data series, but play at fixed intervals to provide background context. They are often used to indicate specific values such as maximum, minimum, or zero thresholds. They are also often used or provide rythm and a sense of time, for example by playing a percussive sound on each X axis tick mark.
+[Context tracks](https://www.highcharts.com/docs/sonification/context-cues) are tracks that are not tied to a data series, but play at fixed intervals to provide background context. They are often used to indicate specific values such as maximum, minimum, or zero thresholds. They are also often used or provide rhythm and a sense of time, for example by playing a percussive sound on each X axis tick mark.
 
 **Play marker:**
 

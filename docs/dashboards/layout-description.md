@@ -3,7 +3,7 @@ Layout
 
 An essential part of any dashboard is the positioning of its components. The layout can initially be defined from the configuration object, and then changed when Edit mode is enabled. Here are the building blocks of a dashboard layout.
 
-![layout-descripton-img.png](layout-descripton-img.png)
+![layout-description-img.png](layout-description-img.png)
 * Green boxes: rows
 * Red boxes: individual cells
 * Blue boxes: nested layout inside a cell

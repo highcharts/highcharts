@@ -51,6 +51,7 @@ import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
+import NavigatorComponent from './Components/NavigatorComponent.js';
 import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
 import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
@@ -181,7 +182,8 @@ class Accessibility {
             chartMenu: new MenuComponent(),
             rangeSelector: new RangeSelectorComponent(),
             series: new SeriesComponent(),
-            zoom: new ZoomComponent()
+            zoom: new ZoomComponent(),
+            navigator: new NavigatorComponent()
         };
 
         if (a11yOptions.customComponents) {
@@ -344,6 +346,7 @@ namespace Accessibility {
         rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
         zoom: ZoomComponent;
+        navigator: NavigatorComponent;
     }
 
     export declare class ChartComposition extends Chart {
@@ -492,16 +495,16 @@ namespace Accessibility {
         SVGElementClass: typeof SVGElement,
         RangeSelectorClass?: typeof RangeSelector
     ): void {
-        // ordered:
+        // Ordered:
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
         LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
-        // RangeSelector
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
 
+        // RangeSelector
         if (RangeSelectorClass) {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }

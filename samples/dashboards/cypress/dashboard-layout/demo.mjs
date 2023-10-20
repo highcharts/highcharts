@@ -28,7 +28,8 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
-            icon: 'https://code.highcharts.com/gfx/dashboards-icons/menu.svg',
+            icon: 'https://code.highcharts.com/dashboards/gfx/' +
+                'dashboards-icons/menu.svg',
             items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',

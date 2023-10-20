@@ -37,4 +37,10 @@ export interface OrganizationPointOptions extends SankeyPointOptions {
     offset?: (number|string);
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default OrganizationPointOptions;

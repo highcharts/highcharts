@@ -104,24 +104,26 @@ function getBoostClipRect(
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
-        height: chart.plotHeight
+        height: chart.navigator ? // #17820
+            chart.navigator.top + chart.navigator.height - chart.plotTop :
+            chart.plotHeight
     };
 
-    /* Uncomment to fix #19039
-    if (target instanceof Series) {
-        clipBox = target.getClipBox();
+    // Clipping of individal series (#11906, #19039).
+    if ((target as Series).getClipBox) {
+        const { xAxis, yAxis } = target as Series;
+        clipBox = (target as Series).getClipBox();
         if (chart.inverted) {
             const lateral = clipBox.width;
             clipBox.width = clipBox.height;
             clipBox.height = lateral;
-            clipBox.x = target.yAxis.pos;
-            clipBox.y = target.xAxis.pos;
+            clipBox.x = yAxis.pos;
+            clipBox.y = xAxis.pos;
         } else {
-            clipBox.x = target.xAxis.pos;
-            clipBox.y = target.yAxis.pos;
+            clipBox.x = xAxis.pos;
+            clipBox.y = yAxis.pos;
         }
     }
-    */
 
     if (target === chart) {
         const verticalAxes =
@@ -134,8 +136,6 @@ function getBoostClipRect(
                 chart.plotTop +
                 verticalAxes[0].len
             );
-        } else {
-            clipBox.height = chart.plotHeight;
         }
     }
 

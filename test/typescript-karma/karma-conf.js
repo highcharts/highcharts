@@ -32,16 +32,7 @@ function getProperties() {
                 }
             });
         }
-
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
-        throw new Error(
-            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
-        );
-    }
+    } catch (e) {}
     return properties;
 }
 
@@ -93,6 +84,7 @@ const browserStackBrowsers = {
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
+    const properties = getProperties();
 
     /**
      * @todo ./ts project is not ready for this. We have to remove global
@@ -118,7 +110,7 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        [properties['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
@@ -205,7 +197,6 @@ module.exports = function (config) {
     };
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
-        let properties = getProperties();
         const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {

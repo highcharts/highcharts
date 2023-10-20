@@ -13176,6 +13176,63 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v1.1.1"></a>
+              <span>Highcharts Dashboards v1.1.1 (2023-09-21)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v1.1.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-1.1.1.zip" title="Download the zip archive for Highcharts Dashboards v1.1.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added <code>aria-expanded</code> for the context menu button.</li>
+              <li><code>DataTable.aliases</code> property replaces <code>DataTable.getColumnAliases()</code> and <code>DataTable.setColumnAlias()</code>.</li>
+            </ul>
+            <h3 class="release-header">
+              <a id="highcharts-dashboards-v1.1.0"></a>
+              <span>Highcharts Dashboards v1.1.0 (2023-09-19)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v1.1.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-1.1.0.zip" title="Download the zip archive for Highcharts Dashboards v1.1.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added the <code>aria-label</code> for the context menu button.</li>
+              <li>Added cellFormatter to the dataGrid module.</li>
+              <li>Added NavigatorComponent for crossfilter of a connector table.</li>
+              <li>Added custom sync demo.</li>
+              <li>Added events to the EditMode state.</li>
+              <li>Added docs about component&#39;s sync.</li>
+              <li>Added KPI Component docs as extra article.</li>
+              <li>Created additonal docs of the Highcharts Component.</li>
+              <li>Added loading indicator which turns on for a cell until a connector is loaded.</li>
+              <li>Refactored component life cycle methods.</li>
+              <li>Removed scaleElements option in the HTMLComponent.</li>
+              <li>Added dashboard es-modules docs.</li>
+              <li>Added styledMode into KPI component.</li>
+              <li>Implemented usage of connectors and sync (extremes event) for KPI component.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-1-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v1.1.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v1.1.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-1-1-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-1-1-0" class="collapse" aria-labelledby="hd-heading-1-1-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed, it was impossible to change the confirmation popup close button.</li>
+                      <li>Fixed reference translation in function arguments of MathModifier.</li>
+                      <li>Fixed, <strong>dataGridOptions</strong> were not applied to the <strong>DataGrid</strong> component.</li>
+                      <li>Removed double resize of DataGrid.</li>
+                      <li>Fixed mousewheel problem in the climate demo.</li>
+                      <li>Fixed broken reflow in the dashboards.</li>
+                      <li>Applied default connector to the dragged new element.</li>
+                      <li>Improved the edit mode sidebars and popup design.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v1.0.2"></a>
               <span>Highcharts Dashboards v1.0.2 (2023-08-10)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v1.0.2">#</a>
@@ -13187,7 +13244,6 @@
               <li>Implemented visibility sync handler.</li>
               <li>Implemented disabling of editing of the columns, which are created by Math Modifier.</li>
               <li>Added user-defined <code>redraw</code> event for dashboard components.</li>
-              <li>Added <code>getOptions()</code> method that returns config of dashboard.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
@@ -13208,6 +13264,32 @@
                       <li>Fixed, the data grid did not resize cells properly.</li>
                       <li>Improved TypeScript-support of Dashboards.</li>
                       <li>Fixed, sync was not preserved when the component updated its connector.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
+              <a id="highcharts-dashboards-v1.0.1"></a>
+              <span>Highcharts Dashboards v1.0.1 (2023-07-19)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v1.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-1.0.1.zip" title="Download the zip archive for Highcharts Dashboards v1.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added <code>getOptions()</code> method that returns config of dashboard.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-1-0-1-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v1.0.1">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v1.0.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-1-0-1"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-1-0-1" class="collapse" aria-labelledby="hd-heading-1-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
                       <li>Path to icons has changed to <code>./gfx/dashboards-icons/</code>.</li>
                       <li>Fixed problem in <code>dataGrid </code> with visible unnecessary scrollbars on Windows.</li>
                       <li>Fixed links in the API that were pointing to not existing URL&#39;s.</li>
