@@ -53,7 +53,6 @@ namespace RendererUtilities {
     }
 
     export interface DistributedBoxObject extends BoxObject {
-        del?: boolean;
         pos?: number;
     }
 
@@ -92,9 +91,12 @@ namespace RendererUtilities {
             ): number =>
                 a.target - b.target,
             restBoxes: DistributedBoxArray<T> = [], // The outranked overshoot
-            boxesLength = boxes.length;
+            boxesLength = boxes.length,
+            forDeletion: Array<number> = [],
+            push = restBoxes.push;
 
         let i: number,
+            cursor: number,
             step: number,
             overlapping = true,
             box: T & DistributedBoxObject,
@@ -114,37 +116,34 @@ namespace RendererUtilities {
             stableSort(boxes, sortByRank);
             equalRank = boxes[0].rank === boxes[boxes.length - 1].rank;
             step = equalRank ? boxesLength / 2 : -1;
-            i = equalRank ? step : boxesLength - 1;
+            cursor = equalRank ? step : boxesLength - 1;
 
             // When the boxes have equal rank (pie data labels, flags - #10073),
             // decimate the boxes by starting in the middle and gradually remove
             // more items inside the array. When they are sorted by rank, just
             // remove the ones with the lowest rank from the end.
             while (step && total > reducedLen) {
-                box = boxes[Math.floor(i)];
-                if (!box.del) {
+                i = Math.floor(cursor);
+                box = boxes[i];
+                if (forDeletion.indexOf(i) === -1) {
                     total -= box.size;
-                    box.del = true;
+                    forDeletion.push(i);
                 }
-                i += step;
+                cursor += step;
 
                 // Start over the decimation with smaller steps
-                if (equalRank && i >= boxes.length) {
+                if (equalRank && cursor >= boxes.length) {
                     step /= 2;
-                    i = step;
+                    cursor = step;
                 }
             }
 
             // Clean out the boxes marked for deletion
-            i = boxesLength;
-            while (i--) {
-                const box = boxes[i];
-                if (box.del) {
-                    erase(boxes, box);
-                    restBoxes.push(box);
-                    delete box.del;
-                }
-            }
+            forDeletion
+                .sort((a: number, b: number): number => b - a)
+                .forEach((i): number =>
+                    push.apply(restBoxes, boxes.splice(i, 1))
+                );
         }
 
         // Order by target
@@ -201,8 +200,7 @@ namespace RendererUtilities {
         }
 
         // Add the rest (hidden boxes)
-        origBoxes.push.apply(origBoxes, restBoxes as DistributedBoxArray<T>);
-
+        push.apply(origBoxes, restBoxes as DistributedBoxArray<T>);
 
         // Now the composite boxes are placed, we need to put the original boxes
         // within them
