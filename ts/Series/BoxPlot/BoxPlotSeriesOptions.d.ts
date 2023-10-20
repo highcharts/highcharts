@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
@@ -23,6 +24,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     boxDashStyle?: BoxPlotPoint['boxDashStyle'];
     fillColor?: BoxPlotPoint['fillColor'];
@@ -41,7 +43,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BoxPlotSeriesOptions;

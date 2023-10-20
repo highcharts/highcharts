@@ -23,23 +23,15 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 
 import ColorMapComposition from '../ColorMapComposition.js';
-import MapUtilities from '../../Maps/MapUtilities.js';
-const {
-    boundsFromPath
-} = MapUtilities;
+import MU from '../../Maps/MapUtilities.js';
+const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    // indirect dependency to keep product size low
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -53,42 +45,19 @@ const {
  *
  * */
 
-class MapPoint extends ScatterSeries.prototype.pointClass {
+class MapPoint extends ScatterPoint {
 
     /* *
      *
-     *  Properties
+     *  Static Functions
      *
      * */
 
-    public colorInterval?: unknown;
-
-    public geometry?: GeoJSONGeometryMultiPoint;
-
-    public group?: SVGElement;
-
-    public insetIndex?: number;
-
-    public labelrank?: number;
-
-    public options: MapPointOptions = void 0 as any;
-
-    public path: SVGPath = void 0 as any;
-
-    public projectedPath: SVGPath|undefined;
-
-    public series: MapSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    // Get the projected path based on the geometry. May also be called on
-    // mapData options (not point instances), hence static.
+    /**
+     * Get the projected path based on the geometry. May also be called on
+     * mapData options (not point instances), hence static.
+     * @private
+     */
     public static getProjectedPath(
         point: MapPoint,
         projection?: Projection
@@ -109,6 +78,44 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         return point.projectedPath || [];
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public bounds?: MapBounds;
+
+    public colorInterval?: number;
+
+    public geometry?: GeoJSONGeometryMultiPoint;
+
+    public group?: SVGElement;
+
+    public insetIndex?: number;
+
+    public labelrank?: number;
+
+    public middleX?: number;
+
+    public middleY?: number;
+
+    public options: MapPointOptions = void 0 as any;
+
+    public path: SVGPath = void 0 as any;
+
+    public projectedPath?: SVGPath;
+
+    public properties?: Record<string, (number|string)>;
+
+    public series: MapSeries = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Extend the Point object to split paths.
      * @private
@@ -119,17 +126,12 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     ): MapPoint {
 
         const series = this.series,
-            point: MapPoint = (
-                super.applyOptions.call(this, options, x) as any
-            ),
+            point = super.applyOptions(options, x) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1],
-                mapKey = super.getNestedProperty.call(
-                    point,
-                    joinKey
-                ) as string,
+                mapKey = super.getNestedProperty(joinKey) as string,
                 mapPoint = typeof mapKey !== 'undefined' &&
                     series.mapMap[mapKey];
 
@@ -143,12 +145,13 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         return point;
     }
 
-    /*
+    /**
      * Get the bounds in terms of projected units
-     * @param projection
-     * @return MapBounds|undefined The computed bounds
+     * @private
      */
-    public getProjectedBounds(projection: Projection): MapBounds|undefined {
+    public getProjectedBounds(
+        projection: Projection
+    ): (MapBounds|undefined) {
         const path = MapPoint.getProjectedPath(this, projection),
             bounds = boundsFromPath(path),
             properties = this.properties,
@@ -198,8 +201,11 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * Stop the fade-out
      * @private
      */
-    public onMouseOver(e?: PointerEvent): void {
-        U.clearTimeout(this.colorInterval as any);
+    public onMouseOver(
+        e?: PointerEvent
+    ): void {
+        U.clearTimeout(this.colorInterval);
+
         if (
             // Valid...
             (!this.isNull && this.visible) ||
@@ -209,11 +215,13 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             super.onMouseOver.call(this, e);
         } else {
             // #3401 Tooltip doesn't hide when hovering over null points
-            (this.series.onMouseOut as any)(e);
+            this.series.onMouseOut();
         }
     }
 
-    public setVisible(vis?: boolean): void {
+    public setVisible(
+        vis?: boolean
+    ): void {
         const method = vis ? 'show' : 'hide';
 
         this.visible = this.options.visible = !!vis;
@@ -241,8 +249,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      *
      * @function Highcharts.Point#zoomTo
      */
-    public zoomTo(animOptions?: (boolean|Partial<AnimationOptions>)): void {
-        const point = this as (MapPoint&MapPoint.CacheObject),
+    public zoomTo(
+        animOptions?: (boolean|Partial<AnimationOptions>)
+    ): void {
+        const point = this,
             chart = point.series.chart,
             mapView = chart.mapView;
 
@@ -251,6 +261,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         if (mapView && bounds) {
             const inset = isNumber(point.insetIndex) &&
                 mapView.insets[point.insetIndex];
+
             if (inset) {
                 // If in an inset, translate the bounds to pixels ...
                 const px1 = inset.projectedUnitsToPixels({
@@ -287,8 +298,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -298,10 +307,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPoint extends ColorMapComposition.PointComposition {
-    bounds?: MapBounds;
-    middleX?: number;
-    middleY?: number;
-    properties?: Record<string, (number|string)>;
     value: ColorMapComposition.PointComposition['value'];
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
@@ -310,18 +315,6 @@ extend(MapPoint.prototype, {
     moveToTopOnHover: ColorMapComposition.pointMembers.moveToTopOnHover,
     isValid: ColorMapComposition.pointMembers.isValid
 });
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace MapPoint {
-    export interface CacheObject {
-        bounds?: MapBounds;
-    }
-}
 
 /* *
  *

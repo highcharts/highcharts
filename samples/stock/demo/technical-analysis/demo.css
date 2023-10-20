@@ -1,0 +1,9 @@
+#container {
+    height: 730px;
+}
+
+@media screen and (max-width: 600px) {
+    #container {
+        height: 400px;
+    }
+}

@@ -48,4 +48,22 @@ describe('Component events', () => {
 
     cy.get('#update').should('have.value', 'update');
   });
+
+  it('Press ESC should close sidebar popup', () => {
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
+
+    cy.contains('Confirm').should('be.visible');
+    cy.get('body').type('{esc}');
+
+    cy.contains('Confirm').should('not.be.visible');
+  });
+
+  it('Press ESC should close confirmation popup', () => {
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
+
+    cy.contains('Confirm').should('be.visible');
+    cy.get('body').type('{esc}');
+
+    cy.contains('Confirm').should('not.be.visible');
+  });
 });

@@ -80,6 +80,8 @@ function renderContextButton(
             'aria-label',
             editMode.lang.accessibility.contextMenu.button
         );
+
+        ctxBtnElement.setAttribute('aria-expanded', 'false');
     }
 
     return ctxBtnElement;
@@ -108,7 +110,6 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
-        iconsURLPrefix,
         lang
     } = options;
 

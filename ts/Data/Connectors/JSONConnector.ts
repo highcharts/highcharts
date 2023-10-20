@@ -99,6 +99,7 @@ class JSONConnector extends DataConnector {
      * The attached parser that converts the data format to the table.
      */
     public readonly converter: JSONConverter;
+
     /* *
      *
      *  Functions
@@ -130,15 +131,14 @@ class JSONConnector extends DataConnector {
         // If already loaded, clear the current rows
         table.deleteRows();
 
-        return Promise.resolve(
-            dataUrl ?
-                fetch(dataUrl).then(
-                    (json): Promise<any> => json.json()
-                ) :
-                data ?
-                    data :
-                    []
-        )
+        return Promise
+            .resolve(
+                dataUrl ?
+                    fetch(dataUrl).then(
+                        (json): Promise<any> => json.json()
+                    ) :
+                    data || []
+            )
             .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
                     converter.parse({ data });

@@ -186,7 +186,7 @@ namespace BrokenAxis {
      */
     function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
-        if (axis.brokenAxis && axis.brokenAxis.hasBreaks) {
+        if (axis.brokenAxis?.hasBreaks) {
             axis.options.ordinal = false;
         }
     }
@@ -708,7 +708,9 @@ namespace BrokenAxis {
         ): void {
             const brokenAxis = this;
             const axis = brokenAxis.axis;
-            const hasBreaks = (isArray(breaks) && !!breaks.length);
+            const hasBreaks = isArray(breaks) &&
+                !!breaks.length &&
+                !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;

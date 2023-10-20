@@ -285,9 +285,7 @@ function applyGrouping(
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
-        visible = (
-            series.visible || !chart.options.chart.ignoreHiddenSeries
-        ),
+        reserveSpace = series.reserveSpace(),
         lastDataGrouping = this.currentDataGrouping;
 
     let currentDataGrouping,
@@ -422,7 +420,7 @@ function applyGrouping(
 
             anchorPoints(series, groupedXData, xMax);
 
-            if (visible) {
+            if (reserveSpace) {
                 adjustExtremes(xAxis, groupedXData);
             }
 
