@@ -486,6 +486,12 @@ async function setupBoard() {
                     time: {
                         show: false
                     },
+                    FD: {
+                        headerFormat: 'Days with Frost'
+                    },
+                    ID: {
+                        headerFormat: 'Days with Ice'
+                    },
                     RR1: {
                         headerFormat: 'Days with Rain'
                     },
