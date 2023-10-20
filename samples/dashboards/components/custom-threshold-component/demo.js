@@ -3,7 +3,7 @@ const {
     ComponentRegistry
 } = Dashboards;
 // eslint-disable-next-line no-underscore-dangle
-const U = Dashboards._modules['Core/Utilities.js'];
+const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
 
 class ThresholdComponent extends Component {
     constructor(cell, options) {
@@ -22,22 +22,22 @@ class ThresholdComponent extends Component {
             thresholds = options.thresholds;
 
         let CurrentComponent = ComponentRegistry.types[options.component],
-            componentOptions = U.merge(options.options || {}, {
+            componentOptions = merge(options.options || {}, {
                 value
             });
 
-        if (thresholds && U.isNumber(value)) {
+        if (thresholds && isNumber(value)) {
             for (let i = 0; i < thresholds.length; i++) {
                 const threshold = thresholds[i];
 
-                if (U.isNumber(threshold.min) && value < threshold.min) {
-                    continue;
-                }
-                if (U.isNumber(threshold.max) && value > threshold.max) {
+                if (
+                    (isNumber(threshold.min) && value < threshold.min) ||
+                    (isNumber(threshold.max) && value > threshold.max)
+                ) {
                     continue;
                 }
 
-                componentOptions = U.merge(componentOptions, threshold.options);
+                componentOptions = merge(componentOptions, threshold.options);
                 if (threshold.component) {
                     CurrentComponent =
                         ComponentRegistry.types[threshold.component];
