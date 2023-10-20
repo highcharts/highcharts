@@ -28,8 +28,7 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge,
-    isArray,
-    pushUnique
+    isArray
 } = U;
 
 /* *
@@ -113,44 +112,40 @@ class TrendLineIndicator extends SMAIndicator {
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            uniqueXVal: Array<number> = [],
             index: number = params.index || 3;
-
-        let yValues: Array<number> = [];
-
-        // If data is created from arrays (i.e OHLC), create a new array
-        // consisting of series.yData[i][params.index] values.
-        if (isArray(yVal[0])) {
-            yVal.forEach((val): number => yValues.push(val[index]));
-        } else {
-            yValues = yVal as any;
-        }
-        // Generate an array of unique xValues
-        xVal.forEach((x: number): boolean => pushUnique(uniqueXVal, x));
 
         let numerator = 0,
             denominator = 0,
-            meanX = xVal.reduce((acc, x): number => acc + x, 0) / xVal.length,
-            meanY =
-                yValues.reduce((acc, y): number => acc + y, 0) / yValues.length;
+            xValSum = 0,
+            yValSum = 0;
 
         for (let i = 0; i < xVal.length; i++) {
-            numerator += (xVal[i] - meanX) * (yValues[i] - meanY);
+            const y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
+            xValSum += xVal[i];
+            yValSum += y;
+        }
+
+        const meanX = xValSum / xVal.length,
+            meanY = yValSum / yVal.length;
+
+        for (let i = 0; i < xVal.length; i++) {
+            const y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
+            numerator += (xVal[i] - meanX) * (y - meanY);
             denominator += Math.pow(xVal[i] - meanX, 2);
         }
 
-        const alpha = numerator / denominator,
-            beta = meanY - alpha * meanX;
-
         // Calculate linear regression:
-        for (let i = 0; i < uniqueXVal.length; i++) {
-            const x = uniqueXVal[i],
-                y = alpha * x + beta;
+        for (let i = 0; i < xVal.length; i++) {
+            // Check if the xVal is already used
+            if (xVal[i] === xData[xData.length - 1]) {
+                continue;
+            }
+            const x = xVal[i],
+                y = meanY + (numerator / denominator) * (x - meanX);
 
-            // Prepare arrays required for getValues() method
-            LR[i] = [x, y];
-            xData[i] = x;
-            yData[i] = y;
+            LR.push([x, y]);
+            xData.push(x);
+            yData.push(y);
         }
 
         return {
