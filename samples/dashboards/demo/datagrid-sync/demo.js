@@ -139,7 +139,7 @@ Dashboards.board('container', {
                 text: 'Dragging points <em>will not update</em> the grid'
             },
             accessibility: {
-                description: `The second bar chart uses some random data to
+                description: `The second bar chart uses some example data to
                 show disabled editing of connector values by manually changing
                 the height of bars in a series; allowConnectorUpdate option set
                 to false.`
