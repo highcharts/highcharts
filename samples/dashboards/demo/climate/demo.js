@@ -84,7 +84,7 @@ async function setupBoard() {
                 options: {
                     csvURL: (
                         'https://www.highcharts.com/samples/data/' +
-                        'climate-cities.csv'
+                        'climate-cities-limited.csv'
                     )
                 }
             }]
@@ -254,14 +254,6 @@ async function setupBoard() {
                 chart: {
                     height: '80px',
                     type: 'spline'
-                },
-                navigator: {
-                    handles: {
-                        symbols: ['leftarrow', 'rightarrow'],
-                        lineWidth: 0,
-                        width: 8,
-                        height: 14
-                    }
                 },
                 series: [{
                     name: 'Timeline',
