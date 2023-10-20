@@ -67,7 +67,7 @@ function pointBreakColumn(e) {
 /**
  * Remove the zigzag line after the column is no longer on the break.
  */
-function pointBreakOut(e) {
+function pointOutsideOfBreak(e) {
     const point = e.point,
         brk = e.brk,
         key = ['brk', brk.from, brk.to];
@@ -102,7 +102,7 @@ Highcharts.chart('container', {
         }],
         events: {
             pointBreak: pointBreakColumn,
-            pointBreakOut: pointBreakOut
+            pointOutsideOfBreak: pointOutsideOfBreak
         }
     },
     series: [{
