@@ -520,11 +520,11 @@ async function setupBoard() {
             },
             columnAssignment: {
                 time: 'x',
-                RR1: 'value',
-                TNC: activeScale === 'C' ? 'y' : null,
-                TNF: !activeScale === 'C' ? 'y' : null,
-                TXC: activeScale === 'C' ? 'y' : null,
-                TXF: !activeScale === 'C' ? 'y' : null
+                RR1: 'y',
+                TNC: activeScale === 'C' ? 'value' : null,
+                TNF: !activeScale === 'C' ? 'value' : null,
+                TXC: activeScale === 'C' ? 'value' : null,
+                TXF: !activeScale === 'C' ? 'value' : null
             },
             sync: {
                 highlight: true
@@ -687,13 +687,12 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            type: column[0] === 'T' ? 'spline' : 'column',
+            // type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
 
         selectionTable.setColumns(cityTable.modified.getColumns(), 0);
-        console.log(cityTable.modified.getColumns());
     }
 
     // Update range selection
