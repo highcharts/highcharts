@@ -25,18 +25,14 @@ const chartOptions = {
         point: {
             descriptionFormat: 'Vitamin A content in {name}: {y} micrograms.'
         },
-        description: `The first bar chart presenting the ability to edit the
-        connector values by manually changing the height of the bars in the 
-        series, which is possible with allowConnectorUpdate option set to true.`
+        description: `The first bar chart uses some example data to present
+        the ability to edit the connector values by manually changing the height
+        of the bars in the series, which is possible with allowConnectorUpdate
+        option set to true.`
     },
     tooltip: {
-        stickOnContact: true
-    },
-    xAxis: {
-        accessibility: {
-            description: 'categories of food',
-            rangeDescription: ''
-        }
+        stickOnContact: true,
+        valueSuffix: ' mcg'
     },
     yAxis: {
         title: {
@@ -62,15 +58,13 @@ const chartOptions = {
 
 Dashboards.board('container', {
     dataPool: {
-        connectors: [
-            {
-                type: 'JSON',
-                id: 'synchro-data',
-                options: {
-                    data
-                }
+        connectors: [{
+            type: 'JSON',
+            id: 'synchro-data',
+            options: {
+                data
             }
-        ]
+        }]
     },
     gui: {
         layouts: [{
@@ -145,9 +139,10 @@ Dashboards.board('container', {
                 text: 'Dragging points <em>will not update</em> the grid'
             },
             accessibility: {
-                description: `The second bar chart showing disabled editing of
-                connector values by manually changing the height of bars in a 
-                series; allowConnectorUpdate option set to false.`
+                description: `The second bar chart uses some random data to
+                show disabled editing of connector values by manually changing
+                the height of bars in a series; allowConnectorUpdate option set
+                to false.`
             }
         })
     }, {
