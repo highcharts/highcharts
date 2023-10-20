@@ -31,7 +31,7 @@ declare class ParetoPoint extends Point {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

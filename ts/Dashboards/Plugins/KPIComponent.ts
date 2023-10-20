@@ -28,14 +28,14 @@ import type {
     Chart,
     Options,
     Highcharts as H
-} from '../Plugins/HighchartsTypes';
-import type TextOptions from './TextOptions';
+} from './HighchartsTypes';
+import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Component from './Component.js';
+import Component from '../Components/Component.js';
 import Templating from '../../Core/Templating.js';
-import KPISyncHandlers from '../Plugins/KPISyncHandlers.js';
+import KPISyncHandlers from './KPISyncHandlers.js';
 
 const {
     format
