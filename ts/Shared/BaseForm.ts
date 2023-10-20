@@ -102,7 +102,6 @@ abstract class BaseForm {
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
         const popup = this,
-            popupContainer = popup.container,
             iconsURL = this.iconsURL;
 
         // Create close popup button.
