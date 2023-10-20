@@ -19,6 +19,7 @@
 import U from '../Utilities.js';
 const {
     clamp,
+    erase,
     pick,
     stableSort
 } = U;
@@ -52,6 +53,7 @@ namespace RendererUtilities {
     }
 
     export interface DistributedBoxObject extends BoxObject {
+        del?: boolean;
         pos?: number;
     }
 
@@ -72,7 +74,7 @@ namespace RendererUtilities {
      * @private
      */
     export function distribute<T extends BoxObject>(
-        boxes: Array<T>,
+        boxes: DistributedBoxArray<T>,
         len: number,
         maxDistance?: number
     ): DistributedBoxArray<T> {
@@ -88,18 +90,21 @@ namespace RendererUtilities {
                 a: BoxObject,
                 b: BoxObject
             ): number =>
-                a.target - b.target;
+                a.target - b.target,
+            restBoxes: DistributedBoxArray<T> = [], // The outranked overshoot
+            boxesLength = boxes.length;
 
         let i: number,
+            step: number,
             overlapping = true,
-            restBoxes: Array<T> = [], // The outranked overshoot
-            box,
-            target,
-            total = 0;
+            box: T & DistributedBoxObject,
+            target: number,
+            total = 0,
+            equalRank: boolean;
 
         // If the total size exceeds the len, remove those boxes with the lowest
         // rank
-        i = boxes.length;
+        i = boxesLength;
         while (i--) {
             total += boxes[i].size;
         }
@@ -107,13 +112,39 @@ namespace RendererUtilities {
         // Sort by rank, then slice away overshoot
         if (total > reducedLen) {
             stableSort(boxes, sortByRank);
-            i = 0;
-            total = 0;
-            while (total <= reducedLen) {
-                total += boxes[i].size;
-                i++;
+            equalRank = boxes[0].rank === boxes[boxes.length - 1].rank;
+            step = equalRank ? boxesLength / 2 : -1;
+            i = equalRank ? step : boxesLength - 1;
+
+            // When the boxes have equal rank (pie data labels, flags - #10073),
+            // decimate the boxes by starting in the middle and gradually remove
+            // more items inside the array. When they are sorted by rank, just
+            // remove the ones with the lowest rank from the end.
+            while (step && total > reducedLen) {
+                box = boxes[Math.floor(i)];
+                if (!box.del) {
+                    total -= box.size;
+                    box.del = true;
+                }
+                i += step;
+
+                // Start over the decimation with smaller steps
+                if (equalRank && i >= boxes.length) {
+                    step /= 2;
+                    i = step;
+                }
             }
-            restBoxes = boxes.splice(i - 1, boxes.length);
+
+            // Clean out the boxes marked for deletion
+            i = boxesLength;
+            while (i--) {
+                const box = boxes[i];
+                if (box.del) {
+                    erase(boxes, box);
+                    restBoxes.push(box);
+                    delete box.del;
+                }
+            }
         }
 
         // Order by target
