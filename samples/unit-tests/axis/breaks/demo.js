@@ -175,7 +175,7 @@ QUnit.test(
     function (assert) {
         var iteratorPB = 0,
             iteratorAB = 0,
-            iteratorPBO = 0;
+            iteratorPOB = 0;
 
         const chart = Highcharts.chart('container', {
             chart: {
@@ -199,8 +199,8 @@ QUnit.test(
                     afterBreaks() {
                         iteratorAB++;
                     },
-                    pointBreakOut() {
-                        iteratorPBO++;
+                    pointOutsideOfBreak() {
+                        iteratorPOB++;
                     }
                 }
             },
@@ -239,16 +239,16 @@ QUnit.test(
         assert.strictEqual(iteratorPB, 8, 'All point breaks called.');
 
         assert.strictEqual(
-            iteratorPBO,
+            iteratorPOB,
             0,
             'No point breaks out should be called initially.'
         );
 
         chart.yAxis[0].setExtremes(0, 5);
         assert.strictEqual(
-            iteratorPBO,
+            iteratorPOB,
             chart.series[0].points.length,
-            'The pointBreakOut event should be called for all points.'
+            'The pointOutsideOfBreak event should be called for all points.'
         );
     }
 );

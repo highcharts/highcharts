@@ -293,14 +293,14 @@ namespace BrokenAxis {
                     axis.min :
                     pick(series.options.threshold, axis.min);
 
-                // array of breaks that have been "zoomed-out"
-                // which means that they were shown previously, but now
-                // after zoom, they are not (#19885).
-                const breaksOut = axis?.options?.breaks?.filter(
+                // Array of breaks that have been "zoomed-out" which means that
+                // they were shown previously, but now after zoom, they are not
+                // (#19885).
+                const breaksOutOfRange = axis?.options?.breaks?.filter(
                     function (brk): boolean {
                         let isOut = true;
 
-                        // iterate to see if "brk" is visible
+                        // Iterate to see if "brk" is in axis range
                         for (let i = 0; i < breaks.length; i++) {
                             const otherBreak = breaks[i];
                             if (
@@ -350,9 +350,13 @@ namespace BrokenAxis {
                         }
                     });
 
-                    breaksOut?.forEach(
+                    breaksOutOfRange?.forEach(
                         function (brk: AxisBreakOptions | undefined): void {
-                            fireEvent(axis, 'pointBreakOut', { point, brk });
+                            fireEvent(
+                                axis,
+                                'pointOutsideOfBreak',
+                                { point, brk }
+                            );
                         }
                     );
                 });
