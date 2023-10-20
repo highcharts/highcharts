@@ -31,8 +31,8 @@ class ThresholdComponent extends Component {
                 const threshold = thresholds[i];
 
                 if (
-                    (isNumber(threshold.min) && value < threshold.min) ||
-                    (isNumber(threshold.max) && value > threshold.max)
+                    isNumber(threshold.min) && value < threshold.min ||
+                    isNumber(threshold.max) && value > threshold.max
                 ) {
                     continue;
                 }
