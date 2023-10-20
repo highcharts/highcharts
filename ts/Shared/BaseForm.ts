@@ -137,17 +137,6 @@ abstract class BaseForm {
             }
         );
 
-        // close popup when click outside the popup
-        addEvent(document, 'click', (event): void => {
-            event.stopPropagation();
-            if (
-                popupContainer.style.display === 'block' &&
-                !popupContainer.contains(event.target)
-            ) {
-                popup.closeButtonEvents();
-            }
-        });
-
         return closeButton;
     }
 

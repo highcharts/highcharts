@@ -536,6 +536,17 @@ class SidebarPopup extends BaseForm {
     protected addCloseButton(
         className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
+        // close popup when click outside the popup
+        addEvent(document, 'click', (event): void => {
+            event.stopPropagation();
+            if (
+                this.container.style.display === 'block' &&
+                !this.container.contains(event.target)
+            ) {
+                this.hide();
+            }
+        });
+
         return super.addCloseButton.call(this, className);
     }
 
