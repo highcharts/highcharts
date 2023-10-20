@@ -120,7 +120,7 @@ const board = Dashboards.board('container', {
             min: 70,
             options: {
                 subtitle: `Options from previous thresholds, if not overwritten
-                or limited by the 'max' option or , are passed to the next
+                or limited by the 'max' option, are passed to the next
                 thresholds.`
             }
         }, {
