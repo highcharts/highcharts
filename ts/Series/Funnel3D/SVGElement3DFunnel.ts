@@ -30,7 +30,11 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-import SVGElement3D from '../../Core/Renderer/SVG/SVGElement3D.js';
+const { charts } = H;
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+const {
+    Element3D: SVGElement3D
+} = RendererRegistry.getRendererType().prototype;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -83,8 +87,7 @@ class SVGElement3DFunnel extends SVGElement3D {
         const funnel3d = this,
             opacity = parseFloat(value),
             parts = funnel3d.parts,
-            chart: Chart =
-                H.charts[funnel3d.renderer.chartIndex] as any,
+            chart: Chart = charts[funnel3d.renderer.chartIndex] as any,
             filterId = 'group-opacity-' + opacity + '-' + chart.index;
 
         // use default for top and bottom
@@ -138,9 +141,10 @@ class SVGElement3DFunnel extends SVGElement3D {
     public fillSetter(
         fill: ColorType
     ): this {
+        let fillColor: (Color|ColorType) = color(fill);
+
         // extract alpha channel to use the opacitySetter
-        let funnel3d = this,
-            fillColor: (Color|ColorType) = color(fill),
+        const funnel3d = this,
             alpha: number = (fillColor as any).rgba[3],
             partsWithColor: Record<string, ColorType> = {
                 // standard color for top and bottom
