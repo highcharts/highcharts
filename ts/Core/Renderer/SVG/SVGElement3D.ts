@@ -28,7 +28,10 @@ import type SVGRenderer3D from './SVGRenderer3D';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import SVGElement from './SVGElement.js';
+import RendererRegistry from '../RendererRegistry.js';
+const {
+    Element: SVGElement
+} = RendererRegistry.getRendererType().prototype;
 import U from '../../Utilities.js';
 const {
     defined,
@@ -167,7 +170,7 @@ class SVGElement3D extends SVGElement {
     ): this {
         const elem3d = this;
 
-        for (const part of (elem3d.parts || [])) {
+        for (const part of elem3d.parts) {
             // if different props for different parts
             if (partsProps) {
                 props = pick(partsProps[part], false);
@@ -280,7 +283,7 @@ class SVGElement3D extends SVGElement {
  * */
 
 interface SVGElement3D {
-    renderer: SVGRenderer3D;
+    renderer: SVGRenderer3D.Composition;
     add(parent?: SVGElement3D): this;
     attr(key: string): (number|string);
     attr(
