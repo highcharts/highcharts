@@ -27,7 +27,9 @@ import type SVGArc3D from './SVGArc3D';
 import type SVGAttributes from './SVGAttributes';
 import type SVGAttributes3D from './SVGAttributes3D';
 import type SVGCuboid from './SVGCuboid';
+import type SVGElement from './SVGElement';
 import type SVGPath from './SVGPath';
+import type SVGRenderer from './SVGRenderer';
 
 import A from '../../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -43,9 +45,7 @@ const {
     perspective,
     shapeArea
 } = Math3D;
-import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
-import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
 const {
     defined,
@@ -155,37 +155,57 @@ function curveTo(
 
 /* *
  *
- *  Class
+ *  Composition
  *
  * */
 
-class SVGRenderer3D extends SVGRenderer {
+namespace SVGRenderer3D {
 
     /* *
      *
-     *  Static Functions
+     *  Declarations
+     *
+     * */
+
+    export declare class Composition extends SVGRenderer {
+        Element3D: typeof SVGElement3D;
+        arc3d(attribs: SVGAttributes): SVGElement;
+        arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
+        cuboid(shapeArgs: SVGAttributes): SVGElement;
+        cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
+        element3d(type: string, shapeArgs: SVGAttributes): SVGElement3D;
+        face3d(args?: SVGAttributes): SVGElement;
+        polyhedron(args?: SVGAttributes): SVGElement3D;
+        toLinePath(
+            points: Array<PositionObject>,
+            closed?: boolean
+        ): SVGPath;
+        toLineSegments(points: Array<PositionObject>): SVGPath;
+    }
+
+    /* *
+     *
+     *  Functions
      *
      * */
 
     /** @private */
-    public static compose(
+    export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
         if (pushUnique(composedMembers, SVGRendererClass)) {
-            const renderer3DProto = SVGRenderer3D.prototype;
-
             extend(SVGRendererClass.prototype, {
                 Element3D: SVGElement3D,
-                arc3d: renderer3DProto.arc3d,
-                arc3dPath: renderer3DProto.arc3dPath,
-                cuboid: renderer3DProto.cuboid,
-                cuboidPath: renderer3DProto.cuboidPath,
-                element3d: renderer3DProto.element3d,
-                face3d: renderer3DProto.face3d,
-                polyhedron: renderer3DProto.polyhedron,
-                toLinePath: renderer3DProto.toLinePath,
-                toLineSegments: renderer3DProto.toLineSegments
+                arc3d,
+                arc3dPath,
+                cuboid,
+                cuboidPath,
+                element3d,
+                face3d,
+                polyhedron,
+                toLinePath,
+                toLineSegments
             });
         }
 
@@ -199,7 +219,7 @@ class SVGRenderer3D extends SVGRenderer {
      * */
 
     /** @private */
-    public toLinePath(
+    function toLinePath(
         points: Array<PositionObject>,
         closed?: boolean
     ): SVGPath {
@@ -224,7 +244,7 @@ class SVGRenderer3D extends SVGRenderer {
     }
 
     /** @private */
-    public toLineSegments(
+    function toLineSegments(
         points: Array<PositionObject>
     ): SVGPath {
         const result = [] as SVGPath;
@@ -245,9 +265,13 @@ class SVGRenderer3D extends SVGRenderer {
      * polyhedron Element.
      * @private
      */
-    public face3d(args?: SVGAttributes): SVGElement {
+    function face3d(
+        this: Composition,
+        args?: SVGAttributes
+    ): SVGElement {
         const renderer = this,
-            ret: SVGElement = this.createElement('path');
+            elementProto = renderer.Element.prototype,
+            ret: SVGElement = renderer.createElement('path');
 
         ret.vertexes = [];
         ret.insidePlotArea = false;
@@ -291,7 +315,7 @@ class SVGRenderer3D extends SVGRenderer {
                 hash.visibility = (this.enabled && area > 0) ?
                     'inherit' : 'hidden';
             }
-            return SVGElement.prototype.attr.apply(this, arguments as any);
+            return elementProto.attr.apply(this, arguments as any);
         } as any;
 
         ret.animate = function (
@@ -331,7 +355,7 @@ class SVGRenderer3D extends SVGRenderer {
                 this.attr('visibility', visibility);
             }
 
-            return SVGElement.prototype.animate.apply(this, arguments as any);
+            return elementProto.animate.apply(this, arguments as any);
         };
 
         /* eslint-enable no-invalid-this */
@@ -345,9 +369,13 @@ class SVGRenderer3D extends SVGRenderer {
      * instances.
      * @private
      */
-    public polyhedron(args?: SVGAttributes): SVGElement3D {
+    function polyhedron(
+        this: Composition,
+        args?: SVGAttributes
+    ): SVGElement3D {
         const renderer = this,
-            result = this.g(),
+            elementProto = renderer.Element.prototype,
+            result = renderer.g(),
             destroy = result.destroy;
 
         if (!this.styledMode) {
@@ -393,7 +421,7 @@ class SVGRenderer3D extends SVGRenderer {
                 }
                 delete hash.faces;
             }
-            return SVGElement.prototype.attr.apply(this, arguments as any);
+            return elementProto.attr.apply(this, arguments as any);
         } as any;
 
         result.animate = function (
@@ -418,7 +446,7 @@ class SVGRenderer3D extends SVGRenderer {
                 }
                 delete params.faces;
             }
-            return SVGElement.prototype.animate.apply(this, arguments as any);
+            return elementProto.animate.apply(this, arguments as any);
         };
 
         return result.attr(args) as SVGElement3D;
@@ -429,7 +457,8 @@ class SVGRenderer3D extends SVGRenderer {
      * @private
      * @requires highcharts-3d
      */
-    public element3d(
+    function element3d(
+        this: Composition,
         type: string,
         shapeArgs: SVGAttributes
     ): SVGElement3D {
@@ -448,7 +477,10 @@ class SVGRenderer3D extends SVGRenderer {
      * generelized, so now use simply
      * @private
      */
-    public cuboid(shapeArgs: SVGAttributes): SVGElement {
+    function cuboid(
+        this: Composition,
+        shapeArgs: SVGAttributes
+    ): SVGElement {
         return this.element3d('cuboid', shapeArgs);
     }
 
@@ -456,7 +488,10 @@ class SVGRenderer3D extends SVGRenderer {
      * Generates a cuboid path and zIndexes
      * @private
      */
-    public cuboidPath(shapeArgs: SVGAttributes3D): SVGCuboid {
+    function cuboidPath(
+        this: Composition,
+        shapeArgs: SVGAttributes3D
+    ): SVGCuboid {
         const x = shapeArgs.x || 0,
             y = shapeArgs.y || 0,
             z = shapeArgs.z || 0,
@@ -686,10 +721,13 @@ class SVGRenderer3D extends SVGRenderer {
     }
 
     /** @private */
-    public arc3d(attribs: SVGAttributes3D): SVGElement {
-
-        const wrapper = this.g(),
-            renderer = wrapper.renderer,
+    function arc3d(
+        this: Composition,
+        attribs: SVGAttributes3D
+    ): SVGElement {
+        const renderer = this,
+            wrapper = renderer.g(),
+            elementProto = renderer.Element.prototype,
             customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
 
         /**
@@ -845,7 +883,7 @@ class SVGRenderer3D extends SVGRenderer {
                     wrapper.setPaths(wrapper.attribs as any);
                 }
             }
-            return SVGElement.prototype.attr.apply(wrapper, arguments as any);
+            return elementProto.attr.apply(wrapper, arguments as any);
         } as any;
 
         // Override the animate function by sucking out custom parameters
@@ -909,7 +947,7 @@ class SVGRenderer3D extends SVGRenderer {
                 }
                 animation = anim; // Only when duration (#5572)
             }
-            return SVGElement.prototype.animate.call(
+            return elementProto.animate.call(
                 this,
                 params,
                 animation,
@@ -925,7 +963,7 @@ class SVGRenderer3D extends SVGRenderer {
             this.side1.destroy();
             this.side2.destroy();
 
-            return SVGElement.prototype.destroy.call(this);
+            return elementProto.destroy.call(this);
         };
 
         // hide all children
@@ -957,7 +995,7 @@ class SVGRenderer3D extends SVGRenderer {
      * Generate the paths required to draw a 3D arc.
      * @private
      */
-    public arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
+    function arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
         const cx = shapeArgs.x || 0, // x coordinate of the center
             cy = shapeArgs.y || 0, // y coordinate of the center
             start = shapeArgs.start || 0, // start angle
