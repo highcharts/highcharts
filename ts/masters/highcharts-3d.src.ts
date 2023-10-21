@@ -18,7 +18,7 @@ import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import SVGRenderer3D from '../Core/Renderer/SVG/SVGRenderer3D.js';
 import ZAxis from '../Core/Axis/ZAxis.js';
 import Column3DComposition from '../Series/Column3D/Column3DComposition.js';
-import '../Series/Pie3D/Pie3DComposition.js';
+import Pie3DSeries from '../Series/Pie3D/Pie3DSeries.js';
 import '../Series/Scatter3D/Scatter3DSeries.js';
 const G: AnyRecord = Highcharts;
 // Compositions
@@ -26,6 +26,7 @@ Area3DSeries.compose(G.seriesTypes.area);
 Axis3DComposition.compose(G.Axis, G.Tick);
 Chart3D.compose(G.Chart, G.Fx);
 Column3DComposition.compose(G.Series, StackItem);
+Pie3DSeries.compose(G.Series);
 Series3D.compose(G.Series);
 SVGRenderer3D.compose(RendererRegistry.getRendererType());
 ZAxis.compose(G.Chart);
