@@ -555,8 +555,9 @@ namespace DataLabel {
      */
     function drawDataLabels(
         this: Series,
-        points: Array<Point> = this.points
+        points?: Array<Point>
     ): void {
+        points = points || this.points;
         const series = this,
             chart = series.chart,
             seriesOptions = series.options,
