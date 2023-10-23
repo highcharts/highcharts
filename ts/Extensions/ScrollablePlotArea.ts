@@ -106,9 +106,7 @@ function chartApplyFixed(
         scrollableOptions = chartOptions.scrollablePlotArea,
         Renderer = RendererRegistry.getRendererType();
 
-    let fixedRenderer,
-        scrollableWidth,
-        scrollableHeight;
+    let fixedRenderer;
 
     // First render
     if (firstTime) {
@@ -173,8 +171,8 @@ function chartApplyFixed(
     }
 
     // Increase the size of the scrollable renderer and background
-    scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
-    scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
+    const scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0),
+        scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
     stop(this.container as any);
     this.container.style.width = scrollableWidth + 'px';
     this.container.style.height = scrollableHeight + 'px';
@@ -206,7 +204,7 @@ function chartApplyFixed(
     }
 
     // Mask behind the left and right side
-    let axisOffset = this.axisOffset,
+    const axisOffset = this.axisOffset,
         maskTop = this.plotTop - axisOffset[0] - 1,
         maskLeft = this.plotLeft - axisOffset[3] - 1,
         maskBottom = this.plotTop + this.plotHeight + axisOffset[2] + 1,
@@ -214,8 +212,9 @@ function chartApplyFixed(
         maskPlotRight = this.plotLeft + this.plotWidth -
             (this.scrollablePixelsX || 0),
         maskPlotBottom = this.plotTop + this.plotHeight -
-            (this.scrollablePixelsY || 0),
-        d: SVGPath;
+            (this.scrollablePixelsY || 0);
+
+    let d: SVGPath;
 
 
     if (this.scrollablePixelsX) {
@@ -267,7 +266,7 @@ function chartApplyFixed(
 function chartMoveFixedElements(
     this: Chart
 ): void {
-    let container = this.container,
+    const container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
             '.highcharts-breadcrumbs-group',
@@ -284,8 +283,9 @@ function chartMoveFixedElements(
             '.highcharts-scrollbar',
             '.highcharts-subtitle',
             '.highcharts-title'
-        ],
-        axisClass;
+        ];
+
+    let axisClass: (string|undefined);
 
     if (this.scrollablePixelsX && !this.inverted) {
         axisClass = '.highcharts-yaxis';
@@ -304,10 +304,10 @@ function chartMoveFixedElements(
         );
     }
 
-    fixedSelectors.forEach(function (className: string): void {
+    for (const className of fixedSelectors) {
         [].forEach.call(
             container.querySelectorAll(className),
-            function (elem: DOMElementType): void {
+            (elem: DOMElementType): void => {
                 (
                     elem.namespaceURI === (fixedRenderer as any).SVG_NS ?
                         (fixedRenderer as any).box :
@@ -316,7 +316,7 @@ function chartMoveFixedElements(
                 elem.style.pointerEvents = 'auto';
             }
         );
-    });
+    }
 }
 
 /** @private */
@@ -391,14 +391,11 @@ function compose(
     }
 
     if (pushUnique(composedMembers, ChartClass)) {
-        const chartProto = ChartClass.prototype;
-
         extend(ChartClass.prototype, {
             applyFixed: chartApplyFixed,
             moveFixedElements: chartMoveFixedElements,
             setUpScrolling: chartSetUpScrolling
         });
-
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
         addEvent(ChartClass, 'render', onChartRender);
     }
@@ -421,14 +418,14 @@ function onChartAfterSetChartSize(
     this: Chart,
     e: { skipAxes: boolean }
 ): void {
-
-    let scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
+    const scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
         scrollableMinWidth =
             scrollablePlotArea && scrollablePlotArea.minWidth,
         scrollableMinHeight =
-            scrollablePlotArea && scrollablePlotArea.minHeight,
-        scrollablePixelsX,
-        scrollablePixelsY,
+            scrollablePlotArea && scrollablePlotArea.minHeight;
+
+    let scrollablePixelsX: number,
+        scrollablePixelsY: number,
         corrections: (
             Record<string, Record<string, (number|string)>>|
             undefined
@@ -483,22 +480,21 @@ function onChartAfterSetChartSize(
         }
 
         if (corrections && !e.skipAxes) {
-            this.axes.forEach(function (axis): void {
+            for (const axis of this.axes) {
                 // For right and bottom axes, only fix the plot line length
                 if ((corrections as any)[axis.side]) {
                     // Get the plot lines right in getPlotLinePath,
                     // temporarily set it to the adjusted plot width.
-                    axis.getPlotLinePath = function (this): SVGPath {
-                        let marginName = (corrections as any)[axis.side].name,
+                    axis.getPlotLinePath = function (): SVGPath {
+                        const marginName = (corrections as any)[axis.side].name,
                             correctionValue =
                                 (corrections as any)[axis.side].value,
                             // axis.right or axis.bottom
-                            margin = (this as any)[marginName],
-                            path: SVGPath;
+                            margin = (this as any)[marginName];
 
                         // Temporarily adjust
                         (this as any)[marginName] = margin - correctionValue;
-                        path = Axis.prototype.getPlotLinePath.apply(
+                        const path = Axis.prototype.getPlotLinePath.apply(
                             this,
                             arguments as any
                         ) as any;
@@ -512,7 +508,7 @@ function onChartAfterSetChartSize(
                     axis.setAxisSize();
                     axis.setAxisTranslation();
                 }
-            });
+            }
         }
     }
 }
