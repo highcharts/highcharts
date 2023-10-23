@@ -31,4 +31,10 @@ export interface SVGPath3D {
     zIndexes?: Record<string, number>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SVGPath3D;
