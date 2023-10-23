@@ -26,21 +26,21 @@ WIP on vertical scrollable plot area (#9378). To do:
  *
  * */
 
+import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type Chart from '../Core/Chart/Chart';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
-import Axis from '../Core/Axis/Axis.js';
-import Chart from '../Core/Chart/Chart.js';
-import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
 const {
@@ -483,8 +483,10 @@ function onChartAfterSetChartSize(
             for (const axis of this.axes) {
                 // For right and bottom axes, only fix the plot line length
                 if ((corrections as any)[axis.side]) {
+                    const originalGetPlotLinePath = axis.getPlotLinePath;
                     // Get the plot lines right in getPlotLinePath,
                     // temporarily set it to the adjusted plot width.
+                    // eslint-disable-next-line no-loop-func
                     axis.getPlotLinePath = function (): SVGPath {
                         const marginName = (corrections as any)[axis.side].name,
                             correctionValue =
@@ -494,7 +496,7 @@ function onChartAfterSetChartSize(
 
                         // Temporarily adjust
                         (this as any)[marginName] = margin - correctionValue;
-                        const path = Axis.prototype.getPlotLinePath.apply(
+                        const path = originalGetPlotLinePath.apply(
                             this,
                             arguments as any
                         ) as any;
