@@ -125,6 +125,7 @@ jobs:
         run: |
           npm i
           npm run build -- --CI true
+          npx gulp dist-verify
           npx gulp dist-release --force-yes
 
       - name: Upload to github
