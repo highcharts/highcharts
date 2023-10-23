@@ -75,23 +75,16 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BPatternObject extends BBoxObject {
-            aspectHeight?: number;
-            aspectRatio?: number;
-            aspectWidth?: number;
-        }
-        let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
-    }
+
+interface BPatternObject extends BBoxObject {
+    aspectHeight?: number;
+    aspectRatio?: number;
+    aspectWidth?: number;
 }
+// let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
 
 // Add the predefined patterns
-const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
+const patterns = (H as any).patterns = ((): Array<PatternFill.PatternOptionsObject> => {
     const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
@@ -200,7 +193,7 @@ Point.prototype.calculatePatternDimensions = function (
         return;
     }
 
-    const bBox: Highcharts.BPatternObject = this.graphic && (
+    const bBox: BPatternObject = this.graphic && (
             this.graphic.getBBox &&
             this.graphic.getBBox(true) ||
             this.graphic.element &&

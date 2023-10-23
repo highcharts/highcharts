@@ -47,7 +47,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
-import Pane from '../Extensions/Pane.js';
+import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
 const {
@@ -821,10 +821,10 @@ function wrapChartGet(
     proceed: Function,
     id: string
 ): boolean {
-    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
+    return find(this.pane || [], (pane: Pane): boolean => (
         // @todo remove id or define id type:
-        return (pane.options as any).id === id;
-    }) || proceed.call(this, id);
+        pane.options.id === id
+    )) || proceed.call(this, id);
 }
 
 /**
