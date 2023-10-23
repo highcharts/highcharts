@@ -38,6 +38,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
+import type PositionObject from '../Core/Renderer/PositionObject';
 const {
     addEvent,
     defined,
@@ -45,7 +46,8 @@ const {
     merge,
     pick,
     removeEvent,
-    wrap
+    wrap,
+    attr
 } = U;
 
 /* *
@@ -97,18 +99,17 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
 
     // Start with subtle patterns
     [
-        'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
-        'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
-        'M 2 0 L 2 5 M 4 0 L 4 5',
-        'M 0 2 L 5 2 M 0 4 L 5 4',
-        'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
+        'M 0 0 L 7 7 M 6.3 -0.7 L 7.7 0.7 M -0.7 6.3 L 0.7 7.7',
+        'M 0 7 L 7 0 M -0.7 0.7 L 0.7 -0.7 M 6.3 7.7 L 7.7 6.3',
+        'M 2.8 0 L 2.8 7 M 5.6 0 L 5.6 7',
+        'M 0 2.8 L 7 2.8 M 0 5.6 L 7 5.6',
+        'M 0 2.1 L 3.5 2.1 L 3.5 0 M 3.5 7 L 3.5 4.9 L 7 4.9'
     ].forEach((pattern: string, i: number): void => {
         patterns.push({
             path: pattern,
             color: colors[i],
-            width: 5,
-            height: 5,
-            patternTransform: 'scale(1.4 1.4)'
+            width: 7,
+            height: 7
         });
     });
 
@@ -300,23 +301,23 @@ SVGRenderer.prototype.addPattern = function (
     animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
     let pattern: (SVGElement|undefined),
-        animate = pick(animation, true),
-        animationOptions = animObject(animate),
         path: SVGAttributes,
+        attribs: SVGAttributes,
+        id = options.id;
+    const animate = pick(animation, true),
+        animationOptions = animObject(animate),
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,
         height: number = (
             options.height || (options._height as any) || defaultSize
         ),
         color: ColorString = options.color || '#343434',
-        id = options.id,
         ren = this,
         rect = function (fill: ColorString): void {
             ren.rect(0, 0, width, height)
                 .attr({ fill })
                 .add(pattern);
-        },
-        attribs: SVGAttributes;
+        };
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -524,6 +525,103 @@ addEvent(Point, 'afterInit', function (): void {
     }
 });
 
+/**
+ * Scales the pattern element to the given scales.
+ * @private
+ *
+ * @param {SVGDOMElement} element
+ * Pattern element to scale.
+ *
+ * @param {number} scaleX
+ * X scale to apply on the element.
+ *
+ * @param {number} scaleY
+ * Y scale to apply on the element.
+ */
+function setPatternScale(
+    element: SVGDOMElement,
+    scaleX: number,
+    scaleY: number
+): void {
+    // Get the current patternTransform value.
+    let transform = attr(element, 'patternTransform') || '';
+
+    // Regular expression to match various transforms.
+    const scaleRegex = /scale\([^)]+\)/;
+    const newScale = `scale(${scaleX}, ${scaleY})`;
+
+    // Check if scale is already present.
+    if (scaleRegex.test(transform)) {
+        // Update existing scale value.
+        transform = transform.replace(scaleRegex, newScale);
+    } else {
+        // Add new scale value if not present.
+        transform = `${transform} ${newScale}`.trim();
+    }
+
+    // Set the updated patternTransform value.
+    attr(element, 'patternTransform', transform);
+}
+
+// Scale patterns inversly to the series it's used in.
+// Maintains a visual (1,1) scale regardless of size.
+addEvent(Series, 'afterRender', function (): void {
+    const series = this,
+        chart = this.chart,
+        renderer = chart.renderer,
+        patterns = renderer.patternElements;
+
+    // Only scale if we have patterns to scale.
+    if (renderer.defIds?.length && patterns) {
+        // Filter out points that doesn't have patterns assigned or is missing
+        // a transform group scale.
+        series.points.filter(function (p: Point): boolean {
+            return (
+                p.graphic?.element.hasAttribute('fill') ||
+                p.graphic?.element.hasAttribute('color') ||
+                p.graphic?.element.hasAttribute('stroke')
+            ) &&
+            (p as any).group?.scaleX &&
+            (p as any).group?.scaleY;
+        })
+            // Map up pattern id's and their scales.
+            .map(function (p: Point): [string, PositionObject] {
+                // Parse the id from the graphic element of the point.
+                const id = (
+                    p.graphic?.element.getAttribute('fill') ||
+                    p.graphic?.element.getAttribute('color') ||
+                    p.graphic?.element.getAttribute('stroke') || ''
+                )
+                    .replace(renderer.url, '')
+                    .replace('url(#', '')
+                    .replace(')', '');
+
+                const pGroup = (p as any).group;
+                return [id, { x: pGroup.scaleX, y: pGroup.scaleY }];
+            })
+            // Filter out colors and other non-patterns, as well as duplicates.
+            .filter(function (
+                [id, _]: [string, PositionObject],
+                index: number,
+                arr: [string, PositionObject][]
+            ): boolean {
+                return id.indexOf('highcharts-pattern-') !== -1 &&
+                !arr.some(function (
+                    [otherID, _]: [string, PositionObject],
+                    otherIndex: number
+                ): boolean {
+                    return otherID === id && otherIndex < index;
+                });
+            })
+            .forEach(function ([id, scale]: [string, PositionObject]): void {
+                setPatternScale(
+                    patterns[id].element as SVGDOMElement,
+                    1 / scale.x,
+                    1 / scale.y
+                );
+            });
+    }
+});
 
 // Add functionality to SVG renderer to handle patterns as complex colors
 addEvent(SVGRenderer, 'complexColor', function (
@@ -598,6 +696,7 @@ addEvent(SVGRenderer, 'complexColor', function (
             { duration: 100 }
         ));
 
+
         value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
 
     } else {
@@ -616,7 +715,6 @@ addEvent(SVGRenderer, 'complexColor', function (
     // Skip default handler
     return false;
 });
-
 
 // When animation is used, we have to recalculate pattern dimensions after
 // resize, as the bounding boxes are not available until then.
@@ -656,7 +754,6 @@ addEvent(Chart, 'endResize', function (): void {
         this.redraw(false);
     }
 });
-
 
 // Add a garbage collector to delete old patterns with autogenerated hashes that
 // are no longer being referenced.
@@ -881,4 +978,4 @@ export default PatternFill;
  * @type {number|undefined}
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file
