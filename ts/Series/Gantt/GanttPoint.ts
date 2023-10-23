@@ -20,6 +20,7 @@
 
 import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     xrange: { prototype: { pointClass: XRangePoint } }

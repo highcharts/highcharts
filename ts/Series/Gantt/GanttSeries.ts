@@ -84,6 +84,7 @@ class GanttSeries extends XRangeSeries {
     ): void {
 
         XRangeSeries.compose(AxisClass);
+
         if (!ChartClass) {
             return;
         }
@@ -143,14 +144,15 @@ class GanttSeries extends XRangeSeries {
         point: GanttPoint,
         verb: string
     ): void {
-        let series = this,
+        const series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             shapeArgs: SVGAttributes = point.shapeArgs as any,
             plotY = point.plotY,
-            graphic = point.graphic,
             state = point.selected && 'select',
-            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
+
+        let graphic = point.graphic,
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
@@ -186,7 +188,7 @@ class GanttSeries extends XRangeSeries {
                 point.graphic = graphic.destroy(); // #1269
             }
         } else {
-            XRangeSeries.prototype.drawPoint.call(series, point, verb);
+            super.drawPoint(point, verb);
         }
     }
 
@@ -195,11 +197,12 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        let series = this,
-            shapeArgs: SVGAttributes,
+        const series = this;
+
+        let shapeArgs: SVGAttributes,
             size: number;
 
-        XRangeSeries.prototype.translatePoint.call(series, point);
+        super.translatePoint(point);
 
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs as any;

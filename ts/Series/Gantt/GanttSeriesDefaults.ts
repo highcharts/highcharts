@@ -59,16 +59,15 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
         pointFormat: null as any,
 
         pointFormatter: function (this: GanttPoint): string {
-            let point = this,
+            const point = this,
                 series = point.series,
                 xAxis = series.xAxis,
                 formats = series.tooltipOptions.dateTimeLabelFormats,
                 startOfWeek = xAxis.options.startOfWeek,
                 ttOptions = series.tooltipOptions,
-                format = ttOptions.xDateFormat,
-                start: string,
-                end: string,
-                milestone = point.options.milestone,
+                milestone = point.options.milestone;
+
+            let format = ttOptions.xDateFormat,
                 retVal = '<b>' + (point.name || point.yCategory) + '</b>';
 
             if (ttOptions.pointFormat) {
@@ -84,14 +83,14 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
                 );
             }
 
-            start = series.chart.time.dateFormat(
-                format as any,
-                point.start as any
-            );
-            end = series.chart.time.dateFormat(
-                format as any,
-                point.end as any
-            );
+            const start = series.chart.time.dateFormat(
+                    format as any,
+                    point.start as any
+                ),
+                end = series.chart.time.dateFormat(
+                    format as any,
+                    point.end as any
+                );
 
             retVal += '<br/>';
 
