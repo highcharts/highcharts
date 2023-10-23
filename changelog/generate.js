@@ -82,7 +82,8 @@ const getFile = url => new Promise((resolve, reject) => {
         var log = await prLog(
             params.since,
             params.fromCache,
-            params.branches
+            params.branches,
+            params.highchartsDashboards
         ).catch(e => console.error(e));
 
         callback(log);
@@ -299,7 +300,7 @@ const getFile = url => new Promise((resolve, reject) => {
         const d = new Date();
         const review = [];
 
-        if (params.dashboards && params.release) {
+        if (params.highchartsDashboards && params.release) {
             const version = params.release;
             if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
                 throw new Error('No valid `--release x.x.x` provided.');
