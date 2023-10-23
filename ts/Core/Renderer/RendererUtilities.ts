@@ -19,8 +19,8 @@
 import U from '../Utilities.js';
 const {
     clamp,
-    erase,
     pick,
+    pushUnique,
     stableSort
 } = U;
 
@@ -125,9 +125,8 @@ namespace RendererUtilities {
             while (step && total > reducedLen) {
                 i = Math.floor(cursor);
                 box = boxes[i];
-                if (forDeletion.indexOf(i) === -1) {
+                if (pushUnique(forDeletion, i)) {
                     total -= box.size;
-                    forDeletion.push(i);
                 }
                 cursor += step;
 
