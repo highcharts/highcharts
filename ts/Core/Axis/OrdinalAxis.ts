@@ -484,6 +484,7 @@ namespace OrdinalAxis {
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
         if (positions && positions.length) {
+            // TODO: Change it back to the getIndexOfPoint implementation.
             const indexOf = positions.indexOf(val);
 
             const index = indexOf !== -1 ? indexOf : correctFloat(
