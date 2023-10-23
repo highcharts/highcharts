@@ -29,7 +29,7 @@ import Point from '../Core/Series/Point.js';
 import Pointer from '../Core/Pointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
-import '../Extensions/ScrollablePlotArea.js';
+import ScrollablePlotArea from '../Extensions/ScrollablePlotArea.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import Series from '../Core/Series/Series.js';
@@ -107,6 +107,7 @@ OverlappingDataLabels.compose(Chart);
 PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
+ScrollablePlotArea.compose(Axis, Chart, Series);
 StackingAxis.compose(Axis, Chart, Series);
 Tooltip.compose(Pointer);
 // Default Export
