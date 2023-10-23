@@ -4,6 +4,8 @@ Custom Dashboards components
 ## Custom YouTube Component
 This article shows how to create custom Dashboards Component, in this example YouTube Component.
 
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component"></iframe>
+
 Note, that to create the custom component we are using ES6, to use the `class` and `extends` keywords, which makes creating custom class much easier.
 
 We start by importing the default `Component` class and `ComponentRegistry` from `Dashboards` namespace. We can use destructuring syntax to retrieve this 2 classes. The next step is creating the class which will inherit from the imported `Component` class.
@@ -79,11 +81,12 @@ Dashboards.board({
     }]
 });
 ```
-[The live example can be found here](https://www.highcharts.com/samples/embed/dashboards/components/custom-component).
 
 ---
 ## Custom HTML Component
 The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component"></iframe>
 
 This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
 
@@ -164,12 +167,12 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component).
+
 
 ## Custom Threshold Component
 In some cases, you may want to create a component that works as if it changes its type or/and options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
 
-<iframe style="width: 100%; height: 600px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
 
 Such a component can be implemented very similarly to the previously described `YoutubeComponent`, except that you need to take into account the need to replace the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component, like that:
 
