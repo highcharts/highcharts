@@ -465,24 +465,14 @@ namespace OrdinalAxis {
         // Always use extendedPositions (#19816)
         let positions = ordinal.getExtendedPositions();
 
-        // The visible range contains only equally spaced values.
-        if (!positions) {
-            return val;
-        }
-
-        // Convert back from modivied value to pixels. // #15970
-        const pixelVal = correctFloat((val - (localMin as any)) * localA +
-                axis.minPixelPadding),
-            isInside = val >= positions[0] &&
-                val <= positions[positions.length - 1];
-
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions && positions.length) {
-            // TODO: Change it back to the getIndexOfPoint implementati
-            const indexOf = positions.indexOf(val);
-
-            const index = indexOf !== -1 ? indexOf : correctFloat(
+        if (positions.length) {
+            // Convert back from modivied value to pixels. // #15970
+            const pixelVal = correctFloat(
+                    (val - (localMin as number)) * localA +
+                    axis.minPixelPadding),
+                index = correctFloat(
                     ordinal.getIndexOfPoint(pixelVal, positions)
                 ),
                 mantissa = correctFloat(index % 1);
@@ -496,11 +486,9 @@ namespace OrdinalAxis {
 
                 return positions[Math.floor(index)] + mantissa * distance;
             }
-
-            // If the value is outside positions array, return initial value
-            return val; // #16784
         }
-        return val;
+        // If the value is outside positions array, return initial value
+        return val; // #16784
     }
 
     /**
