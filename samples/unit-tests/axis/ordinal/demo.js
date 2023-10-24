@@ -832,7 +832,7 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
     );
 });
 
-QUnit.test.skip('Zooming in ordnial', assert => {
+QUnit.test('Zooming in ordnial', assert => {
     const dataEvents = [
         [1678464000000, 1],
         [1680726300000, 2],
