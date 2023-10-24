@@ -57,18 +57,6 @@ executors:
     docker:
       - image: cimg/node:18.16.0-browsers
 
-commands:
-  generate_references_command:
-    parameters:
-      browsercount:
-        type: integer
-        default: 1
-    steps:
-      - run: "npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
-      - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
-
 jobs:
   security_scan:
     docker:
@@ -116,32 +104,6 @@ jobs:
       - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
       - <<: *persist_workspace
 
-  generate_release_reference_images:
-    <<: *defaults
-    description: Generate visual tests reference images
-    steps:
-      - <<: *load_workspace
-      - run: sudo apt-get update
-      - browser-tools/install-chrome:
-          chrome-version: 116.0.5845.96 # TODO: remove when https://github.com/CircleCI-Public/browser-tools-orb/issues/90 is fixed
-      - browser-tools/install-chromedriver
-      - run:
-          command: |
-            google-chrome --version
-            whereis google-chrome
-          name: Check Chrome
-      - generate_references_command
-      - run: "mkdir -p /home/circleci/repo/tmp/latest/"
-      - aws-s3/sync:
-          from: "/home/circleci/repo/tmp/latest/"
-          to: 's3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/' # delete existing latest references in S3 location
-          arguments: '--delete'
-      - run:
-          name: "Upload test results"
-          command: "npx gulp dist-testresults --tag ${CIRCLE_TAG} --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}"
-          when: always
-      - <<: *persist_workspace
-
   reset_visual_references_job:
     <<: *defaults
     description: Reset reference images stored on S3 based. I.e recently added/changed samples will be treated as always being a part of this release.
@@ -157,25 +119,6 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
-    unless: << pipeline.parameters.run_reset_tests >>
-    jobs:
-      - checkout_and_install:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-          context: highcharts-common
-      - generate_release_reference_images:
-          requires: [checkout_and_install]
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+(?:\.\d+)+?$/
-          context: highcharts-staging
-
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>
     jobs:
