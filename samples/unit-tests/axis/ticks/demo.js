@@ -1018,8 +1018,7 @@ QUnit.test(
             xAxis: {
                 offset: -20
             }
-        },
-        {
+        }, {
             xAxis: {
                 labels: {
                     style: {
@@ -1036,6 +1035,7 @@ QUnit.test(
             }
         }];
 
+        // Used only for test description.
         const toDotNot = (input, parentKey) => Object.keys(input || {})
             .reduce((acc, key) => {
                 const value = input[key],

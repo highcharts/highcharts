@@ -2425,8 +2425,7 @@ class Chart {
                 // iteration
                 if (!axis.axisGroup) {
                     if (axis.coll === 'colorAxis') {
-                        axis.axisParent =
-                            axis.legendItem && axis.legendItem.group;
+                        axis.axisParent = axis.legendItem?.group;
                     }
 
                     axis.gridGroup = axis.createGroup(
