@@ -41,13 +41,13 @@ import U from '../Core/Utilities.js';
 import type PositionObject from '../Core/Renderer/PositionObject';
 const {
     addEvent,
+    attr,
     defined,
     erase,
     merge,
     pick,
     removeEvent,
-    wrap,
-    attr
+    wrap
 } = U;
 
 /* *
@@ -99,17 +99,18 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
 
     // Start with subtle patterns
     [
-        'M 0 0 L 7 7 M 6.3 -0.7 L 7.7 0.7 M -0.7 6.3 L 0.7 7.7',
-        'M 0 7 L 7 0 M -0.7 0.7 L 0.7 -0.7 M 6.3 7.7 L 7.7 6.3',
-        'M 2.8 0 L 2.8 7 M 5.6 0 L 5.6 7',
-        'M 0 2.8 L 7 2.8 M 0 5.6 L 7 5.6',
-        'M 0 2.1 L 3.5 2.1 L 3.5 0 M 3.5 7 L 3.5 4.9 L 7 4.9'
+        'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+        'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+        'M 2 0 L 2 5 M 4 0 L 4 5',
+        'M 0 2 L 5 2 M 0 4 L 5 4',
+        'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
     ].forEach((pattern: string, i: number): void => {
         patterns.push({
             path: pattern,
             color: colors[i],
-            width: 7,
-            height: 7
+            width: 5,
+            height: 5,
+            patternTransform: 'scale(1.4 1.4)'
         });
     });
 
