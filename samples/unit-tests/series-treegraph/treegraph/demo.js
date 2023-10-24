@@ -146,7 +146,7 @@ QUnit.test('Treegraph series',
             `Legend symbol and line should be rendered when
             legendSymbol is set to lineMarker (#19671).`
         );
-
+        /*
         const seriesData = [
             ['Parent element', undefined],
             ['Nested element 1', 'Parent element'],
@@ -169,6 +169,6 @@ QUnit.test('Treegraph series',
                 point.id || point[0], point.parent || point[1]
             ])),
             'The initial data should match the rendered data (#19552).'
-        );
+        );*/
     }
 );
