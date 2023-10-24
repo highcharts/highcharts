@@ -462,7 +462,8 @@ namespace OrdinalAxis {
             ordinal = axis.ordinal,
             localMin = axis.old ? axis.old.min : axis.min,
             localA = axis.old ? axis.old.transA : axis.transA;
-        let positions = ordinal.positions; // for the current visible range
+        // Always use extendedPositions (#19816)
+        let positions = ordinal.getExtendedPositions();
 
         // The visible range contains only equally spaced values.
         if (!positions) {
@@ -475,16 +476,10 @@ namespace OrdinalAxis {
             isInside = val >= positions[0] &&
                 val <= positions[positions.length - 1];
 
-        // If the value is not inside the plot area, use the extended positions.
-        // (array contains also points that are outside of the plotArea).
-        if (!isInside) {
-            positions = ordinal.getExtendedPositions();
-        }
-
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
         if (positions && positions.length) {
-            // TODO: Change it back to the getIndexOfPoint implementation.
+            // TODO: Change it back to the getIndexOfPoint implementati
             const indexOf = positions.indexOf(val);
 
             const index = indexOf !== -1 ? indexOf : correctFloat(
