@@ -25,7 +25,7 @@
  *         Array of detected products.
  */
 function getProducts(logPaths) {
-    const ChildProcess = require('child_process');
+    const ChildProcess = require('node:child_process');
 
     const paths = ChildProcess
             .execSync('git diff --cached --name-only --diff-filter=ACM')
@@ -39,17 +39,11 @@ function getProducts(logPaths) {
             'Maps',
             'Stock'
         ],
-        affectedProducts = [];
+        affectedProducts = new Set();
 
     // Logging for testing and debugging
     if (logPaths) {
         console.log('paths: ', paths);
-    }
-
-    function mark(product) {
-        if (affectedProducts.indexOf(product) !== -1) {
-            affectedProducts.push(product);
-        }
     }
 
     paths.forEach(path => {
@@ -57,7 +51,7 @@ function getProducts(logPaths) {
         products.forEach(productName => {
             const productNameRegex = new RegExp(productName, 'iu');
             if (productNameRegex.test(path)) {
-                mark(productName);
+                affectedProducts.add(productName);
             }
         });
 
@@ -65,16 +59,16 @@ function getProducts(logPaths) {
         const pathParts = path.split('/');
 
         if (pathParts.length > 2 && pathParts[0] === 'ts') {
-            if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
-                mark('Core');
-                mark('Dashboards');
+            if (['Accessibility', 'Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
+                affectedProducts.add('Core');
+                affectedProducts.add('Dashboards');
             } else if (pathParts[1] === 'DataGrid') {
-                mark('Dashboards');
+                affectedProducts.add('Dashboards');
             }
         }
     });
 
-    return affectedProducts;
+    return Array.from(affectedProducts);
 }
 
 /**
