@@ -566,6 +566,11 @@ function setPatternScale(
 // Scale patterns inversly to the series it's used in.
 // Maintains a visual (1,1) scale regardless of size.
 addEvent(Series, 'afterRender', function (): void {
+    // If not a series used in a map chart, skip it.
+    if (!this.chart.mapView) {
+        return;
+    }
+
     const series = this,
         chart = this.chart,
         renderer = chart.renderer,
