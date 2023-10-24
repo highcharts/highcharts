@@ -541,7 +541,8 @@ class SidebarPopup extends BaseForm {
             event.stopPropagation();
             if (
                 this.container.style.display === 'block' &&
-                !this.container.contains(event.target)
+                !this.container.contains(event.target) &&
+                this.container.classList.value.includes('show')
             ) {
                 this.hide();
             }
