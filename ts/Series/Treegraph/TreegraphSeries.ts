@@ -19,6 +19,7 @@
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
@@ -52,7 +53,6 @@ import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
-import SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 
 /* *
@@ -234,7 +234,7 @@ class TreegraphSeries extends TreemapSeries {
                     );
                     point.linkToParent = link;
                 } else {
-                    point.linkToParent.update(
+                    point.update(
                         { collapsed: pointOptions.collapsed },
                         false
                     );

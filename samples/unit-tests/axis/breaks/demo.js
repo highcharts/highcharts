@@ -3,43 +3,39 @@ QUnit.test(
     function (assert) {
         var iter = 0;
 
-        $('#container')
-            .highcharts({
-                chart: {
-                    type: 'columnrange'
-                },
-                yAxis: {
-                    breaks: [
-                        {
-                            from: 10,
-                            to: 20
-                        }
-                    ],
-                    events: {
-                        pointBreak: function () {
-                            iter++;
-                        }
-                    }
-                },
-                series: [
+        Highcharts.chart('container', {
+            chart: {
+                type: 'columnrange'
+            },
+            yAxis: {
+                breaks: [
                     {
-                        data: [
-                            [0, 5, 15],
-                            [1, 0, 30]
-                        ]
+                        from: 10,
+                        to: 20
                     }
-                ]
-            })
-            .highcharts();
+                ],
+                events: {
+                    pointBreak: function () {
+                        iter++;
+                    }
+                }
+            },
+            series: [
+                {
+                    data: [
+                        [0, 5, 15],
+                        [1, 0, 30]
+                    ]
+                }
+            ]
+        });
 
         assert.strictEqual(iter, 1, 'pointBreak called');
     }
 );
 
 QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
-    var chart;
-
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         title: {
             text: 'Y axis translation failed'
         },
@@ -69,57 +65,53 @@ QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
         ]
     });
 
-    chart = $('#container').highcharts();
-
     assert.equal(chart.yAxis[0].min, 0, 'Min makes sense');
     assert.equal(chart.yAxis[0].max, 3, 'Max stops at break');
 });
 
 QUnit.test('Null inside break (#4275)', function (assert) {
-    var chart = $('#container')
-        .highcharts({
-            title: {
-                text: 'Sample of a simple break'
-            },
-            subtitle: {
-                text: 'Line should be interrupted between 5 and 10'
-            },
-            plotOptions: {
-                series: {
-                    connectNulls: false
-                }
-            },
-            xAxis: {
-                tickInterval: 1,
-                breaks: [
-                    {
-                        from: 5,
-                        to: 10,
-                        breakSize: 1
-                    }
-                ]
-            },
-            series: [
+    let chart = Highcharts.chart('container', {
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: false
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [
                 {
-                    marker: {
-                        enabled: true
-                    },
-                    data: (function () {
-                        var arr = [],
-                            i;
-                        for (i = 0; i < 20; i++) {
-                            if (i <= 5 || i >= 10) {
-                                arr.push(i);
-                            } else {
-                                arr.push(null);
-                            }
-                        }
-                        return arr;
-                    }())
+                    from: 5,
+                    to: 10,
+                    breakSize: 1
                 }
             ]
-        })
-        .highcharts();
+        },
+        series: [
+            {
+                marker: {
+                    enabled: true
+                },
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 20; i++) {
+                        if (i <= 5 || i >= 10) {
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
+                        }
+                    }
+                    return arr;
+                }())
+            }
+        ]
+    });
 
     assert.notEqual(
         chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
@@ -127,50 +119,48 @@ QUnit.test('Null inside break (#4275)', function (assert) {
         'Graph has moveTo operator'
     );
 
-    chart = $('#container')
-        .highcharts({
-            title: {
-                text: 'Sample of a simple break'
-            },
-            subtitle: {
-                text: 'Line should be interrupted between 5 and 10'
-            },
-            plotOptions: {
-                series: {
-                    connectNulls: true
-                }
-            },
-            xAxis: {
-                tickInterval: 1,
-                breaks: [
-                    {
-                        from: 5,
-                        to: 10,
-                        breakSize: 1
-                    }
-                ]
-            },
-            series: [
+    chart = Highcharts.chart('container', {
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: true
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [
                 {
-                    marker: {
-                        enabled: true
-                    },
-                    data: (function () {
-                        var arr = [],
-                            i;
-                        for (i = 0; i < 20; i++) {
-                            if (i <= 5 || i >= 10) {
-                                arr.push(i);
-                            } else {
-                                arr.push(null);
-                            }
-                        }
-                        return arr;
-                    }())
+                    from: 5,
+                    to: 10,
+                    breakSize: 1
                 }
             ]
-        })
-        .highcharts();
+        },
+        series: [
+            {
+                marker: {
+                    enabled: true
+                },
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 20; i++) {
+                        if (i <= 5 || i >= 10) {
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
+                        }
+                    }
+                    return arr;
+                }())
+            }
+        ]
+    });
 
     assert.equal(
         chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
@@ -184,12 +174,15 @@ QUnit.test(
         'series than column.(#4533)',
     function (assert) {
         var iteratorPB = 0,
-            iteratorAB = 0;
+            iteratorAB = 0,
+            iteratorPOB = 0;
 
-        $('#container').highcharts({
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 500,
-                height: 400
+                height: 400,
+                zoomType: 'y',
+                type: 'column'
             },
             yAxis: {
                 breaks: [
@@ -200,11 +193,14 @@ QUnit.test(
                     }
                 ],
                 events: {
-                    pointBreak: function () {
+                    pointBreak() {
                         iteratorPB++;
                     },
-                    afterBreaks: function () {
+                    afterBreaks() {
                         iteratorAB++;
+                    },
+                    pointOutsideOfBreak() {
+                        iteratorPOB++;
                     }
                 }
             },
@@ -217,10 +213,10 @@ QUnit.test(
                     }
                 ],
                 events: {
-                    pointBreak: function () {
+                    pointBreak() {
                         iteratorPB++;
                     },
-                    afterBreaks: function () {
+                    afterBreaks() {
                         iteratorAB++;
                     }
                 }
@@ -241,6 +237,19 @@ QUnit.test(
 
         assert.strictEqual(iteratorAB, 8, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
+
+        assert.strictEqual(
+            iteratorPOB,
+            0,
+            'No point breaks out should be called initially.'
+        );
+
+        chart.yAxis[0].setExtremes(0, 5);
+        assert.strictEqual(
+            iteratorPOB,
+            chart.series[0].points.length,
+            'The pointOutsideOfBreak event should be called for all points.'
+        );
     }
 );
 
@@ -256,83 +265,81 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
         }
     ];
 
-    var chart = $('#container')
-        .highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text:
-                    'Point break for positives and negatives, ' +
-                    'respecting treshold'
-            },
-            yAxis: {
-                tickInterval: 5000,
-                breaks: breaks,
-                events: {
-                    pointBreak: function (e) {
-                        var point = e.point,
-                            brk = e.brk,
-                            shapeArgs = point.shapeArgs,
-                            x = shapeArgs.x,
-                            y = this.toPixels(brk.from, true),
-                            w = shapeArgs.width,
-                            key = ['brk', brk.from, brk.to],
-                            path = [
-                                'M',
-                                x,
-                                y,
-                                'L',
-                                x + w * 0.25,
-                                y + 4,
-                                'L',
-                                x + w * 0.75,
-                                y - 4,
-                                'L',
-                                x + w,
-                                y
-                            ];
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text:
+                'Point break for positives and negatives, ' +
+                'respecting treshold'
+        },
+        yAxis: {
+            tickInterval: 5000,
+            breaks: breaks,
+            events: {
+                pointBreak: function (e) {
+                    var point = e.point,
+                        brk = e.brk,
+                        shapeArgs = point.shapeArgs,
+                        x = shapeArgs.x,
+                        y = this.toPixels(brk.from, true),
+                        w = shapeArgs.width,
+                        key = ['brk', brk.from, brk.to],
+                        path = [
+                            'M',
+                            x,
+                            y,
+                            'L',
+                            x + w * 0.25,
+                            y + 4,
+                            'L',
+                            x + w * 0.75,
+                            y - 4,
+                            'L',
+                            x + w,
+                            y
+                        ];
 
-                        if (!point[key]) {
-                            point[key] = this.chart.renderer
-                                .path(path)
-                                .attr({
-                                    'stroke-width': 3,
-                                    stroke: 'red'
-                                })
-                                .add(point.graphic.parentGroup);
-                        } else {
-                            point[key].attr({
-                                d: path
-                            });
-                        }
+                    if (!point[key]) {
+                        point[key] = this.chart.renderer
+                            .path(path)
+                            .attr({
+                                'stroke-width': 3,
+                                stroke: 'red'
+                            })
+                            .add(point.graphic.parentGroup);
+                    } else {
+                        point[key].attr({
+                            d: path
+                        });
                     }
                 }
+            }
+        },
+        series: [
+            {
+                name: 'Threshold 0',
+                // threshold: 0, // default
+                data: [10000, 50000, -10000, -70000]
             },
-            series: [
-                {
-                    name: 'Threshold 0',
-                    // threshold: 0, // default
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold 100k',
-                    threshold: 100000,
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold -100k',
-                    threshold: -100000,
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold null',
-                    threshold: null,
-                    data: [10000, 50000, -10000, -70000]
-                }
-            ]
-        })
-        .highcharts();
+            {
+                name: 'Threshold 100k',
+                threshold: 100000,
+                data: [10000, 50000, -10000, -70000]
+            },
+            {
+                name: 'Threshold -100k',
+                threshold: -100000,
+                data: [10000, 50000, -10000, -70000]
+            },
+            {
+                name: 'Threshold null',
+                threshold: null,
+                data: [10000, 50000, -10000, -70000]
+            }
+        ]
+    });
 
     var series = chart.series;
     // Zero breaks:

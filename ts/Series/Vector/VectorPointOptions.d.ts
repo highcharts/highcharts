@@ -29,4 +29,10 @@ export interface VectorPointOptions extends ScatterPointOptions {
     length?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default VectorPointOptions;

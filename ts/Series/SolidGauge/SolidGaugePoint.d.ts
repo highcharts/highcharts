@@ -32,7 +32,7 @@ declare class SolidGaugePoint extends GaugePoint {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 
