@@ -1,27 +1,25 @@
 import { defineConfig } from 'cypress';
 import { getProducts } from './tools/gulptasks/lib/test.js';
 
-const products = [];
+const products = new Set();
 
 for (const product of getProducts()) {
     switch (product) {
         case 'Dashboards':
-            if (!products.includes('dashboards')) {
-                products.push('dashboards');
-            }
-            if (!products.includes('data-grid')) {
-                products.push('data-grid');
-            }
+            products.add('dashboards');
+            products.add('data-grid');
             continue;
         default:
-            if (!products.includes('highcharts')) {
-                products.push('highcharts');
-            }
+            products.add('highcharts');
             continue;
     }
 }
 
-const productsPattern = products.length ? `{${products.join(',')}}` : '**';
+const productsPattern = (
+    products.length ?
+        `{${Array.from(products).join(',')}}` :
+        '**'
+);
 
 export default defineConfig({
     fixturesFolder: 'test/cypress/fixtures',

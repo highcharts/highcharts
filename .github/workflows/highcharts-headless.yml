@@ -46,7 +46,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6

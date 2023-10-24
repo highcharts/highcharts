@@ -48,7 +48,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
 
       - name: Create visual test base images
         uses: cypress-io/github-action@v6
@@ -79,7 +79,7 @@ jobs:
           runTests: false
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
 
       - name: Build Highcharts
         run: npx gulp scripts
