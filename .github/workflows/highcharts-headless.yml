@@ -103,7 +103,7 @@ jobs:
           npx gulp test --single-run --splitbrowsers Firefox
 
       - name: Run timezone tests
-        if: ${{ inputs.test_timezones }}
+        if: ${{ inputs.testTimezones }}
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 
