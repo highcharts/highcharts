@@ -282,7 +282,7 @@ class ColumnSeries extends Series {
 
         const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
-                    (xAxis.ordinal && !hasBreaks && xAxis.ordinal.slope) ||
+                    (!hasBreaks && xAxis.ordinal?.slope) ||
                 options.pointRange ||
                 xAxis.closestPointRange ||
                 xAxis.tickInterval ||
