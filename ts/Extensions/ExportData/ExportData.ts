@@ -28,7 +28,7 @@ import type {
     ExportDataLangOptions,
     ExportingCsvOptions
 } from './ExportDataOptions';
-import type Exporting from '../Exporting/Exporting';
+import Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
@@ -161,7 +161,7 @@ const composedMembers: Array<unknown> = [];
  *
  */
 function wrapLoading(
-    this: Chart,
+    this: Exporting.ChartComposition,
     fn: Function
 ): void {
     const showMessage = Boolean(this.options.exporting?.showExportInProgress);
@@ -195,13 +195,15 @@ function wrapLoading(
 function chartDownloadCSV(
     this: Exporting.ChartComposition
 ): void {
-    const csv = this.getCSV(true);
+    wrapLoading.call(this, (): void => {
+        const csv = this.getCSV(true);
 
-    downloadURL(
-        getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        this.getFilename() + '.csv'
-    );
+        downloadURL(
+            getBlobFromContent(csv, 'text/csv') ||
+                'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+            this.getFilename() + '.csv'
+        );
+    });
 }
 
 
@@ -218,8 +220,10 @@ function chartDownloadCSV(
 function chartDownloadXLS(
     this: Exporting.ChartComposition
 ): void {
-    const uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    wrapLoading.call(this, (): void => {
+        const uri = 'data:application/vnd.ms-excel;base64,',
+            template =
+            '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
             'xmlns="http://www.w3.org/TR/REC-html40">' +
             '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
@@ -236,15 +240,16 @@ function chartDownloadXLS(
             '</head><body>' +
             this.getTable(true) +
             '</body></html>',
-        base64 = function (s: string): string {
-            return win.btoa(unescape(encodeURIComponent(s))); // #50
-        };
+            base64 = function (s: string): string {
+                return win.btoa(unescape(encodeURIComponent(s))); // #50
+            };
 
-    downloadURL(
-        getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
-        this.getFilename() + '.xls'
-    );
+        downloadURL(
+            getBlobFromContent(template, 'application/vnd.ms-excel') ||
+                uri + base64(template),
+            this.getFilename() + '.xls'
+        );
+    });
 }
 
 /**
@@ -273,7 +278,7 @@ function chartGetCSV(
                 (1.1).toLocaleString()[1] :
                 '.'
         ),
-        // use ';' for direct to Excel
+        // Use ';' for direct to Excel
         itemDelimiter = pick(
             csvOptions.itemDelimiter,
             decimalPoint === ',' ? ';' : ','
@@ -612,16 +617,16 @@ function chartGetDataRows(
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
                 while (j < valueCount) {
-                    prop = pointArrayMap[j]; // y, z etc
+                    prop = pointArrayMap[j]; // Y, z etc
                     val = (mockPoint as any)[prop];
                     rows[key][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
-                        // datetime yAxis
+                        // Datetime yAxis
                         categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                             time.dateFormat(csvOptions.dateFormat as any, val) :
                             null,
-                        // linear/log yAxis
+                        // Linear/log yAxis
                         val
                     );
                     j++;
@@ -1029,12 +1034,10 @@ function chartHideData(
  * @private
  */
 function chartToggleDataTable(
-    this: Chart,
+    this: Exporting.ChartComposition,
     show?: boolean
 ): void {
-
     show = pick(show, !this.isDataTableVisible);
-
     // Create the div
     const createContainer = show && !this.dataTableDiv;
     if (createContainer) {
@@ -1082,12 +1085,12 @@ function chartToggleDataTable(
 
     if (
         options &&
-        options.menuItemDefinitions &&
-        lang &&
-        lang.viewData &&
-        lang.hideData &&
-        menuItems &&
-        exportDivElements
+            options.menuItemDefinitions &&
+            lang &&
+            lang.viewData &&
+            lang.hideData &&
+            menuItems &&
+            exportDivElements
     ) {
         const exportDivElement = exportDivElements[
             menuItems.indexOf('viewData')
@@ -1150,19 +1153,22 @@ function compose(
                 downloadCSV: {
                     textKey: 'downloadCSV',
                     onclick: function (): void {
-                        wrapLoading.call(this, this.downloadCSV);
+                        this.downloadCSV();
                     }
                 },
                 downloadXLS: {
                     textKey: 'downloadXLS',
                     onclick: function (): void {
-                        wrapLoading.call(this, this.downloadXLS);
+                        this.downloadXLS();
                     }
                 },
                 viewData: {
                     textKey: 'viewData',
                     onclick: function (): void {
-                        wrapLoading.call(this, this.toggleDataTable);
+                        wrapLoading.call(
+                            this as Exporting.ChartComposition,
+                            this.toggleDataTable
+                        );
                     }
                 }
             } as Record<string, Exporting.MenuObject>);
@@ -1386,4 +1392,4 @@ export default ExportData;
  * @type {Array<Array<string>>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
