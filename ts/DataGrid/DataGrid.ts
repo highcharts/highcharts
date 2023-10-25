@@ -269,7 +269,6 @@ class DataGrid {
 
         this.gridContainer.style.height = this.getDataGridSize() + 'px';
         this.gridContainer.role = 'figure';
-        this.gridContainer.tabIndex = 0;
 
         // Init data table
         this.dataTable = this.initDataTable();
