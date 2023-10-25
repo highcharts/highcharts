@@ -107,8 +107,9 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        const xVal: Array<number> = (series.xData as any),
+        const orgXVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = [],
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -117,7 +118,16 @@ class TrendLineIndicator extends SMAIndicator {
         let numerator = 0,
             denominator = 0,
             xValSum = 0,
-            yValSum = 0;
+            yValSum = 0,
+            counter = 0;
+
+        // Create an array of consecutive xValues, (don't remove duplicates)
+        for (let i = 0; i < orgXVal.length; i++) {
+            if (i === 0 || orgXVal[i] !== orgXVal[i - 1]) {
+                counter++;
+            }
+            xVal.push(counter);
+        }
 
         for (let i = 0; i < xVal.length; i++) {
             const y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
@@ -137,11 +147,11 @@ class TrendLineIndicator extends SMAIndicator {
         // Calculate linear regression:
         for (let i = 0; i < xVal.length; i++) {
             // Check if the xVal is already used
-            if (xVal[i] === xData[xData.length - 1]) {
+            if (orgXVal[i] === xData[xData.length - 1]) {
                 continue;
             }
-            const x = xVal[i],
-                y = meanY + (numerator / denominator) * (x - meanX);
+            const x = orgXVal[i],
+                y = meanY + (numerator / denominator) * (xVal[i] - meanX);
 
             LR.push([x, y]);
             xData.push(x);
