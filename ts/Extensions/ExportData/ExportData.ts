@@ -28,7 +28,7 @@ import type {
     ExportDataLangOptions,
     ExportingCsvOptions
 } from './ExportDataOptions';
-import Exporting from '../Exporting/Exporting';
+import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
@@ -161,7 +161,7 @@ const composedMembers: Array<unknown> = [];
  *
  */
 function wrapLoading(
-    this: Exporting.ChartComposition,
+    this: Exporting.ChartComposition | Chart,
     fn: Function
 ): void {
     const showMessage = Boolean(this.options.exporting?.showExportInProgress);
@@ -1166,7 +1166,7 @@ function compose(
                     textKey: 'viewData',
                     onclick: function (): void {
                         wrapLoading.call(
-                            this as Exporting.ChartComposition,
+                            this,
                             this.toggleDataTable
                         );
                     }
