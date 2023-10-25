@@ -43,3 +43,7 @@ items: [{
     }
 }]
 ```
+
+### Live example
+Use the context menu on the upper-right corner to enable and explore the edit mode.
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
