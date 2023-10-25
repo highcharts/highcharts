@@ -22,7 +22,7 @@
 
 import type CylinderSeriesOptions from './CylinderSeriesOptions';
 
-import CylinderComposition from './CylinderComposition.js';
+import './CylinderComposition.js';
 import CylinderPoint from './CylinderPoint.js';
 import CylinderSeriesDefaults from './CylinderSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -60,8 +60,6 @@ class CylinderSeries extends ColumnSeries {
      *  Static Properties
      *
      * */
-
-    public static compose = CylinderComposition.compose;
 
     public static defaultOptions: CylinderSeriesOptions = merge(
         ColumnSeries.defaultOptions,

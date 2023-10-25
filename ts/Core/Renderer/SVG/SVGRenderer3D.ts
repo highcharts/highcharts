@@ -20,21 +20,20 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
-import type Fx from '../../Animation/Fx';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
 import type SVGArc3D from './SVGArc3D';
 import type SVGAttributes from './SVGAttributes';
 import type SVGAttributes3D from './SVGAttributes3D';
 import type SVGCuboid from './SVGCuboid';
-import type SVGElement from './SVGElement';
+import type SVGElement3DLike from './SVGElement3DLike';
 import type SVGPath from './SVGPath';
-import type SVGRenderer from './SVGRenderer';
 
 import A from '../../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
+import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
 const {
     charts,
@@ -45,14 +44,15 @@ const {
     perspective,
     shapeArea
 } = Math3D;
+import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
+import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
 const {
     defined,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -67,20 +67,21 @@ declare module './SVGElementLike' {
         parts?: Array<string>;
         pathType?: string;
         vertexes?: Array<Position3DObject>;
+        initArgs: typeof SVGElement3D.base.initArgs;
         setPaths(attribs: SVGAttributes): void;
     }
 }
 
 declare module './SVGRendererLike' {
     interface SVGRendererLike {
-        Element3D: typeof SVGElement3D;
+        elements3d: typeof SVGElement3D;
         arc3d(attribs: SVGAttributes): SVGElement;
         arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
         cuboid(shapeArgs: SVGAttributes): SVGElement;
         cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
-        element3d(type: string, shapeArgs: SVGAttributes): SVGElement3D;
+        element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
         face3d(args?: SVGAttributes): SVGElement;
-        polyhedron(args?: SVGAttributes): SVGElement3D;
+        polyhedron(args?: SVGAttributes): SVGElement3DLike;
         toLinePath(
             points: Array<PositionObject>,
             closed?: boolean
@@ -95,8 +96,7 @@ declare module './SVGRendererLike' {
  *
  * */
 
-const composedMembers: Array<unknown> = [],
-    cos = Math.cos,
+const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,
     dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
@@ -107,109 +107,93 @@ const composedMembers: Array<unknown> = [],
  *
  * */
 
-/**
- * Method to construct a curved path. Can 'wrap' around more then 180
- * degrees.
- * @private
- */
-function curveTo(
-    cx: number,
-    cy: number,
-    rx: number,
-    ry: number,
-    start: number,
-    end: number,
-    dx: number,
-    dy: number
-): SVGPath {
-    const arcAngle = end - start;
-
-    if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
-        return [
-            curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)[0],
-            curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)[0]
-        ];
-    }
-    if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
-        return [
-            curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)[0],
-            curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)[0]
-        ];
-    }
-
-    return [[
-        'C',
-        cx + (rx * Math.cos(start)) -
-            ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
-        cy + (ry * Math.sin(start)) +
-            ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
-        cx + (rx * Math.cos(end)) +
-            ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
-        cy + (ry * Math.sin(end)) -
-            ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
-
-        cx + (rx * Math.cos(end)) + dx,
-        cy + (ry * Math.sin(end)) + dy
-    ]];
-}
+/* eslint-disable valid-jsdoc */
 
 /* *
  *
- *  Composition
+ *  Class
  *
  * */
 
-namespace SVGRenderer3D {
+class SVGRenderer3D extends SVGRenderer {
 
     /* *
      *
-     *  Declarations
-     *
-     * */
-
-    export declare class Composition extends SVGRenderer {
-        Element3D: typeof SVGElement3D;
-        arc3d(attribs: SVGAttributes): SVGElement;
-        arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
-        cuboid(shapeArgs: SVGAttributes): SVGElement;
-        cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
-        element3d(type: string, shapeArgs: SVGAttributes): SVGElement3D;
-        face3d(args?: SVGAttributes): SVGElement;
-        polyhedron(args?: SVGAttributes): SVGElement3D;
-        toLinePath(
-            points: Array<PositionObject>,
-            closed?: boolean
-        ): SVGPath;
-        toLineSegments(points: Array<PositionObject>): SVGPath;
-    }
-
-    /* *
-     *
-     *  Functions
+     *  Static Functions
      *
      * */
 
     /** @private */
-    export function compose(
-        SVGRendererClass: typeof SVGRenderer
-    ): void {
+    public static compose(SVGRendererClass: typeof SVGRenderer): void {
+        const svgRendererProto = SVGRendererClass.prototype,
+            svgRenderer3dProto = SVGRenderer3D.prototype;
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
-            extend(SVGRendererClass.prototype, {
-                Element3D: SVGElement3D,
-                arc3d,
-                arc3dPath,
-                cuboid,
-                cuboidPath,
-                element3d,
-                face3d,
-                polyhedron,
-                toLinePath,
-                toLineSegments
-            });
+        svgRendererProto.elements3d = SVGElement3D;
+        svgRendererProto.arc3d = svgRenderer3dProto.arc3d;
+        svgRendererProto.arc3dPath = svgRenderer3dProto.arc3dPath;
+        svgRendererProto.cuboid = svgRenderer3dProto.cuboid;
+        svgRendererProto.cuboidPath = svgRenderer3dProto.cuboidPath;
+        svgRendererProto.element3d = svgRenderer3dProto.element3d;
+        svgRendererProto.face3d = svgRenderer3dProto.face3d;
+        svgRendererProto.polyhedron = svgRenderer3dProto.polyhedron;
+        svgRendererProto.toLinePath = svgRenderer3dProto.toLinePath;
+        svgRendererProto.toLineSegments = svgRenderer3dProto.toLineSegments;
+    }
+
+    /**
+     * Method to construct a curved path. Can 'wrap' around more then 180
+     * degrees.
+     * @private
+     */
+    private static curveTo(
+        cx: number,
+        cy: number,
+        rx: number,
+        ry: number,
+        start: number,
+        end: number,
+        dx: number,
+        dy: number
+    ): SVGPath {
+        let result = [] as SVGPath,
+            arcAngle = end - start;
+
+        if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
+            result = result.concat(
+                this.curveTo(
+                    cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy
+                )
+            );
+            result = result.concat(
+                this.curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
+            );
+            return result;
         }
+        if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
+            result = result.concat(
+                this.curveTo(
+                    cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy
+                )
+            );
+            result = result.concat(
+                this.curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
+            );
+            return result;
+        }
+        return [[
+            'C',
+            cx + (rx * Math.cos(start)) -
+                ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+            cy + (ry * Math.sin(start)) +
+                ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+            cx + (rx * Math.cos(end)) +
+                ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+            cy + (ry * Math.sin(end)) -
+                ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
 
-
+            cx + (rx * Math.cos(end)) + dx,
+            cy + (ry * Math.sin(end)) + dy
+        ]];
     }
 
     /* *
@@ -219,16 +203,16 @@ namespace SVGRenderer3D {
      * */
 
     /** @private */
-    function toLinePath(
+    public toLinePath(
         points: Array<PositionObject>,
         closed?: boolean
     ): SVGPath {
         const result: SVGPath = [];
 
         // Put "L x y" for each point
-        for (const point of points) {
+        points.forEach(function (point: PositionObject): void {
             result.push(['L', point.x, point.y]);
-        }
+        });
 
         if (points.length) {
             // Set the first element to M
@@ -244,17 +228,14 @@ namespace SVGRenderer3D {
     }
 
     /** @private */
-    function toLineSegments(
-        points: Array<PositionObject>
-    ): SVGPath {
-        const result = [] as SVGPath;
+    public toLineSegments(points: Array<PositionObject>): SVGPath {
+        let result = [] as SVGPath,
+            m = true;
 
-        let m = true;
-
-        for (const point of points) {
+        points.forEach(function (point: PositionObject): void {
             result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
             m = !m;
-        }
+        });
 
         return result;
     }
@@ -265,13 +246,9 @@ namespace SVGRenderer3D {
      * polyhedron Element.
      * @private
      */
-    function face3d(
-        this: Composition,
-        args?: SVGAttributes
-    ): SVGElement {
+    public face3d(args?: SVGAttributes): SVGElement {
         const renderer = this,
-            elementProto = renderer.Element.prototype,
-            ret: SVGElement = renderer.createElement('path');
+            ret: SVGElement = this.createElement('path');
 
         ret.vertexes = [];
         ret.insidePlotArea = false;
@@ -315,7 +292,7 @@ namespace SVGRenderer3D {
                 hash.visibility = (this.enabled && area > 0) ?
                     'inherit' : 'hidden';
             }
-            return elementProto.attr.apply(this, arguments as any);
+            return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;
 
         ret.animate = function (
@@ -355,7 +332,7 @@ namespace SVGRenderer3D {
                 this.attr('visibility', visibility);
             }
 
-            return elementProto.animate.apply(this, arguments as any);
+            return SVGElement.prototype.animate.apply(this, arguments as any);
         };
 
         /* eslint-enable no-invalid-this */
@@ -369,13 +346,9 @@ namespace SVGRenderer3D {
      * instances.
      * @private
      */
-    function polyhedron(
-        this: Composition,
-        args?: SVGAttributes
-    ): SVGElement3D {
+    public polyhedron(args?: SVGAttributes): SVGElement3DLike {
         const renderer = this,
-            elementProto = renderer.Element.prototype,
-            result = renderer.g(),
+            result = this.g(),
             destroy = result.destroy;
 
         if (!this.styledMode) {
@@ -385,6 +358,8 @@ namespace SVGRenderer3D {
         }
 
         result.faces = [];
+
+        /* eslint-disable no-invalid-this */
 
         // destroy all children
         result.destroy = function (): undefined {
@@ -421,7 +396,7 @@ namespace SVGRenderer3D {
                 }
                 delete hash.faces;
             }
-            return elementProto.attr.apply(this, arguments as any);
+            return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;
 
         result.animate = function (
@@ -446,10 +421,12 @@ namespace SVGRenderer3D {
                 }
                 delete params.faces;
             }
-            return elementProto.animate.apply(this, arguments as any);
+            return SVGElement.prototype.animate.apply(this, arguments as any);
         };
 
-        return result.attr(args) as SVGElement3D;
+        /* eslint-enable no-invalid-this */
+
+        return result.attr(args) as unknown as SVGElement3DLike;
     }
 
     /**
@@ -457,30 +434,25 @@ namespace SVGRenderer3D {
      * @private
      * @requires highcharts-3d
      */
-    function element3d(
-        this: Composition,
-        type: string,
-        shapeArgs: SVGAttributes
-    ): SVGElement3D {
+    public element3d(type: string, shapeArgs: SVGAttributes): SVGElement {
         // base
-        const elem3d = new SVGElement3D.types[type]();
+        const ret = this.g();
+
+        // extend
+        extend(ret, (this.elements3d as any)[type]);
 
         // init
-        elem3d.init(this, 'g');
-        elem3d.initArgs(shapeArgs);
+        ret.initArgs(shapeArgs);
 
         // return
-        return elem3d;
+        return ret;
     }
 
     /**
      * generelized, so now use simply
      * @private
      */
-    function cuboid(
-        this: Composition,
-        shapeArgs: SVGAttributes
-    ): SVGElement {
+    public cuboid(shapeArgs: SVGAttributes): SVGElement {
         return this.element3d('cuboid', shapeArgs);
     }
 
@@ -488,11 +460,8 @@ namespace SVGRenderer3D {
      * Generates a cuboid path and zIndexes
      * @private
      */
-    function cuboidPath(
-        this: Composition,
-        shapeArgs: SVGAttributes3D
-    ): SVGCuboid {
-        const x = shapeArgs.x || 0,
+    public cuboidPath(shapeArgs: SVGAttributes3D): SVGCuboid {
+        let x = shapeArgs.x || 0,
             y = shapeArgs.y || 0,
             z = shapeArgs.z || 0,
             // For side calculation (right/left)
@@ -502,6 +471,19 @@ namespace SVGRenderer3D {
             w = shapeArgs.width || 0,
             d = shapeArgs.depth || 0,
             chart = charts[this.chartIndex],
+            front: Array<number>,
+            back: Array<number>,
+            top: Array<number>,
+            bottom: Array<number>,
+            left: Array<number>,
+            right: Array<number>,
+            shape: Array<number|Array<number>>,
+            path1: Array<PositionObject>,
+            path2: Array<PositionObject>,
+            path3: Array<PositionObject>,
+            isFront: number,
+            isTop: number,
+            isRight: number,
             options3d = (chart as any).options.chart.options3d,
             alpha = options3d.alpha,
             // Priority for x axis is the biggest,
@@ -511,9 +493,6 @@ namespace SVGRenderer3D {
             // (needs to be set because of stacking)
             incrementY = 10,
             incrementZ = 100,
-            forcedSides: Array<string> = [];
-
-        let shape: Array<number|Array<number>>,
             zIndex = 0,
 
             // The 8 corners of the cube
@@ -549,7 +528,11 @@ namespace SVGRenderer3D {
                 x: x,
                 y: y,
                 z: z + d
-            }];
+            }],
+
+            forcedSides: Array<string> = [],
+
+            pickShape;
 
         // apply perspective
         pArr = perspective(pArr, chart as any, shapeArgs.insidePlotArea);
@@ -558,122 +541,122 @@ namespace SVGRenderer3D {
          * helper method to decide which side is visible
          * @private
          */
-        const mapSidePath = (i: number): Position3DObject => {
-                // Added support for 0 value in columns, where height is 0
-                // but the shape is rendered.
-                // Height is used from 1st to 6th element of pArr
-                if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
-                    return {
-                        x: pArr[i].x,
-                        // when height is 0 instead of cuboid we render plane
-                        // so it is needed to add fake 10 height to imitate
-                        // cuboid for side calculation
-                        y: pArr[i].y + 10,
-                        z: pArr[i].z
-                    };
-                }
-                // It is needed to calculate dummy sides (front/back) for
-                // breaking points in case of x and depth values. If column has
-                // side, it means that x values of front and back side are
-                // different.
-                if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
-                    return {
-                        x: pArr[i].x + 10,
-                        // when height is 0 instead of cuboid we render plane
-                        // so it is needed to add fake 10 height to imitate
-                        // cuboid for side calculation
-                        y: pArr[i].y,
-                        z: pArr[i].z
-                    };
-                }
-                // Added dummy depth
-                if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
+        function mapSidePath(i: number): Position3DObject {
+            // Added support for 0 value in columns, where height is 0
+            // but the shape is rendered.
+            // Height is used from 1st to 6th element of pArr
+            if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
+                return {
+                    x: pArr[i].x,
+                    // when height is 0 instead of cuboid we render plane
+                    // so it is needed to add fake 10 height to imitate cuboid
+                    // for side calculation
+                    y: pArr[i].y + 10,
+                    z: pArr[i].z
+                };
+            }
+            // It is needed to calculate dummy sides (front/back) for breaking
+            // points in case of x and depth values. If column has side,
+            // it means that x values of front and back side are different.
+            if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
+                return {
+                    x: pArr[i].x + 10,
+                    // when height is 0 instead of cuboid we render plane
+                    // so it is needed to add fake 10 height to imitate cuboid
+                    // for side calculation
+                    y: pArr[i].y,
+                    z: pArr[i].z
+                };
+            }
+            // Added dummy depth
+            if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
 
-                    return {
-                        x: pArr[i].x,
-                        // when height is 0 instead of cuboid we render plane
-                        // so it is needed to add fake 10 height to imitate
-                        // cuboid for side calculation
-                        y: pArr[i].y,
-                        z: pArr[i].z + 10
-                    };
-                }
-                return pArr[i];
-            },
-            /**
-             * method creating the final side
-             * @private
-             */
-            mapPath = (i: number): Position3DObject => (pArr[i]),
+                return {
+                    x: pArr[i].x,
+                    // when height is 0 instead of cuboid we render plane
+                    // so it is needed to add fake 10 height to imitate cuboid
+                    // for side calculation
+                    y: pArr[i].y,
+                    z: pArr[i].z + 10
+                };
+            }
+            return pArr[i];
+        }
 
-            /**
-             * First value - path with specific face
-             * Second  value - added info about side for later calculations.
-             *                 Possible second values are 0 for path1, 1 for
-             *                 path2 and -1 for no path chosen.
-             * Third value - string containing information about current side of
-             *               cuboid for forcing side rendering.
-             * @private
-             */
-            pickShape = (
-                verticesIndex1: Array<number>,
-                verticesIndex2: Array<number>,
-                side?: string
-            ): Array<number|Array<number>> => {
-                const // An array of vertices for cuboid face
-                    face1: Array<Position3DObject> =
-                        verticesIndex1.map(mapPath),
-                    face2: Array<Position3DObject> =
-                        verticesIndex2.map(mapPath),
-                    // dummy face is calculated the same way as standard face,
-                    // but if cuboid height is 0 additional height is added so
-                    // it is possible to use this vertices array for visible
-                    // face calculation
-                    dummyFace1: Array<Position3DObject> =
-                        verticesIndex1.map(mapSidePath),
-                    dummyFace2: Array<Position3DObject> =
-                        verticesIndex2.map(mapSidePath);
+        /**
+         * method creating the final side
+         * @private
+         */
+        function mapPath(i: number): Position3DObject {
+            return pArr[i];
+        }
 
-                let ret = [[] as any, -1];
-
-                if (shapeArea(face1) < 0) {
+        /**
+         * First value - path with specific face
+         * Second  value - added information about side for later calculations.
+         * Possible second values are 0 for path1, 1 for path2 and -1 for no
+         * path chosen.
+         * Third value - string containing information about current side
+         * of cuboid for forcing side rendering.
+         * @private
+         */
+        pickShape = function (
+            verticesIndex1: Array<number>,
+            verticesIndex2: Array<number>,
+            side?: string
+        ): Array<number|Array<number>> {
+            let ret = [[] as any, -1],
+                // An array of vertices for cuboid face
+                face1: Array<Position3DObject> =
+                    verticesIndex1.map(mapPath),
+                face2: Array<Position3DObject> =
+                    verticesIndex2.map(mapPath),
+                // dummy face is calculated the same way as standard face, but
+                // if cuboid height is 0 additional height is added so it is
+                // possible to use this vertices array for visible face
+                // calculation
+                dummyFace1: Array<Position3DObject> =
+                    verticesIndex1.map(mapSidePath),
+                dummyFace2: Array<Position3DObject> =
+                    verticesIndex2.map(mapSidePath);
+            if (shapeArea(face1) < 0) {
+                ret = [face1, 0];
+            } else if (shapeArea(face2) < 0) {
+                ret = [face2, 1];
+            } else if (side) {
+                forcedSides.push(side);
+                if (shapeArea(dummyFace1) < 0) {
                     ret = [face1, 0];
-                } else if (shapeArea(face2) < 0) {
+                } else if (shapeArea(dummyFace2) < 0) {
                     ret = [face2, 1];
-                } else if (side) {
-                    forcedSides.push(side);
-                    if (shapeArea(dummyFace1) < 0) {
-                        ret = [face1, 0];
-                    } else if (shapeArea(dummyFace2) < 0) {
-                        ret = [face2, 1];
-                    } else {
-                        ret = [face1, 0]; // force side calculation.
-                    }
+                } else {
+                    ret = [face1, 0]; // force side calculation.
                 }
-                return ret;
-            };
+            }
+            return ret;
+        };
 
         // front or back
-        const front = [3, 2, 1, 0],
-            back = [7, 6, 5, 4];
+        front = [3, 2, 1, 0];
+        back = [7, 6, 5, 4];
         shape = pickShape(front, back, 'front');
-        const path1 = shape[0] as any,
-            isFront = shape[1] as any;
+        path1 = shape[0] as any;
+        isFront = shape[1] as any;
 
 
         // top or bottom
-        const top = [1, 6, 7, 0],
-            bottom = [4, 5, 2, 3];
+        top = [1, 6, 7, 0];
+        bottom = [4, 5, 2, 3];
         shape = pickShape(top, bottom, 'top');
-        const path2 = shape[0] as any,
-            isTop = shape[1] as any;
+        path2 = shape[0] as any;
+        isTop = shape[1] as any;
 
         // side
-        const right = [1, 2, 5, 6],
-            left = [0, 7, 4, 3];
+        right = [1, 2, 5, 6];
+        left = [0, 7, 4, 3];
         shape = pickShape(right, left, 'side');
-        const path3 = shape[0] as any,
-            isRight = shape[1] as any;
+        path3 = shape[0] as any;
+        isRight = shape[1] as any;
 
         /* New block used for calculating zIndex. It is basing on X, Y and Z
         position of specific columns. All zIndexes (for X, Y and Z values) are
@@ -721,13 +704,10 @@ namespace SVGRenderer3D {
     }
 
     /** @private */
-    function arc3d(
-        this: Composition,
-        attribs: SVGAttributes3D
-    ): SVGElement {
-        const renderer = this,
-            wrapper = renderer.g(),
-            elementProto = renderer.Element.prototype,
+    public arc3d(attribs: SVGAttributes3D): SVGElement {
+
+        const wrapper = this.g(),
+            renderer = wrapper.renderer,
             customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
 
         /**
@@ -738,9 +718,8 @@ namespace SVGRenderer3D {
         function suckOutCustom(
             params: SVGAttributes3D
         ): (SVGAttributes3D|undefined) {
-            const ca = {} as SVGAttributes;
-
             let hasCA = false,
+                ca = {} as SVGAttributes,
                 key: string;
 
             params = merge(params); // Don't mutate the original object
@@ -778,25 +757,27 @@ namespace SVGRenderer3D {
 
             // These faces are added outside the wrapper group because the
             // z-index relates to neighbour elements as well
-            for (const face of ['out', 'inn', 'side1', 'side2']) {
+            ['out', 'inn', 'side1', 'side2'].forEach(function (face): void {
                 wrapper[face]
                     .attr({
                         'class': className + ' highcharts-3d-side'
                     })
                     .add(parent);
-            }
+            });
         };
 
         // Cascade to faces
-        for (const fn of ['addClass', 'removeClass']) {
+        ['addClass', 'removeClass'].forEach(function (fn): void {
             wrapper[fn] = function (): void {
                 const args = arguments;
 
-                for (const face of ['top', 'out', 'inn', 'side1', 'side2']) {
+                ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (
+                    face: string
+                ): void {
                     wrapper[face][fn].apply(wrapper[face], args);
-                }
+                });
             };
-        }
+        });
 
         /**
          * Compute the transformed paths and set them to the composite shapes
@@ -851,20 +832,21 @@ namespace SVGRenderer3D {
 
         // Apply the same value to all. These properties cascade down to the
         // children when set to the composite arc3d.
-        for (
-            const setter of
-            ['opacity', 'translateX', 'translateY', 'visibility']
-        ) {
-            wrapper[setter + 'Setter'] = function (
-                value: any,
-                key: string
-            ): void {
-                wrapper[key] = value;
-                for (const el of ['out', 'inn', 'side1', 'side2', 'top']) {
-                    wrapper[el].attr(key, value);
-                }
-            };
-        }
+        ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
+            function (setter: string): void {
+                wrapper[setter + 'Setter'] = function (
+                    value: any,
+                    key: string
+                ): void {
+                    wrapper[key] = value;
+                    ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (
+                        el: string
+                    ): void {
+                        wrapper[el].attr(key, value);
+                    });
+                };
+            }
+        );
 
         // Override attr to remove shape attributes and use those to set child
         // paths
@@ -883,7 +865,7 @@ namespace SVGRenderer3D {
                     wrapper.setPaths(wrapper.attribs as any);
                 }
             }
-            return elementProto.attr.apply(wrapper, arguments as any);
+            return SVGElement.prototype.attr.apply(wrapper, arguments as any);
         } as any;
 
         // Override the animate function by sucking out custom parameters
@@ -895,13 +877,13 @@ namespace SVGRenderer3D {
             animation?: (boolean|Partial<AnimationOptions>),
             complete?: Function
         ): SVGElement {
-            const from = this.attribs,
+            let paramArr,
+                from = this.attribs,
+                to: SVGAttributes,
+                anim,
                 randomProp = (
                     'data-' + Math.random().toString(26).substring(2, 9)
                 );
-
-            let paramArr,
-                to: SVGAttributes;
 
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
@@ -910,9 +892,7 @@ namespace SVGRenderer3D {
             delete params.alpha;
             delete params.beta;
 
-            const anim = animObject(
-                pick(animation, this.renderer.globalAnimation)
-            );
+            anim = animObject(pick(animation, this.renderer.globalAnimation));
 
             if (anim.duration) {
                 paramArr = suckOutCustom(params);
@@ -925,12 +905,16 @@ namespace SVGRenderer3D {
                 if (paramArr) {
                     to = (paramArr as any)[0]; // custom attr
                     anim.step = function (a: unknown, fx: Fx): void {
-                        const interpolate = (key: string): number => (
-                            (from as any)[key] + (
+
+                        /**
+                         * @private
+                         */
+                        function interpolate(key: string): number {
+                            return (from as any)[key] + (
                                 pick((to as any)[key], (from as any)[key]) -
                                 (from as any)[key]
-                            ) * fx.pos
-                        );
+                            ) * fx.pos;
+                        }
 
                         if (fx.prop === randomProp) {
                             (fx.elem as any).setPaths(merge(from, {
@@ -947,7 +931,7 @@ namespace SVGRenderer3D {
                 }
                 animation = anim; // Only when duration (#5572)
             }
-            return elementProto.animate.call(
+            return SVGElement.prototype.animate.call(
                 this,
                 params,
                 animation,
@@ -963,7 +947,7 @@ namespace SVGRenderer3D {
             this.side1.destroy();
             this.side2.destroy();
 
-            return elementProto.destroy.call(this);
+            return SVGElement.prototype.destroy.call(this);
         };
 
         // hide all children
@@ -995,7 +979,7 @@ namespace SVGRenderer3D {
      * Generate the paths required to draw a 3D arc.
      * @private
      */
-    function arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
+    public arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
         const cx = shapeArgs.x || 0, // x coordinate of the center
             cy = shapeArgs.y || 0, // y coordinate of the center
             start = shapeArgs.start || 0, // start angle
@@ -1023,11 +1007,15 @@ namespace SVGRenderer3D {
             ['M', cx + (rx * cs), cy + (ry * ss)]
         ];
 
-        top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0)
+        );
         top.push([
             'L', cx + (irx * ce), cy + (iry * se)
         ]);
-        top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0)
+        );
         top.push(['Z']);
 
         // OUTSIDE
@@ -1066,7 +1054,9 @@ namespace SVGRenderer3D {
             ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
         ];
 
-        out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0)
+        );
 
         // When shape is wide, it can cross both, (c) and (d) edges, when using
         // startAngle
@@ -1076,24 +1066,32 @@ namespace SVGRenderer3D {
                 'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
             ]);
             // Curve to the right edge of the slice (d)
-            out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy)
+            );
             // Go to the inner side
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Curve to the true end of the slice
-            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0)
+            );
             // Go to the outer side
             out.push([
                 'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
             ]);
             // Go back to middle (d)
-            out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy)
+            );
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Go back to the left edge
-            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0)
+            );
 
         // But shape can cross also only (c) edge:
         } else if (end > PI - a && start < PI - a) {
@@ -1104,13 +1102,17 @@ namespace SVGRenderer3D {
                 cy + (ry * Math.sin(end2)) + dy
             ]);
             // Curve to the true end of the slice
-            out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy)
+            );
             // Go to the inner side
             out.push([
                 'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
             ]);
             // Go back to the artifical end2
-            out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0)
+            );
         }
 
         out.push([
@@ -1118,7 +1120,9 @@ namespace SVGRenderer3D {
             cx + (rx * Math.cos(end2)) + dx,
             cy + (ry * Math.sin(end2)) + dy
         ]);
-        out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy)
+        );
         out.push(['Z']);
 
         // INSIDE
@@ -1126,13 +1130,17 @@ namespace SVGRenderer3D {
             ['M', cx + (irx * cs), cy + (iry * ss)]
         ];
 
-        inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0)
+        );
         inn.push([
             'L',
             cx + (irx * Math.cos(end)) + dx,
             cy + (iry * Math.sin(end)) + dy
         ]);
-        inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy)
+        );
         inn.push(['Z']);
 
         // SIDES
@@ -1153,9 +1161,8 @@ namespace SVGRenderer3D {
 
         // correction for changed position of vanishing point caused by alpha
         // and beta rotations
-        const angleCorr = Math.atan2(dy, -dx);
-
-        let angleEnd = Math.abs(end + angleCorr),
+        let angleCorr = Math.atan2(dy, -dx),
+            angleEnd = Math.abs(end + angleCorr),
             angleStart = Math.abs(start + angleCorr),
             angleMid = Math.abs((start + end) / 2 + angleCorr);
 

@@ -11,6 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import CylinderSeries from '../../Series/Cylinder/CylinderSeries.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-CylinderSeries.compose(RendererRegistry.getRendererType());
+import '../../Series/Cylinder/CylinderSeries.js';
