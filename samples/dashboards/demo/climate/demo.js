@@ -287,6 +287,15 @@ async function setupBoard() {
                             }
                         }
                     }
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Range selector. Highcharts Interactive Chart.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is displaying range of dates from
+                    1951-01-01 to 2010-10-25.`
                 }
             }
         }, {
@@ -395,7 +404,17 @@ async function setupBoard() {
                 tooltip: {
                     shape: 'rect',
                     distance: -60,
-                    useHTML: true
+                    useHTML: true,
+                    stickOnContact: true
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is maximal temperature,
+                    average temperature and days of rain.`
                 }
             }
         }, {
@@ -414,6 +433,11 @@ async function setupBoard() {
                     text: 'Average Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
+                },
+                yAxis: {
+                    accessibility: {
+                        description: 'Celsius'
+                    }
                 }
             },
             states: {
@@ -433,6 +457,11 @@ async function setupBoard() {
                     text: 'Maximal Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
+                },
+                yAxis: {
+                    accessibility: {
+                        description: 'Celsius'
+                    }
                 }
             },
             states: {
@@ -452,6 +481,11 @@ async function setupBoard() {
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
+                },
+                yAxis: {
+                    accessibility: {
+                        description: 'Days'
+                    }
                 }
             },
             states: {
@@ -563,18 +597,34 @@ async function setupBoard() {
                     y: 5
                 },
                 tooltip: {
-                    enabled: true
+                    enabled: true,
+                    stickOnContact: true
                 },
                 xAxis: {
                     type: 'datetime',
                     dateTimeLabelFormats: {
                         month: '%e. %b'
+                    },
+                    accessibility: {
+                        description: 'Years'
                     }
                 },
                 yAxis: {
                     title: {
                         text: 'Celsius'
+                    },
+                    accessibility: {
+                        description: 'Celsius'
                     }
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is displaying maximal temperature,
+                    average temperature and days of rain.`
                 }
             }
         }]
