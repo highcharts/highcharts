@@ -27,6 +27,7 @@
 
         series: [{
             name: 'Europe',
+            borderColor: 'rgba(0, 0, 0, 0.4)',
             states: {
                 inactive: {
                     enabled: false
@@ -36,12 +37,16 @@
                 exposeAsGroupOnly: true
             }
         }, {
+            type: 'geoheatmap',
             name: 'Train Stations Near Airports',
             opacity: 0.7,
             colsize: 5,
             rowsize: 5,
             borderWidth: 1,
-            type: 'geoheatmap',
+            interpolation: {
+                enabled: true,
+                blur: 2
+            },
             data: [{
                 lon: 10,
                 lat: 50,

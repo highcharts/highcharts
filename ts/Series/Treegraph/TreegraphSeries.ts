@@ -19,6 +19,7 @@
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
@@ -52,7 +53,6 @@ import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
-import SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 
 /* *
@@ -234,7 +234,7 @@ class TreegraphSeries extends TreemapSeries {
                     );
                     point.linkToParent = link;
                 } else {
-                    point.linkToParent.update(
+                    point.update(
                         { collapsed: pointOptions.collapsed },
                         false
                     );
@@ -528,44 +528,53 @@ class TreegraphSeries extends TreemapSeries {
      * @private
      */
     public pointAttribs(
-        point: TreegraphPoint,
+        point?: TreegraphPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            levelOptions =
+            levelOptions = point &&
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
-            options = point.options,
+            options = point && point.options,
             stateOptions =
                 (levelOptions.states &&
                     (levelOptions.states as any)[state as any]) ||
                 {};
-        point.options.marker = merge(
-            series.options.marker,
-            levelOptions.marker,
-            point.options.marker
-        );
+
+        if (point) {
+            point.options.marker = merge(
+                series.options.marker,
+                levelOptions.marker,
+                point.options.marker
+            );
+        }
+
         const linkColor = pick(
-                stateOptions.link && stateOptions.link.color,
-                options.link && options.link.color,
-                levelOptions.link && levelOptions.link.color,
+                stateOptions && stateOptions.link && stateOptions.link.color,
+                options && options.link && options.link.color,
+                levelOptions && levelOptions.link && levelOptions.link.color,
                 series.options.link && series.options.link.color
             ),
             linkLineWidth = pick(
-                stateOptions.link && stateOptions.link.lineWidth,
-                options.link && options.link.lineWidth,
-                levelOptions.link && levelOptions.link.lineWidth,
+                stateOptions && stateOptions.link &&
+                stateOptions.link.lineWidth,
+                options && options.link && options.link.lineWidth,
+                levelOptions && levelOptions.link &&
+                levelOptions.link.lineWidth,
                 series.options.link && series.options.link.lineWidth
             ),
             attribs = seriesProto.pointAttribs.call(series, point, state);
 
-        if (point.isLink) {
-            attribs.stroke = linkColor;
-            attribs['stroke-width'] = linkLineWidth;
-            delete attribs.fill;
+        if (point) {
+            if (point.isLink) {
+                attribs.stroke = linkColor;
+                attribs['stroke-width'] = linkLineWidth;
+                delete attribs.fill;
+            }
+            if (!point.visible) {
+                attribs.opacity = 0;
+            }
         }
-        if (!point.visible) {
-            attribs.opacity = 0;
-        }
+
         return attribs;
     }
 

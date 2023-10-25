@@ -3,43 +3,39 @@ QUnit.test(
     function (assert) {
         var iter = 0;
 
-        $('#container')
-            .highcharts({
-                chart: {
-                    type: 'columnrange'
-                },
-                yAxis: {
-                    breaks: [
-                        {
-                            from: 10,
-                            to: 20
-                        }
-                    ],
-                    events: {
-                        pointBreak: function () {
-                            iter++;
-                        }
-                    }
-                },
-                series: [
+        Highcharts.chart('container', {
+            chart: {
+                type: 'columnrange'
+            },
+            yAxis: {
+                breaks: [
                     {
-                        data: [
-                            [0, 5, 15],
-                            [1, 0, 30]
-                        ]
+                        from: 10,
+                        to: 20
                     }
-                ]
-            })
-            .highcharts();
+                ],
+                events: {
+                    pointBreak: function () {
+                        iter++;
+                    }
+                }
+            },
+            series: [
+                {
+                    data: [
+                        [0, 5, 15],
+                        [1, 0, 30]
+                    ]
+                }
+            ]
+        });
 
         assert.strictEqual(iter, 1, 'pointBreak called');
     }
 );
 
 QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
-    var chart;
-
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         title: {
             text: 'Y axis translation failed'
         },
@@ -69,57 +65,53 @@ QUnit.test('Sub-millisecond tooltip (#4247)', function (assert) {
         ]
     });
 
-    chart = $('#container').highcharts();
-
     assert.equal(chart.yAxis[0].min, 0, 'Min makes sense');
     assert.equal(chart.yAxis[0].max, 3, 'Max stops at break');
 });
 
 QUnit.test('Null inside break (#4275)', function (assert) {
-    var chart = $('#container')
-        .highcharts({
-            title: {
-                text: 'Sample of a simple break'
-            },
-            subtitle: {
-                text: 'Line should be interrupted between 5 and 10'
-            },
-            plotOptions: {
-                series: {
-                    connectNulls: false
-                }
-            },
-            xAxis: {
-                tickInterval: 1,
-                breaks: [
-                    {
-                        from: 5,
-                        to: 10,
-                        breakSize: 1
-                    }
-                ]
-            },
-            series: [
+    let chart = Highcharts.chart('container', {
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: false
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [
                 {
-                    marker: {
-                        enabled: true
-                    },
-                    data: (function () {
-                        var arr = [],
-                            i;
-                        for (i = 0; i < 20; i++) {
-                            if (i <= 5 || i >= 10) {
-                                arr.push(i);
-                            } else {
-                                arr.push(null);
-                            }
-                        }
-                        return arr;
-                    }())
+                    from: 5,
+                    to: 10,
+                    breakSize: 1
                 }
             ]
-        })
-        .highcharts();
+        },
+        series: [
+            {
+                marker: {
+                    enabled: true
+                },
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 20; i++) {
+                        if (i <= 5 || i >= 10) {
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
+                        }
+                    }
+                    return arr;
+                }())
+            }
+        ]
+    });
 
     assert.notEqual(
         chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
@@ -127,50 +119,48 @@ QUnit.test('Null inside break (#4275)', function (assert) {
         'Graph has moveTo operator'
     );
 
-    chart = $('#container')
-        .highcharts({
-            title: {
-                text: 'Sample of a simple break'
-            },
-            subtitle: {
-                text: 'Line should be interrupted between 5 and 10'
-            },
-            plotOptions: {
-                series: {
-                    connectNulls: true
-                }
-            },
-            xAxis: {
-                tickInterval: 1,
-                breaks: [
-                    {
-                        from: 5,
-                        to: 10,
-                        breakSize: 1
-                    }
-                ]
-            },
-            series: [
+    chart = Highcharts.chart('container', {
+        title: {
+            text: 'Sample of a simple break'
+        },
+        subtitle: {
+            text: 'Line should be interrupted between 5 and 10'
+        },
+        plotOptions: {
+            series: {
+                connectNulls: true
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [
                 {
-                    marker: {
-                        enabled: true
-                    },
-                    data: (function () {
-                        var arr = [],
-                            i;
-                        for (i = 0; i < 20; i++) {
-                            if (i <= 5 || i >= 10) {
-                                arr.push(i);
-                            } else {
-                                arr.push(null);
-                            }
-                        }
-                        return arr;
-                    }())
+                    from: 5,
+                    to: 10,
+                    breakSize: 1
                 }
             ]
-        })
-        .highcharts();
+        },
+        series: [
+            {
+                marker: {
+                    enabled: true
+                },
+                data: (function () {
+                    var arr = [],
+                        i;
+                    for (i = 0; i < 20; i++) {
+                        if (i <= 5 || i >= 10) {
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
+                        }
+                    }
+                    return arr;
+                }())
+            }
+        ]
+    });
 
     assert.equal(
         chart.series[0].graph.element.getAttribute('d').indexOf('M', 1),
@@ -184,12 +174,15 @@ QUnit.test(
         'series than column.(#4533)',
     function (assert) {
         var iteratorPB = 0,
-            iteratorAB = 0;
+            iteratorAB = 0,
+            iteratorPOB = 0;
 
-        $('#container').highcharts({
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 500,
-                height: 400
+                height: 400,
+                zoomType: 'y',
+                type: 'column'
             },
             yAxis: {
                 breaks: [
@@ -200,11 +193,14 @@ QUnit.test(
                     }
                 ],
                 events: {
-                    pointBreak: function () {
+                    pointBreak() {
                         iteratorPB++;
                     },
-                    afterBreaks: function () {
+                    afterBreaks() {
                         iteratorAB++;
+                    },
+                    pointOutsideOfBreak() {
+                        iteratorPOB++;
                     }
                 }
             },
@@ -217,10 +213,10 @@ QUnit.test(
                     }
                 ],
                 events: {
-                    pointBreak: function () {
+                    pointBreak() {
                         iteratorPB++;
                     },
-                    afterBreaks: function () {
+                    afterBreaks() {
                         iteratorAB++;
                     }
                 }
@@ -239,8 +235,21 @@ QUnit.test(
             ]
         });
 
-        assert.strictEqual(iteratorAB, 7, 'All after breaks called');
-        assert.strictEqual(iteratorPB, 8, 'All point breaks called');
+        assert.strictEqual(iteratorAB, 7, 'All after breaks called.');
+        assert.strictEqual(iteratorPB, 8, 'All point breaks called.');
+
+        assert.strictEqual(
+            iteratorPOB,
+            0,
+            'No point breaks out should be called initially.'
+        );
+
+        chart.yAxis[0].setExtremes(0, 5);
+        assert.strictEqual(
+            iteratorPOB,
+            chart.series[0].points.length,
+            'The pointOutsideOfBreak event should be called for all points.'
+        );
     }
 );
 
@@ -256,83 +265,81 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
         }
     ];
 
-    var chart = $('#container')
-        .highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text:
-                    'Point break for positives and negatives, ' +
-                    'respecting treshold'
-            },
-            yAxis: {
-                tickInterval: 5000,
-                breaks: breaks,
-                events: {
-                    pointBreak: function (e) {
-                        var point = e.point,
-                            brk = e.brk,
-                            shapeArgs = point.shapeArgs,
-                            x = shapeArgs.x,
-                            y = this.toPixels(brk.from, true),
-                            w = shapeArgs.width,
-                            key = ['brk', brk.from, brk.to],
-                            path = [
-                                'M',
-                                x,
-                                y,
-                                'L',
-                                x + w * 0.25,
-                                y + 4,
-                                'L',
-                                x + w * 0.75,
-                                y - 4,
-                                'L',
-                                x + w,
-                                y
-                            ];
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text:
+                'Point break for positives and negatives, ' +
+                'respecting treshold'
+        },
+        yAxis: {
+            tickInterval: 5000,
+            breaks: breaks,
+            events: {
+                pointBreak: function (e) {
+                    var point = e.point,
+                        brk = e.brk,
+                        shapeArgs = point.shapeArgs,
+                        x = shapeArgs.x,
+                        y = this.toPixels(brk.from, true),
+                        w = shapeArgs.width,
+                        key = ['brk', brk.from, brk.to],
+                        path = [
+                            'M',
+                            x,
+                            y,
+                            'L',
+                            x + w * 0.25,
+                            y + 4,
+                            'L',
+                            x + w * 0.75,
+                            y - 4,
+                            'L',
+                            x + w,
+                            y
+                        ];
 
-                        if (!point[key]) {
-                            point[key] = this.chart.renderer
-                                .path(path)
-                                .attr({
-                                    'stroke-width': 3,
-                                    stroke: 'red'
-                                })
-                                .add(point.graphic.parentGroup);
-                        } else {
-                            point[key].attr({
-                                d: path
-                            });
-                        }
+                    if (!point[key]) {
+                        point[key] = this.chart.renderer
+                            .path(path)
+                            .attr({
+                                'stroke-width': 3,
+                                stroke: 'red'
+                            })
+                            .add(point.graphic.parentGroup);
+                    } else {
+                        point[key].attr({
+                            d: path
+                        });
                     }
                 }
+            }
+        },
+        series: [
+            {
+                name: 'Threshold 0',
+                // threshold: 0, // default
+                data: [10000, 50000, -10000, -70000]
             },
-            series: [
-                {
-                    name: 'Threshold 0',
-                    // threshold: 0, // default
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold 100k',
-                    threshold: 100000,
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold -100k',
-                    threshold: -100000,
-                    data: [10000, 50000, -10000, -70000]
-                },
-                {
-                    name: 'Threshold null',
-                    threshold: null,
-                    data: [10000, 50000, -10000, -70000]
-                }
-            ]
-        })
-        .highcharts();
+            {
+                name: 'Threshold 100k',
+                threshold: 100000,
+                data: [10000, 50000, -10000, -70000]
+            },
+            {
+                name: 'Threshold -100k',
+                threshold: -100000,
+                data: [10000, 50000, -10000, -70000]
+            },
+            {
+                name: 'Threshold null',
+                threshold: null,
+                data: [10000, 50000, -10000, -70000]
+            }
+        ]
+    });
 
     var series = chart.series;
     // Zero breaks:
@@ -530,7 +537,7 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
 });
 
 QUnit.test(
-    'Axis breaks and column width in Highcharts Stock (#5979)',
+    'Axis breaks and column metrics in Highcharts Stock.',
     function (assert) {
         var data = [];
         for (
@@ -566,7 +573,284 @@ QUnit.test(
 
         assert.ok(
             chart.series[0].points[0].graphic.attr('width') > 7,
-            'Width is great enough'
+            'Width is great enough, #5979.'
+        );
+
+        // #16368
+        chart.xAxis[0].update({
+            breaks: undefined
+        });
+
+        chart.series[0].update({
+            data: [
+                [
+                    1630421539000,
+                    36.25
+                ],
+                [
+                    1630422102000,
+                    35.8
+                ],
+                [
+                    1630424354000,
+                    36
+                ],
+                [
+                    1630425480000,
+                    35.5
+                ],
+                [
+                    1630426043000,
+                    35.45
+                ],
+                [
+                    1630427732000,
+                    36.4
+                ],
+                [
+                    1630428295000,
+                    36.15
+                ],
+                [
+                    1630429984000,
+                    35.95
+                ],
+                [
+                    1630430547000,
+                    36.15
+                ],
+                [
+                    1630431110000,
+                    36.1
+                ],
+                [
+                    1630433362000,
+                    34.05
+                ]
+            ]
+        });
+
+        const initialWidth = chart.series[0].points[0].shapeArgs.width;
+
+        chart.xAxis[0].update({
+            breaks: []
+        });
+
+        assert.strictEqual(
+            initialWidth,
+            chart.series[0].points[0].shapeArgs.width,
+            'Presence of axis.breaks option should not affect the columns width, #16368.'
+        );
+
+        chart.series[0].update({
+            type: 'candlestick',
+            data: [
+                [
+                    1630417035000,
+                    37.15,
+                    37.15,
+                    37.15,
+                    37.15
+                ],
+                [
+                    1630418161000,
+                    37.2,
+                    37.2,
+                    35.5,
+                    35.5
+                ],
+                [
+                    1630418724000,
+                    34.6,
+                    35.3,
+                    34.4,
+                    35
+                ],
+                [
+                    1630419287000,
+                    35,
+                    35,
+                    34.95,
+                    34.95
+                ],
+                [
+                    1630419850000,
+                    35.1,
+                    35.1,
+                    35.1,
+                    35.1
+                ],
+                [
+                    1630420413000,
+                    35.3,
+                    36.25,
+                    35.3,
+                    36.25
+                ],
+                [
+                    1630421539000,
+                    36.25,
+                    36.35,
+                    36.25,
+                    36.35
+                ],
+                [
+                    1630422102000,
+                    35.8,
+                    35.8,
+                    35.8,
+                    35.8
+                ],
+                [
+                    1630424354000,
+                    36,
+                    36,
+                    35.75,
+                    35.75
+                ],
+                [
+                    1630425480000,
+                    35.5,
+                    35.5,
+                    35.45,
+                    35.45
+                ],
+                [
+                    1630426043000,
+                    35.45,
+                    35.45,
+                    35.45,
+                    35.45
+                ],
+                [
+                    1630427732000,
+                    36.4,
+                    36.4,
+                    36.15,
+                    36.15
+                ],
+                [
+                    1630428295000,
+                    36.15,
+                    36.15,
+                    35.95,
+                    35.95
+                ],
+                [
+                    1630429984000,
+                    35.95,
+                    36.15,
+                    35.95,
+                    36.15
+                ],
+                [
+                    1630430547000,
+                    36.15,
+                    36.15,
+                    36.15,
+                    36.15
+                ],
+                [
+                    1630431110000,
+                    36.1,
+                    36.1,
+                    34.05,
+                    34.4
+                ],
+                [
+                    1630433362000,
+                    34.05,
+                    34.05,
+                    34.05,
+                    34.05
+                ],
+                [
+                    1630499233000,
+                    35.45,
+                    35.55,
+                    35.45,
+                    35.55
+                ],
+                [
+                    1630502611000,
+                    35.55,
+                    35.55,
+                    34.65,
+                    34.65
+                ],
+                [
+                    1630507115000,
+                    34.6,
+                    35.1,
+                    34.6,
+                    35.1
+                ],
+                [
+                    1630507678000,
+                    35.1,
+                    35.9,
+                    35.1,
+                    35.9
+                ],
+                [
+                    1630508241000,
+                    36,
+                    37.05,
+                    36,
+                    37.05
+                ],
+                [
+                    1630509367000,
+                    37.05,
+                    37.05,
+                    37.05,
+                    37.05
+                ],
+                [
+                    1630511056000,
+                    37.05,
+                    37.05,
+                    37.05,
+                    37.05
+                ],
+                [
+                    1630513308000,
+                    37.05,
+                    38,
+                    37.05,
+                    38
+                ],
+                [
+                    1630513871000,
+                    38.05,
+                    39.15,
+                    38.05,
+                    39.15
+                ],
+                [
+                    1630514434000,
+                    39.15,
+                    39.75,
+                    39.15,
+                    39.75
+                ]
+            ]
+        }, false);
+
+        chart.xAxis[0].update({
+            breaks: [{
+                from: 1630433362000,
+                to: 1630499233000
+            }]
+        }, false);
+
+        chart.xAxis[0].setExtremes();
+
+        const point1 = chart.series[0].points[0].shapeArgs,
+            point2 = chart.series[0].points[1].shapeArgs;
+        assert.ok(
+            point1.x + point2.width < point2.x,
+            'Points should not overlap after applying breaks property, #16368.'
         );
     }
 );
@@ -599,8 +883,20 @@ QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
     });
     assert.strictEqual(
         chart.xAxis[0].brokenAxis.hasBreaks,
+        false,
+        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: false.'
+    );
+
+    chart.xAxis[0].update({
+        breaks: [{
+            from: 1,
+            to: 2
+        }]
+    });
+    assert.strictEqual(
+        chart.xAxis[0].brokenAxis.hasBreaks,
         true,
-        'Axis.breaks: [{}] results in Axis.brokenAxis.hasBreaks: true.'
+        'Axis.breaks with correct config results in Axis.brokenAxis.hasBreaks: true.'
     );
 });
 

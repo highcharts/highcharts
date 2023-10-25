@@ -32,7 +32,6 @@ import type {
     Series,
     SeriesOptions
 } from './HighchartsTypes';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
@@ -106,6 +105,10 @@ class HighchartsComponent extends Component {
              * @default true
              */
             allowConnectorUpdate: true,
+            className: [
+                Component.defaultOptions.className,
+                `${Component.defaultOptions.className}-highcharts`
+            ].join(' '),
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {

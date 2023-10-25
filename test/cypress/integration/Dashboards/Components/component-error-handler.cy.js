@@ -6,18 +6,18 @@ describe('Component error handling', () => {
   })
 
   it('Component that type does not exist, should throw error', () => {
-    cy.get('#dashboard-col-0 h1').should('have.class', titleClassError);
+    cy.get('#dashboard-col-0 h2').should('have.class', titleClassError);
   });
 
   it('HTML Component that has no tagName param, should throw error', () => {
-    cy.get('#dashboard-col-1 h1').should('have.class', titleClassError);
+    cy.get('#dashboard-col-1 h2').should('have.class', titleClassError);
   });
 
   it('Highcharts Component that has wrong configuration, should throw error', () => {
-    cy.get('#dashboard-col-2 h1').should('have.class', titleClassError);
+    cy.get('#dashboard-col-2 h2').should('have.class', titleClassError);
   });
 
   it('Highcharts Component that has wrong configuration, should throw error', () => {
-    cy.get('#dashboard-col-3 h1').should('have.class', titleClassError);
+    cy.get('#dashboard-col-3 h2').should('have.class', titleClassError);
   });
 });

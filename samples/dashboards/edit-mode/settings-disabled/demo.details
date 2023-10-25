@@ -1,0 +1,6 @@
+---
+ name: Disabling the settings button in toolbars
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

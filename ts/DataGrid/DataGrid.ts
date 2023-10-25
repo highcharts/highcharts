@@ -108,6 +108,13 @@ class DataGrid {
     public rowElements: Array<HTMLElement>;
 
     /**
+     * The observer object that calls the callback when the container is
+     * resized.
+     * @internal
+     */
+    public containerResizeObserver: ResizeObserver;
+
+    /**
      * The rendered grid.
      * @internal
      */
@@ -210,6 +217,13 @@ class DataGrid {
      */
     private bottom = false;
 
+    /**
+     * An array of the min column widths for which the text in headers is not
+     * overflown.
+     * @internal
+     */
+    private overflowHeaderWidths: Array<number | null> = [];
+
 
     /* *
      *
@@ -262,6 +276,10 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
         this.render();
+
+        (this.containerResizeObserver = new ResizeObserver((): void => {
+            this.updateGridElements();
+        })).observe(this.container);
     }
 
     /**
@@ -313,12 +331,13 @@ class DataGrid {
                         header.style.flex = flex;
                     }
                 }
-                this.rowElements.forEach((row): void => {
-                    const cellElement = row.children[index] as HTMLElement;
+                for (let i = 0; i < this.rowElements.length; i++) {
+                    const cellElement =
+                        this.rowElements[i].children[index] as HTMLElement;
                     if (cellElement) {
                         cellElement.style.flex = flex;
                     }
-                });
+                }
             }
         } else {
             if (headers) {
@@ -326,11 +345,12 @@ class DataGrid {
                     (headers.children[i] as HTMLElement).style.flex = flex;
                 }
             }
-            this.rowElements.forEach((row): void => {
+            for (let i = 0; i < this.rowElements.length; i++) {
+                const row = this.rowElements[i];
                 for (let i = 0; i < row.children.length; i++) {
                     (row.children[i] as HTMLElement).style.flex = flex;
                 }
-            });
+            }
         }
 
         this.renderColumnDragHandles();
@@ -483,7 +503,6 @@ class DataGrid {
 
         if (options.columnHeaders.enabled) {
             this.columnNames = this.getColumnsToDisplay();
-            this.outerContainer.style.top = this.options.cellHeight + 'px';
             this.renderColumnHeaders();
         } else {
             this.outerContainer.style.top = '0';
@@ -497,6 +516,8 @@ class DataGrid {
         if (options.columnHeaders.enabled && options.resizableColumns) {
             this.renderColumnDragHandles();
         }
+
+        this.updateGridElements();
     }
 
 
@@ -522,8 +543,12 @@ class DataGrid {
      * scrolling.
      *
      * @internal
+     *
+     * @param force
+     * Whether to force the update regardless of whether the position of the
+     * first row has not been changed.
      */
-    private updateVisibleCells(): void {
+    private updateVisibleCells(force: boolean = false): void {
         let scrollTop = this.outerContainer.scrollTop;
         if (H.isSafari) {
             scrollTop = clamp(
@@ -537,7 +562,7 @@ class DataGrid {
         }
 
         let i = Math.floor(scrollTop / this.options.cellHeight);
-        if (i === this.prevTop) {
+        if (i === this.prevTop && !force) {
             return;
         }
         this.prevTop = i;
@@ -601,7 +626,7 @@ class DataGrid {
      */
     private onScroll(e: Event): void {
         e.preventDefault();
-        window.requestAnimationFrame(this.updateVisibleCells.bind(this));
+        window.requestAnimationFrame(this.updateVisibleCells.bind(this, false));
     }
 
 
@@ -639,7 +664,6 @@ class DataGrid {
             this.emit({ type: 'cellClick', input });
         }
     }
-
 
     /**
      * Handle the user clicking somewhere outside the grid.
@@ -879,7 +903,9 @@ class DataGrid {
     private formatCell(cellValue: JSON.Primitive, column: string): string {
         const options = this.options,
             columnOptions = options.columns[column],
-            cellFormat = columnOptions && columnOptions.cellFormat;
+            cellFormat = columnOptions && columnOptions.cellFormat,
+            cellFormatter = columnOptions && columnOptions.cellFormatter;
+
         let formattedCell = defined(cellValue) ? cellValue : '';
 
         if (cellFormat) {
@@ -896,6 +922,10 @@ class DataGrid {
                 formattedCell =
                     Templating.format(cellFormat, { text: cellValue });
             }
+        }
+
+        if (cellFormatter) {
+            return cellFormatter.call({ value: cellValue });
         }
 
         return formattedCell.toString();
@@ -923,7 +953,8 @@ class DataGrid {
         }
 
         const headerEl = makeDiv(className);
-        headerEl.style.height = this.options.cellHeight + 'px';
+        headerEl.style.minHeight = this.options.cellHeight + 'px';
+        headerEl.style.maxHeight = this.options.cellHeight * 2 + 'px';
 
         headerEl.textContent = this.formatHeaderCell(columnName);
         parentEl.appendChild(headerEl);
@@ -956,6 +987,118 @@ class DataGrid {
             this.headerContainer,
             this.outerContainer
         );
+
+        this.updateColumnHeaders();
+    }
+
+
+    /**
+     * Refresh container elements to adapt them to new container dimensions.
+     * @internal
+     */
+    private updateGridElements(): void {
+        this.updateColumnHeaders();
+        this.redrawRowElements();
+        this.updateDragHandlesPosition();
+    }
+
+    /**
+     * Update the column headers of the table.
+     * @internal
+     */
+    private updateColumnHeaders(): void {
+        const headersContainer = this.columnHeadersContainer;
+        if (!headersContainer) {
+            return;
+        }
+
+        // Handle overflowing text in headers.
+        for (let i = 0; i < this.columnNames.length; i++) {
+            const columnName = this.columnNames[i],
+                header = headersContainer.children[i] as HTMLElement,
+                overflowWidth = this.overflowHeaderWidths[i];
+
+            if (header.scrollWidth > header.clientWidth) {
+                // Headers overlap
+                this.overflowHeaderWidths[i] = header.scrollWidth;
+                header.textContent = this.formatHeaderCell(columnName)
+                    .split(' ').map((word): string => (
+                        word.length < 4 ? word : word.slice(0, 2) + '...'
+                    )).join(' ');
+            } else if (
+                isNumber(overflowWidth) &&
+                overflowWidth <= header.clientWidth
+            ) {
+                // Headers not overlap
+                this.overflowHeaderWidths[i] = null;
+                header.textContent = this.formatHeaderCell(columnName);
+            }
+
+        }
+
+        // Offset the outer container by the header row height.
+        this.outerContainer.style.top = headersContainer.clientHeight + 'px';
+
+        // Header columns alignment when scrollbar is shown.
+        if (headersContainer.lastChild) {
+            (headersContainer.lastChild as HTMLElement)
+                .style.marginRight = (
+                    this.outerContainer.offsetWidth -
+                    this.outerContainer.clientWidth
+                ) + 'px';
+        }
+    }
+
+    /**
+     * Redraw existing row elements.
+     * @internal
+     */
+    private redrawRowElements(): void {
+        if (!this.rowElements.length) {
+            return;
+        }
+
+        const prevColumnFlexes: string[] = [],
+            firstRowChildren = this.rowElements[0].children;
+
+        for (let i = 0; i < firstRowChildren.length; i++) {
+            prevColumnFlexes.push(
+                (firstRowChildren[i] as HTMLElement).style.flex
+            );
+        }
+
+        emptyHTMLElement(this.innerContainer);
+        this.renderInitialRows();
+        this.updateScrollingLength();
+        this.updateVisibleCells(true);
+
+        for (let i = 0; i < this.rowElements.length; i++) {
+            const row = this.rowElements[i];
+            for (let j = 0; j < row.childElementCount; j++) {
+                (row.children[j] as HTMLElement).style.flex =
+                    prevColumnFlexes[j];
+            }
+        }
+    }
+
+    /**
+     * Update the column drag handles position.
+     * @internal
+     */
+    private updateDragHandlesPosition() : void {
+        const headersContainer = this.columnHeadersContainer,
+            handlesContainer = this.columnDragHandlesContainer;
+        if (!handlesContainer || !headersContainer) {
+            return;
+        }
+
+        for (let i = 0; i < handlesContainer.childElementCount - 1; i++) {
+            const handle = handlesContainer.children[i] as HTMLElement,
+                header = headersContainer.children[i + 1] as HTMLElement;
+
+            handle.style.height = headersContainer.clientHeight + 'px';
+            handle.style.left = header.offsetLeft - 2 + 'px';
+        }
     }
 
 
@@ -1163,6 +1306,8 @@ class DataGrid {
 
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
+
+        this.updateGridElements();
     }
 
     /**

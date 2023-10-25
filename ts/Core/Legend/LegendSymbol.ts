@@ -94,6 +94,7 @@ namespace LegendSymbol {
             options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
+            symbol = this.symbol || 'circle',
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
             legendItemGroup = legendItem.group,
@@ -151,7 +152,7 @@ namespace LegendSymbol {
             );
 
             // Restrict symbol markers size
-            if ((this.symbol as any).indexOf('url') === 0) {
+            if (symbol.indexOf('url') === 0) {
                 markerOptions = merge(markerOptions, {
                     width: symbolHeight,
                     height: symbolHeight
@@ -161,7 +162,7 @@ namespace LegendSymbol {
 
             legendItem.symbol = legendSymbol = renderer
                 .symbol(
-                    this.symbol as any,
+                    symbol,
                     (symbolWidth / 2) - radius,
                     verticalCenter - radius,
                     2 * radius,

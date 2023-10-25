@@ -1,4 +1,3 @@
-import Board from '/base/code/dashboards/es-modules/Dashboards/Board.js';
 import DashboardGlobals from '/base/code/dashboards/es-modules/Dashboards/Globals.js';
 const { test, skip } = QUnit;
 
@@ -51,7 +50,7 @@ const components = [{
             title: 'I heard you like components'
         }
     }, {
-        textContent: 'Loreum ipsum'
+        textContent: 'Lorem ipsum'
     }]
 }]
 
@@ -73,19 +72,13 @@ test('Components in layout with no row style', function (assert) {
         components
     });
 
-    // assert.strictEqual(
-    //     container.innerText,
-    //     '',
-    //     'Container content should be cleared after creating dashboard.'
-    // );
-
-    const comps = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
+    const comps = document.querySelectorAll(
+        '[class*="' + DashboardGlobals.classNamePrefix + 'component"]:not([class*="-content"])'
+    );
     for (const component of comps) {
-        assert.strictEqual(component.style.height, '', 'Height should be unset')
-        assert.strictEqual(component.style.width, '', 'Width should be unset')
+        assert.strictEqual(component.style.height, '', 'Height should be unset');
+        assert.strictEqual(component.style.width, '', 'Width should be unset');
     }
-
-
 });
 
 test('Components in rows with set height', function (assert) {
@@ -107,15 +100,26 @@ test('Components in rows with set height', function (assert) {
     const columns = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'component')
+        const components = column.querySelectorAll(
+            '[class*="' + DashboardGlobals.classNamePrefix + 'component"]:not([class*="-content"])'
+        );
+
         for (const component of components) {
-            assert.strictEqual(component.style.height, column.style.height, 'Height should be set to the row')
-            assert.strictEqual(component.style.width, '', 'Width should be unset')
+            assert.strictEqual(
+                component.style.height,
+                column.style.height,
+                'Height should be set to the row.'
+            );
+            assert.strictEqual(
+                component.style.width,
+                '',
+                'Width should be unset'
+            );
         }
     }
 
     layouts[0].rows[0].style = {}
-})
+});
 
 skip('Components in layout with set width', function (assert) {
     const container = setupContainer();
@@ -144,7 +148,7 @@ skip('Components in layout with set width', function (assert) {
     }
 
     layouts[0].style = {}
-})
+});
 
 test('Components and rows in layout with set height', function (assert) {
     const container = setupContainer();
@@ -181,7 +185,7 @@ test('Components and rows in layout with set height', function (assert) {
     // }
 
     layouts[0].style = {}
-})
+});
 
 test('Nested layouts serialization.', function (assert) {
     const container = setupContainer();
@@ -342,3 +346,26 @@ test('Reserialized cell width', function (assert) {
     );
 
 });
+
+test('IDs of rows, cells and layouts', function (assert) {
+    const container = setupContainer();
+    const board = Dashboards.board(container.id, {
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        width: '30%'
+                    }]
+                }]
+            }]
+        }
+    });
+
+    const layout = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'layout')[0];
+    const row = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'row')[0];
+    const cell = document.querySelectorAll('.' + DashboardGlobals.classNamePrefix + 'cell')[0];
+
+    assert.strictEqual(layout.getAttribute('id'), null, 'Layout\'s id should not exist');
+    assert.strictEqual(cell.getAttribute('id'), null, 'Cell\'s id should not exist');
+    assert.strictEqual(row.getAttribute('id'), null, 'Row\'s id should not exist');
+})

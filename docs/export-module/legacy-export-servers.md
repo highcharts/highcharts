@@ -128,7 +128,7 @@ curl -H "Content-Type: application/json" -X POST -d "{\"infile\":\"{series:[{dat
 
 ### 2. Export server based on Java and PhantomJS
 
-This solution also includes a standalone solution for creating charts on the server, without a client involved. Highcharts is using this export server at export.highcharts.com, the default Highcharts export server. It's a server which is desgined with a large network load in mind. Requests to this server are concurrently handled by an serverpool.
+This solution also includes a standalone solution for creating charts on the server, without a client involved. Highcharts is using this export server at export.highcharts.com, the default Highcharts export server. It's a server which is designed with a large network load in mind. Requests to this server are concurrently handled by an serverpool.
 
 It takes either SVG or Highcharts options (in javascript) as input and converts it to images (PNG, JPEG ), PDF or SVG.
 

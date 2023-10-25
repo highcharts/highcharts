@@ -93,6 +93,7 @@ export interface LangAccessibilityOptions {
     exporting: LangAccessibilityExportingOptions;
     graphicContainerLabel: string;
     legend: LangAccessibilityLegendOptions;
+    navigator: LangAccessibilityNavigatorOptions;
     rangeSelector: LangAccessibilityRangeSelectorOptions;
     screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
     series: LangAccessibilitySeriesOptions;
@@ -112,6 +113,12 @@ export interface LangAccessibilityRangeSelectorOptions {
     maxInputLabel: string;
     minInputLabel: string;
     clickButtonAnnouncement: string;
+}
+
+export interface LangAccessibilityNavigatorOptions {
+    handleLabel: string;
+    groupLabel: string;
+    changeAnnouncement: string;
 }
 
 export interface LangAccessibilityAnnotationOptions {

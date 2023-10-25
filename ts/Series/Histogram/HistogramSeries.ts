@@ -23,12 +23,11 @@ import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type Series from '../../Core/Series/Series';
 
 import DerivedComposition from '../DerivedComposition.js';
+import HistogramSeriesDefaults from './HistogramSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -104,58 +103,10 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * A histogram is a column series which represents the distribution of the
-     * data set in the base series. Histogram splits data into bins and shows
-     * their frequencies.
-     *
-     * @sample {highcharts} highcharts/demo/histogram/
-     *         Histogram
-     *
-     * @extends      plotOptions.column
-     * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
-     *               stacking, boostBlending
-     * @product      highcharts
-     * @since        6.0.0
-     * @requires     modules/histogram
-     * @optionparent plotOptions.histogram
-     */
-    public static defaultOptions: HistogramSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * A preferable number of bins. It is a suggestion, so a histogram may
-         * have a different number of bins. By default it is set to the square
-         * root of the base series' data length. Available options are:
-         * `square-root`, `sturges`, `rice`. You can also define a function
-         * which takes a `baseSeries` as a parameter and should return a
-         * positive integer.
-         *
-         * @type {"square-root"|"sturges"|"rice"|number|Function}
-         */
-        binsNumber: 'square-root',
-
-        /**
-         * Width of each bin. By default the bin's width is calculated as
-         * `(max - min) / number of bins`. This option takes precedence over
-         * [binsNumber](#plotOptions.histogram.binsNumber).
-         *
-         * @type {number}
-         */
-        binWidth: void 0,
-        pointPadding: 0,
-        groupPadding: 0,
-        grouping: false,
-        pointPlacement: 'between',
-        tooltip: {
-            headerFormat: '',
-            pointFormat: (
-                '<span style="font-size: 0.8em">{point.x} - {point.x2}' +
-                '</span><br/>' +
-                '<span style="color:{point.color}">\u25CF</span>' +
-                ' {series.name} <b>{point.y}</b><br/>'
-            )
-        }
-
-    } as HistogramSeriesOptions);
+    public static defaultOptions: HistogramSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        HistogramSeriesDefaults
+    );
 
     /* *
      *
@@ -179,8 +130,6 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public binsNumber(): number {
         const binsNumberOption = this.options.binsNumber;
         const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
@@ -202,16 +151,16 @@ class HistogramSeries extends ColumnSeries {
         binsNumber: number,
         binWidth: number
     ): Array<HistogramPointOptions> {
-        let series = this,
+        const series = this,
             max = correctFloat(arrayMax(baseData)),
             // Float correction needed, because first frequency value is not
             // corrected when generating frequencies (within for loop).
             min = correctFloat(arrayMin(baseData)),
             frequencies: Array<number> = [],
             bins: Record<string, number> = {},
-            data: Array<HistogramPointOptions> = [],
-            x: number,
-            fitToBin: Function;
+            data: Array<HistogramPointOptions> = [];
+
+        let x: number;
 
         binWidth = series.binWidth = (
             correctFloat(
@@ -256,29 +205,23 @@ class HistogramSeries extends ColumnSeries {
             bins[min] = 0;
         }
 
-        fitToBin = fitToBinLeftClosed(
-            (frequencies as any).map(function (elem: string): number {
-                return parseFloat(elem);
-            })
+        const fitToBin = fitToBinLeftClosed(
+            frequencies.map((elem): number => parseFloat(elem as any))
         );
 
-        baseData.forEach(function (y: number): void {
-            const x = correctFloat(fitToBin(y));
+        for (const y of baseData) {
+            bins[correctFloat(fitToBin(y))]++;
+        }
 
-            bins[x]++;
-        });
-
-        objectEach(bins, function (frequency: number, x: string): void {
+        for (const key of Object.keys(bins)) {
             data.push({
-                x: Number(x),
-                y: frequency,
+                x: Number(key),
+                y: bins[key],
                 x2: correctFloat(Number(x) + binWidth)
             });
-        });
+        }
 
-        data.sort(function (a, b): number {
-            return (a.x as any) - (b.x as any);
-        });
+        data.sort((a, b): number => ((a.x as any) - (b.x as any)));
 
         data[data.length - 1].x2 = max;
 
@@ -301,8 +244,6 @@ class HistogramSeries extends ColumnSeries {
 
         this.setData(data, false);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -341,6 +282,7 @@ declare module '../../Core/Series/SeriesType' {
         histogram: typeof HistogramSeries;
     }
 }
+
 SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
 
 /* *
@@ -350,31 +292,3 @@ SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
  * */
 
 export default HistogramSeries;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `histogram` series. If the [type](#series.histogram.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.histogram
- * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
- * @product   highcharts
- * @since     6.0.0
- * @requires  modules/histogram
- * @apioption series.histogram
- */
-
-/**
- * An integer identifying the index to use for the base series, or a string
- * representing the id of the series.
- *
- * @type      {number|string}
- * @apioption series.histogram.baseSeries
- */
-
-''; // adds doclets above to transpiled file

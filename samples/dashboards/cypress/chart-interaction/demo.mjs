@@ -13,14 +13,6 @@ Dashboards.board('container', {
         contextMenu: {
             enabled: true,
             items: ['editMode']
-        },
-        events: {
-            activate: function () {
-                document.getElementById('editmode').value = 'activated';
-            },
-            deactivate: function () {
-                document.getElementById('editmode').value = 'deactivated';
-            }
         }
     },
     dataPool: {

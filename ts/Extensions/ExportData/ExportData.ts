@@ -60,7 +60,8 @@ const {
         gantt: GanttSeries,
         map: MapSeries,
         mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries
+        treemap: TreemapSeries,
+        xrange: XRangeSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -127,6 +128,7 @@ interface ExportingCategoryDateTimeMap {
 interface ExportDataPoint {
     series: ExportDataSeries;
     x?: number;
+    x2?: number;
 }
 
 interface ExportDataSeries {
@@ -399,27 +401,22 @@ function chartGetDataRows(
             series: Series,
             xAxis: Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
-            );
+            const pointArrayMap = series.pointArrayMap || ['y'],
+                namedPoints = series.data.some((d): string | false =>
+                    (typeof d.y !== 'undefined') && d.name
+                );
 
+            // If there are points with a name, we also want the x value in the
+            // table
             if (
-                namedPoints.length &&
+                namedPoints &&
                 xAxis &&
                 !xAxis.categories &&
-                !series.keyToAxis
+                series.exportKey !== 'name'
             ) {
-                if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap
-                        .filter((p): boolean => p === 'x');
-                    if (pointArrayMapCheck.length) {
-                        series.pointArrayMap.unshift('x');
-                        return series.pointArrayMap;
-                    }
-                }
-                return ['x', 'y'];
+                return ['x', ...pointArrayMap];
             }
-            return series.pointArrayMap || ['y'];
+            return pointArrayMap;
         },
         xAxisIndices: Array<Array<number>> = [];
 
@@ -495,6 +492,8 @@ function chartGetDataRows(
                 index: series.index
             };
 
+            const seriesIndex = mockSeries.index;
+
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -521,15 +520,18 @@ function chartGetDataRows(
                     mockPoint,
                     [options]
                 );
-                key = mockPoint.x as any;
+
+                const name = series.data[pIdx] && series.data[pIdx].name;
+
+                key = (mockPoint.x ?? '') + ',' + name;
 
                 if (defined(rows[key]) &&
-                    rows[key].seriesIndices.includes(mockSeries.index)
+                    rows[key].seriesIndices.includes(seriesIndex)
                 ) {
                     // find keys, which belong to actual series
                     const keysFromActualSeries =
                         Object.keys(rows).filter((i: string): void =>
-                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                            rows[i].seriesIndices.includes(seriesIndex) &&
                                 key
                         ),
                         // find all properties, which start with actual key
@@ -538,10 +540,8 @@ function chartGetDataRows(
                                 propertyName.indexOf(String(key)) === 0
                             );
 
-                    key = key.toString() + ',' + existingKeys.length;
+                    key = key + ',' + existingKeys.length;
                 }
-
-                const name = series.data[pIdx] && series.data[pIdx].name;
 
                 j = 0;
 
@@ -575,7 +575,7 @@ function chartGetDataRows(
                     rows[key].seriesIndices = [];
                 }
                 rows[key].seriesIndices = [
-                    ...rows[key].seriesIndices, mockSeries.index
+                    ...rows[key].seriesIndices, seriesIndex
                 ];
 
                 while (j < valueCount) {
@@ -1158,9 +1158,16 @@ function compose(
     }
 
     if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
+        GanttSeries.prototype.exportKey = 'name';
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
+        };
+    }
+
+    if (XRangeSeries && U.pushUnique(composedMembers, XRangeSeries)) {
+        XRangeSeries.prototype.keyToAxis = {
+            x2: 'x'
         };
     }
 
@@ -1194,10 +1201,6 @@ function getBlobFromContent(
     type: string
 ): (string|undefined) {
     const nav = win.navigator,
-        webKit = (
-            nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
         domurl = win.URL || win.webkitURL || win;
 
     try {
@@ -1208,14 +1211,10 @@ function getBlobFromContent(
             return blob.getBlob('image/svg+xml') as any;
         }
 
-        // Safari requires data URI since it doesn't allow navigation to blob
-        // URLs.
-        if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        }
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
     } catch (e) {
         // Ignore
     }

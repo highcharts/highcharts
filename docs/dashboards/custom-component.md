@@ -19,7 +19,7 @@ class YouTubeComponent extends Component {
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new `YouTubeComponent` class needs to be addded to the registry, using the `ComponentRegistry.registerComponent` method.
+At the end, the new `YouTubeComponent` class needs to be added to the registry, using the `ComponentRegistry.registerComponent` method.
 
 The custom code looks like below:
 
@@ -151,6 +151,7 @@ Dashboards.board('container', {
                 <h1>Custom HTML 2</h1>
                 <span id="custom-html-div-2">Custom HTML added as string </span>
             </div>
+        `
     },
     {
         cell: 'dashboard-col-2',
@@ -164,3 +165,129 @@ Dashboards.board('container', {
 });
 ```
 Check out the [live example here](https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component).
+
+## Custom Threshold Component
+In some cases, you may want to create a component that works as if it changes its type or/and options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
+
+<iframe style="width: 100%; height: 600px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
+
+Such a component can be implemented very similarly to the previously described `YoutubeComponent`, except that you need to take into account the need to replace the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component, like that:
+
+```js
+render() {
+    if (!this.component) {
+        this.parentElement.innerHTML = '';
+        this.component =
+            new CurrentComponent(this.cell, componentOptions).load();
+    } else {
+        this.component.update(componentOptions);
+    }
+}
+```
+
+An example implementation of the `ThresholdComponent` can look like this:
+
+```js
+const {
+    Component,
+    ComponentRegistry
+} = Dashboards;
+const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
+
+class ThresholdComponent extends Component {
+    constructor(cell, options) {
+        super(cell, options);
+        this.type = 'Threshold';
+        this.sync = new Component.Sync(
+            this,
+            this.syncHandlers
+        );
+        return this;
+    }
+
+    render() {
+        const options = this.options,
+            value = options.value,
+            thresholds = options.thresholds;
+
+        let CurrentComponent = ComponentRegistry.types[options.component],
+            componentOptions = merge(options.options || {}, {
+                value
+            });
+
+        // Selecting appropriate options and components based on thresholds
+        // and given value.
+        if (thresholds && isNumber(value)) {
+            for (let i = 0; i < thresholds.length; i++) {
+                const threshold = thresholds[i];
+
+                if (
+                    isNumber(threshold.min) && value < threshold.min ||
+                    isNumber(threshold.max) && value > threshold.max
+                ) {
+                    continue;
+                }
+
+                componentOptions = merge(componentOptions, threshold.options);
+                if (threshold.component) {
+                    CurrentComponent =
+                        ComponentRegistry.types[threshold.component];
+                }
+            }
+        }
+
+        // Rendering the appropriate component or updating it with new options
+        // if it already exists.
+        if (!this.component || this.component !== Component) {
+            this.parentElement.innerHTML = '';
+            this.component =
+                new CurrentComponent(this.cell, componentOptions).load();
+        } else {
+            this.component.update(componentOptions);
+        }
+
+        return this;
+    }
+}
+
+ComponentRegistry.registerComponent('Threshold', ThresholdComponent);
+```
+
+Now you can create the board containing the `ThresholdComponent` with the thresholds options, that you want, for example:
+```js
+Dashboards.board('container', {
+    gui: {
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }]
+            }]
+        }]
+    },
+    components: [{
+        type: 'Threshold',
+        cell: 'dashboard-col-0',
+        component: 'HTML',
+        value: 7,
+        thresholds: [{
+            min: 5,
+            component: 'KPI',
+            options: {
+                title: {
+                    text: 'Example KPI Component'
+                }
+            }
+        }, {
+            min: 10,
+            component: 'Highcharts',
+            options: {
+                title: '',
+                chartOptions: {
+                    ...
+                }
+            }
+        }]
+    }]
+});
+```

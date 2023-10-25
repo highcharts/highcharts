@@ -25,7 +25,7 @@ If you want to use Highcharts charts, you should also import the charts styles, 
 
     ```css
     @import url("https://code.highcharts.com/css/highcharts.css");
-    @import url("https://code.highcharts.com/css/dashboards.css");
+    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
     ```
 
 4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard. <br>

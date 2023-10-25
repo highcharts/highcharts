@@ -20,24 +20,11 @@
 
 import type Pie3DSeries from './Pie3DSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        }
-    }
-} = SeriesRegistry;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const superHaloPath = PiePoint.prototype.haloPath;
+    pie: { prototype: { pointClass: PiePoint } }
+} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -61,17 +48,13 @@ class Pie3DPoint extends PiePoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
     public haloPath(): SVGPath {
         return this.series?.chart.is3d() ?
-            [] : superHaloPath.apply(this, arguments);
+            [] : super.haloPath.apply(this, arguments);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
