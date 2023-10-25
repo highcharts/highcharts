@@ -233,7 +233,6 @@ class ColumnSeries extends Series {
             options = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            hasBreaks = xAxis.brokenAxis?.hasBreaks,
             reversedStacks = xAxis.options.reversedStacks,
             // Keep backward compatibility: reversed xAxis had reversed
             // stacks
@@ -282,11 +281,11 @@ class ColumnSeries extends Series {
 
         const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
-                    (!hasBreaks && xAxis.ordinal?.slope) ||
-                options.pointRange ||
-                xAxis.closestPointRange ||
-                xAxis.tickInterval ||
-                1
+                    (!xAxis.brokenAxis?.hasBreaks && xAxis.ordinal?.slope) ||
+                    options.pointRange ||
+                    xAxis.closestPointRange ||
+                    xAxis.tickInterval ||
+                    1
                 ), // #2610
                 xAxis.len // #1535
             ),
