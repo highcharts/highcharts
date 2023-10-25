@@ -366,6 +366,13 @@ class OrganizationSeries extends SankeySeries {
 
         const chart = this.chart,
             options = this.options,
+            translationFactor = this.translationFactor,
+            sum = node.getSum(),
+            nodeHeight = Math.max(
+                Math.round(sum * translationFactor),
+                this.options.minLinkWidth || 0
+            ),
+            nodeWidth = Math.round(this.nodeWidth),
             indent = options.hangingIndent || 0,
             sign = chart.inverted ? -1 : 1,
             shapeArgs = (node.shapeArgs as any),
@@ -393,7 +400,7 @@ class OrganizationSeries extends SankeySeries {
                     parentNode = parentNode.hangsFrom;
                 }
             } else {
-                // indentLogic === "inherit"
+                // Option indentLogic === "inherit"
                 // Do nothing (v9.3.2 and prev versions):
                 shapeArgs.height -= indent;
                 if (!chart.inverted) {
@@ -404,6 +411,16 @@ class OrganizationSeries extends SankeySeries {
         node.nodeHeight = chart.inverted ?
             shapeArgs.width :
             shapeArgs.height;
+
+        // Calculate shape args correctly to align nodes to center (#19946)
+        if (node.shapeArgs) {
+            node.shapeArgs = merge(node.shapeArgs, {
+                x: (node.shapeArgs.x || 0) + (nodeWidth / 2) -
+                    ((node.shapeArgs.width || 0) / 2),
+                y: (node.shapeArgs.y || 0) + (nodeHeight / 2) -
+                    ((node.shapeArgs.height || 0) / 2)
+            });
+        }
     }
 
     public drawDataLabels(): void {
