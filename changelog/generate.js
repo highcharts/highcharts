@@ -46,16 +46,14 @@ const getFile = url => new Promise((resolve, reject) => {
     var fs = require('fs'),
         path = require('path');
 
-    var tree;
-
-    try {
-        // eslint-disable-next-line node/no-missing-require
-        tree = require('../tree.json');
-    } catch {
+    if (!fs.existsSync('./tree.json')) {
         console.error('File tree.json doesn\'t exist in your repository, run ' +
         'npx gulp jsdoc-options and try to generate changelog again.');
         return false;
     }
+
+    // eslint-disable-next-line node/no-missing-require
+    var tree = require('../tree.json');
 
     /**
      * Return a list of options so that we can auto-link option references in
