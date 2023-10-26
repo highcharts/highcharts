@@ -2403,47 +2403,21 @@ class Chart {
         const tempWidth = chart.plotWidth;
 
         axes.some(function (axis: Axis): (boolean|undefined) {
-            // Left side must be align: right and right side must
-            // have align: left for labels
-            axis.reserveSpaceDefault = (
-                axis.side === 0 ||
-                axis.side === 2 ||
-                { 1: 'left', 3: 'right' }[axis.side] === axis.labelAlign
-            );
-
-            // Set the explicit or automatic label alignment
-            axis.labelAlign = axis.options.labels.align ||
-                axis.autoLabelAlign(axis.labelRotation as any);
-
             if (
                 axis.horiz &&
                 axis.visible &&
                 axis.options.labels.enabled &&
                 axis.series.length
             ) {
-                // Create the axisGroup and gridGroup elements on first
-                // iteration
-                if (!axis.axisGroup) {
-                    if (axis.coll === 'colorAxis') {
-                        axis.axisParent = axis.legendItem?.group;
-                    }
+                // Taking into account only horizontal axes
+                // (axis.side is always 0 or 2) => always resolves to true
+                axis.reserveSpaceDefault = true;
 
-                    axis.gridGroup = axis.createGroup(
-                        'grid',
-                        '-grid',
-                        axis.options.gridZIndex
-                    );
-                    axis.axisGroup = axis.createGroup(
-                        'axis',
-                        '',
-                        axis.options.zIndex
-                    );
-                    axis.labelGroup = axis.createGroup(
-                        'axis-labels',
-                        '-labels',
-                        axis.options.labels.zIndex
-                    );
+                if (axis.coll === 'colorAxis') {
+                    axis.axisParent = axis.legendItem?.group;
                 }
+
+                axis.createGroupsElements();
 
                 // Calculate extecped space based on dummy tick
                 const mockTick = new Tick(axis, -1, '', true),

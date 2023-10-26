@@ -3398,18 +3398,14 @@ class Axis {
     }
 
     /**
-     * Create SVG group used in axes.
+     * Create the axisGroup and gridGroup elements on first iteration.
      *
      * @private
      * @function Highcharts.Axis#getOffset
      *
      * @emits Highcharts.Axis#event:afterGetOffset
      */
-    public createGroup(
-        name: string,
-        suffix: string,
-        zIndex: number
-    ): SVGElement {
+    public createGroupsElements(): void {
         const axis = this,
             {
                 axisParent, // Used in color axis
@@ -3418,7 +3414,12 @@ class Axis {
                 options
             } = axis,
             renderer = chart.renderer;
-        return renderer.g(name)
+
+        const createGroup = (
+            name: string,
+            suffix: string,
+            zIndex: number
+        ): SVGElement => renderer.g(name)
             .attr({ zIndex })
             .addClass(
                 `highcharts-${coll.toLowerCase()}${suffix} ` +
@@ -3426,6 +3427,24 @@ class Axis {
                 (options.className || '')
             )
             .add(axisParent);
+
+        if (!axis.axisGroup) {
+            axis.gridGroup = createGroup(
+                'grid',
+                '-grid',
+                options.gridZIndex
+            );
+            axis.axisGroup = createGroup(
+                'axis',
+                '',
+                options.zIndex
+            );
+            axis.labelGroup = createGroup(
+                'axis-labels',
+                '-labels',
+                options.labels.zIndex
+            );
+        }
     }
 
     /**
@@ -3474,24 +3493,7 @@ class Axis {
         // Set/reset staggerLines
         axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
 
-        // Create the axisGroup and gridGroup elements on first iteration
-        if (!axis.axisGroup) {
-            axis.gridGroup = axis.createGroup(
-                'grid',
-                '-grid',
-                options.gridZIndex
-            );
-            axis.axisGroup = axis.createGroup(
-                'axis',
-                '',
-                options.zIndex
-            );
-            axis.labelGroup = axis.createGroup(
-                'axis-labels',
-                '-labels',
-                labelOptions.zIndex
-            );
-        }
+        axis.createGroupsElements();
 
         if (hasData || axis.isLinked) {
 
