@@ -91,4 +91,4 @@ To do so, you have to pass two arguments:
 
 6. With that config, your dashboard should look like the example below:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard" allow="fullscreen"></iframe>

@@ -75,6 +75,10 @@ dataModifier: {
 ```
 
 ### Example demos
-ou can check the modifiers in action with the following demos:
-* [DataGrid with MathModifier](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-mathmodifier/)
-* [Parsing the data in CSV using different modifiers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/csv-modifiers)
+You can check the modifiers in action with the following demos:
+
+#### DataGrid with MathModifier
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/datagrid-mathmodifier" allow="fullscreen"></iframe>
+
+#### Parsing the data in CSV using different modifiers
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/data-tools/csv-modifiers" allow="fullscreen"></iframe>
