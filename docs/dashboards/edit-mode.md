@@ -26,9 +26,21 @@ Next to the burger menu, some additional buttons are added.
 
 The “Large”, “Medium”, and “Small” buttons change the width of the dashboard, to let the designer check how the dashboard will appear on smaller screens such as tablets and smartphones.
 
+
+## Add Component
+
 The `Add Component` button allows the user to add a new component. When clicked, a sidebar appears, which lets you choose the type of component you want to add and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
 
+The sidebar lists the component types provided by the Dashboards API. Please note that [custom, user-defined components](https://www.highcharts.com/docs/dashboards/custom-component) will not be located there.
+
 ![edit-mode-sidebar.png](edit-mode-sidebar.png)
+
+
+## Component settings
+
+
+
+## Customizing the context menu
 
 The `contextMenu` option also allows you to edit, what should be inside the menu, which shows after clicking on the burger menu.  The items can either be a string like `editMode` if it is a default button, or an object, which defines the button name, `onclick` event and some more options. Here is the example snippet of context menu button configuration:
 ```js
@@ -44,6 +56,7 @@ items: [{
 }]
 ```
 
-### Live example
+## Edit mode live example
+
 Use the context menu on the upper-right corner to enable and explore the edit mode.
 <iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
