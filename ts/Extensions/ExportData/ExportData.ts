@@ -547,14 +547,20 @@ function chartGetDataRows(
                     rows[key] = [];
                     rows[key].xValues = [];
 
+                    // ES5 replacement for Array.from / fill.
                     const arr = [];
                     for (let i = 0; i < series.chart.series.length; i++) {
                         arr[i] = 0;
                     }
 
+                    // Create poiners array, holding information how many
+                    // duplicates of specific x occurs in each series.
+                    // Used for creating rows with duplicates.
                     rows[key].pointers = arr;
                     rows[key].pointers[series.index] = 1;
                 } else {
+                    // Handle duplicates (points with the same x), by creating
+                    // extra rows based on pointers for better performance.
                     const modifiedKey = `${key},${rows[key].pointers[series.index]}`,
                         originalKey = key;
 
