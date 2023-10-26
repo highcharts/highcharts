@@ -56,6 +56,10 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
      */
     orientation?: 'columns'|'rows';
+    /**
+     * Order of columns.
+     */
+    columnNames?: Array<string>;
 }
 
 /* *
