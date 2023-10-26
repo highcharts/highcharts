@@ -130,9 +130,8 @@ class TrendLineIndicator extends SMAIndicator {
         }
 
         for (let i = 0; i < xVal.length; i++) {
-            const y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
             xValSum += xVal[i];
-            yValSum += y;
+            yValSum += isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
         }
 
         const meanX = xValSum / xVal.length,
