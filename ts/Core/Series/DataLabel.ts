@@ -622,8 +622,7 @@ namespace DataLabel {
                             applyFilter(point, labelOptions)
                         ),
                         style = labelOptions.style || {},
-                        labelDistance = labelOptions.distance,
-                        labelBgColor = labelOptions.backgroundColor;
+                        labelDistance = labelOptions.distance;
 
                     let labelConfig,
                         formatString,
@@ -632,7 +631,8 @@ namespace DataLabel {
                         attr: SVGAttributes = {},
                         dataLabel: SVGLabel|SVGElement|undefined =
                             dataLabels[i],
-                        isNew = !dataLabel;
+                        isNew = !dataLabel,
+                        labelBgColor;
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
@@ -653,6 +653,10 @@ namespace DataLabel {
                                 ] ||
                                 labelOptions.formatter
                             ).call(labelConfig, labelOptions);
+
+                        if (labelOptions.backgroundColor !== 'none') {
+                            labelBgColor = labelOptions.backgroundColor;
+                        }
 
                         rotation = labelOptions.rotation;
 
