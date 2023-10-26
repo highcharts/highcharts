@@ -234,10 +234,14 @@ class TreegraphSeries extends TreemapSeries {
                     );
                     point.linkToParent = link;
                 } else {
-                    point.update(
-                        { collapsed: pointOptions.collapsed },
-                        false
+                    point.collapsed = pick(
+                        point.collapsed,
+                        (
+                            this.mapOptionsToLevel[point.node.level] || {}
+                        ).collapsed
                     );
+                    point.linkToParent.visible =
+                        point.linkToParent.toNode.visible;
                 }
                 point.linkToParent.index = links.push(point.linkToParent) - 1;
             } else {
