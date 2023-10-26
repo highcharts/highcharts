@@ -622,7 +622,8 @@ namespace DataLabel {
                             applyFilter(point, labelOptions)
                         ),
                         style = labelOptions.style || {},
-                        labelDistance = labelOptions.distance;
+                        labelDistance = labelOptions.distance,
+                        labelBgColor = labelOptions.backgroundColor;
 
                     let labelConfig,
                         formatString,
@@ -666,10 +667,12 @@ namespace DataLabel {
                             // Get automated contrast color
                             if (style.color === 'contrast') {
                                 point.contrastColor = renderer.getContrast(
+                                    labelBgColor !== 'auto' && labelBgColor ||
                                     (point.color || series.color) as any
                                 );
 
                                 style.color = (
+                                    labelBgColor || // #20007
                                     (
                                         !defined(labelDistance) &&
                                         labelOptions.inside
