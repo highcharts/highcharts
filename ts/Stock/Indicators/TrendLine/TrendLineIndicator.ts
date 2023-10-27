@@ -113,7 +113,7 @@ class TrendLineIndicator extends SMAIndicator {
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            index: number = params.index || 3;
+            index: number = params.index;
 
         let numerator = 0,
             denominator = 0,
