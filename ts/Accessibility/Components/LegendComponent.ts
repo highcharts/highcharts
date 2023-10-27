@@ -534,28 +534,23 @@ class LegendComponent extends AccessibilityComponent {
         const
             { keyCodes: { left, up }, highlightedLegendItemIx, chart } = this,
             numItems = chart.legend.allItems.length,
-            wrapAround = (
-                chart.options.accessibility.keyboardNavigation.wrapAround
-            ),
-            success = keyboardNavigationHandler.response.success,
-            input = (key === left || key === up) ? -1 : 1,
-            rawDirection = highlightedLegendItemIx + input,
-            adjustedDirection = (
-                rawDirection > -1 && rawDirection < numItems
-            ) ? input : (wrapAround && ((numItems - 1) * -input) || 0),
+            wrapAround = chart.options.accessibility
+                .keyboardNavigation.wrapAround,
+            direction = (key === left || key === up) ? -1 : 1,
             res = chart.highlightLegendItem(
-                highlightedLegendItemIx + adjustedDirection
+                highlightedLegendItemIx + direction
             );
 
         if (res) {
-            this.highlightedLegendItemIx += adjustedDirection;
+            this.highlightedLegendItemIx += direction;
         } else if (wrapAround && numItems > 1) {
-            keyboardNavigationHandler.init(input);
+            this.highlightedLegendItemIx = direction > 0 ?
+                0 : numItems - 1;
+            chart.highlightLegendItem(this.highlightedLegendItemIx);
         }
 
-        return success;
+        return keyboardNavigationHandler.response.success;
     }
-
 
     /**
      * @private
@@ -674,7 +669,7 @@ namespace LegendComponent {
                 this.accessibility.components.legend.highlightedLegendItemIx;
 
         const itemToHighlight = items[ix],
-            legendItem = itemToHighlight.legendItem || {};
+            legendItem = itemToHighlight?.legendItem || {};
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
