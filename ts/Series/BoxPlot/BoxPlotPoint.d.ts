@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
 import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnPoint from '../Column/ColumnPoint';
@@ -28,6 +29,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *  Class
  *
  * */
+
 declare class BoxPlotPoint extends ColumnPoint {
     public box: SVGElement;
     public boxDashStyle: DashStyleValue;
@@ -62,7 +64,7 @@ declare class BoxPlotPoint extends ColumnPoint {
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
 

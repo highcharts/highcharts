@@ -3,7 +3,7 @@ Creating custom Highcharts packages
 
 Thanks to ES modules you can create your own custom Highcharts package.
 A benefit of using a custom file can be optimization of browser load speed due
-to lower filesize and less files to request.
+to lower file size and less files to request.
 
 Follow the steps below to get started.
 

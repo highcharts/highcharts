@@ -50,16 +50,18 @@ synchronize extremes in a shared crossfilter. This crossfilter is managed by a
 a RangeModifier which sources the table of a connector. All components have to
 share the same connector and table to make the crossfilter work.
 
+Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
+### Crossfilter Example
 
-## Crossfilter Example
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter" allow="fullscreen"></iframe>
 
 In the
 [crossfilter demo](https://highcharts.com/demo/dashboards/crossfilter)
 you see the setup to limit the amount of data points. You have to define column
 ranges with the help of the NavigatorComponent and a shared DataConnector.
 
-``` JavaScript
+```js
 Dashboard.board('container', {
   components: [
     {

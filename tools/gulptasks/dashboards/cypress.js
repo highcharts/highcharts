@@ -23,10 +23,8 @@ async function testCypress() {
     const logLib = require('../lib/log');
 
     await processLib.exec(
-        'npx cypress run --spec ' +
-            path.join('test', 'cypress', 'integration', 'Dashboards') +
-            ',' +
-            path.join('test', 'cypress', 'integration', 'DataGrid')
+        'npx cypress run --config-file ' +
+            path.join('test', 'cypress', 'configs', 'dashboards.config.mjs')
     );
 
     logLib.success('Cypress tests successful');

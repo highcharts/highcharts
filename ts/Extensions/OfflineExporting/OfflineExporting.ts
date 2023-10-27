@@ -408,6 +408,7 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
+                        scale,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -1009,10 +1010,13 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
+        scale: number,
         callback: Function
     ): void {
-        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
-            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+        const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
+            scale,
+            height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
+                scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',

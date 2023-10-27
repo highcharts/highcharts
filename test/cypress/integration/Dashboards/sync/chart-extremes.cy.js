@@ -17,7 +17,6 @@ function testAxes(currentChart, comparisionChart) {
 
 }
 
-
 describe('Chart extremes sync', () => {
     before(() => {
         cy.visit('/dashboards/cypress/sync-chart-extremes');
@@ -84,4 +83,34 @@ describe('Chart extremes sync', () => {
             })
         })
     })
+});
+
+describe('Chart extreme sync zooming when min or max stays the same', () => {
+    before(() => {
+        cy.visit('/dashboards/demo/sync-extremes');
+    });
+
+    it('All charts should be synced', () => {
+        cy.boardRendered();
+        cy.board().then($el => {
+            const chart = $el.mountedComponents[0].component.chart,
+                chart2 = $el.mountedComponents[1].component.chart;
+
+            chart.xAxis[0].setExtremes(0, 5);
+
+            assert.closeTo(
+                chart2.xAxis[0].min,
+                chart.xAxis[0].min,
+                0.5,
+                'X-axis min should be equal in both charts.'
+            );
+
+            assert.closeTo(
+                chart2.xAxis[0].max,
+                chart.xAxis[0].max,
+                0.5,
+                'X-axis max should be equal in both charts.'
+            );
+        });
+    });
 });

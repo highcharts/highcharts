@@ -165,8 +165,8 @@ namespace RadialAxis {
         setOptions(userOptions: DeepPartial<Options>): void;
     }
 
-    interface Options extends YAxisOptions {
-        // nothing to add yet
+    export interface Options extends YAxisOptions {
+        // Nothing to add yet
     }
 
     interface Path extends SVGPath {
@@ -1053,7 +1053,6 @@ namespace RadialAxis {
             isX = this.isXAxis,
             coll = this.coll,
             isHidden = angular && isX,
-            chartOptions = chart.options,
             paneIndex = e.userOptions.pane || 0,
             pane = this.pane = chart.pane && chart.pane[paneIndex] as any;
 

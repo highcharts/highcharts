@@ -15,8 +15,10 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type { LonLatArray } from '../../Maps/MapViewOptions';
+import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type MapLinePointOptions from '../MapLine/MapLinePointOptions';
-import { LonLatArray } from '../..//Maps/MapViewOptions';
+
 
 /* *
  *
@@ -28,11 +30,11 @@ export interface FlowMapPointOptions extends MapLinePointOptions {
     curveFactor?: number;
     fillColor?: ColorType;
     fillOpacity: number;
-    from?: string | LonLatArray | Highcharts.MapLonLatObject;
+    from?: (string|LonLatArray|MapLonLatObject);
     growTowards?: boolean;
     markerEnd?: MarkerEndOptions;
     opacity?: number;
-    to?: string | LonLatArray | Highcharts.MapLonLatObject;
+    to?: (string|LonLatArray|MapLonLatObject);
     weight?: number;
     lineWidth?: number;
 }

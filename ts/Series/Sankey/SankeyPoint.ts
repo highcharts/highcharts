@@ -25,10 +25,8 @@ import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { defined } = U;
 
@@ -39,6 +37,7 @@ const { defined } = U;
  * */
 
 class SankeyPoint extends ColumnSeries.prototype.pointClass {
+
     /* *
      *
      *  Properties
@@ -86,8 +85,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -163,8 +160,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public isValid(): boolean {
         return this.isNode || typeof this.weight === 'number';
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

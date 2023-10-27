@@ -1,0 +1,30 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+.highcharts-description {
+    margin-top: 1em;
+}
+
+.buttons-wrapper {
+    padding: 12px;
+    background-color: white;
+    box-shadow: none;
+    margin: 1em;
+}
+
+.buttons-wrapper button {
+    margin: 10px 10px 30px;
+}
+
+.ls-status {
+    font-weight: bold;
+}
+
+#ls-status-content {
+    color: red;
+}

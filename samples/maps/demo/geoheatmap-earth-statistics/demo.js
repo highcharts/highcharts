@@ -206,15 +206,24 @@
             text: dataset.title
         }, false);
         chart.colorAxis[0].update(dataset.colorAxis, false);
-        geoheatmap.setData(dataset.data);
+        geoheatmap.setData(dataset.data, true, {
+            complete() {
+                // Hide loading on complete
+                chart.hideLoading();
+            }
+        });
     }
 
     datasetSelect.addEventListener('change', function () {
         // Show the Font Awesome spinner
         chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
-        getDataset(datasetSelect.value);
+        setTimeout(function () {
+            getDataset(datasetSelect.value);
+        }, 0);
     });
 
-    getDataset(datasetSelect.value);
+    setTimeout(function () {
+        getDataset(datasetSelect.value);
+    }, 0);
 
 })();

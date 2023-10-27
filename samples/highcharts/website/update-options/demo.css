@@ -129,8 +129,8 @@
     padding-top: 2px !important;
 }
 
-.highcharts-demo .btn-primary:not(:disabled):not(.disabled).active,
-.highcharts-demo .btn-primary:not(:disabled):not(.disabled):active,
+.highcharts-demo .btn-primary:not(:disabled, .disabled).active,
+.highcharts-demo .btn-primary:not(:disabled, .disabled):active,
 .highcharts-demo .show > .btn-primary.dropdown-toggle {
     color: #fff !important;
     font-weight: bold;

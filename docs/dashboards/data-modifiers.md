@@ -16,7 +16,7 @@ The types of modifiers that are available are:
 
 ### How to add the modifier?
 To add the modifier, you need to specify it in the options of the connector.
-```javascript
+```js
 connector: {
     type: 'CSV',
     id: 'connector-id',
@@ -35,7 +35,7 @@ The modifier modifies the `table.modified` property of the connector, which leav
 
 Here is a brief description of each of the modifiers:
 * Chain - Allows to combine multiple modifiers in the same connector. This is useful, if you need to perform multiple operations on the same dataset. In the `chain` property you can define the order and configuration objects of the modifiers, that should be applied to the modifier. Here is an example usage of this modifier:
-```javascript
+```js
 dataModifier: {
     type: 'Chain',
     chain: [{
@@ -46,7 +46,7 @@ dataModifier: {
 }
 ```
 * Range - Can be used to filter the data by minimal and maximal value. It works both for numbers as well as alphanumerical values. The `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
-```javascript
+```js
 dataModifier: {
     type: 'Range',
     ranges: [{
@@ -57,14 +57,14 @@ dataModifier: {
 }
 ```
 * Invert - Allows to flip the data, and replace the columns with rows. This comes in handy, when you data is structured by rows and you want to present it by columns. No other options need to be specified here. Example:
-```javascript
+```js
 dataModifier: {
     type: 'Invert'
 }
 ```
-* Math - This is the only modifier, that comes in the separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those, that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](<link to mathmodifier article>).
+* Math - This is the only modifier, that comes in the separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those, that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
 Example:
-```javascript
+```js
 dataModifier: {
     type: 'Math',
     columnFormulas: [{
@@ -75,6 +75,10 @@ dataModifier: {
 ```
 
 ### Example demos
-ou can check the modifiers in action with the following demos:
-* [DataGrid with MathModifier](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-mathmodifier/)
-* [Parsing the data in CSV using different modifiers](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/csv-modifiers)
+You can check the modifiers in action with the following demos:
+
+#### DataGrid with MathModifier
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/datagrid-mathmodifier" allow="fullscreen"></iframe>
+
+#### Parsing the data in CSV using different modifiers
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/data-tools/csv-modifiers" allow="fullscreen"></iframe>

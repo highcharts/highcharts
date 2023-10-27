@@ -913,10 +913,9 @@ namespace OrdinalAxis {
                 extremes = axis.getExtremes(),
                 min = extremes.min,
                 max = extremes.max,
-                hasBreaks = axis.isXAxis && !!axis.options.breaks,
-                isOrdinal = axis.options.ordinal,
-                ignoreHiddenSeries =
-                    axis.chart.options.chart.ignoreHiddenSeries;
+                hasBreaks = axis.brokenAxis?.hasBreaks,
+                isOrdinal = axis.options.ordinal;
+
             let len,
                 uniqueOrdinalPositions,
                 dist,
@@ -956,11 +955,10 @@ namespace OrdinalAxis {
                     }
 
                     if (
-                        (!ignoreHiddenSeries || series.visible !== false) &&
+                        series.reserveSpace() &&
                         (
                             (series as ScatterSeries)
-                                .takeOrdinalPosition !== false ||
-                            hasBreaks
+                                .takeOrdinalPosition !== false || hasBreaks
                         )
                     ) {
 
@@ -1119,8 +1117,9 @@ namespace OrdinalAxis {
                     ), 1); // #3339
 
                     // Set the slope and offset of the values compared to the
-                    // indices in the ordinal positions
-                    ordinal.slope = slope = (max - min) / (maxIndex - minIndex);
+                    // indices in the ordinal positions.
+                    ordinal.slope = slope =
+                        (max - min) / (maxIndex - minIndex);
                     ordinal.offset = min - (minIndex * slope);
 
                 } else {
@@ -1249,7 +1248,9 @@ namespace OrdinalAxis {
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
-                        applyGrouping: Series.prototype.applyGrouping
+                        applyGrouping: Series.prototype.applyGrouping,
+                        reserveSpace: Series.prototype.reserveSpace,
+                        visible: series.visible
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(

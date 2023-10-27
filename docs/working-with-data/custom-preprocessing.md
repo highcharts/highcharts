@@ -60,7 +60,7 @@ Highcharts.ajax({
         lines.forEach(function(line, lineNo) {  
             var items = line.split(',');  
               
-            // header line containes categories  
+            // header line contains categories  
             if (lineNo == 0) {  
                 items.forEach(function(item, itemNo) {  
                     if (itemNo > 0) options.xAxis.categories.push(item);  

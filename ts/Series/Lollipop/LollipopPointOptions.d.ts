@@ -30,6 +30,7 @@ export interface LollipopPointOptions extends ScatterPointOptions {
     dashStyle?: DashStyleValue;
     /** @deprecated */
     lowColor?: ColorType;
+    pointWidth: number;
 }
 
 /* *
