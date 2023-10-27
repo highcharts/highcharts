@@ -99,7 +99,7 @@ G.distribute = RendererUtilities.distribute;
 G.seriesType = SeriesRegistry.seriesType;
 // Compositions
 ColumnDataLabel.compose(ColumnSeries);
-BorderRadius.compose(ColumnSeries, PieSeries, SVGElement, SVGRenderer);
+BorderRadius.compose(Series, PieSeries, SVGElement, SVGRenderer);
 DataLabel.compose(Series);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);

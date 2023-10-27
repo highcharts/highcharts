@@ -749,14 +749,15 @@ namespace Exporting {
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
             cacheName = 'cache-' + className,
-            menuPadding = Math.max(width, height); // for mouse leave detection
+            // For mouse leave detection
+            menuPadding = Math.max(width, height);
         let innerMenu: HTMLDOMElement,
             menu: Exporting.DivElement = (chart as any)[cacheName];
 
-        // create the menu only the first time
+        // Create the menu only the first time
         if (!menu) {
 
-            // create a HTML element above the SVG
+            // Create a HTML element above the SVG
             chart.exportContextMenu = (chart as any)[cacheName] = menu =
                 createElement(
                     'div', {
@@ -766,7 +767,8 @@ namespace Exporting {
                         position: 'absolute',
                         zIndex: 1000,
                         padding: menuPadding + 'px',
-                        pointerEvents: 'auto'
+                        pointerEvents: 'auto',
+                        ...chart.renderer.style
                     },
                     chart.fixedDiv || chart.container
                 ) as Exporting.DivElement;
