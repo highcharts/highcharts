@@ -413,7 +413,7 @@ class OrganizationSeries extends SankeySeries {
             shapeArgs.height;
 
         // Calculate shape args correctly to align nodes to center (#19946)
-        if (node.shapeArgs) {
+        if (node.shapeArgs && !node.hangsFrom) {
             node.shapeArgs = merge(node.shapeArgs, {
                 x: (node.shapeArgs.x || 0) + (nodeWidth / 2) -
                     ((node.shapeArgs.width || 0) / 2),
