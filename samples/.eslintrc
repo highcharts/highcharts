@@ -29,7 +29,7 @@ rules:
     function-paren-newline: 0
     indent: [2, 4]
     max-len: [
-        "warn",
+        "error",
         {
             "ignoreStrings": true
         }

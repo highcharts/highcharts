@@ -277,8 +277,8 @@ class SVGLabel extends SVGElement {
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         return {
-            width: this.width || 0,
-            height: this.height || 0,
+            width: this.width,
+            height: this.height,
             x: this.bBox.x - paddingLeft,
             y: this.bBox.y - padding
         };

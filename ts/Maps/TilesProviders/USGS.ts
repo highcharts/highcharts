@@ -4,43 +4,10 @@
 
 'use strict';
 
-/* *
- *
- *  Imports
- *
- * */
-
-import type {
-    ProviderDefinition,
-    Themes
-} from '../ProviderDefinition';
-
-/* *
- *
- *  Class
- *
- * */
+import type ProviderDefinition from '../ProviderDefinition';
 
 class USGS implements ProviderDefinition {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public defaultCredits = (
-        'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological' +
-        'Survey</a>'
-    );
-
-    public initialProjectionName = 'WebMercator' as const;
-
-    public requiresApiKey: undefined;
-
-    public subdomains: undefined;
-
-    public themes: Themes = {
+    themes = {
         USTopo: {
             url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
             minZoom: 0,
@@ -58,12 +25,10 @@ class USGS implements ProviderDefinition {
         }
     };
 
-}
+    initialProjectionName = 'WebMercator';
 
-/* *
- *
- *  Default Export
- *
- * */
+    defaultCredits = `Tiles courtesy of the <a href="https://usgs.gov/">U.S.
+        Geological Survey</a>`;
+}
 
 export default USGS;

@@ -31,10 +31,4 @@ export interface TreemapPointOptions extends ScatterPointOptions {
     width?: number;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default TreemapPointOptions;

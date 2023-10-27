@@ -26,7 +26,7 @@ export interface StreamgraphPointOptions extends AreaSplinePointOptions {
 
 /* *
  *
- *  Default Export
+ *  Default export
  *
  * */
 

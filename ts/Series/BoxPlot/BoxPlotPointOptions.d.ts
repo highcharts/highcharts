@@ -13,7 +13,6 @@
  *  Imports
  *
  * */
-
 import type BoxPlotPoint from './BoxPlotPoint';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
@@ -22,7 +21,6 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *  Declarations
  *
  * */
-
 export interface BoxPlotPointOptions extends ColumnPointOptions {
     high?: BoxPlotPoint['high'];
     low?: BoxPlotPoint['low'];
@@ -33,7 +31,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Default Export
+ *  Export
  *
  * */
 

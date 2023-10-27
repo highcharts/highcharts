@@ -4,44 +4,12 @@
 
 'use strict';
 
-/* *
- *
- *  Imports
- *
- * */
-
-import type {
-    ProviderDefinition,
-    Themes
-} from '../ProviderDefinition';
-
-/* *
- *
- *  Class
- *
- * */
+import type ProviderDefinition from '../ProviderDefinition';
 
 class Thunderforest implements ProviderDefinition {
+    subdomains = ['a', 'b', 'c'];
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public defaultCredits = (
-        'Maps &copy <a href="https://www.thunderforest.com">Thunderforest</a>' +
-        ', Data &copy; <a href="https://www.openstreetmap.org/copyright">' +
-        'OpenStreetMap contributors</a>'
-    );
-
-    public initialProjectionName = 'WebMercator' as const;
-
-    public requiresApiKey = true;
-
-    public subdomains = ['a', 'b', 'c'];
-
-    public themes: Themes = {
+    themes = {
         OpenCycleMap: {
             url: 'https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey={apikey}',
             minZoom: 0,
@@ -89,12 +57,12 @@ class Thunderforest implements ProviderDefinition {
         }
     };
 
-}
+    initialProjectionName = 'WebMercator';
 
-/* *
- *
- *  Default Export
- *
- * */
+    defaultCredits = `Maps \u00a9 <a href="https://www.thunderforest.com">Thunderforest</a>,
+        Data \u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`;
+
+    requiresApiKey = true;
+}
 
 export default Thunderforest;

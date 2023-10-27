@@ -196,9 +196,6 @@ function applyGridOptions(axis: Axis): void {
     // help.
     axis.labelRotation = 0;
     options.labels.rotation = 0;
-
-    // Allow putting ticks closer than their data points.
-    options.minTickInterval = 1;
 }
 
 /**

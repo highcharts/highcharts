@@ -17,10 +17,6 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type {
-    ConnectorsStartMarkerOptions,
-    ConnectorsOptions
-} from '../../Gantt/ConnectorsOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type GanttSeries from './GanttSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -36,12 +32,12 @@ export interface GanttAnimationOptions extends Partial<AnimationOptions> {
     reversed?: boolean;
 }
 
-export interface GanttConnectorOptions extends ConnectorsOptions {
+export interface GanttConnectorOptions extends Highcharts.ConnectorsOptions {
     animation?: (boolean|GanttAnimationOptions);
     startMarker?: GanttConnectorStartMarkerOptions;
 }
 
-export interface GanttConnectorStartMarkerOptions extends ConnectorsStartMarkerOptions {
+export interface GanttConnectorStartMarkerOptions extends Highcharts.ConnectorsStartMarkerOptions {
     fill: ColorType;
 }
 

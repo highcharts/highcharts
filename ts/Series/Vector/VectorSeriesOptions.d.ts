@@ -34,10 +34,4 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
     vectorLength?: number;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default VectorSeriesOptions;

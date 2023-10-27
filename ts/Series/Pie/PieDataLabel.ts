@@ -36,7 +36,8 @@ const {
     clamp,
     defined,
     pick,
-    relativeLength
+    relativeLength,
+    splat
 } = U;
 
 /* *

@@ -259,7 +259,7 @@ function chartGetCSV(
         while (j--) {
             val = row[j];
             if (typeof val === 'string') {
-                val = `"${val}"`;
+                val = '"' + val + '"';
             }
             if (typeof val === 'number') {
                 if (decimalPoint !== '.') {
@@ -492,8 +492,6 @@ function chartGetDataRows(
                 index: series.index
             };
 
-            const seriesIndex = mockSeries.index;
-
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -520,10 +518,27 @@ function chartGetDataRows(
                     mockPoint,
                     [options]
                 );
+                key = mockPoint.x as any;
+
+                if (defined(rows[key]) &&
+                    rows[key].seriesIndices.includes(mockSeries.index)
+                ) {
+                    // find keys, which belong to actual series
+                    const keysFromActualSeries =
+                        Object.keys(rows).filter((i: string): void =>
+                            rows[i].seriesIndices.includes(mockSeries.index) &&
+                                key
+                        ),
+                        // find all properties, which start with actual key
+                        existingKeys = keysFromActualSeries
+                            .filter((propertyName: string): boolean =>
+                                propertyName.indexOf(String(key)) === 0
+                            );
+
+                    key = key.toString() + ',' + existingKeys.length;
+                }
 
                 const name = series.data[pIdx] && series.data[pIdx].name;
-
-                key = (mockPoint.x ?? '') + ',' + name;
 
                 j = 0;
 
@@ -544,47 +559,26 @@ function chartGetDataRows(
                 }
 
                 if (!rows[key]) {
+                    // Generate the row
                     rows[key] = [];
+                    // Contain the X values from one or more X axes
                     rows[key].xValues = [];
-
-                    // ES5 replacement for Array.from / fill.
-                    const arr = [];
-                    for (let i = 0; i < series.chart.series.length; i++) {
-                        arr[i] = 0;
-                    }
-
-                    // Create poiners array, holding information how many
-                    // duplicates of specific x occurs in each series.
-                    // Used for creating rows with duplicates.
-                    rows[key].pointers = arr;
-                    rows[key].pointers[series.index] = 1;
-                } else {
-                    // Handle duplicates (points with the same x), by creating
-                    // extra rows based on pointers for better performance.
-                    const modifiedKey = `${key},${rows[key].pointers[series.index]}`,
-                        originalKey = key;
-
-                    if (rows[key].pointers[series.index]) {
-                        if (!rows[modifiedKey]) {
-                            rows[modifiedKey] = [];
-                            rows[modifiedKey].xValues = [];
-                            rows[modifiedKey].pointers = [];
-                        }
-
-                        key = modifiedKey;
-                    }
-
-                    rows[originalKey].pointers[series.index] += 1;
                 }
-
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
+                if (!defined(rows[key].seriesIndices)) {
+                    rows[key].seriesIndices = [];
+                }
+                rows[key].seriesIndices = [
+                    ...rows[key].seriesIndices, mockSeries.index
+                ];
+
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = (mockPoint as any)[prop];
-                    rows[key][i + j] = pick(
+                    rows[key as any][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
                         // datetime yAxis
@@ -1204,6 +1198,10 @@ function getBlobFromContent(
     type: string
 ): (string|undefined) {
     const nav = win.navigator,
+        webKit = (
+            nav.userAgent.indexOf('WebKit') > -1 &&
+            nav.userAgent.indexOf('Chrome') < 0
+        ),
         domurl = win.URL || win.webkitURL || win;
 
     try {
@@ -1214,10 +1212,14 @@ function getBlobFromContent(
             return blob.getBlob('image/svg+xml') as any;
         }
 
-        return domurl.createObjectURL(new win.Blob(
-            ['\uFEFF' + content], // #7084
-            { type: type }
-        ));
+        // Safari requires data URI since it doesn't allow navigation to blob
+        // URLs.
+        if (!webKit) {
+            return domurl.createObjectURL(new win.Blob(
+                ['\uFEFF' + content], // #7084
+                { type: type }
+            ));
+        }
     } catch (e) {
         // Ignore
     }

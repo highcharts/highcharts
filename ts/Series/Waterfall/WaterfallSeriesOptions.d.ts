@@ -13,18 +13,16 @@
  *  Imports
  *
  * */
-
 import type ColorType from '../../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type WaterfallSeries from './WaterfallSeries';
+import ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import WaterfallSeries from './WaterfallSeries.js';
 
 /* *
  *
- *  Declarations
+ * Declarations
  *
  * */
-
 export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
     upColor?: ColorType;
     states?: SeriesStatesOptions<WaterfallSeries>;
@@ -32,8 +30,7 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Default Export
+ * Export
  *
  * */
-
 export default WaterfallSeriesOptions;

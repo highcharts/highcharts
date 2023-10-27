@@ -4,43 +4,12 @@
 
 'use strict';
 
-/* *
- *
- *  Imports
- *
- * */
-
-import type {
-    ProviderDefinition,
-    Themes
-} from '../ProviderDefinition';
-
-/* *
- *
- *  Class
- *
- * */
+import type ProviderDefinition from '../ProviderDefinition';
 
 class OpenStreetMap implements ProviderDefinition {
+    subdomains = ['a', 'b', 'c'];
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public defaultCredits = (
-        'Map data &copy2023' +
-        ' <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    );
-
-    public initialProjectionName = 'WebMercator' as const;
-
-    public requiresApiKey: undefined;
-
-    public subdomains = ['a', 'b', 'c'];
-
-    public themes: Themes = {
+    themes = {
         Standard: {
             url: 'https://tile.openstreetmap.org/{zoom}/{x}/{y}.png',
             minZoom: 0,
@@ -62,12 +31,10 @@ class OpenStreetMap implements ProviderDefinition {
         }
     };
 
-}
+    initialProjectionName = 'WebMercator';
 
-/* *
- *
- *  Default Export
- *
- * */
+    defaultCredits = `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
+            OpenStreetMap</a>`;
+}
 
 export default OpenStreetMap;

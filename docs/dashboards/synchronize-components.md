@@ -13,7 +13,6 @@ The events, that can be synchronized between components are:
 * [visibility](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
 * [extremes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
 * [highlight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
-* [crossfilter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter/) (Can be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
 
 ### Sync declaration
 ```
@@ -76,10 +75,9 @@ Dashboards.board('container', {
 
 ## Components sync compatibility
 
-|Component's type|highlight|extremes|visibility|crossfilter
-|---|---|---|---|---|
-|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no|no|
-|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes|no|
-|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes|no|
-|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no|no|
-|[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|yes|no|yes|
+|Component's type|highlight|extremes|visibility
+|---|---|---|---|
+|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no
+|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes
+|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes
+|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no

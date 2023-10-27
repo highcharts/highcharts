@@ -22,11 +22,16 @@
 
 import type CylinderPointOptions from './CylinderPointOptions';
 import type CylinderSeries from './CylinderSeries';
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+    seriesTypes: {
+        column: {
+            prototype: {
+                pointClass: ColumnPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -59,7 +64,6 @@ class CylinderPoint extends ColumnPoint {
 interface CylinderPoint {
     shapeType: string;
 }
-
 extend(CylinderPoint.prototype, {
     shapeType: 'cylinder'
 });

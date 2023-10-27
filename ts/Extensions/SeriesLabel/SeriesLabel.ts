@@ -399,10 +399,10 @@ function drawSeriesLabels(chart: Chart): void {
         (s.points || []).forEach((p): void =>
             (p.dataLabels || []).forEach((label): void => {
                 const { width, height } = label.getBBox(),
-                    left = (label.translateX || 0) + (
+                    left = label.translateX + (
                         s.xAxis ? s.xAxis.pos : s.chart.plotLeft
                     ),
-                    top = (label.translateY || 0) + (
+                    top = label.translateY + (
                         s.yAxis ? s.yAxis.pos : s.chart.plotTop
                     );
 

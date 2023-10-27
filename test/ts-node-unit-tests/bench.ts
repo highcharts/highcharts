@@ -1,5 +1,5 @@
 import { readdirSync, existsSync } from 'node:fs';
-import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
+import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 
@@ -20,44 +20,15 @@ const CODE_PATH = resolve(__dirname, '../../code');
 
 const OUTPUT_PATH = join(__dirname, '../../tmp/benchmarks');
 
-const TEST_TIMEOUT_SECONDS = 100;
+const TEST_TIMEOUT_SECONDS = 30;
 
 const errors = [];
 let testCounter: number = 0;
 
-type walkResult = Array<string | walkResult>
-
-/**
- * Grab file extensions
- */
-
-const getDirRecursive = async (dir: string): Promise<Array<string>> => {
-    try {
-        const items = await readdir(dir);
-        let files = [];
-        for (const item of items) {
-            if ((await lstat(`${dir}/${item}`)).isDirectory())
-                files = [
-                    ...files,
-                    ...(await getDirRecursive(`${dir}/${item}`))
-                ];
-            else files.push(`${dir}/${item}`);
-        }
-        return files;
-    } catch (e) {
-        return e;
-    }
-};
-
 async function runTestInWorker(testFile: string, size: number): Promise<BenchmarkResult | undefined> {
     const worker = new Worker(join(__dirname, './bench-worker.ts'), {
-        resourceLimits: {
-            stackSizeMb: 20
-        },
-        stdout: false // pipe to main,
-        
-        },
-    );
+        stdout: false // pipe to main
+    });
 
     const promise = new Promise((resolve, reject) =>{
         worker.on('message', value =>{
@@ -112,7 +83,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
 
-    for (const size  of config.sizes) {
+    for (const size  of config.sizes){
         const details: BenchmarkDetails = {
             test: relative(__dirname, testFile),
             sampleSize: size,
@@ -172,10 +143,13 @@ async function benchmark(){
 
     const reportDir = join(OUTPUT_PATH, typeof context === 'string' ? context : 'actual');
 
-    if (existsSync(BENCH_PATH)) {
-        const result = await getDirRecursive(BENCH_PATH);
+    if (!existsSync(reportDir)){
+        await mkdir(reportDir, { recursive: true });
+    }
 
-        const testFiles = result.filter(file => {
+    if (existsSync(BENCH_PATH)) {
+        const testFiles = readdirSync(BENCH_PATH)
+        .filter(file => {
             if (pattern && typeof pattern === 'string') {
                 return new RegExp(pattern).test(file);
             }
@@ -184,16 +158,11 @@ async function benchmark(){
         });
 
         for (const testFile of testFiles) {
-            const testdir =testFile.replace(/[^/]*$/, '').replace(BENCH_PATH, '');
-            const dirPath = reportDir + testdir;
-            const data = await runRest(testFile);
-
-            if (!existsSync(dirPath)){
-                await mkdir(dirPath, { recursive: true });
-            }
+            const testFilePath = join(BENCH_PATH, testFile);
+            const data = await runRest(testFilePath);
 
             await writeFile(
-                reportDir + testFile.replace(BENCH_PATH, '').replace('.bench.ts', '.json'),
+                join(reportDir, `${testFile.replace('.bench.ts', '')}.json`),
                 JSON.stringify(data, undefined, 2)
             );
 

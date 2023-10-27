@@ -15,9 +15,6 @@
  * */
 
 import type MapSeriesOptions from '../Map/MapSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TiledWebMapSeries from './TiledWebMapSeries';
-import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesProviderRegistry';
 
 /* *
  *
@@ -27,21 +24,20 @@ import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesP
 
 interface TiledWebMapSeriesOptions extends MapSeriesOptions {
     provider?: ProviderOptions
-    states?: SeriesStatesOptions<TiledWebMapSeries>;
 }
 
 interface ProviderOptions {
-    apiKey?: string
-    onload?: Function,
-    subdomain?: string,
+    type?: string,
     theme?: string,
-    type?: TilesProviderRegistryName,
+    subdomain?: string,
     url?: string,
+    onload?: Function,
+    apiKey?: string
 }
 
 /* *
  *
- *  Default Export
+ *  Default export
  *
  * */
 

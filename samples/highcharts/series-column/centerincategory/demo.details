@@ -1,5 +1,5 @@
 ---
- name: Center in category
+ name: Highcharts Demo
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -19,13 +19,17 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { OrganizationDataLabelFormatterContext } from './OrganizationDataLabelOptions';
+import type {
+    OrganizationDataLabelsFormatterCallbackFunction,
+    OrganizationDataLabelFormatterContext
+} from './OrganizationDataLabelOptions';
 import type OrganizationPoint from './OrganizationPoint';
 import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
+import { type DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
 
 /* *
  *

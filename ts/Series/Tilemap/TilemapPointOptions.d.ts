@@ -29,10 +29,4 @@ export interface TilemapPointOptions extends HeatmapPointOptions {
     // nothing here yet
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default TilemapPointOptions;

@@ -31,10 +31,4 @@ export interface Pyramid3DSeriesOptions extends Funnel3DSeriesOptions {
     states?: SeriesStatesOptions<Pyramid3DSeries>;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default Pyramid3DSeriesOptions;

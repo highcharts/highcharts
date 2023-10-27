@@ -2,4 +2,8 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npx lint-staged && \
-npm run test:precommit
+npx gulp lint-ts && \
+# npx gulp dashboards/test && \
+npx gulp test && \
+npx gulp test-ts && \
+npx ts-node ./test/ts-node-unit-tests

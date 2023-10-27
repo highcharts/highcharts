@@ -27,6 +27,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -311,7 +312,7 @@ namespace FocusBorderComposition {
             };
         }
 
-        const isLabel = !!this.text;
+        const isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
             const isRotated = !!this.rotation;
             const correction = !isLabel ? getTextAnchorCorrection(this) :

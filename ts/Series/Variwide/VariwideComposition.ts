@@ -124,13 +124,17 @@ function onAxisAfterRender(
         this.chart.labelCollectors.push(
             function (): Array<SVGElement> {
                 return axis.tickPositions
-                    .filter((pos: number): boolean => !!axis.ticks[pos].label)
-                    .map((pos, i): SVGElement => {
+                    .filter(function (pos: number): boolean {
+                        return axis.ticks[pos].label as any;
+                    })
+                    .map(function (
+                        pos: number,
+                        i: number
+                    ): SVGElement {
                         const label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
-
                         return label;
                     });
             }
@@ -187,13 +191,13 @@ function tickPostTranslate(
 function wrapTickGetLabelPosition(
     this: Tick,
     proceed: Function,
-    _x: number,
-    _y: number,
-    _label: SVGElement,
+    x: number,
+    y: number,
+    label: SVGElement,
     horiz: boolean,
-    _labelOptions: DataLabelOptions,
-    _tickmarkOffset: number,
-    _index: number
+    labelOptions: DataLabelOptions,
+    tickmarkOffset: number,
+    index: number
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';

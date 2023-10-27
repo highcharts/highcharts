@@ -30,6 +30,7 @@ const {
     win,
     doc
 } = H;
+import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -69,9 +70,9 @@ function compose(
     const wglMode = hasWebGLSupport();
 
     if (!wglMode) {
-        if (typeof (H as AnyRecord).initCanvasBoost !== 'undefined') {
+        if (typeof initCanvasBoost !== 'undefined') {
             // Fallback to canvas boost
-            (H as AnyRecord).initCanvasBoost();
+            initCanvasBoost();
         } else {
             error(26);
         }

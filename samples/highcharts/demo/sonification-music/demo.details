@@ -5,7 +5,6 @@ authors:
 js_wrap: b
 requiresManualTesting: true
 new_until: 2023-06-30
-use_png_thumbnail: true
 tags:
   - Highcharts demo
 categories:

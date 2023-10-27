@@ -6,7 +6,7 @@ QUnit.test('DataTable clone', function (assert) {
 
     table.setRows([[ 'row1', 1 ]]);
     table.setCell('1', 0, 100);
-    table.aliases.x = 'x-alias';
+    table.setColumnAlias('x', 'x-alias');
 
     const tableClone = table.clone();
 
@@ -50,10 +50,10 @@ QUnit.test('DataTable clone', function (assert) {
 QUnit.test('DataTable Column Aliases', function (assert) {
     const table = new DataTable();
 
-    table.aliases.x = 'population';
-    table.aliases.y = 'gdp';
-    table.aliases.z = 'id';
-    table.aliases.f = 'population';
+    table.setColumnAlias('x', 'population');
+    table.setColumnAlias('y', 'gdp');
+    table.setColumnAlias('z', 'id');
+    table.setColumnAlias('f', 'population');
 
     table.setRows([{
         id: 'My Land',
@@ -70,13 +70,20 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         nonexistant: 1
     }]);
 
+    table.setColumnAlias('beta', 'nonexistant');
+    assert.strictEqual(
+        table.setColumnAlias('beta', 'a'),
+        false,
+        'Returns false when attempting to add an existing alias.'
+    );
+
     assert.deepEqual(
         table.getColumn('x'),
         table.getColumns(['population'])['population'],
         'Table should return correct column for alias.'
     );
 
-    table.aliases.population = 'gdp';
+    table.setColumnAlias('population', 'gdp')
     assert.deepEqual(
         table.getColumn('population'),
         table.getColumn('gdp'),
@@ -196,7 +203,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
 
     // Force move following alias
     table.setColumn('newColumn', []);
-    table.aliases.existingColumnAlias = 'newEmptyColumn';
+    table.setColumnAlias('existingColumnAlias', 'newEmptyColumn');
 
     assert.ok(
         table.renameColumn('existingColumn', 'existingColumnAlias'),

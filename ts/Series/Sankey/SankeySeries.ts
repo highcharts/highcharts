@@ -36,9 +36,11 @@ import SankeySeriesDefaults from './SankeySeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SankeyColumnComposition from './SankeyColumnComposition.js';
 const {
-    column: ColumnSeries,
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
@@ -86,6 +88,7 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    // eslint-disable-next-line valid-jsdoc
     /**
      * @private
      */
@@ -147,6 +150,8 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /* eslint-disable valid-jsdoc */
+
     /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
@@ -155,7 +160,7 @@ class SankeySeries extends ColumnSeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> {
         const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
 
-        for (const node of this.nodes) {
+        this.nodes.forEach(function (node: SankeyPoint): void {
 
             node.setNodeColumn();
 
@@ -166,7 +171,7 @@ class SankeySeries extends ColumnSeries {
 
             columns[node.column as any].push(node);
 
-        }
+        }, this);
 
         // Fill in empty columns (#8865)
         for (let i = 0; i < columns.length; i++) {
@@ -188,11 +193,13 @@ class SankeySeries extends ColumnSeries {
         // Prevents circular recursion:
         if (typeof node.level === 'undefined') {
             node.level = level;
-            for (const link of node.linksFrom) {
+            node.linksFrom.forEach(function (
+                link: SankeyPoint
+            ): void {
                 if (link.toNode) {
                     series.order(link.toNode, level + 1);
                 }
-            }
+            });
         }
     }
     /**
@@ -202,17 +209,25 @@ class SankeySeries extends ColumnSeries {
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
+        const series = this;
 
         if (this.orderNodes) {
-            for (const node of this.nodes) {
+            this.nodes
                 // Identify the root node(s)
-                if (node.linksTo.length === 0) {
-                    // Start by the root node(s) and recursively set the level
-                    // on all following nodes.
-                    this.order(node, 0);
-                }
-            }
-            stableSort(this.nodes, (a, b): number => (a.level - b.level));
+                .filter(function (node: SankeyPoint): boolean {
+                    return node.linksTo.length === 0;
+                })
+                // Start by the root node(s) and recursively set the level
+                // on all following nodes.
+                .forEach(function (node: SankeyPoint): void {
+                    series.order(node, 0);
+                });
+            stableSort(this.nodes, function (
+                a: SankeyPoint,
+                b: SankeyPoint
+            ): number {
+                return a.level - b.level;
+            });
         }
     }
 
@@ -276,10 +291,10 @@ class SankeySeries extends ColumnSeries {
                 'borderWidth',
                 'linkOpacity',
                 'opacity'
-            ].reduce((
+            ].reduce(function (
                 obj: AnyRecord,
                 key: string
-            ): AnyRecord => {
+            ): AnyRecord {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -334,7 +349,6 @@ class SankeySeries extends ColumnSeries {
         if (!this.processedXData) {
             this.processData();
         }
-
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
@@ -396,24 +410,31 @@ class SankeySeries extends ColumnSeries {
         });
 
         // First translate all nodes so we can use them when drawing links
-        for (const column of nodeColumns) {
-            for (const node of column) {
+        nodeColumns.forEach(function (
+            this: SankeySeries,
+            column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
+        ): void {
+
+            column.forEach(function (node: SankeyPoint): void {
                 series.translateNode(node, column);
-            }
-        }
+            });
+
+        }, this);
 
         // Then translate links
-        for (const node of this.nodes) {
+        this.nodes.forEach(function (node: SankeyPoint): void {
             // Translate the links from this node
-            for (const linkPoint of node.linksFrom) {
+            node.linksFrom.forEach(function (
+                linkPoint: SankeyPoint
+            ): void {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
                 if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }
-            }
-        }
+            });
+        });
     }
 
     /**
@@ -711,6 +732,8 @@ class SankeySeries extends ColumnSeries {
         }
     }
 
+    /* eslint-enable valid-jsdoc */
+
 }
 
 /* *
@@ -736,9 +759,8 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
 }
 
 NodesComposition.compose(SankeyPoint, SankeySeries);
-
 extend(SankeySeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesComposition.createNode as any,
@@ -763,7 +785,6 @@ declare module '../../Core/Series/SeriesType' {
         sankey: typeof SankeySeries;
     }
 }
-
 SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 
 /* *

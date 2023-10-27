@@ -166,7 +166,8 @@ class PackedBubbleSeries extends BubbleSeries {
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
-                series.reserveSpace()
+                series.visible ||
+                !chart.options.chart.ignoreHiddenSeries
             ) {
                 yData = series.yData || [];
 

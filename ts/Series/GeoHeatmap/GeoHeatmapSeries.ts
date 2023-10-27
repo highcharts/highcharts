@@ -115,8 +115,8 @@ class GeoHeatmapSeries extends MapSeries {
      * represented as colors.
      *
      * @sample maps/demo/geoheatmap-europe/
-     *         GeoHeatmap Chart with interpolation on Europe map
-     * @sample maps/series-geoheatmap/geoheatmap-equalearth/
+     *         GeoHeatmap Chart on the Orthographic Projection
+     * @sample maps/demo/geoheatmap-equalearth/
      *         GeoHeatmap Chart on the Equal Earth Projection
      *
      * @extends      plotOptions.map
@@ -321,7 +321,8 @@ class GeoHeatmapSeries extends MapSeries {
             series = this,
             chart = series.chart,
             mapView = chart.mapView,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            interpolation = seriesOptions.interpolation;
 
         if (series.getInterpolation().enabled && mapView && series.bounds) {
             const ctx = series.context || getContext(series),
@@ -769,8 +770,8 @@ export default GeoHeatmapSeries;
  *  ```
  *
  * @sample maps/demo/geoheatmap-europe/
- *         GeoHeatmap Chart with interpolation on Europe map
- * @sample maps/series-geoheatmap/geoheatmap-equalearth/
+ *         GeoHeatmap Chart on the Orthographic Projection
+ * @sample maps/demo/geoheatmap-equalearth/
  *         GeoHeatmap Chart on the Equal Earth Projection
  *
  * @type      {Array<Array<number>|*>}

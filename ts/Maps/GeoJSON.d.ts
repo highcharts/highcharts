@@ -8,36 +8,16 @@
  *
  * */
 
-/* *
- *
- *  Imports
- *
- * */
-
-import type {
-    LonLatArray,
-    MapViewOptions
-} from './MapViewOptions';
-
-/* *
- *
- *  Declarations
- *
- * */
+import type { LonLatArray, MapViewOptions } from './MapViewOptions';
 
 export interface BaseGeometry {
-    arcs?: (number[]|number[][]|number[][][]);
+    arcs?: number[]|number[][]|number[][][];
     properties?: Record<string, string|number>;
 }
 
 export interface GeoJSONGeometryPoint extends BaseGeometry {
     type: 'Point';
     coordinates: LonLatArray;
-}
-
-export interface MapLonLatObject {
-    lat: number;
-    lon: number;
 }
 
 export interface MultiPoint extends BaseGeometry{
@@ -73,17 +53,17 @@ export interface GeoJSONGeometryMultiPointRegistry {
     MultiPolygon: MultiPolygon;
 }
 
-export type GeoJSONGeometryMultiPoint =
-    GeoJSONGeometryMultiPointRegistry[keyof GeoJSONGeometryMultiPointRegistry];
+export type GeoJSONGeometryMultiPoint = GeoJSONGeometryMultiPointRegistry[
+    keyof GeoJSONGeometryMultiPointRegistry
+];
 
-export interface GeoJSONGeometryRegistry
-    extends GeoJSONGeometryMultiPointRegistry {
-
+interface GeoJSONGeometryRegistry extends GeoJSONGeometryMultiPointRegistry {
     Point: GeoJSONGeometryPoint;
 }
 
-export type GeoJSONGeometry =
-    GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
+export type GeoJSONGeometry = GeoJSONGeometryRegistry[
+    keyof GeoJSONGeometryRegistry
+];
 
 export interface GeoJSON {
     bbox: [number, number, number, number];
@@ -103,8 +83,7 @@ export interface GeoJSONFeature {
     properties?: Record<string, string|number>;
     type: 'Feature';
 }
-
-export interface GeoJSONTransform {
+interface GeoJSONTransform {
     crs?: string;
     hitZone?: AnyRecord;
     jsonmarginX?: number;
@@ -130,25 +109,17 @@ export interface TopoJSON {
     type: 'Topology';
 }
 
-export interface TopoJSONObjects {
+interface TopoJSONObjects {
     [key: string]: TopoJSONObject;
 }
-
-export interface TopoJSONObject {
+interface TopoJSONObject {
     geometries: GeoJSONGeometry[];
     'hc-decoded-geojson'?: GeoJSON;
     'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
 }
-
-export interface TopoJSONTransform {
+interface TopoJSONTransform {
     scale: [number, number];
     translate: [number, number];
 }
-
-/* *
- *
- *  Default Export
- *
- * */
 
 export default GeoJSON;

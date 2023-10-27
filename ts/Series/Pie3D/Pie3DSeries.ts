@@ -19,21 +19,23 @@
  * */
 
 import type ColorString from '../../Core/Color/ColorString';
-import type Series from '../../Core/Series/Series';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-
 import H from '../../Core/Globals.js';
-const { deg2rad } = H;
+const {
+    deg2rad
+} = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
+    seriesTypes: {
+        pie: PieSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -56,14 +58,6 @@ declare module '../Pie/PieSeriesOptions' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
@@ -72,25 +66,11 @@ class Pie3DSeries extends PieSeries {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    public static compose(
-        SeriesClass: typeof Series
-    ): void {
-
-        if (pushUnique(composedMembers, SeriesClass)) {
-            SeriesClass.types.pie = Pie3DSeries;
-        }
-
-    }
-
-    /* *
-     *
      *  Functions
      *
      * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -110,12 +90,11 @@ class Pie3DSeries extends PieSeries {
         if (!this.chart.is3d()) {
             super.animate.apply(this, arguments);
         } else {
-            const center = this.center,
+            let animation = this.options.animation,
+                attribs: SVGAttributes,
+                center = this.center,
                 group = this.group,
                 markerGroup = this.markerGroup;
-
-            let animation = this.options.animation,
-                attribs: SVGAttributes;
 
             if (animation === true) {
                 animation = {};
@@ -189,17 +168,14 @@ class Pie3DSeries extends PieSeries {
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
             // Apply perspective on label positions
-            for (
-                const coordinates of
-                [
-                    labelPosition?.natural,
-                    connectorPosition.breakAt,
-                    connectorPosition.touchingSliceAt
-                ]
-            ) {
+            [
+                labelPosition?.natural,
+                connectorPosition.breakAt,
+                connectorPosition.touchingSliceAt
+            ].forEach(function (coordinates: PositionObject): void {
                 coordinates.x += xOffset;
                 coordinates.y += yOffset;
-            }
+            });
         }
         return labelPosition;
     }
@@ -230,16 +206,15 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        const series = this,
+        let series = this,
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
             options3d = series.chart.options.chart.options3d as any,
             alpha = options3d.alpha,
-            beta = options3d.beta;
-
-        let z: number = seriesOptions.stacking ?
-            ((seriesOptions.stack as any) || 0) * depth :
-            series._i * depth;
+            beta = options3d.beta,
+            z: number = seriesOptions.stacking ?
+                ((seriesOptions.stack as any) || 0) * depth :
+                series._i * depth;
 
         z += depth / 2;
 
@@ -247,9 +222,10 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        for (const point of series.data) {
+        series.data.forEach(function (point): void {
 
-            const shapeArgs = point.shapeArgs;
+            let shapeArgs = point.shapeArgs,
+                angle: number;
 
             point.shapeType = 'arc3d';
 
@@ -259,8 +235,7 @@ class Pie3DSeries extends PieSeries {
             (shapeArgs as any).beta = beta;
             (shapeArgs as any).center = series.center;
 
-            const angle =
-                ((shapeArgs as any).end + (shapeArgs as any).start) / 2;
+            angle = ((shapeArgs as any).end + (shapeArgs as any).start) / 2;
 
             point.slicedTranslation = {
                 translateX: Math.round(
@@ -274,7 +249,7 @@ class Pie3DSeries extends PieSeries {
                     Math.cos(alpha * deg2rad)
                 )
             };
-        }
+        });
     }
 
     /**
@@ -288,16 +263,17 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        for (const point of this.points) {
+        this.points.forEach(function (point): void {
             if (point.graphic) {
-                for (const face of ['out', 'inn', 'side1', 'side2']) {
+                ['out', 'inn', 'side1', 'side2'].forEach((face): void => {
                     if (point.graphic) {
                         point.graphic[face].element.point = point;
                     }
-                }
+                });
             }
-        }
+        });
     }
+    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -310,7 +286,6 @@ class Pie3DSeries extends PieSeries {
 interface Pie3DSeries {
     pointClass: typeof Pie3DPoint;
 }
-
 extend(Pie3DSeries.prototype, {
     pointClass: Pie3DPoint
 });

@@ -16,81 +16,84 @@ const gulp = require('gulp');
  * @return {Promise}
  * Promise to keep
  */
-function scriptsCompile(filePaths, config = {}) {
+function scriptsCompile(filePathes) {
     const fs = require('fs'),
         fsLib = require('./lib/fs'),
         logLib = require('./lib/log'),
         path = require('path'),
-        swc = require('@swc/core'),
+        processLib = require('./lib/process'),
         argv = require('yargs').argv;
 
-    const esModulesFolder = config.esModulesFolder || '/es-modules/',
-        targetFolder = config.bundleTargetFolder || 'code';
-
-    filePaths = filePaths instanceof Array ?
-        filePaths :
+    filePathes = filePathes instanceof Array ?
+        filePathes :
         typeof argv.files === 'string' ?
-            argv.files
-                .split(',')
-                .map(filePath => path.join(targetFolder, filePath)) :
-            fsLib.getFilePaths(targetFolder, true);
+            argv.files.split(',').map(filePath => path.join('code', filePath)) :
+            fsLib.getFilePaths('code', true);
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
 
     for (
         let i = 0,
-            iEnd = filePaths.length,
+            iEnd = filePathes.length,
             inputPath,
             promise;
         i < iEnd;
         ++i
     ) {
-        inputPath = filePaths[i];
+        inputPath = filePathes[i];
 
         if (
-            (
-                inputPath.includes('/dashboards/') &&
-                config.cdnFolder !== 'dashboards/'
-            ) ||
-            inputPath.includes(esModulesFolder) ||
+            inputPath.includes('/dashboards/') ||
+            inputPath.includes('/es-modules/') ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
         }
 
 
-        const outputPath = inputPath.replace('.src.js', '.js'),
+        const target = (
+                argv.target ||
+                inputPath.includes('/es5/') ?
+                    'ECMASCRIPT5_STRICT' :
+                    'ECMASCRIPT6_STRICT'
+            ),
+            outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
 
-        // Compile file, https://swc.rs/docs/usage/core
-        const code = fs.readFileSync(inputPath, 'utf-8');
-        promise = swc.minify(code, {
-            compress: {
-                // hoist_funs: true
-            },
-            mangle: true,
-            sourceMap: true
-        })
+        // Compile file
+        // See https://github.com/google/closure-compiler/wiki/Flags-and-Options
+        promise = processLib.exec(
+            'npx google-closure-compiler' +
+            ' --assume_function_wrapper' +
+            ' --compilation_level SIMPLE' +
+            ` --create_source_map "${outputMapPath}"` +
+            // ' --emit_use_strict' + // not supported in GCC 2022
+            ' --env CUSTOM' +
+            ` --js "${inputPath}"` +
+            ` --js_output_file "${outputPath}"` +
+            ` --language_in ${target}` +
+            ` --language_out ${target}`,
+            // ' --platform native', // use native compiler // not GCC 2022
+            { silent: 2 }
 
-            .then(result => {
-                // Write compiled file
-                fs.writeFileSync(
-                    outputPath,
-                    result.code.replace('@license ', '') +
-                    `//# sourceMappingURL=${path.basename(outputMapPath)}`
-                );
+        // Fix source map reference
+        ).then(result => {
+            const outputMapFileName = path.basename(outputMapPath);
 
-                // Write source map
-                fs.writeFileSync(outputMapPath, result.map);
+            // Still no option for it
+            fs.appendFileSync(
+                outputPath,
+                `//# sourceMappingURL=${outputMapFileName}`
+            );
 
-                logLib.success(
-                    `Compiled ${inputPath} => ${outputPath}`,
-                    `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
-                );
+            logLib.success(
+                `Compiled ${inputPath} => ${outputPath}`,
+                `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+            );
 
-                return result;
-            });
+            return result;
+        });
 
         if (i % 2 || argv.CI) {
             promiseChain1 = promiseChain1.then(() => promise);

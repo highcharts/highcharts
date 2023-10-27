@@ -22,7 +22,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
 /* *
  *
- *  API Options
+ *  Constants
  *
  * */
 
@@ -138,6 +138,20 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
 };
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DependencyWheelSeriesDefaults;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -197,12 +211,4 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  * @apioption series.dependencywheel.nodes.dataLabels
  */
 
-''; // keeps doclets above separate
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default DependencyWheelSeriesDefaults;
+''; // adds doclets above to the transpiled file

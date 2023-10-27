@@ -129,8 +129,7 @@ Dashboards.board('container', {
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent.HighchartsComponent.Options).
 
-## Highcharts Compatibility
-The Highcharts component is compatible with all Highcharts modules in v10 or higher.
+
 
 
 

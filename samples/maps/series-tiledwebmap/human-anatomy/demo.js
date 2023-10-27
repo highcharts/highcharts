@@ -14,7 +14,7 @@
         }
     }
 
-    H.TilesProviderRegistry.CustomProvider =
+    H.TilesProvidersRegistry.CustomProvider =
         CustomProviderDefinition;
 }(Highcharts));
 

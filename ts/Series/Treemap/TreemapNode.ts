@@ -16,23 +16,22 @@
  *
  * */
 
-import type TreemapSeries from './TreemapSeries';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type TreemapPoint from './TreemapPoint';
+import type TreemapSeries from './TreemapSeries.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type TreemapPoint from './TreemapPoint.js';
 
 /* *
- *
- *  Class
- *
- * */
-
+*
+*  Class
+*
+* */
 class TreemapNode {
 
     /* *
-     *
-     *  Properties
-     *
-     * */
+    *
+    *  Properties
+    *
+    * */
 
     childrenTotal = 0;
     ignore?: boolean;
@@ -49,10 +48,10 @@ class TreemapNode {
 
 
     /* *
-     *
-     *  Functions
-     *
-     * */
+    *
+    *  Functions
+    *
+    * */
 
     public init(
         id: string,
@@ -76,10 +75,10 @@ class TreemapNode {
 }
 
 /* *
- *
- *  Class Prototype
- *
- * */
+*
+*  Class interface
+*
+* */
 
 interface TreemapNode {
     height: number;
@@ -93,30 +92,22 @@ interface TreemapNode {
 }
 
 /* *
- *
- *  Class Namespace
- *
- * */
+*
+*  Class Namespace
+*
+* */
 
 namespace TreemapNode {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
     export interface NodeValuesObject extends BBoxObject {
         direction: number;
         val: number;
     }
-
 }
 
 /* *
- *
- *  Default Export
- *
- * */
+*
+*  Default Export
+*
+* */
 
 export default TreemapNode;

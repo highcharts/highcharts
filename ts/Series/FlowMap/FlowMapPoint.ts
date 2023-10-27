@@ -18,12 +18,10 @@
 
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ColorMapComposition from '../ColorMapComposition.js';
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { LonLatArray } from '../../Maps/MapViewOptions';
+import { LonLatArray } from '../..//Maps/MapViewOptions';
 const {
     seriesTypes: {
         mapline: {
@@ -79,10 +77,10 @@ class FlowMapPoint extends MapLinePoint {
                     isString(toOrFrom) || ( // point id or has lat/lon coords
                         isNumber(pick(
                             (toOrFrom as LonLatArray)[0],
-                            (toOrFrom as MapLonLatObject).lat)) &&
+                            (toOrFrom as Highcharts.MapLonLatObject).lat)) &&
                         isNumber(pick(
                             (toOrFrom as LonLatArray)[1],
-                            (toOrFrom as MapLonLatObject).lon))
+                            (toOrFrom as Highcharts.MapLonLatObject).lon))
                     )
                 )));
             });

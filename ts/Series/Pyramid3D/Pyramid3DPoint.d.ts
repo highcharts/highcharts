@@ -26,7 +26,6 @@ import type Pyramid3DSeries from './Pyramid3DSeries';
  *  Class
  *
  * */
-
 declare class Pyramid3DPoint extends Funnel3DPoint {
     options: Pyramid3DPointOptions;
     series: Pyramid3DSeries;

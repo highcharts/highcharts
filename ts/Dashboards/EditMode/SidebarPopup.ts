@@ -23,7 +23,7 @@ import type ComponentType from '../Components/ComponentType';
 import type DataGridComponent from '../Plugins/DataGridComponent';
 import type EditMode from './EditMode';
 import type HighchartsComponent from '../Plugins/HighchartsComponent';
-import type KPIComponent from '../Plugins/KPIComponent';
+import type KPIComponent from '../Components/KPIComponent';
 import type Row from '../Layout/Row';
 
 import AccordionMenu from './AccordionMenu.js';

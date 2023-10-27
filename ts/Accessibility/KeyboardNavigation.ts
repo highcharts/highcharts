@@ -341,13 +341,6 @@ class KeyboardNavigation {
             );
 
         let preventDefault;
-        const target = (e.target as HTMLElement|undefined);
-        if (target &&
-            target.nodeName === 'INPUT' &&
-            !target.classList.contains('highcharts-a11y-proxy-element')
-        ) {
-            return;
-        }
 
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;

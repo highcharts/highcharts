@@ -23,18 +23,17 @@ QUnit.test('Lollipop offset affection.', function (assert) {
                 }
             ]
         }),
-        lollipopPoints = chart.series[0].points,
-        errorbarPoints = chart.series[1].points;
+        points = chart.series[0].points;
 
     assert.close(
-        lollipopPoints[0].shapeArgs.x,
-        errorbarPoints[0].shapeArgs.x + (errorbarPoints[0].shapeArgs.width / 2),
+        chart.series[0].data[0].shapeArgs.x,
+        chart.series[1].data[0].shapeArgs.x,
         2,
         'Lollipop and Errorbar connectors should be in the same place.'
     );
 
     assert.deepEqual(
-        lollipopPoints.map(p => p.graphic.attr('fill')),
+        chart.series[0].points.map(p => p.graphic.attr('fill')),
         [
             '#0000ff',
             '#0000ff',
@@ -52,13 +51,13 @@ QUnit.test('Lollipop offset affection.', function (assert) {
     });
 
     assert.strictEqual(
-        lollipopPoints[0].graphic.attr('fill'),
+        chart.series[0].points[0].graphic.attr('fill'),
         '#00ff00',
         '#14103: Marker fillColor should be applied.'
     );
 
-    lollipopPoints[0].setState('hover', false);
-    lollipopPoints[0].setState();
+    points[0].setState('hover', false);
+    points[0].setState();
 
     assert.strictEqual(
         chart.series[0].points[0].graphic.attr('fill'),

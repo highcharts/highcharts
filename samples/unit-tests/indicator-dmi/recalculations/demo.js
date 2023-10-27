@@ -202,7 +202,7 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graph.element.getAttribute('stroke-width'),
-            '2',
+            '1',
             'The DX line width should be correct.'
         );
 

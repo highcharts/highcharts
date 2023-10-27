@@ -97,7 +97,7 @@ abstract class Component {
      * Creates HTML text element like header or title
      *
      * @param tagName
-     * HTML tag name used as wrapper of text like `h2` or `p`.
+     * HTML tag name used as wrapper of text like `h1`, `h2` or `p`.
      * @param elementName
      * Name of element
      * @param textOptions
@@ -860,7 +860,7 @@ abstract class Component {
 
         if (shouldExist) {
             const newTitle = Component.createTextElement(
-                'h2',
+                'h1',
                 'title',
                 titleOptions
             );
@@ -1154,8 +1154,7 @@ namespace Component {
 
     /**
      * The sync can be an object configuration containing: `highlight`,
-     * `visibility` or `extremes`. For the Navigator Component `crossfilter`
-     * sync can be used.
+     * `visibility` or `extremes`.
      * ```
      * Example:
      * {
@@ -1220,8 +1219,6 @@ namespace Component {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
          */
         sync: SyncOptions;
         /**

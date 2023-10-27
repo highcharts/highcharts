@@ -2,6 +2,5 @@
  name: Highcharts Demo
  authors:
    - Pawel Potaczek
- requiresManualTesting: true
  js_wrap: b
 ...

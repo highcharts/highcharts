@@ -17,6 +17,7 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
+
     However, this is not the only way to import Dashboards packages. See other ways, e.g. install via npm, [here](https://www.highcharts.com/docs/dashboards/installation).
 
 3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
@@ -90,4 +91,4 @@ To do so, you have to pass two arguments:
 
 6. With that config, your dashboard should look like the example below:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>

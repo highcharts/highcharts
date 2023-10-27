@@ -85,14 +85,11 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
     chart.redraw();
-    /* No longer relevant after refactoring to xAxis-based stacks for
-        centerInCategory
     assert.strictEqual(
         Object.keys(chart.yAxis[0].stacking.stacks).length,
         1,
         '#14910: Group stack should not be removed on redraw'
     );
-    */
 
     chart.update({
         chart: {
@@ -109,7 +106,6 @@ QUnit.test('series.centerInCategory', function (assert) {
         '#15217: Tooltip should be positioned on top of the bar'
     );
 
-
     chart.update({
         chart: {
             inverted: false
@@ -121,9 +117,9 @@ QUnit.test('series.centerInCategory', function (assert) {
         }))
     });
 
-    assert.notEqual(
-        chart.series[0].points[0].shapeArgs.y,
-        chart.series[1].points[0].shapeArgs.y,
+    assert.ok(
+        chart.series[3].points[0].shapeArgs.x + chart.plotLeft >
+            chart.xAxis[0].ticks[0].mark.element.getBBox().x,
         '#14980: Toggling stacking with centerInCategory enabled should work'
     );
 
@@ -260,49 +256,76 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
 
-    chart.xAxis[1].remove();
-    chart.addAxis({
-        opposite: true
+    /*
+    chart.series[1].setData([
+        [0, 2],
+        [1, null],
+        [1, 5],
+        [1, null],
+        [2, 1]
+    ]);
+
+    assert.notEqual(
+        chart.xAxis[0].ticks[0].mark.element.getBBox().x -
+            chart.series[1].points[0].shapeArgs.x,
+        chart.xAxis[0].ticks[1].mark.element.getBBox().x -
+            chart.series[1].points[2].shapeArgs.x,
+        'Nulls and value with the same x coordinates should be handled properly.'
+    );
+
+    chart.series[0].update({
+        xAxis: 1,
+        yAxis: 1
     }, false);
+
+    chart.series[1].update({
+        xAxis: 1,
+        yAxis: 1
+    }, false);
+
+    chart.xAxis[0].update({
+        width: '50%'
+    }, false);
+
+    chart.xAxis[1].update({
+        width: '50%',
+        left: '50%',
+        offset: 0
+    }, false);
+
+    chart.redraw();
+
+    assert.ok(
+        chart.plotLeft + chart.series[1].points[1].shapeArgs.x + chart.plotSizeX / 2 >
+            chart.xAxis[1].ticks[1].mark.element.getBBox().x,
+        'centerInCategory should work for multiple x-axes.'
+    );
+
     chart.update({
-        series: [{
-            data: [
-                [0, 1],
-                [1, 2],
-                [2, 3]
-            ]
-        }, {
-            data: [
-                [0, 1],
-                [1, null],
-                [2, 3]
-            ],
-            yAxis: 1
-        }, {
-            data: [
-                [0, 1],
-                [1, 2],
-                [2, 3]
-            ],
-            yAxis: 1
-        }]
-    }, true, true);
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        }
+    }, false);
 
-    assert.close(
-        chart.series[1].points[0].graphic.getBBox().x -
-            chart.series[0].points[0].graphic.getBBox().x,
-        chart.series[2].points[0].graphic.getBBox().x -
-            chart.series[1].points[0].graphic.getBBox().x,
-        2,
-        '#17764: Points should be evenly spaced within category'
-    );
+    const thirdSeries = chart.series[2];
 
-    assert.close(
-        chart.series[1].points[0].graphic.getBBox().x -
-            chart.series[0].points[0].graphic.getBBox().x,
-        chart.series[2].points[1].graphic.getBBox().x -
-            chart.series[0].points[1].graphic.getBBox().x,
-        2,
-        '#17764: Points should be evenly spaced, null point between'
+    thirdSeries.update({
+        stack: 1
+    }, false);
+
+    chart.redraw();
+
+    assert.ok(
+        chart.yAxis[0].stacking.stacks[thirdSeries.stackKey][1].label.absoluteBox.x <
+            chart.xAxis[0].ticks[1].mark.element.getBBox().x,
+        'stackLabels placement'
     );
+    */
 });

@@ -31,13 +31,14 @@ const filesize = async () => {
     } = require('../../build.js');
     const colors = require('colors');
     const {
+        compile
+    } = require('../../compile.js');
+    const {
         getFile
     } = require('@highcharts/highcharts-assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');
-    const scriptsCompile = require('../../../tools/gulptasks/scripts-compile');
-
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled and rename the param to
     // 'mode'
@@ -75,7 +76,7 @@ const filesize = async () => {
 
     const runFileSize = async (obj, key) => {
         await getBuildScripts({ files }).fnFirstBuild();
-        await scriptsCompile(files.map(path => `${sourceFolder}${path}`));
+        await compile(files, sourceFolder);
         files.reduce(
             (o, n) => {
                 const filename = n.replace('.src.js', '.js');

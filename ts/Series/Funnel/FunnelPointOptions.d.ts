@@ -29,10 +29,4 @@ export interface FunnelPointOptions extends PiePointOptions {
     dataLabels?: FunnelDataLabelOptions;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default FunnelPointOptions;

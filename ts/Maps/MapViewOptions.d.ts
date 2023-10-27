@@ -13,26 +13,21 @@
  *  Imports
  *
  * */
-
 import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
-import type {
-    GeoJSONGeometryMultiPoint,
-    MultiLineString,
-    Polygon
-} from './GeoJSON';
+import type { GeoJSONGeometryMultiPoint, MultiLineString, Polygon } from './GeoJSON';
 
 /* *
  *
  *  Declarations
  *
  * */
-
 declare module '../Core/Options' {
     interface Options {
         mapView?: MapViewOptions;
     }
 }
+
 
 export type LonLatArray = [number, number];
 
@@ -58,15 +53,7 @@ export interface MapBounds {
     y2: number;
 }
 
-export interface MapViewInsetOptions {
-    borderColor: ColorType;
-    borderWidth: number;
-    padding: MapViewPaddingType;
-    relativeTo: ('mapBoundingBox'|'plotBox');
-    units: ('percent'|'pixels');
-}
-
-export interface MapViewInsetsOptions extends MapViewInsetOptions {
+export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
     borderPath?: MultiLineString;
     center: LonLatArray;
     field?: Polygon;
@@ -75,10 +62,18 @@ export interface MapViewInsetsOptions extends MapViewInsetOptions {
     projection?: ProjectionOptions;
 }
 
+export interface MapViewInsetOptionsOptions {
+    borderColor: ColorType;
+    borderWidth: number;
+    padding: MapViewPaddingType;
+    relativeTo: ('mapBoundingBox'|'plotBox');
+    units: ('percent'|'pixels');
+}
+
 export interface MapViewOptions {
     fitToGeometry?: GeoJSONGeometryMultiPoint;
     center: LonLatArray;
-    insetOptions?: MapViewInsetOptions;
+    insetOptions?: MapViewInsetOptionsOptions;
     insets?: MapViewInsetsOptions[];
     maxZoom?: number;
     padding: MapViewPaddingType;
@@ -87,11 +82,5 @@ export interface MapViewOptions {
     zoom?: number;
     minZoom?: number;
 }
-
-/* *
- *
- *  Default Export
- *
- * */
 
 export default MapViewOptions;

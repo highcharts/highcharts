@@ -29,21 +29,35 @@ const { objectEach } = U;
 
 namespace TreemapUtilities {
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
     interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
         (this: TContext, item: TItem): (boolean|TItem);
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
+    export const AXIS_MAX = 100;
+
+    /* eslint-disable no-invalid-this, valid-jsdoc */
+
+    /**
+     * @todo Similar to eachObject, this function is likely redundant
+     */
+    export function isBoolean(x: unknown): x is boolean {
+        return typeof x === 'boolean';
+    }
+
+    /**
+     * @todo Similar to recursive, this function is likely redundant
+     */
+    export function eachObject(
+        this: any,
+        list: any,
+        func: U.ObjectEachCallback<any, unknown>,
+        context?: unknown
+    ): void {
+        context = context || this;
+        objectEach(list, function (val: unknown, key: string): void {
+            func.call(context, val, key, list);
+        });
+    }
 
     /**
      * @todo find correct name for this function.
@@ -53,11 +67,11 @@ namespace TreemapUtilities {
         this: any,
         item: TItem,
         func: TreemapRecursiveCallbackFunction<TContext, TItem>,
-        context?: TContext
+        context: TContext = this
     ): void {
         let next: any;
 
-        next = func.call(context || this, item);
+        next = func.call(context as any, item);
         if (next !== false) {
             recursive(next, func, context);
         }

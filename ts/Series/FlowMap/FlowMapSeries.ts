@@ -16,16 +16,13 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import type { LonLatArray } from '../..//Maps/MapViewOptions';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type { MarkerEndOptions } from './FlowMapPointOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-
 import FlowMapPoint from './FlowMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import { LonLatArray } from '../..//Maps/MapViewOptions';
+
 const {
     series: {
         prototype: {
@@ -38,6 +35,8 @@ const {
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
+import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -561,8 +560,8 @@ class FlowMapSeries extends MapLineSeries {
                     }
                 },
                 getLonLatXY = (
-                    lonLat: (LonLatArray|MapLonLatObject)
-                ): MapLonLatObject => {
+                    lonLat: LonLatArray | Highcharts.MapLonLatObject
+                ): Highcharts.MapLonLatObject => {
                     if (isArray(lonLat)) {
                         return {
                             lon: lonLat[0],
@@ -818,8 +817,8 @@ class FlowMapSeries extends MapLineSeries {
         }
 
         // Objects converted to string to be used in tooltip.
-        const fromPoint = point.options.from as MapLonLatObject,
-            toPoint = point.options.to as MapLonLatObject,
+        const fromPoint = point.options.from as Highcharts.MapLonLatObject,
+            toPoint = point.options.to as Highcharts.MapLonLatObject,
             fromLat = fromPoint.lat,
             fromLon = fromPoint.lon,
             toLat = toPoint.lat,

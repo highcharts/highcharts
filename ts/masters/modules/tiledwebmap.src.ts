@@ -9,8 +9,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import TiledWebMapSeries from '../../Series/TiledWebMap/TiledWebMapSeries.js';
-import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
+import '../../Series/TiledWebMap/TiledWebMapSeries.js';
+import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
 const G: AnyRecord = Highcharts;
-G.TilesProviderRegistry = TilesProviderRegistry;
-TiledWebMapSeries.compose(G.Chart);
+G.TilesProvidersRegistry = TilesProvidersRegistry;

@@ -20,7 +20,6 @@ import U from '../Utilities.js';
 const {
     clamp,
     pick,
-    pushUnique,
     stableSort
 } = U;
 
@@ -73,7 +72,7 @@ namespace RendererUtilities {
      * @private
      */
     export function distribute<T extends BoxObject>(
-        boxes: DistributedBoxArray<T>,
+        boxes: Array<T>,
         len: number,
         maxDistance?: number
     ): DistributedBoxArray<T> {
@@ -89,24 +88,18 @@ namespace RendererUtilities {
                 a: BoxObject,
                 b: BoxObject
             ): number =>
-                a.target - b.target,
-            restBoxes: DistributedBoxArray<T> = [], // The outranked overshoot
-            boxesLength = boxes.length,
-            forDeletion: Array<number> = [],
-            push = restBoxes.push;
+                a.target - b.target;
 
         let i: number,
-            cursor: number,
-            step: number,
             overlapping = true,
-            box: T & DistributedBoxObject,
-            target: number,
-            total = 0,
-            equalRank: boolean;
+            restBoxes: Array<T> = [], // The outranked overshoot
+            box,
+            target,
+            total = 0;
 
         // If the total size exceeds the len, remove those boxes with the lowest
         // rank
-        i = boxesLength;
+        i = boxes.length;
         while (i--) {
             total += boxes[i].size;
         }
@@ -114,35 +107,13 @@ namespace RendererUtilities {
         // Sort by rank, then slice away overshoot
         if (total > reducedLen) {
             stableSort(boxes, sortByRank);
-            equalRank = boxes[0].rank === boxes[boxes.length - 1].rank;
-            step = equalRank ? boxesLength / 2 : -1;
-            cursor = equalRank ? step : boxesLength - 1;
-
-            // When the boxes have equal rank (pie data labels, flags - #10073),
-            // decimate the boxes by starting in the middle and gradually remove
-            // more items inside the array. When they are sorted by rank, just
-            // remove the ones with the lowest rank from the end.
-            while (step && total > reducedLen) {
-                i = Math.floor(cursor);
-                box = boxes[i];
-                if (pushUnique(forDeletion, i)) {
-                    total -= box.size;
-                }
-                cursor += step;
-
-                // Start over the decimation with smaller steps
-                if (equalRank && cursor >= boxes.length) {
-                    step /= 2;
-                    cursor = step;
-                }
+            i = 0;
+            total = 0;
+            while (total <= reducedLen) {
+                total += boxes[i].size;
+                i++;
             }
-
-            // Clean out the boxes marked for deletion
-            forDeletion
-                .sort((a: number, b: number): number => b - a)
-                .forEach((i): number =>
-                    push.apply(restBoxes, boxes.splice(i, 1))
-                );
+            restBoxes = boxes.splice(i - 1, boxes.length);
         }
 
         // Order by target
@@ -199,7 +170,8 @@ namespace RendererUtilities {
         }
 
         // Add the rest (hidden boxes)
-        push.apply(origBoxes, restBoxes as DistributedBoxArray<T>);
+        origBoxes.push.apply(origBoxes, restBoxes as DistributedBoxArray<T>);
+
 
         // Now the composite boxes are placed, we need to put the original boxes
         // within them

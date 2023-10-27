@@ -12,18 +12,16 @@
 
 /* *
  *
- *  Imports
+ * Imports
  *
  * */
-
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
  *
- *  Declarations
+ * Declarations
  *
  * */
-
 export interface WindbarbPointOptions extends ColumnPointOptions {
     direction?: number;
     value?: number;
@@ -31,8 +29,7 @@ export interface WindbarbPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Default Export
+ * Export default
  *
  * */
-
 export default WindbarbPointOptions;

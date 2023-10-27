@@ -29,10 +29,4 @@ export interface Pyramid3DPointOptions extends Funnel3DPointOptions {
     // nothing here yet
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default Pyramid3DPointOptions;

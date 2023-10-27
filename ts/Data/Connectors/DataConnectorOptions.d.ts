@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Sophie Bremer
  *  - Karol Kolodziej
  *
  * */
@@ -22,8 +21,7 @@
 
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
-import type DataTableOptions from '../DataTableOptions';
-
+import type DataTable from '../DataTable';
 
 /* *
  *
@@ -31,12 +29,10 @@ import type DataTableOptions from '../DataTableOptions';
  *
  * */
 
-
 /**
  * Option of the DataConnector.
  */
 export interface DataConnectorOptions {
-
 
     /**
      * Options for the modifier that shall be applied to the table to create a
@@ -60,19 +56,16 @@ export interface DataConnectorOptions {
      */
     dataModifier?: DataModifierTypeOptions;
 
-
     /**
      * Options for the data table.
      */
-    dataTable?: DataTableOptions;
-
+    dataTable?: DataTable.Options;
 
     /**
      * Contains custom metadata related to the connector source, for example the
      * column order on the source side.
      */
     metadata?: Metadata;
-
 
 }
 
@@ -83,12 +76,10 @@ export interface DataConnectorOptions {
  */
 export interface Metadata {
 
-
     /**
      * Metadata entry containing the name of the column and a metadata object.
      */
     columns: Record<string, MetaColumn>;
-
 
 }
 

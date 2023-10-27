@@ -145,7 +145,7 @@ function addToolbar(
 
     // set small size
     if (popupDiv.className.indexOf(toolbarClass) === -1) {
-        popupDiv.className += ' ' + toolbarClass + ' highcharts-no-mousewheel';
+        popupDiv.className += ' ' + toolbarClass;
     }
 
     // set position

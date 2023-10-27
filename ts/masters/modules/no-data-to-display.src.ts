@@ -11,7 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from '../../Core/Globals.js';
-import NoDataToDisplay from '../../Extensions/NoDataToDisplay/NoDataToDisplay.js';
-const G: AnyRecord = Highcharts;
-NoDataToDisplay.compose(G.Chart, G.defaultOptions);
+import '../../Extensions/NoDataToDisplay.js';

@@ -1,9 +1,6 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-.highcharts-dashboards-component {
+#dashboard-3 h1 {
+    height: 400px;
     text-align: center;
-}
-
-.highcharts-dashboards-component img {
-    height: 200px;
 }

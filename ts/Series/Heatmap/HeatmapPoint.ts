@@ -23,8 +23,14 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+    seriesTypes: {
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -65,7 +71,11 @@ class HeatmapPoint extends ScatterPoint {
      *
      * */
 
-    /** @private */
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
     public applyOptions(
         options: HeatmapPointOptions,
         x?: number
@@ -83,7 +93,6 @@ class HeatmapPoint extends ScatterPoint {
         return this;
     }
 
-    /** @private */
     public getCellAttributes(): HeatmapPoint.CellAttributes {
         const point = this,
             series = point.series,
@@ -146,7 +155,7 @@ class HeatmapPoint extends ScatterPoint {
 
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
-        for (const dimension of dimensions) {
+        dimensions.forEach(function (dimension): void {
             const prop = dimension[0],
                 direction = dimension[1];
 
@@ -183,7 +192,7 @@ class HeatmapPoint extends ScatterPoint {
                 cellAttr[start] += pointPadding;
                 cellAttr[end] -= pointPadding;
             }
-        }
+        });
 
         return cellAttr;
     }
@@ -191,14 +200,10 @@ class HeatmapPoint extends ScatterPoint {
     /**
      * @private
      */
-    public haloPath(
-        size: number
-    ): SVGPath {
-
+    public haloPath(size: number): SVGPath {
         if (!size) {
             return [];
         }
-
         const { x = 0, y = 0, width = 0, height = 0 } = this.shapeArgs || {};
 
         return [
@@ -222,6 +227,8 @@ class HeatmapPoint extends ScatterPoint {
             this.value !== -Infinity
         );
     }
+
+    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -247,22 +254,13 @@ extend(HeatmapPoint.prototype, {
  * */
 
 namespace HeatmapPoint {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
     export interface CellAttributes extends Record<string, number> {
         x1: number;
         x2: number;
         y1: number;
         y2: number;
     }
-
 }
-
 /* *
  *
  *  Default Export

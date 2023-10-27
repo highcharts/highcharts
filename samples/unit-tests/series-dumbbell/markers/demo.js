@@ -113,9 +113,6 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
 
         series: [
             {
-                lowMarker: {
-                    symbol: 'triangle'
-                },
                 data: [
                     [0, 10],
                     [10, 20],
@@ -168,21 +165,6 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
             point.graphics[0].attr('fill'),
             '#000000',
             'After series.lowColor update, all the graphics[0]s should have a correct color.'
-        );
-    });
-
-    chart.series[0].update({
-        lowMarker: {
-            symbol: 'square',
-            fillColor: '#00ff00'
-        }
-    });
-
-    chart.series[0].points.forEach(function (point) {
-        assert.strictEqual(
-            point.graphics[0].attr('fill'),
-            '#00ff00',
-            'After series.lowMarker update, all the graphics[0]s should have a correct color.'
         );
     });
 });

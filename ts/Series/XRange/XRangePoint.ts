@@ -29,8 +29,21 @@ import type {
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+    series: {
+        prototype: {
+            pointClass: {
+                prototype: pointProto
+            }
+        }
+    },
+    seriesTypes: {
+        column: {
+            prototype: {
+                pointClass: ColumnPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import XRangeSeries from './XRangeSeries.js';
@@ -41,14 +54,14 @@ import XRangeSeries from './XRangeSeries.js';
  *
  * */
 
+interface BBoxObjectWithCenter extends BBoxObject {
+    centerX?: number;
+}
+
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
         tooltipDateKeys?: Array<string>;
     }
-}
-
-interface BBoxObjectWithCenter extends BBoxObject {
-    centerX?: number;
 }
 
 /* *
@@ -134,14 +147,13 @@ class XRangePoint extends ColumnPoint {
         }
 
     }
-
     /**
      * Extend init to have y default to 0.
      *
      * @private
      */
     public init(): XRangePoint {
-        super.init.apply(this, arguments as any);
+        pointProto.init.apply(this, arguments as any);
 
         if (!this.y) {
             this.y = 0;
@@ -154,7 +166,7 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public setState(): void {
-        super.setState.apply(this, arguments as any);
+        pointProto.setState.apply(this, arguments as any);
 
         this.series.drawPoint(this, this.series.getAnimationVerb());
     }
@@ -165,7 +177,7 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        const cfg = super.getLabelConfig.call(this) as
+        const cfg = pointProto.getLabelConfig.call(this) as
                 XRangePoint.XRangePointLabelObject,
             yCats = this.series.yAxis.categories;
 
@@ -191,7 +203,7 @@ class XRangePoint extends ColumnPoint {
 
 /* *
  *
- *  Class Prototype
+ * Class Prototype
  *
  * */
 
@@ -206,7 +218,6 @@ interface XRangePoint {
     yCategory?: string;
 
 }
-
 extend(XRangePoint.prototype, {
     ttBelow: false,
     tooltipDateKeys: ['x', 'x2']

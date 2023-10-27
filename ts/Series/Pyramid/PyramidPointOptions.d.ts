@@ -28,10 +28,4 @@ export interface PyramidPointOptions extends FunnelPointOptions {
     // nothing here yet
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default PyramidPointOptions;

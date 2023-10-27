@@ -12,11 +12,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import DownloadURL from '../../Extensions/DownloadURL.js';
-import ExportData from '../../Extensions/ExportData/ExportData.js';
 const G: AnyRecord = Highcharts;
-// Compatibility
-G.dataURLtoBlob = DownloadURL.dataURLtoBlob;
-G.downloadURL = DownloadURL.downloadURL;
-// Compose
+import ExportData from '../../Extensions/ExportData/ExportData.js';
 ExportData.compose(G.Chart);

@@ -26,9 +26,13 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BorderRadius from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    gauge: GaugeSeries,
-    pie: PieSeries
-} = SeriesRegistry.seriesTypes;
+    seriesTypes: {
+        gauge: GaugeSeries,
+        pie: {
+            prototype: pieProto
+        }
+    }
+} = SeriesRegistry;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
@@ -60,7 +64,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     /* *
      *
-     *  Static Properties
+     *  Static properties
      *
      * */
 
@@ -101,7 +105,7 @@ class SolidGaugeSeries extends GaugeSeries {
         if (!axis.dataClasses && axis.options.dataClasses) {
             axis.initDataClasses(axis.options);
         }
-        axis.initStops();
+        axis.initStops(axis.options);
 
         // Generate points and inherit data label position
         GaugeSeries.prototype.translate.call(this);
@@ -267,10 +271,9 @@ class SolidGaugeSeries extends GaugeSeries {
     public animate(init?: boolean): void {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
-            PieSeries.prototype.animate.call(this, init);
+            pieProto.animate.call(this, init);
         }
     }
-
 }
 
 /* *

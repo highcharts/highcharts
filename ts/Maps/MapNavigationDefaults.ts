@@ -16,21 +16,17 @@
  *
  * */
 
-import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
-
+import D from '../Core/Defaults.js';
 import { Palette } from '../Core/Color/Palettes.js';
+import U from '../Core/Utilities.js';
+const { extend } = U;
 
 /* *
  *
  *  Constants
  *
  * */
-
-const lang: Record<string, string> = {
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out'
-};
 
 /**
  * The `mapNavigation` option handles buttons for navigation in addition to
@@ -39,7 +35,7 @@ const lang: Record<string, string> = {
  * @product      highmaps
  * @optionparent mapNavigation
  */
-const mapNavigation: MapNavigationOptions = {
+const MapNavigationDefaults: MapNavigationOptions = {
 
     /**
      * General options for the map navigation buttons. Individual options
@@ -164,7 +160,7 @@ const mapNavigation: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
              */
-            onclick: function (this: MapChart): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(0.5);
             },
 
@@ -199,7 +195,7 @@ const mapNavigation: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
              */
-            onclick: function (this: MapChart): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(2);
             },
 
@@ -297,13 +293,22 @@ const mapNavigation: MapNavigationOptions = {
 
 /* *
  *
+ *  Composition
+ *
+ * */
+
+// Add language
+extend(D.defaultOptions.lang, {
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out'
+});
+// Set the default map navigation options
+D.defaultOptions.mapNavigation = MapNavigationDefaults;
+
+/* *
+ *
  *  Default Export
  *
  * */
 
-const mapNavigationDefaults = {
-    lang,
-    mapNavigation
-};
-
-export default mapNavigationDefaults;
+export default MapNavigationDefaults;

@@ -18,7 +18,6 @@ import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeries from './AreaRangeSeries';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import { PointMarkerOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -32,7 +31,6 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
     );
     states?: SeriesStatesOptions<AreaRangeSeries>;
     trackByArea?: boolean;
-    lowMarker?: PointMarkerOptions;
 }
 
 declare module '../../Core/Series/SeriesOptions' {

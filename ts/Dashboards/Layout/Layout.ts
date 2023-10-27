@@ -143,7 +143,7 @@ class Layout extends GUIElement {
             render: board.guiEnabled,
             parentContainer: parentContainer,
             attribs: {
-                id: (options.id || '') + (this.copyId ? '_' + this.copyId : ''),
+                id: options.id + (this.copyId ? '_' + this.copyId : ''),
                 className: Globals.classNames.layout + ' ' +
                     layoutClassName
             },

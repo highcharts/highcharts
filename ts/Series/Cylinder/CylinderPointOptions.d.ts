@@ -30,10 +30,4 @@ export interface CylinderPointOptions extends ColumnPointOptions {
     shapeType?: string;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default CylinderPointOptions;

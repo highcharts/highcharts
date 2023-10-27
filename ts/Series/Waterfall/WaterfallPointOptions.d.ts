@@ -13,15 +13,13 @@
  *  Imports
  *
  * */
-
 import ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *
- *  Declarations
+ * Declarations
  *
  * */
-
 interface WaterfallPointOptions extends ColumnPointOptions {
     isSum?: boolean;
     y?: any;
@@ -29,8 +27,7 @@ interface WaterfallPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Export
+ * Export
  *
  * */
-
 export default WaterfallPointOptions;

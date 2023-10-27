@@ -13,7 +13,6 @@
  *  Imports
  *
  * */
-
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 
@@ -34,7 +33,7 @@ export interface BulletTargetOptions {
 
 /* *
  *
- *  Default Export
+ *  Export
  *
  * */
 

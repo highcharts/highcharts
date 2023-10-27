@@ -104,9 +104,7 @@ function getBoostClipRect(
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
-        height: chart.navigator ? // #17820
-            chart.navigator.top + chart.navigator.height - chart.plotTop :
-            chart.plotHeight
+        height: chart.plotHeight
     };
 
     // Clipping of individal series (#11906, #19039).
@@ -136,6 +134,8 @@ function getBoostClipRect(
                 chart.plotTop +
                 verticalAxes[0].len
             );
+        } else {
+            clipBox.height = chart.plotHeight;
         }
     }
 

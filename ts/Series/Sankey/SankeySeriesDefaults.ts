@@ -103,6 +103,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          */
         nodeFormat: void 0,
 
+        // eslint-disable-next-line valid-jsdoc
         /**
          * Callback to format data labels for _nodes_ in the sankey diagram.
          * The `nodeFormat` option takes precedence over the
@@ -122,6 +123,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
         format: void 0,
 
+        // eslint-disable-next-line valid-jsdoc
         /**
          * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
          */

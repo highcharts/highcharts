@@ -8,39 +8,33 @@
  *
  * */
 
-/* *
- *
- *  Imports
- *
- * */
-
 import type {
     LonLatArray,
     MapBounds,
     ProjectedXYArray
 } from './MapViewOptions';
+import type ProjectionOptions from './ProjectionOptions';
 
-/* *
- *
- *  Declarations
- *
- * */
+export interface ProjectionForwardFunction {
+    (coords: LonLatArray): ProjectedXYArray;
+}
+
+export interface ProjectionInverseFunction {
+    (xy: ProjectedXYArray): LonLatArray;
+}
 
 export interface Projector {
-    forward(coords: LonLatArray): ProjectedXYArray;
-    inverse(xy: ProjectedXYArray): LonLatArray;
+    forward: ProjectionForwardFunction;
+    inverse: ProjectionInverseFunction;
 }
 
-export interface ProjectionDefinition extends Projector {
+export declare class ProjectionDefinition {
+    constructor(options: ProjectionOptions);
     antimeridianCutting?: boolean;
     bounds?: MapBounds;
+    forward: ProjectionForwardFunction;
+    inverse: ProjectionInverseFunction;
     maxLatitude?: number;
 }
-
-/* *
- *
- *  Default Export
- *
- * */
 
 export default ProjectionDefinition;

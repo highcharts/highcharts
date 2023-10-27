@@ -81,7 +81,7 @@ function chartDrawChartBox(
             legend.allItems.forEach((item): void => {
                 legendItem = item.legendItem || {};
                 if (legendItem.group) {
-                    legendItem.group.translateY = void 0;
+                    legendItem.group.translateY = null;
                 }
             });
         }

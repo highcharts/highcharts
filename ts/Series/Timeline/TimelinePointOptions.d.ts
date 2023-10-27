@@ -34,10 +34,4 @@ export interface TimelinePointOptions extends LinePointOptions {
     visible?: boolean;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default TimelinePointOptions;

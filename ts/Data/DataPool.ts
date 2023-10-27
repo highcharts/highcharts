@@ -54,20 +54,6 @@ class DataPool implements DataEvent.Emitter {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-
-    /**
-     * Semantic version string of the DataPool class.
-     * @internal
-     */
-    public static readonly version: string = '1.0.0';
-
-
-    /* *
-     *
      *  Constructor
      *
      * */

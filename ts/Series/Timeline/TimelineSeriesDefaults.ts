@@ -56,11 +56,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @optionparent plotOptions.timeline
  */
 const TimelineSeriesDefaults: TimelineSeriesOptions = {
-
     colorByPoint: true,
-
     stickyTracking: false,
-
     ignoreHiddenPoint: true,
 
     /**
@@ -140,13 +137,11 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
         /**
          * A pixel value defining the distance between the data label and
-         * the point. Negative numbers puts the label on top of the point in a
-         * non-inverted chart. Defaults to 100 for horizontal and 20 for
-         * vertical timeline (`chart.inverted: true`).
+         * the point. Negative numbers puts the label on top of the point.
          */
-        distance: void 0,
+        distance: 100,
 
-        // eslint-disable-next-line jsdoc/require-description
+        // eslint-disable-next-line valid-jsdoc
         /**
          * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
          * @default function () {

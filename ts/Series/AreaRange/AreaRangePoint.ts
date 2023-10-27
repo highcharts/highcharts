@@ -36,8 +36,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    isNumber,
-    merge
+    isNumber
 } = U;
 
 /* *
@@ -119,9 +118,7 @@ class AreaRangePoint extends AreaPoint {
     public setState(): void {
         const prevState = this.state,
             series = this.series,
-            isPolar = series.chart.polar,
-            seriesOptionsMarker = series.options.marker,
-            seriesDefaultSymbol = series.symbol;
+            isPolar = series.chart.polar;
 
 
         if (!defined(this.plotHigh)) {
@@ -134,8 +131,10 @@ class AreaRangePoint extends AreaPoint {
             this.plotLow = this.plotY = series.yAxis.toPixels(this.low, true);
         }
 
-        series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
-        series.stateMarkerGraphic = series.upperStateMarkerGraphic;
+        if (series.stateMarkerGraphic) {
+            series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
+            series.stateMarkerGraphic = series.upperStateMarkerGraphic;
+        }
 
         // Change state also for the top marker
         this.graphic = this.graphics && this.graphics[1];
@@ -158,19 +157,15 @@ class AreaRangePoint extends AreaPoint {
             this.plotX = this.plotLowX;
         }
 
-        series.upperStateMarkerGraphic = series.stateMarkerGraphic;
-        series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
-        // Lower marker is stored at stateMarkerGraphic
-        // to avoid reference duplication (#7021)
-        series.lowerStateMarkerGraphic = void 0;
+        if (series.stateMarkerGraphic) {
+            series.upperStateMarkerGraphic = series.stateMarkerGraphic;
+            series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
+            // Lower marker is stored at stateMarkerGraphic
+            // to avoid reference duplication (#7021)
+            series.lowerStateMarkerGraphic = void 0;
+        }
 
-        const originalSettings = series.modifyMarkerSettings();
-
-        // Bottom state
         areaProto.setState.apply(this, arguments as any);
-
-        // Restore previous state
-        series.restoreMarkerSettings(originalSettings);
     }
 
     public haloPath(): SVGPath {

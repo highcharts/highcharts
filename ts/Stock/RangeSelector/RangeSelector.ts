@@ -763,26 +763,25 @@ class RangeSelector {
      * @param {string} name
      */
     public showInput(name: ('min'|'max')): void {
-        const dateBox = name === 'min' ? this.minDateBox : this.maxDateBox,
-            input = name === 'min' ? this.minInput : this.maxInput;
+        const dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
+        const input = name === 'min' ? this.minInput : this.maxInput;
 
         if (input && dateBox && this.inputGroup) {
-            const isTextInput = input.type === 'text',
-                { translateX = 0, translateY = 0 } = this.inputGroup,
-                { x = 0, width = 0, height = 0 } = dateBox,
-                { inputBoxWidth } = this.options;
+            const isTextInput = input.type === 'text';
+            const { translateX, translateY } = this.inputGroup;
+            const { inputBoxWidth } = this.options;
 
             css(input, {
                 width: isTextInput ?
-                    ((width + (inputBoxWidth ? -2 : 20)) + 'px') :
+                    ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
                     'auto',
-                height: (height - 2) + 'px',
+                height: (dateBox.height - 2) + 'px',
                 border: '2px solid silver'
             });
 
             if (isTextInput && inputBoxWidth) {
                 css(input, {
-                    left: (translateX + x) + 'px',
+                    left: (translateX + dateBox.x) + 'px',
                     top: translateY + 'px'
                 });
 
@@ -792,14 +791,14 @@ class RangeSelector {
                 css(input, {
                     left: Math.min(
                         Math.round(
-                            x +
+                            dateBox.x +
                             translateX -
-                            (input.offsetWidth - width) / 2
+                            (input.offsetWidth - dateBox.width) / 2
                         ),
                         this.chart.chartWidth - input.offsetWidth
                     ) + 'px',
                     top: (
-                        translateY - (input.offsetHeight - height) / 2
+                        translateY - (input.offsetHeight - dateBox.height) / 2
                     ) + 'px'
                 });
             }
@@ -1460,7 +1459,7 @@ class RangeSelector {
                         button: SVGElement,
                         i: number
                     ): void => {
-                        width += button.width || 0;
+                        width += button.width;
                         if (i !== buttons.length - 1) {
                             width += options.buttonSpacing;
                         }
@@ -1665,8 +1664,8 @@ class RangeSelector {
             if (buttons[i].visibility !== 'hidden') {
                 buttons[i][verb]({ x: buttonLeft });
 
-                // Increase the button position for the next button
-                buttonLeft += (buttons[i].width || 0) + options.buttonSpacing;
+                // increase button position for the next button
+                buttonLeft += buttons[i].width + options.buttonSpacing;
             } else {
                 buttons[i][verb]({ x: plotLeft });
             }
@@ -1950,8 +1949,8 @@ class RangeSelector {
         } = this;
 
         if (buttonGroup && dropdown) {
-            const { translateX = 0, translateY = 0 } = buttonGroup,
-                bBox = buttons[this.currentButtonIndex()].getBBox();
+            const { translateX, translateY } = buttonGroup;
+            const bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
                 left: (chart.plotLeft + translateX) + 'px',
                 top: (translateY + 0.5) + 'px',

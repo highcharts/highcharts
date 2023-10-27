@@ -20,10 +20,4 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
     states?: SeriesStatesOptions<MapPointSeries>;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default MapPointSeriesOptions;

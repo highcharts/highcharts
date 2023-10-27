@@ -33,10 +33,4 @@ export interface ItemPointMarkerOptions extends PointMarkerOptions {
     radius: undefined;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default ItemPointOptions;

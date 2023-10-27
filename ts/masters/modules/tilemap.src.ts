@@ -11,7 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from '../../Core/Globals.js';
-import TilemapSeries from '../../Series/Tilemap/TilemapSeries.js';
-const G: AnyRecord = Highcharts;
-TilemapSeries.compose(G.Axis);
+import '../../Series/Tilemap/TilemapSeries.js';

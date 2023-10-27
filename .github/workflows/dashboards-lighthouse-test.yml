@@ -10,14 +10,10 @@ on:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
       - 'css/**'
-      - '.github/workflows/dashboards-lighthouse-test.yml'
+      - '.github/workflows/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   cypress_lighthouse:

@@ -10,25 +10,22 @@
 
 /* *
  *
- *  Imports
+ * Imports
  *
  * */
-
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
  *
- *  Declarations
+ * Declarations
  *
  * */
-
 export interface PolygonPointOptions extends ScatterPointOptions {
 }
 
 /* *
  *
- *  Default Export
+ * Export
  *
  * */
-
 export default PolygonPointOptions;

@@ -21,7 +21,8 @@ QUnit.test('Tiled Web Map on the chart', assert => {
             }
         }
 
-        H.TilesProviderRegistry.TestProvider = TestProviderDefinition;
+        H.TilesProvidersRegistry.TestProvider =
+            TestProviderDefinition;
     }(Highcharts));
 
     const chart = Highcharts.mapChart('container', {
@@ -116,7 +117,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
     );
 
     const initialProjectionName =
-        new Highcharts.TilesProviderRegistry
+        new Highcharts.TilesProvidersRegistry
             .TestProvider().initialProjectionName;
 
     assert.strictEqual(

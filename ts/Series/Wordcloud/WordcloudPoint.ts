@@ -25,23 +25,23 @@ import type WordcloudUtils from './WordcloudUtils';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    column: { prototype: { pointClass: ColumnPoint } }
-} = SeriesRegistry.seriesTypes;
+    seriesTypes: {
+        column: {
+            prototype: {
+                pointClass: ColumnPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import WordcloudSeries from './WordcloudSeries';
-
-/* *
- *
- *  Class
- *
- * */
 
 class WordcloudPoint extends ColumnPoint {
 
     /* *
      *
-     *  Properties
+     * Properties
      *
      * */
 
@@ -55,14 +55,13 @@ class WordcloudPoint extends ColumnPoint {
 
     /* *
      *
-     *  Functions
+     * Functions
      *
      * */
 
     public isValid(): boolean {
         return true;
     }
-
 }
 
 /* *

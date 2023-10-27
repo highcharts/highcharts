@@ -36,7 +36,7 @@
     Highcharts.stockChart('container', {
 
         rangeSelector: {
-            selected: 4
+            selected: 1
         },
 
         title: {

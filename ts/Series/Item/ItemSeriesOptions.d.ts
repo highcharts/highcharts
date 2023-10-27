@@ -35,10 +35,4 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
     states?: SeriesStatesOptions<ItemSeries>;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default ItemSeriesOptions;

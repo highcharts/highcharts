@@ -2,10 +2,9 @@ Highcharts.stockChart('container', {
 
     plotOptions: {
         candlestick: {
-            color: 'pink',
-            lineColor: 'red',
-            upColor: 'lightgreen',
-            upLineColor: 'green'
+            lineColor: '#2f7ed8',
+            upLineColor: 'silver', // docs
+            upColor: 'silver'
         }
     },
 

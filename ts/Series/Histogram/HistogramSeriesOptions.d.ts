@@ -32,10 +32,4 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<HistogramSeries>;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default HistogramSeriesOptions;

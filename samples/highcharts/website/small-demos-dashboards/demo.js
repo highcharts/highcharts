@@ -516,7 +516,7 @@ function climate() {
         }
 
         // selectionGrid.dataGrid.scrollToRow(
-        //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
+        //     selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
         // );
 
     // // Update city chart selection
@@ -769,10 +769,6 @@ function datacursor() {
     // Build table with Highcharts.Series aliases
     function buildVegeTable() {
         const table = new DataTable({
-            aliases: {
-                name: 'vegetable',
-                y: 'amount'
-            },
             columns: {
                 vegetable: [
                     'Broccoli',
@@ -798,6 +794,9 @@ function datacursor() {
             },
             id: 'Vegetables'
         });
+
+        table.setColumnAlias('name', 'vegetable');
+        table.setColumnAlias('y', 'amount');
 
         return table;
     }

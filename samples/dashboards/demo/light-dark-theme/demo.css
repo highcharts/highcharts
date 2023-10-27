@@ -22,7 +22,7 @@
     height: 100%;
 }
 
-#dashboard-col-0 h2 {
+#dashboard-col-0 h1 {
     margin-bottom: 0;
 }
 
@@ -31,11 +31,6 @@
     background-color: white;
     box-shadow: none;
     margin: 1em;
-}
-
-.inputs-wrapper label {
-    display: block;
-    margin-bottom: 10px;
 }
 
 @media (prefers-color-scheme: dark) {

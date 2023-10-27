@@ -19,7 +19,6 @@
  *
  * */
 
-import type DataTableOptions from '../../Data/DataTableOptions';
 import type Globals from '../Globals';
 import type JSON from '../JSON';
 
@@ -75,7 +74,7 @@ function jsonSupportFor(
 function toJSON(
     obj: DataTable
 ): DataTableHelper.JSON {
-    const aliases = obj.aliases,
+    const aliases = obj.getColumnAliases(),
         aliasKeys = Object.keys(aliases),
         json: DataTableHelper.JSON = {
             $class: 'Data.DataTable',
@@ -119,7 +118,7 @@ namespace DataTableHelper {
 
     export type ColumnJSON = JSON.Array<JSON.Primitive>;
 
-    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTableOptions);
+    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTable.Options);
 
 }
 

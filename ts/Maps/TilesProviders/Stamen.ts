@@ -4,45 +4,12 @@
 
 'use strict';
 
-/* *
- *
- *  Imports
- *
- * */
-
-import type {
-    ProviderDefinition,
-    Themes
-} from '../ProviderDefinition';
-
-/* *
- *
- *  Class
- *
- * */
+import type ProviderDefinition from '../ProviderDefinition';
 
 class Stamen implements ProviderDefinition {
+    subdomains = ['a', 'b', 'c', 'd'];
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public defaultCredits = (
-        '&copy; Map tiles by <a href="https://stamen.com">Stamen Design</a>,' +
-        ' under <a href="https://creativecommons.org/licenses/by/3.0">CC BY' +
-        ' 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap' +
-        '</a>, under <a href="https://www.openstreetmap.org/copyright">ODbL</a>'
-    );
-
-    public initialProjectionName = 'WebMercator' as const;
-
-    public requiresApiKey: undefined;
-
-    public subdomains = ['a', 'b', 'c', 'd'];
-
-    public themes: Themes = {
+    themes = {
         Toner: {
             url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
             minZoom: 0,
@@ -72,22 +39,19 @@ class Stamen implements ProviderDefinition {
             url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
             minZoom: 1,
             maxZoom: 16,
-            credits: (
-                '&copy Map tiles by <a href="https://stamen.com">Stamen' +
-                ' Design</a>, under <a href="https://creativecommons.org/' +
-                'licenses/by/3.0">CC BY 3.0</a>. Data by <a href="https://' +
-                'openstreetmap.org">OpenStreetMap</a>, under <a href=' +
-                '"https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>'
-            )
+            credits: `\u00a9 Map tiles by <a href="https://stamen.com">Stamen Design</a>,
+            under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+            Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
+            <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>`
         }
     };
 
-}
+    initialProjectionName = 'WebMercator';
 
-/* *
- *
- *  Default Export
- *
- * */
+    defaultCredits = `\u00a9 Map tiles by <a href="https://stamen.com">Stamen Design</a>,
+        under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+        Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
+        <a href="https://www.openstreetmap.org/copyright">ODbL</a>`;
+}
 
 export default Stamen;

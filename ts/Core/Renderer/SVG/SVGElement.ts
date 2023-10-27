@@ -165,9 +165,7 @@ class SVGElement implements SVGElementLike {
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
-    public height?: number;
-    public imgwidth?: number;
-    public imgheight?: number;
+    // @todo public height?: number;
     public inverted: undefined;
     public matrix?: Array<number>;
     public onEvents: Record<string, Function> = {};
@@ -196,10 +194,10 @@ class SVGElement implements SVGElementLike {
     // @todo public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
-    public translateX?: number;
-    public translateY?: number;
+    // @todo public translateX?: number;
+    // @todo public translateY?: number;
     public visibility?: 'hidden'|'inherit'|'visible';
-    public width?: number;
+    // @todo public width?: number;
     public x?: number;
     public y?: number;
     // @todo public zIndex?: number;

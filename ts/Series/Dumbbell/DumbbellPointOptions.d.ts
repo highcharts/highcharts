@@ -16,14 +16,13 @@
 
 import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
  *
  *  Declarations
  *
  * */
-
 interface DumbbellPointOptions extends AreaRangePointOptions {
     connectorColor?: ColorType;
     connectorWidth?: number;
@@ -33,7 +32,7 @@ interface DumbbellPointOptions extends AreaRangePointOptions {
 
 /* *
  *
- *  Default Export
+ *  Default export
  *
  * */
 

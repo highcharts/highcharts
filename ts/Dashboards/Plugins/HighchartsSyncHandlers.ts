@@ -505,11 +505,8 @@ const configs: {
 
                 const { chart, board } = this;
 
-                if (chart && board && chart.zooming?.type) {
-                    const dimensions = chart.zooming.type.split('')
-                        .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
-
-                    dimensions.forEach((dimension): void => {
+                if (chart && board) {
+                    ['xAxis', 'yAxis'].forEach((dimension): void => {
                         const callbacks: Function[] = [];
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
                             const { cursor, event } = e;
@@ -517,31 +514,36 @@ const configs: {
                             if (cursor.type === 'position') {
                                 const eventTarget = event && event.target as unknown as Axis;
                                 if (eventTarget && chart) {
-                                    const axes = chart[dimension];
+                                    const axes = (chart as any)[dimension] as unknown as Axis[];
                                     let didZoom = false;
 
                                     axes.forEach((axis): void => {
                                         if (
                                             eventTarget.coll === axis.coll &&
-                                            eventTarget !== axis &&
-                                            eventTarget.min !== null &&
-                                            eventTarget.max !== null && (
-                                                axis.max !== eventTarget.max ||
-                                                axis.min !== eventTarget.min
-                                            )
+                                            eventTarget !== axis
                                         ) {
-                                            axis.setExtremes(
-                                                eventTarget.min,
-                                                eventTarget.max,
-                                                false,
-                                                void 0,
-                                                {
-                                                    trigger: 'dashboards-sync'
-                                                }
-                                            );
+                                            if (eventTarget.min !== null && eventTarget.max !== null) {
+                                                if (
+                                                    axis.max !== eventTarget.max &&
+                                                    axis.min !== eventTarget.min
+                                                ) {
+                                                    axis
+                                                        .setExtremes(
+                                                            eventTarget.min,
+                                                            eventTarget.max,
+                                                            false,
+                                                            void 0,
+                                                            {
+                                                                trigger: 'dashboards-sync'
+                                                            }
+                                                        );
 
-                                            didZoom = true;
+                                                    didZoom = true;
+
+                                                }
+                                            }
                                         }
+
                                     });
 
                                     if (didZoom && !chart.resetZoomButton) {

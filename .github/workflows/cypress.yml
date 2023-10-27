@@ -1,0 +1,82 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Cypress CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+
+  ### CYPRESS ###
+  cypress_tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      # setup
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+      - uses: nanasess/setup-chromedriver@v1
+      - uses: browser-actions/setup-firefox@latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Install Dependencies
+        run: |
+          npm i cypress github:highcharts/highcharts-utils
+          npx cypress install && npx cypress info
+      # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Run Highcharts-Utils
+        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
+      - name: Check Chrome
+        run: |
+            google-chrome --version
+            whereis google-chrome
+      - name: Run Cypress Tests (Chrome)
+        run: TZ=UTC npx cypress run --browser chrome --headless
+      - name: Store Cypress Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-chrome
+          path: |
+            ${GITHUB_WORKSPACE}/cypress/videos
+            ${GITHUB_WORKSPACE}/cypress/screenshots
+          retention-days: 12
+      - name: Reset Cypress Artifacts
+        run: |
+          rm -rf /home/circleci/repo/highcharts/cypress/videos
+          rm -rf /home/circleci/repo/highcharts/cypress/screenshots
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+      - name: Run Cypress Tests (Firefox)
+        run: TZ=UTC npx cypress run --browser firefox --headless
+      - name: Store Cypress Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-firefox
+          path: |
+            ${GITHUB_WORKSPACE}/cypress/videos
+            ${GITHUB_WORKSPACE}/cypress/screenshots
+          retention-days: 12

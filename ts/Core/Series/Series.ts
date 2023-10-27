@@ -432,8 +432,7 @@ class Series {
          * @type {Highcharts.SeriesOptionsType}
          */
         series.options = series.setOptions(userOptions);
-        const options = series.options,
-            visible = options.visible !== false;
+        const options = series.options;
 
         series.linkedSeries = [];
         // bind the axes
@@ -457,7 +456,7 @@ class Series {
              * @name Highcharts.Series#visible
              * @type {boolean}
              */
-            visible, // true by default
+            visible: options.visible !== false, // true by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
@@ -661,28 +660,6 @@ class Series {
             this.visible &&
             (this.yData as any) &&
             (this.yData as any).length > 0) // #9758
-        );
-    }
-
-    /**
-     * Determine whether the marker in a series has changed.
-     *
-     * @private
-     * @function Highcharts.Series#hasMarkerChanged
-     */
-    public hasMarkerChanged(
-        options: DeepPartial<SeriesOptions>,
-        oldOptions: DeepPartial<SeriesOptions>
-    ): boolean | undefined {
-        const series = this,
-            marker = options.marker,
-            oldMarker = oldOptions.marker || {};
-
-        return marker && (
-            (oldMarker.enabled && !marker.enabled) ||
-            oldMarker.symbol !== marker.symbol || // #10870, #15946
-            oldMarker.height !== marker.height || // #16274
-            oldMarker.width !== marker.width // #16274
         );
     }
 
@@ -3408,16 +3385,6 @@ class Series {
     }
 
     /**
-     * Whether to reserve space for the series, either because it is visible or
-     * because the `chart.ignoreHiddenSeries` option is false.
-     *
-     * @private
-     */
-    public reserveSpace(): boolean {
-        return this.visible || !this.chart.options.chart.ignoreHiddenSeries;
-    }
-
-    /**
      * Find the nearest point from a pointer event. This applies to series that
      * use k-d-trees to get the nearest point. Native pointer events must be
      * normalized using `Pointer.normalize`, that adds `chartX` and `chartY`
@@ -4301,10 +4268,20 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else {
+                const { marker } = seriesOptions,
+                    oldMarker = oldOptions.marker || {};
 
                 // If the  marker got disabled or changed its symbol, width or
                 // height - destroy
-                if (this.hasMarkerChanged(seriesOptions, oldOptions)) {
+                if (
+                    marker &&
+                    (
+                        (oldMarker.enabled && !marker.enabled) ||
+                        oldMarker.symbol !== marker.symbol || // #10870, #15946
+                        oldMarker.height !== marker.height || // #16274
+                        oldMarker.width !== marker.width // #16274
+                    )
+                ) {
                     kinds.graphic = 1;
                 }
 
@@ -4644,33 +4621,32 @@ class Series {
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
-        // If called without an argument, toggle visibility
+        // if called without an argument, toggle visibility
         series.visible =
             vis =
             series.options.visible =
             series.userOptions.visible =
             typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
-
         const showOrHide = vis ? 'show' : 'hide';
 
-        // Show or hide elements
-        (
-            [
-                'group',
-                'dataLabelsGroup',
-                'markerGroup',
-                'tracker',
-                'tt'
-            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt')[]
-        ).forEach((key): void => {
-            series[key]?.[showOrHide]();
+        // show or hide elements
+        [
+            'group',
+            'dataLabelsGroup',
+            'markerGroup',
+            'tracker',
+            'tt'
+        ].forEach(function (key: string): void {
+            if ((series as any)[key]) {
+                (series as any)[key][showOrHide]();
+            }
         });
 
 
-        // Hide tooltip (#1361)
+        // hide tooltip (#1361)
         if (
             chart.hoverSeries === series ||
-            chart.hoverPoint?.series === series
+            (chart.hoverPoint && chart.hoverPoint.series) === series
         ) {
             series.onMouseOut();
         }
@@ -4680,20 +4656,20 @@ class Series {
             chart.legend.colorizeItem(series, vis);
         }
 
-        // Rescale or adapt to resized chart
-        series.isDirty = true;
 
-        // In a stack, all other series are affected
+        // rescale or adapt to resized chart
+        series.isDirty = true;
+        // in a stack, all other series are affected
         if (series.options.stacking) {
-            chart.series.forEach((otherSeries): void => {
+            chart.series.forEach(function (otherSeries): void {
                 if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
             });
         }
 
-        // Show or hide linked series
-        series.linkedSeries.forEach((otherSeries): void => {
+        // show or hide linked series
+        series.linkedSeries.forEach(function (otherSeries): void {
             otherSeries.setVisible(vis, false);
         });
 

@@ -38,10 +38,4 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     width?: number;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
-
 export default SankeyPointOptions;

@@ -277,8 +277,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - (this.graphic.width || 0) / 2,
-                        y: target.y - (this.graphic.height || 0)
+                        x: position.x - this.graphic.width / 2,
+                        y: target.y - this.graphic.height
                     };
                 },
                 events: {
@@ -303,8 +303,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - (this.graphic.width || 0) / 2,
-                        y: target.y - (this.graphic.height || 0)
+                        x: position.x - this.graphic.width / 2,
+                        y: target.y - this.graphic.height
                     };
                 },
                 events: {

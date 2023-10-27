@@ -1,6 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0
-consistent-return: 0 */
+/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
  * This node script copies commit messages since the last release and
@@ -44,16 +43,9 @@ const getFile = url => new Promise((resolve, reject) => {
     'use strict';
 
     var fs = require('fs'),
-        path = require('path');
-
-    if (!fs.existsSync('./tree.json')) {
-        console.error('File tree.json doesn\'t exist in your repository, run ' +
-        'npx gulp jsdoc-options and try to generate changelog again.');
-        return false;
-    }
-
-    // eslint-disable-next-line node/no-missing-require
-    var tree = require('../tree.json');
+        path = require('path'),
+        // eslint-disable-next-line node/no-missing-require
+        tree = require('../tree.json');
 
     /**
      * Return a list of options so that we can auto-link option references in

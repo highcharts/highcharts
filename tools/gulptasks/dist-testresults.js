@@ -21,10 +21,7 @@ function uploadVisualTestResults() {
     const dateString = new Date().toISOString().slice(0, 10);
     const promises = [];
     const defaultParams = {
-        profile: argv.profile,
-        s3Params: {
-            ACL: void 0
-        }
+        profile: argv.profile
     };
 
     if (argv.bucket) {

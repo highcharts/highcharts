@@ -1,0 +1,10 @@
+---
+name: Activity gauge
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Gauges
+...
