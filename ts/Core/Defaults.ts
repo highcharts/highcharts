@@ -299,85 +299,153 @@ const defaultOptions: Options = {
      * });
      * ```
      */
+    global: {
+        /**
+         * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
+         * Use the [libURL](#exporting.libURL) option to configure exporting._
+         *
+         * The URL to the additional file to lazy load for Android 2.x devices.
+         * These devices don't support SVG, so we download a helper file that
+         * contains [canvg](https://github.com/canvg/canvg), its dependency
+         * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
+         * our site, you can install canvas-tools.js on your own server and
+         * change this option accordingly.
+         *
+         * @deprecated
+         *
+         * @type      {string}
+         * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
+         * @product   highcharts highmaps
+         * @apioption global.canvasToolsURL
+         */
 
-    /**
-     * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-     * Use the [libURL](#exporting.libURL) option to configure exporting._
-     *
-     * The URL to the additional file to lazy load for Android 2.x devices.
-     * These devices don't support SVG, so we download a helper file that
-     * contains [canvg](https://github.com/canvg/canvg), its dependency
-     * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-     * our site, you can install canvas-tools.js on your own server and
-     * change this option accordingly.
-     *
-     * @deprecated
-     *
-     * @type      {string}
-     * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
-     * @product   highcharts highmaps
-     * @apioption global.canvasToolsURL
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.useUTC](#time.useUTC) that supports individual time settings
+         * per chart.
+         *
+         * @deprecated
+         *
+         * @type      {boolean}
+         * @apioption global.useUTC
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.useUTC](#time.useUTC) that supports individual time settings
-     * per chart.
-     *
-     * @deprecated
-     *
-     * @type      {boolean}
-     * @apioption global.useUTC
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.Date](#time.Date) that supports individual time settings
+         * per chart.
+         *
+         * @deprecated
+         *
+         * @type      {Function}
+         * @product   highcharts highstock
+         * @apioption global.Date
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.Date](#time.Date) that supports individual time settings
-     * per chart.
-     *
-     * @deprecated
-     *
-     * @type      {Function}
-     * @product   highcharts highstock
-     * @apioption global.Date
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
+         * individual time settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {Function}
+         * @product   highcharts highstock
+         * @apioption global.getTimezoneOffset
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-     * individual time settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {Function}
-     * @product   highcharts highstock
-     * @apioption global.getTimezoneOffset
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.timezone](#time.timezone) that supports individual time
+         * settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {string}
+         * @product   highcharts highstock
+         * @apioption global.timezone
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.timezone](#time.timezone) that supports individual time
-     * settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {string}
-     * @product   highcharts highstock
-     * @apioption global.timezone
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.timezoneOffset](#time.timezoneOffset) that supports individual
+         * time settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {number}
+         * @product   highcharts highstock
+         * @apioption global.timezoneOffset
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-     * time settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {number}
-     * @product   highcharts highstock
-     * @apioption global.timezoneOffset
-     */
-    global: {},
+        /**
+         * General theme for buttons. This applies to the zoom button, exporting
+         * context menu, map navigation, range selector buttons and custom
+         * buttons generated using the `SVGRenderer.button` function. However,
+         * each of these may be overridden with more specific options.
+         *
+         * @since next
+         */
+        buttonTheme: {
+            /**
+             * The fill color for buttons
+             */
+            fill: Palette.neutralColor3,
+            /**
+             * The stroke color for buttons
+             */
+            stroke: Palette.neutralColor20,
+            /**
+             * The stroke width for buttons
+             */
+            'stroke-width': 1,
+            /**
+             * CSS styling for the buttons' text
+             */
+            style: {
+                color: Palette.neutralColor80,
+                cursor: 'pointer',
+                fontSize: '0.8em',
+                fontWeight: 'normal'
+            },
+            /**
+             * State overrides for the buttons
+             */
+            states: {
+                /**
+                 * Hover state overrides for the buttons are applied in addition
+                 * to the normal state options
+                 */
+                hover: {
+                    fill: Palette.neutralColor10
+                },
+                /**
+                 * Select state overrides for the buttons are applied in
+                 * addition to the normal state options
+                 */
+                select: {
+                    fill: Palette.highlightColor10,
+                    style: {
+                        color: Palette.neutralColor100,
+                        fontWeight: 'bold'
+                    }
+                },
+                /**
+                 * Disabled state overrides for the buttons are applied in
+                 * addition to the normal state options
+                 */
+                disabled: {
+                    /**
+                     * Disabled state CSS style overrides for the buttons' text
+                     */
+                    style: {
+                        color: Palette.neutralColor20
+                    }
+                }
+            }
+        }
+
+    },
 
     /**
      * Time options that can apply globally or to individual charts. These

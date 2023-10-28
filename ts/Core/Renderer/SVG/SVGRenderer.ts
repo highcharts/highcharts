@@ -37,6 +37,8 @@ import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
+import D from '../../Defaults.js';
+const { defaultOptions } = D;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -51,7 +53,6 @@ const {
     symbolSizes,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -139,38 +140,6 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        etc.
  */
 class SVGRenderer implements SVGRendererLike {
-
-    /**
-     * The default button theme
-     */
-    public static buttonTheme: ButtonThemeObject = {
-        fill: Palette.neutralColor3,
-        stroke: Palette.neutralColor20,
-        'stroke-width': 1,
-        style: {
-            color: Palette.neutralColor80,
-            cursor: 'pointer',
-            fontSize: '0.8em',
-            fontWeight: 'normal'
-        },
-        states: {
-            hover: {
-                fill: Palette.neutralColor10
-            },
-            select: {
-                fill: Palette.highlightColor10,
-                style: {
-                    color: Palette.neutralColor100,
-                    fontWeight: 'bold'
-                }
-            },
-            disabled: {
-                style: {
-                    color: Palette.neutralColor20
-                }
-            }
-        }
-    };
 
     /* *
      *
@@ -726,7 +695,9 @@ class SVGRenderer implements SVGRendererLike {
     }
 
     /**
-     * Create a button with preset states.
+     * Create a button with preset states. Styles for the button can either be
+     * set as arguments, or a general theme for all buttons can be set by the
+     * `global.buttonTheme` option.
      *
      * @function Highcharts.SVGRenderer#button
      *
@@ -791,7 +762,7 @@ class SVGRenderer implements SVGRendererLike {
 
         let curState = 0;
 
-        theme = merge(SVGRenderer.buttonTheme, theme);
+        theme = merge(defaultOptions.global.buttonTheme, theme);
 
         const states = theme.states || {},
             normalStyle = theme.style || {};
