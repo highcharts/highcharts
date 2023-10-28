@@ -31,8 +31,19 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
-export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
+declare module '../Sankey/SankeySeriesOptions' {
+    interface SankeySeriesOptions {
+        /** @requires OrganizationSeries */
+        linkColor?: OrganizationSeriesOptions['linkColor'];
+        /** @requires OrganizationSeries */
+        linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
+        /** @requires OrganizationSeries */
+        link?: OrganizationSeriesOptions['link'];
+    }
+}
+
+export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
@@ -79,15 +90,10 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     states?: SeriesStatesOptions<OrganizationSeries>;
 }
 
-declare module '../Sankey/SankeySeriesOptions' {
-    interface SankeySeriesOptions {
-        /** @requires OrganizationSeries */
-        linkColor?: OrganizationSeriesOptions['linkColor'];
-        /** @requires OrganizationSeries */
-        linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
-        /** @requires OrganizationSeries */
-        link?: OrganizationSeriesOptions['link'];
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OrganizationSeriesOptions;

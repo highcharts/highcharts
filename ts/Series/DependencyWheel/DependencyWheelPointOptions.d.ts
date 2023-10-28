@@ -28,4 +28,10 @@ export interface DependencyWheelPointOptions extends SankeyPointOptions {
     linkWeight?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default DependencyWheelPointOptions;

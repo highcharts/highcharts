@@ -38,4 +38,10 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
     states?: SeriesStatesOptions<FunnelSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default FunnelSeriesOptions;

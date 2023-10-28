@@ -41,6 +41,12 @@ declare class FunnelPoint extends PiePoint {
 
 declare namespace FunnelPoint {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface BBoxObject extends BBoxObjectImport {
         bottomWidth: number;
         topWidth: number;

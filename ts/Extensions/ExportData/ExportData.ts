@@ -259,7 +259,7 @@ function chartGetCSV(
         while (j--) {
             val = row[j];
             if (typeof val === 'string') {
-                val = '"' + val + '"';
+                val = `"${val}"`;
             }
             if (typeof val === 'number') {
                 if (decimalPoint !== '.') {
@@ -525,24 +525,6 @@ function chartGetDataRows(
 
                 key = (mockPoint.x ?? '') + ',' + name;
 
-                if (defined(rows[key]) &&
-                    rows[key].seriesIndices.includes(seriesIndex)
-                ) {
-                    // find keys, which belong to actual series
-                    const keysFromActualSeries =
-                        Object.keys(rows).filter((i: string): void =>
-                            rows[i].seriesIndices.includes(seriesIndex) &&
-                                key
-                        ),
-                        // find all properties, which start with actual key
-                        existingKeys = keysFromActualSeries
-                            .filter((propertyName: string): boolean =>
-                                propertyName.indexOf(String(key)) === 0
-                            );
-
-                    key = key + ',' + existingKeys.length;
-                }
-
                 j = 0;
 
                 // Pies, funnels, geo maps etc. use point name in X row
@@ -562,26 +544,47 @@ function chartGetDataRows(
                 }
 
                 if (!rows[key]) {
-                    // Generate the row
                     rows[key] = [];
-                    // Contain the X values from one or more X axes
                     rows[key].xValues = [];
+
+                    // ES5 replacement for Array.from / fill.
+                    const arr = [];
+                    for (let i = 0; i < series.chart.series.length; i++) {
+                        arr[i] = 0;
+                    }
+
+                    // Create poiners array, holding information how many
+                    // duplicates of specific x occurs in each series.
+                    // Used for creating rows with duplicates.
+                    rows[key].pointers = arr;
+                    rows[key].pointers[series.index] = 1;
+                } else {
+                    // Handle duplicates (points with the same x), by creating
+                    // extra rows based on pointers for better performance.
+                    const modifiedKey = `${key},${rows[key].pointers[series.index]}`,
+                        originalKey = key;
+
+                    if (rows[key].pointers[series.index]) {
+                        if (!rows[modifiedKey]) {
+                            rows[modifiedKey] = [];
+                            rows[modifiedKey].xValues = [];
+                            rows[modifiedKey].pointers = [];
+                        }
+
+                        key = modifiedKey;
+                    }
+
+                    rows[originalKey].pointers[series.index] += 1;
                 }
+
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
-                if (!defined(rows[key].seriesIndices)) {
-                    rows[key].seriesIndices = [];
-                }
-                rows[key].seriesIndices = [
-                    ...rows[key].seriesIndices, seriesIndex
-                ];
-
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = (mockPoint as any)[prop];
-                    rows[key as any][i + j] = pick(
+                    rows[key][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
                         // datetime yAxis
@@ -1201,10 +1204,6 @@ function getBlobFromContent(
     type: string
 ): (string|undefined) {
     const nav = win.navigator,
-        webKit = (
-            nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
         domurl = win.URL || win.webkitURL || win;
 
     try {
@@ -1215,14 +1214,10 @@ function getBlobFromContent(
             return blob.getBlob('image/svg+xml') as any;
         }
 
-        // Safari requires data URI since it doesn't allow navigation to blob
-        // URLs.
-        if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        }
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
     } catch (e) {
         // Ignore
     }

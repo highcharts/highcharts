@@ -36,7 +36,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

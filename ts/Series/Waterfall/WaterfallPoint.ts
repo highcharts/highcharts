@@ -23,19 +23,20 @@ import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
+
 class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public below?: boolean;
 
     public box?: BBoxObject;
@@ -52,9 +53,10 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this);
 
@@ -63,8 +65,10 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
         } else if (this.isIntermediateSum) {
             className += ' highcharts-intermediate-sum';
         }
+
         return className;
     }
+
     // Pass the null test in ColumnSeries.translate.
     public isValid(): boolean {
         return (
@@ -73,11 +77,13 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
             Boolean(this.isIntermediateSum)
         );
     }
+
 }
 
 /* *
  *
- * Export
+ *  Export
  *
  * */
+
 export default WaterfallPoint;

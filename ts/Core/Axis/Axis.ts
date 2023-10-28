@@ -1000,7 +1000,7 @@ class Axis {
             translatedValue: translatedValue
         };
         fireEvent(this, 'getPlotLinePath', evt, function (
-            e:(Axis.PlotLinePathOptions)
+            e: Axis.PlotLinePathOptions
         ): void {
 
             translatedValue = pick(
@@ -1029,15 +1029,15 @@ class Axis {
 
                 y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
-            (e as any).path = skip && !force ?
-                null :
+            e.path = skip && !force ?
+                void 0 :
                 chart.renderer.crispLine(
                     [['M', x1, y1], ['L', x2, y2]],
                     lineWidth || 1
                 );
         });
 
-        return (evt as any).path;
+        return (evt.path || null);
     }
 
     /**
@@ -4479,6 +4479,8 @@ namespace Axis {
         force?: (boolean|string);
         lineWidth?: number;
         old?: boolean;
+        /** @internal */
+        path?: SVGPath;
         reverse?: boolean;
         translatedValue?: number;
         value?: number;

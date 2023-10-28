@@ -368,17 +368,17 @@ namespace Exporting {
                 this: SVGElement,
                 e: (Event|AnyRecord)
             ): void {
-                // consistent with onclick call (#3495)
+                // Consistent with onclick call (#3495)
                 if (e) {
                     e.stopPropagation();
                 }
                 chart.contextMenu(
                     button.menuClassName,
-                    menuItems as any,
-                    button.translateX,
-                    button.translateY,
-                    button.width,
-                    button.height,
+                    menuItems,
+                    button.translateX || 0,
+                    button.translateY || 0,
+                    button.width || 0,
+                    button.height || 0,
                     button
                 );
                 button.setState(2);
@@ -459,7 +459,7 @@ namespace Exporting {
             }), true, 'spacingBox');
 
         (chart.buttonOffset as any) += (
-            (button.width + btnOptions.buttonSpacing) *
+            ((button.width || 0) + (btnOptions as any).buttonSpacing) *
             (btnOptions.align === 'right' ? -1 : 1)
         );
 
@@ -737,14 +737,15 @@ namespace Exporting {
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
             cacheName = 'cache-' + className,
-            menuPadding = Math.max(width, height); // for mouse leave detection
+            // For mouse leave detection
+            menuPadding = Math.max(width, height);
         let innerMenu: HTMLDOMElement,
             menu: Exporting.DivElement = (chart as any)[cacheName];
 
-        // create the menu only the first time
+        // Create the menu only the first time
         if (!menu) {
 
-            // create a HTML element above the SVG
+            // Create a HTML element above the SVG
             chart.exportContextMenu = (chart as any)[cacheName] = menu =
                 createElement(
                     'div', {
@@ -754,7 +755,8 @@ namespace Exporting {
                         position: 'absolute',
                         zIndex: 1000,
                         padding: menuPadding + 'px',
-                        pointerEvents: 'auto'
+                        pointerEvents: 'auto',
+                        ...chart.renderer.style
                     },
                     chart.fixedDiv || chart.container
                 ) as Exporting.DivElement;
