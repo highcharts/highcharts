@@ -764,6 +764,13 @@ class SVGRenderer implements SVGRendererLike {
 
         theme = merge(defaultOptions.global.buttonTheme, theme);
 
+        // @todo Consider moving this to a lower level, like .attr
+        if (styledMode) {
+            delete theme.fill;
+            delete theme.stroke;
+            delete theme['stroke-width'];
+        }
+
         const states = theme.states || {},
             normalStyle = theme.style || {};
         delete theme.states;
@@ -812,7 +819,7 @@ class SVGRenderer implements SVGRendererLike {
             }
         );
 
-        label.setState = function (state: number): void {
+        label.setState = (state: number = 0): void => {
             // Hover state is temporary, don't record it
             if (state !== 1) {
                 label.state = curState = state;
@@ -824,24 +831,23 @@ class SVGRenderer implements SVGRendererLike {
                 )
                 .addClass(
                     'highcharts-button-' +
-                    ['normal', 'hover', 'pressed', 'disabled'][state || 0]
+                    ['normal', 'hover', 'pressed', 'disabled'][state]
                 );
 
             if (!styledMode) {
-                label.attr(stateAttribs[state || 0]);
-                const css = stateStyles[state || 0];
+                label.attr(stateAttribs[state]);
+                const css = stateStyles[state];
                 if (isObject(css)) {
                     label.css(css);
                 }
             }
         };
 
+        label.attr(stateAttribs[0]);
 
         // Presentational attributes
         if (!styledMode) {
-            label
-                .attr(stateAttribs[0])
-                .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
+            label.css(extend({ cursor: 'default' } as CSSObject, normalStyle));
 
             // HTML labels don't need to handle pointer events because click and
             // mouseenter/mouseleave is bound to the underlying <g> element.
