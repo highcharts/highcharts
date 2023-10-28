@@ -294,7 +294,9 @@ const defaultOptions: Options = {
      * ```js
      * Highcharts.setOptions({
      *     global: {
-     *         useUTC: false
+     *         buttonTheme: {
+     *             fill: '#d0d0d0'
+     *         }
      *     }
      * });
      * ```
@@ -384,6 +386,8 @@ const defaultOptions: Options = {
          * buttons generated using the `SVGRenderer.button` function. However,
          * each of these may be overridden with more specific options.
          *
+         * @sample highcharts/global/buttontheme
+         *         General button theme
          * @since next
          */
         buttonTheme: {
