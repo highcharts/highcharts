@@ -57,11 +57,26 @@ input[type="color"]::-moz-color-swatch {
 }
 
 .container {
-    border: 1px solid rgba(160, 160, 160, 0.5);
     margin: 0.5em 0;
+    box-sizing: border-box;
 }
 
 #container-map {
-    width: 400px;
-    margin: 0 auto;
+    width: 40%;
+    float: left;
+}
+
+#container-stock {
+    width: 60%;
+    float: left;
+}
+
+@media screen and (max-width: 600px) {
+    #container-map {
+        width: auto;
+    }
+
+    #container-stock {
+        width: auto;
+    }
 }
