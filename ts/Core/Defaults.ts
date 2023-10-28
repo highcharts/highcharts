@@ -396,6 +396,14 @@ const defaultOptions: Options = {
              */
             fill: Palette.neutralColor3,
             /**
+             * The padding of buttons
+             */
+            padding: 8,
+            /**
+             * The border radius for buttons
+             */
+            r: 2,
+            /**
              * The stroke color for buttons
              */
             stroke: Palette.neutralColor20,

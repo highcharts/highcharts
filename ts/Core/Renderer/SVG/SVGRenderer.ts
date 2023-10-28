@@ -769,9 +769,6 @@ class SVGRenderer implements SVGRendererLike {
         delete theme.states;
         delete theme.style;
 
-        // Default, non-stylable attributes
-        label.attr({ padding: 8, r: 2 });
-
         // Presentational
         const stateAttribs: Array<SVGAttributes> = [
                 AST.filterUserAttributes(theme)
