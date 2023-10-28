@@ -2,7 +2,6 @@ Highcharts.setOptions({
     global: {
         buttonTheme: {
             fill: '#333333',
-            padding: 16,
             stroke: '#000000',
             style: {
                 color: '#ffffff'
