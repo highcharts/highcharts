@@ -55,6 +55,9 @@ const KPIChartOptions = {
         stops: colorStopsDays,
         tickAmount: 2,
         visible: true
+    },
+    accessibility: {
+        typeDescription: 'The gauge chart with 1 data point.'
     }
 };
 
@@ -286,16 +289,20 @@ async function setupBoard() {
                                 );
                             }
                         }
+                    },
+                    accessibility: {
+                        description: 'Years'
                     }
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Range selector. Highcharts Interactive Chart.'
+                        chartContainerLabel: 'Data range selector. Highcharts Interactive Chart.'
                     }
                 },
                 accessibility: {
                     description: `The chart is displaying range of dates from
-                    1951-01-01 to 2010-10-25.`
+                    1951-01-01 to 2010-10-25.`,
+                    typeDescription: 'Navigator that selects a range of dates.'
                 }
             }
         }, {
@@ -413,8 +420,11 @@ async function setupBoard() {
                     }
                 },
                 accessibility: {
-                    description: `The chart is maximal temperature,
-                    average temperature and days of rain.`
+                    description: `The chart is displaying maximal temperature
+                    in cities.`,
+                    point: {
+                        valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
+                    }
                 }
             }
         }, {
@@ -592,7 +602,7 @@ async function setupBoard() {
                 },
                 title: {
                     margin: 20,
-                    text: 'Climate',
+                    text: 'Temperature and rain in the city',
                     x: 15,
                     y: 5
                 },

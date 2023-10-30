@@ -185,6 +185,10 @@
     stroke: #adadff;
 }
 
+.highcharts-legend-item > text {
+    fill: #fff;
+}
+
 /* *
  *
  *  KPI
@@ -384,7 +388,7 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
-    font-size: 9px;
+    font-size: 12px;
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label text {
