@@ -35,9 +35,24 @@ The sidebar lists the component types provided by the Dashboards API. Please not
 
 ![edit-mode-sidebar.png](edit-mode-sidebar.png)
 
+After dragging a component into the preferred place in the layout, a sidebar with the [component settings](https://www.highcharts.com/docs/dashboards/edit-mode#component-settings) will appear.
+
 
 ## Component settings
 
+Each component type has its own properties. The most important ones can be set using the settings sidebar. It opens automatically after adding any component, but it can also be opened by clicking on the gear icon that appears in the toolbar that opens after clicking on a cell in the edit mode.
+
+![edit-mode-settings-button.png](edit-mode-settings-button.png)
+
+Below you can see the settings categories for the [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component).
+
+![edit-mode-chart-settings.png](edit-mode-chart-settings.png)
+
+The first three categories, `Connector name`, `Title` and `Caption`, are options that are also shared by other components. In `Connector name` you can connect an existing connector that will provide data to the component (in this case, a chart). The rest of the options are typical for this component. You can use them to configure the appearance of the chart.
+
+If you do not intend to use the connector, you can set the data using the component's internal options. In [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component) you can do this by defining data in the [`series.data`](https://api.highcharts.com/highcharts/series.line.data) option. In the [KPI Component](https://www.highcharts.com/docs/dashboards/kpi-component), by setting the [`value`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions#value) option.
+
+Check how the component settings sidebar works in practice using the [edit mode live example](https://www.highcharts.com/docs/dashboards/edit-mode#edit-mode-live-example).
 
 
 ## Customizing the context menu
@@ -55,6 +70,7 @@ items: [{
     }
 }]
 ```
+
 
 ## Edit mode live example
 
