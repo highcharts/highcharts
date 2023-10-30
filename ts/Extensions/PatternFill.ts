@@ -300,24 +300,24 @@ SVGRenderer.prototype.addPattern = function (
     options: PatternFill.PatternOptionsObject,
     animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
-    let pattern: (SVGElement|undefined),
-        path: SVGAttributes,
-        attribs: SVGAttributes,
-        id = options.id;
+    let attribs: SVGAttributes,
+        id = options.id,
+        pattern: (SVGElement|undefined),
+        path: SVGAttributes;
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
+        color: ColorString = options.color || '#343434',
         defaultSize = 32,
-        width: number = options.width || (options._width as any) || defaultSize,
         height: number = (
             options.height || (options._height as any) || defaultSize
         ),
-        color: ColorString = options.color || '#343434',
         ren = this,
         rect = function (fill: ColorString): void {
             ren.rect(0, 0, width, height)
                 .attr({ fill })
                 .add(pattern);
-        };
+        },
+        width: number = options.width || (options._width as any) || defaultSize;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -576,16 +576,17 @@ addEvent(Series, 'afterRender', function (): void {
         renderer = chart.renderer,
         patterns = renderer.patternElements;
 
-    // Only scale if we have patterns to scale.
+    // Only scale if we have patterns to scale. #19980
     if (renderer.defIds?.length && patterns) {
-        // Filter out points that doesn't have patterns assigned or is missing
-        // a transform group scale.
+        // Filter for points which have patterns that don't use images assigned
+        // and has a group scale available.
         series.points.filter(function (p: Point): boolean {
             return (
                 p.graphic?.element.hasAttribute('fill') ||
                 p.graphic?.element.hasAttribute('color') ||
                 p.graphic?.element.hasAttribute('stroke')
             ) &&
+            !(p?.options.color as any)?.pattern?.image &&
             (p as any).group?.scaleX &&
             (p as any).group?.scaleY;
         })
