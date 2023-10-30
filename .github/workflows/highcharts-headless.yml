@@ -51,7 +51,7 @@ jobs:
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
           install: false
