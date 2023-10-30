@@ -405,16 +405,7 @@ function renderToggle(
         {},
         parentElement
     );
-    if (title) {
-        renderText(toggleContainer, { title });
-    }
 
-    if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(toggleContainer, {
-            title: lang.off,
-            className: EditGlobals.classNames.toggleLabels
-        });
-    }
 
     const toggle = createElement(
         'label',
@@ -426,13 +417,28 @@ function renderToggle(
         toggleContainer
     );
 
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(toggle, {
+            title: lang.off,
+            className: EditGlobals.classNames.toggleLabels
+        });
+    }
+
+    if (title) {
+        renderText(toggle, { title });
+    }
+
     const input = renderCheckbox(toggle, value) as HTMLInputElement;
     const callbackFn = options.onchange;
 
     if (input && callbackFn) {
         toggleContainer.addEventListener('click', (e: any): void => {
             callbackFn(!input.checked);
-            input.checked = !input.checked;
+            if (toggle.getAttribute('aria-pressed') === 'true') {
+                toggle.removeAttribute('aria-pressed')
+              } else {
+                toggle.setAttribute('aria-pressed', 'true')
+              }
         });
     }
 

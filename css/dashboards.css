@@ -467,6 +467,13 @@
     min-width: 100px;
 }
 
+.highcharts-dashboards-edit-context-menu-item .highcharts-dashboards-edit-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .highcharts-dashboards-edit-toggle-wrapper,
 .highcharts-dashboards-edit-accordion-content label.highcharts-dashboards-edit-toggle-wrapper {
     position: relative;
@@ -507,11 +514,16 @@
     border-radius: 50%;
 }
 
-.highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
+.highcharts-dashboards-edit-menu-item .highcharts-dashboards-edit-toggle-slider {
+    width: 40px;
+    margin-left: 80px;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper[aria-pressed="true"] .highcharts-dashboards-edit-toggle-slider {
     background-color: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider::before {
+.highcharts-dashboards-edit-toggle-wrapper[aria-pressed="true"] .highcharts-dashboards-edit-toggle-slider::before {
     -webkit-transform: translateX(18px);
     -ms-transform: translateX(18px);
     transform: translateX(18px);
@@ -1234,11 +1246,6 @@
     color: var(--highcharts-neutral-color-100);
     border-radius: 5px;
     padding: 5px;
-}
-
-/* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
-    background-color: var(--highcharts-dashboards-toggle-button-color);
 }
 
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content > label {
