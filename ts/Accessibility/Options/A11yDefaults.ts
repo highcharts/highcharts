@@ -1018,14 +1018,14 @@ const Options: DeepPartial<A11yOptions> = {
          * Accessibility options for the navigator. Requires the
          * Accessibility module.
          *
-         * @since    next
+         * @since 11.2.0
          * @requires modules/accessibility
          */
         accessibility: {
             /**
              * Enable accessibility support for the navigator.
              *
-             * @since next
+             * @since 11.2.0
              */
             enabled: true
         }
