@@ -146,21 +146,21 @@ QUnit.test('Treegraph series',
             `Legend symbol and line should be rendered when
             legendSymbol is set to lineMarker (#19671).`
         );
-        /*
+
         const seriesData = [
             ['Parent element', undefined],
             ['Nested element 1', 'Parent element'],
             ['Nested element 2', 'Parent element']
         ];
 
-        chart.addSeries({
+        const series2 = chart.addSeries({
             type: 'treegraph',
             keys: ['id', 'parent'],
             data: []
         });
 
         for (let i = 0; i < 3; i++) {
-            chart.series[1].addPoint(seriesData[i]);
+            series2.addPoint(seriesData[i]);
         }
 
         assert.deepEqual(
@@ -169,6 +169,20 @@ QUnit.test('Treegraph series',
                 point.id || point[0], point.parent || point[1]
             ])),
             'The initial data should match the rendered data (#19552).'
-        );*/
+        );
+
+        series2.addPoint(['Nested element 3', 'Nested element 1']);
+        series2.addPoint(['Nested element 4', 'Nested element 2']);
+
+        const point2 = series2.points[1],
+            point3 = series2.points[2];
+
+        point2.toggleCollapse();
+        point3.toggleCollapse();
+
+        assert.ok(
+            point2.collapsed && point3.collapsed,
+            'Multiple nodes should collapse simultaneously (#19552).'
+        );
     }
 );
