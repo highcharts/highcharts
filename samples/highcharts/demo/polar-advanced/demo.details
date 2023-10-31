@@ -1,0 +1,14 @@
+---
+name: Advanced polar chart
+authors:
+  - Markus Barstad
+js_wrap: b
+alt_text: >-
+  Highcharts Polar chart shows the performance of three teams in sales,
+  employing a bubble chart highlighting the performance of each team,
+  layered around a column chart, visualizing their cumulative performance.
+tags:
+  - Highcharts demo
+categories:
+  - Combinations
+...
