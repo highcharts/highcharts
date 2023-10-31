@@ -44,9 +44,9 @@ const
     // We create our teams, 1 serie per team.
     teamNames = ['Ulambaator', 'Sofia', 'Asmara'],
     teamColors = [
-        colors[9].tweenTo(colors[0], 0.25),
-        colors[9].tweenTo(colors[8], 0.65),
-        colors[9].tweenTo(colors[3], 0.85)
+        colors[9 % colors.length].tweenTo(colors[0], 0.25),
+        colors[9 % colors.length].tweenTo(colors[8 % colors.length], 0.65),
+        colors[9 % colors.length].tweenTo(colors[3], 0.85)
     ],
     teamSeries = Array(3).fill({
         type: 'bubble',
@@ -213,7 +213,10 @@ Highcharts.chart('container', {
         ...weekExtremes
     }, {
         minColor: colors[1].tweenTo(colors[5], 0.5),
-        maxColor: colors[8].tweenTo(colors[8], 0.5),
+        maxColor: colors[8 % colors.length].tweenTo(
+            colors[8 % colors.length],
+            0.5
+        ),
         showInLegend: false,
         ...monthExtremes
     }],
