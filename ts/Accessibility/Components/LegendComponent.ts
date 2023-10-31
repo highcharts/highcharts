@@ -682,10 +682,10 @@ namespace LegendComponent {
         const items = this.legend.allItems;
         const oldIx = this.accessibility &&
                 this.accessibility.components.legend.highlightedLegendItemIx;
-        const itemToHighlight = items[ix],
-            legendItem = itemToHighlight.legendItem || {};
-
+        const itemToHighlight = items[ix];
+        
         if (itemToHighlight) {
+            const legendItem = itemToHighlight.legendItem || {};
             if (isNumber(oldIx) && items[oldIx]) {
                 setLegendItemHoverState(false, items[oldIx]);
             }
