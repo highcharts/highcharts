@@ -154,8 +154,8 @@ const composedMembers: Array<unknown> = [];
  * */
 
 /**
- * Wrapper function for the download functions,
- * which handles showing and hiding the loading message
+ * Wrapper function for the download functions, which handles showing and hiding
+ * the loading message
  *
  * @private
  *
@@ -617,7 +617,7 @@ function chartGetDataRows(
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
                 while (j < valueCount) {
-                    prop = pointArrayMap[j]; // Y, z etc
+                    prop = pointArrayMap[j]; // `y`, `z` etc
                     val = (mockPoint as any)[prop];
                     rows[key][i + j] = pick(
                         // Y axis category if present
