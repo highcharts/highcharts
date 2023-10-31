@@ -3405,14 +3405,13 @@ class Axis {
      *
      * @emits Highcharts.Axis#event:afterGetOffset
      */
-    public createGroupsElements(): void {
-        const axis = this,
-            {
+    public createGroups(): void {
+        const {
                 axisParent, // Used in color axis
                 chart,
                 coll,
                 options
-            } = axis,
+            } = this,
             renderer = chart.renderer;
 
         const createGroup = (
@@ -3428,18 +3427,18 @@ class Axis {
             )
             .add(axisParent);
 
-        if (!axis.axisGroup) {
-            axis.gridGroup = createGroup(
+        if (!this.axisGroup) {
+            this.gridGroup = createGroup(
                 'grid',
                 '-grid',
                 options.gridZIndex
             );
-            axis.axisGroup = createGroup(
+            this.axisGroup = createGroup(
                 'axis',
                 '',
                 options.zIndex
             );
-            axis.labelGroup = createGroup(
+            this.labelGroup = createGroup(
                 'axis-labels',
                 '-labels',
                 options.labels.zIndex
@@ -3493,7 +3492,7 @@ class Axis {
         // Set/reset staggerLines
         axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
 
-        axis.createGroupsElements();
+        axis.createGroups();
 
         if (hasData || axis.isLinked) {
 

@@ -2402,52 +2402,43 @@ class Chart {
         // Record preliminary dimensions for later comparison
         const tempWidth = chart.plotWidth;
 
-        axes.some(function (axis: Axis): (boolean|undefined) {
+        for (const axis of axes) {
+            const { options } = axis,
+                { labels } = options;
+
             if (
                 axis.horiz &&
                 axis.visible &&
-                axis.options.labels.enabled &&
-                axis.series.length
+                labels.enabled &&
+                axis.series.length &&
+                axis.coll !== 'colorAxis'
             ) {
-                // Taking into account only horizontal axes
-                // (axis.side is always 0 or 2) => always resolves to true
-                axis.reserveSpaceDefault = true;
 
-                if (axis.coll === 'colorAxis') {
-                    axis.axisParent = axis.legendItem?.group;
-                }
-
-                axis.createGroupsElements();
+                expectedSpace = options.tickLength;
+                axis.createGroups();
 
                 // Calculate extecped space based on dummy tick
-                const mockTick = new Tick(axis, -1, '', true),
-                    label = mockTick.createLabel(
-                        { x: 0, y: 0 },
-                        'xy',
-                        axis.options.labels
-                    );
+                const mockTick = new Tick(axis, 0, '', true),
+                    label = mockTick.createLabel('x', labels);
                 mockTick.destroy();
                 if (
                     label &&
-                    !chart.pane &&
                     pick(
-                        axis.options.labels.reserveSpace,
-                        isNumber(axis.options.crossing) ? false : null,
-                        axis.reserveSpaceDefault
+                        labels.reserveSpace,
+                        !isNumber(options.crossing)
                     )
                 ) {
                     expectedSpace = label.getBBox().height +
-                        axis.options.labels.distance +
-                        axis.options.tickLength +
-                        clamp(axis.options.offset || 0, 0, Infinity);
-
-                    label.destroy();
-                    return true;
+                        labels.distance +
+                        Math.max(options.offset || 0, 0);
                 }
-                label?.destroy();
+
+                if (expectedSpace) {
+                    label?.destroy();
+                    break;
+                }
             }
-            return void 0;
-        });
+        }
 
         // Use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);

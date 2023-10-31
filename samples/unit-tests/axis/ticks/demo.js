@@ -1044,13 +1044,21 @@ QUnit.test(
             }, {});
 
         optionsToCheck.forEach(options => {
+            let expectedPlotHeight = 0;
             const chart = Highcharts.chart('container', Highcharts.merge({
                 chart: {
                     height: 370
                 },
                 yAxis: {
                     min: 0,
-                    max: 75
+                    max: 75,
+                    events: {
+                        afterSetScale: function () {
+                            if (expectedPlotHeight === 0) {
+                                expectedPlotHeight = this.chart.plotHeight;
+                            }
+                        }
+                    }
                 },
                 series: [{
                     data: [
@@ -1070,6 +1078,12 @@ QUnit.test(
                 ticksBeforeUpdate,
                 `Ticks with ${JSON.stringify(toDotNot(options))} should stay
                 the same after updating series (#19604).`
+            );
+            assert.strictEqual(
+                chart.plotHeight,
+                expectedPlotHeight,
+                `Plot height with ${JSON.stringify(toDotNot(options))} should
+                stay the same after updating series (#19604).`
             );
         });
 
