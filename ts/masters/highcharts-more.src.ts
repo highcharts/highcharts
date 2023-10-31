@@ -10,7 +10,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-import '../Extensions/Pane.js';
+import Pane from '../Extensions/Pane/Pane.js';
 import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';
@@ -26,6 +26,7 @@ import WaterfallSeries from '../Series/Waterfall/WaterfallSeries.js';
 const G: AnyRecord = Highcharts;
 BubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
+Pane.compose(G.Chart, G.Pointer);
 PolarAdditions.compose(
     G.Axis,
     G.Chart,

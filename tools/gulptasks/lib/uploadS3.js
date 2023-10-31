@@ -322,7 +322,11 @@ async function startS3Session(
             credentials: (
                 profile ?
                     fromIni({ profile }) :
-                    fromEnv() || void 0
+                    // Torstein commented this out 2023-10-30. The `fromEnv()`
+                    // approach fails because I have my credentials defined in
+                    // ~/.aws/credentials
+                    // fromEnv() || void 0
+                    void 0
             )
         })
     };

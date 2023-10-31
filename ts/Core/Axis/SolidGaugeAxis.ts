@@ -17,7 +17,7 @@
  * */
 
 import type { AxisCollectionKey } from './AxisOptions';
-import type Pane from '../../Extensions/Pane';
+import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
 
 import ColorAxisLike from './Color/ColorAxisLike.js';

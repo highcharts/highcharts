@@ -259,6 +259,7 @@ class FunnelSeries extends PieSeries {
         distance: number
     ): DataLabel.LabelPositionObject {
         const y = point.plotY || 0,
+            sign = point.half ? 1 : -1,
             x = this.getX(y, !!point.half, point);
 
         return {
@@ -278,11 +279,11 @@ class FunnelSeries extends PieSeries {
             alignment: point.half ? 'right' : 'left',
             connectorPosition: {
                 breakAt: { // Used in connectorShapes.fixedOffset
-                    x: x - 5 * (point.half ? 1 : -1),
+                    x: x + (distance - 5) * sign,
                     y
                 },
                 touchingSliceAt: {
-                    x,
+                    x: x + distance * sign,
                     y
                 }
             }
@@ -381,7 +382,13 @@ class FunnelSeries extends PieSeries {
         ): number {
             return centerX + (half ? -1 : 1) *
                 ((series.getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
-                (point.dataLabel?.dataLabelPosition?.distance || 0));
+                (
+                    point.dataLabel?.dataLabelPosition?.distance ??
+                    relativeLength(
+                        this.options.dataLabels?.distance || 0,
+                        width
+                    )
+                ));
         };
 
         // Expose
