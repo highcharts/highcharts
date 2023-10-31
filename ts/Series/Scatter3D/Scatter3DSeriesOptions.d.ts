@@ -26,4 +26,10 @@ export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Scatter3DSeriesOptions;

@@ -41,4 +41,10 @@ export interface VennSeriesOptions extends ScatterSeriesOptions {
     states?: SeriesStatesOptions<VennSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default VennSeriesOptions;

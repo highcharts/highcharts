@@ -21,7 +21,6 @@
  * */
 
 import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
@@ -30,15 +29,9 @@ import type TimelineSeries from './TimelineSeries';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
-    seriesTypes: {
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    line: { prototype: { pointClass: LinePoint } },
+    pie: { prototype: { pointClass: PiePoint } }
+} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -55,7 +48,7 @@ const {
  *
  * */
 
-class TimelinePoint extends Series.prototype.pointClass {
+class TimelinePoint extends LinePoint {
 
     /* *
      *
@@ -77,10 +70,8 @@ class TimelinePoint extends Series.prototype.pointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public alignConnector(): void {
-        let point = this,
+        const point = this,
             series = point.series,
             dataLabel: SVGElement = point.dataLabel as any,
             connector: SVGElement = dataLabel.connector as any,
@@ -91,8 +82,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             plotPos = {
                 x: bBox.x + (dataLabel.translateX || 0),
                 y: bBox.y + (dataLabel.translateY || 0)
-            },
-            isVisible;
+            };
 
         // Include a half of connector width in order to run animation,
         // when connectors are aligned to the plot area edge.
@@ -102,7 +92,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             plotPos.x += connectorWidth / 2;
         }
 
-        isVisible = chart.isInsidePlot(
+        const isVisible = chart.isInsidePlot(
             plotPos.x, plotPos.y
         );
 
@@ -110,7 +100,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             d: point.getConnectorPath()
         });
 
-        connector.addClass(`highcharts-color-${point.colorIndex}`);
+        connector.addClass('highcharts-color-' + point.colorIndex);
 
         if (!series.chart.styledMode) {
             connector.attr({
@@ -209,7 +199,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public init(): TimelinePoint {
-        const point: TimelinePoint = super.init.apply(this, arguments) as any;
+        const point = super.init.apply(this, arguments) as TimelinePoint;
 
         point.name = pick(point.name, 'Event');
         point.y = 1;
@@ -256,8 +246,6 @@ class TimelinePoint extends Series.prototype.pointClass {
         this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
         return super.applyOptions(options, x);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

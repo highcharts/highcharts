@@ -252,8 +252,9 @@ namespace PlotLineOrBandAxis {
         this: Composition,
         from: number,
         to: number,
-        options: (PlotBandOptions|PlotLineOptions) = this.options
+        options?: (PlotBandOptions|PlotLineOptions)
     ): SVGPath {
+        options = options || this.options;
         const toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
