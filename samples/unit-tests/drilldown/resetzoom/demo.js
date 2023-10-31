@@ -170,7 +170,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     const drillUpButtonxSetting = chart.drillUpButton.xSetting;
     assert.ok(
         chart.resetZoomButton.xSetting >
-            chart.drillUpButton.xSetting + chart.drillUpButton.width,
+        chart.drillUpButton.xSetting + chart.drillUpButton.width,
         'Buttons should not overlap.'
     );
 
@@ -431,7 +431,7 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
     );
     assert.ok(
         chart.resetZoomButton.xSetting >
-            chart.drillUpButton.xSetting + chart.drillUpButton.width,
+        chart.drillUpButton.xSetting + chart.drillUpButton.width,
         'Buttons should not overlap.'
     );
 
@@ -484,6 +484,9 @@ QUnit.test(
                     }
                 }
             },
+            title: {
+                text: ''
+            },
             series: [{
                 type: 'column',
                 data: [{
@@ -505,6 +508,24 @@ QUnit.test(
         assert.ok(
             true,
             'There should be no errors in the console.'
+        );
+
+        // Retrieve bounding rectangles for the reset zoom button and export menu
+        const resetZoomButton = chart.container.querySelector('.highcharts-reset-zoom'),
+            exportMenuButton = chart.container.querySelector('.highcharts-button'),
+            resetZoomRect = resetZoomButton.getBoundingClientRect(),
+            exportMenuRect = exportMenuButton.getBoundingClientRect();
+
+        // Check if the reset zoom button and export menu overlap
+        const isOverlapping =
+            resetZoomRect.right > exportMenuRect.left &&
+            resetZoomRect.left < exportMenuRect.right &&
+            resetZoomRect.bottom > exportMenuRect.top &&
+            resetZoomRect.top < exportMenuRect.bottom;
+
+        assert.notOk(
+            isOverlapping,
+            'The reset zoom button should not overlap with the export menu (#19908).'
         );
     }
 );
