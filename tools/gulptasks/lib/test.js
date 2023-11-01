@@ -1,7 +1,6 @@
 /*
  * Copyright (C) Highsoft AS
  */
-/* eslint no-console: 0 */
 
 /* *
  *
@@ -43,7 +42,8 @@ function getProducts(logPaths) {
 
     // Logging for testing and debugging
     if (logPaths) {
-        console.log('paths: ', paths);
+        const log = require('./log');
+        log.message('paths: ', paths);
     }
 
     paths.forEach(path => {

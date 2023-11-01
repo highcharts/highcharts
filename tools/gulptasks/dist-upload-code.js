@@ -274,7 +274,12 @@ function distUploadCode() {
         return uploadProductPackage(productProps, { bucket });
     });
 
-    promises.push(uploadFiles({ files: productJs, name: 'products.js', bucket, profile: argv.profile }));
+    promises.push(uploadFiles({
+        files: productJs,
+        name: 'products.js',
+        bucket,
+        profile: argv.profile
+    }));
     return Promise.all(promises);
 }
 

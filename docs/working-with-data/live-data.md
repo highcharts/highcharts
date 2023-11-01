@@ -22,7 +22,7 @@ This example shows how to run a live chart with data retrieved from the server e
 ### Set up the server
 In this case, we have a simple [Express](https://expressjs.com/) server that runs the following function every second, before serving it to [time-rows.json](https://demo-live-data.highcharts.com/time-rows.json):
 
-```javascript
+```js
 generate: (state, counter) => {
   state.rows = state.rows || [];
   state.rows.push([startDate.toISOString(), Math.random() * 10]);
@@ -41,7 +41,7 @@ let chart; // global
 ### Set up a data request function
 Here we use the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) to retrieve the data from the server. After successfully receiving  the data, the point is added to the chart's first series using the [addPoint method](https://api.highcharts.com/class-reference/Highcharts.Series#addPoint). If the series length is greater than 20, we shift off the first point so that the series will move to the left rather than just cram the points tighter.
 
-```javascript
+```js
 /**
 * Request data from the server, add it to the graph and set a timeout to request again
 */
