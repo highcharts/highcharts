@@ -54,6 +54,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
+          config-file: test/cypress/highcharts/config.mjs
           install: false
 
   ### HEADLESS LINUX ###
@@ -103,7 +104,7 @@ jobs:
           npx gulp test --single-run --splitbrowsers Firefox
 
       - name: Run timezone tests
-        if: ${{ inputs.test_timezones }}
+        if: ${{ inputs.testTimezones }}
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 

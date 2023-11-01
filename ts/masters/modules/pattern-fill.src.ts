@@ -11,4 +11,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/PatternFill.js';
+import Highcharts from '../../Core/Globals.js';
+import PatternFill from '../../Extensions/PatternFill.js';
+const G: AnyRecord = Highcharts;
+G.patterns = PatternFill.patterns;
+PatternFill.compose(G.Chart, G.Series, G.SVGRenderer);

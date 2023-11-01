@@ -217,12 +217,12 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public pointAttribs(
-        point: VectorPoint,
+        point?: VectorPoint,
         state?: string
     ): SVGAttributes {
         const options = this.options;
 
-        let stroke = point.color || this.color,
+        let stroke = point?.color || this.color,
             strokeWidth = this.options.lineWidth;
 
         if (state) {

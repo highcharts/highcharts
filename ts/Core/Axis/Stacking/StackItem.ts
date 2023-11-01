@@ -17,18 +17,13 @@
  * */
 
 import type {
-    AlignObject,
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
 import type Axis from '../Axis';
 import type BBoxObject from '../../Renderer/BBoxObject';
-import type Chart from '../../Chart/Chart';
 import type StackingAxis from './StackingAxis';
-import type {
-    StackLabelOptions,
-    StackOverflowValue
-} from './StackingOptions';
+import type { StackLabelOptions } from './StackingOptions';
 import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
@@ -42,9 +37,36 @@ const {
     destroyObjectProperties,
     fireEvent,
     isNumber,
-    merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface AdjustStackPositionProps {
+    labelBox: BBoxObject;
+    verticalAlign: VerticalAlignValue;
+    textAlign: AlignValue;
+}
+
+export interface AlignOptions {
+    verticalAlign: 'top'|'middle'|'bottom';
+    align: 'left'|'center'|'right';
+    x?: number;
+    y?: number;
+}
+
+export interface StackBoxProps {
+    xOffset: number;
+    width: number;
+    boxBottom?: number;
+    boxTop?: number;
+    defaultX?: number;
+    xAxis?: Axis;
+}
 
 /* *
  *
@@ -58,6 +80,7 @@ const {
  * @private
  */
 class StackItem {
+
     /* *
      *
      *  Constructor
@@ -120,6 +143,12 @@ class StackItem {
             (inverted ? (!isNegative ? 'left' : 'right') : 'center');
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public alignOptions: AlignOptions;
     public axis: StackingAxis;
     public base?: string;
@@ -140,6 +169,12 @@ class StackItem {
     public total: number | null;
     public touched?: number;
     public x: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * @private
@@ -384,27 +419,6 @@ class StackItem {
     }
 }
 
-interface AlignOptions {
-    verticalAlign: 'top'|'middle'|'bottom';
-    align: 'left'|'center'|'right';
-    x?: number;
-    y?: number;
-}
-
-export interface StackBoxProps {
-    xOffset: number;
-    width: number;
-    boxBottom?: number;
-    boxTop?: number;
-    defaultX?: number;
-    xAxis?: Axis;
-}
-
-export interface AdjustStackPositionProps {
-    labelBox: BBoxObject;
-    verticalAlign: VerticalAlignValue;
-    textAlign: AlignValue;
-}
 /* *
  *
  *  Default Export

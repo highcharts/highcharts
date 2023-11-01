@@ -348,7 +348,6 @@ class Tick {
              * @type {Highcharts.SVGElement|undefined}
              */
             tick.label = label = tick.createLabel(
-                { x: 0, y: 0 },
                 str,
                 labelOptions
             );
@@ -381,9 +380,9 @@ class Tick {
      * @function Highcharts.Tick#createLabel
      */
     public createLabel(
-        xy: PositionObject,
         str: string,
-        labelOptions: AxisLabelOptions
+        labelOptions: AxisLabelOptions,
+        xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
             chart = axis.chart,
@@ -391,12 +390,12 @@ class Tick {
                 chart.renderer
                     .text(
                         str,
-                        xy.x,
-                        xy.y,
+                        xy?.x,
+                        xy?.y,
                         labelOptions.useHTML
                     )
                     .add(axis.labelGroup) :
-                null as any;
+                void 0;
 
         // Un-rotated length
         if (label) {
@@ -786,9 +785,9 @@ class Tick {
             labelPos = tick.labelPos || (label as any).xy;
 
             tick.movedLabel = tick.createLabel(
-                labelPos,
                 str,
-                labelOptions
+                labelOptions,
+                labelPos
             );
 
             if (tick.movedLabel) {

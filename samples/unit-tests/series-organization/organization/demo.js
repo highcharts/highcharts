@@ -1,5 +1,5 @@
 QUnit.test('Organization data', assert => {
-    let chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         series: [
             {
                 type: 'organization',
@@ -22,26 +22,25 @@ QUnit.test('Organization data', assert => {
         'The last element should be rendered and filled accoring to colorByPoint'
     );
 
-    chart = Highcharts.chart('container', {
+    chart.update({
         chart: {
             inverted: true
-        },
-        series: [
-            {
-                type: 'organization',
-                keys: ['from', 'to'],
-                data: [
-                    ['Skill Cluster', 'Skill 1'],
-                    ['Skill Cluster', 'Skill 2'],
-                    ['Skill Cluster', 'Skill 3'],
-                    ['Skill Cluster', 'Skill 4'],
-                    ['Skill Cluster', 'Skill 5'],
-                    ['Skill Cluster', 'Skill 6'],
-                    ['Skill 2', 'Skill 6 3rd Level'],
-                    ['Skill 6 3rd Level', 'Skill 7 4th Level'],
-                    ['Skill 7 4th Level', 'Skill 8 5th Level']
-                ]
-            }
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        data: [
+            ['Skill Cluster', 'Skill 1'],
+            ['Skill Cluster', 'Skill 2'],
+            ['Skill Cluster', 'Skill 3'],
+            ['Skill Cluster', 'Skill 4'],
+            ['Skill Cluster', 'Skill 5'],
+            ['Skill Cluster', 'Skill 6'],
+            ['Skill 2', 'Skill 6 3rd Level'],
+            ['Skill 6 3rd Level', 'Skill 7 4th Level'],
+            ['Skill 7 4th Level', 'Skill 8 5th Level']
         ]
     });
 
@@ -50,17 +49,17 @@ QUnit.test('Organization data', assert => {
         -9999,
         'Node labels should be visible when not overlap (#13100).'
     );
-});
 
-QUnit.test('Organization single data', assert => {
-    const chart = Highcharts.chart('container', {
-        series: [
-            {
-                type: 'organization',
-                keys: ['from', 'to'],
-                data: [['hey', 'hey']]
-            }
-        ]
+    chart.update({
+        chart: {
+            inverted: false
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        data: [['hey', 'hey']]
     });
 
     assert.strictEqual(
@@ -68,10 +67,50 @@ QUnit.test('Organization single data', assert => {
         1,
         'A single-node series should be possible (#11792)'
     );
+
     assert.strictEqual(
         chart.container.innerHTML.indexOf('NaN'),
         -1,
         'The SVG should not contain NaN'
+    );
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        nodes: [{
+            id: 'A',
+            height: 50, // works in non inverted chart
+            width: 50 // works in inverted chart
+        }],
+        data: [
+            ['A', 'B']
+        ]
+    });
+
+    let nodeBox = chart.series[0].nodes[0].graphic.getBBox();
+
+    assert.strictEqual(
+        nodeBox.y,
+        (chart.plotHeight / 2) -
+            (nodeBox.height / 2),
+        `After specifing the node height in non inverted chart, that node
+        should be aligned to the center of the chart (#19946).`
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    nodeBox = chart.series[0].nodes[0].graphic.getBBox();
+
+    assert.strictEqual(
+        nodeBox.y,
+        (chart.plotWidth / 2) -
+            (nodeBox.width / 2),
+        `After specifing the node width in inverted chart, that node should be
+        aligned to the center of the chart (#19946).`
     );
 });
 

@@ -101,6 +101,24 @@ class LollipopSeries extends Series {
             connectorWidth: 1,
             /** @ignore-option */
             groupPadding: 0.2,
+
+            /**
+             * Whether to group non-stacked lollipop points or to let them
+             * render independent of each other. Non-grouped lollipop points
+             * will be laid out individually and overlap each other.
+             *
+             * @sample highcharts/series-lollipop/enabled-grouping/
+             *         Multiple lollipop series with grouping
+             * @sample highcharts/series-lollipop/disabled-grouping/
+             *         Multiple lollipop series with disabled grouping
+             *
+             * @type      {boolean}
+             * @default   true
+             * @since     8.0.0
+             * @product   highcharts highstock
+             * @apioption plotOptions.lollipop.grouping
+             */
+
             /** @ignore-option */
             pointPadding: 0.1,
             /** @ignore-option */
@@ -159,6 +177,31 @@ class LollipopSeries extends Series {
             i++;
         }
     }
+
+    /**
+     * Extend the series' translate method to use grouping option.
+     * @private
+     *
+     * @function Highcharts.Series#translate
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     */
+    public translate(): void {
+        const series = this;
+
+        colProto.translate.apply(series, arguments);
+
+        // Correct x position
+        for (const point of series.points) {
+            const { pointWidth, shapeArgs } = point;
+
+            if (shapeArgs?.x) {
+                shapeArgs.x += pointWidth / 2;
+                point.plotX = shapeArgs.x || 0;
+            }
+        }
+    }
 }
 
 /* *
@@ -175,7 +218,6 @@ interface LollipopSeries {
     getColumnMetrics: typeof colProto['getColumnMetrics'];
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
-    translate: typeof colProto['translate'];
 }
 
 extend(LollipopSeries.prototype, {
@@ -185,8 +227,7 @@ extend(LollipopSeries.prototype, {
     drawDataLabels: colProto.drawDataLabels,
     getColumnMetrics: colProto.getColumnMetrics,
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
-    pointClass: LollipopPoint,
-    translate: colProto.translate
+    pointClass: LollipopPoint
 });
 
 /* *
