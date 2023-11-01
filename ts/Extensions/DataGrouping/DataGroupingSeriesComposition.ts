@@ -513,6 +513,7 @@ function destroyGroupedData(
         // - `this.points`
         // - `preserve` object in series.update()
         this.groupedData.length = 0;
+        delete this.allGroupedData; // #19892
     }
 }
 

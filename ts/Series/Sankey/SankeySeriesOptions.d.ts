@@ -53,7 +53,6 @@ export interface SankeySeriesNodeOptions {
     offset?: (number|string);
 }
 
-
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
     dataLabels?: SankeyDataLabelOptions;
@@ -77,5 +76,11 @@ export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SankeySeriesOptions;

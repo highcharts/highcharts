@@ -672,6 +672,15 @@ namespace AxisDefaults {
          */
 
         /**
+         * An event fired when a point is outside a break after zoom.
+         *
+         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
+         * @product   highcharts highstock gantt
+         * @context   Highcharts.Axis
+         * @apioption xAxis.events.pointBreakOut
+         */
+
+        /**
          * Fires when the minimum and maximum is set for the axis, either by
          * calling the `.setExtremes()` method or by selecting an area in the
          * chart. One parameter, `event`, is passed to the function,

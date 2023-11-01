@@ -10,17 +10,17 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
 import type ColorType from '../../Core/Color/ColorType';
+import type PolygonSeries from './PolygonSeries';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import PolygonSeries from './PolygonSeries';
-import ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions.js';
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
 interface PolygonSeriesOptions extends ScatterSeriesOptions {
@@ -31,7 +31,8 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default PolygonSeriesOptions;

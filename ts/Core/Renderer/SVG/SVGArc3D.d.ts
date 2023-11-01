@@ -35,4 +35,10 @@ export interface SVGArc3D {
     zTop: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SVGArc3D;

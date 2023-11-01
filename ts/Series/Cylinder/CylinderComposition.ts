@@ -21,16 +21,15 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+
 import H from '../../Core/Globals.js';
 const {
     charts,
@@ -38,11 +37,12 @@ const {
 } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import SVGElement3DCylinder from './SVGElement3DCylinder.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge,
-    pick
+    extend,
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -50,26 +50,6 @@ const {
  *  Declarations
  *
  * */
-
-interface CylinderMethodsObject extends SVGElement3DLikeCuboid {
-    parts: Array<string>;
-    pathType: string;
-    fillSetter(fill: ColorType): SVGElement;
-}
-
-interface CylinderPathsObject extends SVGPath3D {
-    back: SVGPath;
-    bottom: SVGPath;
-    front: SVGPath;
-    top: SVGPath;
-    zIndexes: Record<string, number>;
-}
-
-declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
-    interface SVGElement3DLike {
-        cylinder?: CylinderMethodsObject;
-    }
-}
 
 declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     interface SVGRendererLike {
@@ -98,58 +78,80 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
+interface CylinderPathsObject extends SVGPath3D {
+    back: SVGPath;
+    bottom: SVGPath;
+    front: SVGPath;
+    top: SVGPath;
+    zIndexes: Record<string, number>;
+}
+
 /* *
  *
- *  Composition
+ *  Constants
  *
  * */
 
-const rendererProto = RendererRegistry.getRendererType().prototype,
-    cuboidPath = rendererProto.cuboidPath;
+const composedMembers: Array<unknown> = [];
 
-// Check if a path is simplified. The simplified path contains only lineTo
-// segments, whereas non-simplified contain curves.
-const isSimplified = (path: SVGPath): boolean =>
-    !path.some((seg): boolean => seg[0] === 'C');
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-// cylinder extends cuboid
-const cylinderMethods = merge(rendererProto.elements3d.cuboid, {
-    parts: ['top', 'bottom', 'front', 'back'],
-    pathType: 'cylinder',
+function compose(
+    SVGRendererClass: typeof SVGRenderer
+): void {
 
-    fillSetter: function (
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement {
-        this.singleSetterForParts('fill', null, {
-            front: fill,
-            back: fill,
-            top: color(fill).brighten(0.1).get(),
-            bottom: color(fill).brighten(-0.1).get()
+    if (pushUnique(composedMembers, SVGRendererClass)) {
+        const rendererProto =
+            SVGRendererClass.prototype as SVGRenderer3D.Composition;
+
+        rendererProto.Element3D.types.cylinder = SVGElement3DCylinder;
+
+        extend(rendererProto, {
+            cylinder: rendererCylinder,
+            cylinderPath: rendererCylinderPath,
+            getCurvedPath: rendererGetCurvedPath,
+            getCylinderBack: rendererGetCylinderBack,
+            getCylinderEnd: rendererGetCylinderEnd,
+            getCylinderFront: rendererGetCylinderFront
         });
-
-        // fill for animation getter (#6776)
-        this.color = this.fill = fill;
-
-        return this;
     }
-});
 
-rendererProto.elements3d.cylinder = cylinderMethods;
+}
 
-rendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
+/**
+ * Check if a path is simplified. The simplified path contains only lineTo
+ * segments, whereas non-simplified contain curves.
+ * @private
+ */
+function isSimplified(path: SVGPath): boolean {
+    return !path.some((seg): boolean => seg[0] === 'C');
+}
+
+/** @private */
+function rendererCylinder(
+    this: SVGRenderer3D.Composition,
+    shapeArgs: SVGAttributes
+): SVGElement {
     return this.element3d('cylinder', shapeArgs);
-};
+}
 
-// Generates paths and zIndexes.
-rendererProto.cylinderPath = function (
+/**
+ * Generates paths and zIndexes.
+ * @private
+ */
+function rendererCylinderPath(
+    this: SVGRenderer3D.Composition,
     shapeArgs: SVGAttributes
 ): CylinderPathsObject {
     const renderer = this,
         chart = charts[renderer.chartIndex],
 
         // decide zIndexes of parts based on cubiod logic, for consistency.
-        cuboidData = cuboidPath.call(renderer, shapeArgs),
+        cuboidData = this.cuboidPath(shapeArgs),
         isTopFirst = !cuboidData.isTop,
         isFronFirst = !cuboidData.isFront,
 
@@ -171,59 +173,37 @@ rendererProto.cylinderPath = function (
             group: cuboidData.zIndexes.group
         }
     };
-};
+}
 
-// Returns cylinder Front path
-rendererProto.getCylinderFront = function (
-    topPath: SVGPath,
-    bottomPath: SVGPath
-): SVGPath {
-    const path = topPath.slice(0, 3);
+/**
+ * Returns curved path in format of:
+ * [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
+ * (cp - control point, ep - end point)
+ * @private
+ */
+function rendererGetCurvedPath(
+    this: SVGRenderer3D.Composition,
+    points: Array<PositionObject>): SVGPath {
+    const path: SVGPath = [['M', points[0].x, points[0].y]],
+        limit = points.length - 2;
 
-    if (isSimplified(bottomPath)) {
-
-        const move = bottomPath[0];
-        if (move[0] === 'M') {
-            path.push(bottomPath[2]);
-            path.push(bottomPath[1]);
-            path.push(['L', move[1], move[2]]);
-        }
-
-    } else {
-        const move = bottomPath[0],
-            curve1 = bottomPath[1],
-            curve2 = bottomPath[2];
-        if (move[0] === 'M' && curve1[0] === 'C' && curve2[0] === 'C') {
-
-            path.push(['L', curve2[5], curve2[6]]);
-
-            path.push([
-                'C',
-                curve2[3],
-                curve2[4],
-                curve2[1],
-                curve2[2],
-                curve1[5],
-                curve1[6]
-            ]);
-            path.push([
-                'C',
-                curve1[3],
-                curve1[4],
-                curve1[1],
-                curve1[2],
-                move[1],
-                move[2]
-            ]);
-        }
+    for (let i = 1; i < limit; i += 3) {
+        path.push([
+            'C',
+            points[i].x, points[i].y,
+            points[i + 1].x, points[i + 1].y,
+            points[i + 2].x, points[i + 2].y
+        ]);
     }
-    path.push(['Z']);
-
     return path;
-};
+}
 
-// Returns cylinder Back path
-rendererProto.getCylinderBack = function (
+/**
+ * Returns cylinder Back path.
+ * @private
+ */
+function rendererGetCylinderBack(
+    this: SVGRenderer3D.Composition,
     topPath: SVGPath,
     bottomPath: SVGPath
 ): SVGPath {
@@ -285,20 +265,25 @@ rendererProto.getCylinderBack = function (
     path.push(['Z']);
 
     return path;
-};
+}
 
-// Retruns cylinder path for top or bottom
-rendererProto.getCylinderEnd = function (
+/**
+ * Retruns cylinder path for top or bottom.
+ * @private
+ */
+function rendererGetCylinderEnd(
+    this: SVGRenderer3D.Composition,
     chart: Chart,
     shapeArgs: SVGAttributes,
     isBottom?: boolean
 ): SVGPath {
 
     const { width = 0, height = 0, alphaCorrection = 0 } =
-        shapeArgs;
-    // A half of the smaller one out of width or depth (optional, because
-    // there's no depth for a funnel that reuses the code)
-    let depth = pick(shapeArgs.depth, width, 0),
+        shapeArgs,
+
+        // A half of the smaller one out of width or depth (optional, because
+        // there's no depth for a funnel that reuses the code)
+        depth = pick(shapeArgs.depth, width, 0),
         radius = Math.min(width, depth) / 2,
 
         // Approximated longest diameter
@@ -375,22 +360,22 @@ rendererProto.getCylinderEnd = function (
             z: radius
         }],
         cosTheta = Math.cos(angleOffset),
-        sinTheta = Math.sin(angleOffset),
-        perspectivePoints,
-        path: SVGPath,
+        sinTheta = Math.sin(angleOffset);
+
+    let path: SVGPath,
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
-    points.forEach(function (point, i): void {
+    for (const point of points) {
         x = point.x;
         z = point.z;
 
         // x′ = (x * cosθ − z * sinθ) + centerX
         // z′ = (z * cosθ + x * sinθ) + centerZ
-        points[i].x = (x * cosTheta - z * sinTheta) + centerX;
-        points[i].z = (z * cosTheta + x * sinTheta) + centerZ;
-    });
-    perspectivePoints = perspective(points, chart, true);
+        point.x = (x * cosTheta - z * sinTheta) + centerX;
+        point.z = (z * cosTheta + x * sinTheta) + centerZ;
+    }
+    const perspectivePoints = perspective(points, chart, true);
 
     // check for sub-pixel curve issue, compare front and back edges
     if (
@@ -410,23 +395,69 @@ rendererProto.getCylinderEnd = function (
     }
 
     return path;
-};
+}
 
-// Returns curved path in format of:
-// [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
-// (cp - control point, ep - end point)
-rendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
-    let path: SVGPath = [['M', points[0].x, points[0].y]],
-        limit = points.length - 2,
-        i;
+/**
+ * Returns cylinder Front path.
+ * @private
+ */
+function rendererGetCylinderFront(
+    this: SVGRenderer3D.Composition,
+    topPath: SVGPath,
+    bottomPath: SVGPath
+): SVGPath {
+    const path = topPath.slice(0, 3);
 
-    for (i = 1; i < limit; i += 3) {
-        path.push([
-            'C',
-            points[i].x, points[i].y,
-            points[i + 1].x, points[i + 1].y,
-            points[i + 2].x, points[i + 2].y
-        ]);
+    if (isSimplified(bottomPath)) {
+
+        const move = bottomPath[0];
+        if (move[0] === 'M') {
+            path.push(bottomPath[2]);
+            path.push(bottomPath[1]);
+            path.push(['L', move[1], move[2]]);
+        }
+
+    } else {
+        const move = bottomPath[0],
+            curve1 = bottomPath[1],
+            curve2 = bottomPath[2];
+        if (move[0] === 'M' && curve1[0] === 'C' && curve2[0] === 'C') {
+
+            path.push(['L', curve2[5], curve2[6]]);
+
+            path.push([
+                'C',
+                curve2[3],
+                curve2[4],
+                curve2[1],
+                curve2[2],
+                curve1[5],
+                curve1[6]
+            ]);
+            path.push([
+                'C',
+                curve1[3],
+                curve1[4],
+                curve1[1],
+                curve1[2],
+                move[1],
+                move[2]
+            ]);
+        }
     }
+    path.push(['Z']);
+
     return path;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const CylinderComposition = {
+    compose
 };
+
+export default CylinderComposition;

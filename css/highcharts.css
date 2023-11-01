@@ -319,7 +319,7 @@ div.highcharts-tooltip {
 
 .highcharts-graph {
     fill: none;
-    stroke-width: 1px;
+    stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
