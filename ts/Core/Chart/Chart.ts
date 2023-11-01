@@ -2373,8 +2373,8 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            renderAxes = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            renderAxes = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.render();
                     }
@@ -2391,9 +2391,7 @@ class Chart {
         fireEvent(chart, 'beforeMargins');
 
         // Get stacks
-        if (chart.getStacks) {
-            chart.getStacks();
-        }
+        chart.getStacks?.();
 
         // Get chart margins
         chart.getMargins(true);
@@ -2446,20 +2444,18 @@ class Chart {
         const tempHeight = chart.plotHeight;
 
         // Get margins by pre-rendering axes
-        axes.forEach(function (axis): void {
-            axis.setScale();
-        });
+        axes.forEach((axis): void => axis.setScale());
         chart.getAxisMargins();
 
         // If the plot area size has changed significantly, calculate tick
         // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-        // Height is more sensitive, use lower threshold
-        const redoVertical = tempHeight / chart.plotHeight > 1.05;
+        const redoHorizontal = tempWidth / chart.plotWidth > 1.1,
+            // Height is more sensitive, use lower threshold
+            redoVertical = tempHeight / chart.plotHeight > 1.05;
 
         if (redoHorizontal || redoVertical) {
 
-            axes.forEach(function (axis): void {
+            axes.forEach((axis): void => {
                 if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
