@@ -64,7 +64,7 @@
                 zoneAxis: options[3] ? 'x' : 'y'
             }
         },
-        series: [{
+        _series: [{
             data: [-1, -1, 100, 1, 1, -50, -1, -1],
             pointStart: -3,
 
@@ -79,7 +79,7 @@
         }],
 
         // Area with zone
-        series1: [{
+        series: [{
             data: [1, 2, 0.5, 3, 1, 0.1, 3, 1],
             type: 'area',
             lineWidth: 5,

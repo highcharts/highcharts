@@ -3124,7 +3124,7 @@ class Series {
                     lineClip.reverse();
                 }
 
-                let clip = zone.clip,
+                let { clip, simpleClip } = zone,
                     x1 = 0,
                     y1 = 0,
                     x2 = xAxis.len,
@@ -3139,25 +3139,33 @@ class Series {
                 }
 
                 // Adaptive clips
-                const d: SVGPath = [
-                    ['M', x1, y1],
-                    ...lineClip,
-                    ['L', x2, y1],
-                    ['L', x2, y2],
-                    ...lastLineClip,
-                    ['L', x1, y2],
-                    ['Z']
-                ];
+                const adaptivePath: SVGPath = [
+                        ['M', x1, y1],
+                        ...lineClip,
+                        ['L', x2, y1],
+                        ['L', x2, y2],
+                        ...lastLineClip,
+                        ['L', x1, y2],
+                        ['Z']
+                    ],
+                    simplePath: SVGPath = [
+                        ['M', x1, y1],
+                        ['L', x2, y1],
+                        ['L', x2, y2],
+                        ['L', x1, y2],
+                        ['Z']
+                    ];
 
                 lastLineClip = lineClip.reverse();
                 lastTranslated = translated;
 
                 if (inverted) {
-                    invertPath(d, axis.isXAxis);
+                    invertPath(adaptivePath, axis.isXAxis);
+                    invertPath(simplePath, axis.isXAxis);
                 }
 
                 /* Debug clip paths
-                chart.renderer.path(d)
+                chart.renderer.path(adaptivePath)
                     .attr({
                         stroke: zone.color || this.color || 'gray',
                         'stroke-width': 1,
@@ -3167,9 +3175,15 @@ class Series {
                 // */
 
                 if (clip) {
-                    clip.animate({ d });
+                    clip.animate({ d: adaptivePath });
+                    simpleClip?.animate({ d: simplePath });
                 } else {
-                    clip = zone.clip = renderer.path(d);
+                    clip = zone.clip = renderer.path(adaptivePath);
+                    if (area) {
+                        simpleClip = zone.simpleClip = renderer.path(
+                            simplePath
+                        );
+                    }
                 }
 
                 // When no data, graph zone is not applied and after setData
@@ -3180,7 +3194,7 @@ class Series {
                 }
 
                 if (area) {
-                    zone.area?.clip(clip);
+                    zone.area?.clip(simpleClip);
                 }
             });
         } else if (series.visible) {
@@ -4923,6 +4937,7 @@ namespace Series {
         clip?: SVGElement;
         graph?: SVGElement;
         lineClip?: SVGPath;
+        simpleClip?: SVGElement;
         translated?: number;
     }
 
