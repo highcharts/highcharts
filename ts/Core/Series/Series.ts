@@ -3014,7 +3014,7 @@ class Series {
             } = series,
             { inverted, renderer } = chart,
             axis = this[`${zoneAxis}Axis`],
-            len = axis?.len || 0,
+            { isXAxis, len = 0 } = axis || {},
             halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
             // Avoid points that are so close to the threshold that the graph
@@ -3050,10 +3050,7 @@ class Series {
 
             const axisMax = axis.getExtremes().max,
                 // Invert the x and y coordinates of inverted charts
-                invertPath = (
-                    path: SVGPath,
-                    isXAxis: boolean|undefined
-                ): void => {
+                invertPath = (path: SVGPath): void => {
                     path.forEach((segment, i): void => {
                         if (segment[0] === 'M' || segment[0] === 'L') {
                             path[i] = [
@@ -3130,7 +3127,7 @@ class Series {
                     x2 = xAxis.len,
                     y2 = yAxis.len;
 
-                if (axis.isXAxis) {
+                if (isXAxis) {
                     x1 = translated;
                     x2 = lastTranslated;
                 } else {
@@ -3160,8 +3157,10 @@ class Series {
                 lastTranslated = translated;
 
                 if (inverted) {
-                    invertPath(adaptivePath, axis.isXAxis);
-                    invertPath(simplePath, axis.isXAxis);
+                    invertPath(adaptivePath);
+                    if (area) {
+                        invertPath(simplePath);
+                    }
                 }
 
                 /* Debug clip paths
