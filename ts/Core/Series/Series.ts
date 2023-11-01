@@ -3091,7 +3091,11 @@ class Series {
 
             // Prepare for adaptive clips, avoiding segments close to the
             // threshold (#19709)
-            if (zoneAxis === 'y') {
+            if (
+                zoneAxis === 'y' &&
+                // Overheat protection
+                points.length < xAxis.len / halfWidth
+            ) {
                 for (const point of points) {
                     const { plotX, plotY, zone } = point,
                         zoneBelow = zone && zones[zones.indexOf(zone) - 1];
