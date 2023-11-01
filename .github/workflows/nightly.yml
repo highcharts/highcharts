@@ -146,7 +146,7 @@ jobs:
         uses: actions/checkout@v4
       - name: create list of merge commits
         run: |
-          git log --since 24h --oneline | grep -e "^.*Merge pull" > 24hoursofhighcharts.list
+          git log --since 24hours --oneline | grep -e "^.*Merge pull" > 24hoursofhighcharts.list
           node ./github/scripts/createListJSON \
             24hoursofhighcharts.list \
             24hoursofhighcharts.json
