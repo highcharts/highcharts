@@ -220,6 +220,7 @@ class Axis {
     public displayBtn?: boolean;
     public eventArgs?: any;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public expectedSpace: number|undefined;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
     public gridGroup?: SVGElement;
@@ -335,7 +336,8 @@ class Axis {
         coll: AxisCollectionKey = this.coll
     ): void {
         const isXAxis = coll === 'xAxis',
-            axis = this;
+            axis = this,
+            horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
 
         /**
          * The Chart that the axis belongs to.
@@ -351,7 +353,7 @@ class Axis {
          * @name Highcharts.Axis#horiz
          * @type {boolean|undefined}
          */
-        axis.horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
+        axis.horiz = horiz;
 
         /**
          * Whether the axis is the x-axis.
@@ -386,7 +388,7 @@ class Axis {
         axis.side = pick(
             userOptions.side,
             axis.side,
-            (axis.horiz ?
+            (horiz ?
                 (axis.opposite ? 0 : 2) : // top : bottom
                 (axis.opposite ? 1 : 3)) // right : left
         );

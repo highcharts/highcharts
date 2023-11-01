@@ -2411,7 +2411,8 @@ class Chart {
                 axis.visible &&
                 labels.enabled &&
                 axis.series.length &&
-                axis.coll !== 'colorAxis'
+                axis.coll !== 'colorAxis' &&
+                !chart.polar
             ) {
 
                 expectedSpace = options.tickLength;
