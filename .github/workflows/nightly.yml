@@ -149,7 +149,7 @@ jobs:
           git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
       - name: Convert to JSON
         run: |
-          node ./github/scripts/createListJSON \
+          node ./.github/scripts/createListJSON \
             24hoursofhighcharts.list \
             24hoursofhighcharts.json
       - name: Call Slack webhook
