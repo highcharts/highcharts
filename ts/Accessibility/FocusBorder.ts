@@ -209,16 +209,6 @@ namespace FocusBorderComposition {
                 addEvent(browserFocusElement, 'focusin', function (): void {});
             }
 
-            // When focusing out we need to remove the focus border, #19169.
-            const unbinder = addEvent(
-                browserFocusElement,
-                'focusout',
-                function (): void {
-                    svgElement.removeFocusBorder();
-                    unbinder();
-                }
-            );
-
             browserFocusElement.focus();
 
             // Hide default focus ring

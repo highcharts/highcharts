@@ -284,6 +284,7 @@ class KeyboardNavigation {
             }
         }
 
+        this.keyboardReset = false;
         this.exiting = false;
     }
 
