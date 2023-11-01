@@ -19,6 +19,7 @@ import Navigator from '../../Stock/Navigator/Navigator.js';
 import Pathfinder from '../../Gantt/Pathfinder.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
+import StaticScale from '../../Extensions/StaticScale.js';
 // Series
 import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 import GanttSeries from '../../Series/Gantt/GanttSeries.js';
@@ -40,3 +41,4 @@ Pathfinder.compose(G.Chart, G.Point);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
 XRangeSeries.compose(G.Axis);
+StaticScale.compose(G.Axis, G.Chart);

@@ -1916,7 +1916,10 @@ class Pointer {
             ) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
-                    series.markerGroup.attr(seriesAttribs);
+                    series.markerGroup.attr(
+                        // #20018
+                        attribs || series.getPlotBox('marker')
+                    );
                     series.markerGroup.clip(
                         clip ? (chart.clipRect as any) : (null as any)
                     );

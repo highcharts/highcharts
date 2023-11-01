@@ -42,10 +42,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: 'npm'
 
       - name: Install Dependencies
@@ -113,10 +113,10 @@ jobs:
           ref: 'nightly'
           fetch-depth: 0
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 
@@ -125,6 +125,7 @@ jobs:
         run: |
           npm i
           npm run build -- --CI true
+          npx gulp dist-verify
           npx gulp dist-release --force-yes
 
       - name: Upload to github
@@ -137,3 +138,22 @@ jobs:
           git add .
           git commit -m "Nightly build - ${{github.run_id}}"
           git push -u origin nightly
+
+    nightly_changelog:
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
+        - name: create list of merge commits
+          run: |
+            git log --since 24h --oneline | grep -e "^.*Merge pull" > 24hoursofhighcharts.list
+            node ./github/scripts/createListJSON \
+              24hoursofhighcharts.list \
+              24hoursofhighcharts.json
+        - name: Call Slack webhook
+          id: slack
+          uses: slackapi/slack-github-action@v1.24.0
+          with:
+            payload-file-path: "24hoursofhighcharts.json"
+          env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+

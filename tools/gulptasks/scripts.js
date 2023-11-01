@@ -163,11 +163,9 @@ function task() {
             processLib.isRunning('scripts_incomplete', true, true);
 
             gulp.series(
-                'scripts-es5',
                 'scripts-ts',
                 'scripts-css',
-                'scripts-js',
-                'scripts-code'
+                'scripts-js'
             )(
                 function (error) {
 
