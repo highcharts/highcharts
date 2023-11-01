@@ -1406,16 +1406,20 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         const series = [];
         dataRows.forEach((row, i) => {
             if (i > 0) { // ommit names of series
-                row.seriesIndices.forEach(sIdx => {
+                dataRows[1].pointers.map((el, i) => i).forEach(sIdx => {
                     if (!series[sIdx]) {
                         series[sIdx] = {
                             data: []
                         };
                     }
                     if (!isCategoryType) {
-                        series[sIdx].data.push([row[0], row[sIdx + 1]]);
+                        if (row[sIdx + 1]) {
+                            series[sIdx].data.push([row[0], row[sIdx + 1]]);
+                        }
                     } else {
-                        series[sIdx].data.push(row[sIdx + 1]);
+                        if (row[sIdx + 1]) {
+                            series[sIdx].data.push(row[sIdx + 1]);
+                        }
                     }
                 });
             }

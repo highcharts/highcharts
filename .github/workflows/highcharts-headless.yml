@@ -46,7 +46,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
+        run: npm i github:highcharts/highcharts-utils
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
@@ -104,7 +104,7 @@ jobs:
           npx gulp test --single-run --splitbrowsers Firefox
 
       - name: Run timezone tests
-        if: ${{ inputs.test_timezones }}
+        if: ${{ inputs.testTimezones }}
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 

@@ -49,7 +49,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
+        run: npm i github:highcharts/highcharts-utils
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
@@ -83,7 +83,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Install utils
-        run: npm i github:highcharts/highcharts-utils#b46e7588e3aaa004d6148f4d85a9a419949bcd7c
+        run: npm i github:highcharts/highcharts-utils
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5

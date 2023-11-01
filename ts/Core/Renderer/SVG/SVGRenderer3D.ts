@@ -124,19 +124,30 @@ function curveTo(
 ): SVGPath {
     const arcAngle = end - start;
 
+    let result = [] as SVGPath;
+
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
-        return [
-            curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)[0],
-            curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)[0]
-        ];
+        result = result.concat(
+            curveTo(
+                cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy
+            )
+        );
+        result = result.concat(
+            curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
+        );
+        return result;
     }
     if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
-        return [
-            curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)[0],
-            curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)[0]
-        ];
+        result = result.concat(
+            curveTo(
+                cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy
+            )
+        );
+        result = result.concat(
+            curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
+        );
+        return result;
     }
-
     return [[
         'C',
         cx + (rx * Math.cos(start)) -
