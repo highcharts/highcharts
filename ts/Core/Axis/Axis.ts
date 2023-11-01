@@ -50,6 +50,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
+const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -103,6 +104,8 @@ const getNormalizedTickInterval = (
     ),
     !!axis.tickAmount
 );
+
+extend(defaultOptions, { xAxis, yAxis: merge(xAxis, yAxis) });
 
 /* *
  *
@@ -163,8 +166,6 @@ class Axis {
      *  Static Properties
      *
      * */
-
-    public static readonly defaultOptions = AxisDefaults.defaultXAxisOptions;
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
@@ -580,23 +581,34 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
+        const sideSpecific = this.side % 2 ?
+            // Left and right axis, title rotated 90 or 270 degrees
+            // respectively
+            {
+                title: {
+                    rotation: 90 * this.side
+                }
+            } :
+
+            // Top and bottom axis defaults
+            {
+                labels: {
+                    autoRotation: [-45]
+                },
+                margin: 15,
+                title: {
+                    rotation: 0
+                }
+            };
+
+
         this.options = merge(
-            AxisDefaults.defaultXAxisOptions,
-            (this.coll === 'yAxis') && AxisDefaults.defaultYAxisOptions,
-            [
-                AxisDefaults.defaultTopAxisOptions,
-                AxisDefaults.defaultRightAxisOptions,
-                AxisDefaults.defaultBottomAxisOptions,
-                AxisDefaults.defaultLeftAxisOptions
-            ][this.side],
-            merge(
-                // if set in setOptions (#1053):
-                defaultOptions[this.coll],
-                userOptions
-            )
+            sideSpecific,
+            defaultOptions[this.coll] as AxisOptions,
+            userOptions
         );
 
-        fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
+        fireEvent(this, 'afterSetOptions', { userOptions });
     }
 
     /**

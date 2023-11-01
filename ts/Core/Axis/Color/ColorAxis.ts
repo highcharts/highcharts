@@ -34,6 +34,8 @@ import Axis from '../Axis.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import ColorAxisLike from './ColorAxisLike.js';
+import D from '../../Defaults.js';
+const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
@@ -98,6 +100,8 @@ declare module '../../Series/SeriesOptions' {
     }
 }
 
+defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
+
 /* *
  *
  *  Class
@@ -124,8 +128,6 @@ class ColorAxis extends Axis implements AxisLike {
      *  Static Properties
      *
      * */
-
-    public static defaultColorAxisOptions = ColorAxisDefaults;
 
     public static defaultLegendLength: number = 200;
 
@@ -222,7 +224,7 @@ class ColorAxis extends Axis implements AxisLike {
             visible = userOptions.visible;
 
         const options = merge(
-            ColorAxis.defaultColorAxisOptions,
+            defaultOptions.colorAxis as ColorAxis.Options,
             userOptions,
             {
                 showEmpty: false,
@@ -282,11 +284,10 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
-        const axis = this;
 
         super.setOptions(userOptions);
 
-        axis.options.crosshair = axis.options.marker;
+        this.options.crosshair = this.options.marker;
     }
 
     /**

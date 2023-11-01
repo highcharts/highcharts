@@ -16,6 +16,7 @@
  *
  * */
 
+import type { AxisCollectionKey } from './Axis/AxisOptions';
 import type { Options } from './Options';
 import type Legend from './Legend/Legend';
 
@@ -29,7 +30,7 @@ import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { merge } = U;
+const { isArray, merge } = U;
 
 /* *
  *

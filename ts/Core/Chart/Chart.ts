@@ -1073,7 +1073,7 @@ class Chart {
      * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
-        const options = this.options;
+        const options = this.userOptions;
 
         fireEvent(this, 'getAxes');
 

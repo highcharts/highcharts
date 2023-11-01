@@ -115,25 +115,19 @@ declare module '../Renderer/SVG/SVGRendererLike' {
  * @function getDefaultAxisOptions
  */
 function getDefaultAxisOptions(
-    type: string,
-    options: DeepPartial<AxisOptions>
+    coll: string,
+    options: DeepPartial<AxisOptions>,
+    defaultOptions: DeepPartial<AxisOptions>
 ): DeepPartial<AxisOptions> {
-    if (type === 'xAxis') {
+    if (coll === 'xAxis') {
         return {
             minPadding: 0,
             maxPadding: 0,
             overscroll: 0,
-            ordinal: true,
-            title: {
-                text: null
-            },
-            labels: {
-                overflow: 'justify'
-            },
-            showLastLabel: true
+            ordinal: true
         };
     }
-    if (type === 'yAxis') {
+    if (coll === 'yAxis') {
         return {
             labels: {
                 y: -2
@@ -145,7 +139,9 @@ function getDefaultAxisOptions(
                 options.type === 'category'
             ),
             title: {
-                text: null
+                text: defaultOptions.title?.text !== 'Values' ?
+                    defaultOptions.title?.text :
+                    null
             }
         };
     }
@@ -300,31 +296,35 @@ class StockChart extends Chart {
         userOptions.xAxis = xAxisOptions;
         userOptions.yAxis = yAxisOptions;
 
-        // apply X axis options to both single and multi y axes
+        // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
             xAxisOptions: AxisOptions,
             i: number
         ): AxisOptions => merge(
-            getDefaultAxisOptions('xAxis', xAxisOptions),
-            defaultOptions.xAxis, // #3802
+            // defaultOptions.xAxis, // #3802
+            getDefaultAxisOptions(
+                'xAxis',
+                xAxisOptions,
+                defaultOptions.xAxis as AxisOptions
+            ),
             // #7690
-            // @todo remove, default axis options are not arrays
-            defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
-            xAxisOptions, // user options
+            xAxisOptions, // User options
             getForcedAxisOptions('xAxis', userOptions)
         ));
 
-        // apply Y axis options to both single and multi y axes
+        // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
             yAxisOptions: YAxisOptions,
             i: number
         ): YAxisOptions => merge(
-            getDefaultAxisOptions('yAxis', yAxisOptions),
-            defaultOptions.yAxis, // #3802
+            // defaultOptions.yAxis, // #3802
+            getDefaultAxisOptions(
+                'yAxis',
+                yAxisOptions,
+                defaultOptions.yAxis as AxisOptions
+            ),
             // #7690
-            // @todo remove, default axis options are not arrays
-            defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
-            yAxisOptions // user options
+            yAxisOptions // User options
         ));
 
         super.init(options, callback);
@@ -346,7 +346,11 @@ class StockChart extends Chart {
         options: Chart.CreateAxisOptionsObject
     ): Axis {
         options.axis = merge(
-            getDefaultAxisOptions(coll, options.axis),
+            getDefaultAxisOptions(
+                coll,
+                options.axis,
+                getOptions()[coll] as AxisOptions
+            ),
             options.axis,
             getForcedAxisOptions(coll, this.userOptions)
         );

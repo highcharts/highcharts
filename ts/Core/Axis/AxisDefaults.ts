@@ -55,7 +55,7 @@ namespace AxisDefaults {
      * @type         {*|Array<*>}
      * @optionparent xAxis
      */
-    export const defaultXAxisOptions: XAxisOptions = {
+    export const xAxis: XAxisOptions = {
 
         /**
          * When using multiple axis, the ticks of two or more opposite axes
@@ -821,7 +821,6 @@ namespace AxisDefaults {
              * @product   highcharts highstock gantt
              * @apioption xAxis.labels.autoRotation
              */
-            autoRotation: void 0,
 
             /**
              * When each category width is more than this many pixels, we don't
@@ -2285,7 +2284,7 @@ namespace AxisDefaults {
      * @excluding    currentDateIndicator,ordinal,overscroll
      * @optionparent yAxis
      */
-    export const defaultYAxisOptions: DeepPartial<YAxisOptions> = {
+    export const yAxis: DeepPartial<YAxisOptions> = {
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -3152,47 +3151,6 @@ namespace AxisDefaults {
      *            nameToX, showEmpty, top, width
      * @apioption zAxis
      */
-
-    // This variable extends the defaultOptions for left axes.
-    export const defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
-        title: {
-            rotation: 270
-        }
-    };
-
-    // This variable extends the defaultOptions for right axes.
-    export const defaultRightAxisOptions: DeepPartial<AxisOptions> = {
-        title: {
-            rotation: 90
-        }
-    };
-
-    // This variable extends the defaultOptions for bottom axes.
-    export const defaultBottomAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            autoRotation: [-45]
-            // overflow: undefined,
-            // staggerLines: null
-        },
-        margin: 15,
-        title: {
-            rotation: 0
-        }
-    };
-
-    // This variable extends the defaultOptions for top axes.
-    export const defaultTopAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            autoRotation: [-45]
-            // overflow: undefined
-            // staggerLines: null
-        },
-        margin: 15,
-        title: {
-            rotation: 0
-        }
-    };
-
 
 }
 
