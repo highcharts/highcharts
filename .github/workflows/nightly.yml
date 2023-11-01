@@ -147,6 +147,7 @@ jobs:
       - name: create list of merge commits
         run: |
           git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
+          cat 24hoursofhighcharts.list
       - name: Convert to JSON
         run: |
           node ./.github/scripts/createListJSON \
