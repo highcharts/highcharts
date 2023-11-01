@@ -3014,6 +3014,7 @@ class Series {
             } = series,
             { inverted, renderer } = chart,
             axis = this[`${zoneAxis}Axis`],
+            len = axis?.len || 0,
             halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
             // Avoid points that are so close to the threshold that the graph
@@ -3024,7 +3025,7 @@ class Series {
                 plotY: number = 0
             ): void => {
                 if (inverted) {
-                    plotY = yAxis.len - plotY;
+                    plotY = len - plotY;
                 }
                 const { translated = 0, lineClip } = zone,
                     distance = plotY - translated;
@@ -3048,14 +3049,17 @@ class Series {
         ) {
 
             const axisMax = axis.getExtremes().max,
-                // Invert the y coordinate in inverted charts
-                invertPath = (path: SVGPath): void => {
+                // Invert the x and y coordinates of inverted charts
+                invertPath = (
+                    path: SVGPath,
+                    isXAxis: boolean|undefined
+                ): void => {
                     path.forEach((segment, i): void => {
                         if (segment[0] === 'M' || segment[0] === 'L') {
                             path[i] = [
                                 segment[0],
-                                segment[1],
-                                axis.len - segment[2]
+                                isXAxis ? len - segment[1] : segment[1],
+                                isXAxis ? segment[2] : len - segment[2]
                             ];
                         }
                     });
@@ -3070,7 +3074,7 @@ class Series {
                         true
                     ) || 0,
                     0,
-                    axis.len
+                    len
                 );
             });
 
@@ -3089,8 +3093,8 @@ class Series {
             // threshold (#19709)
             if (zoneAxis === 'y') {
                 for (const point of points) {
-                    const zone = point.zone,
-                        { plotX, plotY } = point;
+                    const { plotX, plotY, zone } = point,
+                        zoneBelow = zone && zones[zones.indexOf(zone) - 1];
 
                     // Close to upper boundary
                     if (zone) {
@@ -3098,8 +3102,6 @@ class Series {
                     }
 
                     // Close to lower boundary
-                    // @todo refactor
-                    const zoneBelow = zone && zones[zones.indexOf(zone) - 1];
                     if (zoneBelow) {
                         avoidClose(zoneBelow, plotX, plotY);
                     }
@@ -3147,7 +3149,7 @@ class Series {
                 lastTranslated = translated;
 
                 if (inverted) {
-                    invertPath(d);
+                    invertPath(d, axis.isXAxis);
                 }
 
                 /* Debug clip paths

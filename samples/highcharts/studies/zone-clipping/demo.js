@@ -43,7 +43,7 @@
                 `${i}) chart.inverted: ${options[0]}, ` +
                 `xAxis.reversed: ${options[1]}, ` +
                 `yAxis.reversed: ${options[2]}, ` +
-                `zoneAxis = x: ${options[3]}`,
+                `zoneAxis = ${options[3] ? 'x' : 'y'}`,
             align: 'left'
         },
         legend: {
