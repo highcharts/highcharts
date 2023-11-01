@@ -47,12 +47,6 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        resetZones?: boolean;
-    }
-}
-
 interface MACDZonesObject {
     startIndex?: number;
     zones?: Series.ZoneObject[];
@@ -253,7 +247,6 @@ class MACDIndicator extends SMAIndicator {
                 ),
                 startIndex: (this.macdZones.zones as any).length
             };
-            this.resetZones = true;
         }
 
         // Reset color and index #15608.
