@@ -220,6 +220,7 @@ class Axis {
     public displayBtn?: boolean;
     public eventArgs?: any;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public expectedSpace: number|undefined;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
     public gridGroup?: SVGElement;
@@ -335,7 +336,8 @@ class Axis {
         coll: AxisCollectionKey = this.coll
     ): void {
         const isXAxis = coll === 'xAxis',
-            axis = this;
+            axis = this,
+            horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
 
         /**
          * The Chart that the axis belongs to.
@@ -351,7 +353,7 @@ class Axis {
          * @name Highcharts.Axis#horiz
          * @type {boolean|undefined}
          */
-        axis.horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
+        axis.horiz = horiz;
 
         /**
          * Whether the axis is the x-axis.
@@ -386,7 +388,7 @@ class Axis {
         axis.side = pick(
             userOptions.side,
             axis.side,
-            (axis.horiz ?
+            (horiz ?
                 (axis.opposite ? 0 : 2) : // top : bottom
                 (axis.opposite ? 1 : 3)) // right : left
         );
@@ -3398,6 +3400,55 @@ class Axis {
     }
 
     /**
+     * Create the axisGroup and gridGroup elements on first iteration.
+     *
+     * @private
+     * @function Highcharts.Axis#getOffset
+     *
+     * @emits Highcharts.Axis#event:afterGetOffset
+     */
+    public createGroups(): void {
+        const {
+                axisParent, // Used in color axis
+                chart,
+                coll,
+                options
+            } = this,
+            renderer = chart.renderer;
+
+        const createGroup = (
+            name: string,
+            suffix: string,
+            zIndex: number
+        ): SVGElement => renderer.g(name)
+            .attr({ zIndex })
+            .addClass(
+                `highcharts-${coll.toLowerCase()}${suffix} ` +
+                (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
+                (options.className || '')
+            )
+            .add(axisParent);
+
+        if (!this.axisGroup) {
+            this.gridGroup = createGroup(
+                'grid',
+                '-grid',
+                options.gridZIndex
+            );
+            this.axisGroup = createGroup(
+                'axis',
+                '',
+                options.zIndex
+            );
+            this.labelGroup = createGroup(
+                'axis-labels',
+                '-labels',
+                options.labels.zIndex
+            );
+        }
+    }
+
+    /**
      * Render the tick labels to a preliminary position to get their sizes
      *
      * @private
@@ -3414,10 +3465,8 @@ class Axis {
                 side,
                 ticks,
                 tickPositions,
-                coll,
-                axisParent // Used in color axis
+                coll
             } = axis,
-            renderer = chart.renderer,
             invertedSide = (
                 chart.inverted && !axis.isZAxis ?
                     [1, 0, 3, 2][side] :
@@ -3429,8 +3478,7 @@ class Axis {
             hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
-            directionFactor = [-1, 1, 1, -1][side],
-            className = options.className;
+            directionFactor = [-1, 1, 1, -1][side];
 
         let showAxis,
             titleOffset = 0,
@@ -3446,37 +3494,7 @@ class Axis {
         // Set/reset staggerLines
         axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
 
-        // Create the axisGroup and gridGroup elements on first iteration
-        if (!axis.axisGroup) {
-            const createGroup = (
-                name: string,
-                suffix: string,
-                zIndex: number
-            ): SVGElement => renderer.g(name)
-                .attr({ zIndex })
-                .addClass(
-                    `highcharts-${coll.toLowerCase()}${suffix} ` +
-                    (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
-                    (className || '')
-                )
-                .add(axisParent);
-
-            axis.gridGroup = createGroup(
-                'grid',
-                '-grid',
-                options.gridZIndex
-            );
-            axis.axisGroup = createGroup(
-                'axis',
-                '',
-                options.zIndex
-            );
-            axis.labelGroup = createGroup(
-                'axis-labels',
-                '-labels',
-                labelOptions.zIndex
-            );
-        }
+        axis.createGroups();
 
         if (hasData || axis.isLinked) {
 
@@ -3487,7 +3505,6 @@ class Axis {
             });
 
             axis.renderUnsquish();
-
 
             // Left side must be align: right and right side must
             // have align: left for labels

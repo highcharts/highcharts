@@ -268,6 +268,7 @@ class DataGrid {
         this.options = merge(DataGrid.defaultOptions, options);
 
         this.gridContainer.style.height = this.getDataGridSize() + 'px';
+        this.gridContainer.role = 'figure';
 
         // Init data table
         this.dataTable = this.initDataTable();
@@ -518,6 +519,12 @@ class DataGrid {
         }
 
         this.updateGridElements();
+
+        this.gridContainer.ariaLabel = `Grid with ${
+            this.dataTable.getColumnNames().length
+        } columns and ${
+            this.dataTable.getRowCount()
+        } rows.`;
     }
 
 

@@ -621,8 +621,12 @@ namespace DataLabel {
                             (!point.isNull || point.dataLabelOnNull) &&
                             applyFilter(point, labelOptions)
                         ),
-                        style = labelOptions.style || {},
-                        labelDistance = labelOptions.distance;
+                        {
+                            backgroundColor,
+                            borderColor,
+                            distance,
+                            style = {}
+                        } = labelOptions;
 
                     let labelConfig,
                         formatString,
@@ -631,7 +635,8 @@ namespace DataLabel {
                         attr: SVGAttributes = {},
                         dataLabel: SVGLabel|SVGElement|undefined =
                             dataLabels[i],
-                        isNew = !dataLabel;
+                        isNew = !dataLabel,
+                        labelBgColor;
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
@@ -665,16 +670,22 @@ namespace DataLabel {
                             );
                             // Get automated contrast color
                             if (style.color === 'contrast') {
+                                if (backgroundColor !== 'none') {
+                                    labelBgColor = backgroundColor;
+                                }
+
                                 point.contrastColor = renderer.getContrast(
+                                    labelBgColor !== 'auto' && labelBgColor ||
                                     (point.color || series.color) as any
                                 );
 
                                 style.color = (
+                                    labelBgColor || // #20007
                                     (
-                                        !defined(labelDistance) &&
+                                        !defined(distance) &&
                                         labelOptions.inside
                                     ) ||
-                                    pInt(labelDistance || 0) < 0 ||
+                                    pInt(distance || 0) < 0 ||
                                     seriesOptions.stacking
                                 ) ?
                                     point.contrastColor :
@@ -695,10 +706,6 @@ namespace DataLabel {
                         };
 
                         if (!chart.styledMode) {
-                            const {
-                                backgroundColor,
-                                borderColor
-                            } = labelOptions;
                             attr.fill = backgroundColor === 'auto' ?
                                 point.color :
                                 backgroundColor;

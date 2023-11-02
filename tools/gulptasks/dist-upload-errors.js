@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const errors = require('../../errors/errors.json');
 const log = require('./lib/log');
-const { putS3Object } = require('./lib/uploadS3');
+const { putS3Object, startS3Session } = require('./lib/uploadS3');
 
 const bucket = 'assets.highcharts.com';
 const errorLocation = 'errors';
@@ -29,14 +29,22 @@ function makeHTML(errorNo, obj) {
  * @return {Promise} Promise for Gulp to keep
  */
 async function uploadErrors() {
+
+    const session = await startS3Session(bucket);
+
     await Promise.all(
         Object.keys(errors)
             .filter(key => key !== 'meta')
-            .map(err => putS3Object(`${errorLocation}/${err}/index.html`, null, {
-                Bucket: bucket,
-                Body: makeHTML(err, errors[err]),
-                ContentType: 'text/html; charset=utf-8'
-            }))
+            .map(err => putS3Object(
+                `${errorLocation}/${err}/index.html`,
+                null,
+                {
+                    Bucket: bucket,
+                    Body: makeHTML(err, errors[err]),
+                    ContentType: 'text/html; charset=utf-8'
+                },
+                session
+            ))
     ).catch(error => {
         throw error;
     });

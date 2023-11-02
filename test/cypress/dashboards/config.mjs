@@ -6,6 +6,6 @@ export default defineConfig({
     ...defaultConfig,
     e2e: {
         ...defaultConfig.e2e,
-        specPattern: 'test/cypress/integration/{Dashboards,DataGrid}/**/*.cy.{js,jsx,ts,tsx}'
+        specPattern: 'test/cypress/{dashboards,data-grid}/integration/**/*.cy.{js,jsx,ts,tsx}'
     }
 });

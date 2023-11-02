@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
@@ -3153,13 +3154,13 @@ class Series {
      * @function Highcharts.Series#plotGroup
      */
     public plotGroup(
-        prop: string,
+        prop: 'group'|'markerGroup'|'dataLabelsGroup',
         name: string,
         visibility: 'hidden'|'inherit'|'visible',
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
-        let group = (this as any)[prop];
+        let group = this[prop];
 
         const isNew = !group,
             attrs: SVGAttributes = {
@@ -3169,16 +3170,16 @@ class Series {
 
         // Avoid setting undefined opacity, or in styled mode
         if (
-            typeof this.opacity !== 'undefined' &&
+            defined(this.opacity) &&
             !this.chart.styledMode && this.state !== 'inactive' // #13719
         ) {
             attrs.opacity = this.opacity;
         }
 
         // Generate it on first call
-        if (isNew) {
+        if (!group) {
 
-            (this as any)[prop] = group = this.chart.renderer
+            this[prop] = group = this.chart.renderer
                 .g()
                 .add(parent);
 
@@ -3259,22 +3260,22 @@ class Series {
      * @function Highcharts.Series#removeEvents
      */
     public removeEvents(keepEventsForUpdate?: boolean): void {
-        const series = this;
+        const { eventsToUnbind } = this;
 
         if (!keepEventsForUpdate) {
-            // remove all events
-            removeEvent(series);
+            // Remove all events
+            removeEvent(this);
         }
 
-        if (series.eventsToUnbind.length) {
-            // remove only internal events for proper update
-            // #12355 - solves problem with multiple destroy events
-            series.eventsToUnbind.forEach(function (
+        if (eventsToUnbind.length) {
+            // Remove only internal events for proper update. #12355 solves
+            // problem with multiple destroy events
+            eventsToUnbind.forEach((
                 unbind: Function
-            ): void {
+            ): void => {
                 unbind();
             });
-            series.eventsToUnbind.length = 0;
+            eventsToUnbind.length = 0;
         }
     }
 
@@ -3289,36 +3290,33 @@ class Series {
      */
     public render(): void {
         const series = this,
-            chart = series.chart,
-            options = series.options,
+            { chart, options, hasRendered } = series,
             animOptions = animObject(options.animation),
             visibility: 'hidden'|'inherit'|'visible' = series.visible ?
                 'inherit' : 'hidden', // #2597
             zIndex = options.zIndex,
-            hasRendered = series.hasRendered,
-            chartSeriesGroup = chart.seriesGroup,
-            inverted = chart.inverted;
+            chartSeriesGroup = chart.seriesGroup;
 
-        let animDuration = (!series.finishedAnimating) ?
-            animOptions.duration : 0;
+        let animDuration = series.finishedAnimating ?
+            0 : animOptions.duration;
 
         fireEvent(this, 'render');
 
-        // the group
-        const group = series.plotGroup(
+        // The group
+        series.plotGroup(
             'group',
             'series',
             visibility,
-            zIndex as any,
-            chartSeriesGroup as any
+            zIndex,
+            chartSeriesGroup
         );
 
         series.markerGroup = series.plotGroup(
             'markerGroup',
             'markers',
             visibility,
-            zIndex as any,
-            chartSeriesGroup as any
+            zIndex,
+            chartSeriesGroup
         );
 
         // Initial clipping, applies to columns etc. (#3839).
@@ -3327,13 +3325,13 @@ class Series {
         }
 
         // Initialize the animation
-        if (series.animate && animDuration) {
-            series.animate(true);
+        if (animDuration) {
+            series.animate?.(true);
         }
 
         // Draw the graph if any
-        if ((series as any).drawGraph) {
-            (series as any).drawGraph();
+        if ((series as unknown as LineSeries).drawGraph) {
+            (series as unknown as LineSeries).drawGraph();
             series.applyZones();
         }
 
@@ -3343,27 +3341,20 @@ class Series {
         }
 
         // Draw the data labels
-        if (series.drawDataLabels) {
-            series.drawDataLabels();
-        }
+        series.drawDataLabels?.();
 
         // In pie charts, slices are added to the DOM, but actual rendering
         // is postponed until labels reserved their space
-        if (series.redrawPoints) {
-            series.redrawPoints();
-        }
+        series.redrawPoints?.();
 
         // Draw the mouse tracking area
-        if (
-            series.drawTracker &&
-            options.enableMouseTracking
-        ) {
-            series.drawTracker();
+        if (options.enableMouseTracking) {
+            series.drawTracker?.();
         }
 
         // Run the animation
-        if (series.animate && animDuration) {
-            series.animate();
+        if (animDuration) {
+            series.animate?.();
         }
 
         // Call the afterAnimate function on animation complete (but don't
@@ -3375,7 +3366,7 @@ class Series {
             if (animDuration && animOptions.defer) {
                 animDuration += animOptions.defer;
             }
-            series.animationTimeout = syncTimeout(function (): void {
+            series.animationTimeout = syncTimeout((): void => {
                 series.afterAnimate();
             }, animDuration || 0);
         }
@@ -3440,18 +3431,16 @@ class Series {
         e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
-        const series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            inverted = series.chart.inverted;
+        const { xAxis, yAxis } = this,
+            inverted = this.chart.inverted;
 
         return this.searchKDTree({
             clientX: inverted ?
-                xAxis.len - e.chartY + (xAxis.pos as any) :
-                e.chartX - (xAxis.pos as any),
+                xAxis.len - e.chartY + xAxis.pos :
+                e.chartX - xAxis.pos,
             plotY: inverted ?
-                yAxis.len - e.chartX + (yAxis.pos as any) :
-                e.chartY - (yAxis.pos as any)
+                yAxis.len - e.chartX + yAxis.pos :
+                e.chartY - yAxis.pos
         }, compareX, e);
     }
 
@@ -3478,34 +3467,34 @@ class Series {
          * Internal function
          * @private
          */
-        function _kdtree(
+        function kdtree(
             points: Array<Point>,
             depth: number,
             dimensions: number
         ): (KDNode|undefined) {
-            const length = points && points.length;
-            let axis: string,
+            const length = points?.length;
+            let axis: keyof KDPointSearchObject,
                 median;
 
             if (length) {
 
-                // alternate between the axis
+                // Alternate between the axis
                 axis = series.kdAxisArray[depth % dimensions];
 
-                // sort point array
-                points.sort(function (a, b): number {
-                    return (a as any)[axis] - (b as any)[axis];
-                });
+                // Sort point array
+                points.sort(
+                    (a, b): number => (a[axis] || 0) - (b[axis] || 0)
+                );
 
                 median = Math.floor(length / 2);
 
-                // build and return nod
+                // Build and return node
                 return {
                     point: points[median],
-                    left: _kdtree(
+                    left: kdtree(
                         points.slice(0, median), depth + 1, dimensions
                     ),
-                    right: _kdtree(
+                    right: kdtree(
                         points.slice(median + 1), depth + 1, dimensions
                     )
                 };
@@ -3519,9 +3508,9 @@ class Series {
          * @private
          */
         function startRecursive(): void {
-            series.kdTree = _kdtree(
+            series.kdTree = kdtree(
                 series.getValidPoints(
-                    null as any,
+                    void 0,
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
                     !series.directTouch
@@ -3533,12 +3522,11 @@ class Series {
         }
         delete series.kdTree;
 
-        // For testing tooltips, don't build async. Also if touchstart, we
-        // may be dealing with click events on mobile, so don't delay
-        // (#6817).
+        // For testing tooltips, don't build async. Also if touchstart, we may
+        // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || (e && e.type === 'touchstart') ? 0 : 1
+            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
@@ -3581,7 +3569,7 @@ class Series {
         /**
          * @private
          */
-        function _search(
+        function doSearch(
             search: KDPointSearchObject,
             tree: KDNode,
             depth: number,
@@ -3603,7 +3591,7 @@ class Series {
 
             // End of tree
             if (tree[sideA]) {
-                nPoint1 = _search(
+                nPoint1 = doSearch(
                     search, tree[sideA] as any, depth + 1, dimensions
                 );
 
@@ -3615,10 +3603,10 @@ class Series {
                 );
             }
             if (tree[sideB]) {
-                // compare distance to current best to splitting point to
-                // decide whether to check side B or not
+                // Compare distance to current best to splitting point to decide
+                // whether to check side B or not
                 if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
-                    nPoint2 = _search(
+                    nPoint2 = doSearch(
                         search,
                         tree[sideB] as any,
                         depth + 1,
@@ -3641,7 +3629,7 @@ class Series {
         }
 
         if (this.kdTree) {
-            return _search(point, this.kdTree, kdDimensions, kdDimensions);
+            return doSearch(point, this.kdTree, kdDimensions, kdDimensions);
         }
     }
 
@@ -3650,22 +3638,16 @@ class Series {
      * @function Highcharts.Series#pointPlacementToXValue
      */
     public pointPlacementToXValue(): number {
-        const {
-            options: {
-                pointPlacement,
-                pointRange
-            },
-            xAxis: axis
-        } = this;
+        const { options, xAxis } = this;
 
-        let factor = pointPlacement;
+        let factor = options.pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
         if (factor === 'between') {
-            factor = axis.reversed ? -0.5 : 0.5; // #11955
+            factor = xAxis.reversed ? -0.5 : 0.5; // #11955
         }
 
         return isNumber(factor) ?
-            factor * (pointRange || axis.pointRange) :
+            factor * (options.pointRange || xAxis.pointRange) :
             0;
     }
 
@@ -3675,13 +3657,12 @@ class Series {
      */
     public isPointInside(point: (Record<string, number>|Point)): boolean {
         const { chart, xAxis, yAxis } = this,
+            { plotX = -1, plotY = -1 } = point,
             isInside = (
-                typeof point.plotY !== 'undefined' &&
-                typeof point.plotX !== 'undefined' &&
-                point.plotY >= 0 &&
-                point.plotY <= (yAxis ? yAxis.len : chart.plotHeight) &&
-                point.plotX >= 0 &&
-                point.plotX <= (xAxis ? xAxis.len : chart.plotWidth)
+                plotY >= 0 &&
+                plotY <= (yAxis ? yAxis.len : chart.plotHeight) &&
+                plotX >= 0 &&
+                plotX <= (xAxis ? xAxis.len : chart.plotWidth)
             );
 
         return isInside;
@@ -3699,17 +3680,13 @@ class Series {
             options = series.options,
             trackByArea = options.trackByArea,
             trackerPath = ([] as SVGPath).concat(
-                trackByArea ?
-                    (series.areaPath as any) :
-                    (series.graphPath as any)
+                (trackByArea ? series.areaPath : series.graphPath) || []
             ),
-            // trackerPathLength = trackerPath.length,
             chart = series.chart,
             pointer = chart.pointer,
             renderer = chart.renderer,
-            snap = (chart.options.tooltip as any).snap,
-            tracker = series.tracker,
-            onMouseOver = function (e: PointerEvent): void {
+            snap = chart.options.tooltip?.snap || 0,
+            onMouseOver = (): void => {
                 if (
                     options.enableMouseTracking &&
                     chart.hoverSeries !== series
@@ -3728,14 +3705,15 @@ class Series {
              * Opera: 0.00000000001 (unlimited)
              */
             TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-        let i: number;
+
+        let tracker = series.tracker;
 
         // Draw the tracker
         if (tracker) {
             tracker.attr({ d: trackerPath });
-        } else if (series.graph) { // create
+        } else if (series.graph) { // Create
 
-            series.tracker = renderer.path(trackerPath)
+            series.tracker = tracker = renderer.path(trackerPath)
                 .attr({
                     visibility: series.visible ? 'inherit' : 'hidden',
                     zIndex: 2
@@ -3748,7 +3726,7 @@ class Series {
                 .add(series.group);
 
             if (!chart.styledMode) {
-                (series.tracker as any).attr({
+                tracker.attr({
                     'stroke-linecap': 'round',
                     'stroke-linejoin': 'round', // #1225
                     stroke: TRACKER_FILL,
@@ -3765,13 +3743,11 @@ class Series {
                 series.tracker,
                 series.markerGroup,
                 series.dataLabelsGroup
-            ].forEach(function (
-                tracker?: SVGElement
-            ): void {
+            ].forEach((tracker?: SVGElement): void => {
                 if (tracker) {
                     tracker.addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e: PointerEvent): void {
+                        .on('mouseout', (e: PointerEvent): void => {
                             pointer.onTrackerMouseOut(e);
                         });
 

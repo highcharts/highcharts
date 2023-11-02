@@ -474,6 +474,9 @@ namespace AxisDefaults {
 
         /**
          * The Z index for the axis group.
+         *
+         * @see [axis.gridZIndex](#xAxis.gridZIndex)
+         * @see [axis.labels.zIndex](#xAxis.labels.zIndex)
          */
         zIndex: 2,
 
@@ -738,6 +741,9 @@ namespace AxisDefaults {
          *         A Z index of 4 renders the grid above the graph
          *
          * @product   highcharts highstock gantt
+         *
+         * @see [axis.zIndex](#xAxis.zIndex)
+         * @see [axis.labels.zIndex](#xAxis.labels.zIndex)
          */
         gridZIndex: 1,
 
@@ -1058,6 +1064,9 @@ namespace AxisDefaults {
 
             /**
              * The Z index for the axis labels.
+             *
+             * @see [axis.zIndex](#xAxis.zIndex)
+             * @see [axis.gridZIndex](#xAxis.gridZIndex)
              */
             zIndex: 7,
 
