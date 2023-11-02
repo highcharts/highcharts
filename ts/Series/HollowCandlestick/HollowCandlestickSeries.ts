@@ -169,31 +169,26 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            // procesed and grouped data
+            // Processed and grouped data
             processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (
-            !hollowCandlestickData.length &&
-            processedYData &&
-            processedYData.length
-        ) {
+        hollowCandlestickData.length = 0;
 
-            // First point is allways bullish (transparent).
-            hollowCandlestickData.push({
-                isBullish: true,
-                trendDirection: 'up'
-            });
+        // First point is always bullish (transparent).
+        hollowCandlestickData.push({
+            isBullish: true,
+            trendDirection: 'up'
+        });
 
-            for (let i = 1; i < processedYData.length; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = processedYData[i - 1];
+        for (let i = 1; i < processedYData.length; i++) {
+            const dataPoint: any = processedYData[i],
+                previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(
-                    dataPoint,
-                    previousDataPoint
-                ));
-            }
+            hollowCandlestickData.push(series.isBullish(
+                dataPoint,
+                previousDataPoint
+            ));
         }
     }
 

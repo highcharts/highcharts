@@ -18,7 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type { PlotOptionsOf, SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -93,38 +93,20 @@ class LineSeries extends Series {
      * @function Highcharts.Series#drawGraph
      */
     public drawGraph(): void {
-        const series = this,
-            options = this.options,
+        const options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
             styledMode = this.chart.styledMode;
-        let props = [[
-            'graph',
-            'highcharts-graph'
-        ]];
-
-        // Presentational properties
-        if (!styledMode) {
-            props[0].push(
-                (
-                    options.lineColor ||
-                    this.color ||
-                    Palette.neutralColor20 // when colorByPoint = true
-                ) as any,
-                options.dashStyle as any
-            );
-        }
-
-        props = series.getZonesGraphs(props);
 
         // Draw the graph
-        props.forEach(function (prop, i): void {
-            const graphKey = prop[0];
+        [this, ...this.zones].forEach((owner, i): void => {
             let attribs: SVGAttributes,
-                graph = (series as any)[graphKey];
-            const verb = graph ? 'animate' : 'attr';
+                graph = owner.graph;
+            const verb = graph ? 'animate' : 'attr',
+                dashStyle = (owner as SeriesZonesOptions).dashStyle ||
+                    options.dashStyle;
 
             if (graph) {
-                graph.endX = series.preventGraphAnimation ?
+                graph.endX = this.preventGraphAnimation ?
                     null :
                     graphPath.xMap;
                 graph.animate({ d: graphPath });
@@ -132,44 +114,43 @@ class LineSeries extends Series {
             } else if (graphPath.length) { // #1487
 
                 /**
-                 * SVG element of area-based charts. Can be used for styling
-                 * purposes. If zones are configured, this element will be
-                 * hidden and replaced by multiple zone areas, accessible
-                 * via `series['zone-area-x']` (where x is a number,
-                 * starting with 0).
-                 *
-                 * @name Highcharts.Series#area
-                 * @type {Highcharts.SVGElement|undefined}
-                 */
-                /**
                  * SVG element of line-based charts. Can be used for styling
                  * purposes. If zones are configured, this element will be
                  * hidden and replaced by multiple zone lines, accessible
-                 * via `series['zone-graph-x']` (where x is a number,
-                 * starting with 0).
+                 * via `series.zones[i].graph`.
                  *
                  * @name Highcharts.Series#graph
                  * @type {Highcharts.SVGElement|undefined}
                  */
-                (series as any)[graphKey] = graph = series.chart.renderer
+                owner.graph = graph = this.chart.renderer
                     .path(graphPath)
-                    .addClass(prop[1])
+                    .addClass(
+                        'highcharts-graph' +
+                        (i ? ` highcharts-zone-graph-${i - 1} ` : ' ') +
+                        ((i && (owner as SeriesZonesOptions).className) || '')
+                    )
                     .attr({ zIndex: 1 }) // #1069
-                    .add(series.group);
+                    .add(this.group);
             }
 
             if (graph && !styledMode) {
 
                 attribs = {
-                    'stroke': prop[2],
+                    'stroke': (
+                        (!i && options.lineColor) || // Series only
+                        owner.color ||
+                        this.color ||
+                        // When colorByPoint = true
+                        Palette.neutralColor20
+                    ),
                     'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
+                    'fill': (this.fillGraph && this.color) || 'none'
                 };
 
                 // Apply dash style
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3] as any;
+                if (dashStyle) {
+                    attribs.dashstyle = dashStyle;
 
                 // The reason for the `else if` is that linecaps don't mix well
                 // with dashstyle. The gaps get partially filled by the
@@ -352,34 +333,6 @@ class LineSeries extends Series {
         series.graphPath = graphPath;
 
         return graphPath;
-    }
-
-    // eslint-disable-next-line valid-jsdoc
-    /**
-     * Get zones properties for building graphs. Extendable by series with
-     * multiple lines within one series.
-     *
-     * @private
-     */
-    public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
-        // Add the zone properties if any
-        this.zones.forEach(function (zone, i): void {
-            const propset = [
-                'zone-graph-' + i,
-                'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || '')
-            ];
-
-            if (!this.chart.styledMode) {
-                propset.push(
-                    (zone.color || this.color) as any,
-                    (zone.dashStyle || this.options.dashStyle) as any
-                );
-            }
-            props.push(propset);
-        }, this);
-
-        return props;
     }
 
 }

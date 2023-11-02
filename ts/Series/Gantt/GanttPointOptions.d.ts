@@ -37,4 +37,10 @@ export interface GanttPointOptions extends XRangePointOptions {
     start?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default GanttPointOptions;

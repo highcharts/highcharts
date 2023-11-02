@@ -3,3 +3,7 @@
     height: 250px;
     margin: 0 auto;
 }
+
+.test-classname {
+    font-size: 12px;
+}

@@ -146,7 +146,7 @@ const connectorsDefaults: ConnectorsDefaults = {
         /**
          * The corner radius for the connector line.
          *
-         * @since next
+         * @since 11.2.0
          */
         radius: 0,
 

@@ -541,7 +541,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // Create the group for parent Nodes if doesn't exist
         // If exists it will only be adjusted to the updated plot size (#12063)
         this.parentNodesGroup = this.plotGroup(
-            'parentNodesGroup',
+            'parentNodesGroup' as any,
             'parentNode',
             this.visible ? 'inherit' : 'hidden',
             0.1, chart.seriesGroup

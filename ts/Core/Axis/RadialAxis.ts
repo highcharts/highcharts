@@ -18,7 +18,8 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
-import type Pane from '../../Extensions/Pane';
+import type Pane from '../../Extensions/Pane/Pane';
+import type { PaneBackgroundShapeValue } from '../../Extensions/Pane/PaneOptions.js';
 import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
 import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
@@ -75,7 +76,7 @@ declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
-        shape?: Highcharts.PaneBackgroundShapeValue;
+        shape?: PaneBackgroundShapeValue;
         thickness?: (number|string);
     }
 }

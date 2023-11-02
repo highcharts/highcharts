@@ -836,21 +836,33 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Apply a clipping rectangle to this element.
+     * Apply a clipping shape to this element.
      *
      * @function Highcharts.SVGElement#clip
      *
-     * @param {Highcharts.ClipRectElement} [clipRect]
-     *        The clipping rectangle. If skipped, the current clip is removed.
+     * @param {SVGElement} [clipElem]
+     *        The clipping shape. If skipped, the current clip is removed.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVG element to allow chaining.
      */
-    public clip(clipRect?: SVGRenderer.ClipRectElement): this {
+    public clip(clipElem?: SVGElement): this {
+        if (clipElem && !clipElem.clipPath) {
+            // Add a hyphen at the end to avoid confusion in testing indexes
+            // -1 and -10, -11 etc (#6550)
+            const id = uniqueKey() + '-',
+                clipPath = this.renderer.createElement('clipPath')
+                    .attr({ id })
+                    .add(this.renderer.defs);
+
+            extend(clipElem, { clipPath, id, count: 0 });
+
+            clipElem.add(clipPath);
+        }
         return this.attr(
             'clip-path',
-            clipRect ?
-                'url(' + this.renderer.url + '#' + clipRect.id + ')' :
+            clipElem ?
+                `url(${this.renderer.url}#${clipElem.id})` :
                 'none'
         );
     }
