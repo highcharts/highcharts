@@ -271,7 +271,6 @@ const getFile = url => new Promise((resolve, reject) => {
     function saveReview(md) {
 
         const filename = path.join(__dirname, 'review.html');
-
         const html = `<html>
         <head>
             <title>Changelog Review</title>
@@ -338,7 +337,12 @@ const getFile = url => new Promise((resolve, reject) => {
             // Load the current products and versions, and create one log each
             getFile('https://code.highcharts.com/products.js')
                 .then(products => {
-                    var name;
+                    let name;
+                    const version = params.buildMetadata ?
+                        `${pack.version}+build.${getLatestGitSha()}` :
+                        pack.version;
+
+                    const isPreview = 'v' + version === params.since;
 
                     if (products) {
                         products = products.replace('var products = ', '');
@@ -347,7 +351,6 @@ const getFile = url => new Promise((resolve, reject) => {
                         for (name in products) {
 
                             if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
-                                const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
 
                                 products[name].date =
                                     d.getFullYear() + '-' +
@@ -367,7 +370,11 @@ const getFile = url => new Promise((resolve, reject) => {
                     }
 
                     if (params.review) {
-                        saveReview(review.join('\n\n___\n'));
+                        saveReview(
+                            isPreview ? '<note>Preview for next version</note>' : '' +
+                            review.join('\n\n___\n')
+                        );
+
                     }
                 })
                 .catch(err => {
