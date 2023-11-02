@@ -1,5 +1,5 @@
 ---
- name: Lasso selection demo
+ name: Lasso selection
  authors:
    - Torstein Hønsi
  js_wrap: b

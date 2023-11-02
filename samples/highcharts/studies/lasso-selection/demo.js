@@ -1,37 +1,3 @@
-/*
- * Display a temporary label on the chart
- */
-function toast(chart, text) {
-    chart.toast = chart.renderer.label(text, 100, 120)
-        .attr({
-            fill: Highcharts.getOptions().colors[0],
-            padding: 10,
-            r: 5,
-            zIndex: 8
-        })
-        .css({
-            color: '#FFFFFF'
-        })
-        .add();
-
-    setTimeout(function () {
-        chart.toast.animate({ opacity: 0 });
-    }, 2000);
-    setTimeout(function () {
-        chart.toast = chart.toast.destroy();
-    }, 2500);
-}
-
-/*
- * On click, unselect all points
- */
-function unselectByClick() {
-    const points = this.getSelectedPoints();
-    if (points.length > 0) {
-        points.forEach(point => point.select(false));
-    }
-}
-
 (Highcharts => {
     const {
         addEvent,
@@ -40,7 +6,34 @@ function unselectByClick() {
 
     const polygon = [];
 
-    // Point in polygon function ported from MapUtilities.ts
+    /*
+    * Display a temporary label on the chart
+    */
+    const toast = (chart, text) => {
+        const toast = chart.renderer.label(text, 100, 120)
+            .attr({
+                fill: Highcharts.getOptions().colors[0],
+                padding: 10,
+                r: 5,
+                zIndex: 8
+            })
+            .css({
+                color: '#FFFFFF'
+            })
+            .add();
+
+        setTimeout(() => {
+            toast.animate({ opacity: 0 }, {
+                complete: () => {
+                    toast.destroy();
+                }
+            });
+        }, 2000);
+    };
+
+    /**
+     * Point in polygon function borrowed from MapUtilities.ts
+     */
     const pointInPolygon = (
         point,
         polygon
@@ -70,35 +63,61 @@ function unselectByClick() {
         return c;
     };
 
+    /**
+     * Perform the point selection by checking if each point is inside the
+     * polygon
+     */
     const selectPoints = chart => {
         // Select points
         chart.series.forEach(series => {
-            series.points.forEach(point => {
-                const xy = {
-                    x: chart.plotLeft + point.plotX,
-                    y: chart.plotTop + point.plotY
-                };
-                if (pointInPolygon(xy, polygon)) {
-                    point.select(true, true);
-                }
-            });
+            if (series.options.custom?.lassoSelection) {
+                series.points.forEach(point => {
+                    const xy = {
+                        x: chart.plotLeft + point.plotX,
+                        y: chart.plotTop + point.plotY
+                    };
+                    if (pointInPolygon(xy, polygon)) {
+                        point.select(true, true);
+                    }
+                });
+            }
         });
     };
 
+    /**
+     * Convert the polygon to a path definition that the SVGRenderer can read
+     */
     const polygonToPath = polygon => polygon.map(
         (p, i) => [i ? 'L' : 'M', p[0], p[1]]
     );
 
+    /*
+     * On click, unselect all points
+     */
+    addEvent(Chart, 'click', function () {
+        const points = this.getSelectedPoints();
+        if (points.length > 0) {
+            points.forEach(point => point.select(false));
+        }
+    });
+
+    /**
+     * On chart load, set up the DOM event listeners
+     */
     addEvent(Chart, 'load', function () {
         this.container.addEventListener('mousedown', e => {
-            this.lasso = this.renderer.path()
-                .attr({
-                    stroke: 'blue',
-                    'stroke-width': 1,
-                    'stroke-dasharray': '2,2'
-                })
-                .add();
-            polygon.push([e.chartX, e.chartY]);
+            if (this.series.some(
+                series => series.options.custom?.lassoSelection)
+            ) {
+                this.lasso = this.renderer.path()
+                    .attr({
+                        stroke: 'blue',
+                        'stroke-width': 1,
+                        'stroke-dasharray': '2,2'
+                    })
+                    .add();
+                polygon.push([e.chartX, e.chartY]);
+            }
         });
         this.container.addEventListener('mousemove', e => {
             if (this.lasso) {
@@ -107,7 +126,13 @@ function unselectByClick() {
             }
         });
         this.container.addEventListener('mouseup', () => {
-            if (this.lasso && polygon.length > 1) {
+            const p0 = polygon[0],
+                // Prevent sloppy clicks being interpreted as drag
+                hasDragged = polygon.some(p =>
+                    Math.pow(p0[0] - p[0], 2) + Math.pow(p0[1] - p[1], 2) > 10
+                );
+
+            if (hasDragged && this.lasso) {
                 polygon.push(polygon[0]);
                 this.lasso.attr({ d: polygonToPath(polygon) });
                 selectPoints(this);
@@ -115,18 +140,17 @@ function unselectByClick() {
 
                 toast(
                     this,
-                    `<b>${this.getSelectedPoints().length} points selected.</b>
-                    <br>Click on empty space to deselect.`
+                    `<b>${this.getSelectedPoints().length} points selected</b>
+                    <br>Click on empty space to deselect`
                 );
 
                 const lasso = this.lasso;
                 delete this.lasso;
-                setTimeout(() => {
-                    lasso.animate({ opacity: 0 });
-                }, 2000);
-                setTimeout(() => {
-                    lasso.destroy();
-                }, 2500);
+                lasso.animate({ opacity: 0 }, {
+                    complete: () => {
+                        lasso.destroy();
+                    }
+                });
             } else if (this.lasso) {
                 polygon.length = 0;
                 this.lasso = this.lasso.destroy();
@@ -137,18 +161,22 @@ function unselectByClick() {
 
 Highcharts.chart('container', {
 
+    chart: {
+        type: 'scatter'
+    },
+
     title: {
         text: 'Select points by click-drag'
     },
 
-    chart: {
-        type: 'scatter',
-        events: {
-            click: unselectByClick
-        }
+    subtitle: {
+        text: 'Points can also be selected and unselected individually'
     },
 
     series: [{
+        custom: {
+            lassoSelection: true
+        },
         data: [
             [161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0],
             [155.8, 53.6], [170.0, 59.0], [159.1, 47.6], [166.0, 69.8],
@@ -175,6 +203,7 @@ Highcharts.chart('container', {
             [173.2, 69.2], [170.0, 55.9], [161.4, 63.4], [169.0, 58.2],
             [166.2, 58.6], [159.4, 45.7], [162.5, 52.2]
         ],
-        showInLegend: false
+        showInLegend: false,
+        allowPointSelect: true
     }]
 });
