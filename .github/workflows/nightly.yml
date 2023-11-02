@@ -139,21 +139,25 @@ jobs:
           git commit -m "Nightly build - ${{github.run_id}}"
           git push -u origin nightly
 
-    nightly_changelog:
-      steps:
-        - name: Checkout repo
-          uses: actions/checkout@v4
-        - name: create list of merge commits
-          run: |
-            git log --since 24h --oneline | grep -e "^.*Merge pull" > 24hoursofhighcharts.list
-            node ./github/scripts/createListJSON \
-              24hoursofhighcharts.list \
-              24hoursofhighcharts.json
-        - name: Call Slack webhook
-          id: slack
-          uses: slackapi/slack-github-action@v1.24.0
-          with:
-            payload-file-path: "24hoursofhighcharts.json"
-          env:
-            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+  nightly_changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: create list of merge commits
+        run: |
+          git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
+          cat 24hoursofhighcharts.list
+      - name: Convert to JSON
+        run: |
+          node ./.github/scripts/createListJSON \
+            24hoursofhighcharts.list \
+            24hoursofhighcharts.json
+      - name: Call Slack webhook
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload-file-path: "24hoursofhighcharts.json"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
 
