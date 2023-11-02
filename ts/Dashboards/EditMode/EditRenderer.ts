@@ -435,10 +435,10 @@ function renderToggle(
         toggleContainer.addEventListener('click', (e: any): void => {
             callbackFn(!input.checked);
             if (toggle.getAttribute('aria-pressed') === 'true') {
-                toggle.removeAttribute('aria-pressed')
-              } else {
-                toggle.setAttribute('aria-pressed', 'true')
-              }
+                toggle.removeAttribute('aria-pressed');
+            } else {
+                toggle.setAttribute('aria-pressed', 'true');
+            }
         });
     }
 
