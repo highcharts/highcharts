@@ -152,6 +152,8 @@ jobs:
         with:
           fetch-depth: 0 # get the full history
 
+      - run: npm i
+
       - name: Generate and upload nightly changelog
         run: |
           node changelog/generate --since $(git describe --abbrev=0 --match 'v*') --review
