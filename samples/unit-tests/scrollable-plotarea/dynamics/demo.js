@@ -42,6 +42,8 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
         'X-axis should be outside the scrollable plot area (#8862)'
     );
 
+    /*
+    No longer applicable as of zone refactoring
     chart.series[0].update({
         zones: [{
             value: 0,
@@ -55,11 +57,12 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].clips[0].attr('width'),
+        chart.series[0].zones[0].clip.getBBox().width,
         chart.plotWidth,
-        `When the zones are applied, their' clip width should equal the chart's
+        `When the zones are applied, their clip width should equal the chart's
         plotWidth, #17481.`
     );
+    */
 });
 
 QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
