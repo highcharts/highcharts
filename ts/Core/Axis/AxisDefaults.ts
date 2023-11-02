@@ -1239,8 +1239,7 @@ namespace AxisDefaults {
         /**
          * Specific tick interval in axis units for the minor ticks. On a linear
          * axis, if `"auto"`, the minor tick interval is calculated as a fifth
-         * of the tickInterval. If `null` or `undefined`, minor ticks are not
-         * shown.
+         * of the tickInterval. If `undefined`, minor ticks are not shown.
          *
          * On logarithmic axes, the unit is the power of the value. For example,
          * setting the minorTickInterval to 1 puts one tick on each of 0.1, 1,
@@ -1251,19 +1250,15 @@ namespace AxisDefaults {
          * make sense, and will be ignored to prevent performance problems.
          *
          * @sample {highcharts} highcharts/yaxis/minortickinterval-null/
-         *         Null by default
-         * @sample {highcharts} highcharts/yaxis/minortickinterval-5/
-         *         5 units
+         *         Undefined by default
+         * @sample {highcharts} highcharts/yaxis/minortickinterval-5/ 5 units
          * @sample {highcharts} highcharts/yaxis/minortickinterval-log-auto/
          *         "auto"
-         * @sample {highcharts} highcharts/yaxis/minortickinterval-log/
-         *         0.1
-         * @sample {highstock} stock/demo/basic-line/
-         *         Null by default
-         * @sample {highstock} stock/xaxis/minortickinterval-auto/
-         *         "auto"
+         * @sample {highcharts} highcharts/yaxis/minortickinterval-log/ 0.1
+         * @sample {highstock} stock/demo/basic-line/ Null by default
+         * @sample {highstock} stock/xaxis/minortickinterval-auto/ "auto"
          *
-         * @type      {number|string|null}
+         * @type      {number|'auto'}
          * @apioption xAxis.minorTickInterval
          */
 
