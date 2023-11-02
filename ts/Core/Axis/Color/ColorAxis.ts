@@ -181,8 +181,6 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    // Prevents unnecessary padding with `hc-more`
-    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
@@ -627,14 +625,16 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
+    public getPlotLinePath(
+        options: Axis.PlotLinePathOptions
+    ): (SVGPath|undefined) {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
             top = axis.top;
 
-        // crosshairs only
-        return isNumber(pos) ? // pos can be 0 (#3969)
+        // Crosshairs only
+        return isNumber(pos) ? // `pos` can be 0 (#3969)
             (
                 axis.horiz ? [
                     ['M', pos - 4, top - 6],
