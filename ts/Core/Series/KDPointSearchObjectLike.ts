@@ -23,6 +23,7 @@
  */
 export interface KDPointSearchObjectLike {
     clientX?: number;
+    plotX?: number; // #19403
     plotY?: number;
 }
 
