@@ -19,7 +19,8 @@ const log = {
     Highcharts: {},
     'Highcharts Stock': {},
     'Highcharts Maps': {},
-    'Highcharts Gantt': {}
+    'Highcharts Gantt': {},
+    'Highcharts Dashboards': {}
 };
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted

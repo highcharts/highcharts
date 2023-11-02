@@ -1,0 +1,6 @@
+---
+ name: Disabling the drag&drop module
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...

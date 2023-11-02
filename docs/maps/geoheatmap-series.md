@@ -28,9 +28,15 @@ series: [{
 
 ### The color axis
 
-Heat maps borrow a central concept from Highcharts Maps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details.
+GeoHeatMap series borrow a central concept from Highcharts Maps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-equalearth" allow="fullscreen"></iframe>
+
+### Interpolation
+
+GeoHeatMap series have an [interpolation feature](https://api.highcharts.com/highmaps/plotOptions.geoheatmap.interpolation), which allows for displaying seamlessly transitioning data points.
+
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-earth-statistics" allow="fullscreen"></iframe>
 
 ### Resources
 

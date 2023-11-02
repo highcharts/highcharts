@@ -39,16 +39,22 @@ export interface OrganizationDataLabelsFormatterCallbackFunction {
         )
     ): (string|undefined);
 }
+
 export interface OrganizationDataLabelFormatterContext extends SankeyDataLabelFormatterContext {
     point: OrganizationPoint;
     series: OrganizationSeries;
 }
-
 
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OrganizationDataLabelOptions;

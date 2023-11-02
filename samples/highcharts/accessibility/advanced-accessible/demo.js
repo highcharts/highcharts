@@ -9,10 +9,12 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
     // Change point shape to a line with three crossing lines for low/median/high
     // Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
-        var series = this;
+        const series = this;
         this.points.forEach(function (point) {
-            var graphic = point.graphic,
-                verb = graphic ? 'animate' : 'attr',
+
+            let graphic = point.graphic;
+
+            const verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
                 width = shapeArgs.width,
                 left = Math.floor(shapeArgs.x) + 0.5,
@@ -54,7 +56,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 });
 
 // Create chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },

@@ -97,6 +97,11 @@ QUnit.test('Keyboard nav disabled', function (assert) {
         chart.container.getAttribute('tabindex'),
         'There is no tabindex on container'
     );
+
+    assert.ok(
+        !document.querySelector('.highcharts-exit-anchor'),
+        'The exit anchor element shouldn\'t be rendered (#19374).'
+    );
 });
 
 QUnit.test('No data', function (assert) {

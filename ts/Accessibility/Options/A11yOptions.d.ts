@@ -88,6 +88,7 @@ export interface AccessibilityPointOptions {
     dateFormat?: string;
     dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     describeNull: boolean;
+    descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     valueDecimals?: number;
     valueDescriptionFormat: string;
@@ -125,6 +126,10 @@ export interface AxisAccessibilityOptions {
 }
 
 export interface ExportingAccessibilityOptions {
+    enabled: boolean;
+}
+
+export interface NavigatorAccessibilityOptions {
     enabled: boolean;
 }
 
@@ -212,6 +217,13 @@ declare module '../../Extensions/Exporting/ExportingOptions' {
         accessibility?: ExportingAccessibilityOptions;
     }
 }
+
+declare module '../../Stock/Navigator/NavigatorOptions' {
+    interface NavigatorOptions {
+        accessibility?: NavigatorAccessibilityOptions;
+    }
+}
+
 
 /* *
  *

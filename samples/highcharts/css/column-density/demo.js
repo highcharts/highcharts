@@ -1,7 +1,7 @@
 function getData(n) {
-    var arr = [],
-        i;
-    for (i = 0; i < n; i++) {
+    const arr = [];
+
+    for (let i = 0; i < n; i++) {
         arr.push(Math.sin(Math.PI * 2 / 360 * i));
     }
     return arr;

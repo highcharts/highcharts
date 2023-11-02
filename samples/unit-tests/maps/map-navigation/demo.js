@@ -1,9 +1,14 @@
 QUnit.test(
     'Zoom in/out with padding, panning in both directions.',
-    assert => {
+    async assert => {
+        const world = await fetch(
+            'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+        ).then(response => response.json());
+
         const chart = Highcharts.mapChart('container', {
             chart: {
                 plotBorderWidth: 1,
+                map: world,
 
                 // Square plot area
                 width: 400,
@@ -20,20 +25,7 @@ QUnit.test(
             },
 
             // The map series
-            series: [
-                {
-                    data: [
-                        {
-                            value: 1,
-                            path: 'M,0,0,L,100,0,L,100,100,L,0,100,z'
-                        },
-                        {
-                            value: 2,
-                            path: 'M,200,200,L,300,200,L,300,300,L,200,300,z'
-                        }
-                    ]
-                }
-            ]
+            series: [{}]
         });
 
         const plotLeft = chart.plotLeft,
@@ -60,9 +52,10 @@ QUnit.test(
         );
 
         chart.mapZoom(2);
-        assert.strictEqual(
+        assert.close(
             chart.mapView.zoom,
             zoomBefore,
+            1e-14,
             'The chart should be zoomed out to original state'
         );
 
@@ -81,7 +74,7 @@ QUnit.test(
         );
 
         assert.ok(
-            chart.mapView.center[1] < lat,
+            chart.mapView.center[1] > lat,
             'The chart should pan vertically'
         );
 
@@ -100,16 +93,6 @@ QUnit.test(
             'Chart should be maximally zoomed out (to minZoom), #17082.'
         );
         // #17082 end
-
-        chart.series[0].remove(false);
-
-        chart.update({
-            chart: {
-                map: 'countries/gb/gb-all'
-            }
-        }, false);
-
-        chart.addSeries({}, false);
 
         chart.addSeries({
             type: 'mappoint',
@@ -130,6 +113,22 @@ QUnit.test(
             pointPositionBeforeZoom,
             pointPositionAfterZoom,
             'The map point should update its position on zooming, #16534.'
+        );
+
+        // Zoom out and try to pan in a way that would cause the center to
+        // be outside of the +/-90 range for lat when using EqualEarth.
+        chart.mapZoom(3);
+        chart.mapZoom(0.75);
+
+        controller.pan(
+            [plotLeft + chart.chartWidth / 2 - 20, plotTop + 10],
+            [plotLeft + chart.chartWidth / 2, plotTop + chart.plotHeight - 20]
+        );
+
+        assert.ok(
+            !/NaN/.test(chart.series[0].group.element.childNodes[0]
+                .getAttribute('transform')),
+            'The map should not flip when drag causes invalid center, #19190.'
         );
     }
 );

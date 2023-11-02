@@ -3,11 +3,12 @@
  * slanted lines. For each break, the slanted lines are inserted into the line path.
  */
 Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed, lineWidth) {
-    var axis = this,
+    const axis = this,
         brokenAxis = axis.brokenAxis,
         path = proceed.call(this, lineWidth),
-        start = path[0],
-        x = start[1],
+        start = path[0];
+
+    let x = start[1],
         y = start[2];
 
     (brokenAxis.breakArray || []).forEach(function (brk) {
@@ -40,7 +41,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed, lin
  * On top of each column, draw a zigzag line where the axis break is.
  */
 function pointBreakColumn(e) {
-    var point = e.point,
+    const point = e.point,
         brk = e.brk,
         shapeArgs = point.shapeArgs,
         x = shapeArgs.x,
@@ -63,9 +64,26 @@ function pointBreakColumn(e) {
     }
 }
 
+/**
+ * Remove the zigzag line after the column is no longer on the break.
+ */
+function pointOutsideOfBreak(e) {
+    const point = e.point,
+        brk = e.brk,
+        key = ['brk', brk.from, brk.to];
+
+    if (point[key]) {
+        point[key].destroy();
+        delete point[key];
+    }
+}
+
 Highcharts.chart('container', {
     chart: {
-        type: 'column'
+        type: 'column',
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Visualized axis break'
@@ -83,7 +101,8 @@ Highcharts.chart('container', {
             to: 3000
         }],
         events: {
-            pointBreak: pointBreakColumn
+            pointBreak: pointBreakColumn,
+            pointOutsideOfBreak: pointOutsideOfBreak
         }
     },
     series: [{

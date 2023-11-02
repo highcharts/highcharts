@@ -103,7 +103,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          */
         nodeFormat: void 0,
 
-        // eslint-disable-next-line valid-jsdoc
         /**
          * Callback to format data labels for _nodes_ in the sankey diagram.
          * The `nodeFormat` option takes precedence over the
@@ -123,7 +122,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
         format: void 0,
 
-        // eslint-disable-next-line valid-jsdoc
         /**
          * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
          */
@@ -136,8 +134,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     },
 
     /**
-     * @ignore-option
-     *
+     * @default   true
+     * @extends   plotOptions.series.inactiveOtherPoints
      * @private
      */
     inactiveOtherPoints: true,
@@ -214,6 +212,26 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      */
 
     /**
+     * Determines color mode for sankey links. Available options:
+     *
+     * - `from` color of the sankey link will be the same as the 'from node'
+     *
+     * - `gradient` color of the sankey link will be set to gradient between
+     * colors of 'from node' and 'to node'
+     *
+     * - `to` color of the sankey link will be same as the 'to node'.
+     *
+     * @sample highcharts/demo/vertical-sankey
+     *         Vertical sankey diagram with gradients
+     * @sample highcharts/series-sankey/link-color-mode
+     *         Sankey diagram with gradients and explanation
+     *
+     * @type      {('from'|'gradient'|'to')}
+     * @since     @next
+     */
+    linkColorMode: 'from',
+
+    /**
      * Opacity for the links between nodes in the sankey diagram.
      *
      * @private
@@ -242,6 +260,19 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * @private
      */
     minLinkWidth: 0,
+
+    /**
+     * Determines which side of the chart the nodes are to be aligned to. When
+     * the chart is inverted, `top` aligns to the left and `bottom` to the
+     * right.
+     *
+     * @sample highcharts/plotoptions/sankey-nodealignment
+     *         Node alignment demonstrated
+     *
+     * @type      {'top'|'center'|'bottom'}
+     * @apioption plotOptions.sankey.nodeAlignment
+     */
+    nodeAlignment: 'center',
 
     /**
      * The pixel width of each node in a sankey diagram or dependency wheel,

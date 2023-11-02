@@ -46,6 +46,33 @@ QUnit.test('Plot options and series options priority (#3881)', assert => {
         200,
         'Pri 1: When an option is set in the item, it trumps all'
     );
+
+    chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                pointStart: 10
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4],
+            pointStart: 100
+        }, {
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[0].x,
+        100,
+        `The pointStart property set directly on series should take precedence
+        over plotOptions.series.pointStart.`
+    );
+
+    assert.strictEqual(
+        chart.series[1].data[0].x,
+        10,
+        'The plotOptions.series.pointStart should be applied to other series.'
+    );
 });
 
 QUnit.test('Random properties in plot options', assert => {
@@ -108,6 +135,21 @@ QUnit.test('Updates', assert => {
         'It is possible to update the series.pointInterval.'
     );
 
+    chart.update({
+        plotOptions: {
+            series: {
+                pointStart: 20
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[0].x,
+        20,
+        `It is possible to update plotOptions.series.pointStart more than once,
+        #19203.`
+    );
+
     chart.series[0].update({
         pointStart: 13
     });
@@ -115,7 +157,7 @@ QUnit.test('Updates', assert => {
     assert.strictEqual(
         chart.series[0].data[0].x,
         13,
-        'It is possible to update the plotOptions.series.pointStart.'
+        'It is possible to update series.pointStart.'
     );
 });
 
@@ -149,7 +191,7 @@ QUnit.test('hasOptionChanged() method', assert => {
         },
         series: [
             {
-                pointStart: 200,
+                pointStart: 210,
                 data: [1, 2, 3, 4]
             }
         ]
@@ -213,4 +255,5 @@ QUnit.test('hasOptionChanged() method', assert => {
     );
 
     assert.ok(true, 'Should not throw an error.');
+
 });

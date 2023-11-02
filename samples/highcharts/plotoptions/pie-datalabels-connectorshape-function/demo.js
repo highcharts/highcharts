@@ -19,33 +19,38 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                alignTo: 'plotEdges',
-                format: '<b>{point.name}</b>: {point.y}',
-                connectorShape: function (labelPosition, connectorPosition, options) {
+                format: '<b>{point.name}</b><br><b>{point.y}</b> ' +
+                    '<span style="opacity: 0.5">({point.percentage:.1f}%)</span>',
+                style: {
+                    fontWeight: 'normal'
+                },
+                // Apply a custom connectorShape function that extends the
+                // horizontal part of the connector below the label.
+                connectorShape: function (
+                    labelPosition,
+                    connectorPosition,
+                    options
+                ) {
 
-                    var connectorPadding = options.connectorPadding,
-                        touchingSliceAt = connectorPosition.touchingSliceAt,
-                        series = this.series,
-                        plotWidth = series.chart.plotWidth,
-                        plotLeft = series.chart.plotLeft,
-                        alignment = labelPosition.alignment,
-                        stepDistance = 150, // in px - distance betwenn the step and vertical plot border
-                        stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
+                    // Let the built-in crookedLine function do the heavy
+                    // lifting
+                    const path = Highcharts.seriesTypes
+                        .pie
+                        .prototype
+                        .pointClass
+                        .prototype
+                        .connectorShapes
+                        .crookedLine
+                        .call(this, labelPosition, connectorPosition, options);
 
-                    return ['M',
-                        labelPosition.x + (alignment === 'left' ? 1 : -1) *
-            connectorPadding,
-                        labelPosition.y,
-                        'L',
-                        stepX,
-                        labelPosition.y,
-                        'L',
-                        stepX,
-                        touchingSliceAt.y,
-                        'L',
-                        touchingSliceAt.x,
-                        touchingSliceAt.y
-                    ];
+                    const labelWidth = this.dataLabel.getBBox().width;
+                    if (labelPosition.alignment === 'right') {
+                        path[0][1] -= labelWidth;
+                    } else {
+                        path[0][1] += labelWidth;
+                    }
+
+                    return path;
 
                 }
             }

@@ -41,7 +41,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
 const {
@@ -127,7 +127,7 @@ class Point {
 
     public colorIndex?: number;
 
-    public dataLabels?: Array<SVGLabel>;
+    public dataLabels?: Array<SVGElement|SVGLabel>;
 
     public destroyed = false;
 
@@ -346,9 +346,6 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = this.isValid && !this.isValid();
-
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         // The point is initially selected by options (#5777)
         if (point.selected) {
@@ -380,6 +377,10 @@ class Point {
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
+
+        point.isNull = this.isValid && !this.isValid();
+
+        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         return point;
     }
@@ -524,7 +525,7 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (point.select) { // #2911
+                if (!point.destroyed && point.select) { // #2911, #19075
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
@@ -575,14 +576,16 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic');
+            props.push(
+                'graphic',
+                'connector' // Used by dumbbell
+            );
         }
         if (kinds.dataLabel) {
             props.push(
                 'dataLabel',
                 'dataLabelPath',
-                'dataLabelUpper',
-                'connector'
+                'dataLabelUpper'
             );
         }
 
@@ -596,8 +599,7 @@ class Point {
 
         [
             'graphic',
-            'dataLabel',
-            'connector'
+            'dataLabel'
         ].forEach(function (prop: string): void {
             const plural = prop + 's';
             if ((kinds as any)[prop] && (point as any)[plural]) {
@@ -739,7 +741,13 @@ class Point {
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
-        return this.x !== null && isNumber(this.y);
+        return (
+            (
+                isNumber(this.x) ||
+                (this.x as number | Date) instanceof Date
+            ) &&
+            isNumber(this.y)
+        );
     }
 
     /**
@@ -806,12 +814,14 @@ class Point {
             // This is the fastest way to detect if there are individual point
             // dataLabels that need to be considered in drawDataLabels. These
             // can only occur in object configs.
-            if ((options as any).dataLabels) {
-                series._hasPointLabels = true;
+            if (options.dataLabels) {
+                // Override the prototype function to always return true,
+                // regardless of whether data labels are enabled series-wide
+                series.hasDataLabels = (): boolean => true;
             }
 
             // Same approach as above for markers
-            if ((options as any).marker) {
+            if (options.marker) {
                 series._hasPointMarkers = true;
             }
         }
@@ -820,8 +830,22 @@ class Point {
 
     /**
      * Get the pixel position of the point relative to the plot area.
-     * @private
      * @function Highcharts.Point#pos
+     *
+     * @sample highcharts/point/position
+     *         Get point's position in pixels.
+     *
+     * @param {boolean} chartCoordinates
+     * If true, the returned position is relative to the full chart area.
+     * If false, it is relative to the plot area determined by the axes.
+     *
+     * @param {number|undefined} plotY
+     * A custom plot y position to be computed. Used internally for some
+     * series types that have multiple `y` positions, like area range (low
+     * and high values).
+     *
+     * @return {Array<number>|undefined}
+     * Coordinates of the point if the point exists.
      */
     public pos(
         chartCoordinates?: boolean,
@@ -1078,11 +1102,8 @@ class Point {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && (options as any).dataLabels && point.dataLabel) {
+                if (options?.dataLabels && point.dataLabel) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
-                }
-                if (point.connector) {
-                    point.connector = point.connector.destroy(); // #7243
                 }
             }
 
@@ -1441,15 +1462,15 @@ class Point {
                             !label.hasClass('highcharts-data-label-hidden')
                         ) {
                             label.animate({ opacity }, pointAttribsAnimation);
+
+                            if (label.connector) {
+                                label.connector.animate(
+                                    { opacity },
+                                    pointAttribsAnimation
+                                );
+                            }
                         }
                     });
-
-                    if (point.connector) {
-                        point.connector.animate(
-                            { opacity },
-                            pointAttribsAnimation
-                        );
-                    }
                 }
 
                 point.graphic.animate(
@@ -1643,7 +1664,7 @@ namespace Point {
         total?: number;
     }
     export interface SeriesPointsOptions {
-        events?: Highcharts.PointEventsOptionsObject;
+        events?: PointEventsOptions;
     }
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;

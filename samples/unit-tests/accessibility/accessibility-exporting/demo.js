@@ -8,12 +8,12 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
             .exportButtonProxy;
 
     assert.ok(
-        exportProxy.buttonElement.getAttribute('aria-label'),
+        exportProxy.innerElement.getAttribute('aria-label'),
         'There is aria label on the exporting button'
     );
 
     assert.strictEqual(
-        exportProxy.buttonElement.getAttribute('aria-expanded'),
+        exportProxy.innerElement.getAttribute('aria-expanded'),
         'false',
         'Exporting button should have aria-expanded on it'
     );
@@ -21,7 +21,7 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
     exportProxy.click();
 
     assert.strictEqual(
-        exportProxy.buttonElement.getAttribute('aria-expanded'),
+        exportProxy.innerElement.getAttribute('aria-expanded'),
         'true',
         'Exporting button should update aria-expanded on click'
     );
@@ -49,6 +49,9 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
 
 QUnit.test('Exported chart should not contain HTML elements from a11y module', function (assert) {
     var chart = Highcharts.chart('container', {
+            title: {
+                text: 'Title < title'
+            },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
             }],
@@ -59,7 +62,14 @@ QUnit.test('Exported chart should not contain HTML elements from a11y module', f
         svg = chart.getSVGForExport(),
         hasHTMLElements = svg.match(
             /<(div|p|h[1-7]|button|a|li|ul|ol|table|input|select)(\s[^>]+)?>/gu
-        );
+        ),
+        hasTitleChanged = svg.match(/\bTitle\b(?:\s&lt;\s)\btitle\b/g);
 
     assert.strictEqual(hasHTMLElements, null, 'Should not have any HTML elements in the SVG');
+
+    assert.strictEqual(
+        hasTitleChanged[0],
+        'Title &lt; title',
+        'Title should replace `<` to `&lt;` for exporting, (#17753, #19002)'
+    );
 });

@@ -30,7 +30,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    merge
+    merge,
+    isObject
 } = U;
 
 /* *
@@ -179,9 +180,19 @@ class LineSeries extends Series {
                 }
 
                 graph[verb](attribs)
-                    // Add shadow to normal series (0) or to first
-                    // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
+                // Add shadow to normal series (0) or to first
+                // zone (1) #3932
+                    .shadow(
+                        (i < 2) &&
+                        options.shadow &&
+                        // If shadow is defined, call function with
+                        // `filterUnits: 'userSpaceOnUse'` to avoid known
+                        // SVG filter bug (#19093)
+                        merge(
+                            { filterUnits: 'userSpaceOnUse' },
+                            isObject(options.shadow) ? options.shadow : {}
+                        )
+                    );
             }
 
             // Helpers for animation
@@ -414,7 +425,7 @@ export default LineSeries;
  * A line series displays information as a series of data points connected by
  * straight line segments.
  *
- * @sample {highcharts} highcharts/demo/line-basic/
+ * @sample {highcharts} highcharts/demo/line-chart/
  *         Line chart
  * @sample {highstock} stock/demo/basic-line/
  *         Line chart
@@ -520,6 +531,7 @@ export default LineSeries;
  * chart's legend and tooltip.
  *
  * @sample {highcharts} highcharts/css/point-series-classname
+ *         Series and point class name
  *
  * @type      {string}
  * @since     5.0.0
@@ -581,6 +593,7 @@ export default LineSeries;
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
+ * @type      {*|Array<*>}
  * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt

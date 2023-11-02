@@ -82,7 +82,7 @@ export interface AxisPositions {
 }
 
 export interface NavigationBindingsResizerObject {
-    controlledAxis?: Record<string, Array<number>>;
+    controlledAxis?: Record<string, Array<string|number>>;
     enabled: boolean;
 }
 
@@ -272,7 +272,7 @@ function navigationGetYAxisResizers(
                     next: [
                         pick(
                             nextYAxis.options.id,
-                            nextYAxis.options.index as any
+                            nextYAxis.index
                         )
                     ]
                 }

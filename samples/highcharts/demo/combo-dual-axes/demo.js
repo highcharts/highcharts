@@ -3,13 +3,14 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Precipitation and Temperature in Karasjok, 2021',
+        text: 'Karasjok weather, 2021',
         align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.yr.no/nb/historikk/graf/5-97251/Norge/Troms%20og%20Finnmark/Karasjok/Karasjok?q=2021"' +
-            'target="_blank">YR</a>'
+            'target="_blank">YR</a>',
+        align: 'left'
     },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -51,7 +52,7 @@ Highcharts.chart('container', {
         align: 'left',
         x: 80,
         verticalAlign: 'top',
-        y: 80,
+        y: 60,
         floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme

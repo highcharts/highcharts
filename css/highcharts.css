@@ -319,7 +319,7 @@ div.highcharts-tooltip {
 
 .highcharts-graph {
     fill: none;
-    stroke-width: 1px;
+    stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
@@ -473,14 +473,20 @@ text.highcharts-data-label {
     stroke-width: 0;
 }
 
+.highcharts-series-label text {
+    fill: inherit;
+    font-weight: bold;
+}
+
 .highcharts-series:not(.highcharts-pie-series) .highcharts-point-select,
 .highcharts-markers .highcharts-point-select {
     fill: var(--highcharts-neutral-color-20);
     stroke: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-column-series rect.highcharts-point {
-    /* rect to prevent stroke on 3D columns */
+.highcharts-column-series path.highcharts-point,
+.highcharts-bar-series path.highcharts-point {
+    /* path to prevent stroke on 3D columns and bars */
     stroke: var(--highcharts-background-color);
 }
 
@@ -1134,7 +1140,7 @@ text.highcharts-drilldown-data-label,
 }
 
 /* A11y module */
-.highcharts-a11y-proxy-button {
+.highcharts-a11y-proxy-element {
     border-width: 0;
     background-color: transparent;
     cursor: pointer;

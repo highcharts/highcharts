@@ -132,6 +132,41 @@ QUnit.test(
             dataLabels outside the bar chart should get the contrast (black)
             color (#17413).`
         );
+
+        chart.series[0].update({
+            dataLabels: {
+                backgroundColor: '#fff'
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[1].style.color
+            ).get(),
+            Highcharts.color(
+                'rgb(0, 0, 0)'
+            ).get(),
+            `Prioritize checking the data label background color when the
+            color of the data label is specified (#20007).`
+        );
+
+        chart.series[0].update({
+            color: '#ddd',
+            dataLabels: {
+                backgroundColor: 'auto'
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[1].style.color
+            ).get(),
+            Highcharts.color(
+                'rgb(0, 0, 0)'
+            ).get(),
+            `When the data label background color is set to 'auto', set the
+            data label color by contrast to the point color. (#20007).`
+        );
     }
 );
 

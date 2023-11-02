@@ -1,6 +1,4 @@
 This is the source code repository for Highsoft's JavaScript charting library Highcharts, including its Stock, Maps and Gantt packages.
 
-The library is available under different licenses depending on whether it is intended for commercial/government use, or for a personal or non-profit project.
-
 Read more on licensing alternatives here:
-- https://shop.highsoft.com/
+- https://shop.highcharts.com/

@@ -1,11 +1,10 @@
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+    const arr = [];
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+    for (let i = 0; i < n; i = i + 1) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -27,7 +26,7 @@ function getData(n) {
     }
     return arr;
 }
-var n = 500000,
+const n = 500000,
     data = getData(n);
 
 

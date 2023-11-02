@@ -43,6 +43,8 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         }]
     });
 
+    var controller = new TestController(chart);
+
     let bbox = chart.annotations[0].shapesGroup.getBBox();
     assert.ok(
         bbox.y === chart.yAxis[1].top,
@@ -101,5 +103,30 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         Math.round(axisMiddlePos),
         `Annotation's control points should be positioned in the middle of yAxis
         #17995`
+    );
+
+    bbox = chart.annotations[0].shapesGroup.getBBox();
+
+    // drag the annotation to the left
+    controller.mouseDown(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
+    controller.mouseMove(bbox.x - 50, bbox.y);
+    controller.mouseUp();
+
+    bbox = chart.annotations[0].shapesGroup.getBBox();
+
+    chart.annotations[0].update({
+        typeOptions: {
+            label: {
+                style: {
+                    color: 'red'
+                }
+            }
+        }
+    });
+
+    assert.equal(
+        bbox.x,
+        chart.annotations[0].shapesGroup.getBBox().x,
+        'The annotation should stay in the same place after update, #19121.'
     );
 });

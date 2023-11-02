@@ -103,7 +103,7 @@ QUnit.test('Zooming scatter charts', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy',
+            zoomType: 'y',
             width: 600,
             height: 400
         },
@@ -364,6 +364,35 @@ QUnit.test('Zooming scatter charts', function (assert) {
         ]
     });
 
+    // Update the deprecated properties
+    chart.update({
+        chart: {
+            zoomType: 'xy'
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.type,
+        'xy',
+        'There should be support for updating the deprecated zoomType (#17861)'
+    );
+
+    chart.update({
+        chart: {
+            resetZoomButton: {
+                theme: {
+                    zIndex: 8
+                }
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.resetButton.theme.zIndex,
+        8,
+        'Deprecated zooming properties should be updated (#17861)'
+    );
+
     // Do the first zoom
     chart.pointer.zoomX = chart.pointer.zoomY = true;
     chart.zoom({
@@ -545,4 +574,46 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         yAxis0,
         'Y zoom on the second pane should not affect y-zoom on the first pane when chart inverted (#1289)'
     );
+});
+
+QUnit.test('Zooming accross multiple charts, #15569', assert => {
+    const options = {
+        chart: {
+            zooming: {
+                type: 'x'
+            },
+            width: 300,
+            height: 400
+        },
+        series: [{
+            data: [1, 2, 5, 13, 4, 5, 12, 4]
+        }]
+    };
+
+    // Add two containers in a flexbox and append them to the HC container
+    const mainContainer = document.querySelector('#container'),
+        flexContainer = document.createElement('div'),
+        container1 = document.createElement('div'),
+        container2 = document.createElement('div');
+
+    flexContainer.style.display = 'flex';
+    flexContainer.appendChild(container1);
+    flexContainer.appendChild(container2);
+    mainContainer.appendChild(flexContainer);
+
+    const chart0 = Highcharts.chart(container1, options);
+    Highcharts.chart(container2, options);
+
+    const controller = new TestController(chart0);
+
+    controller.pan(
+        [chart0.xAxis[0].toPixels(6), 250],
+        [chart0.xAxis[0].toPixels(6) + 300, 250]
+    );
+
+    assert.ok(
+        chart0.xAxis[0].displayBtn,
+        'Ending a zoom on a different chart should result in a zoom in.'
+    );
+    flexContainer.remove(); // Remove this line to visually debug the chart
 });

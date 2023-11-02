@@ -20,8 +20,6 @@ import type { Options } from './Options';
 import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import H from './Globals.js';
 const {
     isTouchDevice,
@@ -91,7 +89,7 @@ const defaultOptions: Options = {
      *     "#2ee0ca",
      *     "#fa4b42",
      *     "#feb56a",
-     *     "#91e8e12
+     *     "#91e8e1"
      * ]
      */
     colors: Palettes.colors,
@@ -539,26 +537,6 @@ const defaultOptions: Options = {
          */
 
         /**
-         * CSS styles for the title. Use this for font styling, but use `align`,
-         * `x` and `y` for text alignment.
-         *
-         * In styled mode, the title style is given in the `.highcharts-title`
-         * class.
-         *
-         * @sample {highcharts} highcharts/title/style/
-         *         Custom color and weight
-         * @sample {highstock} stock/chart/title-style/
-         *         Custom color and weight
-         * @sample highcharts/css/titles/
-         *         Styled mode
-         *
-         * @type      {Highcharts.CSSObject}
-         * @default   {highcharts|highmaps} { "color": "#333333", "fontSize": "1.125em" }
-         * @default   {highstock} { "color": "#333333", "fontSize": "1em" }
-         * @apioption title.style
-         */
-
-        /**
          * Whether to
          * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.
@@ -614,6 +592,29 @@ const defaultOptions: Options = {
          * @since     2.0
          * @apioption title.y
          */
+
+        /**
+         * CSS styles for the title. Use this for font styling, but use `align`,
+         * `x` and `y` for text alignment.
+         *
+         * In styled mode, the title style is given in the `.highcharts-title`
+         * class.
+         *
+         * @sample {highcharts} highcharts/title/style/
+         *         Custom color and weight
+         * @sample {highstock} stock/chart/title-style/
+         *         Custom color and weight
+         * @sample highcharts/css/titles/
+         *         Styled mode
+         *
+         * @type      {Highcharts.CSSObject}
+         * @default   {highcharts|highmaps} { "color": "#333333", "fontSize": "18px" }
+         * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
+         */
+        style: {
+            color: Palette.neutralColor80,
+            fontWeight: 'bold'
+        },
 
         /**
          * The title of the chart. To disable the title, set the `text` to
@@ -777,6 +778,31 @@ const defaultOptions: Options = {
          */
 
         /**
+         * CSS styles for the title.
+         *
+         * In styled mode, the subtitle style is given in the
+         * `.highcharts-subtitle` class.
+         *
+         * @sample {highcharts} highcharts/subtitle/style/
+         *         Custom color and weight
+         * @sample {highcharts} highcharts/css/titles/
+         *         Styled mode
+         * @sample {highstock} stock/chart/subtitle-style
+         *         Custom color and weight
+         * @sample {highstock} highcharts/css/titles/
+         *         Styled mode
+         * @sample {highmaps} highcharts/css/titles/
+         *         Styled mode
+         *
+         * @type      {Highcharts.CSSObject}
+         * @default   {"color": "#666666"}
+         */
+        style: {
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
+        },
+
+        /**
          * The subtitle of the chart.
          *
          * @sample {highcharts|highstock} highcharts/subtitle/text/
@@ -840,20 +866,6 @@ const defaultOptions: Options = {
         margin: 15,
 
         /**
-         * CSS styles for the caption.
-         *
-         * In styled mode, the caption style is given in the
-         * `.highcharts-caption` class.
-         *
-         * @sample {highcharts} highcharts/css/titles/
-         *         Styled mode
-         *
-         * @type      {Highcharts.CSSObject}
-         * @default   {"color": "#666666"}
-         * @apioption caption.style
-         */
-
-        /**
          * Whether to
          * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.
@@ -879,6 +891,23 @@ const defaultOptions: Options = {
          * @type      {number}
          * @apioption caption.y
          */
+
+        /**
+         * CSS styles for the caption.
+         *
+         * In styled mode, the caption style is given in the
+         * `.highcharts-caption` class.
+         *
+         * @sample {highcharts} highcharts/css/titles/
+         *         Styled mode
+         *
+         * @type      {Highcharts.CSSObject}
+         * @default   {"color": "#666666"}
+         */
+        style: {
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
+        },
 
         /**
          * The caption text of the chart.
@@ -1234,6 +1263,12 @@ const defaultOptions: Options = {
          * exported images. One way of working around that is to
          * [increase the chart height in
          * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
+         *
+         * @sample highcharts/legend/scrollable-vertical/
+         *         Legend with vertical scrollable extension
+         * @sample highcharts/legend/scrollable-horizontal/
+         *         Legend with horizontal scrollable extension
+         *
          */
         navigation: {
 
@@ -1596,6 +1631,11 @@ const defaultOptions: Options = {
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
          *
+         * @sample highcharts/legend/scrollable-vertical/
+         *         Legend with vertical scrollable extension
+         * @sample highcharts/legend/scrollable-horizontal/
+         *         Legend with horizontal scrollable extension
+         *
          * @type      {boolean}
          * @default   false
          * @apioption legend.useHTML
@@ -1941,6 +1981,25 @@ const defaultOptions: Options = {
          * @default   {highmaps} false
          * @since     3.0.1
          * @apioption tooltip.followTouchMove
+         */
+
+        /**
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for the whole tooltip. When format strings are a requirement, it is
+         * usually more convenient to use `headerFormat`, `pointFormat` and
+         * `footerFormat`, but the `format` option allows combining them into
+         * one setting.
+         *
+         * The context of the format string is the same as that of the
+         * `formatter` callback.
+         *
+         * @sample {highcharts} highcharts/tooltip/format-shared/
+         *         Format for shared tooltip
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since 11.1.0
+         * @apioption tooltip.format
          */
 
         /**
@@ -2305,7 +2364,7 @@ const defaultOptions: Options = {
          *         Different shapes for header and split boxes
          *
          * @type       {Highcharts.TooltipShapeValue}
-         * @validvalue ["callout", "square"]
+         * @validvalue ["callout", "rect"]
          * @since      7.0
          */
         headerShape: 'callout',
@@ -2492,6 +2551,8 @@ const defaultOptions: Options = {
          *         Background and border demo
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
+         *
+         * @type {number}
          */
         borderWidth: void 0,
 

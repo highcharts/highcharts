@@ -251,9 +251,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         outside: true,
-        formatter: function () {
-            return this.point.info;
-        }
+        format: '{point.info}'
     },
 
     exporting: {

@@ -369,7 +369,8 @@ class LegendComponent extends AccessibilityComponent {
                 chart.legend.options.title &&
                 chart.legend.options.title.text ||
                 ''
-            ).replace(/<br ?\/?>/g, ' ')
+            ).replace(/<br ?\/?>/g, ' '),
+            chart.renderer.forExport
         );
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'),
@@ -438,7 +439,10 @@ class LegendComponent extends AccessibilityComponent {
             'accessibility.legend.legendItem',
             {
                 chart: this.chart,
-                itemName: stripHTMLTags((item as any).name),
+                itemName: stripHTMLTags(
+                    (item as any).name,
+                    this.chart.renderer.forExport
+                ),
                 item
             }
         );
@@ -455,7 +459,7 @@ class LegendComponent extends AccessibilityComponent {
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
             click: legendItem.label as SVGElement,
             visual: proxyPositioningElement.element
-        }, attribs);
+        }, 'button', attribs);
     }
 
 
@@ -596,6 +600,15 @@ class LegendComponent extends AccessibilityComponent {
             legendA11yOptions.keyboardNavigation.enabled
         );
     }
+
+
+    /**
+     * Clean up
+     * @private
+     */
+    public destroy(): void {
+        this.removeProxies();
+    }
 }
 
 
@@ -681,7 +694,7 @@ namespace LegendComponent {
 
             const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
-                itemToHighlight.a11yProxyElement.buttonElement;
+                itemToHighlight.a11yProxyElement.innerElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }
@@ -735,7 +748,7 @@ namespace LegendComponent {
             legendItem = e.item;
 
         if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
-            legendItem.a11yProxyElement.buttonElement.setAttribute(
+            legendItem.a11yProxyElement.innerElement.setAttribute(
                 'aria-pressed', e.visible ? 'true' : 'false'
             );
         }

@@ -10,7 +10,7 @@
 	"code/highcharts.src.js",
 	"code/highcharts-more.src.js",
 	"code/highcharts-3d.src.js",
-
+	
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
 	"code/modules/gantt.src.js",
@@ -29,6 +29,7 @@
 	"code/modules/broken-axis.src.js",
 	"code/modules/heatmap.src.js",
 	"code/modules/tilemap.src.js",
+	"code/modules/tiledwebmap.src.js",
 	"code/modules/timeline.src.js",
 	"code/modules/treemap.src.js",
 	"code/modules/treegraph.src.js",
@@ -41,6 +42,7 @@
 	"code/modules/geoheatmap.src.js",
 	"code/modules/pyramid3d.src.js",
 	"code/modules/networkgraph.src.js",
+	"code/modules/overlapping-datalabels.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
 	"code/modules/pictorial.src.js",
@@ -89,5 +91,4 @@
 	"samples/data/ohlc.js",
 	"samples/data/three-series-1000-points.js",
 	"samples/data/large-dataset.js"
-
 ]

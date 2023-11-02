@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Pitch mapping types',
         align: 'left',
@@ -47,7 +47,7 @@ var chart = Highcharts.chart('container', {
                 mapping: {
                     // Map to a function, return a note number where 0 is c0
                     pitch: function (e) {
-                        var time = e.time,
+                        const time = e.time,
                             point = e.point;
                         return time > 7000 ?
                             12 + point.y * 5 :

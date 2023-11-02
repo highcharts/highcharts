@@ -2,7 +2,7 @@ function dollarFormat(x) {
     return '$' + Highcharts.numberFormat(x, 0, '.', ',');
 }
 
-var colors = Highcharts.getOptions().colors;
+const colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container', {
     chart: {

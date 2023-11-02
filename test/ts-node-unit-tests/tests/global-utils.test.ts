@@ -1,4 +1,4 @@
-import { ok } from 'assert';
+import { ok, strictEqual } from 'assert';
 import { describe } from '../test-utils';
 
 export function testGlobalUtilities() {
@@ -61,4 +61,13 @@ export function testGlobalUtilities() {
             throw new Error(`${prop} should be either a function or an object/array`);
         }
     });
+}
+
+export function testTime() {
+    const Highcharts = require('../../../code/highcharts.src.js')();
+    const time = new Highcharts.Time();
+    strictEqual(
+        time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),
+        'Sunday,  1 Jan, 00:00:00'
+    );
 }

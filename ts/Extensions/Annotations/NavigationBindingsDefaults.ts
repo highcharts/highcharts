@@ -173,8 +173,8 @@ const navigation: NavigationOptions = {
                                 point: {
                                     x: coordsX.value,
                                     y: coordsY.value,
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index
                                 },
                                 r: 5
                             }]
@@ -264,8 +264,8 @@ const navigation: NavigationOptions = {
                             shapes: [
                                 {
                                     type: 'ellipse',
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index,
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index,
                                     points: [{
                                         x: coordsX.value,
                                         y: coordsY.value
@@ -357,8 +357,8 @@ const navigation: NavigationOptions = {
 
                 const x = coordsX.value,
                     y = coordsY.value,
-                    xAxis = coordsX.axis.options.index,
-                    yAxis = coordsY.axis.options.index,
+                    xAxis = coordsX.axis.index,
+                    yAxis = coordsY.axis.index,
                     navigation = this.chart.options.navigation;
 
                 return this.chart.addAnnotation(
@@ -453,17 +453,17 @@ const navigation: NavigationOptions = {
                             langKey: 'label',
                             type: 'basicAnnotation',
                             labelOptions: {
-                                format: '{y:.2f}'
+                                format: '{y:.2f}',
+                                overflow: 'none',
+                                crop: true
                             },
                             labels: [{
                                 point: {
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index,
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index,
                                     x: coordsX.value,
                                     y: coordsY.value
-                                },
-                                overflow: 'none',
-                                crop: true
+                                }
                             }]
                         },
                         navigation

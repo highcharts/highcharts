@@ -50,6 +50,10 @@ Highcharts.setOptions({
     legend: {
         itemStyle: {
             fontWeight: 'bold'
+        },
+        itemHiddenStyle: {
+            color: '#cccccc',
+            textDecoration: 'none'
         }
     },
     xAxis: {

@@ -1,6 +1,6 @@
 console.time('load');
 
-var data = {
+const data = {
     vessels: [{
         name: 'TS1_PS',
         utilized: 0,
@@ -52194,12 +52194,12 @@ var data = {
     }]
 };
 
-var series = [];
+const series = [];
 
 data.vessels.forEach(function (vessel, i) {
-    var seriesData = vessel.trips.reduce(function (acc, cur) {
-        var startTime = cur.start;
-        var points = [];
+    const seriesData = vessel.trips.reduce(function (acc, cur) {
+        let startTime = cur.start;
+        const points = [];
         cur.voyages.forEach(function (voyage) {
             if (voyage.loadDuration) {
                 voyage.loadDuration *= 1000 * 60 * 60;

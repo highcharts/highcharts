@@ -13,7 +13,9 @@
         "lib": ["es5", "dom"],
         "paths": {
             "highcharts": ["code/highcharts"],
-            "highcharts/*": ["code/*"]
+            "highcharts/*": ["code/*"],
+            "@highcharts/dashboards": ["code/dashboards/dashboards"],
+            "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
         },
         "types": []
     },

@@ -1,6 +1,6 @@
 // Create some smooth demo data
-var sine = [];
-for (var x = 0; x <= 60; x++) {
+const sine = [];
+for (let x = 0; x <= 60; x++) {
     sine.push([
         x,
         Math.sin(x * Highcharts.deg2rad)

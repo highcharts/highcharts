@@ -1,0 +1,12 @@
+---
+name: Minimal
+authors:
+  - Pawel Lysy, Karol Kolodziej
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General:
+        priority: 1
+use_png_thumbnail: true
+...

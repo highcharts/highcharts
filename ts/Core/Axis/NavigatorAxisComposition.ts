@@ -88,9 +88,9 @@ function onAxisZoom(
         chartOptions = chart.options,
         navigator = chartOptions.navigator,
         navigatorAxis = axis.navigatorAxis,
-        pinchType = chartOptions.chart.zooming.pinchType,
+        pinchType = chart.zooming.pinchType,
         rangeSelector = chartOptions.rangeSelector,
-        zoomType = chartOptions.chart.zooming.type;
+        zoomType = chart.zooming.type;
 
     if (axis.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
@@ -183,7 +183,7 @@ class NavigatorAxisAdditions {
 
     public axis: NavigatorAxisComposition;
     public fake?: boolean;
-    public previousZoom?: [(number|null), (number|null)];
+    public previousZoom?: [number|undefined, number|undefined];
 
     /* *
      *
@@ -222,8 +222,7 @@ class NavigatorAxisAdditions {
             );
 
         const fixedRange = chart && chart.fixedRange,
-            halfPointRange = (axis.pointRange || 0) / 2,
-            changeRatio = fixedRange && (newMax - newMin) / fixedRange;
+            halfPointRange = (axis.pointRange || 0) / 2;
 
         // Add/remove half point range to/from the extremes (#1172)
         if (!defined(fixedMin)) {
@@ -233,16 +232,17 @@ class NavigatorAxisAdditions {
             newMax = correctFloat(newMax - halfPointRange);
         }
 
-        // If the difference between the fixed range and the actual requested
-        // range is too great, the user is dragging across an ordinal gap, and
-        // we need to release the range selector button.
-        if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
-            if (fixedMax) {
-                newMin = newMax - (fixedRange as any);
-            } else {
-                newMax = newMin + (fixedRange as any);
+        // Make sure panning to the edges does not decrease the zoomed range
+        if (fixedRange && axis.dataMin && axis.dataMax) {
+            if (newMax >= axis.dataMax) {
+                newMin = correctFloat(axis.dataMax - fixedRange);
+            }
+
+            if (newMin <= axis.dataMin) {
+                newMax = correctFloat(axis.dataMin + fixedRange);
             }
         }
+
         if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
             newMin = newMax = void 0 as any;
         }

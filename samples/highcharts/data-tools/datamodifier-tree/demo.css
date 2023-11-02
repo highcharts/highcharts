@@ -82,6 +82,7 @@ section > div {
 }
 
 table {
+    table-layout: fixed;
     width: 99%;
 }
 
@@ -90,7 +91,6 @@ table th {
     line-height: 1.5em;
     padding: 0.25em 0.5em;
     vertical-align: top;
-    width: 33%;
 }
 
 table thead th {

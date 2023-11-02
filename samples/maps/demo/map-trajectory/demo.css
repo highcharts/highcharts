@@ -1,12 +1,14 @@
 .highcharts-figure {
     max-width: 700px;
     min-width: 320px;
-    margin: 1em auto;
+    margin: 0 auto;
+    padding: 10px;
     position: relative;
 }
 
 #container {
     height: 600px;
+    margin: 0 -10px;
 }
 
 #sonify {

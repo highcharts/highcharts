@@ -1,7 +1,7 @@
 (function () {
 
     // create shortcuts
-    var HC = Highcharts,
+    const HC = Highcharts,
         defaultOptions = HC.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
         seriesTypes = HC.seriesTypes,
@@ -9,8 +9,9 @@
         extendClass = HC.extendClass,
         Point = HC.Point,
         ColumnSeries = seriesTypes.column,
-        UNDEFINED,
         mathRound = Math.round;
+
+    let UNDEFINED;
 
     // 1 - Set default options
     defaultPlotOptions.genericcandlestick = merge(defaultPlotOptions.column, {
@@ -26,7 +27,7 @@
     });
 
     // 2- Create the GenericCandlestickPoint object
-    var GenericCandlestickPoint = extendClass(Point, {
+    const GenericCandlestickPoint = extendClass(Point, {
         /**
          * Apply the options containing the x and multiple y-values.
          * This is called on point init or from point.update. Extends base Point by adding
@@ -35,9 +36,10 @@
          * @param {Object} options
          */
         applyOptions: function (options) {
-            var point = this,
-                series = point.series,
-                i = 0;
+            const point = this,
+                series = point.series;
+
+            let i = 0;
 
             if (typeof options === 'object' && typeof options.length !== 'number') {
                 // TODO implement object input support?
@@ -53,7 +55,7 @@
                     i++;
                 }
 
-                var yValues = [];
+                const yValues = [];
                 while (i < options.length) {
                     yValues.push(options[i]);
                     i++;
@@ -89,14 +91,14 @@
          * A generic tooltip formatter for multiple Y-values per point
          */
         tooltipFormatter: function () {
-            var point = this,
+            const point = this,
                 series = point.series,
                 yValueLabels = series.options.yValueLabels,
                 yValues = point.yValues;
 
-            var tooltipHtml = '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
+            let tooltipHtml = '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
 
-            for (var i = 0; i < yValueLabels.length; i++) {
+            for (let i = 0; i < yValueLabels.length; i++) {
                 tooltipHtml += yValueLabels[i] + ': ' + yValues[i] + '<br />';
             }
 
@@ -113,7 +115,7 @@
     });
 
     // 3 - Create the GenericCandlestickSeries object
-    var GenericCandlestickSeries = extendClass(ColumnSeries, {
+    const GenericCandlestickSeries = extendClass(ColumnSeries, {
         type: 'genericcandlestick',
         pointClass: GenericCandlestickPoint,
 
@@ -135,15 +137,15 @@
          * Translate data points from raw values x and y to plotX and plotY
          */
         translate: function () {
-            var series = this,
+            const series = this,
                 yAxis = series.yAxis;
 
             seriesTypes.column.prototype.translate.apply(series);
 
             // do the translation
             series.points.forEach(function (point) {
-                var plotYValues = [];
-                for (var i = 0; i < point.yValues.length; i++) {
+                const plotYValues = [];
+                for (let i = 0; i < point.yValues.length; i++) {
                     plotYValues.push(
                         yAxis.translate(point.yValues[i], 0, 1, 0, 1)
                     );
@@ -156,10 +158,11 @@
          * Draw the data points
          */
         drawPoints: function () {
-            var series = this,
+            const series = this,
                 points = series.points,
-                chart = series.chart,
-                pointAttr,
+                chart = series.chart;
+
+            let pointAttr,
                 topBox,
                 bottomBox,
                 crispCorr,
@@ -169,7 +172,7 @@
                 halfWidth;
 
             points.forEach(function (point) {
-                var boxpath,
+                let boxpath,
                     numberOfBoxes,
                     boxes;
                 graphic = point.graphic;
@@ -186,7 +189,7 @@
                     // create path for boxes
                     numberOfBoxes = point.plotYValues.length / 2 - 1;
                     boxes = [];
-                    for (var i = 0; i < numberOfBoxes; i++) {
+                    for (let i = 0; i < numberOfBoxes; i++) {
                         bottomBox = mathRound(point.plotYValues[i + 1]) +
                             crispCorr;
                         topBox = mathRound(
@@ -235,7 +238,7 @@
                         graphic.path.animate({
                             d: path
                         });
-                        for (i = 0; i < boxes.length; i++) {
+                        for (let i = 0; i < boxes.length; i++) {
                             graphic['path' + i].animate({
                                 d: boxes[i]
                             });
@@ -246,7 +249,7 @@
                         graphic.path = chart.renderer.path(path)
                             .attr(pointAttr)
                             .add(graphic);
-                        for (i = 0; i < boxes.length; i++) {
+                        for (let i = 0; i < boxes.length; i++) {
                             graphic['path' + i] = chart.renderer.path(boxes[i])
                                 .attr(pointAttr)
                                 .add(graphic);

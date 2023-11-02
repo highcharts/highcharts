@@ -67,6 +67,15 @@ QUnit.test('Pie radial gradient (#3801)', function (assert) {
         series.center[1],
         'After redraw, gradient is centered'
     );
+
+    assert.strictEqual(
+        Highcharts.format('fill="{point.color}"', { point: series.points[0] }),
+        'fill="url(#' +
+            document.querySelector('#container svg defs radialGradient').id +
+        ')"',
+        'Gradient should be preserved in string handling (#2995)'
+    );
+
     Highcharts.setOptions({
         colors
     });

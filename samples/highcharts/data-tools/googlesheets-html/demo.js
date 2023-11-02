@@ -1,5 +1,4 @@
-const GoogleSheetsConnector = Highcharts.DataConnector.registry
-    .GoogleSheetsConnector;
+const GoogleSheetsConnector = Highcharts.DataConnector.types.GoogleSheets;
 const container = document.querySelector('#container');
 const keyInput = document.querySelector('#key-input');
 const sheetsInput = document.querySelector('#sheets-input');
@@ -9,13 +8,10 @@ const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
 // Load Table From Google Sheets API
 
 document.querySelector('#load-button').addEventListener('click', () => {
-    const connector = new GoogleSheetsConnector(
-        new Highcharts.DataTable(),
-        {
-            googleAPIKey: keyInput.value,
-            googleSpreadsheetKey: sheetsInput.value.replace(/^https?:\/\/.+\/d\/|\/edit.*$/g, '')
-        }
-    );
+    const connector = new GoogleSheetsConnector({
+        googleAPIKey: keyInput.value,
+        googleSpreadsheetKey: sheetsInput.value.replace(/^https?:\/\/.+\/d\/|\/edit.*$/g, '')
+    });
 
     connector
         .load()

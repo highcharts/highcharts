@@ -2,6 +2,12 @@
  * Copyright (C) Highsoft AS
  */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 const gulp = require('gulp');
 
 /* *
@@ -22,9 +28,9 @@ const gulp = require('gulp');
  * @todo add --help command to inform about usage.
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
-function task() {
+function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
@@ -74,4 +80,4 @@ function task() {
     });
 }
 
-gulp.task('scripts-js', task);
+gulp.task('scripts-js', scriptsJS);

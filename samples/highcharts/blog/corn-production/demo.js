@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('production', {
+const chart = Highcharts.chart('production', {
     colors: [
         '#333399',
         '#CCCCFF',
@@ -82,9 +82,9 @@ var chart = Highcharts.chart('production', {
 });
 
 const toggle = function (idx, n) {
-    var series = chart.series[idx];
-    var isVisible = series.visible;
-    for (var i = 0; i < n; i++) {
+    const series = chart.series[idx];
+    const isVisible = series.visible;
+    for (let i = 0; i < n; i++) {
         if (isVisible) {
             chart.series[idx + i].hide();
         } else {
@@ -105,7 +105,7 @@ for (const [key, value] of Object.entries(countries)) {
         if (key !== 'legend') {
             toggle(value[0], value[1]);
         } else {
-            var legend = chart.legend;
+            const legend = chart.legend;
             if (legend.display) {
                 legend.group.hide();
                 legend.box.hide();
@@ -189,7 +189,7 @@ Highcharts.chart('production_heatmap', {
     }]
 });
 
-var chart2 = Highcharts.chart('trade', {
+const chart2 = Highcharts.chart('trade', {
     colors: [
         '#333399', '#333399',
         '#CCCCFF', '#CCCCFF',
@@ -267,9 +267,9 @@ var chart2 = Highcharts.chart('trade', {
     series: tradeData()
 });
 const toggle2 = function (idx, n) {
-    var series = chart2.series[idx];
-    var isVisible = series.visible;
-    for (var i = 0; i < n; i++) {
+    const series = chart2.series[idx];
+    const isVisible = series.visible;
+    for (let i = 0; i < n; i++) {
         if (isVisible) {
             chart2.series[idx + i].hide();
         } else {
@@ -278,9 +278,9 @@ const toggle2 = function (idx, n) {
     }
 };
 const toggle3 = function (idx, n) {
-    var series = chart.series[idx];
-    var isVisible = series.visible;
-    for (var i = 0; i < n; i++) {
+    const series = chart.series[idx];
+    const isVisible = series.visible;
+    for (let i = 0; i < n; i++) {
         chart.series[idx + i].update({
             visible: !isVisible
         });
@@ -300,7 +300,7 @@ for (const [key, value] of Object.entries(countries2)) {
         if (key !== 'legend2') {
             toggle2(value[0], value[1]);
         } else {
-            var legend = chart2.legend;
+            const legend = chart2.legend;
             if (legend.display) {
                 legend.group.hide();
                 legend.box.hide();

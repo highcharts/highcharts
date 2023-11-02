@@ -165,7 +165,9 @@ class SVGElement implements SVGElementLike {
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
-    // @todo public height?: number;
+    public height?: number;
+    public imgwidth?: number;
+    public imgheight?: number;
     public inverted: undefined;
     public matrix?: Array<number>;
     public onEvents: Record<string, Function> = {};
@@ -194,10 +196,10 @@ class SVGElement implements SVGElementLike {
     // @todo public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
-    // @todo public translateX?: number;
-    // @todo public translateY?: number;
+    public translateX?: number;
+    public translateY?: number;
     public visibility?: 'hidden'|'inherit'|'visible';
-    // @todo public width?: number;
+    public width?: number;
     public x?: number;
     public y?: number;
     // @todo public zIndex?: number;
@@ -1065,11 +1067,6 @@ class SVGElement implements SVGElementLike {
         let textWidth,
             hasNew = !oldStyles;
 
-        // convert legacy
-        if (styles.color) {
-            styles.fill = styles.color;
-        }
-
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (value, n: keyof CSSObject): void {
@@ -1126,6 +1123,11 @@ class SVGElement implements SVGElementLike {
                         delete stylesToApply[key]
                     )
                 );
+
+                // SVG requires fill for text
+                if (stylesToApply.color) {
+                    stylesToApply.fill = stylesToApply.color;
+                }
             }
             css(elem, stylesToApply);
         }
@@ -1226,6 +1228,8 @@ class SVGElement implements SVGElementLike {
             wrapper.clipPath = clipPath.destroy();
         }
 
+        wrapper.connector = wrapper.connector?.destroy();
+
         // Destroy stops in case this is a gradient object @todo old code?
         if (wrapper.stops) {
             for (i = 0; i < wrapper.stops.length; i++) {
@@ -1318,29 +1322,6 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Fade out an element by animating its opacity down to 0, and hide it on
-     * complete. Used internally for the tooltip.
-     *
-     * @function Highcharts.SVGElement#fadeOut
-     *
-     * @param {number} [duration=150]
-     * The fade duration in milliseconds.
-     */
-    public fadeOut(duration?: number): void {
-        const elemWrapper = this;
-
-        elemWrapper.animate({
-            opacity: 0
-        }, {
-            duration: pick(duration, 150),
-            complete: function (): void {
-                // #3088, assuming we're only using this for tooltips
-                elemWrapper.hide();
-            }
-        });
-    }
-
-    /**
      * @private
      * @function Highcharts.SVGElement#fillSetter
      * @param {Highcharts.ColorType} value
@@ -1359,6 +1340,21 @@ class SVGElement implements SVGElementLike {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.SVGElement#hrefSetter
+     * @param {Highcharts.ColorType} value
+     * @param {string} key
+     * @param {Highcharts.SVGDOMElement} element
+     */
+    public hrefSetter(
+        value: string,
+        key: string,
+        element: SVGDOMElement
+    ): void {
+        // Namespace is needed for offline export, #19106
+        element.setAttributeNS('http://www.w3.org/1999/xlink', key, value);
+    }
 
     /**
      * Get the bounding box (width, height, x and y) for the element. Generally

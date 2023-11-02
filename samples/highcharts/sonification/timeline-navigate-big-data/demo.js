@@ -1,15 +1,15 @@
 // Some demo data with spikes
-var dataA = [],
+const dataA = [],
     dataB = [],
     size = 50000;
-for (var i = 0; i < size; ++i) {
+for (let i = 0; i < size; ++i) {
     dataA.push(i % 10000 ? Math.sin(i / (size / 5)) * 100 + 1000 : 400);
     dataB.push(i % 17000 ? Math.sin(i / (size / 53)) * 20 + 100 : 2000);
 }
 
 
 // Make the chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     sonification: {
         order: 'simultaneous',
         duration: 5000,
@@ -56,7 +56,7 @@ var chart = Highcharts.chart('container', {
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', function (e) {
-    var timeline = chart.sonification.timeline;
+    const timeline = chart.sonification.timeline;
     if (e.code === 'KeyS') {
         if (chart.sonification.isPlaying()) {
             timeline.pause();
@@ -75,7 +75,7 @@ document.addEventListener('keydown', function (e) {
 
 // Update current time readout
 setInterval(function () {
-    var timeline = chart.sonification.timeline;
+    const timeline = chart.sonification.timeline;
     if (timeline) {
         document.getElementById('currentTime').textContent =
             Math.round(timeline.getCurrentTime() / 4700 * 100);

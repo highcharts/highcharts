@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json'
+    ).then(response => response.json());
 
     Highcharts.stockChart('container', {
 
@@ -29,4 +34,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
 
     });
-});
+
+})();

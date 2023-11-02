@@ -1,5 +1,5 @@
-var clrs = Highcharts.getOptions().colors;
-var pieColors = [clrs[2], clrs[0], clrs[3], clrs[1], clrs[4]];
+const clrs = Highcharts.getOptions().colors;
+const pieColors = [clrs[2], clrs[0], clrs[3], clrs[1], clrs[4]];
 
 // Get a default pattern, but using the pieColors above.
 // The i-argument refers to which default pattern to use
@@ -12,9 +12,9 @@ function getPattern(i) {
 }
 
 // Get 5 patterns
-var patterns = [0, 1, 2, 3, 4].map(getPattern);
+const patterns = [0, 1, 2, 3, 4].map(getPattern);
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },

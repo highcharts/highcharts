@@ -1,4 +1,10 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
+
     Highcharts.stockChart('container', {
         title: {
             text: 'Candlestick and Heiken Ashi series comparison.',
@@ -31,4 +37,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             yAxis: 1
         }]
     });
-});
+})();

@@ -21,32 +21,17 @@
 import type ColorMapComposition from '../ColorMapComposition';
 import type { DrawPointParams } from '../DrawPointUtilities';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type TreemapNode from './TreemapNode';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 
 import DPU from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        },
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    pie: { prototype: { pointClass: PiePoint } },
+    scatter: { prototype: { pointClass: ScatterPoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import type TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,
@@ -69,6 +54,8 @@ class TreemapPoint extends ScatterPoint {
 
     public drillId?: (boolean|string);
 
+    public imageUrl?: string;
+
     public name: string = void 0 as any;
 
     public node: TreemapNode = void 0 as any;
@@ -79,7 +66,7 @@ class TreemapPoint extends ScatterPoint {
 
     public series: TreemapSeries = void 0 as any;
 
-    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = 'rect';
+    public shapeType: 'arc'|'circle'|'image'|'path'|'rect'|'text' = 'rect';
 
     public sortIndex?: number;
 
@@ -91,8 +78,6 @@ class TreemapPoint extends ScatterPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public draw(
         params: DrawPointParams
     ): void {
@@ -100,9 +85,10 @@ class TreemapPoint extends ScatterPoint {
     }
 
     public getClassName(): string {
-        let className = Point.prototype.getClassName.call(this),
-            series = this.series,
+        const series = this.series,
             options = series.options;
+
+        let className = super.getClassName();
 
         // Above the current level
         if (this.node.level <= series.nodeMap[series.rootNode].level) {
@@ -117,6 +103,7 @@ class TreemapPoint extends ScatterPoint {
         } else if (!this.node.isLeaf) {
             className += ' highcharts-internal-node';
         }
+
         return className;
     }
 
@@ -132,7 +119,7 @@ class TreemapPoint extends ScatterPoint {
     }
 
     public setState(state: StatesOptionsKey): void {
-        Point.prototype.setState.call(this, state);
+        super.setState.apply(this, arguments);
 
         // Graphic does not exist when point is not visible.
         if (this.graphic) {
@@ -146,8 +133,6 @@ class TreemapPoint extends ScatterPoint {
         return isNumber(this.plotY) && this.y !== null;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -159,6 +144,7 @@ class TreemapPoint extends ScatterPoint {
 interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
+
 extend(TreemapPoint.prototype, {
     setVisible: PiePoint.prototype.setVisible
 });

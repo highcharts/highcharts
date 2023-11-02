@@ -363,7 +363,8 @@ namespace OfflineExporting {
                         curParent = curParent.parentNode as any;
                     }
                 };
-            let titleElements;
+            let titleElements,
+                outlineElements;
 
             // Workaround for the text styling. Making sure it does pick up
             // settings for parent elements.
@@ -392,6 +393,13 @@ namespace OfflineExporting {
                 ): void {
                     el.removeChild(titleElement);
                 });
+
+                // Remove all .highcharts-text-outline elements, #17170
+                outlineElements =
+                    el.getElementsByClassName('highcharts-text-outline');
+                while (outlineElements.length > 0) {
+                    el.removeChild(outlineElements[0]);
+                }
             });
 
             const svgNode = dummySVGContainer.querySelector('svg');
@@ -400,6 +408,7 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
+                        scale,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -1001,10 +1010,13 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
+        scale: number,
         callback: Function
     ): void {
-        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
-            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+        const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
+            scale,
+            height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
+                scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',

@@ -30,11 +30,18 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     from?: string;
     height?: number;
     level?: number;
+    linkColorMode?: ('from'|'gradient'|'to');
     offset?: (number|string);
     offsetHorizontal?: (number|string);
     offsetVertical?: (number|string);
     to?: string;
     width?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SankeyPointOptions;

@@ -8,27 +8,27 @@ const log = document.querySelector('#log');
 // Set Connector Options
 
 const setConnectorButton = document.querySelector('#set-connector-button');
-const setConnectorName = document.querySelector('#set-connector-name');
+const setConnectorId = document.querySelector('#set-connector-id');
 const setConnectorOptions = document.querySelector('#set-connector-options');
 const setConnectorType = document.querySelector('#set-connector-type');
 
 setConnectorButton.addEventListener('click', () => {
-    const name = (
-        setConnectorName.value.trim() ||
+    const id = (
+        setConnectorId.value.trim() ||
         'Untitled ' + getConnectorSelect.options.length
     );
 
     dataPool.setConnectorOptions({
-        name,
+        id,
         type: setConnectorType.value,
         options: JSON.parse(setConnectorOptions.value)
     });
 
     const selectOption = document.createElement('option');
-    selectOption.innerText = name;
+    selectOption.innerText = id;
     getConnectorSelect.appendChild(selectOption);
 
-    setConnectorName.value = (
+    setConnectorId.value = (
         'My Connector ' +
         (getConnectorSelect.childNodes.length + 1)
     );

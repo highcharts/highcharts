@@ -527,14 +527,8 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
-    var chart,
-        types = Highcharts.Series.types,
-        // No grids for pies!
-        ignoreTypes = ['pie'],
-        ignore,
-        type;
 
-    chart = Highcharts.stockChart('container', {
+    const options = {
         chart: {
             type: 'column'
         },
@@ -618,22 +612,20 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 ]
             }
         ]
-    });
+    };
 
     function test(type) {
-        var axes, axis, $axisGroup, axisGroupBox, leftTick, rightTick, ticks, i;
+        options.chart.type = type;
+        const chart = Highcharts.stockChart('container', options);
+        const axes = chart.xAxis;
 
-        chart.options.chart.type = type;
-        chart = Highcharts.stockChart('container', chart.options);
-
-        axes = chart.xAxis;
-        for (i = 0; i < axes.length; i++) {
-            axis = axes[0];
-            $axisGroup = $(axis.axisGroup.element);
-            axisGroupBox = $axisGroup[0].getBBox();
-            ticks = $axisGroup.find('.highcharts-tick');
-            leftTick = ticks[0];
-            rightTick = ticks.slice(-1)[0];
+        for (let i = 0; i < axes.length - 1; i++) {
+            const axis = axes[i],
+                $axisGroup = $(axis.axisGroup.element),
+                axisGroupBox = $axisGroup[0].getBBox(),
+                ticks = $axisGroup.find('.highcharts-tick'),
+                leftTick = ticks[0],
+                rightTick = ticks.slice(-1)[0];
 
             assert.equal(
                 leftTick.getBBox().x,
@@ -649,14 +641,14 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         }
     }
 
-    types = {
-        column: true
-    };
+    const types = { column: true },
+        // No grids for pies!
+        ignoreTypes = ['pie'];
 
-    for (type in types) {
+    for (const type in types) {
         if (Object.hasOwnProperty.call(types, type)) {
             // eslint-disable-line
-            ignore = ignoreTypes.indexOf(type) > -1;
+            const ignore = ignoreTypes.indexOf(type) > -1;
             if (!ignore) {
                 test(type);
             }
@@ -920,9 +912,8 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         ]
     });
 
-    axes = Highcharts.grep(chart.xAxis, function (axis) {
-        return !axis.options.isInternal;
-    });
+    axes = chart.xAxis.filter(axis => !axis.options.isInternal);
+
 
     axes.forEach(axis => {
         var axisType = axis.options.type || 'linear',

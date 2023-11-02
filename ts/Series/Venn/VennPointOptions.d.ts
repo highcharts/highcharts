@@ -35,4 +35,10 @@ export interface VennPointOptions extends ScatterPointOptions {
     value?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default VennPointOptions;

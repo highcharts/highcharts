@@ -1,7 +1,5 @@
 #container {
-    height: 520px;
-    width: 800px;
+    max-width: 800px;
+    min-width: 360px;
     margin: 0 auto;
-    text-align: center;
-    line-height: 520px;
 }

@@ -329,7 +329,7 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
     options.chart.options3d.enabled = true;
     chart3d = $('#container2').highcharts(options).highcharts();
 
-    chart.series[0].points[1].doDrilldown();
+    chart.series[0].points[1].firePointEvent('click');
     chart.series[0].points[0].select();
 
     chart3d.series[0].points[1].doDrilldown();

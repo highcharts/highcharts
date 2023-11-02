@@ -398,7 +398,7 @@ const sk = {
             'Sankey chart that shows the total funding for Fintech companies in the internet software & services through 2022.',
         point: {
             descriptionFormatter: function (point) {
-                var nodeFrom = point.fromNode.name,
+                const nodeFrom = point.fromNode.name,
                     nodeTo = point.toNode.name,
                     nodeWeight = point.weight;
                 return (

@@ -11,6 +11,7 @@ QUnit.module('Color axis for series types', function () {
                     'mapline', // Needs a map for coordinates
                     'mapbubble', // Needs a map for coordinates
                     'mappoint', // Needs a map for coordinates
+                    'tiledwebmap',
                     'networkgraph',
                     'organization',
                     'sunburst',

@@ -330,8 +330,17 @@ QUnit.test('Chart type update after drilldown', function (assert) {
         }
     });
 
+    const initialSeriesColor = chart.series[0].color;
+
     chart.series[0].points[0].doDrilldown();
     chart.drillUp();
+
+    assert.strictEqual(
+        chart.series[0].color,
+        initialSeriesColor,
+        `Series after the drill-up should be the same color as before the
+        drilldown (#19134).`
+    );
 
     chart.update({
         chart: {

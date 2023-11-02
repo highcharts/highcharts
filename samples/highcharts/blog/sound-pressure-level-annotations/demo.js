@@ -1,4 +1,4 @@
-var data1 = [
+const data1 = [
     [1, 250],
     [2, 180],
     [3, 140],
@@ -14,7 +14,7 @@ var data1 = [
     [13, 31]
 ];
 
-var data2 = [
+const data2 = [
     [1, 350],
     [2, 250],
     [3, 200],
@@ -30,7 +30,7 @@ var data2 = [
     [13, 36]
 ];
 
-var data3 = [
+const data3 = [
     [1, 550],
     [2, 450],
     [3, 390],
@@ -120,8 +120,8 @@ Highcharts.chart('container', {
     }]
 }, function (chart) {
     document.querySelector('.change').addEventListener('click', function () {
-        var seriesInd = parseInt(document.querySelector('.series').value, 10) - 1;
-        var type = chart.series[seriesInd].type === 'column' ? 'scatter' : 'column';
+        const seriesInd = parseInt(document.querySelector('.series').value, 10) - 1;
+        const type = chart.series[seriesInd].type === 'column' ? 'scatter' : 'column';
         chart.series[seriesInd].update({
             type: type
         });

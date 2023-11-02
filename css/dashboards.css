@@ -1,0 +1,1294 @@
+/**
+ * @license Highcharts Dashboards v@product.version@
+ *
+ * (c) 2009-2023 Highsoft AS
+ *
+ * License: www.highcharts.com/license
+ */
+
+:root,
+.highcharts-light {
+    /* Neutral colors */
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-0: #ffffff;
+
+    /* Highlight colors */
+    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-80: #334eff;
+    --highcharts-highlight-color-60: #667aff;
+    --highcharts-highlight-color-20: #ccd3ff;
+    --highcharts-highlight-color-10: #e6e9ff;
+
+    /* Other colors */
+    --highcharts-dashboards-toggle-button-color: #016667;
+    --highcharts-dashboards-overlay-color: #dae3ec90;
+    --highcharts-dashboards-pointer-selected-color: #4a4a53;
+    --highcharts-dashboards-danger-color: rgb(153, 0, 51);
+
+    /* General */
+    --highcharts-background-color: #ffffff;
+    --highcharts-dashboards-shadow-color: 4, 9, 20;
+
+    /* Edit row */
+    --highcharts-dashboards-edit-row-color: #7bb343;
+    --highcharts-dashboards-edit-row-contrast-color: #1a5e20;
+    --highcharts-dashboards-edit-row-highlight-color: #b0c2d4;
+
+    /* Dropdown */
+    --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* UI colors */
+        --highcharts-background-color: #333333;
+
+        /*
+            Neutral color variations
+            https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+        background-color: var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+        border: 1px solid var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+        color: var(--highcharts-neutral-color-0);
+        background-color: var(--highcharts-neutral-color-80);
+        filter: none;
+    }
+
+    .highcharts-dashboards-edit-popup-close,
+    .highcharts-dashboards-edit-pointer,
+    .highcharts-dashboards-edit-accordion-header-icon {
+        filter: invert(1);
+    }
+
+    .highcharts-dashboards-edit-sidebar-title {
+        filter: brightness(0) invert(1);
+    }
+
+    .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
+        filter: brightness(0) invert(1);
+    }
+}
+
+.highcharts-dark {
+    /* UI colors */
+    --highcharts-background-color: #333333;
+
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+    --highcharts-neutral-color-0: rgb(0, 0, 0);
+
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+    background-color: var(--highcharts-neutral-color-0);
+}
+
+/* stylelint-disable max-line-length */
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+    border: 1px solid var(--highcharts-neutral-color-0);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+    color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-80);
+    filter: none;
+}
+/* stylelint-enable max-line-length */
+
+.highcharts-dark .highcharts-dashboards-edit-popup-close,
+.highcharts-dark .highcharts-dashboards-edit-pointer,
+.highcharts-dark .highcharts-dashboards-edit-accordion-header-icon {
+    filter: invert(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-sidebar-title {
+    filter: brightness(0) invert(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
+    filter: brightness(0) invert(1);
+}
+
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    background-color: var(--highcharts-neutral-color-5);
+    padding: 20px 10px;
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    transition: 0.5s;
+    overflow-x: scroll;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+}
+
+.highcharts-dashboards-fullscreen:fullscreen {
+    overflow: scroll;
+}
+
+/* Layout */
+.highcharts-dashboards-layout {
+    position: relative;
+}
+
+.highcharts-dashboards-layouts-wrapper {
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Row */
+.highcharts-dashboards-row {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+/* Cell */
+.highcharts-dashboards-cell {
+    position: relative;
+    flex: 1;
+    min-width: 20px;
+}
+
+.highcharts-dashboards-row,
+.highcharts-dashboards-row .highcharts-dashboards-cell {
+    box-sizing: border-box;
+    border: 1px dashed transparent;
+}
+
+.highcharts-dashboards-cell img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+.highcharts-dashboards-cell-state-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -32px;
+    margin-top: -32px;
+    width: 64px;
+    height: 64px;
+    border: 8px solid var(--highcharts-neutral-color-80);
+    border-radius: 50%;
+    animation: loading-spinner 1s linear infinite;
+    border-color: var(--highcharts-neutral-color-80) transparent transparent transparent;
+}
+
+@keyframes loading-spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Component */
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 5px;
+    background-color: var(--highcharts-background-color);
+    box-shadow:
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
+    background-clip: border-box;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.highcharts-dashboards-component {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-component-kpi {
+    min-height: 150px;
+    text-align: center;
+}
+
+.highcharts-dashboards-component-kpi-value {
+    font-size: 2.5em;
+}
+
+.highcharts-dashboards-component-kpi-subtitle {
+    font-size: 2em;
+}
+
+.highcharts-dashboards-component-title {
+    color: var(--highcharts-neutral-color-100);
+    margin: 0.5em 10px;
+}
+
+.highcharts-dashboards-component img {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+/* Edit mode */
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active {
+    pointer-events: none;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active .highcharts-dashboards-edit-sidebar {
+    pointer-events: auto;
+}
+
+.highcharts-dashboards-edit-enabled .highcharts-dashboards-row {
+    border: 1px solid var(--highcharts-neutral-color-20);
+}
+
+.highcharts-dashboards-edit-enabled .highcharts-dashboards-edit-row-context-highlight {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 5px,
+            var(--highcharts-neutral-color-0) 5px,
+            var(--highcharts-neutral-color-0) 10px
+        );
+}
+
+.highcharts-dashboards-edit-enabled .highcharts-dashboards-edit-cell-highlight {
+    box-shadow: 0 0 0 99998px rgba(var(--highcharts-neutral-color-80), 0.5);
+    position: relative;
+    z-index: 100;
+    pointer-events: auto;
+    transition: all 0.5s ease;
+    box-sizing: border-box;
+}
+
+.highcharts-dashboards-edit-menu {
+    overflow: hidden;
+}
+
+.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row .highcharts-dashboards-edit-menu-item {
+    float: left;
+}
+
+.highcharts-dashboards-edit-drop-pointer {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 10px,
+            var(--highcharts-neutral-color-0) 10px,
+            var(--highcharts-neutral-color-0) 20px
+        );
+    opacity: 0.5;
+    transition: 0.1s;
+    border-radius: 2px;
+}
+
+.highcharts-dashboards-edit-drag-mock {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    min-height: 150px;
+    min-width: 300px;
+    z-index: 99999;
+    display: none;
+    cursor: grab;
+    pointer-events: none;
+    border-radius: 5px;
+    background-color: var(--highcharts-background-color);
+    box-shadow:
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
+}
+
+.highcharts-dashboards-edit-resize-pointer {
+    position: absolute;
+    z-index: 100;
+    display: none;
+    pointer-events: none;
+    border: 4px solid var(--highcharts-highlight-color-60);
+    opacity: 0.5;
+}
+
+.highcharts-dashboards-edit-ctx-detection-pointer {
+    position: absolute;
+    z-index: 101;
+    display: none;
+    pointer-events: none;
+    border: 2px solid var(--highcharts-highlight-color-20);
+}
+
+.highcharts-dashboards-edit-resize-snap {
+    position: absolute;
+    background-color: var(--highcharts-background-color);
+    z-index: 10;
+}
+
+.highcharts-dashboards-edit-resize-snap-x {
+    cursor: col-resize;
+}
+
+.highcharts-dashboards-edit-resize-snap-y {
+    cursor: row-resize;
+    rotate: 90deg;
+}
+
+.highcharts-dashboards-edit-resizer-menu-btn-active {
+    color: var(--highcharts-highlight-color-60);
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component .title-wrapper {
+    margin: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--highcharts-highlight-color-10);
+}
+
+.highcharts-dashboards-toolbar {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 15px;
+    display: none;
+    font-weight: bold;
+}
+
+.highcharts-dashboards-toolbar .tools-row {
+    display: inline-block;
+    float: left;
+    background-color: var(--highcharts-neutral-color-60);
+    padding: 0 10px;
+}
+
+.highcharts-dashboards-toolbar .tools-cell {
+    display: inline-block;
+    background-color: var(--highcharts-neutral-color-20);
+    padding: 0 10px;
+}
+
+.highcharts-dashboards-toolbar .drag-drop {
+    display: inline-block;
+    cursor: move;
+    text-indent: -9999px;
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/drag.svg") no-repeat 50% 50%;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.highcharts-dashboards-toolbar .edit-col,
+.highcharts-dashboards-toolbar .edit-row {
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/settings.svg") no-repeat 50% 50%;
+    background-size: cover;
+    font-size: 0;
+    text-indent: -9999px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    float: right;
+    margin-left: 10px;
+}
+
+.highcharts-dashboards-edit-toggle-container {
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
+    min-width: 100px;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper,
+.highcharts-dashboards-edit-accordion-content label.highcharts-dashboards-edit-toggle-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 43px;
+    height: 23px;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.highcharts-dashboards-edit-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--highcharts-neutral-color-20);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.highcharts-dashboards-edit-toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--highcharts-neutral-color-0);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider::before {
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-label-text.highcharts-dashboards-edit-toggle-labels {
+    background: none;
+    border: none;
+    display: inline-block;
+    padding: 0 5px;
+    margin: 0;
+    width: auto;
+    line-height: 1em;
+    font-size: 0.756em;
+}
+
+/* Edit Mode */
+.highcharts-dashboards-edit-context-menu {
+    background-color: var(--highcharts-background-color);
+    margin-left: auto;
+    border-radius: 3px;
+    position: absolute;
+    display: none;
+    z-index: 9999;
+    box-shadow:
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
+}
+
+.highcharts-dashboards-edit-context-menu-btn {
+    width: 32px;
+    height: 32px;
+    margin-left: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    border: none;
+    float: right;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-color: var(--highcharts-neutral-color-0);
+    background-position: 50% 50%;
+}
+
+.highcharts-dashboards-edit-context-menu-btn:hover {
+    background-color: var(--highcharts-neutral-color-60);
+    filter: invert(100%);
+}
+
+.highcharts-dashboards-edit-menu-item {
+    display: none;
+}
+
+.highcharts-dashboards-edit-tools {
+    overflow: hidden;
+    width: 100%;
+}
+
+.highcharts-dashboards-edit-context-menu-item {
+    padding: 10px 15px;
+    color: var(--highcharts-neutral-color-100);
+    font-size: 0.876em;
+    line-height: 1em;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-context-menu-item:hover {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-context-menu-item > button {
+    color: var(--highcharts-neutral-color-100);
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    font-size: 1em;
+    padding-left: 3px;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-context-menu-item > button:hover {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-separator {
+    background-color: var(--highcharts-neutral-color-20);
+    height: 1px;
+    margin: 5px 0;
+    padding: 0;
+    cursor: default;
+}
+
+.highcharts-dashboards-edit-toolbar {
+    color: var(--highcharts-neutral-color-60);
+    position: absolute;
+    z-index: 90;
+    border-radius: 3px;
+    box-shadow:
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1);
+}
+
+.highcharts-dashboards-edit-toolbar-item div {
+    min-width: 35px;
+    min-height: 30px;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 15px 10px;
+    background-size: 17px 17px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    cursor: pointer;
+    filter: brightness(0) invert(0);
+}
+
+.highcharts-dashboards-edit-toolbar-row {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: var(--highcharts-background-color);
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.highcharts-dashboards-edit-toolbar-row .highcharts-dashboards-edit-toolbar-item div {
+    min-width: 25px;
+    min-height: 25px;
+    background-size: 17px 17px;
+}
+
+.highcharts-dashboards-edit-toolbar-row .highcharts-dashboards-edit-toolbar-item:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-dashboards-edit-toolbar-cell .highcharts-dashboards-edit-toolbar-item div {
+    min-width: 30px;
+}
+
+.highcharts-dashboards-edit-toolbar-cell {
+    background-color: var(--highcharts-background-color);
+    border-radius: 5px;
+    color: var(--highcharts-background-color);
+}
+
+.highcharts-dashboards-edit-toolbar-cell .highcharts-dashboards-edit-toolbar-item:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-dashboards-edit-toolbar-cell-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    opacity: 1;
+}
+
+.highcharts-dashboards-edit-toolbar-row-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    opacity: 1;
+}
+
+.highcharts-dashboards-edit-menu-vertical-separator {
+    height: 1px;
+    background-color: var(--highcharts-neutral-color-20);
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding: 0;
+    cursor: default;
+}
+
+.highcharts-dashboards-edit-sidebar {
+    top: 0;
+    left: -340px; /* width + paddings */
+    transition: 0.5s;
+    width: 300px;
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-60);
+    position: absolute;
+    z-index: 1000;
+    min-height: 500px;
+    height: 100%;
+    padding: 20px;
+    overflow: scroll;
+}
+
+.highcharts-dashboards-edit-sidebar-right {
+    left: auto;
+    right: -340px;
+}
+
+.highcharts-dashboards-edit-sidebar-tab-btn,
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button.highcharts-dashboards-edit-sidebar-tab-btn {
+    margin-top: 10px;
+}
+
+.highcharts-dashboards-edit-tools-btn {
+    padding: 6px 10px 6px 40px;
+    margin-left: 16px;
+    background-color: var(--highcharts-neutral-color-0);
+    border: 1px solid transparent;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 10px center;
+    border-radius: 4px;
+    float: right;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-tools-btn.selected,
+.highcharts-dashboards-edit-tools-btn:hover {
+    background-color: var(--highcharts-neutral-color-60);
+    filter: invert(100%);
+}
+
+.highcharts-dashboards-edit-sidebar-item {
+    font-size: 0.876em;
+}
+
+.highcharts-dashboards-edit-sidebar-item input,
+.highcharts-dashboards-edit-sidebar-item textarea,
+.highcharts-dashboards-edit-sidebar-item select {
+    color: var(--highcharts-neutral-color-60);
+    border: 1px solid var(--highcharts-neutral-color-60);
+    border-radius: 3px;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button,
+.highcharts-dashboards-edit-sidebar-item button {
+    background-color: var(--highcharts-highlight-color-60);
+    color: var(--highcharts-neutral-color-0);
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    background-size: 20px;
+}
+
+.highcharts-dashboards-edit-button.highcharts-dashboards-edit-sidebar-button-nav {
+    min-width: 34px;
+    min-height: 34px;
+    background-position: 50% 50%;
+    background-color: var(--highcharts-background-color);
+}
+
+.highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn {
+    background-size: 15px;
+    margin-right: -10px;
+}
+
+.highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn:hover {
+    background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-highlight-color-80);
+}
+
+.highcharts-dashboards-edit-button {
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
+    gap: 10px;
+    flex: 1;
+}
+
+.highcharts-dashboards-edit-sidebar-show {
+    left: 0;
+    transition: left 0.5s;
+}
+
+.highcharts-dashboards-edit-sidebar-right-show {
+    right: 0;
+    transition: right 0.5s;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-label-text {
+    font-weight: bold;
+    padding: 3px;
+    display: inline-block;
+}
+
+.highcharts-dashboards-edit-sidebar-title {
+    display: inline-block;
+    color: var(--highcharts-neutral-color-80);
+    padding: 5px 5px 5px 0;
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
+    position: relative;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-popup-close {
+    display: inline-block;
+    float: right;
+}
+
+.highcharts-dashboards-edit-rotate-element {
+    transform: rotate(-90deg);
+}
+
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-hidden-element {
+    display: none;
+}
+
+.highcharts-dashboards-edit-sidebar-tab-wrapper.current {
+    display: block;
+}
+
+.highcharts-dashboards-edit-grid-items {
+    display: flex;
+    margin-top: 20px;
+    flex-direction: column;
+}
+
+.highcharts-dashboards-edit-grid-items div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    cursor: grab;
+    border-radius: 5px;
+}
+
+.highcharts-dashboards-edit-grid-items div:hover {
+    background-color: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-dashboards-edit-grid-items div:active {
+    scale: 0.9;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            var(--highcharts-dashboards-edit-row-highlight-color),
+            var(--highcharts-dashboards-edit-row-highlight-color) 5px,
+            var(--highcharts-neutral-color-0) 5px,
+            var(--highcharts-neutral-color-0) 10px
+        );
+    pointer-events: none;
+}
+
+.highcharts-dashboards-edit-sidebar-tabs {
+    display: flex;
+    font-size: 0.876em;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.highcharts-dashboards-edit-sidebar-tab {
+    text-align: left;
+    padding: 5px;
+    border-bottom: 3px solid transparent;
+    transition: 0.3s;
+    font-size: 0.876em;
+    color: var(--highcharts-neutral-color-100);
+    margin-left: 25px;
+}
+
+.highcharts-dashboards-edit-sidebar-tab:first-child {
+    margin-left: 20px;
+}
+
+.highcharts-dashboards-edit-sidebar-tab-content {
+    display: none;
+    padding: 10px;
+}
+
+.highcharts-dashboards-edit-sidebar-tab:hover,
+.highcharts-dashboards-edit-toolbar-tab-active {
+    cursor: pointer;
+    opacity: 1;
+    border-color: var(--highcharts-highlight-color-60);
+    color: var(--highcharts-highlight-color-60);
+}
+
+.highcharts-dashboards-edit-tabs-buttons-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-tabs-buttons-wrapper button.highcharts-dashboards-edit-button {
+    float: none;
+}
+
+.highcharts-dashboards-edit-tabs-buttons-wrapper button:first-child {
+    margin-right: 10px;
+}
+
+.highcharts-dashboards-edit-mask {
+    opacity: 0.3;
+}
+
+/* Confirmation popup */
+
+.highcharts-dashboards-edit-confirmation-popup {
+    display: none;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-60);
+    font-size: 0.876em;
+    max-height: 90%;
+    top: 5%;
+    overflow: hidden;
+    position: absolute;
+    z-index: 100;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.highcharts-dashboards-edit-popup-close {
+    background-repeat: no-repeat;
+    background-position: 0% 100%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content {
+    min-width: 300px;
+    margin-bottom: 20px;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-label-text {
+    text-align: center;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-button {
+    padding: 4px 12px;
+    border-radius: 5px;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-cancel-btn {
+    border: 1px solid var(--highcharts-neutral-color-100);
+    margin-right: 15px;
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-confirm-btn {
+    background-color: var(--highcharts-dashboards-danger-color);
+    border: 1px solid var(--highcharts-dashboards-danger-color);
+    color: var(--highcharts-neutral-color-0);
+}
+
+.highcharts-dashboards-edit-overlay {
+    background: rgba(var(--highcharts-neutral-color-80), 0.5);
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    transition: 0.3s;
+}
+
+.highcharts-dashboards-edit-overlay-active {
+    z-index: 99;
+    display: block;
+    background-color: var(--highcharts-dashboards-overlay-color);
+}
+
+@media (max-width: 728px) {
+    .highcharts-dashboards-row {
+        flex-direction: cell;
+    }
+
+    .highcharts-dashboards-cell {
+        flex: 1;
+    }
+
+    .highcharts-dashboards-cell-state-loading::after {
+        margin-left: -16px;
+        margin-top: -16px;
+        width: 32px;
+        height: 32px;
+        border-width: 4px;
+    }
+
+    .highcharts-dashboards-component-title {
+        font-size: 1em;
+    }
+
+    .highcharts-dashboards-component-kpi-value {
+        font-size: 1.5em;
+    }
+
+    .highcharts-dashboards-component-kpi-subtitle {
+        font-size: 1em;
+    }
+}
+
+/*
+ * A11Y
+*/
+
+.highcharts-dashboards-edit-context-menu-btn:focus,
+.highcharts-dashboards-row .highcharts-dashboards-cell:focus {
+    outline: 5px auto -webkit-focus-ring-color;
+}
+
+/* Dropdown */
+.highcharts-dashboards-edit-dropdown-content {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 5px;
+    border: 1px solid var(--highcharts-neutral-color-20);
+    list-style-type: none;
+    border-radius: 5px;
+    margin: 0;
+}
+
+.highcharts-dashboards-edit-dropdown-content li {
+    margin: 0;
+    background: none;
+}
+
+.highcharts-dashboards-edit-dropdown-content li:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-dashboards-edit-dropdown-content span {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-dropdown {
+    position: relative;
+    color: var(--highcharts-neutral-color-100);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    line-height: 16px;
+}
+
+.highcharts-dashboards-edit-dropdown .highcharts-dashboards-edit-dropdown-button {
+    color: var(--highcharts-neutral-color-100);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px;
+    background: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-dropdown-button-content {
+    display: flex;
+    align-items: center;
+}
+
+.highcharts-dashboards-edit-select-option-button {
+    display: flex;
+    border: none;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-select-option-button:hover {
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-dashboards-edit-select-option-button:hover {
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+/* End of Dropdown */
+
+/* Nested options dropdown */
+.highcharts-dashboards-edit-accordion-nested {
+    display: flex;
+    margin: 5px 0;
+    flex-direction: column;
+    background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    border-radius: 5px;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header {
+    min-height: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-self: stretch;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn {
+    flex-direction: row-reverse;
+    justify-content: left;
+    align-items: center;
+    border: none;
+    background: none;
+    margin: 0;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    cursor: pointer;
+    text-transform: capitalize;
+    font-size: 0.75rem;
+}
+
+.highcharts-dashboards-edit-accordion-header-icon.highcharts-dashboards-edit-collapsed-element {
+    border-width: 0 2px 2px 0;
+    margin-bottom: 4px;
+    display: inline-block;
+    transform: rotate(45deg);
+    width: 5px;
+    height: 5px;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-accordion-header-icon {
+    margin: 0 10px;
+    border: solid black;
+    border-width: 2px 0 0;
+    display: inline-block;
+    width: 6.5px;
+    height: 1px;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.highcharts-dashboards-edit-dropdown-content .highcharts-dashboards-edit-custom-option-button,
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button:hover {
+    background-color: var(--highcharts-dashboards-neutral-color-10);
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button > img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+/* end of nested options dropdown */
+
+/* outer Accordion */
+.highcharts-dashboards-edit-accordion-header-btn {
+    border: none;
+    font: inherit;
+    color: inherit;
+    background: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    cursor: pointer;
+    align-items: center;
+}
+
+.highcharts-dashboards-edit-accordion {
+    padding: 0;
+    margin: 8px 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--highcharts-neutral-color-100);
+    line-height: 16px;
+    border: 1px solid var(--highcharts-neutral-color-20);
+    border-radius: 5px;
+}
+
+.highcharts-dashboards-edit-accordion-content {
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
+    display: none;
+}
+
+.highcharts-dashboards-edit-accordion-content textarea {
+    min-height: 300px;
+    overflow-y: auto;
+    background-color: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.highcharts-dashboards-edit-accordion-content input {
+    background-color: var(--highcharts-neutral-color-3);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: var(--highcharts-dashboards-toggle-button-color);
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content > label {
+    display: inline-block;
+    font-weight: normal;
+    font-size: 12px;
+    padding: 0;
+    margin-bottom: 2px;
+    text-transform: capitalize;
+    margin-top: 10px;
+}
+
+.highcharts-dashboards-edit-accordion-menu {
+    margin-bottom: 20px;
+}
+
+.highcharts-dashboards-edit-accordion-menu-buttons-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-menu-buttons-container .highcharts-dashboards-edit-confirmation-popup-confirm-btn {
+    background-color: var(--highcharts-neutral-color-100);
+    border: 1px solid var(--highcharts-neutral-color-100);
+    border-radius: 5px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-menu-buttons-container .highcharts-dashboards-edit-confirmation-popup-confirm-btn:hover {
+    background-color: var(--highcharts-neutral-color-80);
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-menu-buttons-container .highcharts-dashboards-edit-confirmation-popup-cancel-btn {
+    background-color: var(--highcharts-neutral-color-0);
+    border: 1px solid var(--highcharts-neutral-color-100);
+    border-radius: 5px;
+    color: var(--highcharts-neutral-color-100);
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-menu-buttons-container .highcharts-dashboards-edit-confirmation-popup-cancel-btn:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+/* End of outer accordion */
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-hidden-element {
+    display: none;
+}

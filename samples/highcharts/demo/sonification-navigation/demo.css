@@ -40,7 +40,7 @@
     height: 0;
     transition: height 0.4s, border 0.2s, background-color 0.2s, outline 0.15s;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(100, 100, 150, 0.3) ;
+    box-shadow: 0 0 10px rgba(100, 100, 150, 0.3);
     visibility: hidden;
 }
 

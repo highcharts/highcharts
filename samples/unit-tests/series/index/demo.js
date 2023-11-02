@@ -9,6 +9,22 @@ QUnit.test('Series index and updating', function (assert) {
             .join(', ');
     }
 
+    const checkOptionsConsistency = () => {
+        assert.strictEqual(
+            chart.options.series.length,
+            chart.series.length,
+            'Chart Options series should be the same length as Chart series'
+        );
+
+        for (let i = 0; i < chart.series.length; i++) {
+            assert.strictEqual(
+                chart.options.series[i],
+                chart.series[i].options,
+                'Current series options should be available in chart options'
+            );
+        }
+    };
+
     chart = Highcharts.chart('container', {
         series: [
             {
@@ -29,6 +45,8 @@ QUnit.test('Series index and updating', function (assert) {
         ]
     });
 
+    checkOptionsConsistency();
+
     assert.strictEqual(
         getNames(),
         'Series 1, Series 2, Series 3, Series 4, Series 5',
@@ -38,6 +56,8 @@ QUnit.test('Series index and updating', function (assert) {
     chart.series[1].remove();
     chart.series[1].remove();
     chart.series[1].remove();
+
+    checkOptionsConsistency();
 
     assert.strictEqual(
         getNames(),
@@ -49,6 +69,8 @@ QUnit.test('Series index and updating', function (assert) {
         data: [25, 25, 25],
         name: 'New Series'
     });
+
+    checkOptionsConsistency();
 
     assert.strictEqual(
         getNames(),

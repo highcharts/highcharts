@@ -77,7 +77,7 @@ abstract class BaseForm {
      * @return {HTMLElement}
      * Popup div.
      */
-    private createPopupContainer(
+    protected createPopupContainer(
         parentDiv: HTMLElement,
         className: string = 'highcharts-popup highcharts-no-tooltip'
     ): HTMLElement {
@@ -98,7 +98,7 @@ abstract class BaseForm {
      * @return {HTMLElement}
      * Close button.
      */
-    private addCloseButton(
+    protected addCloseButton(
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
         const popup = this,
@@ -125,6 +125,16 @@ abstract class BaseForm {
                 popup.closeButtonEvents.bind(popup)
             );
         });
+
+        // close popup when press ESC
+        addEvent(
+            document,
+            'keydown', function (event: KeyboardEvent):void {
+                if (event.code === 'Escape') {
+                    popup.closeButtonEvents();
+                }
+            }
+        );
 
         return closeButton;
     }

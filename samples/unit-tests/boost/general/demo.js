@@ -166,8 +166,31 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(
             chart.series[3].points.length,
-            4,
-            'array length should include values with null'
+            2,
+            'Null points should not be added to the series\' kd-tree (#19341)'
+        );
+
+        chart.update({
+            xAxis: {
+                min: 0,
+                max: 10
+            },
+
+            yAxis: {
+                min: 0,
+                max: 10
+            }
+        });
+
+        chart.addSeries({
+            data: [1, 2, 3, 4, null, 6, 7],
+            boostThreshold: 5
+        });
+
+        assert.ok(
+            true,
+            `There shouldn't be any error in the console, after chart render
+            (#17014).`
         );
     }
 );
@@ -256,7 +279,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'The boost clip-path should have the same size as the chart area, #14444.',
+    'The boost clip-path should have appropriate size, #14444, #17820.',
     function (assert) {
         function generataSeries() {
             const series = Array.from(Array(100)).map(function () {
@@ -328,6 +351,82 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.yAxis[0].height,
             `After setting the axis position manually, the boost clip-path
             shouldn\'t be bigger than the axis size.`
+        );
+
+        // #17820
+        chart.update({
+            chart: {
+                inverted: false
+            },
+            navigator: {
+                enabled: true,
+                height: 80,
+                series: {
+                    boostThreshold: 1,
+                    color: 'red',
+                    type: 'line',
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.navigator.top + chart.navigator.height - chart.plotTop,
+            'Clip rect should take into account navigator boosted series, #17820.'
+        );
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boost handling of individual boostable series',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    boostThreshold: 5
+                }
+            },
+            series: [{
+                type: 'scatter',
+                data: [
+                    [1, 0],
+                    [4, 0],
+                    [8, 0]
+                ]
+            }, {
+                data: [1, 0, 3, 4, 5, 6, 7, 8, 9, 10],
+                zIndex: 2
+            }]
+        });
+
+        assert.strictEqual(
+            chart.boost.forceChartBoost,
+            false,
+            `Boost forcing for the entire chart should be turned off when one of
+            the series has less points than the threshold. (#18815)`
+        );
+
+        assert.strictEqual(
+            chart.series[0].boosted,
+            false,
+            'The first series should not be boosted. (#18815)'
+        );
+
+        assert.strictEqual(
+            chart.series[1].boosted,
+            true,
+            'The second series should be boosted. (#18815)'
+        );
+
+        assert.strictEqual(
+            chart.container.querySelector('image.highcharts-boost-canvas')
+                .dataset
+                .zIndex,
+            '2',
+            'The chart-level boost target should take the z-index of the ' +
+            'series (#9819)'
         );
     }
 );

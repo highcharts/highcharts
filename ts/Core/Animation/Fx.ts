@@ -289,7 +289,7 @@ class Fx {
         let ret,
             done;
 
-        if ((elem.attr) && !elem.element) { // #2616, element is destroyed
+        if (!!elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
 
         } else if (gotoEnd || t >= duration + (this.startTime as any)) {

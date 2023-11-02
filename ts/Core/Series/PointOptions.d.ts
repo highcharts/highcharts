@@ -49,6 +49,9 @@ export interface PointClickEvent extends PointerEvent {
  */
 export interface PointEventsOptions {
     click?: EventCallback<Point, PointClickEvent>;
+    drag?: EventCallback<Point, AnyRecord>;
+    dragStart?: EventCallback<Point, (MouseEvent&AnyRecord)>;
+    drop?: EventCallback<Point, AnyRecord>;
     mouseOut?: EventCallback<Point, PointerEvent>;
     mouseOver?: EventCallback<Point, PointerEvent>;
     remove?: EventCallback<Point, Event>;

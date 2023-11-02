@@ -1,10 +1,10 @@
 /* Colors */
-var liberal = '#EE696B',
+const liberal = '#EE696B',
     conservative = '#5A98EA',
     newDemocratic = '#F8A166',
     blocQuebecios = '#80D0F8',
     green = '#99C85F';
-var titleStyle = '10px';
+const titleStyle = '10px';
 const heightChart = 100,
     titleMargin = 0,
     borderWidth = 1;

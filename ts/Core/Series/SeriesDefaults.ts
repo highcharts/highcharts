@@ -63,7 +63,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @product highcharts highstock
      */
-    lineWidth: 1,
+    lineWidth: 2,
 
     /**
      * For some series, there is a limit that shuts down animation
@@ -200,6 +200,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * chart's legend and tooltip.
      *
      * @sample {highcharts} highcharts/css/point-series-classname
+     *         Series and point class name
      *
      * @type      {string}
      * @since     5.0.0
@@ -429,6 +430,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default   true
      * @apioption plotOptions.series.enableMouseTracking
      */
+    enableMouseTracking: true,
 
     /**
      * Whether to use the Y extremes of the total chart width or only the
@@ -441,6 +443,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     4.1.6
      * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
+     */
+
+    /**
+     * Highlight only the hovered point and fade the remaining points.
+     *
+     * Scatter-type series require enabling the 'inactive' marker state and
+     * adjusting opacity. Note that this approach could affect performance
+     * with large datasets.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-inactiveotherpoints-enabled/
+     *         Chart with inactiveOtherPoints option enabled.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @apioption plotOptions.series.inactiveOtherPoints
      */
 
     /**
@@ -536,6 +553,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
+     */
+
+    /**
+     * Same as
+     * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+     * but for an individual series. Overrides the chart wide configuration.
+     *
+     * @type      {Function}
+     * @since 11.1.0
+     * @apioption plotOptions.series.pointDescriptionFormat
      */
 
     /**
@@ -1739,6 +1766,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
          *         Add a unit
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format-subexpression/
+         *         Complex logic in the format string
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value in the data label
          *
@@ -2486,6 +2515,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * What type of legend symbol to render for this series. Can be one of
+     * `lineMarker` or `rectangle`.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     *
+     * @type      {string}
+     * @default   rectangle
+     * @since     11.0.1
+     * @apioption plotOptions.series.legendSymbol
+     */
+
+    /**
      * Determines whether the series should look for the nearest point
      * in both dimensions or just the x-dimension when hovering the series.
      * Defaults to `'xy'` for scatter series and `'x'` for most other
@@ -2508,15 +2552,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @private
      */
     findNearestPointBy: 'x'
-
-    /**
-     * What type of legend symbol to render for this series.
-     *
-     * @validvalue ["lineMarker", "rectangle"]
-     *
-     * @sample {highcharts} highcharts/series/legend-symbol/
-     *         Change the legend symbol
-     */
 
 };
 

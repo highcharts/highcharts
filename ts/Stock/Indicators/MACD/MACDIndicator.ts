@@ -208,21 +208,20 @@ class MACDIndicator extends SMAIndicator {
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
-        const originalColor = this.color,
-            originalColorIndex = this.userOptions._colorIndex;
+        const originalColor = this.color;
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
             // If the default colour doesn't set, get the next available from
             // the array and apply it #15608.
-            if (defined(this.userOptions._colorIndex)) {
+            if (defined(this.colorIndex)) {
                 if (
                     this.options.signalLine &&
                     this.options.signalLine.styles &&
                     !this.options.signalLine.styles.lineColor
                 ) {
-                    this.userOptions._colorIndex++;
+                    this.options.colorIndex = this.colorIndex + 1;
                     this.getCyclic('color', void 0, this.chart.options.colors);
                     this.options.signalLine.styles.lineColor =
                         this.color as ColorString;
@@ -233,7 +232,7 @@ class MACDIndicator extends SMAIndicator {
                     this.options.macdLine.styles &&
                     !this.options.macdLine.styles.lineColor
                 ) {
-                    this.userOptions._colorIndex++;
+                    this.options.colorIndex = this.colorIndex + 1;
                     this.getCyclic('color', void 0, this.chart.options.colors);
                     this.options.macdLine.styles.lineColor =
                         this.color as ColorString;
@@ -258,7 +257,6 @@ class MACDIndicator extends SMAIndicator {
 
         // Reset color and index #15608.
         this.color = originalColor;
-        this.userOptions._colorIndex = originalColorIndex;
     }
 
     public toYData(

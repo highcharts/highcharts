@@ -20,15 +20,21 @@ Here is an example for loading dumbbell modules into a webpage:
 ```
 
 _The demo below represents a change in life expectancy between 1960 and 2018._
-<iframe width="100%" height="600" style="null" src=https://www.highcharts.com/samples/embed/highcharts/demo/dumbbell allow="fullscreen"></iframe>
+<iframe width="100%" height="600" src=https://www.highcharts.com/samples/embed/highcharts/demo/dumbbell allow="fullscreen"></iframe>
 
 Configuring options
 -------------------
 
 The dot can be customized by:
+*   **marker** `series.marker` - marker options for the upper dot.
+*   **lowMarker** `series.lowMarker` - marker options for the lower dot.
+
+_The demo below represents using of upper and lower markers in a dumbbell chart._
+<iframe width="100%" height="600" src=https://www.highcharts.com/samples/embed/highcharts/demo/dumbbell-markers allow="fullscreen"></iframe>
+
+Alternatively, the color of the dot can be changed via:
 *   **fillColor** `series.marker.fillColor` - color for the upper dot.
 *   **lowColor** `series.lowColor` - color for the lower dot.
-*   **radius** `series.marker.radius` - size of the dots.
 
 The connector line can be customized by:
 *   **connectorColor** `series.connectorColor` - color for the connector line.

@@ -17,7 +17,8 @@
  *
  * */
 
-import type { AxisBreakOptions } from '../AxisOptions';
+import type Axis from '../Axis';
+import type { AxisBreakOptions, AxisCollectionKey } from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
@@ -28,15 +29,19 @@ import type {
     PointShortOptions
 } from '../../Series/PointOptions';
 import type Series from '../../Series/Series';
+import type Tick from '../Tick';
 import type {
     TreeGridAxisLabelOptions,
     TreeGridAxisOptions
 } from './TreeGridOptions';
+import type {
+    TreeGetOptionsObject,
+    TreeNode,
+    TreePointOptionsObject
+} from '../../../Gantt/Tree';
 
-import type Axis from '../Axis.js';
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
-import type Tick from '../Tick.js';
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -79,7 +84,7 @@ declare module '../AxisType' {
 }
 
 declare module '../../Series/PointOptions' {
-    interface PointOptions extends Highcharts.TreePointOptionsObject {
+    interface PointOptions extends TreePointOptionsObject {
         collapsed?: boolean;
         seriesIndex?: number;
     }
@@ -118,7 +123,7 @@ interface TreeGridAxisUtilsObject {
     getNode: typeof Tree['getNode'];
 }
 
-interface TreeGridNode extends Highcharts.TreeNode {
+interface TreeGridNode extends TreeNode {
     data: PointOptions;
     pos: number;
     seriesIndex: number;
@@ -129,7 +134,7 @@ interface TreeGridObject {
     mapOfIdToNode: Record<string, TreeGridNode>;
     mapOfPosToGridNode: Record<string, GridNode>;
     collapsedNodes: Array<GridNode>;
-    tree: Highcharts.TreeNode;
+    tree: TreeNode;
 }
 
 /* *
@@ -221,9 +226,9 @@ function getTreeGridFromData(
         posIterator = -1;
 
     // Build the tree from the series data.
-    const treeParams: Highcharts.TreeGetOptionsObject = {
+    const treeParams: TreeGetOptionsObject = {
         // After the children has been created.
-        after: function (node: Highcharts.TreeNode): void {
+        after: function (node: TreeNode): void {
             const gridNode = mapOfPosToGridNode[(node as TreeGridNode).pos];
 
             let height = 0,
@@ -240,7 +245,7 @@ function getTreeGridFromData(
             }
         },
         // Before the children has been created.
-        before: function (node: Highcharts.TreeNode): void {
+        before: function (node: TreeNode): void {
             const data = isObject(node.data, true) ?
                     (node as TreeGridNode).data :
                     {},
@@ -609,7 +614,8 @@ function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
     chart: Chart,
-    userOptions: TreeGridAxisOptions
+    userOptions: TreeGridAxisOptions,
+    coll: AxisCollectionKey
 ): void {
     const axis = this,
         isTreeGrid = userOptions.type === 'treegrid';
@@ -772,9 +778,9 @@ function wrapInit(
         });
     }
 
-    // Now apply the original function with the original arguments,
-    // which are sliced off this function's arguments
-    proceed.apply(axis, [chart, userOptions]);
+    // Now apply the original function with the original arguments, which are
+    // sliced off this function's arguments
+    proceed.apply(axis, [chart, userOptions, coll]);
 
     if (isTreeGrid) {
         axis.hasNames = true;
@@ -900,7 +906,7 @@ class TreeGridAxisAdditions {
     public axis: TreeGridAxisComposition;
     public mapOfPosToGridNode?: Record<string, GridNode>;
     public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
-    public tree?: Highcharts.TreeNode;
+    public tree?: TreeNode;
     public collapsedNodes?: GridNode[];
 
     /* *

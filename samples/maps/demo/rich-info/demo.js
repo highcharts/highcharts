@@ -24,7 +24,7 @@
 
     // Parse the CSV into arrays, one array each country
     csvArr.slice(3).forEach(function (line) {
-        var row = CSVtoArray(line),
+        const row = CSVtoArray(line),
             data = row.slice(4);
 
         data.forEach(function (val, i) {
@@ -162,7 +162,8 @@
     const mapChart = Highcharts.mapChart('container', {
 
         chart: {
-            map: topology
+            map: topology,
+            spacing: 1
         },
 
         title: {

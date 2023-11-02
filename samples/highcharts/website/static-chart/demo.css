@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 body {
     margin: 0;
@@ -19,7 +19,7 @@ body {
 }
 
 .chart-container .transparent {
-    opacity: 100%;
+    opacity: 1;
     stroke-width: 1;
     stroke: white;
     color: white;
@@ -71,11 +71,11 @@ body {
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
@@ -203,7 +203,7 @@ body {
 }
 
 #charts .highcharts-grid.fade-out {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1500ms;
 }
 
@@ -395,7 +395,7 @@ body {
 #charts .berg-depth {
     stroke: #201735;
     fill: #201735;
-    opacity: 100%;
+    opacity: 1;
     stroke-dasharray: 2px;
     transition: opacity 1s;
     stroke-width: 1px;
@@ -406,7 +406,7 @@ body {
 }
 
 #charts .berg-label {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
@@ -420,7 +420,7 @@ body {
 #charts .berg-depth-14,
 #charts .berg-depth-16.highcharts-series-hover,
 #charts .berg-depth-18 {
-    opacity: 100%;
+    opacity: 1;
     stroke-dasharray: 0;
     stroke-width: 1px;
     cursor: pointer;
@@ -485,7 +485,7 @@ body {
 
 #charts .highcharts-plot-line {
     stroke: #f0f0f0;
-    opacity: 100%;
+    opacity: 1;
     transition: all 2s;
 }
 
@@ -523,7 +523,7 @@ body {
     fill: #000;
     font-size: 0.5em;
     width: 100%;
-    opacity: 100%;
+    opacity: 1;
     text-transform: uppercase;
     transform: translateY(0);
 }
@@ -532,7 +532,7 @@ body {
     font-size: 1em;
     transform: translateY(20px);
     font-weight: 700;
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
@@ -547,11 +547,11 @@ body {
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle.show {
-    opacity: 100% !important;
+    opacity: 1 !important;
 }
 
 #charts .label-title {
@@ -612,7 +612,7 @@ body {
         font-size: 1.4em;
         transform: translateY(20px);
         font-weight: 700;
-        opacity: 0%;
+        opacity: 0;
         transition: opacity 1s;
     }
 
@@ -631,7 +631,7 @@ body {
         width: 300px;
         white-space: normal;
         font-size: 1.1em;
-        opacity: 0%;
+        opacity: 0;
     }
 
     #charts .label-title {

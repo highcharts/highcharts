@@ -1,5 +1,5 @@
 (function (H) {
-    var addEvent = H.addEvent,
+    const addEvent = H.addEvent,
         Chart = H.Chart,
         each = H.each,
         seriesTypes = H.seriesTypes,
@@ -16,10 +16,10 @@
     }
 
     Chart.prototype.presentNext = function presentNext() {
-        var point;
-        for (var sI = 0; sI < this.series.length && !point; sI++) {
+        let point;
+        for (let sI = 0; sI < this.series.length && !point; sI++) {
             for (
-                var pI = 0;
+                let pI = 0;
                 pI < this.series[sI].points.length && !point;
                 pI++
             ) {
@@ -41,7 +41,7 @@
 
 
     Chart.prototype.callbacks.push(function (chart) {
-        var total = 0;
+        let total = 0;
         each(chart.series, function (series) {
             if (series.initPuzzle) {
                 total += series.initPuzzle();
@@ -89,8 +89,8 @@
         }
 
         function pointerDown(e) {
-            var point = e.target.point,
-                graphic;
+            const point = e.target.point;
+            let   graphic;
 
             if (point) {
                 graphic = point.graphic;
@@ -110,9 +110,10 @@
         }
 
         function pointerMove(e) {
-            var point = chart.dragPoint,
-                dragStart = point && point.inPuzzle && point.dragStart,
-                startTranslateX,
+            const point = chart.dragPoint,
+                dragStart = point && point.inPuzzle && point.dragStart;
+
+            let startTranslateX,
                 startTranslateY,
                 translateX,
                 translateY,
@@ -172,12 +173,12 @@
     });
 
     seriesTypes.map.prototype.initPuzzle = function () {
-        var total = 0;
+        let total = 0;
 
         if (this.options.puzzle) {
 
             each(this.points, function (point) {
-                var bBox = point.graphic.getBBox(),
+                const bBox = point.graphic.getBBox(),
                     scale = Math.min(100 / bBox.width, 100 / bBox.height);
 
                 // Small items are hard to place
@@ -206,12 +207,12 @@
 
 }(Highcharts));
 
-var n,
-    mapData,
-    data = [],
+let mapData;
+
+const data = [],
     maps = Highcharts.maps;
 
-for (n in maps) {
+for (const n in maps) {
     if (Object.hasOwnProperty.call(maps, n)) {
         mapData = maps[n];
         break;

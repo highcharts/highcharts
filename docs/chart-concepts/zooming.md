@@ -1,7 +1,7 @@
 Zooming
 =======
 
-### Highcharts Basic
+### Highcharts Core
 
 Zooming in Highcharts can be enabled on the X axes or Y axes separately. The
 [chart.zooming.type](https://api.highcharts.com/highcharts/chart.zooming.type)
@@ -28,6 +28,10 @@ and
 [endOnTick](https://api.highcharts.com/highcharts/yAxis.endOnTick)
 are set to `false`.
 
+Since v11.1, mouse wheel zooming is available through the [zooming.mouseWheel](https://api.highcharts.com/highcharts/chart.zooming.mouseWheel) option set. It requires a [separate module
+file](https://code.highcharts.com/modules/mouse-wheel-zoom.js) for Highcharts Core,
+but is bundled in Highcharts Stock.
+
 ### Highcharts Stock
 
 In Highcharts Stock, we also have the Navigator, Range Selector, and Scrollbar to ease
@@ -37,3 +41,6 @@ that moving the zoomed area is easier. 
 On touch devices, both zooming and panning are enabled through the
 [chart.zooming.pinchType](https://api.highcharts.com/highstock/chart.zooming.pinchType)
 option, which defaults to `"x"`.
+
+[Mouse wheel zooming](https://api.highcharts.com/highcharts/chart.zooming.mouseWheel)
+is enabled in Highcharts Stock by default since v11.1.

@@ -139,6 +139,7 @@ class AST {
         'dy',
         'disabled',
         'fill',
+        'filterUnits',
         'flood-color',
         'flood-opacity',
         'height',

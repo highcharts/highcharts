@@ -38,6 +38,26 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/KDPointSearchObjectLike' {
+    interface KDPointSearchObjectLike {
+        lat?: number;
+        lon?: number;
+    }
+}
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        lat?: number;
+        lon?: number;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -49,6 +69,10 @@ class GeoHeatmapPoint extends MapPoint {
      *  Properties
      *
      * */
+
+    public lat: number = void 0 as any;
+
+    public lon: number = void 0 as any;
 
     public options: GeoHeatmapPointOptions = void 0 as any;
 

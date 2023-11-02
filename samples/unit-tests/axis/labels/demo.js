@@ -1590,7 +1590,7 @@ QUnit.test('Labels text height (#3891)', function (assert) {
 // Highcharts 3.0.10, Issue #2806
 // Unable to see all labels on the bar charts
 QUnit.test('Column pointrange (#2806)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -1649,6 +1649,70 @@ QUnit.test('Column pointrange (#2806)', function (assert) {
         chart.xAxis[0].labelGroup.element.childNodes.length,
         4,
         'There should be 4 labels on the xAxis.'
+    );
+
+    chart.update({
+        xAxis: {
+            categories: void 0
+        },
+        plotOptions: {
+            column: {
+                stacking: false
+            }
+        }
+    }, false);
+
+    chart.series[1].remove(false);
+    chart.series[0].remove(false);
+
+    chart.addSeries({
+        data: [{
+            x: 0,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 1,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 2,
+            y: 1
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        1,
+        `pointRange should be calculated properly for multiple series with
+        single points(#17791).`
+    );
+
+    chart.xAxis[0].update({
+        type: 'datetime'
+    }, false);
+
+    chart.series[0].setData([{
+        x: 1640995200000,
+        y: 1
+    }], false);
+    chart.series[1].setData([{
+        x: 1672531200000,
+        y: 1
+    }], false);
+    chart.series[2].setData([{
+        x: 1704067200000,
+        y: 1
+    }]);
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        31536000000,
+        `pointRange should be calculated properly for multiple series with
+        single datetime points(#17791).`
     );
 });
 

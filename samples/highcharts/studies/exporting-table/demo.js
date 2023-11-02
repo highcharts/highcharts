@@ -4,7 +4,7 @@
 Highcharts.drawTable = function () {
 
     // user options
-    var tableTop = 310,
+    const tableTop = 310,
         colWidth = 100,
         tableLeft = 20,
         rowHeight = 20,
@@ -13,10 +13,10 @@ Highcharts.drawTable = function () {
         valueSuffix = ' °C';
 
     // internal variables
-    var chart = this,
+    const chart = this,
         series = chart.series,
-        renderer = chart.renderer,
-        cellLeft = tableLeft;
+        renderer = chart.renderer;
+    let cellLeft = tableLeft;
 
     // draw category labels
     chart.xAxis[0].categories.forEach(function (name, i) {

@@ -1,4 +1,4 @@
-var Instrument = Highcharts.sonification.SonificationInstrument;
+const Instrument = Highcharts.sonification.SonificationInstrument;
 
 document.getElementById('play').onclick = function () {
     const ctx = new AudioContext();

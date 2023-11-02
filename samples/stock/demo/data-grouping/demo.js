@@ -1,7 +1,12 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json'
+    ).then(response => response.json());
 
     // Create a timer
-    var start = +new Date();
+    const start = +new Date();
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -75,4 +80,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
 
     });
-});
+
+})();

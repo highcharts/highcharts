@@ -174,7 +174,8 @@ function getAnnotationListItems(chart: AnnotationChart): string[] {
     return labels.map((label): string => {
         const desc = escapeStringForHTML(
             stripHTMLTagsFromString(
-                getAnnotationLabelDescription(label)
+                getAnnotationLabelDescription(label),
+                chart.renderer.forExport
             )
         );
         return desc ? `<li>${desc}</li>` : '';

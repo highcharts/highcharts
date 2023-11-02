@@ -253,7 +253,7 @@ namespace AxisDefaults {
          * @type      {number}
          * @sample    highcharts/xaxis/crossing
          *            Function plot with axes crossing at 0
-         * @since     next
+         * @since 11.0.1
          * @apioption xAxis.crossing
          */
 
@@ -474,6 +474,9 @@ namespace AxisDefaults {
 
         /**
          * The Z index for the axis group.
+         *
+         * @see [axis.gridZIndex](#xAxis.gridZIndex)
+         * @see [axis.labels.zIndex](#xAxis.labels.zIndex)
          */
         zIndex: 2,
 
@@ -588,7 +591,10 @@ namespace AxisDefaults {
          *
          * @productdesc {highstock}
          * In Highcharts Stock, `endOnTick` is always `false` when the navigator
-         * is enabled, to prevent jumpy scrolling.
+         * is enabled, to prevent jumpy scrolling. With disabled navigator
+         * enabling `endOnTick` may lead to extending the xAxis to show the last
+         * tick, therefore range selector buttons may not have an active state
+         * if the axis gets extended.
          *
          * @sample {highcharts} highcharts/yaxis/endontick/
          *         True by default
@@ -669,6 +675,15 @@ namespace AxisDefaults {
          */
 
         /**
+         * An event fired when a point is outside a break after zoom.
+         *
+         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
+         * @product   highcharts highstock gantt
+         * @context   Highcharts.Axis
+         * @apioption xAxis.events.pointBreakOut
+         */
+
+        /**
          * Fires when the minimum and maximum is set for the axis, either by
          * calling the `.setExtremes()` method or by selecting an area in the
          * chart. One parameter, `event`, is passed to the function,
@@ -726,6 +741,9 @@ namespace AxisDefaults {
          *         A Z index of 4 renders the grid above the graph
          *
          * @product   highcharts highstock gantt
+         *
+         * @see [axis.zIndex](#xAxis.zIndex)
+         * @see [axis.labels.zIndex](#xAxis.labels.zIndex)
          */
         gridZIndex: 1,
 
@@ -772,21 +790,20 @@ namespace AxisDefaults {
              * @sample {highcharts} highcharts/xaxis/labels-reservespace-true/
              *         Left-aligned labels on a vertical category axis
              *
-             * @type       {Highcharts.AlignValue}
-             * @apioption  xAxis.labels.align
+             * @type      {Highcharts.AlignValue}
+             * @apioption xAxis.labels.align
              */
 
             /**
-             * Whether to allow the axis labels to overlap.
-             * When false, overlapping labels are hidden.
+             * Whether to allow the axis labels to overlap. When false,
+             * overlapping labels are hidden.
              *
              * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
              *         X axis labels overlap enabled
              *
-             * @type {boolean}
-             * @default false
+             * @type      {boolean}
+             * @default   false
              * @apioption xAxis.labels.allowOverlap
-             *
              */
 
             /**
@@ -831,10 +848,6 @@ namespace AxisDefaults {
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
              * is set.
-             *
-             * * On polar charts, if it's a percentage string, it is interpreted
-             * the same as [series.radius](#plotOptions.gauge.radius), so the
-             * label can be aligned under the gauge's shape.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
@@ -1051,6 +1064,9 @@ namespace AxisDefaults {
 
             /**
              * The Z index for the axis labels.
+             *
+             * @see [axis.zIndex](#xAxis.zIndex)
+             * @see [axis.gridZIndex](#xAxis.gridZIndex)
              */
             zIndex: 7,
 
@@ -1223,8 +1239,7 @@ namespace AxisDefaults {
         /**
          * Specific tick interval in axis units for the minor ticks. On a linear
          * axis, if `"auto"`, the minor tick interval is calculated as a fifth
-         * of the tickInterval. If `null` or `undefined`, minor ticks are not
-         * shown.
+         * of the tickInterval. If `undefined`, minor ticks are not shown.
          *
          * On logarithmic axes, the unit is the power of the value. For example,
          * setting the minorTickInterval to 1 puts one tick on each of 0.1, 1,
@@ -1235,19 +1250,15 @@ namespace AxisDefaults {
          * make sense, and will be ignored to prevent performance problems.
          *
          * @sample {highcharts} highcharts/yaxis/minortickinterval-null/
-         *         Null by default
-         * @sample {highcharts} highcharts/yaxis/minortickinterval-5/
-         *         5 units
+         *         Undefined by default
+         * @sample {highcharts} highcharts/yaxis/minortickinterval-5/ 5 units
          * @sample {highcharts} highcharts/yaxis/minortickinterval-log-auto/
          *         "auto"
-         * @sample {highcharts} highcharts/yaxis/minortickinterval-log/
-         *         0.1
-         * @sample {highstock} stock/demo/basic-line/
-         *         Null by default
-         * @sample {highstock} stock/xaxis/minortickinterval-auto/
-         *         "auto"
+         * @sample {highcharts} highcharts/yaxis/minortickinterval-log/ 0.1
+         * @sample {highstock} stock/demo/basic-line/ Null by default
+         * @sample {highstock} stock/xaxis/minortickinterval-auto/ "auto"
          *
-         * @type      {number|string|null}
+         * @type      {number|'auto'}
          * @apioption xAxis.minorTickInterval
          */
 
@@ -2527,6 +2538,24 @@ namespace AxisDefaults {
          * @extends xAxis.labels
          */
         labels: {
+
+            /**
+             * The label's pixel distance from the perimeter of the plot area.
+             * On cartesian charts, this is overridden if the `labels.y` setting
+             * is set.
+             *
+             * On polar charts, if it's a percentage string, it is interpreted
+             * the same as [series.radius](#plotOptions.gauge.radius), so the
+             * label can be aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Polar chart, labels centered under the arc
+             *
+             * @type      {number|string}
+             * @product   highcharts
+             * @apioption yAxis.labels.distance
+             */
+
             /**
              * The y position offset of all labels relative to the tick
              * positions on the axis. For polar and radial axis consider the use

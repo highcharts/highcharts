@@ -13,7 +13,7 @@ const getByClass = function (className) {
 const getEl = function (id) {
     return document.getElementById(id);
 };
-var nextMouseOver = null;
+let nextMouseOver = null;
 
 const chart = Highcharts.chart('container', {
     lang: {
@@ -83,9 +83,9 @@ const chart = Highcharts.chart('container', {
                             e.classList.remove('over');
                         });
 
-                        var mq = window.matchMedia('(max-width: 480px)');
-                        var caption = getEl('dyncaption');
-                        var label = getEl(category);
+                        const mq = window.matchMedia('(max-width: 480px)');
+                        const caption = getEl('dyncaption');
+                        const label = getEl(category);
                         if (mq.matches) {
                             caption.className = 'visible content-' + category;
                             getEl('caption-content').innerHTML = label.innerHTML;

@@ -14,6 +14,17 @@ If needed, boost can be disabled on a chart-by-chart basis by setting [boost.ena
 
 **Note**: Boost should be the last module included. This is because it overrides both standard Highcharts functionality, and functionality in certain modules (namely treemap, heatmap, bubble, and scatter).
 
+### With ES modules
+```js
+import Highcharts from "highcharts";
+import HighchartsBoost from "highcharts/modules/boost";
+// Import order is important !
+HighchartsBoost(Highcharts);
+
+// Then you can use your Highcharts as usual
+
+```
+
 Configuration Options
 ---------------------
 

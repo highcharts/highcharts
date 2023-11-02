@@ -30,7 +30,6 @@ const {
     win,
     doc
 } = H;
-import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -70,9 +69,9 @@ function compose(
     const wglMode = hasWebGLSupport();
 
     if (!wglMode) {
-        if (typeof initCanvasBoost !== 'undefined') {
+        if (typeof (H as AnyRecord).initCanvasBoost !== 'undefined') {
             // Fallback to canvas boost
-            initCanvasBoost();
+            (H as AnyRecord).initCanvasBoost();
         } else {
             error(26);
         }
@@ -92,8 +91,14 @@ function compose(
 }
 
 /**
- * Returns true if the current browser supports webgl
- * @private
+ * Returns true if the current browser supports WebGL.
+ *
+ * @requires module:modules/boost
+ *
+ * @function Highcharts.hasWebGLSupport
+ *
+ * @return {boolean}
+ * `true` if the browser supports WebGL.
  */
 function hasWebGLSupport(): boolean {
     let canvas,

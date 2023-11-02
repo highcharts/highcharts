@@ -42,6 +42,8 @@ declare module '../../Core/Options'{
     }
 }
 
+export type AxisCollectionKey = ('colorAxis'|'xAxis'|'yAxis'|'zAxis');
+
 export interface AxisCrosshairLabelOptions {
     align?: AlignValue;
     backgroundColor?: ColorType;
@@ -118,7 +120,7 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    categories?: Array<string>;
+    categories?: Array<string>|true;
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
@@ -132,7 +134,6 @@ export interface AxisOptions {
     gridZIndex: number;
     height?: (number|string);
     id?: string;
-    isX?: boolean;
     labels: AxisLabelOptions;
     left?: (number|string);
     lineColor: ColorType;
@@ -148,7 +149,7 @@ export interface AxisOptions {
     minorGridLineDashStyle: DashStyleValue;
     minorGridLineWidth: number;
     minorTickColor: ColorType;
-    minorTickInterval?: ('auto'|null|number);
+    minorTickInterval?: ('auto'|number);
     minorTickLength: number;
     minorTickPosition: AxisTickPositionValue;
     minorTicks?: boolean;

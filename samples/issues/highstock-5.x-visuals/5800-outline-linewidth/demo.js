@@ -1,5 +1,9 @@
-$(function () {
-    $('#container').highcharts('StockChart', {
+(async () => {
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
+
+    Highcharts.stockChart('container', {
         navigator: {
             outlineColor: 'blue',
             outlineWidth: 9
@@ -12,4 +16,4 @@ $(function () {
             data: usdeur
         }]
     });
-});
+})();

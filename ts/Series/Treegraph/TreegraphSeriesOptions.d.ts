@@ -73,6 +73,7 @@ export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
     collapseButton: CollapseButtonOptions;
+    fillSpace: boolean;
     link: TreegraphLinkOptions;
     reversed?: boolean;
     marker: PointMarkerOptions;

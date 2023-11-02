@@ -7,14 +7,7 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var ix = point.index + 1,
-                    category = point.yCategory,
-                    from = new Date(point.x),
-                    to = new Date(point.x2);
-                return ix + '. ' + category + ', ' + from.toDateString() +
-                    ' to ' + to.toDateString() + '.';
-            }
+            descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} to {x2:%A %e %B %Y}.'
         }
     },
     xAxis: {

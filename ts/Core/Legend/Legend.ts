@@ -36,7 +36,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
@@ -235,7 +235,6 @@ class Legend {
      * Legend options.
      */
     public init(chart: Chart, options: LegendOptions): void {
-
         /**
          * Chart of this legend.
          *
@@ -248,28 +247,23 @@ class Legend {
         this.setOptions(options);
 
         if (options.enabled) {
-
             // Render it
             this.render();
 
-            // move checkboxes
+            // Move checkboxes
             addEvent(this.chart, 'endResize', function (): void {
                 this.legend.positionCheckboxes();
             });
-
-            // On Legend.init and Legend.update, make sure that proximate layout
-            // events are either added or removed (#18362).
-            addEvent(
-                this.chart,
-                'render',
-                (): void => {
-                    if (this.proximate) {
-                        this.proximatePositions();
-                        this.positionItems();
-                    }
-                }
-            );
         }
+
+        // On Legend.init and Legend.update, make sure that proximate layout
+        // events are either added or removed (#18362).
+        addEvent(this.chart, 'render', (): void => {
+            if (this.options.enabled && this.proximate) {
+                this.proximatePositions();
+                this.positionItems();
+            }
+        });
     }
 
     /**
@@ -339,7 +333,7 @@ class Legend {
             chart.redraw();
         }
 
-        fireEvent(this, 'afterUpdate');
+        fireEvent(this, 'afterUpdate', { redraw });
     }
 
     /**
@@ -368,27 +362,17 @@ class Legend {
         }
 
         if (!this.chart.styledMode) {
-            const legend = this,
-                options = legend.options,
-                hiddenColor = (legend.itemHiddenStyle as any).color,
-                textColor = visible ?
-                    options.itemStyle.color :
-                    hiddenColor,
+            const { itemHiddenStyle } = this,
+                hiddenColor = (itemHiddenStyle as any).color,
                 symbolColor = visible ?
                     (item.color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (label) {
-                label.css({
-                    fill: textColor
-                });
-            }
+            label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
 
-            if (line) {
-                line.attr({ stroke: symbolColor });
-            }
+            line?.attr({ stroke: symbolColor });
 
             if (symbol) {
 
@@ -670,9 +654,11 @@ class Legend {
                 (item as any).series :
                 item,
             seriesOptions = series.options,
-            showCheckbox = (legend.createCheckboxForItem) &&
+            showCheckbox = (
+                !!legend.createCheckboxForItem &&
                 seriesOptions &&
-                seriesOptions.showCheckbox,
+                seriesOptions.showCheckbox
+            ),
             useHTML = options.useHTML,
             itemClassName = item.options.className;
 

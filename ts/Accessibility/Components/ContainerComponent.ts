@@ -170,7 +170,13 @@ class ContainerComponent extends AccessibilityComponent {
                 credits.element.setAttribute(
                     'aria-label', chart.langFormat(
                         'accessibility.credits',
-                        { creditsStr: stripHTMLTags(credits.textStr) }
+                        {
+                            creditsStr:
+                                stripHTMLTags(
+                                    credits.textStr,
+                                    chart.renderer.forExport
+                                )
+                        }
                     )
                 );
             }

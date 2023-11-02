@@ -16,22 +16,26 @@ require('highcharts/modules/exporting')(Highcharts);
 Highcharts.chart('container', { /*Highcharts options*/ });
 ```
 
-For other ways to load Highcharts (ECMAScript modules etc.) please see [the README](https://github.com/highcharts/highcharts#load-highcharts-from-the-cdn-as-ecmascript-modules).
+For other ways to load Highcharts (for example using ECMAScript modules) please see [installation](https://highcharts.com/docs/getting-started/installation).
 
-Load Highcharts Stock or Highcharts Maps
---------------------------
+Load Highcharts Stock, Maps, or Gantt
+-------------------------------------
 
-Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. To load the full suite in one page, load Highcharts Maps as a module.
+Highcharts is already included in Highcharts Stock, Maps, and Gantt, so it is not necessary to load both. These products are all included in the npm package. The bundles are available as `highcharts/highstock`, `highcharts/highmaps`, and `highcharts/highcharts-gantt`.
+
+These Stock, Maps, and Gantt bundles can't run in the same page along with each other or with `highcharts`. If Stock, Maps, or Gantt are required in the same page as each other or with basic Highcharts, they can be loaded as modules:
 
 ```js
+// Highstock bundle includes Stock and basic Highcharts
 var Highcharts = require('highcharts/highstock');  
-// Load Highcharts Maps as a module
+// Load Highcharts Maps as a module to get both Maps and Stock
 require('highcharts/modules/map')(Highcharts);
 ```
 
-Alternatively when only map functionality is needed, and not stock.
+Alternatively when only Maps functionality is needed, and not Stock:
 
 ```js
+// Highmaps bundle still includes basic Highcharts, but not Stock
 var Highcharts = require('highcharts/highmaps');
 ```
 

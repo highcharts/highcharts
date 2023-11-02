@@ -10019,9 +10019,7 @@ Highcharts.chart('container', {
         showInLegend: false
     }],
     tooltip: {
-        formatter: function () {
-            return this.point.name + ': ' + Highcharts.numberFormat(this.point.value, 2);
-        }
+        format: '{point.name}: {point.value:.2f}'
     },
     legend: {
         enabled: true

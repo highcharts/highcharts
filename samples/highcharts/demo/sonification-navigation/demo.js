@@ -96,7 +96,7 @@ document.getElementById('controls').onkeydown = function (e) {
     // We use a single SonificationSpeaker for the announcement, since it makes
     // it easy to avoid multiple announcements overlapping.
     function onSinglePointPlayed(e) {
-        var point = e.pointsPlayed && e.pointsPlayed[0];
+        const point = e.pointsPlayed && e.pointsPlayed[0];
         if (point) {
             speaker.sayAtTime(700, point.accessibility.valueDescription +
                 ' ' + point.series.name);

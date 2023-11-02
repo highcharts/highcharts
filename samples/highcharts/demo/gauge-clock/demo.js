@@ -5,18 +5,12 @@ const getNow = () => {
     const now = new Date();
 
     return {
+        date: now,
         hours: now.getHours() + now.getMinutes() / 60,
         minutes: now.getMinutes() * 12 / 60 + now.getSeconds() * 12 / 3600,
         seconds: now.getSeconds() * 12 / 60
     };
 };
-
-/**
- * Pad numbers
- */
-const pad = (number, length) =>
-    // Create an array of the remaining length + 1 and join it with 0's
-    new Array((length || 2) + 1 - String(number).length).join(0) + number;
 
 let now = getNow();
 
@@ -61,7 +55,10 @@ Highcharts.chart('container', {
 
     yAxis: {
         labels: {
-            distance: -20
+            distance: -23,
+            style: {
+                fontSize: '18px'
+            }
         },
         min: 0,
         max: 12,
@@ -69,14 +66,14 @@ Highcharts.chart('container', {
         showFirstLabel: false,
 
         minorTickInterval: 'auto',
-        minorTickWidth: 1,
+        minorTickWidth: 3,
         minorTickLength: 5,
         minorTickPosition: 'inside',
         minorGridLineWidth: 0,
         minorTickColor: '#666',
 
         tickInterval: 1,
-        tickWidth: 2,
+        tickWidth: 4,
         tickPosition: 'inside',
         tickLength: 10,
         tickColor: '#666',
@@ -85,7 +82,7 @@ Highcharts.chart('container', {
             style: {
                 color: '#BBB',
                 fontWeight: 'normal',
-                fontSize: '8px',
+                fontSize: '10px',
                 lineHeight: '10px'
             },
             y: 10
@@ -93,9 +90,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return this.series.chart.tooltipText;
-        }
+        format: '{series.chart.tooltipText}'
     },
 
     series: [{
@@ -143,11 +138,7 @@ function (chart) {
                 second = chart.get('second');
 
             // Cache the tooltip text
-            chart.tooltipText =
-                pad(Math.floor(now.hours), 2) + ':' +
-                pad(Math.floor(now.minutes * 5), 2) + ':' +
-                pad(now.seconds * 5, 2);
-
+            chart.tooltipText = Highcharts.dateFormat('%H:%M:%S', now.date);
 
             hour.update(now.hours, true, false);
             minute.update(now.minutes, true, false);

@@ -2,19 +2,21 @@
  * Create a global getSVG method that takes an array of charts as an argument. The SVG is returned as an argument in the callback.
  */
 Highcharts.getSVG = function (charts, options, callback) {
-    var svgArr = [],
-        top = 0,
-        width = 0,
+    let top = 0,
+        width = 0;
+
+    const svgArr = [],
         addSVG = function (svgres) {
             // Grab width/height from exported chart
-            var svgWidth = +svgres.match(
+            const svgWidth = +svgres.match(
                     /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
                 )[1],
                 svgHeight = +svgres.match(
                     /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
-                )[1],
-                // Offset the position of this chart in the final SVG
-                svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+                )[1];
+
+            // Offset the position of this chart in the final SVG
+            let svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
             svg = svg.replace('</svg>', '</g>');
             top += svgHeight;
             width = Math.max(width, svgWidth);
@@ -58,7 +60,7 @@ Highcharts.setOptions({
 });
 
 // Create the charts
-var chart1 = Highcharts.chart('container1', {
+const chart1 = Highcharts.chart('container1', {
 
     chart: {
         height: 200,
@@ -86,7 +88,7 @@ var chart1 = Highcharts.chart('container1', {
     }
 
 });
-var chart2 = Highcharts.chart('container2', {
+const chart2 = Highcharts.chart('container2', {
 
     chart: {
         type: 'column',

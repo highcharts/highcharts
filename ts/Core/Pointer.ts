@@ -582,7 +582,7 @@ class Pointer {
         // (#877)
         if (chart && isNumber(chart.index)) {
             css(chart.container, { cursor: chart._cursor as any });
-            chart.cancelClick = this.hasDragged > 10; // #370
+            chart.cancelClick = +this.hasDragged > 10; // #370
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
         }
@@ -1169,6 +1169,8 @@ class Pointer {
 
         e = this.normalize(e);
 
+        this.onContainerMouseMove(e);
+
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
@@ -1200,7 +1202,7 @@ class Pointer {
             tooltip = chart.tooltip,
             pEvt = this.normalize(e);
 
-        this.setHoverChartIndex();
+        this.setHoverChartIndex(e);
 
         if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
@@ -1598,7 +1600,8 @@ class Pointer {
 
         selectionMarker[wh] = selectionWH;
         selectionMarker[xy] = selectionXY;
-        transform[scaleKey] = scale;
+        // Invert scale if needed (#19217)
+        transform[scaleKey] = scale * (inverted && !horiz ? -1 : 1);
         transform['translate' + XY] = (transformScale * plotLeftTop) +
             (touch0Now - (transformScale * touch0Start));
     }
@@ -1902,7 +1905,8 @@ class Pointer {
 
         // Scale each series
         chart.series.forEach(function (series): void {
-            const seriesAttribs = attribs || series.getPlotBox(); // #1701
+            const seriesAttribs =
+                attribs || series.getPlotBox('series'); // #1701 and #19217
             if (
                 series.group &&
                 (
@@ -1912,7 +1916,10 @@ class Pointer {
             ) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
-                    series.markerGroup.attr(seriesAttribs);
+                    series.markerGroup.attr(
+                        // #20018
+                        attribs || series.getPlotBox('marker')
+                    );
                     series.markerGroup.clip(
                         clip ? (chart.clipRect as any) : (null as any)
                     );
@@ -2001,7 +2008,7 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#setHoverChartIndex
      */
-    public setHoverChartIndex(): void {
+    public setHoverChartIndex(e?: MouseEvent): void {
         const chart = this.chart;
         const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
 
@@ -2010,7 +2017,7 @@ class Pointer {
             hoverChart !== chart
         ) {
             hoverChart.pointer.onContainerMouseLeave(
-                { relatedTarget: chart.container } as any
+                e || { relatedTarget: chart.container } as any
             );
         }
 
@@ -2090,7 +2097,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            this.chart.options.chart.zooming.singleTouch &&
+            this.chart.zooming.singleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2107,13 +2114,13 @@ class Pointer {
             options = chart.options.chart,
             inverted = chart.inverted;
 
-        let zoomType = options.zooming.type || '',
+        let zoomType = chart.zooming.type || '',
             zoomX,
             zoomY;
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(options.zooming.pinchType, zoomType);
+            zoomType = pick(chart.zooming.pinchType, zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);

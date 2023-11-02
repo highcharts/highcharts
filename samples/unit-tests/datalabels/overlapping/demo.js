@@ -131,10 +131,10 @@ QUnit.test(
         Highcharts.fireEvent(chart.legend.allItems[1].legendItem.group.element, 'click');
         chart.xAxis[0].setExtremes(0.5);
 
-        assert.strictEqual(
-            chart.series[0].points[3].dataLabel.visibility,
-            'hidden',
-            'The dataLabel after zoom is hidden (#7815).'
+        assert.ok(
+            !chart.series[0].points[3].dataLabel ||
+                chart.series[0].points[3].dataLabel.visibility === 'hidden',
+            'The dataLabel should be hidden after zoom (#7815).'
         );
     }
 );

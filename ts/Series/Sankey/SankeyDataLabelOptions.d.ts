@@ -20,6 +20,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type SankeyPoint from './SankeyPoint';
 import type { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
+
 /* *
  *
  *  Declarations
@@ -44,5 +45,11 @@ export interface SankeyDataLabelOptions extends DataLabelOptions {
     nodeFormatter?: SankeyDataLabelFormatterCallback;
     linkTextPath?: DataLabelTextPathOptions;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SankeyDataLabelOptions;

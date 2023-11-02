@@ -425,7 +425,11 @@ QUnit.test('Scrollbar without navigator (#5709).', function (assert) {
     );
 });
 
-QUnit.test('Missing points using navigator (#5699)', function (assert) {
+QUnit.test('Missing points using navigator (#5699, #17212)', function (assert) {
+    const data = new Array(3000).fill(1).map((item, i) => [
+        Date.UTC(2010, 0, 1) + i * 24 * 36e5,
+        Math.random()
+    ]);
     var container = $('#container'),
         chart = container
             .highcharts('StockChart', {
@@ -441,9 +445,14 @@ QUnit.test('Missing points using navigator (#5699)', function (assert) {
 
     chart.addSeries({
         type: 'column',
-        name: 'USD to EUR',
-        data: usdeur
+        data
     });
+
+    assert.strictEqual(
+        chart.series[0].processedXData[0],
+        chart.series[1].processedXData[0],
+        'Navigator by default should start at the parent series starting point, #17212.'
+    );
 
     navigator.handlesMousedown(
         {

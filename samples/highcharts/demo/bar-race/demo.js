@@ -52,7 +52,11 @@ let dataset, chart;
                 (point.dataLabels || []).forEach(
                     label =>
                         (label.attr = function (hash) {
-                            if (hash && hash.text !== undefined) {
+                            if (
+                                hash &&
+                                hash.text !== undefined &&
+                                chart.isResizing === 0
+                            ) {
                                 const text = hash.text;
 
                                 delete hash.text;
@@ -125,7 +129,7 @@ function getSubtitle() {
             floating: true,
             align: 'right',
             verticalAlign: 'middle',
-            y: -20,
+            y: -80,
             x: -100
         },
 

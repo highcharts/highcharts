@@ -32,7 +32,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * A pie chart is a circular graphic which is divided into slices to
  * illustrate numerical proportion.
  *
- * @sample highcharts/demo/pie-basic/
+ * @sample highcharts/demo/pie-chart/
  *         Pie chart
  *
  * @extends      plotOptions.line
@@ -196,8 +196,6 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @product   highcharts highmaps
          * @apioption plotOptions.pie.dataLabels.alignTo
          */
-
-        allowOverlap: true,
 
         /**
          * The color of the line connecting the data label to the pie slice.
@@ -435,8 +433,8 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
     ignoreHiddenPoint: true,
 
     /**
-     * @ignore-option
-     *
+     * @default   true
+     * @extends   plotOptions.series.inactiveOtherPoints
      * @private
      */
     inactiveOtherPoints: true,

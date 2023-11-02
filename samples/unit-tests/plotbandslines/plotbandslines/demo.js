@@ -1,4 +1,4 @@
-QUnit.test('Plot band labels outside plot area (#3983)', function (assert) {
+QUnit.test('Plot band labels', function (assert) {
     var chart,
         options = {
             chart: {
@@ -31,6 +31,27 @@ QUnit.test('Plot band labels outside plot area (#3983)', function (assert) {
                         }
                     }
                 ]
+            },
+
+            yAxis: {
+                plotLines: [{
+                    value: 4,
+                    label: {
+                        text: 'Big text',
+                        useHTML: true,
+                        style: {
+                            fontSize: '2em'
+                        },
+                        align: 'right'
+                    }
+                }, {
+                    value: 5,
+                    label: {
+                        text: 'Small text',
+                        useHTML: true,
+                        align: 'right'
+                    }
+                }]
             },
 
             series: [
@@ -66,17 +87,28 @@ QUnit.test('Plot band labels outside plot area (#3983)', function (assert) {
     assert.equal(
         typeof chart.xAxis[0].plotLinesAndBands[0].label,
         'undefined',
-        'Highcharts - before'
+        'Label less than x axis should not be rendered'
     );
     assert.equal(
         typeof chart.xAxis[0].plotLinesAndBands[1].label,
         'object',
-        'Highcharts - within'
+        'Label within x axis should be rendered'
     );
     assert.equal(
         typeof chart.xAxis[0].plotLinesAndBands[2].label,
         'undefined',
-        'Highcharts - after'
+        'Label greater than x axis should not be rendered'
+    );
+
+    assert.close(
+        chart.yAxis[0].plotLinesAndBands[0].label.element
+            .getBoundingClientRect()
+            .right,
+        chart.yAxis[0].plotLinesAndBands[1].label.element
+            .getBoundingClientRect()
+            .right,
+        1,
+        'Font size should be considered when laying out label (#19488)'
     );
 });
 

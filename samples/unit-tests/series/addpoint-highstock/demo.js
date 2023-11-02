@@ -1,5 +1,8 @@
 QUnit.test('Add point without shift', function (assert) {
-    const usdeurCopy = usdeur.slice();
+    const usdeurCopy = new Array(3000).fill(1).map((item, i) => [
+        Date.UTC(2010, 0, 1) + i * 24 * 36e5,
+        Math.random()
+    ]);
     var chart = Highcharts.stockChart('container', {
             rangeSelector: {
                 selected: 1
@@ -74,7 +77,10 @@ QUnit.test('Add point without shift', function (assert) {
 });
 
 QUnit.test('Add point with shift', function (assert) {
-    const usdeurCopy = usdeur.slice();
+    const usdeurCopy = new Array(3000).fill(1).map((item, i) => [
+        Date.UTC(2010, 0, 1) + i * 24 * 36e5,
+        Math.random()
+    ]);
     var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 800

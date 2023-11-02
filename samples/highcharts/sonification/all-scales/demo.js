@@ -2,7 +2,7 @@
 // Each element refers to an offset in semitones
 Highcharts.sonification.Scales.custom = [0, 1, 5, 7, 8, 10, 11];
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Musical scales',
         align: 'left',
@@ -44,7 +44,7 @@ document.getElementById('sonify').onclick = function () {
 Object.keys(
     Highcharts.sonification.Scales
 ).forEach(function (preset) {
-    var option = document.createElement('option');
+    const option = document.createElement('option');
     option.textContent = option.value = preset;
     document.getElementById('preset').appendChild(option);
 });

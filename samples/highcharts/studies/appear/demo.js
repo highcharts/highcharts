@@ -10,12 +10,12 @@
  */
 (function (H) {
 
-    var pendingRenders = [];
+    const pendingRenders = [];
 
     // https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
     function isElementInViewport(el) {
 
-        var rect = el.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
 
         return (
             rect.top >= 0 &&
@@ -32,7 +32,7 @@
     }
 
     H.wrap(H.Series.prototype, 'render', function deferRender(proceed) {
-        var series = this,
+        const series = this,
             renderTo = this.chart.container.parentNode;
 
         // It is appeared, render it

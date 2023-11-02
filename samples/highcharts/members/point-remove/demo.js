@@ -9,7 +9,7 @@ const chart = Highcharts.chart('container', {
 
 // button handler
 document.getElementById('button').addEventListener('click', () => {
-    var series = chart.series[0];
+    const series = chart.series[0];
     if (series.data.length) {
         chart.series[0].data[0].remove();
     }

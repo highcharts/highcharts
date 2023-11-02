@@ -7,13 +7,13 @@
     }, {
         // Use the drawGraph function to draw relational paths between the nodes
         drawGraph: function () {
-            var series = this,
+            const series = this,
                 chart = this.chart,
                 relations = this.relations = this.relations || {};
             this.points.forEach(function (point) {
                 point.connections.forEach(function (connId) {
 
-                    var key = point.id + '-' + connId,
+                    const key = point.id + '-' + connId,
                         connPoint = chart.get(connId);
 
                     if (connPoint) {
@@ -44,10 +44,10 @@
     H.wrap(H.Chart.prototype, 'getContainer', function (proceed) {
         proceed.apply(this);
 
-        var chart = this,
+        const chart = this,
             renderer = chart.renderer,
-            defOptions = chart.options.defs || [],
-            i = defOptions.length,
+            defOptions = chart.options.defs || [];
+        let i = defOptions.length,
             def,
             marker;
 

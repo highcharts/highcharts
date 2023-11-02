@@ -73,10 +73,11 @@ class ArcDiagramSeries extends SankeySeries {
      * @product      highcharts
      * @requires     modules/arc-diagram
      * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
-     *               dataSorting, dragDrop, getExtremesFromAll, nodePadding,
-     *               centerInCategory, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, relativeXValue, softThreshold,
-     *               stack, stacking, step, xAxis, yAxis
+     *               dataSorting, dragDrop, getExtremesFromAll, nodeAlignment,
+     *               nodePadding, centerInCategory, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointStart,
+     *               relativeXValue, softThreshold, stack, stacking, step,
+     *               xAxis, yAxis
      * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {

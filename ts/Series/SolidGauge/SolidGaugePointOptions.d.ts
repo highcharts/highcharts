@@ -29,7 +29,7 @@ export interface SolidGaugePointOptions extends GaugePointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

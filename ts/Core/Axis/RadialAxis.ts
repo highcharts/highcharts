@@ -18,7 +18,8 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
-import type Pane from '../../Extensions/Pane';
+import type Pane from '../../Extensions/Pane/Pane';
+import type { PaneBackgroundShapeValue } from '../../Extensions/Pane/PaneOptions.js';
 import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
 import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
@@ -75,7 +76,7 @@ declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
-        shape?: Highcharts.PaneBackgroundShapeValue;
+        shape?: PaneBackgroundShapeValue;
         thickness?: (number|string);
     }
 }
@@ -165,8 +166,8 @@ namespace RadialAxis {
         setOptions(userOptions: DeepPartial<Options>): void;
     }
 
-    interface Options extends YAxisOptions {
-        // nothing to add yet
+    export interface Options extends YAxisOptions {
+        // Nothing to add yet
     }
 
     interface Path extends SVGPath {
@@ -1053,7 +1054,6 @@ namespace RadialAxis {
             isX = this.isXAxis,
             coll = this.coll,
             isHidden = angular && isX,
-            chartOptions = chart.options,
             paneIndex = e.userOptions.pane || 0,
             pane = this.pane = chart.pane && chart.pane[paneIndex] as any;
 

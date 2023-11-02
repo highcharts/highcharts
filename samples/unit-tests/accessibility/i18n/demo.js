@@ -151,6 +151,14 @@ QUnit.test('i18nFormat', function (assert) {
         'Array each combination'
     );
     assert.strictEqual(
+        Highcharts.i18nFormat(
+            'Parens: [{#each(arr, -1), }{arr[-1]}]. ' +
+            'Block handler: [{#each arr}{this}{#unless @last}, {/unless}{/each}].',
+            { arr: [0, 1, 2, 3, 4, 5] }),
+        'Parens: [0, 1, 2, 3, 4, 5]. Block handler: [0, 1, 2, 3, 4, 5].',
+        'Parenthesis-based #each function should live side by side with block handler syntax'
+    );
+    assert.strictEqual(
         Highcharts.i18nFormat('Items: {#plural(num, many, one)}.', { num: 1 }),
         'Items: one.',
         'Plural conditional 1'

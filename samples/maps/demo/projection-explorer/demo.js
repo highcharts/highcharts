@@ -107,7 +107,8 @@
 
             chart = Highcharts.mapChart('container', {
                 chart: {
-                    height: '65%'
+                    height: '65%',
+                    spacing: [10, 1, 10, 1]
                 },
 
                 title: {

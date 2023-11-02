@@ -15,7 +15,7 @@
  * */
 
 import type Color from './Color';
-import type ColorString from './ColorString';
+import type ColorType from './ColorType';
 
 /* *
  *
@@ -31,7 +31,7 @@ export interface GradientColor {
 
 export interface GradientColorStop {
     0: number;
-    1: ColorString;
+    1: ColorType;
     color?: Color;
 }
 

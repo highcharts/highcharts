@@ -65,12 +65,6 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
-        beforePadding?(): void;
-    }
-}
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         bubblePadding?: BubbleSeries['bubblePadding'];
@@ -102,28 +96,28 @@ const composedMembers: Array<unknown> = [];
  * Add logic to pad each axis with the amount of pixels necessary to avoid the
  * bubbles to overflow.
  */
-function axisBeforePadding(
+function onAxisFoundExtremes(
     this: Axis
 ): void {
+
     const axisLength = this.len,
-        chart = this.chart,
-        isXAxis = this.isXAxis,
+        { coll, isXAxis, min } = this,
         dataKey = isXAxis ? 'xData' : 'yData',
-        min = this.min,
-        range = (this.max as any) - (min as any);
+        range = (this.max || 0) - (min || 0);
 
     let pxMin = 0,
         pxMax = axisLength,
         transA = axisLength / range,
         hasActiveSeries;
 
+    if (coll !== 'xAxis' && coll !== 'yAxis') {
+        return;
+    }
+
     // Handle padding on the second pass, or on redraw
     this.series.forEach((series): void => {
 
-        if (
-            series.bubblePadding &&
-            (series.visible || !chart.options.chart.ignoreHiddenSeries)
-        ) {
+        if (series.bubblePadding && series.reserveSpace()) {
             // Correction for #1673
             this.allowZoomOutside = true;
 
@@ -482,7 +476,7 @@ class BubbleSeries extends ScatterSeries {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
         if (U.pushUnique(composedMembers, AxisClass)) {
-            AxisClass.prototype.beforePadding = axisBeforePadding;
+            addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
         }
 
     }
@@ -581,12 +575,7 @@ class BubbleSeries extends ScatterSeries {
             let zMax = -Number.MAX_VALUE;
             let valid;
             this.chart.series.forEach((otherSeries): void => {
-                if (
-                    otherSeries.bubblePadding && (
-                        otherSeries.visible ||
-                        !this.chart.options.chart.ignoreHiddenSeries
-                    )
-                ) {
+                if (otherSeries.bubblePadding && otherSeries.reserveSpace()) {
                     const zExtremes = (
                         otherSeries.onPoint || (otherSeries as any)
                     ).getZExtremes();
@@ -727,8 +716,8 @@ class BubbleSeries extends ScatterSeries {
     }
 
     public translateBubble(): void {
-        const { data, radii } = this;
-        const { minPxSize } = this.getPxExtremes();
+        const { data, options, radii } = this,
+            { minPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
         let i = data.length;
@@ -736,6 +725,11 @@ class BubbleSeries extends ScatterSeries {
         while (i--) {
             const point = data[i];
             const radius = radii ? radii[i] : 0; // #1737
+
+            // Negative points means negative z values (#9728)
+            if (this.zoneAxis === 'z') {
+                point.negative = (point.z || 0) < (options.zThreshold || 0);
+            }
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments
@@ -830,8 +824,6 @@ extend(BubbleSeries.prototype, {
     alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
-    buildKDTree: noop,
-    directTouch: true,
     isBubble: true,
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,

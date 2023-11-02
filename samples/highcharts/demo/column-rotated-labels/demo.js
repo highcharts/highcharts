@@ -11,7 +11,7 @@ Highcharts.chart('container', {
     xAxis: {
         type: 'category',
         labels: {
-            rotation: -45,
+            autoRotation: [-45, -90],
             style: {
                 fontSize: '13px',
                 fontFamily: 'Verdana, sans-serif'

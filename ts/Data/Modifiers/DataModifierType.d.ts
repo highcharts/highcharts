@@ -23,6 +23,11 @@
 export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
+ * Contains all possible options of the modifier registry.
+ */
+export type DataModifierTypeOptions = DataModifierType['prototype']['options'];
+
+/**
  * Describes the modifier registry as a record object with key and class
  * constructor.
  */

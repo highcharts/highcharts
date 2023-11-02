@@ -1,0 +1,13 @@
+---
+name: Vertical Sankey chart
+authors:
+  - Hubert Kozik
+js_wrap: b
+alt_text: >-
+    Vertical Sankey chart, which shows energy consumed for water use in the
+    United States in 2010.
+tags:
+  - Highcharts demo
+categories:
+  - Trees and networks
+...

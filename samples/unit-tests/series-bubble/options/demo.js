@@ -98,3 +98,73 @@ QUnit.test('Negative values', function (assert) {
         'Only points below zThreshold should have negative class name'
     );
 });
+
+QUnit.test('Align dataLabel', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bubble'
+        },
+        yAxis: {
+            min: 0,
+            max: 5
+        },
+        plotOptions: {
+            series: {
+                clip: false,
+                dataLabels: {
+                    overflow: 'allow',
+                    crop: false,
+                    enabled: true
+                }
+            }
+        },
+        series: [
+            {
+                data: [{
+                    x: 2,
+                    y: 3,
+                    z: 5
+                }]
+            }, {
+                data: [{
+                    x: 1,
+                    y: 2,
+                    z: 8
+                }]
+            }, {
+                data: [{
+                    x: 1,
+                    y: 0,
+                    z: 10
+                }]
+            }
+        ]
+    });
+
+    const point = chart.series[2].points[0];
+
+    const dataLabel = point.dataLabel;
+    const bubbleCenter = {
+        x: point.plotX,
+        y: point.plotY
+    };
+
+    assert.ok(
+        dataLabel,
+        'Data label exists'
+    );
+
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        bubbleCenter.x,
+        1, // Assuming 1 pixel tolerance
+        `Data label for point (${point.x}, ${point.y}) is horizontally centered (#13240)`
+    );
+
+    assert.close(
+        dataLabel.y + dataLabel.height / 2,
+        bubbleCenter.y,
+        1, // Assuming 1 pixel tolerance
+        `Data label for point (${point.x}, ${point.y}) is vertically centered (#13240)`
+    );
+});

@@ -62,8 +62,8 @@ class BasicAnnotation extends Annotation {
                 const xy = MockPoint
                     .pointToPixels(target.points[0]);
                 return {
-                    x: xy.x - this.graphic.width / 2,
-                    y: xy.y - this.graphic.height / 2
+                    x: xy.x - (this.graphic.width || 0) / 2,
+                    y: xy.y - (this.graphic.height || 0) / 2
                 };
             },
             // TRANSLATE POINT/ANCHOR
@@ -96,9 +96,9 @@ class BasicAnnotation extends Annotation {
                 }
                 return {
                     x: target.graphic.alignAttr.x -
-                        this.graphic.width / 2,
+                        (this.graphic.width || 0) / 2,
                     y: target.graphic.alignAttr.y -
-                        this.graphic.height / 2
+                        (this.graphic.height || 0) / 2
                 };
             },
             // TRANSLATE POSITION WITHOUT CHANGING THE
@@ -137,10 +137,12 @@ class BasicAnnotation extends Annotation {
                 ): void {
                     const annotation = target.annotation,
                         coords = this.chart.pointer.getCoordinates(e),
-                        x = coords.xAxis[0].value,
-                        y = coords.yAxis[0].value,
                         points: Array<MockPointOptions> = target.options.points as any,
-                        shapes = annotation.userOptions.shapes;
+                        shapes = annotation.userOptions.shapes,
+                        xAxisIndex = annotation.clipXAxis?.index || 0,
+                        yAxisIndex = annotation.clipYAxis?.index || 0,
+                        x = coords.xAxis[xAxisIndex].value,
+                        y = coords.yAxis[yAxisIndex].value;
 
                     // Top right point
                     points[1].x = x;
@@ -168,9 +170,9 @@ class BasicAnnotation extends Annotation {
                     r: number = target.options.r as any;
                 return {
                     x: xy.x + r * Math.cos(Math.PI / 4) -
-                    this.graphic.width / 2,
+                    (this.graphic.width || 0) / 2,
                     y: xy.y + r * Math.sin(Math.PI / 4) -
-                    this.graphic.height / 2
+                    (this.graphic.height || 0) / 2
                 };
             },
             events: {
@@ -211,8 +213,8 @@ class BasicAnnotation extends Annotation {
                 const position = target.getAbsolutePosition(target.points[0]);
 
                 return {
-                    x: position.x - this.graphic.width / 2,
-                    y: position.y - this.graphic.height / 2
+                    x: position.x - (this.graphic.width || 0) / 2,
+                    y: position.y - (this.graphic.height || 0) / 2
                 };
             },
             events: {
@@ -241,8 +243,8 @@ class BasicAnnotation extends Annotation {
                 const position = target.getAbsolutePosition(target.points[1]);
 
                 return {
-                    x: position.x - this.graphic.width / 2,
-                    y: position.y - this.graphic.height / 2
+                    x: position.x - (this.graphic.width || 0) / 2,
+                    y: position.y - (this.graphic.height || 0) / 2
                 };
             },
             events: {
@@ -274,9 +276,9 @@ class BasicAnnotation extends Annotation {
                     attrs = target.getAttrs(position, position2);
 
                 return {
-                    x: attrs.cx - this.graphic.width / 2 +
+                    x: attrs.cx - (this.graphic.width || 0) / 2 +
                         attrs.ry * Math.sin((attrs.angle * Math.PI) / 180),
-                    y: attrs.cy - this.graphic.height / 2 -
+                    y: attrs.cy - (this.graphic.height || 0) / 2 -
                         attrs.ry * Math.cos((attrs.angle * Math.PI) / 180)
                 };
             },

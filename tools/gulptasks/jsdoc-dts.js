@@ -38,6 +38,7 @@ function jsDocESMDTS() {
         .filter(file => (
             file.endsWith('.src.d.ts') &&
             !file.endsWith('globals.src.d.ts') &&
+            !file.includes('dashboards') &&
             !file.includes('es-modules')
         ));
     const path = require('path');
@@ -61,14 +62,12 @@ function jsDocESMDTS() {
                 product => dtsFile.endsWith(`${product}.src.d.ts`)
             ) ?
                 [
-                    `import * as Highcharts from '${source}';`,
+                    `import * as Highcharts from '${fsLib.path(source, true)}';`,
                     'export default Highcharts;',
                     ''
                 ].join('\n') :
                 [
-                    `import factory from '${source}';`,
-                    `export * from '${source}';`,
-                    'export default factory;',
+                    `import '${fsLib.path(source, true)}';`,
                     ''
                 ].join('\n')
         ));

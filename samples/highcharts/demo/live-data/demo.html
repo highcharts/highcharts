@@ -13,23 +13,24 @@
     </p>
 </figure>
 
-<div class="ld-row">
-	<label class="ld-label">
-		Enable Polling
-	</label>
-	<input type="checkbox" checked="checked" id="enablePolling"/>
+<div class="ld-form">
+	<div class="ld-row">
+		<label class="ld-label">
+			Enable Polling
+		</label>
+		<input type="checkbox" checked="checked" id="enablePolling"/>
+	</div>
+	<div class="ld-row">
+		<label class="ld-label">
+			Polling Time (Seconds)
+		</label>
+		<input class="ld-time-input" type="number" value="2" id="pollingTime"/>
+	</div>
+	<div class="ld-row">
+		<label class="ld-label">
+			CSV URL
+		</label>
+		<input class="ld-url-input" type="text" id="fetchURL"/>
+	</div>
 </div>
-<div class="ld-row">
-	<label class="ld-label">
-		Polling Time (Seconds)
-	</label>
-	<input class="ld-time-input" type="number" value="2" id="pollingTime"/>
-</div>
-<div class="ld-row">
-	<label class="ld-label">
-		CSV URL
-	</label>
-	<input class="ld-url-input" type="text" id="fetchURL"/>
-</div>
-
 

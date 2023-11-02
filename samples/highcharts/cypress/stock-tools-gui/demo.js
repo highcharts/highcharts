@@ -69,12 +69,12 @@ const data = [
     [1593523800000, 90.02, 91.5, 90, 91.2, 140223200]
 ];
 // split the data set into ohlc and volume
-var ohlc = [],
+const ohlc = [],
     volume = [],
-    dataLength = data.length,
-    i = 0;
+    dataLength = data.length;
 
-for (i; i < dataLength; i += 1) {
+
+for (let i = 0; i < dataLength; i += 1) {
     ohlc.push([
         data[i][0], // the date
         data[i][1], // open
@@ -115,8 +115,8 @@ Highcharts.stockChart('container', {
         borderWidth: 0,
         shadow: false,
         positioner: function (width, height, point) {
-            var chart = this.chart,
-                position;
+            const chart = this.chart;
+            let position;
 
             if (point.isHeader) {
                 position = {

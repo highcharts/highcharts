@@ -16,7 +16,7 @@ Highcharts.setOptions({
 });
 
 // Set up the chart
-var chart = new Highcharts.Chart({
+const chart = new Highcharts.Chart({
     chart: {
         renderTo: 'container',
         margin: 100,
@@ -100,7 +100,7 @@ var chart = new Highcharts.Chart({
     function dragStart(eStart) {
         eStart = chart.pointer.normalize(eStart);
 
-        var posX = eStart.chartX,
+        const posX = eStart.chartX,
             posY = eStart.chartY,
             alpha = chart.options.chart.options3d.alpha,
             beta = chart.options.chart.options3d.beta,

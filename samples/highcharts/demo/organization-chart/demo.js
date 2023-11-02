@@ -10,13 +10,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var nodeName = point.toNode.name,
-                    nodeId = point.toNode.id,
-                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
-                    parentDesc = point.fromNode.id;
-                return point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.';
-            }
+            descriptionFormat: '{add index 1}. {toNode.name}' +
+                '{#if (ne toNode.name toNode.id)}, {toNode.id}{/if}, ' +
+                'reports to {fromNode.id}'
         }
     },
 

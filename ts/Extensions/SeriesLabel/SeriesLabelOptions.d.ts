@@ -9,7 +9,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type Series from '../../Core/Series/Series';
 
 /* *
@@ -31,7 +31,7 @@ export interface SeriesLabelOptions {
     connectorNeighbourDistance?: number;
     enabled?: boolean;
     format?: string;
-    formatter?: FormatUtilities.FormatterCallback<Series>;
+    formatter?: Templating.FormatterCallback<Series>;
     maxFontSize?: (number|null);
     minFontSize?: (number|null);
     onArea?: (boolean|null);

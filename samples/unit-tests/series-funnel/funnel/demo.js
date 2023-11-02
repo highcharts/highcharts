@@ -147,7 +147,7 @@ QUnit.test('Visible funnel items', function (assert) {
     );
 });
 
-QUnit.test('Top path of funnel intact', function (assert) {
+QUnit.test('Funnel path', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'funnel'
@@ -170,8 +170,11 @@ QUnit.test('Top path of funnel intact', function (assert) {
         ]
     });
 
+    const series = chart.series[0],
+        points = series.points;
+
     assert.strictEqual(
-        chart.series[0].points[3].graphic.element
+        points[3].graphic.element
             .getAttribute('d')
             .split(' ')
             .filter(function (s) {
@@ -179,6 +182,53 @@ QUnit.test('Top path of funnel intact', function (assert) {
             }).length,
         14,
         'The path should have the neck intact (#8277)'
+    );
+
+    series.update({
+        borderRadius: 10
+    });
+
+    assert.strictEqual(
+        points[0].graphic.d.split(' ').filter(s => s === 'C').length,
+        2,
+        'The first point should have 2 rounded corners, scope: stack (#18839)'
+    );
+
+    assert.strictEqual(
+        points[1].graphic.d.split(' ').filter(s => s === 'C').length,
+        0,
+        'The second point should have 0 rounded corners, scope: stack (#18839)'
+    );
+
+    assert.strictEqual(
+        points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The last point should have 4 rounded corners, scope: stack (#18839)'
+    );
+
+    series.update({
+        borderRadius: {
+            radius: '1%',
+            scope: 'point'
+        }
+    });
+
+    assert.strictEqual(
+        points[0].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The first point should have 4 rounded corners, scope: point (#18839)'
+    );
+
+    assert.strictEqual(
+        points[1].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The second point should have 4 rounded corners, scope: point (#18839)'
+    );
+
+    assert.strictEqual(
+        points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        6,
+        'The last point should have 6 rounded corners, scope: point (#18839)'
     );
 });
 

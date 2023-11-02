@@ -1,53 +1,63 @@
-(function (H) {
-    H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
+
+    (function (H) {
+        H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
         // Run the original proceed method
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        // For each point add or update trackball
-        points.forEach(point => {
+            // For each point add or update trackball
+            points.forEach(point => {
             // Function variables
-            const series = point.series,
-                chart = series.chart,
-                pointX = point.plotX + series.xAxis.pos,
-                pointY = H.pick(point.plotClose, point.plotY) + series.yAxis.pos;
+                const series = point.series,
+                    chart = series.chart,
+                    pointX = point.plotX + series.xAxis.pos,
+                    pointY = H.pick(point.plotClose, point.plotY) +
+                                                             series.yAxis.pos;
 
-            // If trackball functionality does not already exist
-            if (!series.options.marker) {
+                // If trackball functionality does not already exist
+                if (!series.options.marker) {
                 // If trackball is not defined
-                if (!series.trackball) {
+                    if (!series.trackball) {
                     // Creates a new trackball with same color as the series
-                    series.trackball = chart.renderer.circle(pointX, pointY, 5).attr({
-                        fill: series.color,
-                        stroke: 'white',
-                        'stroke-width': 1,
-                        zIndex: 5
-                    }).add();
-                } else {
+                        series.trackball = chart.renderer.circle(
+                            pointX,
+                            pointY,
+                            5).attr({
+                            fill: series.color,
+                            stroke: 'white',
+                            'stroke-width': 1,
+                            zIndex: 5
+                        }).add();
+                    } else {
                     // Updates the position of the trackball
-                    series.trackball.attr({
-                        x: pointX,
-                        y: pointY
-                    });
+                        series.trackball.attr({
+                            x: pointX,
+                            y: pointY
+                        });
+                    }
                 }
-            }
+            });
         });
-    });
 
-    H.wrap(H.Tooltip.prototype, 'hide', function (proceed) {
-        const series = this.chart.series;
-        // Run original proceed method
-        proceed.apply(this);
-        // For each series destroy trackball
-        series.forEach(serie => {
-            const trackball = serie.trackball;
-            if (trackball) {
-                serie.trackball = trackball.destroy();
-            }
+        H.wrap(H.Tooltip.prototype, 'hide', function (proceed) {
+            const series = this.chart.series;
+            // Run original proceed method
+            proceed.apply(this);
+            // For each series destroy trackball
+            series.forEach(serie => {
+                const trackball = serie.trackball;
+                if (trackball) {
+                    serie.trackball = trackball.destroy();
+                }
+            });
         });
-    });
-}(Highcharts));
+    }(Highcharts));
 
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
     // Split the data set into ohlc and volume
     const ohlc = [];
     const volume = [];
@@ -122,4 +132,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data
             }
         }]
     });
-});
+})();

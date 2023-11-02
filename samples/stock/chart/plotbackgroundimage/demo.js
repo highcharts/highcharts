@@ -1,16 +1,23 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    chart: {
-        plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    rangeSelector: {
-        selected: 1
-    },
+    Highcharts.stockChart('container', {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur,
-        color: '#202040'
-    }]
-});
+        chart: {
+            plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur,
+            color: '#202040'
+        }]
+    });
+})();

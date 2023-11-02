@@ -1,11 +1,11 @@
-var nav = Highcharts.win.navigator,
+const nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
 function addText(text) {
-    var heading = document.createElement('h2');
+    const heading = document.createElement('h2');
     heading.innerHTML = text;
     parentEl.appendChild(heading);
 }
@@ -23,8 +23,8 @@ function fallbackHandler(options) {
 
 // NOTE: dataURL length limits in certain browsers. #6108
 
-var arr = [];
-for (var i = 0; i < 15000; i++) {
+const arr = [];
+for (let i = 0; i < 15000; i++) {
     arr.push(Math.sin(i / 15000) * i * Math.random());
 }
 

@@ -48,8 +48,8 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../../Core/Chart/Chart.js';
-import FU from '../../Core/FormatUtilities.js';
-const { format } = FU;
+import T from '../../Core/Templating.js';
+const { format } = T;
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../../Core/Series/Series.js';
@@ -399,10 +399,10 @@ function drawSeriesLabels(chart: Chart): void {
         (s.points || []).forEach((p): void =>
             (p.dataLabels || []).forEach((label): void => {
                 const { width, height } = label.getBBox(),
-                    left = label.translateX + (
+                    left = (label.translateX || 0) + (
                         s.xAxis ? s.xAxis.pos : s.chart.plotLeft
                     ),
-                    top = label.translateY + (
+                    top = (label.translateY || 0) + (
                         s.yAxis ? s.yAxis.pos : s.chart.plotTop
                     );
 

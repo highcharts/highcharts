@@ -56,7 +56,8 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     stickyTracking: false,
 
     /**
-     * @ignore-option
+     * @default   true
+     * @extends   plotOptions.series.inactiveOtherPoints
      * @private
      */
     inactiveOtherPoints: true,
@@ -612,6 +613,13 @@ export default NetworkgraphSeriesDefaults;
  * @type      {number}
  * @product   highcharts
  * @apioption series.networkgraph.nodes.mass
+ */
+
+/**
+ * Options for the node markers.
+ *
+ * @extends   plotOptions.networkgraph.marker
+ * @apioption series.networkgraph.nodes.marker
  */
 
 /**
