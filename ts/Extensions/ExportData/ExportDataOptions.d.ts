@@ -21,6 +21,7 @@ declare module '../Exporting/ExportingOptions' {
         csv?: ExportingCsvOptions;
         showTable?: boolean;
         tableCaption?: (boolean|string);
+        showExportInProgress?: boolean;
     }
 }
 
@@ -31,6 +32,7 @@ declare module '../../Core/Options' {
         exportData?: ExportDataLangOptions;
         viewData?: string;
         hideData?: string;
+        exportInProgress?: string;
     }
 }
 
@@ -71,6 +73,7 @@ export interface ExportingOptions {
     tableCaption?: (boolean|string);
     useMultiLevelHeaders?: boolean;
     useRowspanHeaders?: boolean;
+    showExportInProgress?: boolean;
 }
 
 export interface LangOptions {
@@ -79,6 +82,7 @@ export interface LangOptions {
     exportData?: ExportDataLangOptions;
     viewData?: string;
     hideData?: string;
+    exportInProgress?: string;
 }
 
 /* *

@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.1.0",
+  "version": "11.2.0",
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -24,6 +24,7 @@
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
+    "test:precommit": "npx gulp test-ts && npx gulp test && npx ts-node ./test/ts-node-unit-tests",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
@@ -32,6 +33,7 @@
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
+    "lint": "cd ts && npx eslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
@@ -47,9 +49,10 @@
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.3",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.6",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
+    "@swc/core": "^1.3.93",
     "@types/jquery": "^3.5.16",
     "@types/qunit": "^2.19.4",
     "@types/trusted-types": "^2.0.2",
@@ -72,7 +75,6 @@
     "fs-extra": "^11.1.0",
     "gifencoder": "^2.0.1",
     "glob": "^8.1.0",
-    "google-closure-compiler": "20200504.0.0",
     "gulp": "^4.0.2",
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "^5.1.0",
@@ -119,6 +121,9 @@
   "lint-staged": {
     "*.js": [
       "eslint"
+    ],
+    "./ts/**/*.ts": [
+      "npm run lint"
     ],
     "*.css": [
       "stylelint"

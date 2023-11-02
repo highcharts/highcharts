@@ -1634,6 +1634,9 @@ class SVGRenderer implements SVGRendererLike {
      * to {@link SVGElement} objects through the {@link SVGElement#clip}
      * function.
      *
+     * This function is deprecated as of v11.2. Instead, use a regular shape
+     * (`rect`, `path` etc), and the `SVGElement.clipTo` function.
+     *
      * @example
      * let circle = renderer.circle(100, 100, 100)
      *     .attr({ fill: 'red' })
@@ -1642,6 +1645,8 @@ class SVGRenderer implements SVGRendererLike {
      *
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
+     *
+     * @deprecated
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -1662,20 +1667,7 @@ class SVGRenderer implements SVGRendererLike {
         width?: number,
         height?: number
     ): SVGRenderer.ClipRectElement {
-        const
-            // Add a hyphen at the end to avoid confusion in testing indexes
-            // -1 and -10, -11 etc (#6550)
-            id = uniqueKey() + '-',
-            clipPath = (this.createElement('clipPath').attr({
-                id: id
-            }) as any).add(this.defs),
-            wrapper = this.rect(x, y, width, height, 0).add(clipPath);
-
-        wrapper.id = id;
-        wrapper.clipPath = clipPath;
-        wrapper.count = 0;
-
-        return wrapper;
+        return this.rect(x, y, width, height, 0);
     }
 
 
