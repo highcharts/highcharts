@@ -3030,15 +3030,13 @@ class Series {
                 const { translated = 0, lineClip } = zone,
                     distance = plotY - translated;
 
-                if (lineClip) {
-                    lineClip.push([
-                        'L',
-                        plotX,
-                        Math.abs(distance) < halfWidth ?
-                            plotY - halfWidth * (distance <= 0 ? -1 : 1) :
-                            translated
-                    ]);
-                }
+                lineClip?.push([
+                    'L',
+                    plotX,
+                    Math.abs(distance) < halfWidth ?
+                        plotY - halfWidth * (distance <= 0 ? -1 : 1) :
+                        translated
+                ]);
             };
 
         if (
@@ -3091,7 +3089,7 @@ class Series {
             if (
                 zoneAxis === 'y' &&
                 // Overheat protection
-                points.length < xAxis.len / halfWidth
+                points.length < xAxis.len
             ) {
                 for (const point of points) {
                     const { plotX, plotY, zone } = point,
@@ -3136,21 +3134,21 @@ class Series {
                 }
 
                 // Adaptive clips
-                const adaptivePath: SVGPath = [
+                const simplePath: SVGPath = [
                         ['M', x1, y1],
-                        ...lineClip,
                         ['L', x2, y1],
                         ['L', x2, y2],
-                        ...lastLineClip,
                         ['L', x1, y2],
                         ['Z']
                     ],
-                    simplePath: SVGPath = [
-                        ['M', x1, y1],
-                        ['L', x2, y1],
-                        ['L', x2, y2],
-                        ['L', x1, y2],
-                        ['Z']
+                    adaptivePath: SVGPath = [
+                        simplePath[0],
+                        ...lineClip,
+                        simplePath[1],
+                        simplePath[2],
+                        ...lastLineClip,
+                        simplePath[3],
+                        simplePath[4]
                     ];
 
                 lastLineClip = lineClip.reverse();
