@@ -154,10 +154,13 @@ jobs:
 
       - run: npm i
 
-      - name: Generate and upload nightly changelog
+      - name: Build tree.json
         run: |
           npx gulp scripts
           npx gulp jsdoc-options
+
+      - name: Generate and upload nightly changelog
+        run: |
           node changelog/generate --since $(git describe --abbrev=0 --match 'v*') --review
           aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
 
