@@ -18,13 +18,16 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
+import type Chart from '../../Core/Chart/Chart';
 import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Tick from '../../Core/Axis/Tick';
 
-import Axis from '../../Core/Axis/Axis.js';
-import Chart from '../../Core/Chart/Chart.js';
 import GanttPoint from './GanttPoint.js';
+import GanttSeriesDefaults from './GanttSeriesDefaults.js';
+import Pathfinder from '../../Gantt/Pathfinder.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -32,19 +35,14 @@ const {
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
-import Tick from '../../Core/Axis/Tick.js';
+import StaticScale from '../../Extensions/StaticScale.js';
+import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    merge,
-    splat
+    merge
 } = U;
-
-import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
-TreeGridAxis.compose(Axis, Chart, Series, Tick);
-import '../../Extensions/StaticScale.js';
-import '../../Gantt/Pathfinder.js';
 
 /* *
  *
@@ -61,96 +59,51 @@ import '../../Gantt/Pathfinder.js';
  */
 class GanttSeries extends XRangeSeries {
 
-    /**
-     * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
-     * it is inherited from [chart.type](#chart.type).
+    /* *
      *
-     * @extends      plotOptions.xrange
-     * @product      gantt
-     * @requires     highcharts-gantt
-     * @optionparent plotOptions.gantt
-     */
-    public static defaultOptions: GanttSeriesOptions = merge(XRangeSeries.defaultOptions, {
-        // options - default options merged with parent
+     *  Static Properties
+     *
+     * */
 
-        grouping: false,
+    public static defaultOptions: GanttSeriesOptions = merge(
+        XRangeSeries.defaultOptions,
+        GanttSeriesDefaults
+    );
 
-        dataLabels: {
-            enabled: true
-        },
-        tooltip: {
-            headerFormat:
-                '<span style="font-size: 0.8em">{series.name}</span><br/>',
-            pointFormat: null as any,
-            pointFormatter: function (this: GanttPoint): string {
-                let point = this,
-                    series = point.series,
-                    xAxis = series.xAxis,
-                    formats = series.tooltipOptions.dateTimeLabelFormats,
-                    startOfWeek = xAxis.options.startOfWeek,
-                    ttOptions = series.tooltipOptions,
-                    format = ttOptions.xDateFormat,
-                    start: string,
-                    end: string,
-                    milestone = point.options.milestone,
-                    retVal = '<b>' + (point.name || point.yCategory) + '</b>';
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
-                if (ttOptions.pointFormat) {
-                    return point.tooltipFormatter(ttOptions.pointFormat);
-                }
+    public static compose(
+        AxisClass: typeof Axis,
+        ChartClass?: typeof Chart,
+        SeriesClass?: typeof Series,
+        TickClass?: typeof Tick
+    ): void {
 
-                if (!format && isNumber(point.start)) {
-                    format = series.chart.time.getDateFormat(
-                        xAxis.closestPointRange,
-                        point.start,
-                        startOfWeek,
-                        formats || {}
-                    );
-                }
+        XRangeSeries.compose(AxisClass);
 
-                start = series.chart.time.dateFormat(
-                    format as any,
-                    point.start as any
-                );
-                end = series.chart.time.dateFormat(
-                    format as any,
-                    point.end as any
-                );
-
-                retVal += '<br/>';
-
-                if (!milestone) {
-                    retVal += 'Start: ' + start + '<br/>';
-                    retVal += 'End: ' + end + '<br/>';
-                } else {
-                    retVal += start + '<br/>';
-                }
-
-                return retVal;
-            }
-        },
-        connectors: {
-            type: 'simpleConnect',
-            /**
-             * @declare Highcharts.ConnectorsAnimationOptionsObject
-             */
-            animation: {
-                reversed: true // Dependencies go from child to parent
-            },
-            radius: 0,
-            startMarker: {
-                enabled: true,
-                symbol: 'arrow-filled',
-                radius: 4,
-                fill: '#fa0',
-                align: 'left' as const
-            },
-            endMarker: {
-                enabled: false, // Only show arrow on the dependent task
-                align: 'right' as const
-            }
+        if (!ChartClass) {
+            return;
         }
-    } as GanttSeriesOptions);
+
+        StaticScale.compose(AxisClass, ChartClass);
+
+        if (!SeriesClass) {
+            return;
+        }
+
+        Pathfinder.compose(ChartClass, SeriesClass.prototype.pointClass);
+
+        if (!TickClass) {
+            return;
+        }
+
+        TreeGridAxis.compose(AxisClass, ChartClass, SeriesClass, TickClass);
+
+    }
 
     /* *
      *
@@ -169,8 +122,6 @@ class GanttSeries extends XRangeSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Draws a single point in the series.
@@ -193,14 +144,15 @@ class GanttSeries extends XRangeSeries {
         point: GanttPoint,
         verb: string
     ): void {
-        let series = this,
+        const series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
             shapeArgs: SVGAttributes = point.shapeArgs as any,
             plotY = point.plotY,
-            graphic = point.graphic,
             state = point.selected && 'select',
-            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
+
+        let graphic = point.graphic,
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
@@ -236,7 +188,7 @@ class GanttSeries extends XRangeSeries {
                 point.graphic = graphic.destroy(); // #1269
             }
         } else {
-            XRangeSeries.prototype.drawPoint.call(series, point, verb);
+            super.drawPoint(point, verb);
         }
     }
 
@@ -245,11 +197,12 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        let series = this,
-            shapeArgs: SVGAttributes,
+        const series = this;
+
+        let shapeArgs: SVGAttributes,
             size: number;
 
-        XRangeSeries.prototype.translatePoint.call(series, point);
+        super.translatePoint(point);
 
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs as any;
@@ -263,8 +216,6 @@ class GanttSeries extends XRangeSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -277,14 +228,11 @@ interface GanttSeries{
     keyboardMoveVertical: boolean;
     pointClass: typeof GanttPoint;
 }
+
 extend(GanttSeries.prototype, { // props - series member overrides
-
     pointArrayMap: ['start', 'end', 'y'],
-
     pointClass: GanttPoint,
-
     setData: Series.prototype.setData
-
 });
 
 /* *
@@ -298,6 +246,7 @@ declare module '../../Core/Series/SeriesType' {
         gantt: typeof GanttSeries;
     }
 }
+
 SeriesRegistry.registerSeriesType('gantt', GanttSeries);
 
 /* *
@@ -307,159 +256,3 @@ SeriesRegistry.registerSeriesType('gantt', GanttSeries);
  * */
 
 export default GanttSeries;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `gantt` series.
- *
- * @extends   series,plotOptions.gantt
- * @excluding boostThreshold, dashStyle, findNearestPointBy,
- *            getExtremesFromAll, marker, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPlacement, pointStart
- * @product   gantt
- * @requires  highcharts-gantt
- * @apioption series.gantt
- */
-
-/**
- * Data for a Gantt series.
- *
- * @declare   Highcharts.GanttPointOptionsObject
- * @type      {Array<*>}
- * @extends   series.xrange.data
- * @excluding className, connect, dataLabels, events,
- *            partialFill, selected, x, x2
- * @product   gantt
- * @apioption series.gantt.data
- */
-
-/**
- * Whether the grid node belonging to this point should start as collapsed. Used
- * in axes of type treegrid.
- *
- * @sample {gantt} gantt/treegrid-axis/collapsed/
- *         Start as collapsed
- *
- * @type      {boolean}
- * @default   false
- * @product   gantt
- * @apioption series.gantt.data.collapsed
- */
-
-/**
- * The start time of a task.
- *
- * @type      {number}
- * @product   gantt
- * @apioption series.gantt.data.start
- */
-
-/**
- * The end time of a task.
- *
- * @type      {number}
- * @product   gantt
- * @apioption series.gantt.data.end
- */
-
-/**
- * The Y value of a task.
- *
- * @type      {number}
- * @product   gantt
- * @apioption series.gantt.data.y
- */
-
-/**
- * The name of a task. If a `treegrid` y-axis is used (default in Gantt charts),
- * this will be picked up automatically, and used to calculate the y-value.
- *
- * @type      {string}
- * @product   gantt
- * @apioption series.gantt.data.name
- */
-
-/**
- * Progress indicator, how much of the task completed. If it is a number, the
- * `fill` will be applied automatically.
- *
- * @sample {gantt} gantt/demo/progress-indicator
- *         Progress indicator
- *
- * @type      {number|*}
- * @extends   series.xrange.data.partialFill
- * @product   gantt
- * @apioption series.gantt.data.completed
- */
-
-/**
- * The amount of the progress indicator, ranging from 0 (not started) to 1
- * (finished).
- *
- * @type      {number}
- * @default   0
- * @apioption series.gantt.data.completed.amount
- */
-
-/**
- * The fill of the progress indicator. Defaults to a darkened variety of the
- * main color.
- *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- * @apioption series.gantt.data.completed.fill
- */
-
-/**
- * The ID of the point (task) that this point depends on in Gantt charts.
- * Aliases [connect](series.xrange.data.connect). Can also be an object,
- * specifying further connecting [options](series.gantt.connectors) between the
- * points. Multiple connections can be specified by providing an array.
- *
- * @sample gantt/demo/project-management
- *         Dependencies
- * @sample gantt/pathfinder/demo
- *         Different connection types
- *
- * @type      {string|Array<string|*>|*}
- * @extends   series.xrange.data.connect
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.dependency
- */
-
-/**
- * Whether this point is a milestone. If so, only the `start` option is handled,
- * while `end` is ignored.
- *
- * @sample gantt/gantt/milestones
- *         Milestones
- *
- * @type      {boolean}
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.milestone
- */
-
-/**
- * The ID of the parent point (task) of this point in Gantt charts.
- *
- * @sample gantt/demo/subtasks
- *         Gantt chart with subtasks
- *
- * @type      {string}
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.parent
- */
-
-/**
- * @excluding afterAnimate
- * @apioption series.gantt.events
- */
-
-''; // adds doclets above to the transpiled file
