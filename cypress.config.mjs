@@ -16,9 +16,11 @@ for (const product of getProducts()) {
 }
 
 const productsPattern = (
-    products.length ?
+    products.length > 1 ?
         `{${Array.from(products).join(',')}}` :
-        '**'
+        products.length ?
+            products[0] :
+            '**'
 );
 
 export default defineConfig({
