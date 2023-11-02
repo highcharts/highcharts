@@ -652,7 +652,7 @@ function rendererAddPattern(
             .attr({ fill })
             .add(pattern),
         width: number = options.width || (options._width as any) || defaultSize;
-        
+
     let attribs: SVGAttributes,
         id = options.id,
         path: SVGAttributes;
