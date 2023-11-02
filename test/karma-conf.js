@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getProducts } = require('../tools/gulptasks/lib/test');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -168,6 +169,23 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
+
+    if (argv.iff) {
+        const folders = argv.iff.split(',');
+        const products = getProducts(false, true);
+
+        let affected = false;
+
+        for (const folder of folders) {
+            if (products.includes(folder)) {
+                affected = true;
+            }
+        }
+
+        if (!affected) {
+            return process.exit();
+        }
+    }
 
     if (argv.ts) {
         const ChildProcess = require('child_process');

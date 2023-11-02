@@ -1079,9 +1079,10 @@ QUnit.test(
                 `Ticks with ${JSON.stringify(toDotNot(options))} should stay
                 the same after updating series (#19604).`
             );
-            assert.strictEqual(
+            assert.close(
                 chart.plotHeight,
                 expectedPlotHeight,
+                0.5, // Firefox is not that steady
                 `Plot height with ${JSON.stringify(toDotNot(options))} should
                 stay the same after updating series (#19604).`
             );

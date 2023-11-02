@@ -95,10 +95,10 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: ./tools/affected-product Core Data Series Shared && npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: ./tools/affected-product Stock Data Series Shared && npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: ./tools/affected-product Maps Data Series Shared && npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: ./tools/affected-product Gantt Data Series Shared && npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --iff Core,Data,Series,Shared --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --iff Stock,Data,Series,Shared --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --iff Maps,Data,Series,Shared --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --iff Gantt,Data,Series,Shared --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
         uses: actions/checkout@v4
@@ -118,10 +118,10 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: ./tools/affected-product Core Data Series Shared && npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: ./tools/affected-product Stock Data Series Shared && npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: ./tools/affected-product Maps Data Series Shared && npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: ./tools/affected-product Gantt Data Series Shared && npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --iff Core,Data,Series,Shared --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --iff Stock,Data,Series,Shared --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --iff Maps,Data,Series,Shared --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --iff Gantt,Data,Series,Shared --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |

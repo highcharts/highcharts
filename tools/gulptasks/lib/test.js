@@ -17,7 +17,7 @@
 /**
  * Returns list of products affected by modified files staged for commit.
  *
- * @param {Boolean} logPaths
+ * @param {boolean} logPaths
  *        Logging for testing and debugging.
  *
  * @return {Array<string>}
@@ -26,11 +26,18 @@
 function getProducts(logPaths) {
     const ChildProcess = require('node:child_process');
 
-    const paths = ChildProcess
-            .execSync('git diff --cached --name-only --diff-filter=ACM')
-            .toString()
-            .split('\n')
-            .filter(match => !!match),
+    const paths = Array.from(new Set([
+            ...ChildProcess
+                .execSync('git diff --cached --name-only --diff-filter=ACM')
+                .toString()
+                .split('\n')
+                .filter(match => !!match),
+            ...ChildProcess
+                .execSync('git diff HEAD^ HEAD --name-only --diff-filter=ACM')
+                .toString()
+                .split('\n')
+                .filter(match => !!match)
+        ])),
         products = [
             'Core',
             'Dashboards',
@@ -59,7 +66,7 @@ function getProducts(logPaths) {
         const pathParts = path.split('/');
 
         if (pathParts.length > 2 && pathParts[0] === 'ts') {
-            if (['Accessibility', 'Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
+            if (['Accessibility', 'Series', 'Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 affectedProducts.add('Core');
                 affectedProducts.add('Dashboards');
             } else if (pathParts[1] === 'DataGrid') {
@@ -69,21 +76,6 @@ function getProducts(logPaths) {
     });
 
     return Array.from(affectedProducts);
-}
-
-/**
- * Fails if the product is not affected in the files staged for commit.
- *
- * @throws Will throw an error if the product is not affected.
- *
- * @param {string} product
- *        The product name that should be checked.
- */
-function checkProduct(product) {
-    const products = getProducts();
-    if (products.indexOf(product) === -1) {
-        throw new Error(`${product} is not affected`);
-    }
 }
 
 /**
@@ -194,7 +186,6 @@ function saveRun({
  * */
 
 module.exports = {
-    checkProduct,
     getProducts,
     shouldRun,
     saveRun
