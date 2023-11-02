@@ -302,7 +302,14 @@ async function setupBoard() {
                 accessibility: {
                     description: `The chart is displaying range of dates from
                     1951-01-01 to 2010-10-25.`,
-                    typeDescription: 'Navigator that selects a range of dates.'
+                    typeDescription: 'Navigator that selects a range of dates.',
+                    point: {
+                        descriptionFormatter: function (point) {
+                            return 'x, ' +
+                                Highcharts.dateFormat('%Y-%m-%d', point.x) +
+                                ', ' + point.y + '. Timeline.';
+                        }
+                    }
                 }
             }
         }, {
