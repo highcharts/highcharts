@@ -17,11 +17,11 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type ColorType from '../../Core/Color/ColorType';
 import type {
     ConnectorsStartMarkerOptions,
     ConnectorsOptions
 } from '../../Gantt/ConnectorsOptions';
-import type ColorType from '../../Core/Color/ColorType';
 import type GanttSeries from './GanttSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type XRangeSeriesOptions from '../../Series/XRange/XRangeSeriesOptions';
@@ -56,5 +56,11 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
     connectors?: GanttConnectorOptions;
     states?: SeriesStatesOptions<GanttSeries>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GanttSeriesOptions;

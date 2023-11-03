@@ -10,13 +10,13 @@ on:
   pull_request:
     branches: [ 'master' ]
     paths:
-      - 'test/cypress/visual/**'
-      - 'samples/cypress/dashboards/**'
+      - '.github/workflows/dashboards-test.yml'
+      - 'css/dashboards*'
+      - 'css/datagrid*'
       - 'samples/dashboards/**'
+      - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'css/**'
-      - '.github/workflows/dashboards-test.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)

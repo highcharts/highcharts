@@ -7,7 +7,7 @@ consistent-return: 0 */
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String  The tag to start from, defaults to latest commit.
+ * --since String  The tag to start from, defaults to latest annotated tag.
  * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
  * --review        Create a review page with edit links and a list of all PRs
@@ -271,7 +271,6 @@ const getFile = url => new Promise((resolve, reject) => {
     function saveReview(md) {
 
         const filename = path.join(__dirname, 'review.html');
-
         const html = `<html>
         <head>
             <title>Changelog Review</title>
@@ -338,7 +337,10 @@ const getFile = url => new Promise((resolve, reject) => {
             // Load the current products and versions, and create one log each
             getFile('https://code.highcharts.com/products.js')
                 .then(products => {
-                    var name;
+                    let name;
+                    const version = params.buildMetadata ?
+                        `${pack.version}+build.${getLatestGitSha()}` :
+                        pack.version;
 
                     if (products) {
                         products = products.replace('var products = ', '');
@@ -347,7 +349,6 @@ const getFile = url => new Promise((resolve, reject) => {
                         for (name in products) {
 
                             if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
-                                const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
 
                                 products[name].date =
                                     d.getFullYear() + '-' +

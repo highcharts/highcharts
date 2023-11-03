@@ -11,3 +11,13 @@ jobs:
 
 workflows:
   version: 2
+  security_scan_cron:
+    triggers:
+      - schedule:
+          cron: "0 0 31 2 0" # February 31st
+          filters:
+            branches:
+              only:
+                - chore/scan-security
+    jobs:
+      - security_scan

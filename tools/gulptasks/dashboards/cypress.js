@@ -24,7 +24,7 @@ async function testCypress() {
 
     await processLib.exec(
         'npx cypress run --config-file ' +
-            path.join('test', 'cypress', 'configs', 'dashboards.config.mjs')
+            path.join('test', 'cypress', 'dashboards', 'config.mjs')
     );
 
     logLib.success('Cypress tests successful');
