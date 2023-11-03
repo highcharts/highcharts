@@ -1469,18 +1469,19 @@ class Pointer {
                             touch1Now = touches[1]?.[chartXY];
 
                         if (
-                            typeof touch1Now === 'number' &&
-                            // Don't zoom if fingers are too close on this
-                            // axis
+                            isNumber(touch1Now) &&
+                            // Don't zoom if fingers are too close on this axis
                             Math.abs(touch0Start - touch1Start) > 20
                         ) {
-                            const scale = Math.abs(touch0Now - touch1Now) /
-                                Math.abs(touch0Start - touch1Start);
-
-                            const center = (touch1Start + touch0Start) / 2;
-
-                            const minPx = center - center / scale,
-                                maxPx = center + center / scale;
+                            const delta0 = touch0Now - touch0Start,
+                                delta1 = touch1Start - touch1Now,
+                                centerFactor = delta0 / (delta0 + delta1),
+                                center = touch0Start +
+                                    (touch1Start - touch0Start) * centerFactor,
+                                scale = Math.abs(touch0Now - touch1Now) /
+                                    Math.abs(touch0Start - touch1Start),
+                                minPx = center - center / scale,
+                                maxPx = center + (axis.len - center) / scale;
 
                             const min = Math.max(
                                     axis.translate(
@@ -1490,7 +1491,7 @@ class Pointer {
                                         true, // Use axis.old
                                         true
                                     ),
-                                    axis.dataMin || -Infinity
+                                    axis.dataMin ?? -Infinity
                                 ),
                                 max = Math.min(
                                     axis.translate(
@@ -1500,7 +1501,7 @@ class Pointer {
                                         true, // Use axis.old
                                         true
                                     ),
-                                    axis.dataMax || Infinity
+                                    axis.dataMax ?? Infinity
                                 );
 
                             zoomParam[axis.coll as 'xAxis'|'yAxis'].push({
