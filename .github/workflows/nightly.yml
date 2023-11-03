@@ -161,7 +161,7 @@ jobs:
 
       - name: Generate and upload nightly changelog
         run: |
-          node changelog/generate --since $(git describe --abbrev=0 --match 'v*') --review
+          node changelog/generate --review
           aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
 
       - name: create list of merge commits
