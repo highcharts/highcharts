@@ -3590,7 +3590,7 @@ class Chart {
             chart.redraw(
                 pick(
                     chart.options.chart.animation,
-                    event && (event as any).animation,
+                    event?.animation,
                     chart.pointCount < 100
                 )
             );

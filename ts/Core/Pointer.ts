@@ -145,7 +145,7 @@ class Pointer {
 
     public isDirectTouch?: boolean;
 
-    public lastValidTouch: object = {};
+    //public lastValidTouch: object = {};
 
     public mouseDownX?: number;
 
@@ -154,6 +154,8 @@ class Pointer {
     public options: Options;
 
     public pinchDown: Array<any> = [];
+
+    public pinchDown2: Array<any> = [];
 
     public res?: boolean;
 
@@ -387,7 +389,7 @@ class Pointer {
             // make a selection
             if (
                 (chart.hasCartesianSeries || chart.mapView) &&
-                (this.zoomX || this.zoomY) &&
+                this.hasZoom &&
                 clickedInside &&
                 !panKey
             ) {
@@ -483,6 +485,10 @@ class Pointer {
             chart = this.chart,
             hasPinched = this.hasPinched;
 
+        if (e.type === 'touchend') {
+            chart.axes.forEach((axis): boolean => delete axis.old);
+        }
+
         if (this.selectionMarker) {
             const {
                 x,
@@ -573,9 +579,11 @@ class Pointer {
             }
 
             // Reset scaling preview
+            /*
             if (hasPinched) {
                 this.scaleGroups();
             }
+            */
         }
 
         // Reset all. Check isNumber because it may be destroyed on mouse up
@@ -1010,7 +1018,7 @@ class Pointer {
         );
 
         this.pinchDown = [];
-        this.lastValidTouch = {};
+        //this.lastValidTouch = {};
 
         this.setDOMEvents();
 
@@ -1329,9 +1337,13 @@ class Pointer {
         const self = this,
             chart = self.chart,
             pinchDown = self.pinchDown,
-            touches: (Array<PointerEvent>|Array<Touch>) = (e.touches || []),
+            touches = [].map.call(
+                e.touches || [],
+                // Normalize each touch
+                (touch): PointerEvent => self.normalize(touch)
+            ) as Array<PointerEvent>,
             touchesLength = touches.length,
-            lastValidTouch = self.lastValidTouch as any,
+            // lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
             transform: Series.PlotBoxTransform = {} as any,
             fireClickEvent = touchesLength === 1 && (
@@ -1370,27 +1382,29 @@ class Pointer {
             e.preventDefault();
         }
 
-        // Normalize each touch
-        [].map.call(touches, function (e): PointerEvent {
-            return self.normalize(e);
-        });
-
         // Register the touch start position
         if (e.type === 'touchstart') {
-            [].forEach.call(touches, function (
-                e: PointerEvent,
-                i: number
-            ): void {
+            touches.forEach((e, i): void => {
                 pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
             });
+            /*
             lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&
                 pinchDown[1].chartX];
             lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
                 pinchDown[1].chartY];
+            */
 
             // Identify the data bounds in pixels
             chart.axes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
+                    axis.old = {
+                        len: axis.len,
+                        max: axis.max,
+                        min: axis.min,
+                        pinchBase: true,
+                        transA: axis.transA
+                    };
+                    /*
                     const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
                         min = axis.toPixels(
@@ -1417,6 +1431,7 @@ class Pointer {
                         axis.pos + axis.len,
                         absMax + minPixelPadding
                     );
+                    */
                 }
             });
             self.res = true; // reset on next move
@@ -1425,13 +1440,84 @@ class Pointer {
         } else if (followTouchMove) {
             this.runPointActions(self.normalize(e));
 
-        // Event type is touchmove, handle panning and pinching
-        } else if (pinchDown.length) { // can be 0 when releasing, if touchend
-            // fires first
+        // Event type is touchmove, handle panning and pinching. The length can
+        // be 0 when releasing, if touchend fires first
+        } else if (pinchDown.length) {
 
             fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
+                const zoomParam: Pointer.SelectEventObject = {
+                    animation: false,
+                    originalEvent: e,
+                    xAxis: [],
+                    yAxis: []
+                };
+                let hasZoomed: boolean|undefined;
+                for (const axis of chart.axes) {
+                    const { horiz } = axis;
+                    if (
+                        axis.zoomEnabled &&
+                        (
+                            (this.zoomHor && horiz) ||
+                            (this.zoomVert && !horiz)
+                        )
+                    ) {
+                        const chartXY = horiz ? 'chartX' : 'chartY',
+                            touch0Start = pinchDown[0][chartXY],
+                            touch1Start = pinchDown[1]?.[chartXY],
+                            touch0Now = touches[0][chartXY],
+                            touch1Now = touches[1]?.[chartXY];
+
+                        if (
+                            typeof touch1Now === 'number' &&
+                            // Don't zoom if fingers are too close on this
+                            // axis
+                            Math.abs(touch0Start - touch1Start) > 20
+                        ) {
+                            const scale = Math.abs(touch0Now - touch1Now) /
+                                Math.abs(touch0Start - touch1Start);
+
+                            const center = (touch1Start + touch0Start) / 2;
+
+                            const minPx = center - center / scale,
+                                maxPx = center + center / scale;
+
+                            const min = Math.max(
+                                    axis.translate(
+                                        minPx,
+                                        true,
+                                        !horiz,
+                                        true, // Use axis.old
+                                        true
+                                    ),
+                                    axis.dataMin || -Infinity
+                                ),
+                                max = Math.min(
+                                    axis.translate(
+                                        maxPx,
+                                        true,
+                                        !horiz,
+                                        true, // Use axis.old
+                                        true
+                                    ),
+                                    axis.dataMax || Infinity
+                                );
+
+                            zoomParam[axis.coll as 'xAxis'|'yAxis'].push({
+                                axis,
+                                min,
+                                max
+                            });
+                            hasZoomed = true;
+                        }
+                    }
+                }
+                if (hasZoomed) {
+                    chart.zoom(zoomParam);
+                }
+
                 // Set the marker
+                /*
                 if (!selectionMarker) {
                     // @todo It's a mock object, so maybe we need a separate
                     // interface
@@ -1455,6 +1541,7 @@ class Pointer {
                 // Scale and translate the groups to provide visual feedback
                 // during pinching
                 self.scaleGroups(transform, clip as any);
+                // */
             });
 
             if (self.res) {
@@ -1468,7 +1555,7 @@ class Pointer {
      * Run translation operations
      * @private
      * @function Highcharts.Pointer#pinchTranslate
-     */
+     * /
     public pinchTranslate(
         pinchDown: Array<any>,
         touches: Array<PointerEvent>,
@@ -1500,13 +1587,14 @@ class Pointer {
             );
         }
     }
+    */
 
     /**
      * Run translation operations for each direction (horizontal and vertical)
      * independently.
      * @private
      * @function Highcharts.Pointer#pinchTranslateDirection
-     */
+     * /
     public pinchTranslateDirection(
         horiz: boolean,
         pinchDown: Array<any>,
@@ -1605,6 +1693,7 @@ class Pointer {
         transform['translate' + XY] = (transformScale * plotLeftTop) +
             (touch0Now - (transformScale * touch0Start));
     }
+    */
 
     /**
      * Reset the tracking by hiding the tooltip, the hover series state and the
@@ -1895,12 +1984,11 @@ class Pointer {
      * Scale series groups to a certain scale and translation.
      * @private
      * @function Highcharts.Pointer#scaleGroups
-     */
+     * /
     public scaleGroups(
         attribs?: Series.PlotBoxTransform,
         clip?: boolean
     ): void {
-
         const chart = this.chart;
 
         // Scale each series
@@ -1933,6 +2021,7 @@ class Pointer {
         // Clip
         (chart.clipRect as any).attr(clip || chart.clipBox);
     }
+    */
 
     /**
      * Set the JS DOM events on the container and document. This method should
@@ -2181,6 +2270,7 @@ namespace Pointer {
         min: number;
     }
     export interface SelectEventObject {
+        animation?: boolean,
         originalEvent: Event;
         resetSelection?: boolean;
         xAxis: Array<SelectDataObject>;

@@ -99,7 +99,7 @@ namespace MapPointer {
             });
 
             wrap(pointerProto, 'normalize', wrapNormalize);
-            wrap(pointerProto, 'pinchTranslate', wrapPinchTranslate);
+            // wrap(pointerProto, 'pinchTranslate', wrapPinchTranslate);
             wrap(pointerProto, 'zoomOption', wrapZoomOption);
         }
     }
@@ -220,7 +220,7 @@ namespace MapPointer {
     /**
      * Extend the pinchTranslate method to preserve fixed ratio when zooming.
      * @private
-     */
+     * /
     function wrapPinchTranslate(
         this: MapPointer,
         proceed: Function,
@@ -258,6 +258,7 @@ namespace MapPointer {
             );
         }
     }
+    */
 
     /**
      * The pinchType is inferred from mapNavigation options.

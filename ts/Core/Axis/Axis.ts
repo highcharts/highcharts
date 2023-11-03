@@ -232,6 +232,7 @@ class Axis {
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isOrdinal?: boolean;
+    public isPinching?: boolean;
     public isRadial?: boolean;
     public isXAxis?: boolean;
     public isZAxis?: boolean;
@@ -262,6 +263,7 @@ class Axis {
         len: number;
         max?: number;
         min?: number;
+        pinchBase?: boolean;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -4055,15 +4057,18 @@ class Axis {
         }
         // End stacked totals
 
-        // Record old scaling for updating/animation
-        axis.old = {
-            len: axis.len,
-            max: axis.max,
-            min: axis.min,
-            transA: axis.transA,
-            userMax: axis.userMax,
-            userMin: axis.userMin
-        };
+        // Record old scaling for updating/animation. Pinch base must be
+        // preserved until the pinch ends.
+        if (!axis.old?.pinchBase) {
+            axis.old = {
+                len: axis.len,
+                max: axis.max,
+                min: axis.min,
+                transA: axis.transA,
+                userMax: axis.userMax,
+                userMin: axis.userMin
+            };
+        }
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');
