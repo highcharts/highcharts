@@ -585,26 +585,21 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
-        const sideSpecific = this.side % 2 ?
+        const sideSpecific = this.horiz ?
+            // Top and bottom axis defaults
+            {
+                labels: {
+                    autoRotation: [-45]
+                },
+                margin: 15
+            } :
             // Left and right axis, title rotated 90 or 270 degrees
             // respectively
             {
                 title: {
                     rotation: 90 * this.side
                 }
-            } :
-
-            // Top and bottom axis defaults
-            {
-                labels: {
-                    autoRotation: [-45]
-                },
-                margin: 15,
-                title: {
-                    rotation: 0
-                }
             };
-
 
         this.options = merge(
             sideSpecific,
@@ -3362,7 +3357,7 @@ class Axis {
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: axisTitleOptions.rotation,
+                    rotation: axisTitleOptions.rotation || 0,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');

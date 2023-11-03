@@ -235,7 +235,7 @@ export interface AxisTitleOptions {
     margin?: number;
     offset?: number;
     reserveSpace?: boolean;
-    rotation: number;
+    rotation?: number;
     style: CSSObject;
     text?: (string|null);
     textAlign?: AlignValue;

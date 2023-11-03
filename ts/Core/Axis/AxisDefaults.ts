@@ -1904,12 +1904,16 @@ namespace AxisDefaults {
 
             /**
              * The rotation of the text in degrees. 0 is horizontal, 270 is
-             * vertical reading from bottom to top.
+             * vertical reading from bottom to top. Defaults to 0 for horizontal
+             * axes, 270 for left-side axes and 90 for right-side axes.
              *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Horizontal
+             * @sample    {highcharts} highcharts/yaxis/title-offset/
+             *            Horizontal
+             *
+             * @type      {number}
+             * @default   undefined
+             * @apioption xAxis.title.rotation
              */
-            rotation: 0,
 
             /**
              * The actual text of the axis title. It can contain basic HTML tags
@@ -2910,15 +2914,6 @@ namespace AxisDefaults {
              * @default   40
              * @apioption yAxis.title.margin
              */
-
-            /**
-             * The rotation of the text in degrees. 0 is horizontal, 270 is
-             * vertical reading from bottom to top.
-             *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Horizontal
-             */
-            rotation: 270,
 
             /**
              * The actual text of the axis title. Horizontal texts can contain
