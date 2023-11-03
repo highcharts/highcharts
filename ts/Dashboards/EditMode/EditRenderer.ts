@@ -400,11 +400,17 @@ function renderToggle(
     const { value, lang } = options;
     const title = options.title || options.name;
     const toggleContainer = createElement(
-        'div',
-        { className: EditGlobals.classNames.toggleContainer },
+        'button',
+        {
+            className: EditGlobals.classNames.toggleContainer,
+            type: 'button',
+            role: 'switch',
+            'aria-checked': false,
+        } as any,
         {},
         parentElement
     );
+
     if (title) {
         renderText(toggleContainer, { title });
     }
@@ -433,6 +439,7 @@ function renderToggle(
         toggleContainer.addEventListener('click', (e: any): void => {
             callbackFn(!input.checked);
             input.checked = !input.checked;
+            e.stopPropagation();
         });
     }
 
