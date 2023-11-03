@@ -32,3 +32,26 @@ Got: ${printArrayOrString(actual as any)}
 Expected: ${printArrayOrString(expected as any)}
 `);
 }
+
+export function setupDOM(){
+  const { JSDOM } = require('jsdom');
+  const dom = new JSDOM(
+    `<!doctype html>
+  <body> </body>`);
+  const win = dom.window;
+  const doc = win.document;
+
+  global.Node = win.Node; // Workaround for issue #1
+  win.Date = Date;
+  // Do some modifications to the jsdom document in order to get the SVG bounding
+  // boxes right.
+  let el = doc.createElement('div');
+  doc.body.appendChild(el);
+
+  return {
+    win,
+    doc,
+    el
+  }
+
+}

@@ -130,6 +130,7 @@ function wrapAreaSeriesGetGraphPath(
         series.areaPath = areaPath;
     }
 
+    series.graphPath = svgPath;
     return svgPath;
 }
 

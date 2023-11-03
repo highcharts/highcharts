@@ -389,7 +389,7 @@ function isDotEntry(
         .split(SEP)
         .every(entry => (
             entry === '..' ||
-            !entry.startsWith('.')
+            entry.startsWith('.')
         ));
 }
 

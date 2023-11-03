@@ -63,7 +63,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @product highcharts highstock
      */
-    lineWidth: 1,
+    lineWidth: 2,
 
     /**
      * For some series, there is a limit that shuts down animation

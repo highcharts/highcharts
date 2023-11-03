@@ -25,7 +25,7 @@ export default defineConfig({
         setupNodeEvents(on, config) {
             getCompareSnapshotsPlugin(on, config);
         },
-        specPattern: 'test/cypress/visual/**/*.cy.{js,jsx,ts,tsx}',
+        specPattern: 'test/cypress/dashboards/visual/**/*.cy.{js,jsx,ts,tsx}',
         video: false
     }
 });
