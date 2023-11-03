@@ -155,8 +155,6 @@ class Pointer {
 
     public pinchDown: Array<any> = [];
 
-    public pinchDown2: Array<any> = [];
-
     public res?: boolean;
 
     public runChartClick: boolean = false;
@@ -1487,7 +1485,7 @@ class Pointer {
                                     axis.translate(
                                         minPx,
                                         true,
-                                        !horiz,
+                                        void 0,
                                         true, // Use axis.old
                                         true
                                     ),
@@ -1497,7 +1495,7 @@ class Pointer {
                                     axis.translate(
                                         maxPx,
                                         true,
-                                        !horiz,
+                                        void 0,
                                         true, // Use axis.old
                                         true
                                     ),
