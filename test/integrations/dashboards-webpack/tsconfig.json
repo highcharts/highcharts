@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "highcharts": ["node_modules/highcharts"]
+    }
+  }
+}
