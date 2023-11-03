@@ -35,13 +35,8 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -207,8 +202,7 @@ class XRangeSeries extends ColumnSeries {
     ): SeriesClass.CropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        const crop = seriesProto.cropData.call(
-            this,
+        const crop = super.cropData(
             this.x2Data as any,
             yData,
             min,
@@ -500,7 +494,6 @@ class XRangeSeries extends ColumnSeries {
             shapeArgs = point.shapeArgs,
             partShapeArgs = point.partShapeArgs,
             clipRectArgs = point.clipRectArgs,
-            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
             pointState = point.state,
             stateOpts: SeriesStateHoverOptions = (
                 (seriesOpts.states as any)[pointState || 'normal'] ||
@@ -666,8 +659,6 @@ class XRangeSeries extends ColumnSeries {
     }
     //*/
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -684,7 +675,6 @@ interface XRangeSeries {
     requireSorting: boolean;
     type: string;
     x2Data: Array<(number|undefined)>;
-    animate: typeof seriesProto.animate;
 }
 
 extend(XRangeSeries.prototype, {
@@ -694,7 +684,7 @@ extend(XRangeSeries.prototype, {
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
     type: 'xrange',
-    animate: seriesProto.animate,
+    animate: SeriesRegistry.series.prototype.animate,
     autoIncrement: noop,
     buildKDTree: noop
 });

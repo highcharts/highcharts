@@ -26,4 +26,10 @@ export interface Scatter3DPointOptions extends ScatterPointOptions {
     z?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Scatter3DPointOptions;

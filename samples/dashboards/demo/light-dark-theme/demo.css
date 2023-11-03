@@ -33,6 +33,11 @@
     margin: 1em;
 }
 
+.inputs-wrapper label {
+    display: block;
+    margin-bottom: 10px;
+}
+
 @media (prefers-color-scheme: dark) {
     .highcharts-point {
         fill-opacity: 0.9;
