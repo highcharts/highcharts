@@ -266,14 +266,14 @@ namespace PlotLineOrBandAxis {
                 !isNumber(this.min) ||
                 !isNumber(this.max) ||
                 (from < this.min && to < this.min) ||
-                (from > this.max && to > this.max);
-
-        let path = this.getPlotLinePath({
+                (from > this.max && to > this.max),
+            path = this.getPlotLinePath({
                 value: from,
                 force: true,
                 acrossPanes: options.acrossPanes
-            }),
-            i,
+            });
+
+        let i,
             // #4964 check if chart is inverted or plotband is on yAxis
             plus = 1,
             isFlat: (boolean|undefined);
@@ -321,8 +321,6 @@ namespace PlotLineOrBandAxis {
                 (result as any).isFlat = isFlat;
             }
 
-        } else { // outside the axis area
-            path = null;
         }
 
         return result;

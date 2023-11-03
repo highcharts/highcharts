@@ -201,12 +201,12 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Day temperature in Oslo, Norway July 2023',
-        align: 'center'
+        align: 'left'
     },
 
     subtitle: {
         text: 'Temperature variation at day through July',
-        align: 'center'
+        align: 'left'
     },
 
     accessibility: {

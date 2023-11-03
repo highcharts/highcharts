@@ -21,29 +21,28 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type Chart from '../Core/Chart/Chart.js';
 import type ColorString from '../Core/Color/ColorString';
+import type Point from '../Core/Series/Point.js';
+import type Series from '../Core/Series/Series.js';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type {
-    SVGDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type { SVGDOMElement } from '../Core/Renderer/DOMElementType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
-import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
     erase,
+    extend,
     merge,
     pick,
+    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -60,7 +59,7 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
         idCounter?: number;
         patternElements?: Record<string, SVGElement>;
         addPattern(
-            options: PatternFill.PatternOptionsObject,
+            options: PatternOptionsObject,
             animation?: (boolean|AnimationOptions)
         ): (SVGElement|undefined);
     }
@@ -70,67 +69,146 @@ declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
-            pattern: PatternFill.PatternOptionsObject
+            pattern: PatternOptionsObject
         ): void;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface BPatternObject extends BBoxObject {
-            aspectHeight?: number;
-            aspectRatio?: number;
-            aspectWidth?: number;
-        }
-        let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
-    }
+export interface BPatternObject extends BBoxObject {
+    aspectHeight?: number;
+    aspectRatio?: number;
+    aspectWidth?: number;
 }
 
-// Add the predefined patterns
-const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
-    const patterns: Array<PatternFill.PatternOptionsObject> = [],
+export interface PatternObject {
+    animation?: Partial<AnimationOptions>;
+    pattern: PatternOptionsObject;
+    patternIndex?: number;
+}
+
+export interface PatternOptionsObject {
+    _inverted?: (Boolean);
+    _height?: (number|string);
+    _width?: (number|string);
+    _x?: number;
+    _y?: number;
+    aspectRatio?: number;
+    backgroundColor?: ColorString;
+    color: ColorString;
+    height: number;
+    id?: string;
+    image?: string;
+    opacity?: number;
+    path: (string|SVGAttributes);
+    patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
+    patternTransform?: string;
+    width: number;
+    x?: number;
+    y?: number;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+const patterns = createPatterns();
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/** @private */
+function compose(
+    ChartClass: typeof Chart,
+    SeriesClass: typeof Series,
+    SVGRendererClass: typeof SVGRenderer
+): void {
+    const PointClass = SeriesClass.prototype.pointClass;
+
+    if (pushUnique(composedMembers, ChartClass)) {
+        addEvent(ChartClass, 'endResize', onChartEndResize);
+        addEvent(ChartClass, 'redraw', onChartRedraw);
+    }
+
+    if (pushUnique(composedMembers, PointClass)) {
+        extend(PointClass.prototype, {
+            calculatePatternDimensions: pointCalculatePatternDimensions
+        });
+        addEvent(PointClass, 'afterInit', onPointAfterInit);
+    }
+
+    if (pushUnique(composedMembers, SeriesClass)) {
+        addEvent(SeriesClass, 'render', onSeriesRender);
+        wrap(SeriesClass.prototype, 'getColor', wrapSeriesGetColor);
+    }
+
+    if (pushUnique(composedMembers, SVGRendererClass)) {
+        extend(SVGRendererClass.prototype, {
+            addPattern: rendererAddPattern
+        });
+        addEvent(SVGRendererClass, 'complexColor', onRendererComplexColor);
+    }
+
+}
+
+/**
+ * Add the predefined patterns.
+ * @private
+ */
+function createPatterns(): Array<PatternOptionsObject> {
+    const patterns: Array<PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
     // Start with subtle patterns
-    [
-        'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
-        'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
-        'M 2 0 L 2 5 M 4 0 L 4 5',
-        'M 0 2 L 5 2 M 0 4 L 5 4',
-        'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
-    ].forEach((pattern: string, i: number): void => {
+    let i = 0;
+    for (
+        const pattern of
+        [
+            'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+            'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+            'M 2 0 L 2 5 M 4 0 L 4 5',
+            'M 0 2 L 5 2 M 0 4 L 5 4',
+            'M 0 1.5 L 2.5 1.5 L 2.5 0 M 2.5 5 L 2.5 3.5 L 5 3.5'
+        ]
+    ) {
         patterns.push({
             path: pattern,
-            color: colors[i],
+            color: colors[i++],
             width: 5,
             height: 5,
             patternTransform: 'scale(1.4 1.4)'
         });
-    });
+    }
 
     // Then add the more drastic ones
-    [
-        'M 0 0 L 5 10 L 10 0',
-        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
-        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
-        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9'
-    ].forEach((pattern: string, i: number): void => {
+    i = 5;
+    for (
+        const pattern of
+        [
+            'M 0 0 L 5 10 L 10 0',
+            'M 3 3 L 8 3 L 8 8 L 3 8 Z',
+            'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
+            'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+            'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9'
+        ]
+    ) {
         patterns.push({
             path: pattern,
-            color: colors[i + 5],
+            color: colors[i],
             width: 10,
             height: 10
         });
-    });
+        i = i + 5;
+    }
 
     return patterns;
-})();
-
+}
 
 /**
  * Utility function to compute a hash value from an object. Modified Java
@@ -174,6 +252,267 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
     return hash.toString(16).replace('-', '1');
 }
 
+/**
+ * When animation is used, we have to recalculate pattern dimensions after
+ * resize, as the bounding boxes are not available until then.
+ * @private
+ */
+function onChartEndResize(
+    this: Chart
+): void {
+    if (
+        this.renderer &&
+        (this.renderer.defIds || []).filter((
+            id: string
+        ): (boolean|string) => (
+            id &&
+            id.indexOf &&
+            id.indexOf('highcharts-pattern-') === 0
+        )).length
+    ) {
+        // We have non-default patterns to fix. Find them by looping through
+        // all points.
+        for (const series of this.series) {
+
+            if (series.visible) {
+                for (const point of series.points) {
+                    const colorOptions = point.options && point.options.color;
+
+                    if (
+                        colorOptions &&
+                        (colorOptions as PatternObject).pattern
+                    ) {
+                        (colorOptions as PatternObject).pattern
+                            ._width = 'defer';
+                        (colorOptions as PatternObject).pattern
+                            ._height = 'defer';
+                    }
+                }
+            }
+        }
+        // Redraw without animation
+        this.redraw(false);
+    }
+}
+
+/**
+ * Add a garbage collector to delete old patterns with autogenerated hashes that
+ * are no longer being referenced.
+ * @private
+ */
+function onChartRedraw(
+    this: Chart
+): void {
+    const usedIds: {[key: string]: boolean} = {},
+        renderer = this.renderer,
+        // Get the autocomputed patterns - these are the ones we might delete
+        patterns = (renderer.defIds || []).filter((pattern): boolean => (
+            pattern.indexOf &&
+            pattern.indexOf('highcharts-pattern-') === 0
+        ));
+
+    if (patterns.length) {
+        // Look through the DOM for usage of the patterns. This can be points,
+        // series, tooltips etc.
+        [].forEach.call(
+            this.renderTo.querySelectorAll(
+                '[color^="url("], [fill^="url("], [stroke^="url("]'
+            ),
+            (node: SVGDOMElement): void => {
+                const id = node.getAttribute('fill') ||
+                        node.getAttribute('color') ||
+                        node.getAttribute('stroke');
+                if (id) {
+                    const sanitizedId = id
+                        .replace(renderer.url, '')
+                        .replace('url(#', '')
+                        .replace(')', '');
+                    usedIds[sanitizedId] = true;
+                }
+            }
+        );
+
+        // Loop through the patterns that exist and see if they are used
+        for (const id of patterns) {
+            if (!usedIds[id]) {
+                // Remove id from used id list
+                erase(renderer.defIds as any, id);
+                // Remove pattern element
+                if ((renderer.patternElements as any)[id]) {
+                    (renderer.patternElements as any)[id].destroy();
+                    delete (renderer.patternElements as any)[id];
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Merge series color options to points.
+ * @private
+ */
+function onPointAfterInit(
+    this: Point
+): void {
+    const point = this,
+        colorOptions: (PatternObject|undefined) =
+            point.options.color as any;
+
+    // Only do this if we have defined a specific color on this point. Otherwise
+    // we will end up trying to re-add the series color for each point.
+    if (colorOptions && colorOptions.pattern) {
+        // Move path definition to object, allows for merge with series path
+        // definition
+        if (typeof colorOptions.pattern.path === 'string') {
+            colorOptions.pattern.path = {
+                d: colorOptions.pattern.path
+            };
+        }
+        // Merge with series options
+        point.color = point.options.color = merge(
+            point.series.options.color as any, colorOptions
+        );
+    }
+}
+
+/**
+ * Add functionality to SVG renderer to handle patterns as complex colors.
+ * @private
+ */
+function onRendererComplexColor(
+    this: SVGRenderer,
+    args: {
+        args: [
+            PatternObject,
+            string,
+            SVGDOMElement
+        ];
+    }
+): boolean {
+    const color = args.args[0],
+        prop = args.args[1],
+        element = args.args[2],
+        chartIndex = (this.chartIndex || 0);
+
+    let pattern = color.pattern,
+        value = '#343434';
+
+    // Handle patternIndex
+    if (typeof color.patternIndex !== 'undefined' && patterns) {
+        pattern = patterns[color.patternIndex];
+    }
+
+    // Skip and call default if there is no pattern
+    if (!pattern) {
+        return true;
+    }
+
+    // We have a pattern.
+    if (
+        pattern.image ||
+        typeof pattern.path === 'string' ||
+        pattern.path && pattern.path.d
+    ) {
+        // Real pattern. Add it and set the color value to be a reference.
+
+        // Force Hash-based IDs for legend items, as they are drawn before
+        // point render, meaning they are drawn before autocalculated image
+        // width/heights. We don't want them to highjack the width/height for
+        // this ID if it is defined by users.
+        let forceHashId = element.parentNode &&
+            (element.parentNode as any).getAttribute('class');
+        forceHashId = forceHashId &&
+            forceHashId.indexOf('highcharts-legend') > -1;
+
+        // If we don't have a width/height yet, handle it. Try faking a point
+        // and running the algorithm again.
+        if (pattern._width === 'defer' || pattern._height === 'defer') {
+            pointCalculatePatternDimensions.call(
+                { graphic: { element: element } } as any, pattern
+            );
+        }
+
+        // If we don't have an explicit ID, compute a hash from the
+        // definition and use that as the ID. This ensures that points with
+        // the same pattern definition reuse existing pattern elements by
+        // default. We combine two hashes, the second with an additional
+        // preSeed algorithm, to minimize collision probability.
+        if (forceHashId || !pattern.id) {
+            // Make a copy so we don't accidentally edit options when setting ID
+            pattern = merge({}, pattern);
+            pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
+                hashFromObject(pattern) + hashFromObject(pattern, true);
+        }
+
+        // Add it. This function does nothing if an element with this ID
+        // already exists.
+        this.addPattern(pattern, !this.forExport && pick(
+            (pattern as any).animation,
+            this.globalAnimation,
+            { duration: 100 }
+        ));
+
+        value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
+
+    } else {
+        // Not a full pattern definition, just add color
+        value = pattern.color || value;
+    }
+
+    // Set the fill/stroke prop on the element
+    element.setAttribute(prop, value);
+
+    // Allow the color to be concatenated into tooltips formatters etc.
+    color.toString = function (): string {
+        return value;
+    };
+
+    // Skip default handler
+    return false;
+}
+
+/**
+ * Calculate pattern dimensions on points that have their own pattern.
+ * @private
+ */
+function onSeriesRender(
+    this: Series
+): void {
+    const isResizing = this.chart.isResizing;
+
+    if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
+        for (const point of this.points) {
+            const colorOptions = point.options && point.options.color;
+
+            if (
+                colorOptions &&
+                (colorOptions as PatternObject).pattern
+            ) {
+                // For most points we want to recalculate the dimensions on
+                // render, where we have the shape args and bbox. But if we
+                // are resizing and don't have the shape args, defer it, since
+                // the bounding box is still not resized.
+                if (
+                    isResizing &&
+                    !(
+                        point.shapeArgs &&
+                        point.shapeArgs.width &&
+                        point.shapeArgs.height
+                    )
+                ) {
+                    (colorOptions as PatternObject)
+                        .pattern._width = 'defer';
+                    (colorOptions as PatternObject)
+                        .pattern._height = 'defer';
+                } else {
+                    point.calculatePatternDimensions(
+                        (colorOptions as PatternObject).pattern
+                    );
+                }
+            }
+        }
+    }
+}
 
 /**
  * Set dimensions on pattern from point. This function will set internal
@@ -193,14 +532,15 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
  *
  * @requires modules/pattern-fill
  */
-Point.prototype.calculatePatternDimensions = function (
-    pattern: PatternFill.PatternOptionsObject
+function pointCalculatePatternDimensions(
+    this: Point,
+    pattern: PatternOptionsObject
 ): void {
     if (pattern.width && pattern.height) {
         return;
     }
 
-    const bBox: Highcharts.BPatternObject = this.graphic && (
+    const bBox: BPatternObject = this.graphic && (
             this.graphic.getBBox &&
             this.graphic.getBBox(true) ||
             this.graphic.element &&
@@ -274,9 +614,7 @@ Point.prototype.calculatePatternDimensions = function (
                 0
         );
     }
-};
-
-/* eslint-disable no-invalid-this */
+}
 
 /**
  * Add a pattern to the renderer.
@@ -295,27 +633,26 @@ Point.prototype.calculatePatternDimensions = function (
  *
  * @requires modules/pattern-fill
  */
-SVGRenderer.prototype.addPattern = function (
-    options: PatternFill.PatternOptionsObject,
+function rendererAddPattern(
+    this: SVGRenderer,
+    options: PatternOptionsObject,
     animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
-    let pattern: (SVGElement|undefined),
-        animate = pick(animation, true),
+    const animate = pick(animation, true),
         animationOptions = animObject(animate),
-        path: SVGAttributes,
         defaultSize = 32,
         width: number = options.width || (options._width as any) || defaultSize,
         height: number = (
             options.height || (options._height as any) || defaultSize
         ),
         color: ColorString = options.color || '#343434',
+        rect = (fill: ColorString): SVGElement => this
+            .rect(0, 0, width, height)
+            .attr({ fill })
+            .add(pattern);
+
+    let path: SVGAttributes,
         id = options.id,
-        ren = this,
-        rect = function (fill: ColorString): void {
-            ren.rect(0, 0, width, height)
-                .attr({ fill })
-                .add(pattern);
-        },
         attribs: SVGAttributes;
 
     if (!id) {
@@ -363,7 +700,7 @@ SVGRenderer.prototype.addPattern = function (
         attrs.patternTransform = options.patternTransform;
     }
 
-    pattern = this.createElement('pattern').attr(attrs).add(this.defs);
+    const pattern = this.createElement('pattern').attr(attrs).add(this.defs);
 
     // Set id on the SVGRenderer object
     pattern.id = id;
@@ -415,9 +752,9 @@ SVGRenderer.prototype.addPattern = function (
 
     // For non-animated patterns, set opacity now
     if (!(options.image && animate) && typeof options.opacity !== 'undefined') {
-        [].forEach.call(pattern.element.childNodes, function (
+        [].forEach.call(pattern.element.childNodes, (
             child: SVGDOMElement
-        ): void {
+        ): void => {
             child.setAttribute('opacity', options.opacity as any);
         });
     }
@@ -427,11 +764,13 @@ SVGRenderer.prototype.addPattern = function (
     this.patternElements[id] = pattern;
 
     return pattern;
-};
+}
 
-
-// Make sure we have a series color
-wrap(Series.prototype, 'getColor', function (
+/**
+ * Make sure we have a series color.
+ * @private
+ */
+function wrapSeriesGetColor(
     this: Series,
     proceed: Series['getColor']
 ): void {
@@ -439,310 +778,19 @@ wrap(Series.prototype, 'getColor', function (
 
     // Temporarely remove color options to get defaults
     if (oldColor &&
-        (oldColor as PatternFill.PatternObject).pattern &&
-        !(oldColor as PatternFill.PatternObject).pattern.color
+        (oldColor as PatternObject).pattern &&
+        !(oldColor as PatternObject).pattern.color
     ) {
         delete this.options.color;
         // Get default
-        proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments as any, 1) as any
-        );
+        proceed.apply(this, [].slice.call(arguments, 1) as any);
         // Replace with old, but add default color
-        (oldColor as PatternFill.PatternObject).pattern.color =
+        (oldColor as PatternObject).pattern.color =
             this.color as any;
         this.color = this.options.color = oldColor;
     } else {
         // We have a color, no need to do anything special
-        proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments as any, 1) as any
-        );
-    }
-});
-
-
-// Calculate pattern dimensions on points that have their own pattern.
-addEvent(Series, 'render', function (): void {
-    const isResizing = this.chart.isResizing;
-
-    if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
-        (this.points || []).forEach(function (point: Point): void {
-            const colorOptions = point.options && point.options.color;
-
-            if (
-                colorOptions &&
-                (colorOptions as PatternFill.PatternObject).pattern
-            ) {
-                // For most points we want to recalculate the dimensions on
-                // render, where we have the shape args and bbox. But if we
-                // are resizing and don't have the shape args, defer it, since
-                // the bounding box is still not resized.
-                if (
-                    isResizing &&
-                    !(
-                        point.shapeArgs &&
-                        point.shapeArgs.width &&
-                        point.shapeArgs.height
-                    )
-                ) {
-                    (colorOptions as PatternFill.PatternObject)
-                        .pattern._width = 'defer';
-                    (colorOptions as PatternFill.PatternObject)
-                        .pattern._height = 'defer';
-                } else {
-                    point.calculatePatternDimensions(
-                        (colorOptions as PatternFill.PatternObject).pattern
-                    );
-                }
-            }
-        });
-    }
-});
-
-
-// Merge series color options to points
-addEvent(Point, 'afterInit', function (): void {
-    const point = this,
-        colorOptions: (PatternFill.PatternObject|undefined) =
-            point.options.color as any;
-
-    // Only do this if we have defined a specific color on this point. Otherwise
-    // we will end up trying to re-add the series color for each point.
-    if (colorOptions && colorOptions.pattern) {
-        // Move path definition to object, allows for merge with series path
-        // definition
-        if (typeof colorOptions.pattern.path === 'string') {
-            colorOptions.pattern.path = {
-                d: colorOptions.pattern.path
-            };
-        }
-        // Merge with series options
-        point.color = point.options.color = merge(
-            point.series.options.color as any, colorOptions
-        );
-    }
-});
-
-
-// Add functionality to SVG renderer to handle patterns as complex colors
-addEvent(SVGRenderer, 'complexColor', function (
-    args: {
-        args: [
-            PatternFill.PatternObject,
-            string,
-            SVGDOMElement
-        ];
-    }
-): boolean {
-    const color = args.args[0],
-        prop = args.args[1],
-        element = args.args[2],
-        chartIndex = (this.chartIndex || 0);
-
-    let pattern = color.pattern,
-        value = '#343434';
-
-    // Handle patternIndex
-    if (typeof color.patternIndex !== 'undefined' && patterns) {
-        pattern = patterns[color.patternIndex];
-    }
-
-    // Skip and call default if there is no pattern
-    if (!pattern) {
-        return true;
-    }
-
-    // We have a pattern.
-    if (
-        pattern.image ||
-        typeof pattern.path === 'string' ||
-        pattern.path && pattern.path.d
-    ) {
-        // Real pattern. Add it and set the color value to be a reference.
-
-        // Force Hash-based IDs for legend items, as they are drawn before
-        // point render, meaning they are drawn before autocalculated image
-        // width/heights. We don't want them to highjack the width/height for
-        // this ID if it is defined by users.
-        let forceHashId = element.parentNode &&
-            (element.parentNode as any).getAttribute('class');
-        forceHashId = forceHashId &&
-            forceHashId.indexOf('highcharts-legend') > -1;
-
-        // If we don't have a width/height yet, handle it. Try faking a point
-        // and running the algorithm again.
-        if (pattern._width === 'defer' || pattern._height === 'defer') {
-            Point.prototype.calculatePatternDimensions.call(
-                { graphic: { element: element } }, pattern
-            );
-        }
-
-        // If we don't have an explicit ID, compute a hash from the
-        // definition and use that as the ID. This ensures that points with
-        // the same pattern definition reuse existing pattern elements by
-        // default. We combine two hashes, the second with an additional
-        // preSeed algorithm, to minimize collision probability.
-        if (forceHashId || !pattern.id) {
-            // Make a copy so we don't accidentally edit options when setting ID
-            pattern = merge({}, pattern);
-            pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
-                hashFromObject(pattern) + hashFromObject(pattern, true);
-        }
-
-        // Add it. This function does nothing if an element with this ID
-        // already exists.
-        this.addPattern(pattern, !this.forExport && pick(
-            (pattern as any).animation,
-            this.globalAnimation,
-            { duration: 100 }
-        ));
-
-        value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
-
-    } else {
-        // Not a full pattern definition, just add color
-        value = pattern.color || value;
-    }
-
-    // Set the fill/stroke prop on the element
-    element.setAttribute(prop, value);
-
-    // Allow the color to be concatenated into tooltips formatters etc.
-    color.toString = function (): string {
-        return value;
-    };
-
-    // Skip default handler
-    return false;
-});
-
-
-// When animation is used, we have to recalculate pattern dimensions after
-// resize, as the bounding boxes are not available until then.
-addEvent(Chart, 'endResize', function (): void {
-    if (
-        (this.renderer && this.renderer.defIds || []).filter(function (
-            id: string
-        ): (boolean|string) {
-            return (
-                id &&
-                id.indexOf &&
-                id.indexOf('highcharts-pattern-') === 0
-            );
-        }).length
-    ) {
-        // We have non-default patterns to fix. Find them by looping through
-        // all points.
-        this.series.forEach(function (series: Series): void {
-
-            if (series.visible) {
-                series.points.forEach(function (point: Point): void {
-                    const colorOptions = point.options && point.options.color;
-
-                    if (
-                        colorOptions &&
-                        (colorOptions as PatternFill.PatternObject).pattern
-                    ) {
-                        (colorOptions as PatternFill.PatternObject).pattern
-                            ._width = 'defer';
-                        (colorOptions as PatternFill.PatternObject).pattern
-                            ._height = 'defer';
-                    }
-                });
-            }
-        });
-        // Redraw without animation
-        this.redraw(false);
-    }
-});
-
-
-// Add a garbage collector to delete old patterns with autogenerated hashes that
-// are no longer being referenced.
-addEvent(Chart, 'redraw', function (): void {
-    const usedIds: {[key: string]: boolean} = {},
-        renderer = this.renderer,
-        // Get the autocomputed patterns - these are the ones we might delete
-        patterns = (renderer.defIds || []).filter(function (
-            pattern: string
-        ): boolean {
-            return (
-                pattern.indexOf &&
-                pattern.indexOf('highcharts-pattern-') === 0
-            );
-        });
-    if (patterns.length) {
-        // Look through the DOM for usage of the patterns. This can be points,
-        // series, tooltips etc.
-        [].forEach.call(
-            this.renderTo.querySelectorAll(
-                '[color^="url("], [fill^="url("], [stroke^="url("]'
-            ),
-            function (node: SVGDOMElement): void {
-                const id = node.getAttribute('fill') ||
-                        node.getAttribute('color') ||
-                        node.getAttribute('stroke');
-                if (id) {
-                    const sanitizedId = id
-                        .replace(renderer.url, '')
-                        .replace('url(#', '')
-                        .replace(')', '');
-                    usedIds[sanitizedId] = true;
-                }
-            }
-        );
-
-        // Loop through the patterns that exist and see if they are used
-        patterns.forEach(function (id: string): void {
-            if (!usedIds[id]) {
-                // Remove id from used id list
-                erase(renderer.defIds as any, id);
-                // Remove pattern element
-                if ((renderer.patternElements as any)[id]) {
-                    (renderer.patternElements as any)[id].destroy();
-                    delete (renderer.patternElements as any)[id];
-                }
-            }
-        });
-    }
-});
-
-/* eslint-enable no-invalid-this */
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace PatternFill {
-
-    export interface PatternObject {
-        animation?: Partial<AnimationOptions>;
-        pattern: PatternOptionsObject;
-        patternIndex?: number;
-    }
-
-    export interface PatternOptionsObject {
-        _inverted?: (Boolean);
-        _height?: (number|string);
-        _width?: (number|string);
-        _x?: number;
-        _y?: number;
-        aspectRatio?: number;
-        backgroundColor?: ColorString;
-        color: ColorString;
-        height: number;
-        id?: string;
-        image?: string;
-        opacity?: number;
-        path: (string|SVGAttributes);
-        patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
-        patternTransform?: string;
-        width: number;
-        x?: number;
-        y?: number;
+        proceed.apply(this, [].slice.call(arguments, 1) as any);
     }
 }
 
@@ -754,7 +802,7 @@ namespace PatternFill {
 
 declare module '../Core/Color/ColorType' {
     interface ColorTypeRegistry {
-        PatternFill: PatternFill.PatternObject;
+        PatternFill: PatternObject;
     }
 }
 
@@ -763,6 +811,11 @@ declare module '../Core/Color/ColorType' {
  *  Export
  *
  * */
+
+const PatternFill = {
+    compose,
+    patterns
+};
 
 export default PatternFill;
 
