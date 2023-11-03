@@ -294,6 +294,11 @@ async function setupBoard() {
                         description: 'Years'
                     }
                 },
+                yAxis: {
+                    accessibility: {
+                        description: 'Temperature'
+                    }
+                },
                 lang: {
                     accessibility: {
                         chartContainerLabel: 'Data range selector. Highcharts Interactive Chart.'
