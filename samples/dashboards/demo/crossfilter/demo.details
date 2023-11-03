@@ -1,0 +1,11 @@
+---
+name: Crossfilter demo
+author:
+  - Sophie Bremer
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
+use_png_thumbnail: true
+...

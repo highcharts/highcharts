@@ -261,7 +261,8 @@ QUnit.test('getSeriesExtremes', function (assert) {
                 {
                     visible: true,
                     options: {},
-                    getXExtremes: Highcharts.Series.prototype.getXExtremes
+                    getXExtremes: Highcharts.Series.prototype.getXExtremes,
+                    reserveSpace: Highcharts.Series.prototype.reserveSpace
                 }
             ]
         };
@@ -276,13 +277,13 @@ QUnit.test('getSeriesExtremes', function (assert) {
     getSeriesExtremes.call(xAxis);
     assert.strictEqual(
         xAxis.dataMin,
-        null,
-        'xAxis with xData:[] gives dataMin:null'
+        undefined,
+        'xAxis with xData:[] gives dataMin:undefined'
     );
     assert.strictEqual(
         xAxis.dataMax,
-        null,
-        'xAxis with xData:[] gives dataMax:null'
+        undefined,
+        'xAxis with xData:[] gives dataMax:undefined'
     );
     xAxis.series[0].xData = [2, 7, 4];
     getSeriesExtremes.call(xAxis);

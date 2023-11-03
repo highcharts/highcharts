@@ -20,12 +20,9 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type ScatterPoint from './../Scatter/ScatterPoint';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const { scatter: ScatterSeries } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -42,6 +39,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *  Properties
      *
      * */
+
     public insetIndex?: number;
 
     public options: MapPointPointOptions = void 0 as any;
@@ -56,8 +54,6 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public isValid(): boolean {
         return Boolean(
             this.options.geometry ||
@@ -65,8 +61,6 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
             (isNumber(this.options.lon) && isNumber(this.options.lat))
         );
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

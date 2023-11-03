@@ -56,13 +56,15 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    destroyObjectProperties,
     error,
     extend,
     fireEvent,
     isArray,
     isNumber,
     pick,
-    wrap
+    wrap,
+    defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 
@@ -472,7 +474,16 @@ function createAndAttachRenderer(
 
         boost.clipRect = chart.renderer.clipRect();
 
-        (boost.targetFo || boost.target).clip(boost.clipRect);
+        (boost.targetFo || boost.target)
+            .attr({
+                // Set the z index of the boost target to that of the last
+                // series using it. This logic is not perfect, as it will not
+                // handle interleaved series with boost enabled or disabled. But
+                // it will cover the most common use case of one or more
+                // successive boosted or non-boosted series (#9819).
+                zIndex: series.options.zIndex
+            })
+            .clip(boost.clipRect);
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
@@ -558,19 +569,7 @@ function destroyGraphics(
         }
     });
 
-    const zonesSeries = series as (BoostSeriesComposition&LineSeries);
-
-    if (zonesSeries.getZonesGraphs) {
-        const props = zonesSeries.getZonesGraphs(
-            [['graph', 'highcharts-graph']]
-        ) as Array<[keyof LineSeries]>;
-        props.forEach((prop): void => {
-            const zoneGraph = zonesSeries[prop[0]] as (SVGElement|undefined);
-            if (zoneGraph) {
-                (zonesSeries as any)[prop[0]] = zoneGraph.destroy();
-            }
-        });
-    }
+    series.zones.forEach(destroyObjectProperties);
 }
 
 /**
@@ -1023,7 +1022,7 @@ function seriesRenderCanvas(this: Series): void {
             low: number = false as any,
             isYInside = true;
 
-        if (typeof d === 'undefined') {
+        if (!defined(d)) {
             return true;
         }
 

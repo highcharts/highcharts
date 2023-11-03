@@ -166,8 +166,7 @@ class PackedBubbleSeries extends BubbleSeries {
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
-                series.visible ||
-                !chart.options.chart.ignoreHiddenSeries
+                series.reserveSpace()
             ) {
                 yData = series.yData || [];
 
@@ -542,7 +541,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // Create the group for parent Nodes if doesn't exist
         // If exists it will only be adjusted to the updated plot size (#12063)
         this.parentNodesGroup = this.plotGroup(
-            'parentNodesGroup',
+            'parentNodesGroup' as any,
             'parentNode',
             this.visible ? 'inherit' : 'hidden',
             0.1, chart.seriesGroup

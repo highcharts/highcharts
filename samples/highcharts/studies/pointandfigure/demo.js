@@ -94,8 +94,8 @@
                     lastPoint = getLastPoint(finalData);
 
                 if (upTrend) {
-
-                    if (close - lastPoint >= calculatedBoxSize) { // Add point going UP
+                    // Add point going UP
+                    if (close - lastPoint >= calculatedBoxSize) {
                         pushNewPoint(close, upTrend, lastPoint);
                     }
 
@@ -108,8 +108,8 @@
                 }
 
                 if (!upTrend) {
-
-                    if (lastPoint - close >= calculatedBoxSize) { // Add point going DOWN
+                    // Add point going DOWN
+                    if (lastPoint - close >= calculatedBoxSize) {
                         pushNewPoint(close, upTrend, lastPoint);
                     }
 
@@ -178,7 +178,7 @@
 
     // eslint-disable-next-line no-underscore-dangle
     Highcharts.wrap(Highcharts._modules['Core/Series/Series.js'].prototype, 'groupData', function (proceed) {
-        if (this.is('pointandfigure')) {
+        if (this.is && this.is('pointandfigure')) {
             return generatePnfData.apply(
                 this, Array.prototype.slice.call(arguments, 1
                 ));

@@ -15,23 +15,24 @@
  *  Imports
  *
  * */
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
  *
  *  Declarations
  *
  * */
+
 export interface WordcloudPointOptions extends ColumnPointOptions {
     name?: string;
     weight?: number;
 }
-
 
 /* *
  *
  *  Default Export
  *
  * */
+
 export default WordcloudPointOptions;

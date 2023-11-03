@@ -49,7 +49,7 @@ export type {
     default as OrdinalAxis
 } from 'highcharts/es-modules/Core/Axis/OrdinalAxis';
 
-export type { default as Pane } from 'highcharts/es-modules/Extensions/Pane';
+export type { default as Pane } from 'highcharts/es-modules/Extensions/Pane/Pane';
 
 export type { default as Point } from 'highcharts/es-modules/Core/Series/Point';
 

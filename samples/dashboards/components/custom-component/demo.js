@@ -14,7 +14,7 @@ class YouTubeComponent extends Component {
         this.youTubeElement.setAttribute('height', height - 10); // padding
     }
 
-    load() {
+    async load() {
         super.load();
 
         this.youTubeElement.setAttribute(

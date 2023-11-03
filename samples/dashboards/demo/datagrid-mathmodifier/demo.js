@@ -1,12 +1,13 @@
 // Create Dashboard
 const data = [
     ['Day', 'EUR', 'Rate'],
-    [15, 11, 1.0876],
-    [16, 23, 1.0881],
-    [17, 15, 1.0829],
-    [18, 27, 1.0813],
-    [19, 13, 1.0808]
+    [1691971200000, 11, 1.0930],
+    [1692057600000, 23, 1.0926],
+    [1692144000000, 15, 1.0916],
+    [1692230400000, 27, 1.0900],
+    [1692316800000, 13, 1.0867]
 ];
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -33,6 +34,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
                     },
                     id: 'dashboard-col-1'
@@ -40,6 +47,12 @@ Dashboards.board('container', {
                     responsive: {
                         small: {
                             width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
                         }
                     },
                     id: 'dashboard-col-2'
@@ -47,45 +60,98 @@ Dashboards.board('container', {
             }]
         }]
     },
-    components: [
-        {
-            cell: 'dashboard-col-1',
-            type: 'Highcharts',
-            connector: {
-                id: 'EUR-USD'
+    components: [{
+        cell: 'dashboard-col-1',
+        type: 'Highcharts',
+        connector: {
+            id: 'EUR-USD'
+        },
+        columnAssignment: {
+            Day: 'x',
+            EUR: 'custom.eur',
+            Rate: 'y',
+            USD: 'custom.usd'
+        },
+        sync: {
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                animation: false,
+                type: 'line',
+                zooming: false,
+                events: {
+                    redraw: function () {
+                        if (!this.series[1].options.yAxis) {
+                            this.series[1].update({
+                                yAxis: 1
+                            });
+                        }
+                    }
+                }
             },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y',
-                USD: 'custom.usd'
+            title: {
+                text: 'EUR to USD'
             },
-            sync: {
-                highlight: true
+            subtitle: {
+                text: 'Euro foreign exchange reference rate to US dollar'
             },
-            chartOptions: {
-                chart: {
-                    animation: false,
-                    type: 'line',
-                    zooming: false
+            tooltip: {
+                shared: true,
+                split: true,
+                stickOnContact: true
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Euro foreign exchange reference rate 
+                    to US dollar`
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the 3 linear series, the 
+                first of which corresponds to a certain value on a given day in 
+                Euro, the second to the Euro to US Dollar exchange rate, and 
+                the third to the same amount converted to US Dollars according 
+                to the given exchange rate.`
+            },
+            xAxis: {
+                type: 'datetime',
+                accessibility: {
+                    description: 'Date and time',
+                    rangeDescription: 'Range: Monday, 14 Aug to Friday, 18 Aug'
+                }
+            },
+            yAxis: [{
+                title: {
+                    text: 'EUR / USD'
+                }
+            }, {
+                title: {
+                    text: 'Rate'
                 },
-                tooltip: {
-                    shared: true,
-                    split: true
-                },
-                xAxis: {
-                    type: 'category'
+                opposite: true
+            }]
+        }
+    }, {
+        cell: 'dashboard-col-2',
+        type: 'DataGrid',
+        connector: {
+            id: 'EUR-USD'
+        },
+        sync: {
+            highlight: true
+        },
+        dataGridOptions: {
+            editable: false,
+            columns: {
+                Day: {
+                    cellFormatter: function () {
+                        return new Date(this.value)
+                            .toISOString()
+                            .substring(0, 10);
+                    }
                 }
             }
-        }, {
-            cell: 'dashboard-col-2',
-            type: 'DataGrid',
-            connector: {
-                id: 'EUR-USD'
-            },
-            sync: {
-                highlight: true
-            }
         }
-    ]
+    }]
 });

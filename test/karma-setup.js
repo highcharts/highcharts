@@ -506,23 +506,22 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0]
     ) {
         var points = chart.series[0].nodes || // Network graphs, sankey etc
-            chart.series[0].points;
+                chart.series[0].points || [],
+            i = points.length;
 
-        if (points) {
-            for (var i = 0; i < points.length; i++) {
-                if (
-                    points[i] &&
-                    !points[i].isNull &&
-                    !( // Map point with no extent, like Aruba
-                        points[i].shapeArgs &&
-                        points[i].shapeArgs.d &&
-                        points[i].shapeArgs.d.length === 0
-                    ) &&
-                    typeof points[i].onMouseOver === 'function'
-                ) {
-                    points[i].onMouseOver();
-                    break;
-                }
+        while (i--) {
+            if (
+                points[i] &&
+                !points[i].isNull &&
+                !( // Map point with no extent, like Aruba
+                    points[i].shapeArgs &&
+                    points[i].shapeArgs.d &&
+                    points[i].shapeArgs.d.length === 0
+                ) &&
+                typeof points[i].onMouseOver === 'function'
+            ) {
+                points[i].onMouseOver();
+                break;
             }
         }
     }

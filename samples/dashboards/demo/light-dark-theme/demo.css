@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 * {
     transition: background-color 100ms, color 100ms;
@@ -18,15 +18,24 @@
     fill-opacity: 0.9;
 }
 
-#dashboard-col-0 h1 {
+.datagrid {
+    height: 100%;
+}
+
+#dashboard-col-0 h2 {
     margin-bottom: 0;
 }
 
-.inputs {
+.inputs-wrapper {
     padding: 12px;
     background-color: white;
     box-shadow: none;
     margin: 1em;
+}
+
+.inputs-wrapper label {
+    display: block;
+    margin-bottom: 10px;
 }
 
 @media (prefers-color-scheme: dark) {

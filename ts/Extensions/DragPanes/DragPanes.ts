@@ -110,13 +110,12 @@ function compose(
 function onAxisAfterRender(
     this: Axis
 ): void {
-    let axis = this,
+    const axis = this,
         resizer = axis.resizer,
-        resizerOptions = axis.options.resize,
-        enabled;
+        resizerOptions = axis.options.resize;
 
     if (resizerOptions) {
-        enabled = resizerOptions.enabled !== false;
+        const enabled = resizerOptions.enabled !== false;
 
         if (resizer) {
             // Resizer present and enabled
@@ -146,10 +145,12 @@ function onAxisAfterRender(
  */
 function onAxisDestroy(
     this: Axis,
-    e: Event
+    e: { keepEvents: boolean }
 ): void {
-    if (!(e as any).keepEvents && this.resizer) {
-        this.resizer.destroy();
+    const axis = this;
+
+    if (!e.keepEvents && axis.resizer) {
+        axis.resizer.destroy();
     }
 }
 
@@ -162,8 +163,10 @@ function wrapPointerDrag(
     this: Pointer,
     proceed: Function
 ): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    const pointer = this;
+
+    if (!pointer.chart.activeResizer) {
+        proceed.apply(pointer, [].slice.call(arguments, 1));
     }
 }
 
@@ -175,8 +178,10 @@ function wrapPointerRunPointActions(
     this: Pointer,
     proceed: Function
 ): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    const pointer = this;
+
+    if (!pointer.chart.activeResizer) {
+        proceed.apply(pointer, [].slice.call(arguments, 1));
     }
 }
 

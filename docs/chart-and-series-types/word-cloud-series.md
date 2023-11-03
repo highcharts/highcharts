@@ -39,12 +39,12 @@ Advanced usage
 
 ### Custom spiralling algorithm
 
-Spirals are used for moving a word after the inital position experienced a collision with either another word or the borders of the playing field.  
+Spirals are used for moving a word after the initial position experienced a collision with either another word or the borders of the playing field.  
 To implement a custom spiral, look at the function archimedeanSpiral for example:
 
     
     /**
-     * archimedeanSpiral - Gives a set of cordinates for an Archimedian Spiral.
+     * archimedeanSpiral - Gives a set of coordinates for an Archimedian Spiral.
      *
      * @param {number} t How far along the spiral we have traversed.
      * @return {object} Resulting coordinates, x and y.
@@ -57,7 +57,7 @@ To implement a custom spiral, look at the function archimedeanSpiral for example
         };
     }; 
 
-The spiralling algorithm is made accesible by attaching it to the `spirals` property:
+The spiralling algorithm is made accessible by attaching it to the `spirals` property:
 
     
     Highcharts.seriesTypes.wordcloud.prototype.spirals.archimedean = archimedeanSpiral; 
@@ -88,7 +88,7 @@ To implement a custom strategy, have a look at the function randomPlacement for 
       };
     }; 
 
-The placement algorithm is made accesible by attaching it to the `placementStrategy` property:
+The placement algorithm is made accessible by attaching it to the `placementStrategy` property:
 
     
     Highcharts.seriesTypes.wordcloud.prototype.placementStrategy.random= randomPlacement; 
@@ -120,7 +120,7 @@ Things to be aware of
 ---------------------
 
 *   When words are rotated in angles not divisible by 90, there is a lot of air between them.
-    *   The current collision algorithm does not take rotation into count, and only checks if the outer areas of two words collides. To fix this we can utilize the [Seperating Axis Theorem](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)
+    *   The current collision algorithm does not take rotation into count, and only checks if the outer areas of two words collides. To fix this we can utilize the [Separating Axis Theorem](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)
 *   The words has changed places when I export my chart.
     *   The exporting does a new render of the data, which causes the words to be repositioned in different coordinates than the original chart.
 *   There is a different font type in my exported chart.

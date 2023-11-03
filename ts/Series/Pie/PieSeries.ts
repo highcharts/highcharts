@@ -38,7 +38,8 @@ const {
     fireEvent,
     merge,
     pick,
-    relativeLength
+    relativeLength,
+    splat
 } = U;
 
 /* *
@@ -99,8 +100,6 @@ class PieSeries extends Series {
     public data: Array<PiePoint> = void 0 as any;
 
     public endAngleRad?: number;
-
-    public maxLabelDistance: number = void 0 as any;
 
     public options: PieSeriesOptions = void 0 as any;
 
@@ -241,34 +240,35 @@ class PieSeries extends Series {
     }
 
     /**
-     * Utility for getting the x value from a given y, used for
-     * anticollision logic in data labels. Added point for using specific
-     * points' label distance.
+     * Utility for getting the x value from a given y, used for anticollision
+     * logic in data labels.
      * @private
      */
     public getX(
         y: number,
         left: boolean,
-        point: PiePoint
+        point: PiePoint,
+        dataLabel: SVGElement
     ): number {
         const center = this.center,
             // Variable pie has individual radius
             radius = this.radii ?
                 this.radii[point.index as any] || 0 :
-                center[2] / 2;
+                center[2] / 2,
+            labelPosition = dataLabel.dataLabelPosition,
+            distance = labelPosition?.distance || 0;
 
         const angle = Math.asin(
-            clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
+            clamp((y - center[1]) / (radius + distance), -1, 1)
         );
         const x = center[0] +
-        (left ? -1 : 1) *
-        (Math.cos(angle) * (radius + point.labelDistance)) +
-        (
-            (point.labelDistance as any) > 0 ?
-                (left ? -1 : 1) * (this.options.dataLabels as any).padding :
-                0
-        );
-
+            (left ? -1 : 1) *
+            (Math.cos(angle) * (radius + distance)) +
+            (
+                distance > 0 ?
+                    (left ? -1 : 1) * (dataLabel.padding || 0) :
+                    0
+            );
         return x;
     }
 
@@ -389,8 +389,6 @@ class PieSeries extends Series {
             precision = 1000, // issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
-            connectorOffset =
-                (slicedOffset as any) + (options.borderWidth || 0),
             radians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -399,14 +397,12 @@ class PieSeries extends Series {
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
             points = series.points,
-            labelDistance = (options.dataLabels as any).distance,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             len = points.length;
-        let finalConnectorOffset,
-            start,
+        let start,
             end,
             angle,
-            // the x component of the radius vector for a given point
+            // The x component of the radius vector for a given point
             radiusX,
             radiusY,
             i,
@@ -425,7 +421,7 @@ class PieSeries extends Series {
 
             point = points[i];
 
-            // set start and end angle
+            // Set start and end angle
             start = startAngleRad + (cumulative * circ);
             if (
                 point.isValid() &&
@@ -435,7 +431,7 @@ class PieSeries extends Series {
             }
             end = startAngleRad + (cumulative * circ);
 
-            // set the shape
+            // Set the shape
             const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
@@ -446,28 +442,6 @@ class PieSeries extends Series {
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
-
-            // Used for distance calculation for specific point.
-            point.labelDistance = pick(
-                (
-                    point.options.dataLabels &&
-                    point.options.dataLabels.distance
-                ),
-                labelDistance
-            );
-
-            // Compute point.labelDistance if it's defined as percentage
-            // of slice radius (#8854)
-            point.labelDistance = relativeLength(
-                point.labelDistance,
-                shapeArgs.r
-            );
-
-            // Saved for later dataLabels distance calculation.
-            series.maxLabelDistance = Math.max(
-                series.maxLabelDistance || 0,
-                point.labelDistance
-            );
 
             // The angle must stay within -90 and 270 (#2645)
             angle = (end + start) / 2;
@@ -487,7 +461,7 @@ class PieSeries extends Series {
                 )
             };
 
-            // set the anchor point for tooltips
+            // Set the anchor point for tooltips
             radiusX = Math.cos(angle) * positions[2] / 2;
             radiusY = Math.sin(angle) * positions[2] / 2;
             point.tooltipPos = [
@@ -499,49 +473,6 @@ class PieSeries extends Series {
                 1 :
                 0;
             point.angle = angle;
-
-            // Set the anchor point for data labels. Use point.labelDistance
-            // instead of labelDistance // #1174
-            // finalConnectorOffset - not override connectorOffset value.
-
-            finalConnectorOffset = Math.min(
-                connectorOffset,
-                point.labelDistance / 5
-            ); // #1678
-
-            point.labelPosition = {
-                natural: {
-                // initial position of the data label - it's utilized for
-                // finding the final position for the label
-                    x: positions[0] + radiusX + Math.cos(angle) *
-                    point.labelDistance,
-                    y: positions[1] + radiusY + Math.sin(angle) *
-                    point.labelDistance
-                },
-                computed: {
-                // used for generating connector path -
-                // initialized later in drawDataLabels function
-                // x: undefined,
-                // y: undefined
-                },
-                // left - pie on the left side of the data label
-                // right - pie on the right side of the data label
-                // center - data label overlaps the pie
-                alignment: point.labelDistance < 0 ?
-                    'center' : point.half ? 'right' : 'left',
-                connectorPosition: {
-                    breakAt: { // used in connectorShapes.fixedOffset
-                        x: positions[0] + radiusX + Math.cos(angle) *
-                        finalConnectorOffset,
-                        y: positions[1] + radiusY + Math.sin(angle) *
-                        finalConnectorOffset
-                    },
-                    touchingSliceAt: { // middle of the arc
-                        x: positions[0] + radiusX,
-                        y: positions[1] + radiusY
-                    }
-                }
-            };
         }
         fireEvent(series, 'afterTranslate');
     }

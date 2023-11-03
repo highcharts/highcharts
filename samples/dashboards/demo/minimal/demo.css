@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 h1#title {
     padding-top: 10px;
@@ -65,4 +65,8 @@ h1#title {
 
 .highcharts-plot-line-label {
     fill: var(--highcharts-color-3);
+}
+
+.highcharts-description {
+    padding: 0 20px;
 }

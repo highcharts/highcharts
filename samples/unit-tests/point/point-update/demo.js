@@ -481,14 +481,14 @@ QUnit.test('Pie series point update', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].connector.attr('stroke'),
+        chart.series[0].points[0].dataLabel.connector.attr('stroke'),
         'yellow',
         'Initial connector color'
     );
 
     chart.series[0].points[0].update({ color: 'red' });
     assert.strictEqual(
-        chart.series[0].points[0].connector.attr('stroke'),
+        chart.series[0].points[0].dataLabel.connector.attr('stroke'),
         'red',
         'Connector color updated'
     );

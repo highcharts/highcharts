@@ -24,7 +24,7 @@ import type PieDataLabelOptions from './PieDataLabelOptions';
  * */
 
 export interface PiePointOptions extends LinePointOptions {
-    dataLabels?: PieDataLabelOptions;
+    dataLabels?: PieDataLabelOptions|PieDataLabelOptions[];
     sliced?: boolean;
     visible?: boolean;
 }

@@ -65,12 +65,6 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
-        beforePadding?(): void;
-    }
-}
-
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         bubblePadding?: BubbleSeries['bubblePadding'];
@@ -102,28 +96,28 @@ const composedMembers: Array<unknown> = [];
  * Add logic to pad each axis with the amount of pixels necessary to avoid the
  * bubbles to overflow.
  */
-function axisBeforePadding(
+function onAxisFoundExtremes(
     this: Axis
 ): void {
+
     const axisLength = this.len,
-        chart = this.chart,
-        isXAxis = this.isXAxis,
+        { coll, isXAxis, min } = this,
         dataKey = isXAxis ? 'xData' : 'yData',
-        min = this.min,
-        range = (this.max as any) - (min as any);
+        range = (this.max || 0) - (min || 0);
 
     let pxMin = 0,
         pxMax = axisLength,
         transA = axisLength / range,
         hasActiveSeries;
 
+    if (coll !== 'xAxis' && coll !== 'yAxis') {
+        return;
+    }
+
     // Handle padding on the second pass, or on redraw
     this.series.forEach((series): void => {
 
-        if (
-            series.bubblePadding &&
-            (series.visible || !chart.options.chart.ignoreHiddenSeries)
-        ) {
+        if (series.bubblePadding && series.reserveSpace()) {
             // Correction for #1673
             this.allowZoomOutside = true;
 
@@ -482,7 +476,7 @@ class BubbleSeries extends ScatterSeries {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
         if (U.pushUnique(composedMembers, AxisClass)) {
-            AxisClass.prototype.beforePadding = axisBeforePadding;
+            addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
         }
 
     }
@@ -581,12 +575,7 @@ class BubbleSeries extends ScatterSeries {
             let zMax = -Number.MAX_VALUE;
             let valid;
             this.chart.series.forEach((otherSeries): void => {
-                if (
-                    otherSeries.bubblePadding && (
-                        otherSeries.visible ||
-                        !this.chart.options.chart.ignoreHiddenSeries
-                    )
-                ) {
+                if (otherSeries.bubblePadding && otherSeries.reserveSpace()) {
                     const zExtremes = (
                         otherSeries.onPoint || (otherSeries as any)
                     ).getZExtremes();
@@ -828,7 +817,6 @@ interface BubbleSeries {
     isBubble: true;
     pointClass: typeof BubblePoint;
     specialGroup: 'group'|'markerGroup';
-    zoneAxis: string;
 }
 
 extend(BubbleSeries.prototype, {

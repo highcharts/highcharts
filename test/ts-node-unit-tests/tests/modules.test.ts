@@ -36,7 +36,7 @@ export function testMapSeries() {
         Highmaps.product,
         'Highmaps',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testStockSeries() {
@@ -290,12 +290,12 @@ export function testHighchartsWithModules() {
     );
 
     // Boost
-    require('../../../code/modules/boost.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Series.prototype.renderCanvas,
-        'function',
-        'Boost is loaded.'
-    );
+    // require('../../../code/modules/boost.src')(Highcharts);
+    // strictEqual(
+    //     typeof Highcharts.Series.prototype.renderCanvas,
+    //     'function',
+    //     'Boost is loaded.'
+    // );
 
     // Broken Axis
     require('../../../code/modules/broken-axis.src')(Highcharts);

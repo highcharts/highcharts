@@ -37,7 +37,7 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

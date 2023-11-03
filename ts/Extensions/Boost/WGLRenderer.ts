@@ -381,8 +381,7 @@ class WGLRenderer {
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
-            chart = series.chart,
-            options = series.options,
+            { chart, options, sorted, xAxis, yAxis } = series,
             isStacked = !!options.stacking,
             rawData = options.data,
             xExtremes = series.xAxis.getExtremes(),
@@ -399,8 +398,6 @@ class WGLRenderer {
                 series.zData || (options as any).zData ||
                 (series as any).processedZData
             ),
-            yAxis = series.yAxis,
-            xAxis = series.xAxis,
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -883,8 +880,9 @@ class WGLRenderer {
             }
 
             // The first point before and first after extremes should be
-            // rendered (#9962)
+            // rendered (#9962, 19701)
             if (
+                sorted &&
                 (nx >= xMin || x >= xMin) &&
                 (px <= xMax || x <= xMax)
             ) {

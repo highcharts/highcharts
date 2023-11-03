@@ -319,7 +319,7 @@ div.highcharts-tooltip {
 
 .highcharts-graph {
     fill: none;
-    stroke-width: 1px;
+    stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
@@ -1140,7 +1140,7 @@ text.highcharts-drilldown-data-label,
 }
 
 /* A11y module */
-.highcharts-a11y-proxy-button {
+.highcharts-a11y-proxy-element {
     border-width: 0;
     background-color: transparent;
     cursor: pointer;

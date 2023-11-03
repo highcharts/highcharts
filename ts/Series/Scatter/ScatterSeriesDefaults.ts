@@ -71,6 +71,8 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      * https://api.highcharts.com/highcharts/plotOptions.column.pointPadding)
      * settings.
      *
+     * **Note:** With boost mode enabled, the jitter effect is not supported.
+     *
      * @sample {highcharts} highcharts/demo/scatter-jitter
      *         Jitter on a scatter plot
      *

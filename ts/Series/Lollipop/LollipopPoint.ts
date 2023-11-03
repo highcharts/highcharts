@@ -18,6 +18,7 @@
 
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -59,9 +60,11 @@ class LollipopPoint extends Point {
      *
      * */
 
+    public connector?: SVGElement;
     public options: LollipopPointOptions = void 0 as any;
     public series: LollipopSeries = void 0 as any;
     public plotX: number = void 0 as any;
+    public pointWidth: number = void 0 as any;
 }
 
 /* *

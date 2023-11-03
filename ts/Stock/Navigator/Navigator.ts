@@ -52,6 +52,7 @@ const {
     erase,
     extend,
     find,
+    fireEvent,
     isArray,
     isNumber,
     merge,
@@ -736,6 +737,7 @@ class Navigator {
             );
         }
         navigator.rendered = true;
+        fireEvent(this, 'afterRender');
     }
 
     /**

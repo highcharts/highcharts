@@ -695,7 +695,7 @@ QUnit.test('Point className on other elements', function (assert) {
     });
 
     assert.notEqual(
-        chart.series[0].points[1].connector.element
+        chart.series[0].points[1].dataLabel.connector.element
             .getAttribute('class')
             .indexOf('my-class'),
         -1,

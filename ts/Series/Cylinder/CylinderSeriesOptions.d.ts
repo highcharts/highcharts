@@ -32,4 +32,10 @@ export interface CylinderSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<CylinderSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default CylinderSeriesOptions;

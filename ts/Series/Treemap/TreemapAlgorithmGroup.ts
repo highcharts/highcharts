@@ -19,7 +19,7 @@
  * */
 
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type TreemapNode from './TreemapNode.js';
+import type TreemapNode from './TreemapNode';
 
 /* *
  *
@@ -102,8 +102,6 @@ class TreemapAlgorithmGroup {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public addElement(el: number): void {
         this.lP.total = this.elArr[this.elArr.length - 1];
         this.total = this.total + el;
@@ -136,8 +134,6 @@ class TreemapAlgorithmGroup {
         this.total = 0;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -147,6 +143,13 @@ class TreemapAlgorithmGroup {
  * */
 
 namespace TreemapAlgorithmGroup {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface LPObject {
         lH: number;
         lR: number;
@@ -157,9 +160,11 @@ namespace TreemapAlgorithmGroup {
         total: number;
         aspectRatio(w: number, h: number): number;
     }
+
     export interface PlotObject extends PositionObject {
         parent: TreemapNode.NodeValuesObject;
     }
+
 }
 
 /* *

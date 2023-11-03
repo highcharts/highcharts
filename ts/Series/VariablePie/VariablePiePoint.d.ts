@@ -27,7 +27,6 @@ import type VariablePieSeries from './VariablePieSeries';
  * */
 
 declare class VariablePiePoint extends PiePoint {
-    public labelDistance: number;
     public options: VariablePiePointOptions;
     public series: VariablePieSeries;
 }

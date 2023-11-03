@@ -1,0 +1,13 @@
+---
+name: Line chart with custom entrance animation
+authors:
+  - Hubert Kozik
+js_wrap: b
+alt_text: >-
+  Highcharts basic line chart presents a custom entrance animation with United
+  States of America's Inflation-related statistics.
+tags:
+  - Highcharts demo
+categories:
+  - Line charts
+...

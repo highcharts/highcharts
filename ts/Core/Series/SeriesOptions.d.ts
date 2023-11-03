@@ -147,7 +147,7 @@ export interface SeriesOptions {
     xAxis?: (number|string);
     yAxis?: (number|string);
     zIndex?: number;
-    zoneAxis?: string;
+    zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
 }
@@ -176,7 +176,7 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
 }
 
 export interface SeriesStateInactiveOptions extends StateInactiveOptions {
-    // nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStateNormalOptions extends StateNormalOptions {

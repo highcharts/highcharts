@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/css/datagrid.css");
-@import url("https://code.highcharts.com/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 h1,
 a {
@@ -47,4 +47,9 @@ p {
 #dashboard-col-4 .highcharts-color-0 {
     fill: var(--highcharts-color-3);
     stroke: var(--highcharts-color-3);
+}
+
+.highcharts-description {
+    margin-top: 1em;
+    padding: 0 20px;
 }

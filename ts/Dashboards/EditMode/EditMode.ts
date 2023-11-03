@@ -83,18 +83,25 @@ class EditMode {
                 resize: {
                     enabled: true
                 },
+                settings: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
                 },
                 tools: {
                     addComponentBtn: {
+                        enabled: true,
                         icon: this.iconsURLPrefix + 'add.svg'
                     },
-                    rwdIcons: {
-                        small: this.iconsURLPrefix + 'smartphone.svg',
-                        medium: this.iconsURLPrefix + 'tablet.svg',
-                        large: this.iconsURLPrefix + 'computer.svg'
+                    rwdButtons: {
+                        enabled: true,
+                        icons: {
+                            small: this.iconsURLPrefix + 'smartphone.svg',
+                            medium: this.iconsURLPrefix + 'tablet.svg',
+                            large: this.iconsURLPrefix + 'computer.svg'
+                        }
                     }
                 },
                 confirmationPopup: {
@@ -271,16 +278,8 @@ class EditMode {
      */
     public onContextBtnClick(): void {
         const editMode = this;
-        // Init contextMenu if doesn't exist.
-        if (!editMode.tools.contextMenu) {
-            editMode.tools.contextMenu = new EditContextMenu(
-                editMode.board.container,
-                editMode.options.contextMenu || {},
-                editMode
-            );
-        }
 
-        // Show context menu.
+        // Toggle context menu visibility.
         if (editMode.tools.contextMenu) {
             if (!editMode.tools.contextMenu.isVisible) {
                 editMode.tools.contextMenu
@@ -707,7 +706,7 @@ class EditMode {
 
     /**
      * Creates the buttons such as `addComponent` button, rwd buttons and
-     * context menu button.
+     * context menu button and its container.
      * @internal
      */
     public createTools(): void {
@@ -724,40 +723,52 @@ class EditMode {
         );
 
         // Create context menu button
-        if (
-            options.contextMenu &&
-            options.contextMenu.enabled
-        ) {
+        if (options.contextMenu && options.contextMenu.enabled) {
             this.tools.contextButtonElement = EditRenderer.renderContextButton(
                 this.tools.container,
                 editMode
             );
+
+            // Init contextMenu if doesn't exist.
+            if (!editMode.tools.contextMenu) {
+                editMode.tools.contextMenu = new EditContextMenu(
+                    editMode.board.container,
+                    editMode.options.contextMenu || {},
+                    editMode
+                );
+            }
         }
 
-        // Create rwd menu
-        this.createRwdMenu();
+        if (options.tools?.rwdButtons?.enabled) {
+            this.createRwdMenu();
+        }
 
-        // Create add button
-        const addIconURL = options?.tools?.addComponentBtn?.icon;
+        // Create add component button
+        if (
+            options.tools?.addComponentBtn?.enabled &&
+            options.toolbars?.cell?.enabled
+        ) {
+            const addIconURL = options.tools.addComponentBtn.icon;
 
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon: addIconURL,
-                text: this.lang.addComponent,
-                callback: (): void => {
-                    // Sidebar trigger
-                    if (editMode.sidebar) {
-                        editMode.sidebar.show();
-                        editMode.setEditOverlay();
+            this.addComponentBtn = EditRenderer.renderButton(
+                this.tools.container,
+                {
+                    className: EditGlobals.classNames.editToolsBtn,
+                    icon: addIconURL,
+                    text: this.lang.addComponent,
+                    callback: (): void => {
+                        // Sidebar trigger
+                        if (editMode.sidebar) {
+                            editMode.sidebar.show();
+                            editMode.setEditOverlay();
+                        }
+                    },
+                    style: {
+                        display: 'none'
                     }
-                },
-                style: {
-                    display: 'none'
                 }
-            }
-        );
+            );
+        }
     }
 
     /**
@@ -768,8 +779,7 @@ class EditMode {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
-        const rwdIcons =
-            (options && options.tools && options.tools.rwdIcons) || {};
+        const rwdIcons = options?.tools?.rwdButtons?.icons || {};
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
@@ -1050,6 +1060,10 @@ namespace EditMode {
          */
         resize?: Resizer.Options;
         /**
+         * Settings options.
+         */
+        settings?: SettingsOptions;
+        /**
          * Toolbar options.
          *
          * Try it:
@@ -1058,9 +1072,21 @@ namespace EditMode {
          */
         toolbars?: Toolbars;
         /**
-         * @internal
+         * Tools options.
          */
         tools?: Tools;
+    }
+
+    /**
+     * Settings options
+     */
+    export interface SettingsOptions {
+        /**
+         * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
     }
 
     /**
@@ -1069,6 +1095,9 @@ namespace EditMode {
     export interface Toolbars {
         /**
         * Options of the cell toolbar.
+        *
+        * When the cell toolbar is disabled, the Add Component button is not
+        * displayed.
         */
         cell?: CellEditToolbar.Options;
         /**
@@ -1082,29 +1111,83 @@ namespace EditMode {
     }
 
     /**
-    * @internal
+    * Tools options.
     */
     export interface Tools {
-        contextMenu?: EditContextMenu;
-        contextButtonElement?: HTMLDOMElement;
+        /**
+        * Add Component button options.
+        */
         addComponentBtn?: AddComponentBtn;
+        /**
+         * RWD buttons options.
+         */
+        rwdButtons?: RwdButtons;
+        /**
+        * @internal
+        */
+        contextMenu?: EditContextMenu;
+        /**
+        * @internal
+        */
+        contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
         container?: HTMLDOMElement;
-        rwdIcons?: RwdIcons;
     }
 
     /**
-    * @internal
+    * Add Component Button options.
     */
     export interface AddComponentBtn {
+        /**
+         * Whether the Add Component button should be visible.
+         *
+         * Note that the Add Component button is always disabled when cell
+         * toolbars are disabled.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * URL to the Add Component button icon.
+         */
         icon: string;
     }
 
     /**
-    * @internal
-    */
+     * RWD buttons options.
+     */
+    export interface RwdButtons {
+        /**
+         * Whether the RWD buttons should be visible.
+         *
+         * @default true
+         *
+         */
+        enabled?: boolean;
+        /**
+         * RWD buttons icons options.
+         */
+        icons: RwdIcons;
+    }
+
+    /**
+     * RWD Buttons icons options.
+     */
     export interface RwdIcons {
+        /**
+         * URL to small RWD button icon.
+         */
         small: string;
+        /**
+         * URL to medium RWD button icon.
+         */
         medium: string;
+        /**
+         * URL to large RWD button icon.
+         */
         large: string;
     }
 
