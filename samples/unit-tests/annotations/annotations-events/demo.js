@@ -305,4 +305,42 @@ QUnit.test('Annotations events - general', function (assert) {
         '#19024, rectangle should resize to exact drag position.'
     );
 
+    let clicks = 0;
+
+    annotation = chart.addAnnotation({
+        labels: [{
+            useHTML: true,
+            text: 'test label',
+            point: {
+                x: 200,
+                y: 100
+            }
+        }],
+        events: {
+            click: function () {
+                clicks++;
+            }
+        },
+        shapes: [{
+            points: [{
+                x: 100,
+                y: 100
+            }, {
+                x: 200,
+                y: 100
+            }],
+            type: 'path',
+            strokeWidth: 10
+        }],
+        draggable: false
+    });
+
+    controller.click(chart.plotLeft + 105, chart.plotTop + 100);
+    controller.click(chart.plotLeft + 200, chart.plotTop + 75);
+
+    assert.equal(
+        clicks,
+        2,
+        'Click event should be correctly bound both for HTML annotation label and SVG path (#19926).'
+    );
 });
