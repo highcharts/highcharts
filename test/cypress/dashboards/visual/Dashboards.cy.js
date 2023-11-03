@@ -8,7 +8,7 @@ describe('Dashboards climate demo visual tests', () => {
     it('Climate demo', () => {
         cy.boardRendered();
         cy.get('g.highcharts-markers.highcharts-series-1.highcharts-mappoint-series')
-            .children('.highcharts-point').should('have.length', 6);
+            .children('.highcharts-point', { timeout: 10000 }).should('have.length', 6);
         cy.get('#demo-content').compareSnapshot('dashboard-climate-loaded', 0.1);
     });
 
