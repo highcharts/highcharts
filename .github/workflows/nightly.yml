@@ -141,9 +141,29 @@ jobs:
 
   nightly_changelog:
     runs-on: ubuntu-latest
+    env:
+      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # get the full history
+
+      - run: npm i
+
+      - name: Build tree.json
+        run: |
+          npx gulp scripts
+          npx gulp jsdoc-options
+
+      - name: Generate and upload nightly changelog
+        run: |
+          node changelog/generate --review
+          aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
+
       - name: create list of merge commits
         run: |
           git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
