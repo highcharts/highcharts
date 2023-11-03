@@ -71,7 +71,7 @@
             });
         return pass;
     }
-/*
+    /*
     QUnit.test('Boxes within', function (assert) {
         var boxes = [
             {
