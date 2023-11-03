@@ -7,7 +7,7 @@ consistent-return: 0 */
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String  The tag to start from, defaults to latest commit.
+ * --since String  The tag to start from, defaults to latest annotated tag.
  * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
  * --review        Create a review page with edit links and a list of all PRs
@@ -342,8 +342,6 @@ const getFile = url => new Promise((resolve, reject) => {
                         `${pack.version}+build.${getLatestGitSha()}` :
                         pack.version;
 
-                    const isPreview = 'v' + version === params.since;
-
                     if (products) {
                         products = products.replace('var products = ', '');
                         products = JSON.parse(products);
@@ -370,11 +368,7 @@ const getFile = url => new Promise((resolve, reject) => {
                     }
 
                     if (params.review) {
-                        saveReview(
-                            isPreview ? '<note>Preview for next version</note>' : '' +
-                            review.join('\n\n___\n')
-                        );
-
+                        saveReview(review.join('\n\n___\n'));
                     }
                 })
                 .catch(err => {
