@@ -218,24 +218,13 @@ class ColorAxis extends Axis implements AxisLike {
         const legend = chart.options.legend || {},
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical',
-            visible = userOptions.visible;
-
-        const options = merge(
-            defaultOptions.colorAxis as ColorAxis.Options,
-            userOptions,
-            {
-                showEmpty: false,
-                title: null,
-                visible: legend.enabled && visible !== false
-            }
-        );
+                legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options, 'colorAxis');
+        super.init(chart, userOptions, 'colorAxis');
 
         // Super.init saves the extended user options, now replace it with the
         // originals
@@ -283,7 +272,19 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
 
-        super.setOptions(userOptions);
+        const options = merge(
+            defaultOptions.colorAxis as ColorAxis.Options,
+            userOptions,
+            // Forced options
+            {
+                showEmpty: false,
+                title: null,
+                visible: this.chart.options.legend.enabled &&
+                    userOptions.visible !== false
+            }
+        );
+
+        super.setOptions(options);
 
         this.options.crosshair = this.options.marker;
     }
