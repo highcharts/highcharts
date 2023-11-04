@@ -82,7 +82,7 @@ function compose(
 ): void {
 
     if (U.pushUnique(composedMembers, AxisClass)) {
-        merge(true, defaultOptions.xAxis, AxisResizer.resizerOptions);
+        merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
         AxisClass.keepProps.push('resizer');
