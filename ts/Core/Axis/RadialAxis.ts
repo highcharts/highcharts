@@ -211,24 +211,30 @@ namespace RadialAxis {
      * @private
      */
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
+        endOnTick: false,
+        gridLineWidth: 0,
         labels: {
             align: 'center',
             distance: -25,
             x: 0,
-            y: void 0 // auto
+            y: void 0 // Auto
         },
+        lineWidth: 1,
         minorGridLineWidth: 0,
         minorTickInterval: 'auto',
         minorTickLength: 10,
         minorTickPosition: 'inside',
         minorTickWidth: 1,
+        startOnTick: false,
         tickLength: 10,
+        tickPixelInterval: 100,
         tickPosition: 'inside',
         tickWidth: 2,
         title: {
-            rotation: 0
+            rotation: 0,
+            text: ''
         },
-        zIndex: 2 // behind dials, points in the series group
+        zIndex: 2 // Behind dials, points in the series group
     };
 
     /**
@@ -1433,7 +1439,7 @@ namespace RadialAxis {
         if (angular) {
             if (!this.isXAxis) {
                 defaultPolarOptions = merge(
-                    defaultOptions[coll],
+                    defaultOptions.yAxis,
                     defaultRadialGaugeOptions
                 );
             }

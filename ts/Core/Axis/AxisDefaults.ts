@@ -3127,8 +3127,6 @@ namespace AxisDefaults {
         gridLineWidth: 1,
 
         lineWidth: 0
-
-        // tickWidth: 0
     };
 
     /**
