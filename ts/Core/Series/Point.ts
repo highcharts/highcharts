@@ -655,7 +655,7 @@ class Point {
      * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
-    public getZone(): SeriesZonesOptions {
+    public getZone(): Series.ZoneObject {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
