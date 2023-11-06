@@ -33,7 +33,7 @@ function getProducts(logPaths) {
                 .split('\n')
                 .filter(match => !!match),
             ...ChildProcess
-                .execSync('git diff HEAD^ HEAD --name-only --diff-filter=ACM')
+                .execSync('git diff refs/heads/master HEAD --name-only --diff-filter=ACM')
                 .toString()
                 .split('\n')
                 .filter(match => !!match)
