@@ -58,7 +58,7 @@ export default defineConfig({
                 })
             });
         },
-        specPattern: 'test/cypress/performance/**/*.cy.{js,jsx,ts,tsx}',
+        specPattern: 'test/cypress/dashboards/performance/**/*.cy.{js,jsx,ts,tsx}',
         video: false
     }
 });

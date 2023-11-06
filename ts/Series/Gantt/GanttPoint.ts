@@ -20,16 +20,11 @@
 
 import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        xrange: {
-            prototype: {
-                pointClass: XRangePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    xrange: { prototype: { pointClass: XRangePoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { pick } = U;
 
@@ -46,8 +41,6 @@ class GanttPoint extends XRangePoint {
      *  Static Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -71,8 +64,6 @@ class GanttPoint extends XRangePoint {
             'partialFill', pick(options.completed, options.partialFill)
         );
     }
-
-    /* eslint-enable valid-jsdoc */
 
     /* *
      *
@@ -100,8 +91,6 @@ class GanttPoint extends XRangePoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Applies the options containing the x and y data and possible some
      * extra properties. This is called on point init or from point.update.
@@ -122,10 +111,8 @@ class GanttPoint extends XRangePoint {
         options: GanttPointOptions,
         x: number
     ): GanttPoint {
-        let point = this,
-            ganttPoint: GanttPoint;
+        const ganttPoint = super.applyOptions(options, x) as GanttPoint;
 
-        ganttPoint = super.applyOptions.call(point, options, x) as any;
         GanttPoint.setGanttPointAliases(ganttPoint);
 
         return ganttPoint;
@@ -145,10 +132,7 @@ class GanttPoint extends XRangePoint {
         );
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
-
 
 /* *
  *
