@@ -3,6 +3,7 @@ QUnit.test('Annotations events - general', function (assert) {
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
         closeEventCalled = 0,
+        chartRedrawEventCalled = 0,
         circleAfterUpdateCalled = 0,
         customButtonClicked = 0,
         popupOptions,
@@ -29,6 +30,13 @@ QUnit.test('Annotations events - general', function (assert) {
             ];
         },
         chart = Highcharts.chart('container', {
+            chart: {
+                events: {
+                    redraw() {
+                        chartRedrawEventCalled++;
+                    }
+                }
+            },
             exporting: {
                 buttons: {
                     customButton: {
@@ -138,7 +146,7 @@ QUnit.test('Annotations events - general', function (assert) {
         afterUpdateEventCalled,
         1,
         'annotations.events.afterUpdate called just once - after' +
-            '`annotation.update()`.'
+        '`annotation.update()`.'
     );
 
     var mouseDown = false,
@@ -265,7 +273,7 @@ QUnit.test('Annotations events - general', function (assert) {
     const xAxis = 0,
         yAxis = 1;
 
-    chart.addAnnotation({
+    const anno = chart.addAnnotation({
         type: 'basicAnnotation',
         shapes: [{
             type: 'path',
@@ -305,4 +313,14 @@ QUnit.test('Annotations events - general', function (assert) {
         '#19024, rectangle should resize to exact drag position.'
     );
 
+    const initialRedrawCounter = chartRedrawEventCalled;
+    anno.update({
+        shapes: [{}]
+    });
+
+    assert.strictEqual(
+        initialRedrawCounter,
+        chartRedrawEventCalled,
+        'Chart redraw event should not be called when calling annotation.update, #20080.'
+    );
 });
