@@ -215,18 +215,15 @@ function anchorPoints(
 
     const groupedDataLastIndex = groupedXData.length - 1,
         anchor = dataGroupingOptions.anchor,
-        firstAnchor = pick(dataGroupingOptions.firstAnchor, false),
-        lastAnchor = pick(dataGroupingOptions.lastAnchor, false);
+        firstAnchor = dataGroupingOptions.firstAnchor,
+        lastAnchor = dataGroupingOptions.lastAnchor;
     let i = groupedXData.length - 1,
         iEnd = 0;
     // Anchor points that are not extremes.
 
     // Change the first point position, but only when it is
     // the first point in the data set not in the current zoom.
-    if (
-        firstAnchor &&
-            series.xData[0] >= groupedXData[0]
-    ) {
+    if (firstAnchor && series.xData[0] >= groupedXData[0]) {
         iEnd++;
         const groupStart = series.groupMap[0].start,
             groupLength = series.groupMap[0].length;
