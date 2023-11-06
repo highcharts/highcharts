@@ -120,7 +120,7 @@ const EditGlobals: EditGlobals = {
                 button: 'Context menu'
             },
             editMode: {
-                editMode: 'Edit mode toggle button',
+                editMode: 'Edit mode toggle button'
             }
         },
         addComponent: 'Add component',

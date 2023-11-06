@@ -407,7 +407,7 @@ function renderToggle(
             type: 'button',
             role: 'switch',
             ariaChecked: false,
-            ariaLabel: langKey ? lang.accessibility[langKey][options.name] : '',
+            ariaLabel: langKey ? lang.accessibility[langKey][options.name] : ''
         } as any,
         {},
         parentElement
