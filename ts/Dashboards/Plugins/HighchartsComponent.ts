@@ -583,6 +583,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
+
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
@@ -628,31 +629,13 @@ class HighchartsComponent extends Component {
 
                     return true;
                 });
+            
+            const isChartSeries = chart.series.length;
 
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
                 let i = 0;
-                while (i < chart.series.length) {
-                    const series = chart.series[i];
-                    const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
-                    const existingSeries =
-                        seriesNames.indexOf(series.name) !== -1;
-                    i++;
-
-                    if (
-                        existingSeries &&
-                        seriesFromConnector
-                    ) {
-                        return series;
-                    }
-
-                    if (
-                        !existingSeries &&
-                        seriesFromConnector
-                    ) {
-                        series.destroy();
-                    }
-                }
+                let relatedSeries;
 
                 // Disable dragging on series, which were created out of a
                 // columns which are created by MathModifier.
@@ -663,6 +646,40 @@ class HighchartsComponent extends Component {
                             (formula): boolean => formula.column === seriesName
                         )
                 );
+
+                while (i < chart.series.length) {
+                    const series = chart.series[i];
+                    const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
+                    const existingSeries =
+                        seriesNames.indexOf(series.name) !== -1;
+                    i++;
+
+                    if (existingSeries) {
+                        if (seriesFromConnector) {
+                            return series;
+                        }
+                        relatedSeries = series;
+                    }
+
+                    if (
+                        !existingSeries &&
+                        seriesFromConnector
+                    ) {
+                        series.destroy();
+                    }
+                }
+
+                if (relatedSeries && isChartSeries) {
+                    relatedSeries.update({
+                        name: seriesName,
+                        id: `${storeTableID}-series-${index}`,
+                        dragDrop: {
+                            draggableY: shouldBeDraggable
+                        }
+                    }, false);
+                    relatedSeries = {};
+                    return chart.series[index];
+                }
 
                 return chart.addSeries({
                     name: seriesName,
@@ -676,6 +693,7 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
+                console.log(series);
                 const seriesTable = new DataTable({
                     columns: table.modified.getColumns([xKey, series.name])
                 });
