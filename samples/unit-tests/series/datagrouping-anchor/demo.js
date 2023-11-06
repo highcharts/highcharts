@@ -383,5 +383,106 @@ QUnit.test('Data grouping anchor for single point in the dataset', function (ass
         hour * 2,
         'for dataGrouping anchor end the point should be after 2h'
     );
+});
+
+QUnit.test('Anchor should be applied to the last point as well', function (assert) {
+    const data = [
+        1, // first group
+        2, // first group ---> (1 + 2) / 2 = 1,5
+        3, // second group
+        4, // second group ---> (3 + 4) / 2 = 3,5
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        {
+            y: 4,
+            x: 3600 * 1000 * 10 + 4250000
+        }
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            height: 500
+        },
+        xAxis: {
+            tickInterval: 3600 * 1000,
+            ordinal: false
+        },
+        yAxis: [{
+            height: '50%',
+            offset: 0
+        }, {
+            height: '50%',
+            top: '50%',
+            offset: 0
+
+        }],
+        plotOptions: {
+            series: {
+
+                pointInterval: 3600 * 1000,
+                dataGrouping: {
+                    approximation: 'average',
+                    enabled: true,
+                    forced: true,
+                    units: [
+                        ['hour', [2]]
+                    ]
+                }
+            }
+        },
+        series: [{
+            yAxis: 0,
+            data: data,
+            dataGrouping: {
+                anchor: 'middle'
+            }
+        }, {
+            yAxis: 1,
+            data: data.slice(0, -2),
+            dataGrouping: {
+                anchor: 'middle'
+            }
+        }]
+    });
+    const xPositions = [
+        chart.series[0].points.at(-2).x,
+        chart.series[1].points.at(-1).x
+    ];
+    assert.equal(
+        xPositions[0],
+        xPositions[1],
+        `last point of series 1 and second to last point in series 2 should be
+            in the same position`
+    );
+
+    chart.tooltip.refresh(chart.series[0].points.at(0));
+    let content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
+    assert.equal(
+        content,
+        'Thursday,  1 Jan, 00:00-01:59',
+        'Tooltip\'s content should show correct group range for the first point'
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            lastAnchor: 'lastPoint',
+            firstAnchor: 'firstPoint'
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points.at(-1));
+    // 10:00-11:59
+    content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
+    assert.equal(
+        content,
+        'Thursday,  1 Jan, 10:00-11:59',
+        `Tooltip's content should show correct group range of the last point
+        when lastAnchor is set to 'lastPoint'`
+    );
 
 });
