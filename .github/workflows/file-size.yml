@@ -1,0 +1,73 @@
+name: File Size Comparison
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'ts/**'
+      - '.github/workflows/file-size.yml'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  file_size_comparison:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: Write file sizes at master
+        run: npx gulp write-file-sizes --filename master.json
+
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          fetch-depth: 0
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: File size comparison
+        run: |
+          npx gulp write-file-sizes --filename ${{github.event.pull_request.number}}.json
+          npx gulp compare-size-and-comment \
+          --master ./tmp/filesizes/master.json \
+          --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
+          --pr ${{github.event.pull_request.number}} \
+          --user circleci-mu
+        env:
+          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
