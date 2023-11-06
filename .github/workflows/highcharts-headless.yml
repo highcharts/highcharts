@@ -39,6 +39,7 @@ jobs:
           fetch-depth: 2
       - uses: actions/checkout@v4
         with:
+          clean: false
           fetch-depth: 2
       - uses: actions/setup-node@v3
         with:
