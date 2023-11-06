@@ -45,11 +45,10 @@ const {
     createElement,
     css,
     defined,
-    getStyle,
+    diffObjects,
     isArray,
     isNumber,
-    merge,
-    diffObjects
+    merge
 } = U;
 
 /* *
@@ -143,7 +142,8 @@ class KPIComponent extends Component {
                         type: 'input',
                         propertyPath: ['valueFormat']
                     }]
-                )
+                ),
+            valueInChart: true
         }
     );
 
@@ -314,6 +314,8 @@ class KPIComponent extends Component {
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
 
+        this.setChartValue();
+
         return this;
     }
 
@@ -426,7 +428,7 @@ class KPIComponent extends Component {
         } = this.options;
 
         if (defined(value)) {
-            let prevValue;
+            let prevValue: number | undefined;
             if (isNumber(value)) {
                 prevValue = value;
             }
@@ -440,9 +442,58 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, '' + value);
+            this.setChartValue(value);
 
             this.prevValue = prevValue;
         }
+    }
+
+    /**
+     * Handles updating chart point value when synced.
+     *
+     * @internal
+     */
+    public setChartValue(
+        value: number|string|undefined = this.getValue()
+    ): void {
+        const chart = this.chart;
+        let valueInChart = this.options.valueInChart;
+
+        if (!chart || !valueInChart || !defined(value) || !isNumber(+value)) {
+            return;
+        }
+
+        value = +value;
+
+        if (valueInChart === true) {
+            valueInChart = {
+                series: 0,
+                point: 0
+            };
+        }
+
+        const targetSeries = chart.series[valueInChart.series ?? 0],
+            targetPoint = targetSeries?.points[valueInChart.point ?? 0];
+
+        if (targetSeries) {
+            if (targetPoint) {
+                targetPoint.update({
+                    y: value
+                });
+                return;
+            }
+
+            targetSeries.addPoint({
+                y: value
+            });
+            return;
+        }
+
+        chart.addSeries({
+            data: [{
+                y: value
+            }]
+        });
     }
 
     /**
@@ -708,6 +759,15 @@ namespace KPIComponent {
          * Callback function to format the text of the value from scratch.
          */
         valueFormatter?: ValueFormatterCallbackFunction;
+        /**
+         * Whether turn on synchronizing the KPI chart with the KPI value.
+         *
+         * If no specific point is set, the first point of the first series is
+         * the target.
+         *
+         * @default true
+         */
+        valueInChart?: boolean|ValueInChartOptions;
     }
     /** @internal */
     export interface SubtitleOptions extends TextOptions {
@@ -722,6 +782,24 @@ namespace KPIComponent {
             this: KPIComponent,
             value: (number|string)
         ): string;
+    }
+
+    /**
+     * Indicating the series and point that is to receiving the KPI value.
+     */
+    export interface ValueInChartOptions {
+        /**
+         * Index of the series with the point receiving the KPI value.
+         *
+         * @default 0
+         */
+        series?: number;
+        /**
+         * Index of the point that is to receive the KPI value on its Y.
+         *
+         * @default 0
+         */
+        point?: number;
     }
 }
 
