@@ -50,6 +50,11 @@ Dashboards.board('container', {
             chart: {
                 animation: false,
                 type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
         events: {},
@@ -66,6 +71,11 @@ Dashboards.board('container', {
             type: 'column',
             chart: {
                 animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
         events: {},
@@ -83,6 +93,11 @@ Dashboards.board('container', {
             type: 'column',
             chart: {
                 animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
         events: {},

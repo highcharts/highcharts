@@ -116,7 +116,21 @@ abstract class EventEmitter {
             };
 
             if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
-                emitter.graphic.on(type, eventHandler);
+                addEvent(
+                    emitter.graphic.element,
+                    type,
+                    eventHandler,
+                    { passive: false }
+                );
+
+                if (emitter.graphic.div) {
+                    addEvent(
+                        emitter.graphic.div,
+                        type,
+                        eventHandler,
+                        { passive: false }
+                    );
+                }
             } else {
                 addEvent(emitter, type, eventHandler, { passive: false });
             }

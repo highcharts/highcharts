@@ -139,6 +139,9 @@ Dashboards.board('container', {
             value: 1430,
             valueFormat: '$ {value}',
             subtitle: '43%',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     styledMode: true
@@ -162,6 +165,9 @@ Dashboards.board('container', {
             value: 6500,
             valueFormat: '$ {value}',
             subtitle: '22%',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     styledMode: true
@@ -273,6 +279,9 @@ Dashboards.board('container', {
             title: 'Spendings',
             value: 350,
             valueFormat: '$ {value}',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 series: [
                     {
@@ -293,6 +302,9 @@ Dashboards.board('container', {
             title: 'Your wallet condition',
             value: '',
             subtitle: 'You saved 1450$ this month',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 title: {
                     verticalAlign: 'middle',
