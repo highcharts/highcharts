@@ -1463,9 +1463,10 @@ class Pointer {
                         const chartXY = horiz ? 'chartX' : 'chartY',
                             singleTouch = touchesLength === 1,
                             touch0Start = pinchDown[0][chartXY],
-                            touch1Start = pinchDown[1]?.[chartXY],
+                            touch1Start = pinchDown[1]?.[chartXY] ??
+                                touch0Start,
                             touch0Now = touches[0][chartXY],
-                            touch1Now = touches[1]?.[chartXY];
+                            touch1Now = touches[1]?.[chartXY] ?? touch0Now;
 
                         if (
                             singleTouch ||
@@ -1477,15 +1478,19 @@ class Pointer {
                         ) {
                             const delta0 = touch0Now - touch0Start,
                                 delta1 = touch1Start - touch1Now,
+                                // The pinch is single-like if either only one
+                                // finger is used, or two fingers are moved in
+                                // parallel
+                                singleLike = Math.abs(delta0 + delta1) < 1,
                                 centerFactor = delta0 / (delta0 + delta1),
                                 center = touch0Start +
                                     (touch1Start - touch0Start) * centerFactor,
                                 scale = Math.abs(touch0Now - touch1Now) /
                                     Math.abs(touch0Start - touch1Start),
-                                minPx = singleTouch ?
+                                minPx = singleLike ?
                                     -delta0 :
                                     center - center / scale,
-                                maxPx = singleTouch ?
+                                maxPx = singleLike ?
                                     axis.len - delta0 :
                                     center + (axis.len - center) / scale;
 

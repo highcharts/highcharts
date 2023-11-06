@@ -116,7 +116,7 @@ class MapNavigation {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        MapPointer.compose(PointerClass);
+        MapPointer.compose(MapChartClass, PointerClass);
         MapSymbols.compose(SVGRendererClass);
 
         if (pushUnique(composedMembers, MapChartClass)) {

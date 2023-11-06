@@ -23,6 +23,7 @@ import type PointerEvent from '../Core/PointerEvent';
 
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
     pick,
@@ -87,6 +88,7 @@ namespace MapPointer {
      * @private
      */
     export function compose(
+        MapChartClass: typeof MapChart,
         PointerClass: typeof Pointer
     ): void {
 
@@ -98,8 +100,10 @@ namespace MapPointer {
                 onContainerMouseWheel
             });
 
+
+            addEvent(MapChartClass, 'touchpan', onChartTouchPan);
+
             wrap(pointerProto, 'normalize', wrapNormalize);
-            // wrap(pointerProto, 'pinchTranslate', wrapPinchTranslate);
             wrap(pointerProto, 'zoomOption', wrapZoomOption);
         }
     }
@@ -215,6 +219,21 @@ namespace MapPointer {
         }
 
         return e;
+    }
+
+    /**
+     * Handle pinch zoom and touch pan for maps
+     * @private
+     */
+    function onChartTouchPan(
+        this: MapChart,
+        e: PointerEvent
+    ): void {
+        const { mapView } = this;
+        if (mapView) {
+            /* eslint-disable-next-line no-console */
+            console.log('@todo: Implement map touch');
+        }
     }
 
     /**
