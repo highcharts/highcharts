@@ -103,7 +103,7 @@ export interface DataGroupingInfoObject {
     length?: number;
     options?: (PointOptions|PointShortOptions|SeriesTypeOptions);
     start?: number;
-    startX?: number
+    groupStart?: number
 }
 
 export interface DataGroupingResultObject {
@@ -705,7 +705,7 @@ function groupData(
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
                 groupMap.push(extend(series.dataGroupInfo, {
-                    startX: pointX
+                    groupStart: pointX
                 }));
             }
 
