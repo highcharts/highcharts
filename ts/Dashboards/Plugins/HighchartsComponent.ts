@@ -629,7 +629,7 @@ class HighchartsComponent extends Component {
 
                     return true;
                 });
-            
+
             const isChartSeries = chart.series.length;
 
             // Create the series or get the already added series
