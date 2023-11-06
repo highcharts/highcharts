@@ -318,8 +318,6 @@ class KPIComponent extends Component {
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
 
-        this.setChartValue();
-
         return this;
     }
 
@@ -363,6 +361,7 @@ class KPIComponent extends Component {
         }
 
         this.sync.start();
+        this.setChartValue();
         this.emit({ type: 'afterRender' });
         return this;
     }
@@ -407,7 +406,7 @@ class KPIComponent extends Component {
      * The value that should be displayed in the KPI.
      */
     private getValue(): string|number|undefined {
-        if (this.options.value) {
+        if (defined(this.options.value)) {
             return this.options.value;
         }
 
@@ -433,8 +432,8 @@ class KPIComponent extends Component {
 
         if (defined(value)) {
             let prevValue: number | undefined;
-            if (isNumber(value)) {
-                prevValue = value;
+            if (isNumber(+value)) {
+                prevValue = +value;
             }
 
             if (valueFormatter) {
@@ -446,7 +445,7 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, '' + value);
-            this.setChartValue(value);
+            this.setChartValue(prevValue);
 
             this.prevValue = prevValue;
         }
