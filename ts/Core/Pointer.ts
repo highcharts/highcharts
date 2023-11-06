@@ -145,7 +145,7 @@ class Pointer {
 
     public isDirectTouch?: boolean;
 
-    //public lastValidTouch: object = {};
+    // public lastValidTouch: object = {};
 
     public mouseDownX?: number;
 
@@ -1016,7 +1016,7 @@ class Pointer {
         );
 
         this.pinchDown = [];
-        //this.lastValidTouch = {};
+        // this.lastValidTouch = {};
 
         this.setDOMEvents();
 
@@ -1461,15 +1461,19 @@ class Pointer {
                         )
                     ) {
                         const chartXY = horiz ? 'chartX' : 'chartY',
+                            singleTouch = touchesLength === 1,
                             touch0Start = pinchDown[0][chartXY],
                             touch1Start = pinchDown[1]?.[chartXY],
                             touch0Now = touches[0][chartXY],
                             touch1Now = touches[1]?.[chartXY];
 
                         if (
-                            isNumber(touch1Now) &&
-                            // Don't zoom if fingers are too close on this axis
-                            Math.abs(touch0Start - touch1Start) > 20
+                            singleTouch ||
+                            (
+                                // Don't zoom if fingers are too close on this
+                                // axis
+                                Math.abs(touch0Start - touch1Start) > 20
+                            )
                         ) {
                             const delta0 = touch0Now - touch0Start,
                                 delta1 = touch1Start - touch1Now,
@@ -1478,8 +1482,12 @@ class Pointer {
                                     (touch1Start - touch0Start) * centerFactor,
                                 scale = Math.abs(touch0Now - touch1Now) /
                                     Math.abs(touch0Start - touch1Start),
-                                minPx = center - center / scale,
-                                maxPx = center + (axis.len - center) / scale;
+                                minPx = singleTouch ?
+                                    -delta0 :
+                                    center - center / scale,
+                                maxPx = singleTouch ?
+                                    axis.len - delta0 :
+                                    center + (axis.len - center) / scale;
 
                             const min = Math.max(
                                     axis.translate(
