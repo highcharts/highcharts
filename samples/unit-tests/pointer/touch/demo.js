@@ -387,7 +387,8 @@ QUnit.test('Touch and panning', function (assert) {
             chart: {
                 type: 'column',
                 pinchType: 'x',
-                panning: true
+                panning: true,
+                width: 600
             },
             xAxis: {
                 min: 4,
@@ -416,6 +417,8 @@ QUnit.test('Touch and panning', function (assert) {
             ]
         }),
         offset = Highcharts.offset(chart.container);
+
+    const initialRange = chart.xAxis[0].max - chart.xAxis[0].min;
 
     Array.prototype.item = function (i) {
         // eslint-disable-line no-extend-native
@@ -458,6 +461,12 @@ QUnit.test('Touch and panning', function (assert) {
         chart.xAxis[0].max > chart.xAxis[0].options.max,
         true,
         'Touch-device panning allows panning outside the xAxis options: min & max (#10633)'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        initialRange,
+        'The x-axis range should not change during panning'
     );
 
     chart.update({

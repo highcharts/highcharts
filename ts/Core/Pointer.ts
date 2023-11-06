@@ -1452,7 +1452,7 @@ class Pointer {
                 };
                 let hasZoomed: boolean|undefined;
                 for (const axis of chart.axes) {
-                    const { horiz } = axis;
+                    const { horiz, minPixelPadding } = axis;
                     if (
                         axis.zoomEnabled &&
                         (
@@ -1496,7 +1496,7 @@ class Pointer {
 
                             const min = Math.max(
                                     axis.translate(
-                                        minPx,
+                                        minPx + minPixelPadding,
                                         true,
                                         void 0,
                                         true, // Use axis.old
@@ -1506,7 +1506,7 @@ class Pointer {
                                 ),
                                 max = Math.min(
                                     axis.translate(
-                                        maxPx,
+                                        maxPx - minPixelPadding,
                                         true,
                                         void 0,
                                         true, // Use axis.old
