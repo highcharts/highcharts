@@ -693,7 +693,6 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
-                console.log(series);
                 const seriesTable = new DataTable({
                     columns: table.modified.getColumns([xKey, series.name])
                 });
