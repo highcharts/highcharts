@@ -139,7 +139,7 @@ function onTooltipHeaderFormatter(
         const groupStart = pick(
                 series &&
                     series.groupMap &&
-                    series.groupMap[point.index].startX,
+                    series.groupMap[point.index].groupStart,
                 labelConfig.key
             ),
             groupEnd = groupStart + currentDataGrouping?.totalRange - 1;

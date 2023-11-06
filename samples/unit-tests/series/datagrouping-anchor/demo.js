@@ -371,26 +371,26 @@ QUnit.test('Data grouping anchor for single point in the dataset', function (ass
     assert.strictEqual(
         chart.series[0].points[0].x,
         0,
-        'for dataGrouping anchor the point should be at the beginning'
+        'anchor: `start` -> beginning of the group'
     );
     assert.strictEqual(
         chart.series[1].points[0].x,
         hour,
-        'for dataGrouping anchor middle the point should be after 1h'
+        'anchor: `middle` -> middle of the group'
     );
     assert.strictEqual(
         chart.series[2].points[0].x,
         hour * 2,
-        'for dataGrouping anchor end the point should be after 2h'
+        'anchor: `end` -> end of the group'
     );
 });
 
-QUnit.test('Anchor should be applied to the last point as well', function (assert) {
+QUnit.test('DataGrouping unequal series length', function (assert) {
     const data = [
-        1, // first group
-        2, // first group ---> (1 + 2) / 2 = 1,5
-        3, // second group
-        4, // second group ---> (3 + 4) / 2 = 3,5
+        1,
+        2,
+        3,
+        4,
         1,
         2,
         3,
@@ -400,6 +400,7 @@ QUnit.test('Anchor should be applied to the last point as well', function (asser
         3,
         {
             y: 4,
+            // To make lastAnchor: lastPoint visible
             x: 3600 * 1000 * 10 + 4250000
         }
     ];
@@ -449,13 +450,9 @@ QUnit.test('Anchor should be applied to the last point as well', function (asser
             }
         }]
     });
-    const xPositions = [
-        chart.series[0].points.at(-2).x,
-        chart.series[1].points.at(-1).x
-    ];
     assert.equal(
-        xPositions[0],
-        xPositions[1],
+        chart.series[0].points.at(-2).x,
+        chart.series[1].points.at(-1).x,
         `last point of series 1 and second to last point in series 2 should be
             in the same position`
     );
@@ -465,7 +462,8 @@ QUnit.test('Anchor should be applied to the last point as well', function (asser
     assert.equal(
         content,
         'Thursday,  1 Jan, 00:00-01:59',
-        'Tooltip\'s content should show correct group range for the first point'
+        `Tooltip\'s content should show correct group range for the point with
+        anchor: middle`
     );
 
     chart.series[0].update({
@@ -476,7 +474,6 @@ QUnit.test('Anchor should be applied to the last point as well', function (asser
     });
 
     chart.tooltip.refresh(chart.series[0].points.at(-1));
-    // 10:00-11:59
     content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
     assert.equal(
         content,
