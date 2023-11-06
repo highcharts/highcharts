@@ -383,10 +383,10 @@ function renderSelectElement(
  * The element to which the new element should be appended.
  *
  * @param options
- * Form field options
+ * Form field options.
  *
  * @returns
- * Toggle element
+ * Toggle element.
  */
 function renderToggle(
     parentElement: HTMLElement,
@@ -397,29 +397,37 @@ function renderToggle(
         return;
     }
 
-    const { value, lang } = options;
-    const title = options.title || options.name;
+    const { lang, langKey, value } = options,
+        title = options.title || options.name;
+
     const toggleContainer = createElement(
         'button',
         {
             className: EditGlobals.classNames.toggleContainer,
             type: 'button',
             role: 'switch',
-            'aria-checked': false,
+            ariaChecked: false,
+            ariaLabel: langKey ? lang.accessibility[langKey][options.name] : '',
         } as any,
         {},
         parentElement
     );
 
     if (title) {
-        renderText(toggleContainer, { title });
+        renderText(
+            toggleContainer,
+            { title }
+        );
     }
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(toggleContainer, {
-            title: lang.off,
-            className: EditGlobals.classNames.toggleLabels
-        });
+        renderText(
+            toggleContainer,
+            {
+                title: lang.off,
+                className: EditGlobals.classNames.toggleLabels
+            }
+        );
     }
 
     const toggle = createElement(
@@ -432,16 +440,17 @@ function renderToggle(
         toggleContainer
     );
 
-    const input = renderCheckbox(toggle, value) as HTMLInputElement;
-    const callbackFn = options.onchange;
+    const input = renderCheckbox(toggle, value) as HTMLInputElement,
+        callbackFn = options.onchange;
 
-    if (input && callbackFn) {
-        toggleContainer.addEventListener('click', (e: any): void => {
-            callbackFn(!input.checked);
-            input.checked = !input.checked;
-            e.stopPropagation();
-        });
-    }
+    callbackFn && toggleContainer.addEventListener('click', (e: any): void => {
+        callbackFn(!input.checked);
+        input.checked = !input.checked;
+
+        toggleContainer.setAttribute('aria-checked', input.checked);
+
+        e.stopPropagation();
+    });
 
     const slider = createElement(
         'span',
@@ -457,10 +466,13 @@ function renderToggle(
     });
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(toggleContainer, {
-            title: lang.on,
-            className: EditGlobals.classNames.toggleLabels
-        });
+        renderText(
+            toggleContainer,
+            {
+                title: lang.on,
+                className: EditGlobals.classNames.toggleLabels
+            }
+        );
     }
 
 
@@ -830,6 +842,7 @@ export interface ToggleFormFieldOptions {
     id: string;
     name: string;
     lang: EditGlobals.LangOptions;
+    langKey?: string;
 }
 
 export interface NestedHeaderFormFieldOptions {

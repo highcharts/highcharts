@@ -118,6 +118,9 @@ const EditGlobals: EditGlobals = {
         accessibility: {
             contextMenu: {
                 button: 'Context menu'
+            },
+            editMode: {
+                editMode: 'Edit mode toggle button',
             }
         },
         addComponent: 'Add component',
@@ -359,7 +362,9 @@ namespace EditGlobals {
     }
 
     export interface LangAccessibilityOptions {
+        [key: string]: any;
         contextMenu: LangAccessibilityOptionsContextMenu;
+        editMode: LangAccessibilityOptionsEditMode;
     }
 
     export interface LangAccessibilityOptionsContextMenu {
@@ -367,6 +372,13 @@ namespace EditGlobals {
          * @default 'Context menu'
          */
         button: string;
+    }
+
+    export interface LangAccessibilityOptionsEditMode {
+        /**
+         * @default 'Edit mode'
+         */
+        editMode: string;
     }
 
     export type TLangKeys = 'editMode' | 'verticalSeparator';
