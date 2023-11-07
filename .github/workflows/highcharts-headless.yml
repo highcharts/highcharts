@@ -72,6 +72,9 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
+      - uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
       - uses: nanasess/setup-chromedriver@v2
       - uses: browser-actions/setup-firefox@latest
         with:
