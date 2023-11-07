@@ -1384,40 +1384,6 @@ class Pointer {
         // Register the touch start position
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
-
-            // Identify the data bounds in pixels
-            chart.axes.forEach(function (axis: Axis): void {
-                if (axis.zoomEnabled) {
-                    /*
-                    const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
-                        minPixelPadding = axis.minPixelPadding,
-                        min = axis.toPixels(
-                            Math.min(
-                                pick(axis.options.min, axis.dataMin as any),
-                                axis.dataMin as any
-                            )
-                        ),
-                        max = axis.toPixels(
-                            Math.max(
-                                pick(axis.options.max, axis.dataMax as any),
-                                axis.dataMax as any
-                            )
-                        ),
-                        absMin = Math.min(min, max),
-                        absMax = Math.max(min, max);
-
-                    // Store the bounds for use in the touchmove handler
-                    bounds.min = Math.min(
-                        axis.pos,
-                        absMin - minPixelPadding
-                    );
-                    bounds.max = Math.max(
-                        axis.pos + axis.len,
-                        absMax + minPixelPadding
-                    );
-                    */
-                }
-            });
             pointer.res = true; // Reset on next move
 
         // Optionally move the tooltip on touchmove
@@ -1439,13 +1405,21 @@ class Pointer {
                 };
                 let hasZoomed: boolean|undefined;
                 for (const axis of chart.axes) {
-                    const { horiz, minPixelPadding } = axis;
+                    const {
+                        dataMin,
+                        dataMax,
+                        horiz,
+                        minPixelPadding,
+                        options
+                    } = axis;
                     if (
                         axis.zoomEnabled &&
                         (
                             (this.zoomHor && horiz) ||
                             (this.zoomVert && !horiz)
-                        )
+                        ) &&
+                        isNumber(dataMin) &&
+                        isNumber(dataMax)
                     ) {
                         const chartXY = horiz ? 'chartX' : 'chartY',
                             singleTouch = touchesLength === 1,
@@ -1473,13 +1447,52 @@ class Pointer {
                                 center = touch0Start +
                                     (touch1Start - touch0Start) * centerFactor,
                                 scale = Math.abs(touch0Now - touch1Now) /
-                                    Math.abs(touch0Start - touch1Start),
-                                minPx = singleLike ?
+                                    Math.abs(touch0Start - touch1Start);
+
+                            // Identify the data bounds in pixels
+                            const [minVal, maxVal] = [
+                                    axis.toPixels(
+                                        Math.min(
+                                            options.min ?? dataMin,
+                                            dataMin
+                                        ),
+                                        true
+                                    ),
+                                    axis.toPixels(
+                                        Math.max(
+                                            options.max ?? dataMax,
+                                            dataMax
+                                        ),
+                                        true
+                                    )
+                                ].sort((a, b): number => a - b),
+
+                                minPxBound = Math.min(
+                                    0,
+                                    minVal - minPixelPadding
+                                ),
+                                maxPxBound = Math.max(
+                                    axis.len,
+                                    maxVal + minPixelPadding
+                                );
+
+                            let minPx = singleLike ?
                                     -delta0 :
                                     center - center / scale,
                                 maxPx = singleLike ?
                                     axis.len - delta0 :
                                     center + (axis.len - center) / scale;
+
+                            // Constrain to the bounds
+                            const range = maxPx - minPx;
+                            if (minPx < minPxBound) {
+                                minPx = minPxBound;
+                                maxPx = minPxBound + range;
+                            }
+                            if (maxPx > maxPxBound) {
+                                maxPx = maxPxBound;
+                                minPx = Math.max(0, maxPxBound - range);
+                            }
 
                             const min = Math.max(
                                     axis.translate(

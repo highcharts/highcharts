@@ -241,23 +241,36 @@
                     data: getData(),
                     kdNow: true
                 }
-            ]
+            ],
+            xAxis: {
+                minPadding: 0,
+                maxPadding: 0
+            }
         });
 
-        var xAxis = chart.xAxis[0];
+        const xAxis = chart.xAxis[0],
+            initialRange = xAxis.max - xAxis.min;
 
         assert.ok(xAxis.min <= 0, 'Initial min');
 
-        assert.ok(xAxis.max >= 1000, 'Initial max');
+        assert.ok(xAxis.max >= 999, 'Initial max');
+
+        singleTouchDrag(chart);
+
+        assert.strictEqual(
+            xAxis.max - xAxis.min,
+            initialRange,
+            'The range should be preserved during a single touch pan'
+        );
 
         dualTouchZoom(chart);
-        var initialExtremes = [xAxis.min, xAxis.max].toString();
+        const initialExtremes = [xAxis.min, xAxis.max].toString();
 
         singleTouchDrag(chart);
         assert.notEqual(
             [xAxis.min, xAxis.max].toString(),
             initialExtremes,
-            'Extremes have changed'
+            'Extremes should change after single-panning a zoomed chart'
         );
     });
 

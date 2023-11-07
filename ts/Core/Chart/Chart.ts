@@ -296,7 +296,6 @@ class Chart {
     public _cursor?: (CursorValue|null);
     public axes: Array<AxisType> = void 0 as any;
     public axisOffset: Array<number> = void 0 as any;
-    public bounds: Record<string, Record<string, number>> = void 0 as any;
     public callback?: Chart.CallbackFunction;
     public chartBackground?: SVGElement;
     public chartHeight: number = void 0 as any;
@@ -469,9 +468,6 @@ class Chart {
 
             this.margin = [];
             this.spacing = [];
-
-            // Pixel data bounds for touch zoom
-            this.bounds = { h: {}, v: {} };
 
             // An array of functions that returns labels that should be
             // considered for anti-collision
