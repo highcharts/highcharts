@@ -143,7 +143,7 @@ class KPIComponent extends Component {
                         propertyPath: ['valueFormat']
                     }]
                 ),
-            valueInChart: {
+            linkedValueTo: {
                 enabled: true,
                 seriesIndex: 0,
                 pointIndex: 0
@@ -318,6 +318,8 @@ class KPIComponent extends Component {
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
 
+        this.setChartValue();
+
         return this;
     }
 
@@ -361,7 +363,6 @@ class KPIComponent extends Component {
         }
 
         this.sync.start();
-        this.setChartValue();
         this.emit({ type: 'afterRender' });
         return this;
     }
@@ -460,10 +461,10 @@ class KPIComponent extends Component {
         value: number|string|undefined = this.getValue()
     ): void {
         const chart = this.chart;
-        const valueInChart = this.options.valueInChart;
+        const linkedValueTo = this.options.linkedValueTo;
 
         if (
-            !chart || !valueInChart.enabled ||
+            !chart || !linkedValueTo.enabled ||
             !defined(value) || !isNumber(+value)
         ) {
             return;
@@ -471,8 +472,8 @@ class KPIComponent extends Component {
 
         value = +value;
 
-        const targetSeries = chart.series[valueInChart.seriesIndex ?? 0],
-            targetPoint = targetSeries?.points[valueInChart.pointIndex ?? 0];
+        const targetSeries = chart.series[linkedValueTo.seriesIndex ?? 0],
+            targetPoint = targetSeries?.points[linkedValueTo.pointIndex ?? 0];
 
         if (targetSeries) {
             if (targetPoint) {
@@ -764,7 +765,7 @@ namespace KPIComponent {
          * If no specific point is set, the first point of the first series is
          * the target.
          */
-        valueInChart: ValueInChartOptions;
+        linkedValueTo: LinkedValueToOptions;
     }
     /** @internal */
     export interface SubtitleOptions extends TextOptions {
@@ -784,7 +785,7 @@ namespace KPIComponent {
     /**
      * Indicating the series and point that is to receiving the KPI value.
      */
-    export interface ValueInChartOptions {
+    export interface LinkedValueToOptions {
         /**
          * Enable or disable linking KPI value to a point on the chart.
          *
