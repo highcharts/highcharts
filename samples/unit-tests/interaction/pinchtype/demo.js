@@ -58,7 +58,7 @@
                 },
                 {
                     pageX: 300 + offset.left,
-                    pageY: 100 + offset.top
+                    pageY: 150 + offset.top
                 }
             ],
             preventDefault: function () {}
@@ -69,11 +69,11 @@
             touches: [
                 {
                     pageX: 150 + offset.left,
-                    pageY: 100 + offset.top
+                    pageY: 80 + offset.top
                 },
                 {
                     pageX: 350 + offset.left,
-                    pageY: 100 + offset.top
+                    pageY: 170 + offset.top
                 }
             ],
             preventDefault: function () {}
@@ -84,11 +84,11 @@
             touches: [
                 {
                     pageX: 150 + offset.left,
-                    pageY: 100 + offset.top
+                    pageY: 80 + offset.top
                 },
                 {
                     pageX: 350 + offset.left,
-                    pageY: 100 + offset.top
+                    pageY: 170 + offset.top
                 }
             ]
         });
@@ -330,10 +330,10 @@
     });
 
     QUnit.test('zoomType is on, pinchType inherited', function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 zooming: {
-                    type: 'x'
+                    type: 'xy'
                 },
                 animation: false,
                 width: 600
@@ -351,11 +351,21 @@
             }
         });
 
-        var xAxis = chart.xAxis[0];
+        const xAxis = chart.xAxis[0],
+            yAxis = chart.yAxis[0];
 
         dualTouchZoom(chart);
         assert.notEqual(xAxis.min, 0, 'Altered min');
         assert.notEqual(xAxis.max, 999, 'Altered max');
+
+        assert.ok(
+            yAxis.tickPositions.includes(yAxis.min),
+            'The y-axis should start on a tick after touch-zooming'
+        );
+        assert.ok(
+            yAxis.tickPositions.includes(yAxis.max),
+            'The y-axis should end on a tick after touch-zooming'
+        );
     });
 
     QUnit.test('zoomBySingleTouch is true', assert => {

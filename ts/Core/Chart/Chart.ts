@@ -3528,13 +3528,13 @@ class Chart {
         const chart = this,
             pointer = chart.pointer;
 
-        let displayButton = false,
-            hasZoomed;
+        let displayButton: boolean|undefined,
+            hasZoomed: boolean|undefined;
 
         // If zoom is called with no arguments, reset the axes
         if (!event || event.resetSelection) {
-            chart.axes.forEach(function (axis): void {
-                hasZoomed = (axis.zoom as any)();
+            chart.axes.forEach((axis): void => {
+                hasZoomed = axis.zoom();
             });
             pointer.initiated = false; // #6804
 
@@ -3568,7 +3568,11 @@ class Chart {
                         chart.inverted ? mouseDownX : mouseDownY
                     )
                 ) {
-                    hasZoomed = axis.zoom(axisData.min, axisData.max);
+                    hasZoomed = axis.zoom(
+                        axisData.min,
+                        axisData.max,
+                        event.trigger
+                    );
                     if (axis.displayBtn) {
                         displayButton = true;
                     }

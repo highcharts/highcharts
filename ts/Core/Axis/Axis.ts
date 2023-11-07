@@ -290,6 +290,7 @@ class Axis {
     public softThreshold?: boolean;
     public staggerLines?: number;
     public staticScale?: number;
+    public suppressEndOnTick?: boolean;
     public threshold?: number;
     public thresholdAlignment?: number;
     public tickAmount: number = void 0 as any;
@@ -1948,17 +1949,18 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            hasVerticalPanning = this.hasVerticalPanning(),
-            isColorAxis = this.coll === 'colorAxis',
-            startOnTick = (
-                (isColorAxis || !hasVerticalPanning) && options.startOnTick
-            ),
-            endOnTick = (
-                (isColorAxis || !hasVerticalPanning) && options.endOnTick
-            );
+            suppressEndOnTick = this.eventArgs?.trigger === 'touchpan',
+            allowEndOnTick = (
+                this.coll === 'colorAxis' ||
+                !this.hasVerticalPanning()
+            ) && !suppressEndOnTick,
+            startOnTick = allowEndOnTick && options.startOnTick,
+            endOnTick = allowEndOnTick && options.endOnTick;
 
         let tickPositions: TickPositionsArray = [],
             tickPositionerResult: TickPositionsArray|undefined;
+
+        this.suppressEndOnTick = suppressEndOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -2674,7 +2676,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#zoom
      */
-    public zoom(newMin: number, newMax: number): void {
+    public zoom(newMin?: number, newMax?: number, trigger = 'zoom'): boolean {
         const axis = this,
             dataMin = this.dataMin,
             dataMax = this.dataMax,
@@ -2730,7 +2732,7 @@ class Axis {
                     newMax,
                     false,
                     void 0,
-                    { trigger: 'zoom' }
+                    { trigger }
                 );
             }
             e.zoomed = true;
@@ -4342,8 +4344,7 @@ class Axis {
     public hasVerticalPanning(): boolean {
         const panningOptions = this.chart.options.chart.panning;
         return Boolean(
-            panningOptions &&
-            panningOptions.enabled && // #14624
+            panningOptions?.enabled && // #14624
             /y/.test(panningOptions.type)
         );
     }

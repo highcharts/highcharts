@@ -483,8 +483,23 @@ class Pointer {
             chart = this.chart,
             hasPinched = this.hasPinched;
 
+        // During a touch zoom or pan, the `startOnTick` and `endOnTick` options
+        // are ignored. Otherwise the zooming or panning would be jumpy, or even
+        // not performed because it would not get passed the tick thresholds.
+        // After the touch has ended, we delete the event arguments that cause
+        // this (in the `setTickPositions` function), and set the extremes
+        // again.
         if (e.type === 'touchend') {
-            chart.axes.forEach((axis): boolean => delete axis.old);
+            for (const axis of chart.axes) {
+                if (
+                    axis.suppressEndOnTick &&
+                    (axis.options.startOnTick || axis.options.endOnTick)
+                ) {
+                    axis.forceRedraw = true;
+                    axis.setExtremes(axis.userMin, axis.userMax);
+                }
+                delete axis.suppressEndOnTick;
+            }
         }
 
         if (this.selectionMarker) {
@@ -508,10 +523,10 @@ class Pointer {
             // which case the zoom will be handled in the selection event.
             let runZoom = Boolean(chart.mapView);
 
-            // a selection has been made
+            // A selection has been made
             if (this.hasDragged || hasPinched) {
 
-                // record each axis' min and max
+                // Record each axis' min and max
                 chart.axes.forEach(function (axis: Axis): void {
                     if (
                         axis.zoomEnabled &&
@@ -575,13 +590,6 @@ class Pointer {
             if (isNumber(chart.index)) {
                 this.selectionMarker = this.selectionMarker.destroy();
             }
-
-            // Reset scaling preview
-            /*
-            if (hasPinched) {
-                this.scaleGroups();
-            }
-            */
         }
 
         // Reset all. Check isNumber because it may be destroyed on mouse up
@@ -1425,6 +1433,7 @@ class Pointer {
                 const zoomParam: Pointer.SelectEventObject = {
                     animation: false,
                     originalEvent: e,
+                    trigger: 'touchpan',
                     xAxis: [],
                     yAxis: []
                 };
@@ -1477,7 +1486,7 @@ class Pointer {
                                         minPx + minPixelPadding,
                                         true,
                                         void 0,
-                                        false, // Use axis.old
+                                        false,
                                         true
                                     ),
                                     axis.dataMin ?? -Infinity
@@ -1487,7 +1496,7 @@ class Pointer {
                                         maxPx - minPixelPadding,
                                         true,
                                         void 0,
-                                        false, // Use axis.old
+                                        false,
                                         true
                                     ),
                                     axis.dataMax ?? Infinity
@@ -2265,6 +2274,7 @@ namespace Pointer {
         animation?: boolean,
         originalEvent: Event;
         resetSelection?: boolean;
+        trigger?: string;
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
