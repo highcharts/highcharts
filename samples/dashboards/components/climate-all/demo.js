@@ -417,6 +417,9 @@ async function setupBoard() {
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     height: 166,
@@ -488,6 +491,9 @@ async function setupBoard() {
         }, {
             cell: 'kpi-max-temperature',
             type: 'KPI',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     height: 166,
@@ -562,6 +568,9 @@ async function setupBoard() {
         }, {
             cell: 'kpi-rain',
             type: 'KPI',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     height: 166,
@@ -632,6 +641,9 @@ async function setupBoard() {
         }, {
             cell: 'kpi-ice',
             type: 'KPI',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     height: 166,
@@ -703,6 +715,9 @@ async function setupBoard() {
         }, {
             cell: 'kpi-frost',
             type: 'KPI',
+            linkedValueTo: {
+                enabled: false
+            },
             chartOptions: {
                 chart: {
                     height: 166,
