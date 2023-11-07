@@ -1016,7 +1016,7 @@ class MapView {
                 mouseDownY
             } = chart;
 
-            if (pinchDown.length === 1) {
+            if (pinchDown?.length === 1) {
                 mouseDownX = pinchDown[0].chartX;
                 mouseDownY = pinchDown[0].chartY;
             }

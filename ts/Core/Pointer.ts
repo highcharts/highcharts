@@ -145,7 +145,7 @@ class Pointer {
 
     public isDirectTouch?: boolean;
 
-    // public lastValidTouch: object = {};
+    public lastTouches?: Array<PointerEvent>;
 
     public mouseDownX?: number;
 
@@ -153,7 +153,7 @@ class Pointer {
 
     public options: Options;
 
-    public pinchDown: Array<any> = [];
+    public pinchDown?: Array<PointerEvent>;
 
     public res?: boolean;
 
@@ -1332,48 +1332,41 @@ class Pointer {
      * @function Highcharts.Pointer#pinch
      */
     public pinch(e: PointerEvent): void {
-        const self = this,
-            chart = self.chart,
-            pinchDown = self.pinchDown,
+        const pointer = this,
+            { chart, hasZoom, lastTouches } = pointer,
             touches = [].map.call(
                 e.touches || [],
                 // Normalize each touch
-                (touch): PointerEvent => self.normalize(touch)
+                (touch): PointerEvent => pointer.normalize(touch)
             ) as Array<PointerEvent>,
             touchesLength = touches.length,
-            // lastValidTouch = self.lastValidTouch as any,
-            hasZoom = self.hasZoom,
-            transform: Series.PlotBoxTransform = {} as any,
             fireClickEvent = touchesLength === 1 && (
                 (
-                    self.inClass(e.target as any, 'highcharts-tracker') &&
+                    pointer.inClass(e.target as any, 'highcharts-tracker') &&
                     chart.runTrackerClick
                 ) ||
-                self.runChartClick
+                pointer.runChartClick
             ),
-            clip = {},
-            tooltip = self.chart.tooltip,
+            tooltip = chart.tooltip,
             followTouchMove = touchesLength === 1 &&
-                pick((tooltip && tooltip.options.followTouchMove), true);
-
-        let selectionMarker = self.selectionMarker;
+                pick(tooltip?.options.followTouchMove, true);
 
         // Don't initiate panning until the user has pinched. This prevents us
         // from blocking page scrolling as users scroll down a long page
         // (#4210).
         if (touchesLength > 1) {
-            self.initiated = true;
+            pointer.initiated = true;
         } else if (followTouchMove) {
             // #16119: Prevent blocking scroll when single-finger panning is
             // not enabled
-            self.initiated = false;
+            pointer.initiated = false;
         }
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
         if (
             hasZoom &&
-            self.initiated &&
+            pointer.initiated &&
             !fireClickEvent &&
             e.cancelable !== false
         ) {
@@ -1382,26 +1375,11 @@ class Pointer {
 
         // Register the touch start position
         if (e.type === 'touchstart') {
-            touches.forEach((e, i): void => {
-                pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
-            });
-            /*
-            lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&
-                pinchDown[1].chartX];
-            lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] &&
-                pinchDown[1].chartY];
-            */
+            pointer.pinchDown = touches;
 
             // Identify the data bounds in pixels
             chart.axes.forEach(function (axis: Axis): void {
                 if (axis.zoomEnabled) {
-                    axis.old = {
-                        len: axis.len,
-                        max: axis.max,
-                        min: axis.min,
-                        pinchBase: true,
-                        transA: axis.transA
-                    };
                     /*
                     const bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
@@ -1432,15 +1410,15 @@ class Pointer {
                     */
                 }
             });
-            self.res = true; // reset on next move
+            pointer.res = true; // Reset on next move
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {
-            this.runPointActions(self.normalize(e));
+            this.runPointActions(pointer.normalize(e));
 
         // Event type is touchmove, handle panning and pinching. The length can
         // be 0 when releasing, if touchend fires first
-        } else if (pinchDown.length) {
+        } else if (lastTouches) {
 
             fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
@@ -1462,8 +1440,8 @@ class Pointer {
                     ) {
                         const chartXY = horiz ? 'chartX' : 'chartY',
                             singleTouch = touchesLength === 1,
-                            touch0Start = pinchDown[0][chartXY],
-                            touch1Start = pinchDown[1]?.[chartXY] ??
+                            touch0Start = lastTouches[0][chartXY],
+                            touch1Start = lastTouches[1]?.[chartXY] ??
                                 touch0Start,
                             touch0Now = touches[0][chartXY],
                             touch1Now = touches[1]?.[chartXY] ?? touch0Now;
@@ -1499,7 +1477,7 @@ class Pointer {
                                         minPx + minPixelPadding,
                                         true,
                                         void 0,
-                                        true, // Use axis.old
+                                        false, // Use axis.old
                                         true
                                     ),
                                     axis.dataMin ?? -Infinity
@@ -1509,7 +1487,7 @@ class Pointer {
                                         maxPx - minPixelPadding,
                                         true,
                                         void 0,
-                                        true, // Use axis.old
+                                        false, // Use axis.old
                                         true
                                     ),
                                     axis.dataMax ?? Infinity
@@ -1556,11 +1534,13 @@ class Pointer {
                 // */
             });
 
-            if (self.res) {
-                self.res = false;
+            if (pointer.res) {
+                pointer.res = false;
                 this.reset(false, 0);
             }
         }
+
+        pointer.lastTouches = touches;
     }
 
     /**
@@ -2136,10 +2116,9 @@ class Pointer {
      * @function Highcharts.Pointer#touch
      */
     public touch(e: PointerEvent, start?: boolean): void {
-        const chart = this.chart;
+        const { chart, pinchDown = [] } = this;
 
         let hasMoved,
-            pinchDown,
             isInside;
 
         this.setHoverChartIndex();
@@ -2169,11 +2148,12 @@ class Pointer {
                 // checking how much it moved, and cancelling on small
                 // distances. #3450.
                 if (e.type === 'touchmove') {
-                    pinchDown = this.pinchDown;
-                    hasMoved = pinchDown[0] ? Math.sqrt( // #5266
-                        Math.pow(pinchDown[0].chartX - e.chartX, 2) +
-                        Math.pow(pinchDown[0].chartY - e.chartY, 2)
-                    ) >= 4 : false;
+                    hasMoved = pinchDown[0] ? // #5266
+                        (
+                            Math.pow(pinchDown[0].chartX - e.chartX, 2) +
+                            Math.pow(pinchDown[0].chartY - e.chartY, 2)
+                        ) >= 16 :
+                        false;
                 }
 
                 if (pick(hasMoved, true)) {

@@ -263,7 +263,6 @@ class Axis {
         len: number;
         max?: number;
         min?: number;
-        pinchBase?: boolean;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -4059,16 +4058,14 @@ class Axis {
 
         // Record old scaling for updating/animation. Pinch base must be
         // preserved until the pinch ends.
-        if (!axis.old?.pinchBase) {
-            axis.old = {
-                len: axis.len,
-                max: axis.max,
-                min: axis.min,
-                transA: axis.transA,
-                userMax: axis.userMax,
-                userMin: axis.userMin
-            };
-        }
+        axis.old = {
+            len: axis.len,
+            max: axis.max,
+            min: axis.min,
+            transA: axis.transA,
+            userMax: axis.userMax,
+            userMin: axis.userMin
+        };
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');
