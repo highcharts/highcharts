@@ -1494,25 +1494,19 @@ class Pointer {
                                 minPx = Math.max(0, maxPxBound - range);
                             }
 
-                            const min = Math.max(
-                                    axis.translate(
-                                        minPx + minPixelPadding,
-                                        true,
-                                        void 0,
-                                        false,
-                                        true
-                                    ),
-                                    axis.dataMin ?? -Infinity
+                            const min = axis.translate(
+                                    minPx + minPixelPadding,
+                                    true,
+                                    void 0,
+                                    false,
+                                    true
                                 ),
-                                max = Math.min(
-                                    axis.translate(
-                                        maxPx - minPixelPadding,
-                                        true,
-                                        void 0,
-                                        false,
-                                        true
-                                    ),
-                                    axis.dataMax ?? Infinity
+                                max = axis.translate(
+                                    maxPx - minPixelPadding,
+                                    true,
+                                    void 0,
+                                    false,
+                                    true
                                 );
 
                             zoomParam[axis.coll as 'xAxis'|'yAxis'].push({
