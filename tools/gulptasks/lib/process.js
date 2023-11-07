@@ -63,11 +63,12 @@ let onExitCallbacks;
 function exec(command, options = {}) {
     const ChildProcess = require('child_process');
 
-    const silent = options.silent;
+    const log = [],
+        silent = options.silent;
 
     return new Promise((resolve, reject) => {
 
-        const cli = ChildProcess.exec(command, options, (error, stdout) => {
+        const cli = ChildProcess.exec(command, options, error => {
 
             if (error) {
                 LogLib.failure(error);
@@ -86,11 +87,18 @@ function exec(command, options = {}) {
                 );
             }
 
-            resolve(stdout);
+            resolve(log.join('\n'));
         });
 
         if (!silent) {
-            cli.stdout.on('data', data => process.stdout.write(data));
+            cli.stderr.on('data', data => {
+                log.push(data);
+                process.stdout.write(data);
+            });
+            cli.stdout.on('data', data => {
+                log.push(data);
+                process.stdout.write(data);
+            });
         }
     });
 }
