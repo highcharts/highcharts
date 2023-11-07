@@ -1210,7 +1210,6 @@ class TreemapSeries extends ScatterSeries {
             yAxis = series.yAxis,
             inverted = series.chart.inverted;
         return this.searchKDTree({
-            // clientX --> plotX
             plotX: inverted ?
                 xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
             plotY: inverted ?
