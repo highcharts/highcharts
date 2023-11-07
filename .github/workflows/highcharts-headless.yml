@@ -104,7 +104,7 @@ jobs:
       - name: Run Tests (Firefox)
         run: |
           export DISPLAY=:99
-          npx gulp test --single-run --splitbrowsers Firefox
+          npx gulp test --single-run --splitbrowsers Firefox --force
 
       - name: Run timezone tests
         if: ${{ inputs.testTimezones }}
