@@ -6,7 +6,7 @@
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'y'
+            zoomType: 'x'
         },
         title: {
             text: 'USD to EUR exchange rate over time',
