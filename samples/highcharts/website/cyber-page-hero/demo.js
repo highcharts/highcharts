@@ -5,6 +5,8 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/';
+
 
 /* shared gauge options */
 const gaugeOptions = {
@@ -825,7 +827,7 @@ Highcharts.chart('container', {
                 x: 4,
                 y: 1,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p2-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p2-outline.svg)',
                     width: 38,
                     height: 30
                 }
@@ -835,7 +837,7 @@ Highcharts.chart('container', {
                 x: 15,
                 y: 3,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p6-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p6-outline.svg)',
                     width: 58,
                     height: 45
                 }
@@ -846,7 +848,7 @@ Highcharts.chart('container', {
                 x: 2,
                 y: 6,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p5-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p5-outline.svg)',
                     width: 42,
                     height: 60
                 }
@@ -856,7 +858,7 @@ Highcharts.chart('container', {
                 x: 2,
                 y: 12,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p4-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p4-outline.svg)',
                     width: 27,
                     height: 50
                 }
@@ -865,7 +867,7 @@ Highcharts.chart('container', {
                 x: 16,
                 y: 16,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p6b-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p6b-outline.svg)',
                     width: 71,
                     height: 61
                 }
@@ -874,7 +876,7 @@ Highcharts.chart('container', {
                 x: 5,
                 y: 17,
                 marker: {
-                    symbol: 'url(http://192.168.1.176:3030/p1-outline.svg)',
+                    symbol: 'url(' + imgPath + 'p1-outline.svg)',
                     width: 79,
                     height: 58
                 }
