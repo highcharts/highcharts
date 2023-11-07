@@ -67,14 +67,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       ### SETUP ###
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
       - uses: browser-actions/setup-chrome@latest
         with:
           chrome-version: stable
+      - name: Check and set Chrome
+        run: |
+          chrome --version
+          whereis chrome
+          CHROME_BIN=$(which chrome)
       - uses: nanasess/setup-chromedriver@v2
       - uses: browser-actions/setup-firefox@latest
         with:
@@ -89,10 +94,7 @@ jobs:
       ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Check Chrome
-        run: |
-          chrome --version
-          whereis chrome
+
       - name: Run Tests (Chrome)
         run: |
           export DISPLAY=:99
