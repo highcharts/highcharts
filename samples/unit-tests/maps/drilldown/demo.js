@@ -58,6 +58,9 @@ QUnit.test('Map drilldown with disabled animation', async assert => {
         `There shouldn't be any error (maximum call stack) in the console,
         when drilldown animation is disabled (#19373).`
     );
+
+    // Drill up to prevent default animation breaking lolex.
+    chart.drillUp();
 });
 
 QUnit.test('Map drilldown with zooming animation', async assert => {
