@@ -783,7 +783,13 @@ namespace KPIComponent {
     }
 
     /**
-     * Indicating the series and point that is to receiving the KPI value.
+     * This option allows you to enable or disable the connection of KPI value
+     * to a point on the chart and to specify the exact point to which it should
+     * be connected.
+     *
+     * Linking is enabled by default for the first point of the first series.
+     * When the KPI value changes, an existing point is edited, a non-existent
+     * one is added.
      */
     export interface LinkedValueToOptions {
         /**
