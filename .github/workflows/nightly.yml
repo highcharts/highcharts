@@ -136,6 +136,7 @@ jobs:
           git config --global user.email "technical+circleci_mu@highsoft.com"
           git config --global core.editor vi
           git add .
+          git commit -m "Nightly build - ${{github.run_id}}"
           git push -u origin nightly
 
   nightly_changelog:
