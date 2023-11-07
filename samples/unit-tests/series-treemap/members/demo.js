@@ -61,10 +61,10 @@ QUnit.test(
 
 QUnit.test('directTouch', function (assert) {
     var treemapSeries = Highcharts.Series.types.treemap;
-    assert.strictEqual(
+    // Tooltip touch follow requires directTouch to be disabled #19403.
+    assert.notOk(
         treemapSeries.prototype.directTouch,
-        false,
-        'directTouch should default to false for tooltip touch follow to work as expected.'
+        'directTouch should default to false.'
     );
 });
 

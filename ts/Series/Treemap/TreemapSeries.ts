@@ -1525,13 +1525,12 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     };
 }
 extend(TreemapSeries.prototype, {
-    buildKDTree: ScatterSeries.prototype.buildKDTree, // #19403
+    buildKDTree: ScatterSeries.prototype.buildKDTree,
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
-    directTouch: false, // directTouch = false due to #19403
     getExtremesFromAll: true,
     getSymbol: noop,
-    kdAxisArray: ['plotX', 'plotY'], // #19403
+    kdAxisArray: ['plotX', 'plotY'],
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],
