@@ -486,19 +486,14 @@ class Pointer {
         // During a touch zoom or pan, the `startOnTick` and `endOnTick` options
         // are ignored. Otherwise the zooming or panning would be jumpy, or even
         // not performed because it would not get passed the tick thresholds.
-        // After the touch has ended, we delete the event arguments that cause
-        // this (in the `setTickPositions` function), and set the extremes
-        // again.
-        if (e.type === 'touchend') {
+        // After the touch has ended, we undo this and render again.
+        if (e.type === 'touchend' && chart.suppressEndOnTick) {
+            chart.suppressEndOnTick = false;
             for (const axis of chart.axes) {
-                if (
-                    axis.suppressEndOnTick &&
-                    (axis.options.startOnTick || axis.options.endOnTick)
-                ) {
+                if (axis.options.startOnTick || axis.options.endOnTick) {
                     axis.forceRedraw = true;
                     axis.setExtremes(axis.userMin, axis.userMax);
                 }
-                delete axis.suppressEndOnTick;
             }
         }
 
@@ -1402,7 +1397,6 @@ class Pointer {
                 const zoomParam: Pointer.SelectEventObject = {
                     animation: false,
                     originalEvent: e,
-                    trigger: 'touchpan',
                     xAxis: [],
                     yAxis: []
                 };
@@ -1529,6 +1523,7 @@ class Pointer {
                     }
                 }
                 if (hasZoomed) {
+                    chart.suppressEndOnTick = true;
                     chart.zoom(zoomParam);
                 }
 

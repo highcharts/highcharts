@@ -349,6 +349,7 @@ class Chart {
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
     public subtitle?: SVGElement;
+    public suppressEndOnTick?: boolean;
     public symbolCounter: number = void 0 as any;
     public time: Time = void 0 as any;
     public title?: SVGElement;
@@ -3566,8 +3567,7 @@ class Chart {
                 ) {
                     hasZoomed = axis.zoom(
                         axisData.min,
-                        axisData.max,
-                        event.trigger
+                        axisData.max
                     );
                     if (axis.displayBtn) {
                         displayButton = true;

@@ -290,7 +290,6 @@ class Axis {
     public softThreshold?: boolean;
     public staggerLines?: number;
     public staticScale?: number;
-    public suppressEndOnTick?: boolean;
     public threshold?: number;
     public thresholdAlignment?: number;
     public tickAmount: number = void 0 as any;
@@ -1949,18 +1948,15 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            suppressEndOnTick = this.eventArgs?.trigger === 'touchpan',
             allowEndOnTick = (
                 this.coll === 'colorAxis' ||
                 !this.hasVerticalPanning()
-            ) && !suppressEndOnTick,
+            ) && !this.chart.suppressEndOnTick,
             startOnTick = allowEndOnTick && options.startOnTick,
             endOnTick = allowEndOnTick && options.endOnTick;
 
         let tickPositions: TickPositionsArray = [],
             tickPositionerResult: TickPositionsArray|undefined;
-
-        this.suppressEndOnTick = suppressEndOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -2676,7 +2672,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#zoom
      */
-    public zoom(newMin?: number, newMax?: number, trigger = 'zoom'): boolean {
+    public zoom(newMin?: number, newMax?: number): boolean {
         const axis = this,
             dataMin = this.dataMin,
             dataMax = this.dataMax,
@@ -2732,7 +2728,7 @@ class Axis {
                     newMax,
                     false,
                     void 0,
-                    { trigger }
+                    { trigger: 'zoom' }
                 );
             }
             e.zoomed = true;
