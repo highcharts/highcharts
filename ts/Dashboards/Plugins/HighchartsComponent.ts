@@ -605,8 +605,8 @@ class HighchartsComponent extends Component {
             const columnNames = table.modified.getColumnNames();
             const columnAssignment = this.options.columnAssignment ||
                 this.getDefaultColumnAssignment(columnNames);
-            const useOhlcData = columnAssignment.useOhlcData;
-            const pointColumnMap = useOhlcData?.pointColumnMap;
+            const seriesColumnMap = columnAssignment.seriesColumnMap;
+            const pointColumnMap = seriesColumnMap?.pointColumnMap;
             const pointColumnMapValues = pointColumnMap &&
                 Object.keys(pointColumnMap).map(key => pointColumnMap[key]);
             const xKeyMap: Record<string, string> = {};
@@ -642,8 +642,8 @@ class HighchartsComponent extends Component {
                 });
 
             // create empty series for OHLC data
-            if (useOhlcData) {
-                seriesNames.push(useOhlcData.seriesName);
+            if (seriesColumnMap) {
+                seriesNames.push(seriesColumnMap.seriesName);
             }
 
             // Create the series or get the already added series
@@ -701,14 +701,14 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
-                const isOhlcSeries = series.name === useOhlcData?.seriesName;
-                const columnKeys = isOhlcSeries ?
+                const isSeriesColumnMap = series.name === seriesColumnMap?.seriesName;
+                const columnKeys = isSeriesColumnMap ?
                     [xKey].concat(pointColumnMapValues) : [xKey, series.name];
                 const seriesTable = new DataTable({
                     columns: table.modified.getColumns(columnKeys)
                 });
 
-                if (!isOhlcSeries) {
+                if (!isSeriesColumnMap) {
                     seriesTable.renameColumn(series.name, 'y');
                 }
 
@@ -719,14 +719,12 @@ class HighchartsComponent extends Component {
                     arr: (number | {})[],
                     row
                 ): (number | {})[] => {
-                    if (isOhlcSeries) {
-                        arr.push([
-                            row.x,
-                            row[pointColumnMap.open],
-                            row[pointColumnMap.high],
-                            row[pointColumnMap.close],
-                            row[pointColumnMap.low]
-                        ]);
+                    if (isSeriesColumnMap) {
+                        arr.push(
+                            [row.x].concat(
+                                pointColumnMapValues.map((value: string) => row[value])
+                            )
+                        );
                     } else {
                         arr.push([row.x, row.y]);
                     }
