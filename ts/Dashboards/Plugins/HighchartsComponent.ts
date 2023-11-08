@@ -664,7 +664,7 @@ class HighchartsComponent extends Component {
                 }
 
                 const relatedSeries =
-                    chart.series.find(series => series.name === seriesName);
+                    chart.series.find((series):boolean => series.name === seriesName);
 
                 if (relatedSeries) {
                     relatedSeries.update({
