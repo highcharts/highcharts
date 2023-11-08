@@ -318,7 +318,7 @@ class KPIComponent extends Component {
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
 
-        this.setChartValue();
+        this.linkValueToChart();
 
         return this;
     }
@@ -446,7 +446,7 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, '' + value);
-            this.setChartValue(prevValue);
+            this.linkValueToChart(prevValue);
 
             this.prevValue = prevValue;
         }
@@ -457,7 +457,7 @@ class KPIComponent extends Component {
      *
      * @internal
      */
-    public setChartValue(
+    public linkValueToChart(
         value: number|string|undefined = this.getValue()
     ): void {
         const chart = this.chart;
