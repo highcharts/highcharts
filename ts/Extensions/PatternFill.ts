@@ -157,6 +157,12 @@ function compose(
         addEvent(SVGRendererClass, 'complexColor', onRendererComplexColor);
     }
 
+    addEvent(
+        SeriesClass,
+        'afterRender',
+        seriesAfterRenderPatternScaleCorrection
+    );
+
 }
 
 /**
@@ -834,16 +840,22 @@ function setPatternScale(
     attr(element, 'patternTransform', transform);
 }
 
-// Scale patterns inversly to the series it's used in.
-// Maintains a visual (1,1) scale regardless of size.
-addEvent(Series, 'afterRender', function (): void {
+/**
+ * Scale patterns inversly to the series it's used in.
+ * Maintains a visual (1,1) scale regardless of size.
+ * @private
+ */
+function seriesAfterRenderPatternScaleCorrection(
+    this: Series
+): void {
+    const series = this;
+
     // If not a series used in a map chart, skip it.
-    if (!this.chart.mapView) {
+    if (!series.chart.mapView) {
         return;
     }
 
-    const series = this,
-        chart = this.chart,
+    const chart = series.chart,
         renderer = chart.renderer,
         patterns = renderer.patternElements;
 
@@ -898,7 +910,7 @@ addEvent(Series, 'afterRender', function (): void {
                 );
             });
     }
-});
+}
 
 /* *
  *
