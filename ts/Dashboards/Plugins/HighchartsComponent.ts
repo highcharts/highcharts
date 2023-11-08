@@ -630,12 +630,9 @@ class HighchartsComponent extends Component {
                     return true;
                 });
 
-            const isChartSeries = chart.series.length;
-
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
                 let i = 0;
-                let relatedSeries;
 
                 // Disable dragging on series, which were created out of a
                 // columns which are created by MathModifier.
@@ -654,11 +651,8 @@ class HighchartsComponent extends Component {
                         seriesNames.indexOf(series.name) !== -1;
                     i++;
 
-                    if (existingSeries) {
-                        if (seriesFromConnector) {
-                            return series;
-                        }
-                        relatedSeries = series;
+                    if (existingSeries && seriesFromConnector) {
+                        return series;
                     }
 
                     if (
@@ -669,7 +663,10 @@ class HighchartsComponent extends Component {
                     }
                 }
 
-                if (relatedSeries && isChartSeries) {
+                const relatedSeries =
+                    chart.series.find(series => series.name === seriesName);
+
+                if (relatedSeries) {
                     relatedSeries.update({
                         name: seriesName,
                         id: `${storeTableID}-series-${index}`,
@@ -677,7 +674,7 @@ class HighchartsComponent extends Component {
                             draggableY: shouldBeDraggable
                         }
                     }, false);
-                    relatedSeries = {};
+
                     return chart.series[index];
                 }
 
