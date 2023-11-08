@@ -1,5 +1,5 @@
 // Set the date you're counting down to
-const countDownDate = new Date('2023-11-20T09:00:00').getTime();
+const countDownDate = new Date('2023-11-27T09:00:00').getTime();
 
 Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
