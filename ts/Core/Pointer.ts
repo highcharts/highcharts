@@ -1394,7 +1394,10 @@ class Pointer {
         // be 0 when releasing, if touchend fires first
         } else if (lastTouches) {
 
-            fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
+            fireEvent(chart, 'touchpan', {
+                originalEvent: e,
+                touches
+            }, (): void => {
 
                 const zoomParam: Pointer.SelectEventObject = {
                     animation: false,

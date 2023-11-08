@@ -23,7 +23,6 @@ import type PointerEvent from '../Core/PointerEvent';
 
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     defined,
     extend,
     pick,
@@ -88,7 +87,6 @@ namespace MapPointer {
      * @private
      */
     export function compose(
-        MapChartClass: typeof MapChart,
         PointerClass: typeof Pointer
     ): void {
 
@@ -99,9 +97,6 @@ namespace MapPointer {
                 onContainerDblClick,
                 onContainerMouseWheel
             });
-
-
-            addEvent(MapChartClass, 'touchpan', onChartTouchPan);
 
             wrap(pointerProto, 'normalize', wrapNormalize);
             wrap(pointerProto, 'zoomOption', wrapZoomOption);
@@ -220,64 +215,6 @@ namespace MapPointer {
 
         return e;
     }
-
-    /**
-     * Handle pinch zoom and touch pan for maps
-     * @private
-     */
-    function onChartTouchPan(
-        this: MapChart,
-        e: PointerEvent
-    ): void {
-        const { mapView } = this;
-        if (mapView) {
-            /* eslint-disable-next-line no-console */
-            console.log('@todo: Implement map touch');
-        }
-    }
-
-    /**
-     * Extend the pinchTranslate method to preserve fixed ratio when zooming.
-     * @private
-     * /
-    function wrapPinchTranslate(
-        this: MapPointer,
-        proceed: Function,
-        pinchDown: Array<any>,
-        touches: Array<any>,
-        transform: any,
-        selectionMarker: any,
-        clip: any,
-        lastValidTouch: any
-    ): void {
-        let xBigger;
-
-        proceed.call(
-            this,
-            pinchDown,
-            touches,
-            transform,
-            selectionMarker,
-            clip,
-            lastValidTouch
-        );
-
-        // Keep ratio
-        if (this.chart.options.chart.type === 'map' && this.hasZoom) {
-            xBigger = transform.scaleX > transform.scaleY;
-            this.pinchTranslateDirection(
-                !xBigger,
-                pinchDown,
-                touches,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch,
-                xBigger ? transform.scaleX : transform.scaleY
-            );
-        }
-    }
-    */
 
     /**
      * The pinchType is inferred from mapNavigation options.
