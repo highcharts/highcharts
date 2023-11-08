@@ -605,6 +605,10 @@ class HighchartsComponent extends Component {
             const columnNames = table.modified.getColumnNames();
             const columnAssignment = this.options.columnAssignment ||
                 this.getDefaultColumnAssignment(columnNames);
+            const useOhlcData = columnAssignment.useOhlcData;
+            const pointColumnMap = useOhlcData?.pointColumnMap;
+            const pointColumnMapValues = pointColumnMap &&
+                Object.keys(pointColumnMap).map(key => pointColumnMap[key]);
             const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
@@ -612,6 +616,13 @@ class HighchartsComponent extends Component {
             // Remove series names that match the xKeys
             const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
+                    if (
+                        pointColumnMap &&
+                        pointColumnMapValues.indexOf(name) !== -1
+                    ) {
+                        return false;
+                    }
+
                     const isVisible = this.activeGroup ?
                         this.activeGroup
                             .getSharedState()
@@ -629,6 +640,11 @@ class HighchartsComponent extends Component {
 
                     return true;
                 });
+
+            // create empty series for OHLC data
+            if (useOhlcData) {
+                seriesNames.push(useOhlcData.seriesName);
+            }
 
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
@@ -663,38 +679,38 @@ class HighchartsComponent extends Component {
                     }
                 }
 
-                const relatedSeries =
-                    chart.series.find((series):boolean => series.name === seriesName);
-
-                if (relatedSeries) {
-                    relatedSeries.update({
-                        name: seriesName,
-                        id: `${storeTableID}-series-${index}`,
-                        dragDrop: {
-                            draggableY: shouldBeDraggable
-                        }
-                    }, false);
-
-                    return chart.series[index];
-                }
-
-                return chart.addSeries({
+                const seriesOptions = {
                     name: seriesName,
                     id: `${storeTableID}-series-${index}`,
                     dragDrop: {
                         draggableY: shouldBeDraggable
                     }
-                }, false);
+                }
+
+                const relatedSeries =
+                    chart.series.find((series):boolean => series.name === seriesName);
+
+                if (relatedSeries) {
+                    relatedSeries.update(seriesOptions, false);
+                    return chart.series[index];
+                }
+
+                return chart.addSeries(seriesOptions, false);
             });
 
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
+                const isOhlcSeries = series.name === useOhlcData?.seriesName;
+                const columnKeys = isOhlcSeries ?
+                    [xKey].concat(pointColumnMapValues) : [xKey, series.name];
                 const seriesTable = new DataTable({
-                    columns: table.modified.getColumns([xKey, series.name])
+                    columns: table.modified.getColumns(columnKeys)
                 });
 
-                seriesTable.renameColumn(series.name, 'y');
+                if (!isOhlcSeries) {
+                    seriesTable.renameColumn(series.name, 'y');
+                }
 
                 if (xKey) {
                     seriesTable.renameColumn(xKey, 'x');
@@ -703,7 +719,17 @@ class HighchartsComponent extends Component {
                     arr: (number | {})[],
                     row
                 ): (number | {})[] => {
-                    arr.push([row.x, row.y]);
+                    if (isOhlcSeries) {
+                        arr.push([
+                            row.x,
+                            row[pointColumnMap.open],
+                            row[pointColumnMap.high],
+                            row[pointColumnMap.close],
+                            row[pointColumnMap.low]
+                        ]);
+                    } else {
+                        arr.push([row.x, row.y]);
+                    }
                     return arr;
                 }, []);
 
@@ -1043,7 +1069,7 @@ namespace HighchartsComponent {
          * }
          * ```
          */
-        columnAssignment?: Record<string, string | null>;
+        columnAssignment?: Record<string, any>; // TODO
     }
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
