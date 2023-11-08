@@ -38,7 +38,7 @@ import type HistogramSeriesOptions from './HistogramSeriesOptions';
  *               stacking, boostBlending
  * @product      highcharts
  * @since        6.0.0
- * @requires     modules/histogram
+ * @requires     modules/histogram-bellcurve
  * @optionparent plotOptions.histogram
  */
 const HistogramSeriesDefaults: HistogramSeriesOptions = {
@@ -92,7 +92,7 @@ const HistogramSeriesDefaults: HistogramSeriesOptions = {
  * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
  * @product   highcharts
  * @since     6.0.0
- * @requires  modules/histogram
+ * @requires  modules/histogram-bellcurve
  * @apioption series.histogram
  */
 

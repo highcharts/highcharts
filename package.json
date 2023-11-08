@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.1.0",
+  "version": "11.2.0",
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -49,7 +49,7 @@
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.3",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.6",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
     "@swc/core": "^1.3.93",

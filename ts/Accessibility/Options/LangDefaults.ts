@@ -216,7 +216,7 @@ const langOptions: DeepPartial<LangOptions> = {
         /**
          * Navigator language options for accessibility.
          *
-         * @since next
+         * @since 11.2.0
          */
         navigator: {
             /**

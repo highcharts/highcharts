@@ -39,7 +39,17 @@ Dashboards.board(
         components: [
             {
                 cell: 'dashboard-col-1',
-                type: 'Highcharts'
+                type: 'Highcharts',
+                chartOptions: {
+                    chart: {
+                        animation: false
+                    },
+                    plotOptions: {
+                        series: {
+                            animation: false
+                        }
+                    }
+                }
             },
             {
                 cell: 'dashboard-col-2',

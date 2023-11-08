@@ -347,7 +347,14 @@ function onChartRender(
                             ); // #4118
 
                             // Allow overlap if the option is explicitly true
-                            if (options.allowOverlap) { // #13449
+                            if (
+                                // #13449
+                                options.allowOverlap ??
+
+                                // Pie labels outside have a separate placement
+                                // logic, skip the overlap logic
+                                Number(options.distance) > 0
+                            ) {
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;
                                 hideOrShow(label, chart);
