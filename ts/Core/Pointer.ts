@@ -487,7 +487,7 @@ class Pointer {
         // are ignored. Otherwise the zooming or panning would be jumpy, or even
         // not performed because it would not get passed the tick thresholds.
         // After the touch has ended, we undo this and render again.
-        if (e.type === 'touchend' && chart.suppressEndOnTick) {
+        if (chart.suppressEndOnTick) {
             chart.suppressEndOnTick = false;
             for (const axis of chart.axes) {
                 if (axis.options.startOnTick || axis.options.endOnTick) {

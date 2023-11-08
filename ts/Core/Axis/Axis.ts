@@ -1948,10 +1948,7 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            allowEndOnTick = (
-                this.coll === 'colorAxis' ||
-                !this.hasVerticalPanning()
-            ) && !this.chart.suppressEndOnTick,
+            allowEndOnTick = !this.chart.suppressEndOnTick,
             startOnTick = allowEndOnTick && options.startOnTick,
             endOnTick = allowEndOnTick && options.endOnTick;
 
@@ -4329,20 +4326,6 @@ class Axis {
             this.cross.hide();
         }
         fireEvent(this, 'afterHideCrosshair');
-    }
-
-    /**
-     * Check whether the chart has vertical panning ('y' or 'xy' type).
-     *
-     * @private
-     * @function Highcharts.Axis#hasVerticalPanning
-     */
-    public hasVerticalPanning(): boolean {
-        const panningOptions = this.chart.options.chart.panning;
-        return Boolean(
-            panningOptions?.enabled && // #14624
-            /y/.test(panningOptions.type)
-        );
     }
 
     /**

@@ -549,6 +549,10 @@ QUnit.test(
                     type: 'y'
                 }
             },
+            yAxis: {
+                startOnTick: false,
+                endOnTick: false
+            },
             title: {
                 text: 'AAPL stock price by minute'
             },

@@ -3633,7 +3633,9 @@ class Chart {
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
-            // remove active points for shared tooltip
+            chart.suppressEndOnTick = true;
+
+            // Remove active points for shared tooltip
             if (hoverPoints) {
                 hoverPoints.forEach(function (point): void {
                     point.setState();
@@ -3679,8 +3681,7 @@ class Chart {
                             (axis.isXAxis && axis.pointRangePadding) ||
                             0
                         ),
-                    flipped = panMax < panMin,
-                    hasVerticalPanning = axis.hasVerticalPanning();
+                    flipped = panMax < panMin;
 
                 let newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
@@ -3690,7 +3691,7 @@ class Chart {
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
                 if (
-                    hasVerticalPanning &&
+                    /y/.test(type) &&
                     !axis.isXAxis && (
                         !panningState || panningState.isDirty
                     )
