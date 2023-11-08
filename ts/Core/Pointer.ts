@@ -1480,7 +1480,7 @@ class Pointer {
                                 );
 
                             let minPx = singleLike ?
-                                    -delta0 :
+                                    delta1 :
                                     center - center / scale,
                                 maxPx = singleLike ?
                                     axis.len - delta0 :
@@ -1496,21 +1496,28 @@ class Pointer {
                                 maxPx = maxPxBound;
                                 minPx = Math.max(0, maxPxBound - range);
                             }
+                            if (axis.reversed) {
+                                [minPx, maxPx] = [maxPx, minPx];
+                            }
 
-                            const min = axis.translate(
+                            // Get the translated min and max. Sorting is for
+                            // vertical axes.
+                            const [min, max] = [
+                                axis.translate(
                                     minPx + minPixelPadding,
                                     true,
-                                    void 0,
+                                    !horiz,
                                     false,
                                     true
                                 ),
-                                max = axis.translate(
+                                axis.translate(
                                     maxPx - minPixelPadding,
                                     true,
-                                    void 0,
+                                    !horiz,
                                     false,
                                     true
-                                );
+                                )
+                            ].sort((a, b): number => a - b);
 
                             zoomParam[axis.coll as 'xAxis'|'yAxis'].push({
                                 axis,
