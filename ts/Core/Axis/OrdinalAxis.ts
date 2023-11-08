@@ -1374,8 +1374,8 @@ namespace OrdinalAxis {
             ordinalArray: Array<number>
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
-                firstPointVal = ordinal.positions ? ordinal.positions[0] : 0;
+                axis = ordinal.axis;
+            let firstPointVal = 0;
 
             // Check whether the series has at least one point inside the chart
             const hasPointsInside = function (series: Series): boolean {
@@ -1405,6 +1405,7 @@ namespace OrdinalAxis {
                     hasPointsInside(series)
                 ) {
                     firstPointX = firstPoint.plotX;
+                    firstPointVal = firstPoint.x;
                 }
             });
 
