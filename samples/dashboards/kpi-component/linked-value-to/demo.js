@@ -30,13 +30,13 @@ Dashboards.board('container', {
             }, {
                 type: 'pie',
                 data: [{
-                    y: 100,
-                    name: 'Const A (100)'
-                }, {
                     y: 200,
-                    name: 'Const B (200)'
+                    name: 'Const A (200)'
                 }, {
-                    name: 'Value'
+                    y: 400,
+                    name: 'Const B (400)'
+                }, {
+                    name: 'Linked Value'
                 }]
             }]
         }

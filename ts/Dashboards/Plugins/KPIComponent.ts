@@ -760,10 +760,23 @@ namespace KPIComponent {
          */
         valueFormatter?: ValueFormatterCallbackFunction;
         /**
-         * Whether turn on synchronizing the KPI chart with the KPI value.
+         * This option lets you toggle KPI value connection on the chart and set
+         * the specific point of connection.
          *
-         * If no specific point is set, the first point of the first series is
-         * the target.
+         * Linking is enabled by default for the first point of the first
+         * series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+         *
+         * @example
+         * ```js
+         * linkedValueTo: {
+         *     seriesIndex: 1,
+         *     pointIndex: 2
+         * }
+         * ```
          */
         linkedValueTo: LinkedValueToOptions;
     }
@@ -783,13 +796,11 @@ namespace KPIComponent {
     }
 
     /**
-     * This option allows you to enable or disable the connection of KPI value
-     * to a point on the chart and to specify the exact point to which it should
-     * be connected.
+     * Options for linking KPI value to the chart point.
      *
-     * Linking is enabled by default for the first point of the first series.
-     * When the KPI value changes, an existing point is edited, a non-existent
-     * one is added.
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
      */
     export interface LinkedValueToOptions {
         /**
