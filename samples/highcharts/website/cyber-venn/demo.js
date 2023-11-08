@@ -49,6 +49,9 @@ const titles = [
     null
 ];
 
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/';
+
+
 Highcharts.chart('venn', {
     chart: {
         backgroundColor: '#fff',
@@ -101,7 +104,7 @@ Highcharts.chart('venn', {
             const title = titles[this.point.index];
 
             const html = '<div class="venntip">' +
-            '<div id="tip-title"><img src="http://192.168.1.176:3030/' + img + '"></img>' +
+            '<div id="tip-title"><img src="' + imgPath + img + '"></img>' +
             '<span class="title">' + title + '</span></div>' +
             '<span>' + tiptext + '</span></div>';
             if (this.point.notooltip !== true) {
@@ -118,7 +121,7 @@ Highcharts.chart('venn', {
             value: 5,
             name: 'collection',
             dataLabels: {
-                format: '<div id="collection" class="labels"><img src="http://192.168.1.176:3030/cyber-collection.svg"><span class="text"><br>Add to your Highcharts Collection</span></div>',
+                format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg"><span class="text"><br>Add to your Highcharts Collection</span></div>',
                 y: -10
 
             }
@@ -127,7 +130,7 @@ Highcharts.chart('venn', {
             value: 5,
             name: 'frameworks',
             dataLabels: {
-                format: '<div id="frameworks" class="labels"><img src="http://192.168.1.176:3030/cyber-frameworks.svg"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
+                format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
             }
         }, {
             sets: ['4'],
@@ -148,7 +151,7 @@ Highcharts.chart('venn', {
                 description: 'Explore our latest products'
             },
             dataLabels: {
-                format: '<div id="products" class="labels"><img src="http://192.168.1.176:3030/cyber-products.svg"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
+                format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
                 y: -10
 
             }
@@ -160,7 +163,7 @@ Highcharts.chart('venn', {
                 description: 'Customize to fit your brand'
             },
             dataLabels: {
-                format: '<div id="customize" class="labels"><img src="http://192.168.1.176:3030/cyber-customize.svg"><span class="text"><br>Customize to<br>fit your brand</span></div>'
+                format: '<div id="customize" class="labels"><img src="' + imgPath + 'cyber-customize.svg"><span class="text"><br>Customize to<br>fit your brand</span></div>'
             }
         }, {
             sets: ['3', '2'],
@@ -170,7 +173,7 @@ Highcharts.chart('venn', {
             },
             name: 'dataviz',
             dataLabels: {
-                format: '<div id="dataviz" class="labels"><img src="http://192.168.1.176:3030/cyber-dataviz.svg"><span class="text"><br>Up your<br>data viz game</span></div>',
+                format: '<div id="dataviz" class="labels"><img src="' + imgPath + 'cyber-dataviz.svg"><span class="text"><br>Up your<br>data viz game</span></div>',
                 y: -20,
                 x: 10
             }
@@ -182,7 +185,7 @@ Highcharts.chart('venn', {
             },
             name: 'creativity',
             dataLabels: {
-                format: '<div id="creativity" class="labels"><img src="http://192.168.1.176:3030/cyber-creativity.svg"><span class="text"><br>Unleash your<br>creativity</span></div>'
+                format: '<div id="creativity" class="labels"><img src="' + imgPath + 'cyber-creativity.svg"><span class="text"><br>Unleash your<br>creativity</span></div>'
             }
         }, {
             sets: ['2', '4', '5'],
@@ -206,7 +209,7 @@ Highcharts.chart('venn', {
             },
             name: 'money',
             dataLabels: {
-                format: '<div id="money" class="labels"><img src="http://192.168.1.176:3030/cyber-money.svg"><span class="text"><br>Save time<br>and money</div>'
+                format: '<div id="money" class="labels"><img src="' + imgPath + 'cyber-money.svg"><span class="text"><br>Save time<br>and money</div>'
             }
         }, {
             sets: ['2', '4'],
@@ -217,7 +220,7 @@ Highcharts.chart('venn', {
             name: 'bigdeal',
             notooltip: true,
             dataLabels: {
-                format: '<div id="bigdeal" class="labels"><img src="http://192.168.1.176:3030/bigdeal.svg"><span class="text"><br>Check back on November 27, 2023 for the big reveal.</span></div>',
+                format: '<div id="bigdeal" class="labels"><img src="' + imgPath + 'bigdeal.svg"><span class="text"><br>Check back on November 27, 2023 for the big reveal.</span></div>',
                 className: 'big-offer',
                 y: 40,
                 x: -5
@@ -245,7 +248,7 @@ Highcharts.chart('venn', {
             },
             name: 'curve',
             dataLabels: {
-                format: '<div id="curve" class="labels"><img src="http://192.168.1.176:3030/cyber-curve.svg"><span class="text"><br>Dive in without a<br>learning curve</div>'
+                format: '<div id="curve" class="labels"><img src="' + imgPath + 'cyber-curve.svg"><span class="text"><br>Dive in without a<br>learning curve</div>'
             }
         }, {
             sets: ['2', '3', '5'],
