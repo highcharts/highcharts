@@ -595,7 +595,7 @@ class RangeSelector {
                 )
             );
             const select = (
-                isSelectedTooGreat ||
+                (isSelectedTooGreat && type === 'all') ||
                 (isSelected && isSameRange) ||
                 (isSameRange && !selectedExists && !isYTDButNotSelected) ||
                 (isSelected && rangeSelector.frozenStates)
