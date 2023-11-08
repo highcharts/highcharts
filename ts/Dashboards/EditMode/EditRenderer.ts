@@ -397,8 +397,10 @@ function renderToggle(
         return;
     }
 
-    const { lang, langKey, value } = options,
-        title = options.title || options.name;
+    const lang = options.lang,
+        value = options.value,
+        title = options.title || options.name,
+        langKey = options.langKey as keyof EditGlobals.LangAccessibilityOptions;
 
     const toggleContainer = createElement(
         'button',

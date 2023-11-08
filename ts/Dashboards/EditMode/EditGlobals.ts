@@ -362,12 +362,13 @@ namespace EditGlobals {
     }
 
     export interface LangAccessibilityOptions {
-        [key: string]: any;
         contextMenu: LangAccessibilityOptionsContextMenu;
         editMode: LangAccessibilityOptionsEditMode;
     }
 
     export interface LangAccessibilityOptionsContextMenu {
+        [key: string]: string;
+
         /**
          * @default 'Context menu'
          */
@@ -375,6 +376,8 @@ namespace EditGlobals {
     }
 
     export interface LangAccessibilityOptionsEditMode {
+        [key: string]: string;
+
         /**
          * @default 'Edit mode'
          */
