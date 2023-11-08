@@ -120,6 +120,9 @@ Highcharts.chart('venn', {
             sets: ['2'],
             value: 5,
             name: 'collection',
+            accessibility: {
+                description: 'Add to your Highcharts Collection'
+            },
             dataLabels: {
                 format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg"><span class="text"><br>Add to your Highcharts Collection</span></div>',
                 y: -10
@@ -129,6 +132,9 @@ Highcharts.chart('venn', {
             sets: ['3'],
             value: 5,
             name: 'frameworks',
+            accessibility: {
+                description: 'Integrate with your favorite frameworks'
+            },
             dataLabels: {
                 format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
             }
@@ -292,9 +298,6 @@ Highcharts.chart('venn', {
             dataLabels: {
                 enabled: false,
                 format: '11'
-            },
-            tooltip: {
-                format: 'asdasdas'
             }
         }]
     }],
