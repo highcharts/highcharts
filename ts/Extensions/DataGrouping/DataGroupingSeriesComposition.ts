@@ -206,9 +206,9 @@ function anchorPoints(
 
     if (!(
         dataGroupingOptions &&
-            series.xData &&
-            totalRange &&
-            series.groupMap
+        series.xData &&
+        totalRange &&
+        series.groupMap
     )) {
         return;
     }
@@ -217,14 +217,13 @@ function anchorPoints(
         anchor = dataGroupingOptions.anchor,
         firstAnchor = dataGroupingOptions.firstAnchor,
         lastAnchor = dataGroupingOptions.lastAnchor;
-    let i = groupedXData.length - 1,
-        iEnd = 0;
-    // Anchor points that are not extremes.
+    let anchorIndexIterator = groupedXData.length - 1,
+        anchorFirstIndex = 0;
 
     // Change the first point position, but only when it is
     // the first point in the data set not in the current zoom.
     if (firstAnchor && series.xData[0] >= groupedXData[0]) {
-        iEnd++;
+        anchorFirstIndex++;
         const groupStart = series.groupMap[0].start,
             groupLength = series.groupMap[0].length;
         let firstGroupEnd;
@@ -251,7 +250,7 @@ function anchorPoints(
             totalRange &&
             groupedXData[groupedDataLastIndex] >= xMax - totalRange
     ) {
-        i--;
+        anchorIndexIterator--;
         const lastGroupStart = series.groupMap[
             series.groupMap.length - 1
         ].start;
@@ -271,9 +270,9 @@ function anchorPoints(
                 ({ middle: 0.5, end: 1 } as AnchorChoiceType)[anchor]
         );
 
-        while (i >= iEnd) {
-            groupedXData[i] += shiftInterval;
-            i--;
+        while (anchorIndexIterator >= anchorFirstIndex) {
+            groupedXData[anchorIndexIterator] += shiftInterval;
+            anchorIndexIterator--;
         }
     }
 }
@@ -396,8 +395,8 @@ function applyGrouping(
         // to the new anchoring mechanism. #12455.
         if (
             dataGroupingOptions &&
-                dataGroupingOptions.smoothed &&
-                groupedXData.length
+            dataGroupingOptions.smoothed &&
+            groupedXData.length
         ) {
             dataGroupingOptions.firstAnchor = 'firstPoint';
             dataGroupingOptions.anchor = 'middle';
@@ -669,7 +668,8 @@ function groupData(
             pointX = groupPositions[pos];
             series.dataGroupInfo = {
                 start: groupAll ? start : ((series.cropStart as any) + start),
-                length: values[0].length
+                length: values[0].length,
+                groupStart: pointX
             };
             groupedY = approximationFn.apply(series, values);
 
@@ -701,9 +701,7 @@ function groupData(
             if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
-                groupMap.push(extend(series.dataGroupInfo, {
-                    groupStart: pointX
-                }));
+                groupMap.push(series.dataGroupInfo);
             }
 
             // reset the aggregate arrays
