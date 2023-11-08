@@ -48,6 +48,8 @@ const composedClasses: Array<(Function|GlobalsLike)> = [],
         sensitivity: 1.1
     };
 
+let wheelTimer: number;
+
 
 /* *
  *
@@ -113,56 +115,6 @@ const fitToRange = (
     };
 };
 
-let wheelTimer: number,
-    startOnTick: boolean|undefined,
-    endOnTick: boolean|undefined;
-
-/**
- * Temporarly disable `axis.startOnTick` and `axis.endOnTick` to allow zooming
- * for small values.
- * @private
-*/
-const waitForAutomaticExtremes = function (
-    axis: Axis
-) : void {
-    const axisOptions = axis.options;
-
-    // Options interfering with yAxis zoom by setExtremes() returning
-    // integers by default.
-    if (defined(wheelTimer)) {
-        clearTimeout(wheelTimer);
-    }
-
-    if (!defined(startOnTick)) {
-        startOnTick = axisOptions.startOnTick;
-        endOnTick = axisOptions.endOnTick;
-    }
-
-    // Temporarily disable start and end on tick, because they would
-    // prevent small increments of zooming.
-    if (startOnTick || endOnTick) {
-        axisOptions.startOnTick = false;
-        axisOptions.endOnTick = false;
-    }
-    wheelTimer = setTimeout((): void => {
-        if (defined(startOnTick) && defined(endOnTick)) {
-            // Repeat merge after the wheel zoom is finished, #19178
-            axisOptions.startOnTick = startOnTick;
-            axisOptions.endOnTick = endOnTick;
-
-            // Set the extremes to the same as they already are, but now
-            // with the original startOnTick and endOnTick. We need
-            // `forceRedraw` otherwise it will detect that the values
-            // haven't changed. We do not use a simple yAxis.update()
-            // because it will destroy the ticks and prevent animation.
-            const { min, max } = axis.getExtremes();
-            axis.forceRedraw = true;
-            axis.setExtremes(min, max);
-            startOnTick = endOnTick = void 0;
-        }
-    }, 400);
-};
-
 /**
 * Calulate the ratio of mouse position on the axis to it's length. If mousePos
 * doesn't exist, returns 0.5;
@@ -219,10 +171,6 @@ const zoomOnDirection = function (
 
     if (defined(axis.max) && defined(axis.min) &&
         defined(axis.dataMax) && defined(axis.dataMin)) {
-
-        if (!isXAxis) {
-            waitForAutomaticExtremes(axis);
-        }
 
         const range = axis.max - axis.min,
             center = isNumber(centerArg) ? centerArg :
@@ -323,7 +271,19 @@ const zoomBy = function (
         hasZoomed = hasZoomedX || hasZoomedY;
 
     if (hasZoomed) {
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
+
+        chart.suppressEndOnTick = true;
         chart.redraw(false);
+
+        // Some time after the last mousewheel event, run drop. In case any of
+        // the affected axes had `startOnTick` or `endOnTick`, they will be
+        // re-adjusted now.
+        wheelTimer = setTimeout((): void => {
+            chart.pointer.drop();
+        }, 250);
     }
 
     return hasZoomed;

@@ -478,26 +478,31 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#drop
      */
-    public drop(e: Event): void {
+    public drop(e?: Event): void {
         const pointer = this,
             chart = this.chart,
             hasPinched = this.hasPinched;
 
-        // During a touch zoom or pan, the `startOnTick` and `endOnTick` options
-        // are ignored. Otherwise the zooming or panning would be jumpy, or even
-        // not performed because it would not get passed the tick thresholds.
-        // After the touch has ended, we undo this and render again.
+        // During a mouse, touch or mousewheel pan, the `startOnTick` and
+        // `endOnTick` options are ignored. Otherwise the zooming or panning
+        // would be jumpy, or even not performed because the end ticks would
+        // block it. After the touch has ended, we undo this and render again.
         if (chart.suppressEndOnTick) {
             chart.suppressEndOnTick = false;
+            let redraw: true|undefined;
             for (const axis of chart.axes) {
                 if (axis.options.startOnTick || axis.options.endOnTick) {
                     axis.forceRedraw = true;
-                    axis.setExtremes(axis.userMin, axis.userMax);
+                    axis.setExtremes(axis.userMin, axis.userMax, false);
+                    redraw = true;
                 }
+            }
+            if (redraw) {
+                chart.redraw();
             }
         }
 
-        if (this.selectionMarker) {
+        if (this.selectionMarker && e) {
             const {
                 x,
                 y,
@@ -514,8 +519,8 @@ class Pointer {
                 width,
                 height
             };
-            // Start by false runZoom, unless when we have a mapView, in
-            // which case the zoom will be handled in the selection event.
+            // Start by false runZoom, unless when we have a mapView, in which
+            // case the zoom will be handled in the selection event.
             let runZoom = Boolean(chart.mapView);
 
             // A selection has been made
