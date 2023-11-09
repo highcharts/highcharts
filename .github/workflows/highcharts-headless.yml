@@ -74,17 +74,13 @@ jobs:
           cache: 'npm'
       # - uses: browser-actions/setup-chrome@latest
       #   with:
-      #     chrome-version: stable
+      #     chrome-version: stabl
       - name: Update Chrome
         run: |
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo apt update
           sudo apt --only-upgrade install google-chrome-stable
-      - name: Check and set Chrome
-        run: |
-          chrome --version
-          whereis chrome
-          set CHROME_BIN $(which chrome)
-          echo $CHROME_BIN
       - uses: nanasess/setup-chromedriver@v2
       - uses: browser-actions/setup-firefox@latest
         with:
