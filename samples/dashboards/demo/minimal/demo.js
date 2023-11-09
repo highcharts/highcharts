@@ -121,13 +121,6 @@ Dashboards.board('container', {
         valueFormat: '{value}',
         subtitle: 'daily recommended dose'
     }, {
-        cell: 'title',
-        type: 'HTML',
-        elements: [{
-            tagName: 'h1',
-            textContent: 'MicroElement amount in Foods'
-        }]
-    }, {
         sync: {
             visibility: true,
             highlight: true,

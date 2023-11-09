@@ -2,6 +2,7 @@ import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
 import { generateOHLC } from '../../data-generators';
+import { setupDOM } from '../../test-utils';
 
 
 export const config = {
@@ -23,22 +24,9 @@ export default async function benchmarkTest(
         data
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
-  const { JSDOM } = require('jsdom');
-  const dom = new JSDOM(
-    `<!doctype html>
-  <body> </body>`);
-  const win = dom.window;
-  const doc = win.document;
+  const { win, el } = setupDOM();
   const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
 
-  global.Node = win.Node; // Workaround for issue #1
-  win.Date = Date;
-
-  // Do some modifications to the jsdom document in order to get the SVG bounding
-  // boxes right.
-  let oldCreateElementNS = doc.createElementNS;
-  let el = doc.createElement('div');
-  doc.body.appendChild(el);
   performance.mark('Start');
   hc.stockChart(el, {
     chart: {

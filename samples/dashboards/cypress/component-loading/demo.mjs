@@ -49,6 +49,11 @@ Dashboards.board('container', {
                 }],
                 chart: {
                     animation: false
+                },
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
                 }
             }
         },
