@@ -606,7 +606,8 @@ class HighchartsComponent extends Component {
             const columnAssignment = this.options.columnAssignment ||
                 this.getDefaultColumnAssignment(columnNames);
             const seriesColumnMap = columnAssignment.seriesColumnMap;
-            const pointColumnMap = seriesColumnMap?.pointColumnMap;
+            const pointColumnMap =
+                (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.pointColumnMap;
             const pointColumnMapValues = pointColumnMap &&
                 Object.keys(pointColumnMap).map(key => pointColumnMap[key]);
             const xKeyMap: Record<string, string> = {};
@@ -618,6 +619,7 @@ class HighchartsComponent extends Component {
                 .filter((name): boolean => {
                     if (
                         pointColumnMap &&
+                        pointColumnMapValues &&
                         pointColumnMapValues.indexOf(name) !== -1
                     ) {
                         return false;
@@ -643,7 +645,9 @@ class HighchartsComponent extends Component {
 
             // create empty series for OHLC data
             if (seriesColumnMap) {
-                seriesNames.push(seriesColumnMap.seriesName);
+                seriesNames.push(
+                    (seriesColumnMap as HighchartsComponent.seriesColumnMap).seriesName
+                );
             }
 
             // Create the series or get the already added series
@@ -701,7 +705,8 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
-                const isSeriesColumnMap = series.name === seriesColumnMap?.seriesName;
+                const isSeriesColumnMap = 
+                    series.name === (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.seriesName;
                 const columnKeys = isSeriesColumnMap ?
                     [xKey].concat(pointColumnMapValues) : [xKey, series.name];
                 const seriesTable = new DataTable({
@@ -1067,7 +1072,13 @@ namespace HighchartsComponent {
          * }
          * ```
          */
-        columnAssignment?: Record<string, any>; // TODO
+        columnAssignment?: Record<string, string|seriesColumnMap>;
+    }
+    
+    /** @privaate */
+    export interface seriesColumnMap {
+        seriesName: string;
+        pointColumnMap: Record<string, string>
     }
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
@@ -1081,6 +1092,7 @@ namespace HighchartsComponent {
     export interface ClassJSON extends Component.JSON {
         options: OptionsJSON;
     }
+
 }
 
 /* *
