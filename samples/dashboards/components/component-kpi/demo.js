@@ -17,6 +17,9 @@ const board = Dashboards.board('container', {
         title: 'Cakes',
         value: 7,
         subtitle: 'Consumed daily',
+        linkedValueTo: {
+            enabled: false
+        },
         chartOptions: {
             series: [{
                 data: [734, 244, 685, 250, 920, 320, 200, 150]
@@ -45,6 +48,7 @@ const board = Dashboards.board('container', {
         cell: 'kpi-12',
         type: 'KPI',
         title: 'Progress',
+        value: 70,
         chartOptions: {
             chart: {
                 type: 'solidgauge'
@@ -68,7 +72,6 @@ const board = Dashboards.board('container', {
                 },
                 rounded: true,
                 data: [{
-                    y: 70,
                     innerRadius: '60%',
                     outerRadius: '100%'
                 }]
@@ -78,6 +81,9 @@ const board = Dashboards.board('container', {
         cell: 'kpi-13',
         type: 'KPI',
         title: 'Visits last 24 hours',
+        linkedValueTo: {
+            enabled: false
+        },
         chartOptions: {
             yAxis: {
                 min: 0,
@@ -133,9 +139,8 @@ function setValues() {
                 true,
                 true
             );
-        } else if (chart) {
-            chart.series[0].setData([randomValue]);
         }
+
         element.component.update({
             value: randomValue
         });
