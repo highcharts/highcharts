@@ -90,7 +90,7 @@ Dashboards.board('container', {
 });
 ```
 
-By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#types/Dashboards_Plugins_KPIComponent.KPIComponent.LinkedValueToOptions) option as in the example above.
+By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronisation, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#types/Dashboards_Plugins_KPIComponent.KPIComponent.LinkedValueToOptions) option as in the example above.
 
 You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 

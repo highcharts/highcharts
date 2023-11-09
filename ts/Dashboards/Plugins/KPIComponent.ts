@@ -760,8 +760,8 @@ namespace KPIComponent {
          */
         valueFormatter?: ValueFormatterCallbackFunction;
         /**
-         * This option allows user to toggle the KPI value connection with the
-         * chart and set the specific point for the connection.
+         * This option lets you toggle KPI value connection with the chart and
+         * set the specific point for the connection.
          *
          * Linking is enabled by default for the first point of the first
          * series.
