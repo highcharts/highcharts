@@ -27,8 +27,8 @@ export default async function benchmarkTest(
   const { win,  el } = setupDOM();
 
   const hc = require(join(CODE_PATH, '/highcharts.src.js'))(win);
+  global.window = win;
   require(join(CODE_PATH, '/modules/export-data.src.js'))(hc);
-
 
   const chart = hc.chart(el, {
       accessibility:  {

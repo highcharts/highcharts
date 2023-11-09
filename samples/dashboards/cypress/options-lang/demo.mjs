@@ -60,6 +60,14 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
+            chart: {
+                animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 data: [1, 2, 3]
             }]
@@ -68,6 +76,14 @@ Dashboards.board('container', {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
+            chart: {
+                animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 data: [1, 2, 3]
             }]

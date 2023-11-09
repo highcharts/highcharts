@@ -53,7 +53,17 @@ Dashboards.board(
                 connector: {
                     id: 'data'
                 },
-                type: 'Highcharts'
+                type: 'Highcharts',
+                chartOptions: {
+                    plotOptions: {
+                        series: {
+                            animation: false
+                        }
+                    },
+                    chart: {
+                        animation: false
+                    }
+                }
             },
             {
                 cell: 'dashboard-col-2',
