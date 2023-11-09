@@ -98,8 +98,7 @@ body,
 body {
     background-color: transparent;
     height: 100%;
-
-    /* margin-top: -130px; */
+    margin-top: -130px;
 }
 
 .highcharts-container {
@@ -125,7 +124,7 @@ body {
 }
 
 .homepage #content {
-    height: 60px;
+    height: unset;
     display: inline-grid;
     grid-template-columns: 54% 46%;
     grid-auto-rows: max-content;
@@ -254,16 +253,16 @@ body {
 }
 
 .homepage #content #countdown .gauge {
-    border: 1px solid #6ee7b7;
-    width: 50px;
+    border: 0 solid #6ee7b7;
+    width: 75px;
     height: 40px;
 }
 
 /* data labels */
 
 .homepage #content #countdown .highcharts-data-label .time {
-    width: 82px;
-    text-align: center;
+    width: 22px;
+    text-align: right;
 }
 
 .homepage #content #countdown .highcharts-data-label .time div {
@@ -273,15 +272,23 @@ body {
     font-weight: 600;
     font-size: 1.2rem;
     margin-top: -10px;
+    margin-left: 0;
+    transform: translateX(-20px);
 }
 
 /* caption */
 .highcharts-caption {
-    font-size: 0.5em !important;
+    font-size: 0.9em !important;
     font-weight: normal;
     fill: #e3e3e8 !important;
     margin-bottom: 0;
     text-transform: uppercase;
+    transform: translate(12px, 11px);
+    font-family: monospace;
+}
+
+.highcharts-pane {
+    fill: transparent;
 }
 
 .highcharts-label-box.highcharts-data-label-box {
@@ -300,6 +307,10 @@ body {
 
     .highcharts-pane {
         stroke-width: 1;
+    }
+
+    .homepage #content #countdown #hours.gauge {
+        margin-left: unset;
     }
 
     #stop {
@@ -342,13 +353,25 @@ body {
         height: 80px;
     }
 
+    .homepage #content #countdown .highcharts-data-label .time {
+        width: 80px;
+        text-align: center;
+    }
+
     .homepage #content #countdown .highcharts-data-label .time div {
         font-size: 1.4rem;
         margin-top: 0;
+        margin-left: 0;
+        transform: unset;
     }
 
     .homepage #content h1 {
         display: block;
+    }
+
+    .highcharts-caption {
+        transform: none;
+        font-size: 0.5rem !important;
     }
 }
 
@@ -522,6 +545,11 @@ body {
     .homepage #content #countdown .highcharts-data-label .time div {
         font-size: 2.8rem;
         margin-top: -6px;
+    }
+
+    .highcharts-caption {
+        transform: none;
+        font-size: 0.7rem !important;
     }
 }
 
