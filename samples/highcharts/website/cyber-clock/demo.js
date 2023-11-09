@@ -242,7 +242,7 @@ function updateCountdown(type) {
     if (distance <= 0) {
         // clearInterval(countdownInterval);
         countDownDate = new Date('2023-12-04T00:00:00').getTime();
-        document.getElementById('header').innerHTML = 'Our <span>big deal</span> ends in:';
+        document.getElementById('header').innerHTML = '<span style="font-weight:bold">70% Off </span> Highcharts Dashboards ends in:';
     }
 
     switch (type) {
