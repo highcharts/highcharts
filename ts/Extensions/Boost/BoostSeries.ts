@@ -851,6 +851,63 @@ function getPoint(
 
 /**
  * @private
+ */
+function scatterProcessData(
+    series: Series
+): (boolean|undefined) {
+
+    series.yAxis.setTickInterval();
+
+    const {
+            max: xMax,
+            min: xMin
+        } = series.xAxis.getExtremes(),
+        {
+            max: yMax,
+            min: yMin
+        } = series.yAxis.getExtremes();
+
+    if (
+        typeof yMin !== 'number' ||
+        typeof yMax !== 'number'
+    ) {
+        return;
+    }
+
+    const processedXData: Array<number> = [],
+        processedYData: Array<number> = [],
+        xData = series.xData || [],
+        yData = series.yData || [];
+
+    let cropped = false,
+        x: number,
+        y: number;
+
+    for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
+        x = xData[i];
+        y = yData[i] as number;
+
+        if (
+            x >= xMin && x <= xMax &&
+            y >= yMin && y <= yMax
+        ) {
+            processedXData.push(x);
+            processedYData.push(y);
+        } else {
+            cropped = true;
+        }
+    }
+
+    series.cropped = cropped;
+    series.cropStart = 0;
+    series.processedXData = processedXData;
+    series.processedYData = processedYData;
+
+    return true;
+}
+
+/**
+ * @private
  * @function Highcharts.Series#renderCanvas
  */
 function seriesRenderCanvas(this: Series): void {
@@ -1302,12 +1359,16 @@ function wrapSeriesProcessData(
             // First pass with options.data:
             !getSeriesBoosting(dataToMeasure) ||
             series.type === 'heatmap' ||
+            series.type === 'scatter' ||
             series.type === 'treemap' ||
             // processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
             proceed.apply(series, [].slice.call(arguments, 1));
+            if (series.type === 'scatter' && series.boosted) {
+                scatterProcessData(series);
+            }
             dataToMeasure = series.processedXData;
         }
 
