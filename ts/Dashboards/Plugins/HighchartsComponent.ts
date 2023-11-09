@@ -692,7 +692,7 @@ class HighchartsComponent extends Component {
 
                 if (relatedSeries) {
                     relatedSeries.update(seriesOptions, false);
-                    return chart.series[index];
+                    return relatedSeries;
                 }
 
                 return chart.addSeries(seriesOptions, false);
