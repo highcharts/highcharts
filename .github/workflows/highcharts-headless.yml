@@ -72,9 +72,13 @@ jobs:
         with:
           node-version: lts/*
           cache: 'npm'
-      - uses: browser-actions/setup-chrome@latest
-        with:
-          chrome-version: stable
+      # - uses: browser-actions/setup-chrome@latest
+      #   with:
+      #     chrome-version: stable
+      - name: Update Chrome
+        run: |
+          sudo apt update
+          sudo apt --only-upgrade install google-chrome-stable
       - name: Check and set Chrome
         run: |
           chrome --version
