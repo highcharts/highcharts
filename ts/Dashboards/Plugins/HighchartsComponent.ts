@@ -606,8 +606,8 @@ class HighchartsComponent extends Component {
             const columnAssignment = this.options.columnAssignment ||
                 this.getDefaultColumnAssignment(columnNames);
             const seriesColumnMap = columnAssignment.seriesColumnMap;
-            const pointColumnMap =
-                (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.pointColumnMap;
+            // eslint-disable-next-line max-len
+            const pointColumnMap = (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.pointColumnMap;
             const pointColumnMapValues = pointColumnMap &&
                 Object.keys(pointColumnMap).map(key => pointColumnMap[key]);
             const xKeyMap: Record<string, string> = {};
@@ -646,7 +646,9 @@ class HighchartsComponent extends Component {
             // create empty series for OHLC data
             if (seriesColumnMap) {
                 seriesNames.push(
-                    (seriesColumnMap as HighchartsComponent.seriesColumnMap).seriesName
+                    (
+                        seriesColumnMap as HighchartsComponent.seriesColumnMap
+                    ).seriesName
                 );
             }
 
@@ -689,10 +691,12 @@ class HighchartsComponent extends Component {
                     dragDrop: {
                         draggableY: shouldBeDraggable
                     }
-                }
+                };
 
                 const relatedSeries =
-                    chart.series.find((series):boolean => series.name === seriesName);
+                    chart.series.find(
+                        (series):boolean => series.name === seriesName
+                    );
 
                 if (relatedSeries) {
                     relatedSeries.update(seriesOptions, false);
@@ -705,8 +709,8 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
-                const isSeriesColumnMap = 
-                    series.name === (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.seriesName;
+                // eslint-disable-next-line max-len
+                const isSeriesColumnMap = series.name === (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.seriesName;
                 const columnKeys = isSeriesColumnMap ?
                     [xKey].concat(pointColumnMapValues) : [xKey, series.name];
                 const seriesTable = new DataTable({
@@ -722,12 +726,15 @@ class HighchartsComponent extends Component {
                 }
                 const seriesData = seriesTable.getRowObjects().reduce((
                     arr: (number | {})[],
-                    row
+                    row: Record<string, any>
                 ): (number | {})[] => {
                     if (isSeriesColumnMap) {
                         arr.push(
                             [row.x].concat(
-                                pointColumnMapValues.map((value: string) => row[value])
+                                pointColumnMapValues.map(
+                                     // eslint-disable-next-line max-len
+                                    (value: string):number|undefined => row[value]
+                                )
                             )
                         );
                     } else {
@@ -1074,8 +1081,8 @@ namespace HighchartsComponent {
          */
         columnAssignment?: Record<string, string|seriesColumnMap>;
     }
-    
-    /** @privaate */
+
+    /** @private */
     export interface seriesColumnMap {
         seriesName: string;
         pointColumnMap: Record<string, string>
