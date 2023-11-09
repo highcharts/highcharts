@@ -832,7 +832,7 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
     );
 });
 
-QUnit.test('Zooming in ordnial', assert => {
+QUnit.test('Selection zoom with ordinal and multiple series.', assert => {
     const dataA = [
             [1629217713911, 2],
             [1629395999999, 0],
@@ -1171,7 +1171,7 @@ QUnit.test('Zooming in ordnial', assert => {
         start = [chart.plotLeft, chart.plotTop + 40],
         end = [chart.plotLeft + chart.xAxis[0].len / 10, chart.plotTop + 40];
 
-    testController.pan(start, end, {}, true);
+    testController.pan(start, end, {});
 
     const actualMin = chart.series[0].xAxis.min;
 
