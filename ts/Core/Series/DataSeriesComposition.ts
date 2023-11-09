@@ -386,7 +386,7 @@ class DataSeriesAdditions {
     }
 
     /**
-     * Stops synchronisation of table changes with series.
+     * Stops synchronization of table changes with series.
      * @private
      */
     public syncOff(): void {
