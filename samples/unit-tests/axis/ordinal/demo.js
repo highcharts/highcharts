@@ -1171,7 +1171,7 @@ QUnit.test('Selection zoom with ordinal and multiple series.', assert => {
         start = [chart.plotLeft, chart.plotTop + 40],
         end = [chart.plotLeft + chart.xAxis[0].len / 10, chart.plotTop + 40];
 
-    testController.pan(start, end, {});
+    testController.pan(start, end);
 
     const actualMin = chart.series[0].xAxis.min;
 
