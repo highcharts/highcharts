@@ -136,6 +136,8 @@ QUnit.test('Zoom and pan key', function (assert) {
                     'Nov',
                     'Dec'
                 ],
+                minPadding: 0,
+                maxPadding: 0,
                 reversed: true // #7857
             },
             yAxis: {
@@ -356,7 +358,9 @@ QUnit.test(
             ]
         });
 
-        var controller = new TestController(chart),
+        chart.xAxis[0].setExtremes(Date.UTC(2020, 1, 7));
+
+        const controller = new TestController(chart),
             initialMin = chart.xAxis[0].min;
 
         controller.pan([100, 200], [200, 200]);
@@ -369,175 +373,304 @@ QUnit.test(
     }
 );
 
-QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'area',
-            panning: true,
-            width: 800
-        },
-        plotOptions: {
-            area: {
-                pointStart: 1940,
-                marker: {
-                    enabled: false
+QUnit.test('Pan all the way to extremes (#5863, #19872, #20070)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area',
+                panning: true,
+                width: 800
+            },
+            plotOptions: {
+                area: {
+                    pointStart: 1940,
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            xAxis: {
+                min: 1945,
+                tickInterval: 5,
+                minPadding: 0,
+                maxPadding: 0
+            },
+            yAxis: {
+                min: 10000,
+                max: 60000,
+                tickInterval: 10000
+            },
+            series: [
+                {
+                    name: 'USA',
+                    data: [
+                        235,
+                        369,
+                        640,
+                        1005,
+                        1436,
+                        2063,
+                        3057,
+                        4618,
+                        6444,
+                        9822,
+                        15468,
+                        20434,
+                        24126,
+                        27387,
+                        29459,
+                        31056,
+                        31982,
+                        32040,
+                        31233,
+                        29224,
+                        27342,
+                        26662,
+                        26956,
+                        27912,
+                        28999,
+                        28965,
+                        27826,
+                        25579,
+                        25722,
+                        24826,
+                        24605,
+                        24304,
+                        23464,
+                        23708,
+                        24099,
+                        24357,
+                        24237,
+                        24401,
+                        24344,
+                        23586,
+                        22380,
+                        21004,
+                        17287,
+                        14747,
+                        13076,
+                        12555,
+                        12144,
+                        11009,
+                        10950,
+                        10871,
+                        10824,
+                        10577,
+                        10527,
+                        10475,
+                        10421,
+                        10358
+                    ]
+                },
+                {
+                    name: 'USSR/Russia',
+                    data: [
+                        5,
+                        25,
+                        50,
+                        120,
+                        150,
+                        200,
+                        426,
+                        660,
+                        869,
+                        1060,
+                        1605,
+                        2471,
+                        3322,
+                        4238,
+                        5221,
+                        6129,
+                        7089,
+                        8339,
+                        9399,
+                        10538,
+                        11643,
+                        13092,
+                        14478,
+                        15915,
+                        17385,
+                        19055,
+                        21205,
+                        23044,
+                        25393,
+                        27935,
+                        30062,
+                        32049,
+                        33952,
+                        35804,
+                        37431,
+                        39197,
+                        45000,
+                        43000,
+                        41000,
+                        39000,
+                        37000,
+                        35000,
+                        33000,
+                        31000,
+                        29000,
+                        27000,
+                        25000,
+                        24000,
+                        23000,
+                        22000,
+                        21000,
+                        20000,
+                        19000,
+                        18000,
+                        18000,
+                        17000
+                    ]
+                }
+            ]
+        });
+
+        const xAxis = chart.xAxis[0],
+            yAxis = chart.yAxis[0];
+
+        var controller = new TestController(chart);
+
+        xAxis.setExtremes(1950);
+
+        assert.strictEqual(
+            xAxis.tickPositions.toString(),
+            '1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
+            'Right xAxis ticks before panning.'
+        );
+
+        // Pan
+        controller.pan([100, 200], [200, 200]);
+        assert.strictEqual(
+            xAxis.tickPositions.toString(),
+            '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
+            'Right xAxis ticks after panning to min extreme.'
+        );
+
+        // Pan
+        controller.pan([300, 200], [200, 200]);
+        assert.strictEqual(
+            xAxis.tickPositions.toString(),
+            '1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
+            'Right xAxis ticks after panning to max extreme.'
+        );
+
+        const maxPadding = 0.2,
+            minPadding = 0.2;
+
+        xAxis.update({
+            min: undefined,
+            max: undefined,
+            minPadding: minPadding,
+            maxPadding: maxPadding
+        });
+
+        yAxis.setExtremes(undefined, undefined, false);
+        xAxis.setExtremes(1970, 1995);
+
+        // Pan
+        controller.pan([500, 200], [100, 200]);
+        assert.strictEqual(
+            xAxis.max,
+            xAxis.dataMax +
+            (xAxis.dataMax - xAxis.dataMin) * maxPadding,
+            'Right xAxis max after setting maxPadding and panning to max extreme.'
+        );
+
+        xAxis.setExtremes(1935, 1955);
+
+        // Pan
+        controller.pan([100, 200], [600, 200]);
+        assert.strictEqual(
+            xAxis.min,
+            xAxis.dataMin -
+            (xAxis.dataMax - xAxis.dataMin) * minPadding,
+            'Right xAxis min after setting minPadding and panning to min extreme.'
+        );
+
+        yAxis.setExtremes(20000, 50000);
+
+        chart.update({
+            chart: {
+                panning: {
+                    type: 'y'
                 }
             }
-        },
-        xAxis: {
-            min: 1945,
-            tickInterval: 5
-        },
-        series: [
-            {
-                name: 'USA',
-                data: [
-                    235,
-                    369,
-                    640,
-                    1005,
-                    1436,
-                    2063,
-                    3057,
-                    4618,
-                    6444,
-                    9822,
-                    15468,
-                    20434,
-                    24126,
-                    27387,
-                    29459,
-                    31056,
-                    31982,
-                    32040,
-                    31233,
-                    29224,
-                    27342,
-                    26662,
-                    26956,
-                    27912,
-                    28999,
-                    28965,
-                    27826,
-                    25579,
-                    25722,
-                    24826,
-                    24605,
-                    24304,
-                    23464,
-                    23708,
-                    24099,
-                    24357,
-                    24237,
-                    24401,
-                    24344,
-                    23586,
-                    22380,
-                    21004,
-                    17287,
-                    14747,
-                    13076,
-                    12555,
-                    12144,
-                    11009,
-                    10950,
-                    10871,
-                    10824,
-                    10577,
-                    10527,
-                    10475,
-                    10421,
-                    10358
-                ]
+        });
+
+        assert.strictEqual(
+            yAxis.tickPositions.toString(),
+            '20000,30000,40000,50000',
+            'Right yAxis ticks before panning.'
+        );
+
+        // Pan
+        controller.pan([200, 300], [200, 0]);
+        assert.strictEqual(
+            yAxis.tickPositions.toString(),
+            '10000,20000,30000,40000',
+            'Right yAxis ticks after panning to min extreme.'
+        );
+
+        // Pan
+        controller.pan([200, 100], [200, 400]);
+        assert.strictEqual(
+            yAxis.tickPositions.toString(),
+            '30000,40000,50000,60000',
+            'Right yAxis ticks after panning to max extreme.'
+        );
+
+        yAxis.update({
+            min: undefined,
+            max: undefined,
+            minPadding: minPadding,
+            maxPadding: maxPadding
+        });
+
+        xAxis.setExtremes(undefined, undefined, false);
+        yAxis.setExtremes(10000, 50000);
+
+        // Pan
+        controller.pan([200, 100], [200, 400]);
+        assert.strictEqual(
+            yAxis.max,
+            yAxis.dataMax + yAxis.dataMax * maxPadding,
+            'Right yAxis max after setting maxPadding and panning to max extreme.'
+        );
+
+        // Pan
+        controller.pan([200, 300], [200, 0]);
+        assert.strictEqual(
+            yAxis.min,
+            0,
+            'Right yAxis min after setting minPadding and panning to min extreme.'
+        );
+
+        chart.update({
+            chart: {
+                type: 'line'
             },
-            {
-                name: 'USSR/Russia',
-                data: [
-                    5,
-                    25,
-                    50,
-                    120,
-                    150,
-                    200,
-                    426,
-                    660,
-                    869,
-                    1060,
-                    1605,
-                    2471,
-                    3322,
-                    4238,
-                    5221,
-                    6129,
-                    7089,
-                    8339,
-                    9399,
-                    10538,
-                    11643,
-                    13092,
-                    14478,
-                    15915,
-                    17385,
-                    19055,
-                    21205,
-                    23044,
-                    25393,
-                    27935,
-                    30062,
-                    32049,
-                    33952,
-                    35804,
-                    37431,
-                    39197,
-                    45000,
-                    43000,
-                    41000,
-                    39000,
-                    37000,
-                    35000,
-                    33000,
-                    31000,
-                    29000,
-                    27000,
-                    25000,
-                    24000,
-                    23000,
-                    22000,
-                    21000,
-                    20000,
-                    19000,
-                    18000,
-                    18000,
-                    17000
-                ]
-            }
-        ]
+            yAxis: {
+                tickInterval: 1
+            },
+            series: [{
+                data: [5.5, 6, 7, 8, 9]
+            }, {
+                data: [6, 7, 8, 9, 10]
+            }]
+        });
+
+        yAxis.setExtremes(5, 10);
+
+        // Pan
+        controller.pan([200, 300], [200, 0]);
+        assert.strictEqual(
+            yAxis.min,
+            yAxis.dataMin -
+            (yAxis.dataMax - yAxis.dataMin) * minPadding,
+            'Right yAxis min after setting minPadding and panning to min extreme.'
+        );
     });
-
-    var controller = new TestController(chart);
-
-    assert.strictEqual(
-        chart.xAxis[0].tickPositions.toString(),
-        '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
-        'Right ticks'
-    );
-
-    // Pan
-    controller.pan([100, 200], [200, 200]);
-    assert.strictEqual(
-        chart.xAxis[0].tickPositions.toString(),
-        '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
-        'Right ticks'
-    );
-
-    // Pan
-    controller.pan([300, 200], [200, 200]);
-    assert.strictEqual(
-        chart.xAxis[0].tickPositions.toString(),
-        '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
-        'Right ticks'
-    );
-});
 
 QUnit.test(
     'Pan in vertical direction, and both directions. (Highcharts Stock only)',

@@ -3730,30 +3730,60 @@ class Chart {
                     });
                 }
 
-                const paddedMin = Math.min(
-                    pick(
+                const startMin = pick(
                         panningState && panningState.startMin,
                         extremes.dataMin
                     ),
-                    halfPointRange ?
-                        extremes.min :
-                        axis.toValue(
-                            axis.toPixels(extremes.min) -
-                            axis.minPixelPadding
-                        )
-                );
-                const paddedMax = Math.max(
-                    pick(
+                    startMax = pick(
                         panningState && panningState.startMax,
                         extremes.dataMax
                     ),
-                    halfPointRange ?
-                        extremes.max :
-                        axis.toValue(
-                            axis.toPixels(extremes.max) +
-                            axis.minPixelPadding
-                        )
-                );
+                    dataRange = pick(axis.options.max, startMax) -
+                        pick(axis.options.min, startMin);
+
+                let minPaddingOffset = dataRange * axis.options.minPadding,
+                    maxPaddingOffset = dataRange * axis.options.maxPadding;
+
+                if (defined(axis.threshold)) {
+                    if (extremes.dataMin >= axis.threshold) {
+                        minPaddingOffset = 0;
+                    } else if (extremes.dataMax <= axis.threshold) {
+                        maxPaddingOffset = 0;
+                    }
+                }
+
+                const paddedMin = pick(axis.options.min, Math.min(
+                        axis.isXAxis ? startMin - minPaddingOffset :
+                            startMin === 0 ? 0 :
+                                Math.max(
+                                    startMin < 0 ?
+                                        startMin - minPaddingOffset : 0,
+                                    startMin - minPaddingOffset
+                                ),
+                        halfPointRange ?
+                            extremes.min :
+                            axis.toValue(
+                                axis.toPixels(extremes.min) -
+                                axis.minPixelPadding
+                            ),
+                        pick(axis.threshold, Infinity)
+                    )),
+                    paddedMax = pick(axis.options.max, Math.max(
+                        axis.isXAxis ? startMax + maxPaddingOffset :
+                            startMax === 0 ? 0 :
+                                Math.min(
+                                    startMax > 0 ?
+                                        startMax + maxPaddingOffset : 0,
+                                    startMax + maxPaddingOffset
+                                ),
+                        halfPointRange ?
+                            extremes.max :
+                            axis.toValue(
+                                axis.toPixels(extremes.max) +
+                                axis.minPixelPadding
+                            ),
+                        pick(axis.threshold, -Infinity)
+                    ));
 
                 axis.panningState = panningState;
 
