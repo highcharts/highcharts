@@ -1,4 +1,6 @@
 QUnit.test('Annotations events - general', function (assert) {
+    const done = assert.async();
+
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
@@ -314,6 +316,17 @@ QUnit.test('Annotations events - general', function (assert) {
     );
 
     const initialRedrawCounter = chartRedrawEventCalled;
+
+    chart.series[0].update({
+        kdTreeNow: false
+    }, false);
+
+    // Simulate mouse move on a chart to build a kdTree
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(1),
+        chart.yAxis[1].toPixels(10)
+    );
+
     anno.update({
         shapes: [{}]
     });
@@ -323,4 +336,9 @@ QUnit.test('Annotations events - general', function (assert) {
         chartRedrawEventCalled,
         'Chart redraw event should not be called when calling annotation.update, #20080.'
     );
+
+    setTimeout(() => {
+        assert.ok(chart.series[0].kdTree, 'kdTree should be built upon mouse move on a chart.');
+        done();
+    }, 0);
 });
