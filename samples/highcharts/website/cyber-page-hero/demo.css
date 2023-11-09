@@ -88,6 +88,7 @@ body,
 
 body {
     background-color: transparent;
+    background-color: black;
     height: 100%;
 
     /* margin-top: -81px; */
@@ -179,8 +180,12 @@ body {
     display: none;
 }
 
-.highcharts-point {
+.highcharts-solidgauge-series .highcharts-point {
     fill: #6ee7b7;
+}
+
+.highcharts-columnrange-series.highcharts-series-0 .highcharts-point {
+    fill: #fff;
 }
 
 .homepage #content h1 span {
@@ -221,12 +226,13 @@ body {
 }
 
 /* caption */
-.highcharts-caption {
+.landingpage #content #countdown .highcharts-caption {
     font-size: 0.5em !important;
     font-weight: normal;
     fill: #e3e3e8 !important;
     margin-bottom: 0;
     text-transform: uppercase;
+    font-family: monospace;
 }
 
 .highcharts-label-box.highcharts-data-label-box {
@@ -293,7 +299,7 @@ body {
         margin-top: -10px;
     }
 
-    .highcharts-caption {
+    .landingpage #content #countdown .highcharts-caption {
         font-size: 0.6rem !important;
     }
 
@@ -336,6 +342,10 @@ body {
     #stop {
         top: 276px;
     }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+    }
 }
 
 @media screen  and (min-width: 992px) {
@@ -349,8 +359,15 @@ body {
         z-index: 1;
     }
 
-    .highcharts-caption {
-        font-size: 0.6em !important;
+    .landingpage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.4rem;
+        margin-top: -4px;
+        margin-bottom: 0;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: none;
     }
 
     #stop {
@@ -394,6 +411,7 @@ body {
     }
 
     .landingpage #content #countdown .highcharts-data-label .time div {
+        margin-top: 0;
         font-size: 2.6rem;
     }
 
@@ -408,8 +426,9 @@ body {
         height: 120px;
     }
 
-    .highcharts-caption {
-        font-size: 0.6em !important;
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: translateY(5px);
     }
 
     #stop {
@@ -439,14 +458,14 @@ body {
     }
 
     .landingpage #content #countdown .highcharts-data-label .time div {
-        font-size: 2.8rem;
-        margin-top: 0;
+        font-size: 3rem;
+        margin-top: 5px;
         margin-bottom: 0;
     }
 
-    .highcharts-caption {
-        font-size: 0.6em !important;
-        transform: translateY(5px);
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: none;
     }
 
     #stop {
