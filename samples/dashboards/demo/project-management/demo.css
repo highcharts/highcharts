@@ -9,9 +9,16 @@
     --highcharts-color-1: #636c79;
     --highcharts-color-2: #e6d3a4;
     --highcharts-color-3: #fb8d83;
+    --highcharts-color-5: #ccc;
 
     /* Extra colors */
     --gray: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gray: #333;
+    }
 }
 
 .highcharts-dashboards-component-title {
@@ -32,17 +39,17 @@
 }
 
 .highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0 {
-    fill: var(--gray);
-    stroke: var(--gray);
+    fill: var(--highcharts-color-5);
+    stroke: var(--highcharts-color-5);
 }
 
 #dashboard-chart-1 .highcharts-point.highcharts-color-0 {
-    fill: var(--gray);
-    stroke: var(--gray);
+    fill: var(--highcharts-color-5);
+    stroke: var(--highcharts-color-5);
 }
 
 #dashboard-kpi-3 .highcharts-dashboards-component .highcharts-point.highcharts-color-0 {
-    fill: black;
+    fill: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-component.highcharts-dashboards-component-kpi {
@@ -67,4 +74,8 @@
 
 .highcharts-plot-lines-0 .highcharts-plot-line {
     stroke-width: 3px;
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-neutral-color-100);
 }
