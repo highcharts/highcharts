@@ -1948,7 +1948,7 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            allowEndOnTick = !this.chart.suppressEndOnTick,
+            allowEndOnTick = !this.chart.isPanning,
             startOnTick = allowEndOnTick && options.startOnTick,
             endOnTick = allowEndOnTick && options.endOnTick;
 
@@ -2190,9 +2190,10 @@ class Axis {
      */
     public alignToOthers(): (boolean|undefined) {
         const axis = this,
+            chart = axis.chart,
             alignedAxes: Axis[] = [this],
             options = axis.options,
-            chartOptions = this.chart.options.chart,
+            chartOptions = chart.options.chart,
             alignThresholds = (
                 this.coll === 'yAxis' &&
                 chartOptions.alignThresholds
@@ -2207,6 +2208,8 @@ class Axis {
                 (chartOptions.alignTicks !== false && options.alignTicks) ||
                 alignThresholds
             ) &&
+
+            !chart.isPanning &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
             options.startOnTick !== false &&
@@ -2229,7 +2232,7 @@ class Axis {
             };
 
             const thisKey = getKey(this);
-            this.chart[this.coll as 'xAxis'|'yAxis'].forEach(function (
+            chart[this.coll as 'xAxis'|'yAxis'].forEach(function (
                 otherAxis: Axis
             ): void {
                 const { series } = otherAxis;

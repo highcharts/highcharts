@@ -349,7 +349,7 @@ class Chart {
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
     public subtitle?: SVGElement;
-    public suppressEndOnTick?: boolean;
+    public isPanning?: boolean;
     public symbolCounter: number = void 0 as any;
     public time: Time = void 0 as any;
     public title?: SVGElement;
@@ -3612,7 +3612,6 @@ class Chart {
         panning: ChartPanningOptions|boolean
     ): void {
         const chart = this,
-            hoverPoints = chart.hoverPoints,
             panningOptions: ChartPanningOptions = (
                 typeof panning === 'object' ?
                     panning :
@@ -3621,202 +3620,207 @@ class Chart {
                         type: 'x'
                     }
             ),
+            type = panningOptions.type,
+            axes = type && chart[{
+                x: 'xAxis',
+                xy: 'axes',
+                y: 'yAxis'
+            }[type] as ('axes'|'xAxis'|'yAxis')]
+                .filter((axis): boolean =>
+                    axis.options.panningEnabled && !axis.options.isInternal
+                ),
             chartOptions = chart.options.chart;
 
-        if (chartOptions && chartOptions.panning) {
+        if (chartOptions?.panning) {
             chartOptions.panning = panningOptions;
         }
 
-        const type = panningOptions.type;
+        fireEvent(this, 'pan', { originalEvent: e }, (): void => {
+            chart.transform([
+                (chart.mouseDownX || 0) - e.chartX,
+                (chart.mouseDownY || 0) - e.chartY
+            ], void 0, axes, e);
+            css(chart.container, { cursor: 'move' });
+        });
+    }
 
-        let doRedraw: boolean;
+    /**
+     * Pan and scale the chart. Used internally by mouse-pan,
+     * touch-pan/touch-zoom, and mousewheel zoom.
+     *
+     * @private
+     * @function Highcharts.Chart#transform
+     */
+    public transform(
+        moveXY: [number, number] = [0, 0],
+        scaleXY: [number, number] = [1, 1],
+        axes: Array<Axis>,
+        e?: PointerEvent
+    ): boolean {
+        let redraw = false;
 
-        fireEvent(this, 'pan', { originalEvent: e }, function (): void {
+        // Temporarily flag the chart as `isPanning` in order to disallow
+        // certain axis padding options that would make panning/zooming hard.
+        // Reset and redrawn after the operation has finished.
+        this.isPanning = true;
 
-            chart.suppressEndOnTick = true;
+        // Remove active points for shared tooltip
+        this.hoverPoints?.forEach((point): void => point.setState());
 
-            // Remove active points for shared tooltip
-            if (hoverPoints) {
-                hoverPoints.forEach(function (point): void {
-                    point.setState();
+        for (const axis of axes || []) {
+            const dim = +!axis.horiz,
+                move = moveXY[dim],
+                scale = scaleXY[dim],
+                halfPointRange = axis.minPointOffset || 0,
+                pointRangeDirection =
+                    (axis.reversed && !this.inverted) ||
+                    (!axis.reversed && this.inverted) ?
+                        -1 :
+                        1,
+                extremes = axis.getExtremes(),
+                minPx = move,
+                panMin = axis.toValue(minPx, true) +
+                    halfPointRange * pointRangeDirection,
+                panMax =
+                    axis.toValue(
+                        minPx + axis.len * scale, true
+                    ) -
+                    (
+                        (halfPointRange * pointRangeDirection) ||
+                        (axis.isXAxis && axis.pointRangePadding) ||
+                        0
+                    ),
+                flipped = panMax < panMin;
+
+            let newMin = flipped ? panMax : panMin,
+                newMax = flipped ? panMin : panMax,
+                panningState = axis.panningState;
+
+            // General calculations of panning state. This is related to using
+            // vertical panning. (#11315).
+            if (
+                scale === 1 &&
+                axis.coll === 'yAxis' && (
+                    !panningState || panningState.isDirty
+                )
+            ) {
+                axis.series.forEach(function (series): void {
+                    const processedData = series.getProcessedData(true),
+                        dataExtremes = series.getExtremes(
+                            processedData.yData, true
+                        );
+
+                    if (!panningState) {
+                        panningState = {
+                            startMin: Number.MAX_VALUE,
+                            startMax: -Number.MAX_VALUE
+                        };
+                    }
+
+                    if (
+                        isNumber(dataExtremes.dataMin) &&
+                        isNumber(dataExtremes.dataMax)
+                    ) {
+                        panningState.startMin = Math.min(
+                            pick(series.options.threshold, Infinity),
+                            dataExtremes.dataMin,
+                            panningState.startMin
+                        );
+                        panningState.startMax = Math.max(
+                            pick(series.options.threshold, -Infinity),
+                            dataExtremes.dataMax,
+                            panningState.startMax
+                        );
+                    }
                 });
             }
 
-            let axes = chart.xAxis;
-
-            if (type === 'xy') {
-                axes = axes.concat(chart.yAxis);
-            } else if (type === 'y') {
-                axes = chart.yAxis;
-            }
-
-            const nextMousePos: Record<string, number> = {};
-
-            axes.forEach(function (
-                axis: Axis
-            ): void {
-                if (!axis.options.panningEnabled || axis.options.isInternal) {
-                    return;
-                }
-
-                const horiz = axis.horiz,
-                    mousePos = e[horiz ? 'chartX' : 'chartY'],
-                    mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
-                    startPos = (chart as any)[mouseDown],
-                    halfPointRange = axis.minPointOffset || 0,
-                    pointRangeDirection =
-                        (axis.reversed && !chart.inverted) ||
-                        (!axis.reversed && chart.inverted) ?
-                            -1 :
-                            1,
-                    extremes = axis.getExtremes(),
-                    panMin = axis.toValue(startPos - mousePos, true) +
-                        halfPointRange * pointRangeDirection,
-                    panMax =
-                        axis.toValue(
-                            startPos + axis.len - mousePos, true
-                        ) -
-                        (
-                            (halfPointRange * pointRangeDirection) ||
-                            (axis.isXAxis && axis.pointRangePadding) ||
-                            0
-                        ),
-                    flipped = panMax < panMin;
-
-                let newMin = flipped ? panMax : panMin,
-                    newMax = flipped ? panMin : panMax,
-                    panningState = axis.panningState,
-                    spill;
-
-                // General calculations of panning state.
-                // This is related to using vertical panning. (#11315).
-                if (
-                    /y/.test(type) &&
-                    !axis.isXAxis && (
-                        !panningState || panningState.isDirty
+            const minBound = Math.min(
+                pick(
+                    panningState && panningState.startMin,
+                    extremes.dataMin
+                ),
+                halfPointRange ?
+                    extremes.min :
+                    axis.toValue(
+                        axis.toPixels(extremes.min) -
+                        axis.minPixelPadding
                     )
+            );
+            const maxBound = Math.max(
+                pick(
+                    panningState && panningState.startMax,
+                    extremes.dataMax
+                ),
+                halfPointRange ?
+                    extremes.max :
+                    axis.toValue(
+                        axis.toPixels(extremes.max) +
+                        axis.minPixelPadding
+                    )
+            );
+
+            axis.panningState = panningState;
+
+            // It is not necessary to calculate extremes on ordinal axis,
+            // because they are already calculated, so we don't want to
+            // override them.
+            if (!axis.isOrdinal || scale !== 1) {
+                // If the new range spills over, either to the min or max,
+                // adjust the new range.
+                const range = (newMax - newMin) * Math.min(scale, 1);
+                if (newMin < minBound) {
+                    newMin = minBound;
+                    newMax = newMin + range;
+                }
+
+                if (newMax > maxBound) {
+                    newMax = maxBound;
+                    newMin = newMax - range;
+                }
+
+                // Set new extremes if they are actually new
+                if (
+                    axis.series.length &&
+                    (newMin !== extremes.min || newMax !== extremes.max) &&
+                    newMin >= minBound &&
+                    newMax <= maxBound
                 ) {
-                    axis.series.forEach(function (series): void {
-                        const processedData = series.getProcessedData(true),
-                            dataExtremes = series.getExtremes(
-                                processedData.yData, true
-                            );
+                    axis.setExtremes(
+                        newMin,
+                        newMax,
+                        false,
+                        false,
+                        { trigger: 'pan' }
+                    );
 
-                        if (!panningState) {
-                            panningState = {
-                                startMin: Number.MAX_VALUE,
-                                startMax: -Number.MAX_VALUE
-                            };
-                        }
-
-                        if (
-                            isNumber(dataExtremes.dataMin) &&
-                            isNumber(dataExtremes.dataMax)
-                        ) {
-                            panningState.startMin = Math.min(
-                                pick(series.options.threshold, Infinity),
-                                dataExtremes.dataMin,
-                                panningState.startMin
-                            );
-                            panningState.startMax = Math.max(
-                                pick(series.options.threshold, -Infinity),
-                                dataExtremes.dataMax,
-                                panningState.startMax
-                            );
-                        }
-                    });
-                }
-
-                const paddedMin = Math.min(
-                    pick(
-                        panningState && panningState.startMin,
-                        extremes.dataMin
-                    ),
-                    halfPointRange ?
-                        extremes.min :
-                        axis.toValue(
-                            axis.toPixels(extremes.min) -
-                            axis.minPixelPadding
-                        )
-                );
-                const paddedMax = Math.max(
-                    pick(
-                        panningState && panningState.startMax,
-                        extremes.dataMax
-                    ),
-                    halfPointRange ?
-                        extremes.max :
-                        axis.toValue(
-                            axis.toPixels(extremes.max) +
-                            axis.minPixelPadding
-                        )
-                );
-
-                axis.panningState = panningState;
-
-                // It is not necessary to calculate extremes on ordinal axis,
-                // because they are already calculated, so we don't want to
-                // override them.
-                if (!axis.isOrdinal) {
-                    // If the new range spills over, either to the min or max,
-                    // adjust the new range.
-                    spill = paddedMin - newMin;
-                    if (spill > 0) {
-                        newMax += spill;
-                        newMin = paddedMin;
-                    }
-
-                    spill = newMax - paddedMax;
-                    if (spill > 0) {
-                        newMax = paddedMax;
-                        newMin -= spill;
-                    }
-
-                    // Set new extremes if they are actually new
                     if (
-                        axis.series.length &&
-                        newMin !== extremes.min &&
-                        newMax !== extremes.max &&
-                        newMin >= paddedMin &&
-                        newMax <= paddedMax
+                        !this.resetZoomButton &&
+                        // Show reset zoom button only when both newMin and
+                        // newMax values are between padded axis range.
+                        newMin !== minBound &&
+                        newMax !== maxBound &&
+                        (scale !== 1 || axis.coll === 'yAxis')
                     ) {
-                        axis.setExtremes(
-                            newMin,
-                            newMax,
-                            false,
-                            false,
-                            { trigger: 'pan' }
-                        );
-
-                        if (
-                            !chart.resetZoomButton &&
-                            // Show reset zoom button only when both newMin and
-                            // newMax values are between padded axis range.
-                            newMin !== paddedMin &&
-                            newMax !== paddedMax &&
-                            type.match('y')
-                        ) {
-                            chart.showResetZoom();
-                            axis.displayBtn = false;
-                        }
-
-                        doRedraw = true;
+                        this.showResetZoom();
+                        axis.displayBtn = false;
                     }
 
-                    // set new reference for next run:
-                    nextMousePos[mouseDown] = mousePos;
+                    redraw = true;
                 }
-            });
 
-            objectEach(nextMousePos, (pos, down): void => {
-                (chart as any)[down] = pos;
-            });
-
-            if (doRedraw) {
-                chart.redraw(false);
+                if (e) {
+                    this[axis.horiz ? 'mouseDownX' : 'mouseDownY'] =
+                        e[axis.horiz ? 'chartX' : 'chartY'];
+                }
             }
-            css(chart.container, { cursor: 'move' });
-        });
+        }
+
+        if (redraw) {
+            this.redraw(false);
+        }
+
+        return redraw;
     }
 
 }

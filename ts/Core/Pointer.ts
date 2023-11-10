@@ -487,8 +487,8 @@ class Pointer {
         // `endOnTick` options are ignored. Otherwise the zooming or panning
         // would be jumpy, or even not performed because the end ticks would
         // block it. After the touch has ended, we undo this and render again.
-        if (chart.suppressEndOnTick) {
-            chart.suppressEndOnTick = false;
+        if (chart.isPanning) {
+            chart.isPanning = false;
             let redraw: true|undefined;
             for (const axis of chart.axes) {
                 if (axis.options.startOnTick || axis.options.endOnTick) {
@@ -1399,6 +1399,44 @@ class Pointer {
                 touches
             }, (): void => {
 
+                const last0 = lastTouches[0],
+                    last1 = lastTouches[1] ?? last0,
+                    now0 = touches[0],
+                    now1 = touches[1] ?? now0,
+                    moveXY: [number, number] = [0, 0],
+                    scaleXY: [number, number] = [1, 1],
+                    axes = chart.axes
+                        .filter((axis): boolean|undefined =>
+                            axis.zoomEnabled &&
+                            (
+                                (this.zoomHor && axis.horiz) ||
+                                (this.zoomVert && !axis.horiz)
+                            )
+                        );
+
+                (['chartX', 'chartY'] as Array<'chartX'|'chartY'>).forEach(
+                    (chartXY, i): void => {
+                        const pos = (i ? chart.plotTop : chart.plotLeft),
+                            from = (last0[chartXY] + last1[chartXY]) / 2 - pos,
+                            to = (now0[chartXY] + now1[chartXY]) / 2 - pos,
+                            denominator = Math.abs(
+                                now1[chartXY] - now0[chartXY]
+                            ),
+                            // Small denominator means either single touch or
+                            // fingers pinched very close on this axis
+                            scale = denominator < 20 ? 1 : Math.abs(
+                                last1[chartXY] - last0[chartXY]
+                            ) / denominator;
+
+                        moveXY[i] = (2 - scale) * from - to;
+                        scaleXY[i] = scale;
+                    }
+                );
+
+                chart.transform(moveXY, scaleXY, axes);
+
+                /* /
+
                 const zoomParam: Pointer.SelectEventObject = {
                     animation: false,
                     originalEvent: e,
@@ -2218,7 +2256,6 @@ class Pointer {
      */
     public zoomOption(e: Event): void {
         const chart = this.chart,
-            options = chart.options.chart,
             inverted = chart.inverted;
 
         let zoomType = chart.zooming.type || '',
