@@ -1,5 +1,5 @@
 // Set the date you're counting down to
-let countDownDate = new Date('2023-11-27T09:00:00').getTime();
+let countDownDate = new Date('2023-11-27T07:00:00Z').getTime();
 
 Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
@@ -218,7 +218,7 @@ function updateCountdown(type) {
     // If the countdown is over, display some text
     if (distance <= 0) {
         // clearInterval(countdownInterval);
-        countDownDate = new Date('2023-12-04T00:00:00').getTime();
+        countDownDate = new Date('2023-12-03T23:00:00Z').getTime();
     }
 
     switch (type) {
