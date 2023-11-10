@@ -609,7 +609,9 @@ class HighchartsComponent extends Component {
             // eslint-disable-next-line max-len
             const pointColumnMap = (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.pointColumnMap;
             const pointColumnMapValues = pointColumnMap &&
-                Object.keys(pointColumnMap).map(key => pointColumnMap[key]);
+                Object.keys(pointColumnMap).map(
+                    (key): string => pointColumnMap[key]
+                );
             const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
@@ -732,7 +734,7 @@ class HighchartsComponent extends Component {
                         arr.push(
                             [row.x].concat(
                                 pointColumnMapValues.map(
-                                     // eslint-disable-next-line max-len
+                                    // eslint-disable-next-line max-len
                                     (value: string):number|undefined => row[value]
                                 )
                             )
