@@ -1,6 +1,17 @@
 const day = 24 * 36e5,
     week = 7 * day;
 
+const cumulativeData = [
+    ['Date', 'Done', 'To Do', 'Blocked'],
+    [0, 0, 156, 30],
+    [23, 23, 134, 30],
+    [45, 45, 111, 30],
+    [68, 68, 89, 13],
+    [90, 90, 93, 2],
+    [113, 113, 44, 8],
+    [null, null, 21, 2]
+];
+
 Highcharts.setOptions({
     credits: {
         enabled: false
@@ -11,6 +22,16 @@ Highcharts.setOptions({
 });
 
 Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'cumulativeData',
+            type: 'JSON',
+            orientation: 'row',
+            options: {
+                data: cumulativeData
+            }
+        }]
+    },
     gui: {
         layouts: [{
             rows: [{
@@ -315,6 +336,14 @@ Dashboards.board('container', {
         cell: 'dashboard-chart-cumulative',
         type: 'Highcharts',
         title: 'Cumulative flow',
+        connector: {
+            id: 'cumulativeData'
+        },
+        columnAssignment: {
+            Done: 'y',
+            'To Do': 'y',
+            Blocked: 'y'
+        },
         chartOptions: {
             chart: {
                 type: 'area'
@@ -340,22 +369,11 @@ Dashboards.board('container', {
                     to: 3 * week
                 }]
             },
-            series: [{
-                name: 'Done',
-                data: [0, 23, 45, 68, 90, 113]
-            }, {
-                name: 'To Do',
-                data: [156, 134, 111, 89, 93, 44, 21]
-            }, {
-                name: 'Blocked',
-                data: [30, 30, 30, 13, 2, 8, 2]
-            }],
             legend: {
                 enabled: true,
                 align: 'left',
                 verticalAlign: 'top',
-                floating: false,
-                x: 50
+                floating: false
             }
         }
     }]
