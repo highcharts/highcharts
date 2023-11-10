@@ -34,6 +34,7 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint-dashboards": "cd ts/Dashboards && npx eslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
@@ -124,6 +125,9 @@
     ],
     "./ts/**/*.ts": [
       "npm run lint"
+    ],
+    "./ts/Dashboards/**/*.ts": [
+      "npm run lint-dashboards"
     ],
     "*.css": [
       "stylelint"
