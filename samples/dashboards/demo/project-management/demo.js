@@ -3,13 +3,13 @@ const day = 24 * 36e5,
 
 const cumulativeData = [
     ['Date', 'Done', 'To Do', 'Blocked'],
-    [1, 0, 156, 30],
-    [2, 23, 134, 30],
-    [3, 45, 111, 30],
-    [4, 68, 89, 13],
-    [5, 90, 93, 2],
-    [6, 113, 44, 8],
-    [7, null, 21, 2]
+    [Date.UTC(2023, 4, 1), 0, 156, 30],
+    [Date.UTC(2023, 4, 8), 23, 134, 30],
+    [Date.UTC(2023, 4, 15), 45, 111, 30],
+    [Date.UTC(2023, 4, 22), 68, 89, 13],
+    [Date.UTC(2023, 4, 29), 90, 93, 2],
+    [Date.UTC(2023, 5, 5), 113, 44, 8],
+    [Date.UTC(2023, 5, 12), null, 21, 2]
 ];
 
 Highcharts.setOptions({
@@ -216,9 +216,6 @@ Dashboards.board('container', {
         cell: 'dashboard-chart-1',
         type: 'Highcharts',
         title: 'Total task by assignee',
-        connector: {
-            id: 'taskByAssignee'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -264,11 +261,11 @@ Dashboards.board('container', {
                         text: 'Today',
                         align: 'right'
                     },
-                    value: 4.7 * week
+                    value: Date.UTC(2023, 5, 4)
                 }],
                 plotBands: [{
-                    from: 1 * week,
-                    to: 3 * week
+                    from: Date.UTC(2023, 4, 8),
+                    to: Date.UTC(2023, 4, 22)
                 }],
                 dateTimeLabelFormats: {
                     day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
@@ -296,44 +293,44 @@ Dashboards.board('container', {
                 data: [
                     {
                         name: 'F:1352',
-                        start: 0,
-                        end: 3 * week
+                        start: Date.UTC(2023, 4, 1),
+                        end: Date.UTC(2023, 4, 22)
                     }, {
                         name: 'I.20-00',
-                        start: 0,
-                        end: 1 * week
+                        start: Date.UTC(2023, 4, 1),
+                        end: Date.UTC(2023, 4, 8)
                     }, {
                         name: 'I.20-01',
-                        start: 1 * week,
-                        end: 2 * week
+                        start: Date.UTC(2023, 4, 8),
+                        end: Date.UTC(2023, 4, 15)
                     }, {
                         name: 'F:2741',
-                        start: 2 * week,
-                        end: 5 * week
+                        start: Date.UTC(2023, 4, 15),
+                        end: Date.UTC(2023, 5, 5)
                     }, {
                         name: 'I.20-02',
-                        start: 2 * week,
-                        end: 3 * week
+                        start: Date.UTC(2023, 4, 15),
+                        end: Date.UTC(2023, 4, 22)
                     }, {
                         name: 'I.20-03',
-                        start: 3 * week,
-                        end: 4 * week
+                        start: Date.UTC(2023, 4, 22),
+                        end: Date.UTC(2023, 4, 29)
                     }, {
                         name: 'I.20-04',
-                        start: 4 * week,
-                        end: 5 * week
+                        start: Date.UTC(2023, 4, 29),
+                        end: Date.UTC(2023, 5, 5)
                     }, {
                         name: 'I.20-05',
-                        start: 5 * week,
-                        end: 6 * week
+                        start: Date.UTC(2023, 5, 5),
+                        end: Date.UTC(2023, 5, 12)
                     }, {
                         name: 'F:1982',
-                        start: 0,
-                        end: 4 * week
+                        start: Date.UTC(2023, 4, 1),
+                        end: Date.UTC(2023, 4, 29)
                     }, {
                         name: 'F:673',
-                        start: 4 * week,
-                        end: 6 * week
+                        start: Date.UTC(2023, 4, 29),
+                        end: Date.UTC(2023, 5, 12)
                     }
                 ]
             }]
@@ -346,6 +343,7 @@ Dashboards.board('container', {
             id: 'cumulativeData'
         },
         columnAssignment: {
+            Date: 'x',
             Done: 'y',
             'To Do': 'y',
             Blocked: 'y'
@@ -356,9 +354,7 @@ Dashboards.board('container', {
             },
             plotOptions: {
                 series: {
-                    stacking: 'normal',
-                    pointStart: 0,
-                    pointInterval: week
+                    stacking: 'normal'
                 }
             },
             xAxis: {
@@ -368,11 +364,11 @@ Dashboards.board('container', {
                         text: 'Today',
                         align: 'right'
                     },
-                    value: 4.7 * week
+                    value: Date.UTC(2023, 5, 4)
                 }],
                 plotBands: [{
-                    from: 1 * week,
-                    to: 3 * week
+                    from: Date.UTC(2023, 4, 8),
+                    to: Date.UTC(2023, 4, 22)
                 }]
             },
             legend: {
