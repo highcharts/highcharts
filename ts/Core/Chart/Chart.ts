@@ -2377,7 +2377,7 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            { overheatProtector } = chart.options.chart,
+            axesLayoutRuns = pick(chart.options.chart.axesLayoutRuns, 1),
             renderAxes = (axes: Array<Axis>): void => {
                 axes.forEach((axis): void => {
                     if (axis.visible) {
@@ -2452,12 +2452,14 @@ class Chart {
 
         // If the plot area size has changed significantly, calculate tick
         // positions again
-        let redoHorizontal = tempWidth !== chart.plotWidth,
-            redoVertical = tempHeight !== chart.plotHeight,
+        let redoHorizontal = tempWidth / chart.plotWidth > 1.1,
+            // Height is more sensitive, use lower threshold
+            redoVertical = tempHeight / chart.plotHeight > 1.05,
             redoCounter = 0;
+
         while (
-            (redoHorizontal || redoVertical) &&
-            redoCounter < pick(overheatProtector, 1) // #19794
+            (redoHorizontal || redoVertical || axesLayoutRuns > 1) &&
+            redoCounter < axesLayoutRuns // #19794
         ) {
 
             tempWidth = chart.plotWidth;
