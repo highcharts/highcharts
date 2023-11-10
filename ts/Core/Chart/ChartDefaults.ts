@@ -427,6 +427,21 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * The number of times the loop repeats the calculation of axis future
+     * dimensions while rendering the chart to find perfect axis fills and tick
+     * intervals. Use this property if the axes change after you redraw the
+     * chart.
+     *
+     * **Note:** Changing that option to higher than the default might decrease
+     * performance significantly, especially with bigger sets of data.
+     *
+     * @type      {number}
+     * @default   1
+     * @since     @next
+     * @apioption chart.overheatProtector
+     */
+
+    /**
      * Allows setting a key to switch between zooming and panning. Can be
      * one of `alt`, `ctrl`, `meta` (the command key on Mac and Windows
      * key on Windows) or `shift`. The keys are mapped directly to the key

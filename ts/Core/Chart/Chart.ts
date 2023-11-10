@@ -2377,6 +2377,7 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
+            { overheatProtector } = chart.options.chart,
             renderAxes = (axes: Array<Axis>): void => {
                 axes.forEach((axis): void => {
                     if (axis.visible) {
@@ -2400,9 +2401,6 @@ class Chart {
         // Get chart margins
         chart.getMargins(true);
         chart.setChartSize();
-
-        // Record preliminary dimensions for later comparison
-        const tempWidth = chart.plotWidth;
 
         for (const axis of axes) {
             const { options } = axis,
@@ -2445,7 +2443,8 @@ class Chart {
 
         // Use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
-        const tempHeight = chart.plotHeight;
+        let tempWidth = chart.plotWidth,
+            tempHeight = chart.plotHeight;
 
         // Get margins by pre-rendering axes
         axes.forEach((axis): void => axis.setScale());
@@ -2453,13 +2452,17 @@ class Chart {
 
         // If the plot area size has changed significantly, calculate tick
         // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1,
-            // Height is more sensitive, use lower threshold
-            redoVertical = tempHeight / chart.plotHeight > 1.05;
+        let redoHorizontal = tempWidth !== chart.plotWidth,
+            redoVertical = tempHeight !== chart.plotHeight,
+            redoCounter = 0;
+        while (
+            (redoHorizontal || redoVertical) &&
+            redoCounter < pick(overheatProtector, 1) // #19794
+        ) {
 
-        if (redoHorizontal || redoVertical) {
-
-            axes.forEach((axis): void => {
+            tempWidth = chart.plotWidth;
+            tempHeight = chart.plotHeight;
+            for (const axis of axes) {
                 if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
@@ -2467,8 +2470,12 @@ class Chart {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
                 }
-            });
+            }
             chart.getMargins(); // Second pass to check for new labels
+
+            redoHorizontal = tempWidth !== chart.plotWidth;
+            redoVertical = tempHeight !== chart.plotHeight;
+            redoCounter++;
         }
 
         // Draw the borders and backgrounds
