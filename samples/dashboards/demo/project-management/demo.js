@@ -3,13 +3,13 @@ const day = 24 * 36e5,
 
 const cumulativeData = [
     ['Date', 'Done', 'To Do', 'Blocked'],
-    [0, 0, 156, 30],
-    [23, 23, 134, 30],
-    [45, 45, 111, 30],
-    [68, 68, 89, 13],
-    [90, 90, 93, 2],
-    [113, 113, 44, 8],
-    [null, null, 21, 2]
+    [1, 0, 156, 30],
+    [2, 23, 134, 30],
+    [3, 45, 111, 30],
+    [4, 68, 89, 13],
+    [5, 90, 93, 2],
+    [6, 113, 44, 8],
+    [7, null, 21, 2]
 ];
 
 Highcharts.setOptions({
@@ -26,7 +26,6 @@ Dashboards.board('container', {
         connectors: [{
             id: 'cumulativeData',
             type: 'JSON',
-            orientation: 'row',
             options: {
                 data: cumulativeData
             }
@@ -138,6 +137,10 @@ Dashboards.board('container', {
         title: 'Completed tasks',
         subtitle: '10% more',
         value: 22,
+        columnName: 'Done',
+        connector: {
+            id: 'cumulativeData'
+        },
         chartOptions: {
             series: [{
                 type: 'column',
@@ -213,6 +216,9 @@ Dashboards.board('container', {
         cell: 'dashboard-chart-1',
         type: 'Highcharts',
         title: 'Total task by assignee',
+        connector: {
+            id: 'taskByAssignee'
+        },
         chartOptions: {
             xAxis: {
                 type: 'category'
