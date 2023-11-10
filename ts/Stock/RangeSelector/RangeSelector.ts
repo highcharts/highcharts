@@ -623,6 +623,11 @@ class RangeSelector {
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
                     rangeSelector.setSelected();
+                } else if (
+                    (state === 2 && !defined(selected)) ||
+                    isSelectedTooGreat
+                ) {
+                    rangeSelector.setSelected(i);
                 }
             }
         });
