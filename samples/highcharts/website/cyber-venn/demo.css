@@ -81,8 +81,9 @@ body,
 }
 
 #sale img {
-    width: 148px;
+    width: 138px;
     margin-left: 0;
+    margin-top: 0;
 }
 
 #sale p {
@@ -95,6 +96,16 @@ body,
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
 }
 
+#sale #date {
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 30px 0 0;
+    color: #fff;
+    width: 100%;
+    font-weight: bold;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
 #sale span {
     display: none;
 }
@@ -103,8 +114,6 @@ body,
     width: 100%;
     max-height: 800px;
     position: absolute;
-
-    /* padding: 0 0 32px; */
     /* stylelint-disable max-line-length */
     background: linear-gradient(to bottom right, #474554 25%, #1f1e24 41%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 25%, #1f1e24 41%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 25%, #1f1e24 41%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 25%, #1f1e24 41%) top right / 50% 50% no-repeat;
     /* stylelint-enable */
@@ -445,10 +454,16 @@ body,
     #sale img {
         width: 200px;
         margin-left: -8px;
+        margin-top: 10px;
     }
 
     #sale span {
         display: none;
+    }
+
+    #sale #date {
+        font-size: 12px;
+        margin: 10px 0 0;
     }
 
     #sale p {
@@ -540,6 +555,11 @@ body,
 
     #sale span {
         display: block;
+    }
+
+    #sale #date {
+        font-size: 14px;
+        margin: -18px 0 0;
     }
 
     #venn {

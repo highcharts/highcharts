@@ -58,7 +58,7 @@ const saleTitles = [
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/';
 
-const countDownDate = new Date('2023-11-27T07:00:00Z').getTime();
+const countDownDate = new Date('2023-11-07T07:00:00Z').getTime();
 const now = new Date().getTime();
 const distance = countDownDate - now;
 
@@ -562,6 +562,7 @@ const sale = {
             dataLabels: {
                 enabled: true,
                 format: `<div id="sale">
+                <div id="date">Nov 27 - Dec 3</div>
                 <img src="http://192.168.1.176:3030/product-logo.png"/>
                 <p>Dashboards</p>
                 <div id="terms" class="labels"><span class="text">With the purchase of any <br>Highcharts Charting Library</span><a href="#">see terms</a></div>
