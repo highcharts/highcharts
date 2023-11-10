@@ -14,8 +14,8 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
@@ -33,14 +33,11 @@ jobs:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 2
-      - uses: actions/checkout@v4
-        with:
-          clean: false
-          fetch-depth: 2
+      - name: Include main branch
+        run: |
+          git remote set-branches origin 'master'
+          git fetch --depth=1
+
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
@@ -134,8 +131,8 @@ jobs:
   #   runs-on: macos-latest
   #   steps:
   #     ### SETUP ###
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
   #       with:
   #         node-version: lts/*
   #         cache: 'npm'

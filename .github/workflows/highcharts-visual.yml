@@ -24,17 +24,20 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - name: Checkout main branch
+      - name: Git checkout
         uses: actions/checkout@v4
-        with:
-          ref: master
-          fetch-depth: 2
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+
+      - name: Checkout main branch
+        run: |
+          git remote set-branches origin 'master'
+          git fetch --depth=1
+          git checkout master
 
       - name: Install dependencies
         run: npm i
@@ -42,19 +45,18 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --iff Core,Data,Series,Shared --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --iff Stock,Data,Series,Shared --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --iff Maps,Data,Series,Shared --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --iff Gantt,Data,Series,Shared --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - name: Test main branch for reference
+        run: |
+          npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
-        with:
-          clean: false
-          fetch-depth: 2
+        run: git checkout -
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -65,10 +67,12 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --iff Core,Data,Series,Shared --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --iff Stock,Data,Series,Shared --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --iff Maps,Data,Series,Shared --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --iff Gantt,Data,Series,Shared --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
+      - name: Test current branch and compare
+        run: |
+          npx karma start test/karma-conf.js --iff Core,Data,Series,Shared --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
+          npx karma start test/karma-conf.js --iff Stock,Data,Series,Shared --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
+          npx karma start test/karma-conf.js --iff Maps,Data,Series,Shared --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
+          npx karma start test/karma-conf.js --iff Gantt,Data,Series,Shared --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
