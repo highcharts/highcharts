@@ -1,6 +1,3 @@
-const day = 24 * 36e5,
-    week = 7 * day;
-
 const cumulativeData = [
     ['Date', 'Done', 'To Do', 'Blocked'],
     [Date.UTC(2023, 4, 1), 0, 156, 30],
@@ -144,6 +141,7 @@ Dashboards.board('container', {
         chartOptions: {
             series: [{
                 type: 'column',
+                enableMouseTracking: false,
                 name: 'Previous sprints',
                 data: [20, 18, 23, 14, 19]
             }]
@@ -158,6 +156,7 @@ Dashboards.board('container', {
             series: [{
                 type: 'column',
                 name: 'Previous sprints',
+                enableMouseTracking: false,
                 data: [20, 18, 23, 14, 19].reverse()
             }]
         }
@@ -288,6 +287,9 @@ Dashboards.board('container', {
                         format: '{point.name}'
                     }]
                 }
+            },
+            tooltip: {
+                headerFormat: ''
             },
             series: [{
                 data: [
