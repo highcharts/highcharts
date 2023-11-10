@@ -123,7 +123,7 @@
     "*.js": [
       "eslint"
     ],
-    "./ts/**/*.ts": [
+    "./ts/!(Dashboards)**/*.ts": [
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
