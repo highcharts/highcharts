@@ -24,7 +24,18 @@ Dashboards.board('container', {
                         rows: [{
                             cells: [{
                                 id: 'dashboard-kpi-1',
-                                height: 300
+                                height: 300,
+                                responsive: {
+                                    small: {
+                                        width: '100%'
+                                    },
+                                    medium: {
+                                        width: '50%'
+                                    },
+                                    large: {
+                                        width: '50%'
+                                    }
+                                }
                             }, {
                                 id: 'dashboard-kpi-2',
                                 height: 300
@@ -33,17 +44,49 @@ Dashboards.board('container', {
                     }
                 }, {
                     id: 'dashboard-kpi-4',
-                    height: 300
+                    height: 300,
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
                 }]
             }, {
                 id: 'charts-1',
                 cells: [{
                     id: 'dashboard-chart-1',
                     height: 350,
-                    width: '2/5'
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '2/5'
+                        }
+                    }
                 }, {
                     id: 'dashboard-chart-2',
-                    height: 350
+                    height: 350,
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '3/5'
+                        }
+                    }
                 }]
             }, {
                 id: 'cumulative',
@@ -129,6 +172,20 @@ Dashboards.board('container', {
                 align: 'right',
                 verticalAlign: 'center',
                 layout: 'vertical'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 450
+                    },
+                    chartOptions: {
+                        legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            layout: 'horizontal'
+                        }
+                    }
+                }]
             }
         }
     }, {
@@ -260,8 +317,7 @@ Dashboards.board('container', {
         title: 'Cumulative flow',
         chartOptions: {
             chart: {
-                type: 'area',
-                marginTop: 30
+                type: 'area'
             },
             plotOptions: {
                 series: {
@@ -298,7 +354,7 @@ Dashboards.board('container', {
                 enabled: true,
                 align: 'left',
                 verticalAlign: 'top',
-                floating: true,
+                floating: false,
                 x: 50
             }
         }
