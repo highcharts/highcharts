@@ -117,7 +117,7 @@ const zoomBy = function (
         // the affected axes had `startOnTick` or `endOnTick`, they will be
         // re-adjusted now.
         wheelTimer = setTimeout((): void => {
-            chart.pointer.drop();
+            chart.pointer?.drop();
         }, 400);
     }
 
