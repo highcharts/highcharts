@@ -33,16 +33,23 @@ Expected: ${printArrayOrString(expected as any)}
 `);
 }
 
-export function setupDOM(){
+export function setupDOM( customBody = '' ){
   const { JSDOM } = require('jsdom');
   const dom = new JSDOM(
-    `<!doctype html>
-  <body> </body>`);
+      customBody ??
+    '<!doctype html><body></body>');
   const win = dom.window;
   const doc = win.document;
 
   global.Node = win.Node; // Workaround for issue #1
   win.Date = Date;
+
+  // DispatchEvent workaround
+  const originalDispatchEvent = win.dispatchEvent;
+  win.dispatchEvent = function (e: Record<string, any>){
+      const event = new win.Event(e.type, e);
+      return originalDispatchEvent.call(this, event);
+  };
   // Do some modifications to the jsdom document in order to get the SVG bounding
   // boxes right.
   let el = doc.createElement('div');
@@ -54,4 +61,18 @@ export function setupDOM(){
     el
   }
 
+}
+
+export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
+    const { win } = setupDOM();
+    const Highcharts = require(`../../code/${hc}.src.js`)(win);
+
+    if(modules.length){
+        global.window = win; // needed to load modules as of Node 20+
+        modules.forEach(module => {
+            require(`../../code/${module}.src.js`)(Highcharts);
+        });
+    }
+
+    return Highcharts;
 }

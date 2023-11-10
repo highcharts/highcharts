@@ -42,10 +42,16 @@ Dashboards.board('container', {
                 zooming: {
                     enabled: true,
                     type: 'x'
-                }
+                },
+                animation: false
             },
             xAxis: {
                 type: 'datetime'
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
         columnAssignment: {

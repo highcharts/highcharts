@@ -19,6 +19,11 @@ const chartDemo = {
             type: 'pie',
             animation: false,
             height: 150
+        },
+        plotOptions: {
+            series: {
+                animation: false
+            }
         }
     }
 };
@@ -101,6 +106,11 @@ Dashboards.board('container', {
             },
             tooltip: {
                 enabled: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             },
             series: [{
                 name: 'Series from options',

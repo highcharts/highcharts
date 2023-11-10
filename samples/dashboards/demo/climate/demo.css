@@ -258,6 +258,12 @@
     vertical-align: middle;
 }
 
+#kpi-temperature .highcharts-dashboards-component-kpi-value,
+#kpi-max-temperature .highcharts-dashboards-component-kpi-value,
+#kpi-rain .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
+
 /* *
  *
  *  Selection Grid

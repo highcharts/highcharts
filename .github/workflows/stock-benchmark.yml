@@ -11,6 +11,7 @@ on:
       - 'ts/Core/Chart/StockChart.ts'
       - 'ts/Core/Axis/BrokenAxis.ts'
       - '.github/workflows/stock-benchmark.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
