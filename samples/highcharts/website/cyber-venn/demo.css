@@ -68,9 +68,41 @@ body,
     background-color: #fff;
 }
 
+#promo {
+    position: relative;
+}
+
+#sale {
+    position: absolute;
+    z-index: 1000;
+    left: -82px;
+    top: -128px;
+    width: 158px;
+}
+
+#sale img {
+    width: 148px;
+    margin-left: 0;
+}
+
+#sale p {
+    font-size: 20px;
+    margin: -10px 0 0;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
+#sale span {
+    display: none;
+}
+
 #venn {
     width: 100%;
     max-height: 800px;
+    position: absolute;
 
     /* padding: 0 0 32px; */
     /* stylelint-disable max-line-length */
@@ -190,6 +222,15 @@ body,
     opacity: 0;
 }
 
+#terms.labels span.text,
+#terms.labels a {
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    color: #fff;
+    font-weight: 300;
+    font-size: 0.8rem;
+    opacity: 1;
+}
+
 .labels span.text:hover {
     font-weight: 600;
 }
@@ -219,7 +260,7 @@ body,
     width: 30px;
     height: 44px;
     margin-top: 65px;
-    margin-left: 0;
+    margin-left: -10px;
 }
 
 #customize img {
@@ -283,16 +324,12 @@ body,
     stroke: transparent;
 }
 
-.highcharts-pane {
-    fill-opacity: 0.8;
-}
-
 .highcharts-series-inactive {
     opacity: 1 !important;
 }
 
 .highcharts-venn-series .highcharts-point {
-    fill-opacity: 0.8;
+    fill-opacity: 1;
     stroke-opacity: 0;
 }
 
@@ -342,6 +379,13 @@ body,
     opacity: 1;
 }
 
+#venn.sale .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(6) {
+    fill: url(#ffflux-gradient);
+    fill: black;
+    opacity: 1;
+    fill-opacity: 1;
+}
+
 .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(7) {
     fill: #8f98dd;
     opacity: 1;
@@ -352,8 +396,23 @@ body,
     opacity: 1;
 }
 
+#venn.sale .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(8) {
+    fill: url(#ffflux-gradient);
+    fill: black;
+    fill: #1b2129;
+    opacity: 1;
+    fill-opacity: 1;
+}
+
 .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
     fill: url(#ffflux-gradient);
+    fill-opacity: 1;
+}
+
+#venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
+    fill: url(#ffflux-gradient);
+    fill: red;
+    fill: url(#g964);
     fill-opacity: 1;
 }
 
@@ -367,7 +426,41 @@ body,
     visibility: hidden;
 }
 
+#venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(11) {
+    opacity: 1;
+    visibility: visible;
+    fill: url(#ffflux-gradient);
+    fill: #1b2129;
+}
+
 @media screen  and (min-width: 550px) {
+    #sale {
+        position: absolute;
+        z-index: 1000;
+        left: -122px;
+        top: -162px;
+        width: 248px;
+    }
+
+    #sale img {
+        width: 200px;
+        margin-left: -8px;
+    }
+
+    #sale span {
+        display: none;
+    }
+
+    #sale p {
+        font-size: 28px;
+        margin: -10px 0 0;
+        color: #fff;
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    }
+
     .highcharts-container {
         height: 580px;
     }
@@ -391,7 +484,7 @@ body,
     #dataviz img {
         width: 40px;
         height: 54px;
-        margin-top: 35px;
+        margin-top: 40px;
         margin-left: -10px;
     }
 
@@ -428,6 +521,31 @@ body,
 }
 
 @media screen  and (min-width: 768px) {
+    #sale {
+        position: absolute;
+        z-index: 1000;
+        left: -142px;
+        top: -182px;
+        width: 288px;
+    }
+
+    #sale img {
+        width: 280px;
+        margin-left: -8px;
+    }
+
+    #sale p {
+        font-size: 35px;
+    }
+
+    #sale span {
+        display: block;
+    }
+
+    #venn {
+        margin-top: -80px;
+    }
+
     .venntip img {
         max-width: 42px;
         max-height: 42px;
@@ -451,5 +569,9 @@ body,
         height: 146px;
         margin-left: -16px;
         margin-top: 12px;
+    }
+
+    #dataviz img {
+        margin-top: 20px;
     }
 }
