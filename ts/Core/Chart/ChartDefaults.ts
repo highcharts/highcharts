@@ -438,7 +438,7 @@ const ChartDefaults: ChartOptions = {
      * @type      {number}
      * @default   1
      * @since     @next
-     * @apioption chart.overheatProtector
+     * @apioption chart.axesLayoutRuns
      */
 
     /**
