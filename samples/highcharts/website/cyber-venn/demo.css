@@ -115,7 +115,6 @@ body,
     max-height: 800px;
     position: absolute;
     /* stylelint-disable max-line-length */
-    background: linear-gradient(to bottom right, #474554 25%, #1f1e24 41%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 25%, #1f1e24 41%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 25%, #1f1e24 41%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 25%, #1f1e24 41%) top right / 50% 50% no-repeat;
     /* stylelint-enable */
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     text-align: center;
