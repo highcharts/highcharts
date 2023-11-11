@@ -1403,8 +1403,6 @@ class Pointer {
                     last1 = lastTouches[1] ?? last0,
                     now0 = touches[0],
                     now1 = touches[1] ?? now0,
-                    moveXY: [number, number] = [0, 0],
-                    scaleXY: [number, number] = [1, 1],
                     axes = chart.axes
                         .filter((axis): boolean|undefined =>
                             axis.zoomEnabled &&
@@ -1412,7 +1410,8 @@ class Pointer {
                                 (this.zoomHor && axis.horiz) ||
                                 (this.zoomVert && !axis.horiz)
                             )
-                        );
+                        ),
+                    transform: Chart.ChartTransformParams = { axes };
 
                 (['chartX', 'chartY'] as Array<'chartX'|'chartY'>).forEach(
                     (chartXY, i): void => {
@@ -1428,12 +1427,14 @@ class Pointer {
                                 last1[chartXY] - last0[chartXY]
                             ) / denominator;
 
-                        moveXY[i] = (2 - scale) * from - to;
-                        scaleXY[i] = scale;
+                        transform[
+                            i ? 'moveY' : 'moveX'
+                        ] = (2 - scale) * from - to;
+                        transform[i ? 'zoomY' : 'zoomX'] = scale;
                     }
                 );
 
-                chart.transform(moveXY, scaleXY, axes);
+                chart.transform(transform);
 
                 /* /
 

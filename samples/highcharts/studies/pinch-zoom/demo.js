@@ -2,12 +2,8 @@
 To do
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
-- Parameters for axes in order to control options for mouse, touch and
-  mousewheel?
 - When to show reset zoom button? Not on mousewheel.
 - Look into the Chart.zoom function. Can it also use transform?
-- Inverted chart.
-- Check the `getProcessedData` part for y-axis.
 */
 
 
@@ -19,7 +15,12 @@ To do
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'x'
+            zoomType: 'x',
+            panning: {
+                enabled: true,
+                type: 'x'
+            },
+            panKey: 'shift'
         },
         title: {
             text: 'USD to EUR exchange rate over time',
@@ -80,6 +81,7 @@ To do
         }]
     });
 
+    /* eslint-disable-next-line no-extend-native */
     Array.prototype.item = function (i) {
         // eslint-disable-line no-extend-native
         return this[i];

@@ -105,11 +105,13 @@ const zoomBy = function (
         clearTimeout(wheelTimer);
     }
 
-    const hasZoomed = chart.transform(
-        [mouseX - howMuch * mouseX, mouseY - howMuch * mouseY],
-        [howMuch, howMuch],
-        axes || []
-    );
+    const hasZoomed = chart.transform({
+        axes,
+        moveX: mouseX - howMuch * mouseX,
+        moveY: mouseY - howMuch * mouseY,
+        zoomX: howMuch,
+        zoomY: howMuch
+    });
 
     if (hasZoomed) {
 

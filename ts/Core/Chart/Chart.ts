@@ -3608,11 +3608,11 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#pan
-     * @param {Highcharts.PointerEventObject} e
+     * @param {Highcharts.PointerEventObject} event
      * @param {string} panning
      */
     public pan(
-        e: PointerEvent,
+        event: PointerEvent,
         panning: ChartPanningOptions|boolean
     ): void {
         const chart = this,
@@ -3639,28 +3639,33 @@ class Chart {
             chartOptions.panning = panningOptions;
         }
 
-        fireEvent(this, 'pan', { originalEvent: e }, (): void => {
-            chart.transform([
-                (chart.mouseDownX || 0) - e.chartX,
-                (chart.mouseDownY || 0) - e.chartY
-            ], void 0, axes, e);
+        fireEvent(this, 'pan', { originalEvent: event }, (): void => {
+            chart.transform({
+                axes,
+                event,
+                moveX: (chart.mouseDownX || 0) - event.chartX,
+                moveY: (chart.mouseDownY || 0) - event.chartY
+            });
             css(chart.container, { cursor: 'move' });
         });
     }
 
     /**
-     * Pan and scale the chart. Used internally by mouse-pan,
-     * touch-pan/touch-zoom, and mousewheel zoom.
+     * Pan and scale the chart. Used internally by mouse-pan, touch-pan,
+     * touch-zoom, and mousewheel zoom.
      *
      * @private
      * @function Highcharts.Chart#transform
      */
-    public transform(
-        moveXY: [number, number] = [0, 0],
-        scaleXY: [number, number] = [1, 1],
-        axes: Array<Axis>,
-        e?: PointerEvent
-    ): boolean {
+    public transform(params: Chart.ChartTransformParams): boolean {
+        const {
+            axes = [],
+            event,
+            moveX,
+            moveY,
+            zoomX,
+            zoomY
+        } = params;
         let redraw = false;
 
         // Temporarily flag the chart as `isPanning` in order to disallow
@@ -3671,21 +3676,22 @@ class Chart {
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
 
-        for (const axis of axes || []) {
-            const dim = +!axis.horiz,
-                move = moveXY[dim],
-                scale = scaleXY[dim],
+        for (const axis of axes) {
+            const { horiz, reversed } = axis,
+                move = (horiz ? moveX : moveY) || 0,
+                scale = (horiz ? zoomX : zoomY) || 1,
                 halfPointRange = axis.minPointOffset || 0,
                 pointRangeDirection =
-                    (axis.reversed && !this.inverted) ||
-                    (!axis.reversed && this.inverted) ?
+                    (reversed && !this.inverted) ||
+                    (!reversed && this.inverted) ?
                         -1 :
                         1,
                 extremes = axis.getExtremes(),
-                minPx = move,
-                panMin = axis.toValue(minPx, true) +
+                minPx = move;
+
+            let newMin = axis.toValue(minPx, true) +
                     halfPointRange * pointRangeDirection,
-                panMax =
+                newMax =
                     axis.toValue(
                         minPx + axis.len * scale, true
                     ) -
@@ -3694,14 +3700,16 @@ class Chart {
                         (axis.isXAxis && axis.pointRangePadding) ||
                         0
                     ),
-                flipped = panMax < panMin;
-
-            let newMin = flipped ? panMax : panMin,
-                newMax = flipped ? panMin : panMax,
                 panningState = axis.panningState;
 
-            // General calculations of panning state. This is related to using
-            // vertical panning. (#11315).
+            if (newMin > newMax) {
+                [newMin, newMax] = [newMax, newMin];
+            }
+
+            // General calculations of panning state. The panning state holds
+            // the full-range data min and max, and is calculated on the first
+            // call to transform, then reused for subsequent touch/pan calls.
+            // (#11315).
             if (
                 scale === 1 &&
                 axis.coll === 'yAxis' && (
@@ -3813,9 +3821,9 @@ class Chart {
                     redraw = true;
                 }
 
-                if (e) {
-                    this[axis.horiz ? 'mouseDownX' : 'mouseDownY'] =
-                        e[axis.horiz ? 'chartX' : 'chartY'];
+                if (event) {
+                    this[horiz ? 'mouseDownX' : 'mouseDownY'] =
+                        event[horiz ? 'chartX' : 'chartY'];
                 }
             }
         }
@@ -3957,6 +3965,15 @@ namespace Chart {
         widthAdjust?: number;
         x?: number;
         y?: number;
+    }
+
+    export interface ChartTransformParams {
+        axes?: Array<Axis>;
+        event?: PointerEvent;
+        moveX?: number;
+        moveY?: number;
+        zoomX?: number;
+        zoomY?: number;
     }
 
     export interface CreateAxisOptionsObject {
