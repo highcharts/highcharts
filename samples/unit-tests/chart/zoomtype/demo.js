@@ -64,7 +64,7 @@ QUnit.test('Zoom type', function (assert) {
     );
 
     // Zoom
-    controller.pan([200, 150], [250, 150]);
+    controller.pan([200, 150], [250, 200]);
     assert.strictEqual(
         chart.resetZoomButton.zIndex,
         6,
