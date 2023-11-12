@@ -217,7 +217,6 @@ class Axis {
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: number;
     public dataMin?: number;
-    public displayBtn?: boolean;
     public eventArgs?: any;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
     public expectedSpace: number|undefined;
@@ -2633,11 +2632,11 @@ class Axis {
      * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
-        newMin?: number,
-        newMax?: number,
+        min?: number,
+        max?: number,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
-        eventArguments?: any
+        eventArguments?: Record<string, any>
     ): void {
         const axis = this,
             chart = axis.chart;
@@ -2647,16 +2646,16 @@ class Axis {
         });
 
         // Extend the arguments with min and max
-        eventArguments = extend(eventArguments, {
-            min: newMin,
-            max: newMax
-        });
+        eventArguments = extend(
+            eventArguments,
+            { min, max }
+        );
 
         // Fire the event
-        fireEvent(axis, 'setExtremes', eventArguments, (): void => {
+        fireEvent(axis, 'setExtremes', eventArguments, (e): void => {
 
-            axis.userMin = newMin;
-            axis.userMax = newMax;
+            axis.userMin = (e as any).min;
+            axis.userMax = (e as any).max;
             axis.eventArgs = eventArguments;
 
             if (redraw) {
@@ -2717,10 +2716,12 @@ class Axis {
 
                 // In full view, displaying the reset zoom button is not
                 // required
+                /*
                 axis.displayBtn = (
                     typeof newMin !== 'undefined' ||
                     typeof newMax !== 'undefined'
                 );
+                */
 
                 // Do it
                 axis.setExtremes(

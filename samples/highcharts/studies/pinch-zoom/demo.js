@@ -3,7 +3,20 @@ To do
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
 - When to show reset zoom button? Not on mousewheel.
-- Look into the Chart.zoom function. Can it also use transform?
+- Try replacing `minPixelPadding` translation roundtrip with `minPointOffset`.
+  It should mean the same.
+- Rename `panningState` to `allExtremes`, having properties `dataMin` and
+  `dataMax`. Then it can be spread right into the extremes object if defined.
+  Also checked for `cropped` to avoid doing this for nothing.
+- Refactor: touchpan and zoom now uses basically the same chart.axes.filter
+  expression
+- Clean up mouseDownX, mouseDownY, lastTouches, pinchStart. See if we can store
+  one single event instead.
+- MouseWheel hard to start when minPadding and maxPadding since
+  `allowZoomOutside` change. Check out if minPadding, maxPadding and threshold
+  can be refactored out and shared with setTickPositions.
+- Check if marker/attr stuff is necessary in `getSelectionBox`. Simple .getBBox
+  should be sufficient.
 */
 
 
@@ -11,16 +24,23 @@ To do
 
     const data = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
-    ).then(response => response.json());
+    ).then(response => response.json())
+        .then(data =>
+            data.map(p => p[1])
+                .slice(0, 20)
+        );
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'x',
+            zoomType: 'xy',
             panning: {
-                enabled: true,
-                type: 'x'
+                enabled: true
             },
-            panKey: 'shift'
+            mouseWheel: {
+                enabled: true
+            },
+            panKey: 'shift',
+            width: 600
         },
         title: {
             text: 'USD to EUR exchange rate over time',
@@ -30,10 +50,6 @@ To do
             text: document.ontouchstart === undefined ?
                 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
             align: 'left'
-        },
-        xAxis: {
-            min: 500,
-            max: 2500
         },
         yAxis: {
             title: {
@@ -46,6 +62,9 @@ To do
         },
         legend: {
             enabled: false
+        },
+        rangeSelector: {
+            selected: 2
         },
         plotOptions: {
             area: {
@@ -75,9 +94,9 @@ To do
         },
 
         series: [{
-            type: 'area',
+            type: 'column',
             name: 'USD to EUR',
-            data: data.map(p => p[1])
+            data
         }]
     });
 
@@ -86,6 +105,7 @@ To do
         // eslint-disable-line no-extend-native
         return this[i];
     };
+    /*
     setTimeout(function () {
         const chart = Highcharts.charts[0],
             offset = Highcharts.offset(chart.container);
@@ -154,4 +174,5 @@ To do
         }, 500);
 
     }, 1000);
+    // */
 })();

@@ -419,12 +419,9 @@ class Pointer {
                 );
             }
 
-            // panning
-            if (clickedInside &&
-                !selectionMarker &&
-                panningEnabled
-            ) {
-                (chart.pan as any)(e, chartOptions.panning);
+            // Panning
+            if (clickedInside && !selectionMarker && panningEnabled) {
+                chart.pan(e, chartOptions.panning as any);
             }
         }
     }
@@ -478,10 +475,8 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#drop
      */
-    public drop(e?: Event): void {
-        const pointer = this,
-            chart = this.chart,
-            hasPinched = this.hasPinched;
+    public drop(e?: PointerEvent): void {
+        const { chart, selectionMarker } = this;
 
         // During a mouse, touch or mousewheel pan, the `startOnTick` and
         // `endOnTick` options are ignored. Otherwise the zooming or panning
@@ -502,93 +497,86 @@ class Pointer {
             }
         }
 
-        if (this.selectionMarker && e) {
-            const {
-                x,
-                y,
-                width,
-                height
-            } = this.getSelectionBox(this.selectionMarker);
+        if (selectionMarker && e) {
+            const selectionBox = this.getSelectionBox(selectionMarker),
+                selection: Pointer.SelectEventObject = {
+                    originalEvent: e, // #4890
+                    xAxis: [],
+                    yAxis: [],
+                    ...selectionBox
+                };
 
-            const selectionData = {
-                originalEvent: e, // #4890
-                xAxis: [],
-                yAxis: [],
-                x,
-                y,
-                width,
-                height
-            };
+            /*
             // Start by false runZoom, unless when we have a mapView, in which
             // case the zoom will be handled in the selection event.
             let runZoom = Boolean(chart.mapView);
 
-            // A selection has been made
-            if (this.hasDragged || hasPinched) {
+            // Record each axis' min and max
+            chart.axes.forEach(function (axis: Axis): void {
+                if (
+                    axis.zoomEnabled &&
+                    defined(axis.min) &&
+                    (
+                        hasPinched ||
+                        pointer[({
+                            xAxis: 'zoomX',
+                            yAxis: 'zoomY'
+                        } as Record<string, (
+                            'zoomX'|
+                            'zoomY'
+                        )>)[axis.coll]]
+                    ) &&
+                    isNumber(x) &&
+                    isNumber(y) &&
+                    isNumber(width) &&
+                    isNumber(height)
+                ) { // #859, #3569
+                    const horiz = axis.horiz,
+                        minPixelPadding = e.type === 'touchend' ?
+                            axis.minPixelPadding :
+                            0, // #1207, #3075
+                        selectionMin = axis.toValue(
+                            (horiz ? x : y) + minPixelPadding
+                        ),
+                        selectionMax = axis.toValue(
+                            (horiz ? x + width : y + height) -
+                            minPixelPadding
+                        );
 
-                // Record each axis' min and max
-                chart.axes.forEach(function (axis: Axis): void {
-                    if (
-                        axis.zoomEnabled &&
-                        defined(axis.min) &&
-                        (
-                            hasPinched ||
-                            pointer[({
-                                xAxis: 'zoomX',
-                                yAxis: 'zoomY'
-                            } as Record<string, (
-                                'zoomX'|
-                                'zoomY'
-                            )>)[axis.coll]]
-                        ) &&
-                        isNumber(x) &&
-                        isNumber(y) &&
-                        isNumber(width) &&
-                        isNumber(height)
-                    ) { // #859, #3569
-                        const horiz = axis.horiz,
-                            minPixelPadding = e.type === 'touchend' ?
-                                axis.minPixelPadding :
-                                0, // #1207, #3075
-                            selectionMin = axis.toValue(
-                                (horiz ? x : y) + minPixelPadding
-                            ),
-                            selectionMax = axis.toValue(
-                                (horiz ? x + width : y + height) -
-                                minPixelPadding
-                            );
-
-                        (selectionData as any)[axis.coll].push({
-                            axis: axis,
-                            // Min/max for reversed axes
-                            min: Math.min(selectionMin, selectionMax),
-                            max: Math.max(selectionMin, selectionMax)
-                        });
-                        runZoom = true;
-                    }
-                });
-                if (runZoom) {
-                    fireEvent(
-                        chart,
-                        'selection',
-                        selectionData,
-                        function (args: object): void {
-                            (chart.zoom as any)(
-                                extend(
-                                    args,
-                                    hasPinched ?
-                                        { animation: false } :
-                                        null as any
-                                )
-                            );
-                        }
-                    );
+                    (selectionData as any)[axis.coll].push({
+                        axis: axis,
+                        // Min/max for reversed axes
+                        min: Math.min(selectionMin, selectionMax),
+                        max: Math.max(selectionMin, selectionMax)
+                    });
+                    runZoom = true;
                 }
+            });
+            */
 
+            // A selection has been made
+            if (this.hasDragged) {
+                chart.transform({
+                    axes: chart.axes.filter((a): boolean|undefined =>
+                        a.zoomEnabled &&
+                        (
+                            (a.coll === 'xAxis' && this.zoomX) ||
+                            (a.coll === 'yAxis' && this.zoomY)
+                        )
+                    ),
+                    // The move and zoom properties are not suffient to zoom on
+                    // panes and polar charts.
+                    // moveX: x - chart.plotLeft,
+                    // moveY: y - chart.plotTop,
+                    // zoomX: width / chart.plotWidth,
+                    // zoomY: height / chart.plotHeight,
+                    selection,
+                    ...selectionBox
+                });
             }
 
             if (isNumber(chart.index)) {
-                this.selectionMarker = this.selectionMarker.destroy();
+                this.selectionMarker = selectionMarker.destroy();
             }
         }
 
@@ -1327,11 +1315,10 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseUp
      */
-    public onDocumentMouseUp(e: MouseEvent): void {
-        const chart = charts[pick(Pointer.hoverChartIndex, -1)];
-        if (chart) {
-            chart.pointer.drop(e);
-        }
+    public onDocumentMouseUp(e: PointerEvent): void {
+        charts[pick(Pointer.hoverChartIndex, -1)]
+            ?.pointer
+            .drop(e);
     }
 
     /**
@@ -2327,10 +2314,14 @@ namespace Pointer {
     }
     export interface SelectEventObject {
         animation?: boolean,
+        height?: number;
         originalEvent: Event;
         resetSelection?: boolean;
         trigger?: string;
+        width?: number;
+        x?: number;
         xAxis: Array<SelectDataObject>;
+        y?: number;
         yAxis: Array<SelectDataObject>;
     }
 

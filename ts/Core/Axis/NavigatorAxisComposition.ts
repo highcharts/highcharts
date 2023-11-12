@@ -79,7 +79,7 @@ function onAxisInit(
  * selector.
  * @private
  */
-function onAxisZoom(
+function onAxisSetExtremes(
     this: Axis,
     e: AnyRecord
 ): void {
@@ -92,21 +92,22 @@ function onAxisZoom(
         rangeSelector = chartOptions.rangeSelector,
         zoomType = chart.zooming.type;
 
-    if (axis.isXAxis && ((navigator && navigator.enabled) ||
-            (rangeSelector && rangeSelector.enabled))) {
+    if (
+        axis.isXAxis &&
+        (navigator?.enabled || rangeSelector?.enabled)
+    ) {
 
         // For y only zooming, ignore the X axis completely
         if (zoomType === 'y') {
             e.zoomed = false;
 
-        // For xy zooming, record the state of the zoom before zoom
-        // selection, then when the reset button is pressed, revert to
-        // this state. This should apply only if the chart is
-        // initialized with a range (#6612), otherwise zoom all the way
-        // out.
+        // For xy zooming, record the state of the zoom before zoom selection,
+        // then when the reset button is pressed, revert to this state. This
+        // should apply only if the chart is initialized with a range (#6612),
+        // otherwise zoom all the way out.
         } else if (
             (
-                (!isTouchDevice && zoomType === 'xy') ||
+                (e.trigger === 'zoom' && zoomType === 'xy') ||
                 (isTouchDevice && pinchType === 'xy')
             ) &&
             axis.options.range
@@ -114,11 +115,14 @@ function onAxisZoom(
 
             const previousZoom = navigatorAxis.previousZoom;
 
-            if (defined(e.newMin)) {
+            // Minimum defined, zooming in
+            if (defined(e.min)) {
                 navigatorAxis.previousZoom = [axis.min, axis.max];
+
+            // Minimum undefined, resetting zoom
             } else if (previousZoom) {
-                e.newMin = previousZoom[0];
-                e.newMax = previousZoom[1];
+                e.min = previousZoom[0];
+                e.max = previousZoom[1];
                 navigatorAxis.previousZoom = void 0;
             }
         }
@@ -158,7 +162,7 @@ class NavigatorAxisAdditions {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
-            addEvent(AxisClass, 'zoom', onAxisZoom);
+            addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
         }
 
     }

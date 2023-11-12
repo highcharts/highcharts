@@ -612,7 +612,7 @@ QUnit.test('Zooming accross multiple charts, #15569', assert => {
     );
 
     assert.ok(
-        chart0.xAxis[0].displayBtn,
+        chart0.resetZoomButton,
         'Ending a zoom on a different chart should result in a zoom in.'
     );
     flexContainer.remove(); // Remove this line to visually debug the chart

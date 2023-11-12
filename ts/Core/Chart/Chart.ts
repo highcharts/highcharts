@@ -3515,7 +3515,12 @@ class Chart {
      * @emits Highcharts.Chart#event:selection
      */
     public zoomOut(): void {
-        fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
+        fireEvent(
+            this,
+            'selection',
+            { resetSelection: true },
+            (): boolean => this.transform({ reset: true, trigger: 'zoom' })
+        );
     }
 
     /**
@@ -3573,9 +3578,11 @@ class Chart {
                         axisData.min,
                         axisData.max
                     );
+                    /*
                     if (axis.displayBtn) {
                         displayButton = true;
                     }
+                    */
                 }
             });
         }
@@ -3644,7 +3651,8 @@ class Chart {
                 axes,
                 event,
                 moveX: (chart.mouseDownX || 0) - event.chartX,
-                moveY: (chart.mouseDownY || 0) - event.chartY
+                moveY: (chart.mouseDownY || 0) - event.chartY,
+                trigger: 'pan'
             });
             css(chart.container, { cursor: 'move' });
         });
@@ -3659,31 +3667,42 @@ class Chart {
      */
     public transform(params: Chart.ChartTransformParams): boolean {
         const {
-            axes = [],
-            event,
-            moveX,
-            moveY,
-            zoomX,
-            zoomY
-        } = params;
-        let redraw = false;
+                axes = this.axes,
+                event,
+                height,
+                moveX,
+                moveY,
+                reset,
+                selection,
+                trigger,
+                width,
+                x,
+                y,
+                zoomX,
+                zoomY
+            } = params,
+            { inverted, resetZoomButton } = this;
 
-        // Temporarily flag the chart as `isPanning` in order to disallow
-        // certain axis padding options that would make panning/zooming hard.
-        // Reset and redrawn after the operation has finished.
-        this.isPanning = true;
+        let hasZoomed = false,
+            displayButton: boolean|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
 
         for (const axis of axes) {
-            const { horiz, reversed } = axis,
-                move = (horiz ? moveX : moveY) || 0,
-                scale = (horiz ? zoomX : zoomY) || 1,
+            const { horiz, len, reversed } = axis,
+                // The x, y, width and height parameters are used for selection
+                // zoom. In this case, moveX, moveY, zoomX and zoomY are not
+                // enough because we need to tie the zoom to specific axes,
+                // either as panes or in polar charts.
+                move = (horiz ? moveX : moveY) ??
+                    ((horiz ? x : y) || 0) - axis.pos,
+                scale = (horiz ? zoomX : zoomY) ??
+                    ((horiz ? width : height) || len) / len,
                 halfPointRange = axis.minPointOffset || 0,
                 pointRangeDirection =
-                    (reversed && !this.inverted) ||
-                    (!reversed && this.inverted) ?
+                    (reversed && !inverted) ||
+                    (!reversed && inverted) ?
                         -1 :
                         1,
                 extremes = axis.getExtremes(),
@@ -3693,11 +3712,12 @@ class Chart {
                     halfPointRange * pointRangeDirection,
                 newMax =
                     axis.toValue(
-                        minPx + axis.len * scale, true
+                        minPx + len * scale, true
                     ) -
                     (
                         (halfPointRange * pointRangeDirection) ||
-                        (axis.isXAxis && axis.pointRangePadding) ||
+                        // Polar zoom tests failed when this was not commented:
+                        // (axis.isXAxis && axis.pointRangePadding) ||
                         0
                     ),
                 panningState = axis.panningState;
@@ -3712,11 +3732,12 @@ class Chart {
             // (#11315).
             if (
                 scale === 1 &&
+                !reset &&
                 axis.coll === 'yAxis' && (
                     !panningState || panningState.isDirty
                 )
             ) {
-                axis.series.forEach(function (series): void {
+                for (const series of axis.series) {
                     const processedData = series.getProcessedData(true),
                         dataExtremes = series.getExtremes(
                             processedData.yData, true
@@ -3744,32 +3765,36 @@ class Chart {
                             panningState.startMax
                         );
                     }
-                });
+                }
             }
 
-            const minBound = Math.min(
+            const floor = Math.min(
                 pick(
                     panningState && panningState.startMin,
                     extremes.dataMin
                 ),
-                halfPointRange ?
-                    extremes.min :
-                    axis.toValue(
-                        axis.toPixels(extremes.min) -
-                        axis.minPixelPadding
-                    )
+                axis.allowZoomOutside || scale === 1 ? (
+                    halfPointRange ?
+                        extremes.min :
+                        axis.toValue(
+                            axis.toPixels(extremes.min) -
+                            axis.minPixelPadding
+                        )
+                ) : extremes.dataMin
             );
-            const maxBound = Math.max(
+            const ceiling = Math.max(
                 pick(
                     panningState && panningState.startMax,
                     extremes.dataMax
                 ),
-                halfPointRange ?
-                    extremes.max :
-                    axis.toValue(
-                        axis.toPixels(extremes.max) +
-                        axis.minPixelPadding
-                    )
+                axis.allowZoomOutside || scale === 1 ? (
+                    halfPointRange ?
+                        extremes.max :
+                        axis.toValue(
+                            axis.toPixels(extremes.max) +
+                            axis.minPixelPadding
+                        )
+                ) : extremes.dataMax
             );
 
             axis.panningState = panningState;
@@ -3777,48 +3802,57 @@ class Chart {
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to
             // override them.
-            if (!axis.isOrdinal || scale !== 1) {
+            if (!axis.isOrdinal || scale !== 1 || reset) {
                 // If the new range spills over, either to the min or max,
                 // adjust the new range.
-                const range = (newMax - newMin) * Math.min(scale, 1);
-                if (newMin < minBound) {
-                    newMin = minBound;
+                const range = newMax - newMin;// * Math.min(scale, 1);
+                if (newMin < floor) {
+                    newMin = floor;
                     newMax = newMin + range;
                 }
 
-                if (newMax > maxBound) {
-                    newMax = maxBound;
+                if (newMax > ceiling) {
+                    newMax = ceiling;
                     newMin = newMax - range;
                 }
 
                 // Set new extremes if they are actually new
                 if (
-                    axis.series.length &&
-                    (newMin !== extremes.min || newMax !== extremes.max) &&
-                    newMin >= minBound &&
-                    newMax <= maxBound
+                    reset || (
+                        axis.series.length &&
+                        (newMin !== extremes.min || newMax !== extremes.max) &&
+                        newMin >= floor &&
+                        newMax <= ceiling
+                    )
                 ) {
-                    axis.setExtremes(
-                        newMin,
-                        newMax,
-                        false,
-                        false,
-                        { trigger: 'pan' }
-                    );
+                    if (selection) {
+                        selection[axis.coll as 'xAxis'|'yAxis'].push({
+                            axis,
+                            min: newMin,
+                            max: newMax
+                        });
+                    } else {
 
-                    if (
-                        !this.resetZoomButton &&
-                        // Show reset zoom button only when both newMin and
-                        // newMax values are between padded axis range.
-                        newMin !== minBound &&
-                        newMax !== maxBound &&
-                        (scale !== 1 || axis.coll === 'yAxis')
-                    ) {
-                        this.showResetZoom();
-                        axis.displayBtn = false;
+                        // Temporarily flag the chart as `isPanning` in order to
+                        // disallow certain axis padding options that would make
+                        // panning/zooming hard. Reset and redraw after the
+                        // operation has finished.
+                        this.isPanning = trigger !== 'zoom';
+
+                        axis.setExtremes(
+                            reset ? void 0 : newMin,
+                            reset ? void 0 : newMax,
+                            false,
+                            false,
+                            { trigger }
+                        );
+
+                        if (!reset) {
+                            displayButton = true;
+                        }
                     }
 
-                    redraw = true;
+                    hasZoomed = true;
                 }
 
                 if (event) {
@@ -3828,11 +3862,36 @@ class Chart {
             }
         }
 
-        if (redraw) {
-            this.redraw(false);
-        }
+        if (hasZoomed) {
+            if (selection) {
+                fireEvent(
+                    this,
+                    'selection',
+                    selection,
+                    // Run transform again, this time without the selection data
+                    // so that the transform is applied.
+                    (): void => {
+                        delete params.selection;
+                        params.trigger = 'zoom';
+                        this.transform(params);
+                    }
+                );
+            } else {
 
-        return redraw;
+                // Show or hide the Reset zoom button
+                if (displayButton && !resetZoomButton) {
+                    this.showResetZoom();
+                } else if (!displayButton && resetZoomButton) {
+                    this.resetZoomButton = resetZoomButton.destroy();
+                }
+
+                this.redraw(
+                    trigger === 'zoom' &&
+                    (this.options.chart.animation ?? this.pointCount < 100)
+                );
+            }
+        }
+        return hasZoomed;
     }
 
 }
@@ -3970,8 +4029,15 @@ namespace Chart {
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
+        height?: number;
         moveX?: number;
         moveY?: number;
+        reset?: boolean;
+        selection?: Pointer.SelectEventObject;
+        trigger?: string;
+        width?: number;
+        x?: number;
+        y?: number;
         zoomX?: number;
         zoomY?: number;
     }

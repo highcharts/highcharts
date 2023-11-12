@@ -398,23 +398,22 @@ function onPointerGetSelectionBox(this: Pointer, event: any): void {
     if (this.chart.polar) {
         event.preventDefault();
 
-        let start = (
-            marker.attr ? marker.attr('start') : marker.start
-        ) - (radialAxis as any).startAngleRad;
-
-        let r = (marker.attr ? marker.attr('r') : marker.r);
-
-        let end = (
-            marker.attr ? marker.attr('end') : marker.end
-        ) - (radialAxis as any).startAngleRad;
-
-        let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR);
+        const start = (
+                marker.attr ? marker.attr('start') : marker.start
+            ) - (radialAxis as any).startAngleRad,
+            r = (marker.attr ? marker.attr('r') : marker.r),
+            end = (
+                marker.attr ? marker.attr('end') : marker.end
+            ) - (radialAxis as any).startAngleRad,
+            innerR = (marker.attr ? marker.attr('innerR') : marker.innerR);
 
         event.result.x = start + radialAxis.pos;
         event.result.width = end - start;
-        // innerR goes from pane's center but toValue computes values from top
-        event.result.y = linearAxis.len + linearAxis.pos - innerR;
-        event.result.height = innerR - r;
+
+        // `innerR` goes from pane's center but `toValue` computes values from
+        // top
+        event.result.y = linearAxis.len + linearAxis.pos - r;
+        event.result.height = r - innerR;
     }
 }
 
