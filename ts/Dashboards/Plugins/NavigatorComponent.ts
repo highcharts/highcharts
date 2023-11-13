@@ -30,7 +30,10 @@ import type {
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
-import type { RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
@@ -39,6 +42,7 @@ const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import U from '../../Core/Utilities.js';
+import DataTable from 'highcharts/es-modules/Data/DataTable';
 const {
     addEvent,
     diffObjects,
@@ -57,7 +61,8 @@ const {
 
 const navigatorComponentSync = {
     crossfilter: {
-        emitter: crossfilterEmitter
+        emitter: crossfilterEmitter,
+        handler: crossfilterReceiver
     },
     extremes: {
         emitter: extremesEmitter,
@@ -134,6 +139,64 @@ function crossfilterEmitter(
             delay = setTimeout(afterSetExtremes, 50, this, extremes);
         }
     );
+}
+
+/** @internal */
+function crossfilterReceiver(this: Component): void {
+    const component = this as NavigatorComponent,
+        dataCursor = component.board.dataCursor;
+
+    const crossfilterListener = (e: DataCursor.Event): void => {
+        if (!component.connector) {
+            return;
+        }
+
+        const table = component.connector.table,
+            filterColumn = component.getColumnAssignment()[0],
+            localRanges = (table.getModifier()?.options as (
+                RangeModifierOptions | undefined
+            ))?.ranges.filter((r): boolean => r.column !== filterColumn);
+
+        if (!localRanges || localRanges.length < 1) {
+            return;
+        }
+
+        const setNavigatorData = async (): Promise<void> => {
+            const localTable = await table?.clone()
+                .setModifier(new RangeModifier({ ranges: localRanges }));
+
+            component.localTable = localTable.modified;
+        };
+
+        setNavigatorData();
+    };
+
+    const registerCursorListeners = (): void => {
+        const table = component.connector && component.connector.table;
+        if (table) {
+            dataCursor.addListener(
+                table.id,
+                'crossfilter',
+                crossfilterListener
+            );
+        }
+    };
+
+    const unregisterCursorListeners = (): void => {
+        const table = component.connector && component.connector.table;
+        if (table) {
+            dataCursor.removeListener(
+                table.id,
+                'crossfilter',
+                crossfilterListener
+            );
+        }
+    };
+
+    registerCursorListeners();
+
+    component.on('setConnector', (): void => unregisterCursorListeners());
+    component.on('afterSetConnector', (): void => registerCursorListeners());
 }
 
 
@@ -492,6 +555,11 @@ class NavigatorComponent extends Component {
      */
     public chartContainer: HTMLElement;
 
+    /**
+     * test
+     */
+    public localTable?: DataTable;
+
 
     /**
      * Options for the navigator component
@@ -662,7 +730,7 @@ class NavigatorComponent extends Component {
         const chart = this.chart;
 
         if (this.connector) {
-            const table = this.connector.table,
+            const table = this.localTable ?? this.connector.table,
                 options = this.options,
                 column = this.getColumnAssignment(),
                 values = (table.getColumn(column[0], true) || []);
@@ -678,7 +746,8 @@ class NavigatorComponent extends Component {
 
                 let index: number;
 
-                for (let value of values) {
+                for (let i = 0; i < values.length; i++) {
+                    let value = values[i];
 
                     if (value === null) {
                         continue;
