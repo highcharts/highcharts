@@ -270,6 +270,8 @@ function anchorPoints(
                 ({ middle: 0.5, end: 1 } as AnchorChoiceType)[anchor]
         );
 
+        // Anchor the rest of the points apart from the ones, that were
+        // previously moved.
         while (anchorIndexIterator >= anchorFirstIndex) {
             groupedXData[anchorIndexIterator] += shiftInterval;
             anchorIndexIterator--;
