@@ -1,9 +1,10 @@
 import { ok, strictEqual } from 'assert';
-import { describe } from '../test-utils';
+import { describe, setupDOM } from '../test-utils';
 
 export function testGlobalUtilities() {
     describe('Testing global utilities ...');
-    const Highcharts = require('../../../code/highcharts.src.js')();
+    const { win } = setupDOM();
+    const Highcharts = require('../../../code/highcharts.src.js')(win);
     const keys = [
         'addEvent',
         'arrayMax',
@@ -64,7 +65,8 @@ export function testGlobalUtilities() {
 }
 
 export function testTime() {
-    const Highcharts = require('../../../code/highcharts.src.js')();
+    const { win } = setupDOM();
+    const Highcharts = require('../../../code/highcharts.src.js')(win);
     const time = new Highcharts.Time();
     strictEqual(
         time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),

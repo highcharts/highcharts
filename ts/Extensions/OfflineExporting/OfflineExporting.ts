@@ -57,10 +57,12 @@ const {
 AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
+    'filter',
     'rx',
     'ry',
     'stroke-dasharray',
     'stroke-linejoin',
+    'stroke-opacity',
     'text-anchor',
     'transform',
     'version',
