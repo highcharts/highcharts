@@ -4,18 +4,23 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
             series: [
                 {
                     type: 'xrange',
                     name: 'Project 1',
                     dataLabels: [
                         {
-                            enabled: true,
                             format: 'Left label',
                             align: 'left'
                         },
                         {
-                            enabled: true,
                             format: 'Right label',
                             align: 'right'
                         }
@@ -73,6 +78,12 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         correct,
         true,
         'Appropriate tooltip appears when hovering both point\'s data labels.'
+    );
+
+    assert.ok(
+        point.dataLabels[0] && point.dataLabels[0].element &&
+            point.dataLabels[1] && point.dataLabels[1].element,
+        'Both data labels should be rendered when enabled in plotOptions.'
     );
 
     assert.strictEqual(
