@@ -1985,6 +1985,21 @@ QUnit.test(
             chart.yAxis[0].scrollbar,
             'Only one scrollbar should be visible.'
         );
+
+        const [series] = chart.series;
+        chart.update({
+            yAxis: {
+                min: undefined,
+                max: undefined
+            }
+        });
+
+        try {
+            series.hide();
+        } catch (e) {
+            assert.ok(false, 'Hiding the series should not throw an error');
+            series.show();
+        }
     }
 );
 
