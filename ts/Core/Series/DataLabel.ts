@@ -230,8 +230,17 @@ namespace DataLabel {
      * @private
      */
     function hasDataLabels(this: Series): boolean {
+        const series = this,
+            plotOptions = series.chart.options.plotOptions;
+
         return splat(
-            this.options.dataLabels || {}
+            mergeArrays(
+                mergeArrays(
+                    plotOptions?.series?.dataLabels,
+                    plotOptions?.[series.type]?.dataLabels
+                ),
+                series.options.dataLabels
+            )
         ).some((o: DataLabelOptions|undefined): boolean|undefined =>
             o?.enabled
         );
