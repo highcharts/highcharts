@@ -645,7 +645,7 @@ class HighchartsComponent extends Component {
                     return true;
                 });
 
-            // create empty series for OHLC data
+            // create empty series for mapping custom props of data
             if (seriesColumnMap) {
                 seriesNames.push(
                     (
@@ -1084,7 +1084,30 @@ namespace HighchartsComponent {
         columnAssignment?: Record<string, string|seriesColumnMap>;
     }
 
-    /** @private */
+    /**
+     * Names that should be mapped to point values or props. You can
+     * declare which columns will be parameter of the point. It is useful for
+     * series like OHLC, candlestick, columnrange or arearange.
+     * 
+     * The seriesName field is mandatory for displaying series (for instance in
+     * the legend) properly.
+     * 
+     * ```
+     * Example
+     * columnAssignment: {
+     *      'Dates': 'x',
+     *       seriesColumnMap: {
+     *           seriesName: 'mySeriesName',
+     *           pointColumnMap: {
+     *             'open': 'myOpen',
+     *             'high': 'myHigh',
+     *             'low': 'myLow',
+     *             'close': 'myClose'
+     *          }
+     *       }
+     * }
+     * ```
+    */
     export interface seriesColumnMap {
         seriesName: string;
         pointColumnMap: Record<string, string>
