@@ -221,14 +221,14 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
     assert.strictEqual(
-        chart.yAxis[0].panningState.startMin,
+        chart.yAxis[0].allExtremes.dataMin,
         20,
-        '#15022: panningState should have the correct startMin'
+        '#15022: allExtremes should have the correct dataMin'
     );
     assert.strictEqual(
-        chart.yAxis[0].panningState.startMax,
+        chart.yAxis[0].allExtremes.dataMax,
         300,
-        '#15022: panningState should have the correct startMax'
+        '#15022: allExtremes should have the correct dataMax'
     );
 });
 

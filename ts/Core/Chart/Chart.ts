@@ -3719,74 +3719,61 @@ class Chart {
                         // (axis.isXAxis && axis.pointRangePadding) ||
                         0
                     ),
-                panningState = axis.panningState;
+                allExtremes = axis.allExtremes;
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
             }
 
-            // General calculations of panning state. The panning state holds
-            // the full-range data min and max, and is calculated on the first
-            // call to transform, then reused for subsequent touch/pan calls.
-            // (#11315).
+            // General calculations of the full data extremes. It is calculated
+            // on the first call to transform, then reused for subsequent
+            // touch/pan calls. (#11315).
             if (
                 scale === 1 &&
                 !reset &&
-                axis.coll === 'yAxis' && (
-                    !panningState || panningState.isDirty
-                )
+                axis.coll === 'yAxis' &&
+                !allExtremes
             ) {
                 for (const series of axis.series) {
-                    const processedData = series.getProcessedData(true),
-                        dataExtremes = series.getExtremes(
-                            processedData.yData, true
-                        );
+                    const seriesExtremes = series.getExtremes(
+                        series.getProcessedData(true).yData, true
+                    );
 
-                    if (!panningState) {
-                        panningState = {
-                            startMin: Number.MAX_VALUE,
-                            startMax: -Number.MAX_VALUE
-                        };
-                    }
+                    allExtremes ??= {
+                        dataMin: Number.MAX_VALUE,
+                        dataMax: -Number.MAX_VALUE
+                    };
 
                     if (
-                        isNumber(dataExtremes.dataMin) &&
-                        isNumber(dataExtremes.dataMax)
+                        isNumber(seriesExtremes.dataMin) &&
+                        isNumber(seriesExtremes.dataMax)
                     ) {
-                        panningState.startMin = Math.min(
-                            pick(series.options.threshold, Infinity),
-                            dataExtremes.dataMin,
-                            panningState.startMin
+                        allExtremes.dataMin = Math.min(
+                            seriesExtremes.dataMin,
+                            allExtremes.dataMin
                         );
-                        panningState.startMax = Math.max(
-                            pick(series.options.threshold, -Infinity),
-                            dataExtremes.dataMax,
-                            panningState.startMax
+                        allExtremes.dataMax = Math.max(
+                            seriesExtremes.dataMax,
+                            allExtremes.dataMax
                         );
                     }
                 }
+                axis.allExtremes = allExtremes;
             }
+            extend(extremes, allExtremes || {});
 
             const floor = Math.min(
-                pick(
-                    panningState && panningState.startMin,
-                    extremes.dataMin
+                    extremes.dataMin,
+                    axis.allowZoomOutside || scale === 1 ?
+                        extremes.min :
+                        extremes.dataMin
                 ),
-                axis.allowZoomOutside || scale === 1 ?
-                    extremes.min :
-                    extremes.dataMin
-            );
-            const ceiling = Math.max(
-                pick(
-                    panningState && panningState.startMax,
-                    extremes.dataMax
-                ),
-                axis.allowZoomOutside || scale === 1 ?
-                    extremes.max :
-                    extremes.dataMax
-            );
-
-            axis.panningState = panningState;
+                ceiling = Math.max(
+                    extremes.dataMax,
+                    axis.allowZoomOutside || scale === 1 ?
+                        extremes.max :
+                        extremes.dataMax
+                );
 
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to

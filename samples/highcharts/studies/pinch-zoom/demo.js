@@ -3,11 +3,11 @@ To do
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
 - When to show reset zoom button? On pinch? Not on mousewheel.
-- Rename `panningState` to `allExtremes`, having properties `dataMin` and
-  `dataMax`. Then it can be spread right into the extremes object if defined.
-  Also checked for `cropped` to avoid doing this for nothing.
 - Refactor: touchpan and zoom now uses basically the same chart.axes.filter
   expression
+- Refactor: All zoom, pan, touch and wheel operations should be possible to
+  define using two rectangles, a reference (default to full chart), and a
+  target (like the selectionBox).
 - Clean up mouseDownX, mouseDownY, lastTouches, pinchStart. See if we can store
   one single event instead.
 - MouseWheel hard to start when minPadding and maxPadding since
@@ -15,6 +15,7 @@ To do
   can be refactored out and shared with setTickPositions.
 - Check if marker/attr stuff is necessary in `getSelectionBox`. Simple .getBBox
   should be sufficient.
+- Stock chart: navigator not working after zooming on y
 */
 
 
@@ -25,22 +26,22 @@ To do
     ).then(response => response.json())
         .then(data =>
             data
-                .map(p => p[1])
-                .slice(0, 20)
+            // .map(p => p[1])
+            // .slice(0, 20)
         );
 
-    Highcharts.stockChart('container', {
+    Highcharts.chart('container', {
         chart: {
-            zoomType: 'x',
+            zoomType: 'y',
             panning: {
-                enabled: true
+                enabled: true,
+                type: 'y'
             },
             mouseWheel: {
                 enabled: true
             },
             panKey: 'shift',
-            width: 600,
-            type: 'column'
+            width: 600
         },
         title: {
             text: 'USD to EUR exchange rate over time',

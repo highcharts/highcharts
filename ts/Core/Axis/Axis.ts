@@ -199,6 +199,7 @@ class Axis {
      * */
 
     public _addedPlotLB?: boolean;
+    public allExtremes?: Axis.AllExtremes;
     public allowZoomOutside?: boolean;
     public alternateBands: Record<string, PlotLineOrBand> = void 0 as any;
     public autoRotation?: Array<number>;
@@ -271,7 +272,6 @@ class Axis {
     public ordinal?: AxisComposition['ordinal'];
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
-    public panningState?: Axis.PanningState;
     public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
     public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
     public pointRange: number = void 0 as any;
@@ -2585,10 +2585,10 @@ class Axis {
             stacking.cleanStacks();
         }
 
-        // Recalculate panning state object, when the data
-        // has changed. It is required when vertical panning is enabled.
-        if (isDirtyData && axis.panningState) {
-            axis.panningState.isDirty = true;
+        // Recalculate all extremes object when the data has changed. It is
+        // required when vertical panning is enabled.
+        if (isDirtyData) {
+            delete axis.allExtremes;
         }
 
         fireEvent(this, 'afterSetScale');
@@ -4474,10 +4474,9 @@ namespace Axis {
         userMax?: number;
         userMin?: number;
     }
-    export interface PanningState {
-        startMin: number;
-        startMax: number;
-        isDirty?: boolean;
+    export interface AllExtremes {
+        dataMin: number;
+        dataMax: number;
     }
     export interface PlotLinePathOptions {
         acrossPanes?: boolean;
