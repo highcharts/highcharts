@@ -47,9 +47,11 @@ platform. The `tsconfig.json` below, covers a typical use case of Highcharts:
 
 If you place your TypeScript source code (`*.ts`) in one of your project
 folders, the TypeScript compiler will automatically find it, compile it and
-output the JavaScript compiled code (`*.js`) to the `outDir` folder. With the
-`exclude` property you prevent specified folders from compiling to TypeScript,
-for example files found in the `node_modules` folder.
+output the JavaScript compiled code (`*.js`) to the `outDir` folder.
+
+With the `exclude` property you prevent specified folders from compiling to
+TypeScript, for example files found in the `node_modules` folder.
+
 
 ### RequireJS
 
@@ -90,6 +92,54 @@ Details about the configuration options can be found in the
 
 
 
+Using Highcharts Typing
+-----------------------
+
+There are some subtle differences in using the Highcharts product bundles and
+the modules, either in classic namespace-based projects or as ES-module-based
+projects.
+
+
+### Highcharts Bundles
+
+Starting point is one of the product bundles in the Highcharts NPM package. Best
+practice is to always use the default product bundle in TypeScript projects.
+This avoids conflicts between competing product bundles.
+
+- For classic projects use:
+  ```ts
+  import Highcharts from 'highcharts';
+  ```
+
+- For ES module projects use:
+  ```ts
+  import Highcharts from 'highcharts/es-modules/masters/highcharts';
+  ```
+
+Other possible product bundles are:
+- `../highcharts-gantt`
+- `../highmaps`
+- `../highstock`
+
+
+### Highcharts Modules
+
+With the help of Highcharts modules you can extend a Highcharts bundle with
+additional functionality, for example to provide A11y controls. 
+
+- For classic projects use:
+  ```ts
+  import Accessibility from 'highcharts/modules/accessibility';
+  Accessibility(Highcharts);
+  ```
+
+- For ES module projects use:
+  ```ts
+  import Accessibility from 'highcharts/es-modules/masters/modules/accessibility';
+  ```
+
+
+
 Extending Highcharts Typing
 ---------------------------
 
@@ -100,13 +150,14 @@ as illustrated with the below example.
 
 ### Steps
 
-* Set proper types for your extensions
-* Declare additional interfaces with your extensions to the Highcharts namespace
+* User proper typing in your extensions
+* Declare additional interfaces of your extensions in the Highcharts namespace
 * Make use of existing
   [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and
   [interfaces](https://api.highcharts.com/class-reference/Highcharts.Dictionary_T_)
-* For a deep dive into TypeScript declaration take a look at the official
+* For a deep dive into TypeScript declarations take a look at the official
   [TypeScript guide](http://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
+
 
 ### Example
 
@@ -144,7 +195,7 @@ your code:
 
 ```ts
 // ...
-declare module 'highcharts/highcharts' {
+declare module 'highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }
@@ -157,7 +208,7 @@ Finally the source code of the example would look like this:
 ```ts
 import * as Highcharts from 'highcharts';
 
-declare module 'highcharts/highcharts' {
+declare module 'highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }
@@ -172,6 +223,10 @@ Highcharts.Point.prototype.highlight = function (
     this.series.chart.xAxis[0].drawCrosshair(event, this);
 };
 ```
+
+Note: If you like to replace existing functionallity of Highcharts, listen to
+the Highcharts events instead of overwriting functions and methods. That way you
+can avoid many unintended side effects. 
 
 
 
@@ -190,6 +245,7 @@ npm install typescript && npx tsc --init
 More information about migrating JavaScript projects to TypeScript can be found
 in the official
 [TypeScript handbook](http://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
+
 
 ### Migration from Definitely Typed
 
@@ -217,7 +273,6 @@ series: [{
     data: [1, 2, "3", 4, 5]
 } as Highcharts.LineSeriesOptions] 
 ```
-
 
 
 ### Reporting Bugs
