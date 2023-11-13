@@ -70,7 +70,6 @@ const data = [
 ];
 // split the data set into ohlc and volume
 const ohlc = [],
-    volume = [],
     dataLength = data.length;
 
 
@@ -82,95 +81,35 @@ for (let i = 0; i < dataLength; i += 1) {
         data[i][3], // low
         data[i][4] // close
     ]);
-
-    volume.push([
-        data[i][0], // the date
-        data[i][5] // the volume
-    ]);
 }
 
 Highcharts.stockChart('container', {
+
     stockTools: {
-        enabled: true
-    },
-    yAxis: [
-        {
-            labels: {
-                align: 'left'
-            },
-            height: '80%',
-            resize: {
-                enabled: true
-            }
-        },
-        {
-            labels: {
-                align: 'left'
-            },
-            top: '80%',
-            height: '20%',
-            offset: 0
-        }
-    ],
-    tooltip: {
-        shape: 'square',
-        headerShape: 'callout',
-        borderWidth: 0,
-        shadow: false,
-        positioner: function (width, height, point) {
-            const chart = this.chart;
-            let position;
-
-            if (point.isHeader) {
-                position = {
-                    x: Math.max(
-                        // Left side limit
-                        chart.plotLeft,
-                        Math.min(
-                            point.plotX + chart.plotLeft - width / 2,
-                            // Right side limit
-                            chart.chartWidth - width - chart.marginRight
-                        )
-                    ),
-                    y: point.plotY
-                };
-            } else {
-                position = {
-                    x: point.series.chart.plotLeft,
-                    y: point.series.yAxis.top - chart.plotTop
-                };
-            }
-
-            return position;
+        gui: {
+            enabled: true
         }
     },
-    series: [
-        {
-            type: 'ohlc',
-            id: 'aapl-ohlc',
-            name: 'AAPL Stock Price',
-            data: ohlc
-        },
-        {
-            type: 'column',
-            id: 'aapl-volume',
-            name: 'AAPL Volume',
-            data: volume,
-            yAxis: 1
+    annotations: [{
+        langKey: 'segment',
+        type: 'crookedLine',
+        xAxis: 0,
+        yAxis: 0,
+        typeOptions: {
+            points: [{
+                x: ohlc[0][0],
+                y: 60
+            }, {
+                x: ohlc[0][0],
+                y: 90
+            }]
         }
-    ],
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 800
-                },
-                chartOptions: {
-                    rangeSelector: {
-                        inputEnabled: false
-                    }
-                }
-            }
-        ]
-    }
+
+    }],
+    series: [{
+        type: 'ohlc',
+        id: 'aapl-ohlc',
+        name: 'AAPL Stock Price',
+        data: ohlc
+    }]
 });
