@@ -1,13 +1,14 @@
-const cumulativeData = [
-    ['Date', 'Done', 'To Do', 'Blocked'],
-    [Date.UTC(2023, 4, 1), 0, 156, 30],
-    [Date.UTC(2023, 4, 8), 23, 134, 30],
-    [Date.UTC(2023, 4, 15), 45, 111, 30],
-    [Date.UTC(2023, 4, 22), 68, 89, 13],
-    [Date.UTC(2023, 4, 29), 90, 93, 2],
-    [Date.UTC(2023, 5, 5), 113, 44, 8],
-    [Date.UTC(2023, 5, 12), null, 21, 2]
-];
+const plotLines = [{
+        label: {
+            text: 'Today',
+            align: 'right'
+        },
+        value: Date.UTC(2023, 5, 4)
+    }],
+    plotBands = [{
+        from: Date.UTC(2023, 4, 8),
+        to: Date.UTC(2023, 4, 22)
+    }];
 
 Highcharts.setOptions({
     credits: {
@@ -24,7 +25,16 @@ Dashboards.board('container', {
             id: 'cumulativeData',
             type: 'JSON',
             options: {
-                data: cumulativeData
+                data: [
+                    ['Date', 'Done', 'To Do', 'Blocked'],
+                    [Date.UTC(2023, 4, 1), 0, 156, 30],
+                    [Date.UTC(2023, 4, 8), 23, 134, 30],
+                    [Date.UTC(2023, 4, 15), 45, 111, 30],
+                    [Date.UTC(2023, 4, 22), 68, 89, 13],
+                    [Date.UTC(2023, 4, 29), 85, 93, 2],
+                    [Date.UTC(2023, 5, 5), 113, 44, 8],
+                    [Date.UTC(2023, 5, 12), null, 21, 2]
+                ]
             }
         }]
     },
@@ -132,32 +142,28 @@ Dashboards.board('container', {
         cell: 'dashboard-kpi-1',
         type: 'KPI',
         title: 'Completed tasks',
-        subtitle: '10% more',
-        value: 22,
-        columnName: 'Done',
-        connector: {
-            id: 'cumulativeData'
-        },
+        subtitle: 'task completed',
+        value: 28,
         chartOptions: {
             series: [{
                 type: 'column',
                 enableMouseTracking: false,
                 name: 'Previous sprints',
-                data: [20, 18, 23, 14, 19]
+                data: [0, 23, 22, 23, 17, 28]
             }]
         }
     }, {
         cell: 'dashboard-kpi-2',
         type: 'KPI',
         title: 'Incomplete tasks',
-        subtitle: '7% less',
+        subtitle: 'to be done',
         value: 10,
         chartOptions: {
             series: [{
                 type: 'column',
                 name: 'Previous sprints',
                 enableMouseTracking: false,
-                data: [20, 18, 23, 14, 19].reverse()
+                data: [20, 18, 23, 14, 19]
             }]
         }
     }, {
@@ -165,24 +171,18 @@ Dashboards.board('container', {
         type: 'Highcharts',
         title: 'Task by status',
         chartOptions: {
+            xAxis: {
+                categories: ['Done', 'To Do', 'In Progress', 'Blocked']
+            },
             series: [{
                 type: 'pie',
-                data: [{
-                    name: 'Done',
-                    y: 10
-                },
-                {
-                    name: 'To Do',
-                    y: 21
-                },
-                {
-                    name: 'In Progress',
-                    y: 16
-                },
-                {
-                    name: 'Blocked',
-                    y: 9
-                }],
+                keys: ['name', 'y'],
+                data: [
+                    ['Done', 113],
+                    ['To Do', 21],
+                    ['In Progress', 38],
+                    ['Blocked', 8]
+                ],
                 innerSize: '50%',
                 size: '110%',
                 dataLabels: {
@@ -217,32 +217,11 @@ Dashboards.board('container', {
         title: 'Total task by assignee',
         chartOptions: {
             xAxis: {
-                type: 'category'
+                categories: ['Dev 1', 'Dev 2', 'Dev 3', 'Dev 4', 'Dev 5']
             },
             series: [{
                 type: 'column',
-                data: [
-                    {
-                        name: 'Dev 1',
-                        y: 20
-                    },
-                    {
-                        name: 'Dev 2',
-                        y: 18
-                    },
-                    {
-                        name: 'Dev 3',
-                        y: 15
-                    },
-                    {
-                        name: 'Dev 4',
-                        y: 4
-                    },
-                    {
-                        name: 'Dev 5',
-                        y: 1
-                    }
-                ]
+                data: [41, 28, 15, 14, 4]
             }],
             legend: {
                 enabled: false
@@ -255,17 +234,8 @@ Dashboards.board('container', {
         chartConstructor: 'ganttChart',
         chartOptions: {
             xAxis: [{
-                plotLines: [{
-                    label: {
-                        text: 'Today',
-                        align: 'right'
-                    },
-                    value: Date.UTC(2023, 5, 4)
-                }],
-                plotBands: [{
-                    from: Date.UTC(2023, 4, 8),
-                    to: Date.UTC(2023, 4, 22)
-                }],
+                plotLines,
+                plotBands,
                 dateTimeLabelFormats: {
                     day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
                 },
@@ -361,17 +331,8 @@ Dashboards.board('container', {
             },
             xAxis: {
                 type: 'datetime',
-                plotLines: [{
-                    label: {
-                        text: 'Today',
-                        align: 'right'
-                    },
-                    value: Date.UTC(2023, 5, 4)
-                }],
-                plotBands: [{
-                    from: Date.UTC(2023, 4, 8),
-                    to: Date.UTC(2023, 4, 22)
-                }]
+                plotLines,
+                plotBands
             },
             legend: {
                 enabled: true,
@@ -381,4 +342,4 @@ Dashboards.board('container', {
             }
         }
     }]
-});
+}, true);
