@@ -2,9 +2,7 @@
 To do
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
-- When to show reset zoom button? Not on mousewheel.
-- Try replacing `minPixelPadding` translation roundtrip with `minPointOffset`.
-  It should mean the same.
+- When to show reset zoom button? On pinch? Not on mousewheel.
 - Rename `panningState` to `allExtremes`, having properties `dataMin` and
   `dataMax`. Then it can be spread right into the extremes object if defined.
   Also checked for `cropped` to avoid doing this for nothing.
@@ -26,13 +24,14 @@ To do
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
     ).then(response => response.json())
         .then(data =>
-            data.map(p => p[1])
+            data
+                .map(p => p[1])
                 .slice(0, 20)
         );
 
-    Highcharts.chart('container', {
+    Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'xy',
+            zoomType: 'x',
             panning: {
                 enabled: true
             },
@@ -40,7 +39,8 @@ To do
                 enabled: true
             },
             panKey: 'shift',
-            width: 600
+            width: 600,
+            type: 'column'
         },
         title: {
             text: 'USD to EUR exchange rate over time',
@@ -94,7 +94,6 @@ To do
         },
 
         series: [{
-            type: 'column',
             name: 'USD to EUR',
             data
         }]

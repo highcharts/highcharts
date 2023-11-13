@@ -3690,7 +3690,7 @@ class Chart {
         this.hoverPoints?.forEach((point): void => point.setState());
 
         for (const axis of axes) {
-            const { horiz, len, reversed } = axis,
+            const { horiz, len, minPointOffset = 0, reversed } = axis,
                 // The x, y, width and height parameters are used for selection
                 // zoom. In this case, moveX, moveY, zoomX and zoomY are not
                 // enough because we need to tie the zoom to specific axes,
@@ -3699,7 +3699,6 @@ class Chart {
                     ((horiz ? x : y) || 0) - axis.pos,
                 scale = (horiz ? zoomX : zoomY) ??
                     ((horiz ? width : height) || len) / len,
-                halfPointRange = axis.minPointOffset || 0,
                 pointRangeDirection =
                     (reversed && !inverted) ||
                     (!reversed && inverted) ?
@@ -3709,13 +3708,13 @@ class Chart {
                 minPx = move;
 
             let newMin = axis.toValue(minPx, true) +
-                    halfPointRange * pointRangeDirection,
+                    minPointOffset * pointRangeDirection,
                 newMax =
                     axis.toValue(
                         minPx + len * scale, true
                     ) -
                     (
-                        (halfPointRange * pointRangeDirection) ||
+                        (minPointOffset * pointRangeDirection) ||
                         // Polar zoom tests failed when this was not commented:
                         // (axis.isXAxis && axis.pointRangePadding) ||
                         0
@@ -3773,28 +3772,18 @@ class Chart {
                     panningState && panningState.startMin,
                     extremes.dataMin
                 ),
-                axis.allowZoomOutside || scale === 1 ? (
-                    halfPointRange ?
-                        extremes.min :
-                        axis.toValue(
-                            axis.toPixels(extremes.min) -
-                            axis.minPixelPadding
-                        )
-                ) : extremes.dataMin
+                axis.allowZoomOutside || scale === 1 ?
+                    extremes.min :
+                    extremes.dataMin
             );
             const ceiling = Math.max(
                 pick(
                     panningState && panningState.startMax,
                     extremes.dataMax
                 ),
-                axis.allowZoomOutside || scale === 1 ? (
-                    halfPointRange ?
-                        extremes.max :
-                        axis.toValue(
-                            axis.toPixels(extremes.max) +
-                            axis.minPixelPadding
-                        )
-                ) : extremes.dataMax
+                axis.allowZoomOutside || scale === 1 ?
+                    extremes.max :
+                    extremes.dataMax
             );
 
             axis.panningState = panningState;
