@@ -19,6 +19,7 @@ const columns = (() => {
     return cols;
 })();
 
+// eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataTable({ columns })
 });
