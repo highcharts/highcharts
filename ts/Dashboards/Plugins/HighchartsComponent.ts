@@ -1088,10 +1088,10 @@ namespace HighchartsComponent {
      * Names that should be mapped to point values or props. You can
      * declare which columns will be parameter of the point. It is useful for
      * series like OHLC, candlestick, columnrange or arearange.
-     * 
+     *
      * The seriesName field is mandatory for displaying series (for instance in
      * the legend) properly.
-     * 
+     *
      * ```
      * Example
      * columnAssignment: {
