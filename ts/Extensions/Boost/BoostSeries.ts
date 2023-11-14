@@ -25,7 +25,6 @@ import type {
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -34,9 +33,6 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
@@ -80,6 +76,7 @@ declare module '../../Core/Series/SeriesLike' {
         boost?: BoostSeriesAdditions;
         fill?: boolean;
         fillOpacity?: boolean;
+        processedData?: Array<(PointOptions|PointShortOptions)>;
         sampling?: boolean;
     }
 }
@@ -828,7 +825,7 @@ function getPoint(
         ),
         point = (new PointClass()).init(
             series as BoostSeriesComposition,
-            (series.options.data as any)[boostPoint.i],
+            (series.options.data || [])[boostPoint.i],
             xData ? xData[boostPoint.i] : void 0
         ) as BoostPointComposition;
 
@@ -855,6 +852,10 @@ function getPoint(
 function scatterProcessData(
     series: Series
 ): (boolean|undefined) {
+
+    if (series.isDirtyData) {
+        return;
+    }
 
     series.yAxis.setTickInterval();
 
@@ -917,7 +918,7 @@ function seriesRenderCanvas(this: Series): void {
         yAxis = this.yAxis,
         xData = options.xData || this.processedXData,
         yData = options.yData || this.processedYData,
-        rawData = options.data,
+        rawData = this.processedData || options.data,
         xExtremes = xAxis.getExtremes(),
         xMin = xExtremes.min,
         xMax = xExtremes.max,
