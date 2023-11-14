@@ -148,6 +148,11 @@ function compose(
     if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'render', onSeriesRender);
         wrap(SeriesClass.prototype, 'getColor', wrapSeriesGetColor);
+        addEvent(
+            SeriesClass,
+            'afterRender',
+            seriesAfterRenderPatternScaleCorrection
+        );
     }
 
     if (pushUnique(composedMembers, SVGRendererClass)) {
@@ -156,12 +161,6 @@ function compose(
         });
         addEvent(SVGRendererClass, 'complexColor', onRendererComplexColor);
     }
-
-    addEvent(
-        SeriesClass,
-        'afterRender',
-        seriesAfterRenderPatternScaleCorrection
-    );
 
 }
 
