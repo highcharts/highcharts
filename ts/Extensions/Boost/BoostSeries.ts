@@ -1177,7 +1177,12 @@ function seriesRenderCanvas(this: Series): void {
 
             // Go back to prototype, ready to build
             delete (this as Partial<typeof this>).buildKDTree;
-            this.buildKDTree();
+
+            // Check that options exist, as async processing
+            // could mean the series is removed at this point (#19895)
+            if (this.options) {
+                this.buildKDTree();
+            }
 
             if (boostOptions.debug.timeKDTree) {
                 console.timeEnd('kd tree building'); // eslint-disable-line no-console

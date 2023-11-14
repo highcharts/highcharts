@@ -7,6 +7,7 @@ on:
       - 'ts/Stock/**'
       - 'ts/Core/Axis/OrdinalAxis.ts'
       - 'ts/Extensions/Annotations/**'
+      - 'ts/Extensions/DataGrouping/**'
       - 'test/ts-node-unit-tests/benchmark/Stock/'
       - 'ts/Core/Chart/StockChart.ts'
       - 'ts/Core/Axis/BrokenAxis.ts'
