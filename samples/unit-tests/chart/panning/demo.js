@@ -374,7 +374,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
         chart: {
             type: 'area',
             panning: true,
-            width: 800
+            width: 600
         },
         plotOptions: {
             area: {
@@ -527,15 +527,15 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
         '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
-        'Right ticks'
+        'Panned all the way to the left of the axis, first category should show'
     );
 
     // Pan
     controller.pan([300, 200], [200, 200]);
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
-        '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
-        'Right ticks'
+        '1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
+        'Panned all the way to the right of the axis, last category should show'
     );
 });
 

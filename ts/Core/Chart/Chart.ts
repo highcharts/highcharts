@@ -3690,7 +3690,13 @@ class Chart {
         this.hoverPoints?.forEach((point): void => point.setState());
 
         for (const axis of axes) {
-            const { horiz, len, minPointOffset = 0, reversed } = axis,
+            const {
+                    horiz,
+                    len,
+                    minPointOffset = 0,
+                    options,
+                    reversed
+                } = axis,
                 // The x, y, width and height parameters are used for selection
                 // zoom. In this case, moveX, moveY, zoomX and zoomY are not
                 // enough because we need to tie the zoom to specific axes,
@@ -3704,7 +3710,6 @@ class Chart {
                     (!reversed && inverted) ?
                         -1 :
                         1,
-                extremes = axis.getExtremes(),
                 minPx = move;
 
             let newMin = axis.toValue(minPx, true) +
@@ -3760,43 +3765,67 @@ class Chart {
                 }
                 axis.allExtremes = allExtremes;
             }
-            extend(extremes, allExtremes || {});
 
-            const floor = Math.min(
-                    extremes.dataMin,
-                    axis.allowZoomOutside || scale === 1 ?
-                        extremes.min :
-                        extremes.dataMin
+            const { dataMin, dataMax, min, max } = extend(
+                    axis.getExtremes(),
+                    allExtremes || {}
+                ),
+                range = newMax - newMin,
+                padRange = axis.categories ? 0 : Math.min(
+                    range,
+                    dataMax - dataMin
+                ),
+                paddedMin = dataMin - padRange * (
+                    defined(options.min) ? 0 : options.minPadding
+                ),
+                paddedMax = dataMax + padRange * (
+                    defined(options.max) ? 0 : options.maxPadding
+                ),
+
+                // We're allowed to zoom outside the data extremes if we're
+                // dealing with a bubble chart, if we're panning, or if we're
+                // pinching or mousewheeling in.
+                allowZoomOutside = axis.allowZoomOutside ||
+                    scale === 1 ||
+                    (trigger !== 'zoom' && scale < 1),
+
+                // Calculate the floor and the ceiling
+                floor = Math.min(
+                    options.min ?? paddedMin,
+                    paddedMin,
+                    allowZoomOutside ? min : paddedMin
                 ),
                 ceiling = Math.max(
-                    extremes.dataMax,
-                    axis.allowZoomOutside || scale === 1 ?
-                        extremes.max :
-                        extremes.dataMax
+                    options.max ?? paddedMax,
+                    paddedMax,
+                    allowZoomOutside ? max : paddedMax
                 );
 
             // It is not necessary to calculate extremes on ordinal axis,
-            // because they are already calculated, so we don't want to
-            // override them.
+            // because they are already calculated, so we don't want to override
+            // them.
             if (!axis.isOrdinal || scale !== 1 || reset) {
                 // If the new range spills over, either to the min or max,
-                // adjust the new range.
-                const range = newMax - newMin;// * Math.min(scale, 1);
+                // adjust it.
                 if (newMin < floor) {
                     newMin = floor;
-                    newMax = newMin + range;
+                    if (scale <= 1) {
+                        newMax = newMin + range;
+                    }
                 }
 
                 if (newMax > ceiling) {
                     newMax = ceiling;
-                    newMin = newMax - range;
+                    if (scale <= 1) {
+                        newMin = newMax - range;
+                    }
                 }
 
                 // Set new extremes if they are actually new
                 if (
                     reset || (
                         axis.series.length &&
-                        (newMin !== extremes.min || newMax !== extremes.max) &&
+                        (newMin !== min || newMax !== max) &&
                         newMin >= floor &&
                         newMax <= ceiling
                     )
@@ -3823,7 +3852,7 @@ class Chart {
                             { trigger }
                         );
 
-                        if (!reset) {
+                        if (!reset && (newMin > floor || newMax < ceiling)) {
                             displayButton = true;
                         }
                     }

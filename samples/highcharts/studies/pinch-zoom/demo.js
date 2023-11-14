@@ -2,7 +2,7 @@
 To do
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
-- When to show reset zoom button? On pinch? Not on mousewheel.
+- When to show reset zoom button? Investigate and run some combinations.
 - Refactor: touchpan and zoom now uses basically the same chart.axes.filter
   expression
 - Refactor: All zoom, pan, touch and wheel operations should be possible to
@@ -10,12 +10,13 @@ To do
   target (like the selectionBox).
 - Clean up mouseDownX, mouseDownY, lastTouches, pinchStart. See if we can store
   one single event instead.
-- MouseWheel hard to start when minPadding and maxPadding since
-  `allowZoomOutside` change. Check out if minPadding, maxPadding and threshold
+- Check out if minPadding, maxPadding and threshold
   can be refactored out and shared with setTickPositions.
 - Check if marker/attr stuff is necessary in `getSelectionBox`. Simple .getBBox
   should be sufficient.
-- Stock chart: navigator not working after zooming on y
+- Stock chart: navigator not working after zooming on y. Reset button quirks.
+- More granular isPanning. When panning on x-axis, isPanning prevents end on
+  ticks on the y-axis. Maybe isPanning should be on the axis, not the chart.
 */
 
 
@@ -32,16 +33,15 @@ To do
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'y',
+            zoomType: 'x',
             panning: {
                 enabled: true,
-                type: 'y'
+                type: 'x'
             },
             mouseWheel: {
                 enabled: true
             },
-            panKey: 'shift',
-            width: 600
+            panKey: 'shift'
         },
         title: {
             text: 'USD to EUR exchange rate over time',
@@ -51,6 +51,10 @@ To do
             text: document.ontouchstart === undefined ?
                 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
             align: 'left'
+        },
+        xAxis: {
+            minPadding: 0.2,
+            maxPadding: 0.2
         },
         yAxis: {
             title: {

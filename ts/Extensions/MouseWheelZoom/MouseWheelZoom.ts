@@ -101,10 +101,6 @@ const zoomBy = function (
     mouseX -= chart.plotLeft;
     mouseY -= chart.plotTop;
 
-    if (defined(wheelTimer)) {
-        clearTimeout(wheelTimer);
-    }
-
     const hasZoomed = chart.transform({
         axes,
         moveX: mouseX - howMuch * mouseX,
@@ -114,6 +110,9 @@ const zoomBy = function (
     });
 
     if (hasZoomed) {
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
 
         // Some time after the last mousewheel event, run drop. In case any of
         // the affected axes had `startOnTick` or `endOnTick`, they will be
