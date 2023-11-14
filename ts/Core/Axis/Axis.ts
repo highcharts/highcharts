@@ -2670,7 +2670,7 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#zoom
-     */
+     * /
     public zoom(newMin?: number, newMax?: number): boolean {
         const axis = this,
             dataMin = this.dataMin,
@@ -2716,12 +2716,10 @@ class Axis {
 
                 // In full view, displaying the reset zoom button is not
                 // required
-                /*
                 axis.displayBtn = (
                     typeof newMin !== 'undefined' ||
                     typeof newMax !== 'undefined'
                 );
-                */
 
                 // Do it
                 axis.setExtremes(
@@ -2737,6 +2735,7 @@ class Axis {
 
         return evt.zoomed;
     }
+    */
 
     /**
      * Update the axis metrics.

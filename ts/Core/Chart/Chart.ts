@@ -135,7 +135,6 @@ declare module './ChartLike' {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
-        zoom(event: Pointer.SelectEventObject): void;
         zoomOut(): void;
     }
 }
@@ -3529,7 +3528,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#zoom
      * @param {Highcharts.SelectEventObject} event
-     */
+     * /
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer;
@@ -3578,11 +3577,9 @@ class Chart {
                         axisData.min,
                         axisData.max
                     );
-                    /*
                     if (axis.displayBtn) {
                         displayButton = true;
                     }
-                    */
                 }
             });
         }
@@ -3607,6 +3604,7 @@ class Chart {
             );
         }
     }
+    */
 
     /**
      * Pan the chart by dragging the mouse across the pane. This function is

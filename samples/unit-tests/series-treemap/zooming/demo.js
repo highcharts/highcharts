@@ -53,7 +53,7 @@ QUnit.test(
             extremes;
 
         // Zoom should work when enabled
-        xAxis.zoom(80, 100);
+        xAxis.setExtremes(80, 100);
         chart.redraw();
         extremes = xAxis.getExtremes();
         assert.strictEqual(
@@ -67,7 +67,8 @@ QUnit.test(
             'xAxis.max is correct according to zoom'
         );
 
-        // When allowDrillToNode the extremes should be the same as the point values of the root node.
+        // When allowDrillToNode the extremes should be the same as the point
+        // values of the root node.
         chart.series[0].update({
             allowDrillToNode: true
         });
@@ -85,7 +86,7 @@ QUnit.test(
         );
 
         // When allowDrillToNode extremes should be unaffected by zoom.
-        xAxis.zoom(80, 100);
+        xAxis.setExtremes(80, 100);
         extremes = xAxis.getExtremes();
         assert.strictEqual(Highcharts.correctFloat(extremes.min), 0, 'xAxis.min is unaffected by zoom');
         assert.strictEqual(Highcharts.correctFloat(extremes.max), 50, 'xAxis.max is unaffected by zoom');

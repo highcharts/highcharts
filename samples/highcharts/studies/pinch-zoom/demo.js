@@ -1,5 +1,7 @@
 /*
 To do
+- Remove Chart.zoom and Axis.zoom functions. Marker clusters need to be updated
+  to use Chart.transform.
 - Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
   positioning.
 - When to show reset zoom button? Investigate and run some combinations.
