@@ -798,7 +798,6 @@ function renderIfNotSeriesBoosting(series: Series): void {
 /**
  * Return a full Point object based on the index.
  * The boost module uses stripped point objects for performance reasons.
-
  * @private
  * @param {object|Highcharts.Point} boostPoint
  *        A stripped-down point object
@@ -857,6 +856,12 @@ function scatterProcessData(
         return;
     }
 
+    if (!series.boost) {
+        series.data.length = 0;
+        series.isDirty = true;
+        return;
+    }
+
     series.yAxis.setTickInterval();
 
     const {
@@ -875,7 +880,8 @@ function scatterProcessData(
         return;
     }
 
-    const processedXData: Array<number> = [],
+    const processedData: Array<PointOptions> = [],
+        processedXData: Array<number> = [],
         processedYData: Array<number> = [],
         xData = series.xData || [],
         yData = series.yData || [];
@@ -892,6 +898,7 @@ function scatterProcessData(
             x >= xMin && x <= xMax &&
             y >= yMin && y <= yMax
         ) {
+            processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
         } else {
@@ -901,6 +908,7 @@ function scatterProcessData(
 
     series.cropped = cropped;
     series.cropStart = 0;
+    series.processedData = processedData;
     series.processedXData = processedXData;
     series.processedYData = processedYData;
 
@@ -1372,7 +1380,7 @@ function wrapSeriesProcessData(
             !hasExtremes(series, true)
         ) {
             proceed.apply(series, [].slice.call(arguments, 1));
-            if (series.type === 'scatter' && series.boosted) {
+            if (series.type === 'scatter') {
                 scatterProcessData(series);
             }
             dataToMeasure = series.processedXData;
