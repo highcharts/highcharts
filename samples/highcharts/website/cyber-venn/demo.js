@@ -1,5 +1,5 @@
 // const imgPath = 'http://192.168.1.176:3030/';
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@ffc1cc549ab7d0c8aa2cb7933f6026eb0cc0451d/samples/graphics/cyber-monday/';
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d645df6f0c5d8540e5d059a043051cd862f259d0/samples/graphics/cyber-monday/';
 
 // title, tip, image
 const collection = ['Add to your Highcharts Collection', 'If you\'ve been holding out for a deal on a particular Highcharts data visualization libraries, you\'ll want to check out our Cyber Week Deal.', 'core.svg'];
@@ -18,7 +18,7 @@ const money = ['Save time<br>and money', 'With a low learning curve and detailed
 
 const curve = ['Dive in without a learning curve',  'Filled with helpful examples, our API reference will have you customizing your data visualizations in no time and make maintaining them a breeze.',  'cyber-curve.svg'];
 
-const terms = ['Offer Terms', 'Get 70% off <a href="https://www.highcharts.com/products/dashboards/">Highcharts Dashboards</a> Annual License with the purchase of any Highcharts Charting Library. The discount applies to the first year only. Licenses must be purchased in our <a href="https://shop.highcharts.com/">webshop.</a> Only one discount per purchase.', null];
+const terms = ['Offer Terms', 'Get 70% off <a href="https://www.highcharts.com/products/dashboards/">Highcharts Dashboards</a> with the purchase of any Highcharts Charting Library. The discount applies to the first year only. Licenses must be purchased in our <a href="https://shop.highcharts.com/">webshop.</a> Only one discount per purchase.', null];
 
 const presaleTips = [
     collection[1], frameworks[1], null, products[1],
@@ -57,7 +57,7 @@ const saleTitles = [
     null, money[0], null, null, null, curve[0], null, terms[0]
 ];
 
-const countDownDate = new Date('2023-11-07T07:00:00Z').getTime();
+const countDownDate = new Date('2023-11-27T07:00:00Z').getTime();
 const now = new Date().getTime();
 const distance = countDownDate - now;
 
@@ -131,7 +131,7 @@ const presale = {
             value: 5,
             name: 'collection',
             accessibility: {
-                description: 'Add to your Highcharts Collection'
+                description: 'Add to your Highcharts Collection - If you\'ve been holding out for a deal on a particular Highcharts data visualization libraries, you\'ll want to check out our Cyber Week Deal.'
             },
             dataLabels: {
                 format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg"><span class="text"><br>Add to your Highcharts Collection</span></div>',
@@ -143,7 +143,7 @@ const presale = {
             value: 5,
             name: 'frameworks',
             accessibility: {
-                description: 'Integrate with your favorite frameworks'
+                description: 'Integrate with your favorite frameworks - We provide official integrations for Angular, React, Vue and more.'
             },
             dataLabels: {
                 format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
@@ -164,7 +164,7 @@ const presale = {
             value: 5,
             name: 'products',
             accessibility: {
-                description: 'Explore our latest products'
+                description: 'Explore our latest products - We\'ve added several new exciting products and integrations to our offerings  this year. Check out our Roadmap for details.'
             },
             dataLabels: {
                 format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
@@ -176,7 +176,7 @@ const presale = {
             value: 3,
             name: 'customize',
             accessibility: {
-                description: 'Customize to fit your brand'
+                description: 'Customize to fit your brand - Easily style your data visualizations via our simple options-structure using JavaScript or CSS.'
             },
             dataLabels: {
                 format: '<div id="customize" class="labels"><img src="' + imgPath + 'cyber-customize.svg"><span class="text"><br>Customize to<br>fit your brand</span></div>'
@@ -185,7 +185,7 @@ const presale = {
             sets: ['3', '2'],
             value: 3,
             accessibility: {
-                description: 'Up your data viz game'
+                description: 'Up your data viz game - We do more than just charts. Elevate your data visualizations with our advanced Stock, Maps, and Gantt libraries.'
             },
             name: 'dataviz',
             dataLabels: {
@@ -197,7 +197,7 @@ const presale = {
             sets: ['3', '4'],
             value: 3,
             accessibility: {
-                description: 'Unleash your creativity'
+                description: 'Unleash your creativity - All of our products are SVG based and use the same simple JavaScript  configuration options, so it\'s easy to add and implement new libraries.'
             },
             name: 'creativity',
             dataLabels: {
@@ -221,7 +221,7 @@ const presale = {
             sets: ['5', '2'],
             value: 3,
             accessibility: {
-                description: 'Save time and money'
+                description: 'Save time and money - With a low learning curve and detailed API, our products help developers work smarter and faster, saving time and money.'
             },
             name: 'money',
             dataLabels: {
@@ -231,7 +231,7 @@ const presale = {
             sets: ['2', '4'],
             value: 1,
             accessibility: {
-                description: 'Our big offer'
+                description: 'Our big deal - Get 70% off Highcharts Dashboards with the purchase of any Highcharts Charting Library. The discount applies to the first year only. Licenses must be purchased in our webshop. Only one discount per purchase.'
             },
             name: 'bigdeal',
             notooltip: true,
@@ -260,7 +260,7 @@ const presale = {
             sets: ['3', '4', '5'],
             value: 2,
             accessibility: {
-                description: 'Dive in without a learning curve'
+                description: 'Dive in without a learning curve - Filled with helpful examples, our API reference will have you customizing your data visualizations in no time and make maintaining them a breeze.'
             },
             name: 'curve',
             dataLabels: {
@@ -388,7 +388,7 @@ const sale = {
             value: 5,
             name: 'collection',
             accessibility: {
-                description: 'Add to your Highcharts Collection'
+                description: 'Add to your Highcharts Collection - If you\'ve been holding out for a deal on a particular Highcharts data visualization libraries, you\'ll want to check out our Cyber Week Deal.'
             },
             dataLabels: {
                 format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg" alt="Highcharts collection icon"><span class="text"><br>Add to your Highcharts Collection</span></div>',
@@ -400,7 +400,7 @@ const sale = {
             value: 5,
             name: 'frameworks',
             accessibility: {
-                description: 'Integrate with your favorite frameworks'
+                description: 'Integrate with your favorite frameworks - We provide official integrations for Angular, React, Vue and more.'
             },
             dataLabels: {
                 format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg" alt="frameworks icon"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
@@ -421,7 +421,7 @@ const sale = {
             value: 5,
             name: 'products',
             accessibility: {
-                description: 'Explore our latest products'
+                description: 'Explore our latest products - We\'ve added several new exciting products and integrations to our offerings  this year. Check out our Roadmap for details.'
             },
             dataLabels: {
                 format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg" alt="our products icon"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
@@ -433,7 +433,7 @@ const sale = {
             value: 3,
             name: 'customize',
             accessibility: {
-                description: 'Customize to fit your brand'
+                description: 'Customize to fit your brand - Easily style your data visualizations via our simple options-structure using JavaScript or CSS.'
             },
             dataLabels: {
                 format: '<div id="customize" class="labels"><img src="' + imgPath + 'cyber-customize.svg" alt="customize icon"><span class="text"><br>Customize to<br>fit your brand</span></div>'
@@ -442,7 +442,7 @@ const sale = {
             sets: ['3', '2'],
             value: 3,
             accessibility: {
-                description: 'Up your data viz game'
+                description: 'Up your data viz game - We do more than just charts. Elevate your data visualizations with our advanced Stock, Maps, and Gantt libraries.'
             },
             name: 'dataviz',
             dataLabels: {
@@ -454,7 +454,7 @@ const sale = {
             sets: ['3', '4'],
             value: 3,
             accessibility: {
-                description: 'Unleash your creativity'
+                description: 'Unleash your creativity - All of our products are SVG based and use the same simple JavaScript  configuration options, so it\'s easy to add and implement new libraries.'
             },
             name: 'creativity',
             dataLabels: {
@@ -478,7 +478,7 @@ const sale = {
             sets: ['5', '2'],
             value: 3,
             accessibility: {
-                description: 'Save time and money'
+                description: 'Save time and money - With a low learning curve and detailed API, our products help developers work smarter and faster, saving time and money.'
             },
             name: 'money',
             dataLabels: {
@@ -524,7 +524,7 @@ const sale = {
             sets: ['2', '3', '5'],
             value: 1,
             accessibility: {
-                description: 'Dive in without a learning curve'
+                description: 'Dive in without a learning curve - Filled with helpful examples, our API reference will have you customizing your data visualizations in no time and make maintaining them a breeze.'
             },
             name: 'curve',
             opacity: 1,
@@ -554,7 +554,7 @@ const sale = {
             sets: ['2', '3', '4', '5'],
             value: 3,
             accessibility: {
-                enabled: false
+                description: 'Our big deal - Get 70% off Highcharts Dashboards with the purchase of any Highcharts Charting Library. The discount applies to the first year only. Licenses must be purchased in our webshop. Only one discount per purchase.'
             },
             opacity: 1,
             name: 'big deal',
@@ -590,4 +590,5 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         Highcharts.chart('venn', presale);
     }
+
 });
