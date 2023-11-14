@@ -668,10 +668,12 @@ function onPointDrillToCluster(
                 chart.pointer.zoomX = true;
                 chart.pointer.zoomY = true;
                 chart.transform({
-                    x: x1Px,
-                    y: y1Px,
-                    width: x2Px - x1Px,
-                    height: y2Px - y1Px
+                    target: {
+                        x: x1Px,
+                        y: y1Px,
+                        width: x2Px - x1Px,
+                        height: y2Px - y1Px
+                    }
                 });
             }
         }

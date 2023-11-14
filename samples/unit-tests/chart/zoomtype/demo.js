@@ -414,10 +414,12 @@ QUnit.test('Zooming scatter charts', function (assert) {
     y1 = chart.yAxis[0].toPixels(84);
     y2 = chart.yAxis[0].toPixels(91);
     chart.transform({
-        x: x1,
-        y: y1,
-        width: x2 - x1,
-        height: y2 - y1,
+        target: {
+            x: x1,
+            y: y1,
+            width: x2 - x1,
+            height: y2 - y1
+        },
         trigger: 'zoom'
     });
 

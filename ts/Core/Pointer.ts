@@ -447,25 +447,18 @@ class Pointer {
      * @function Highcharts.Pointer#getSelectionBox
      * @emits getSelectionBox
      */
-    public getSelectionBox(marker: SVGElement): Partial<BBoxObject> {
+    public getSelectionBox(marker: SVGElement): BBoxObject {
         const e = {
             args: { marker },
-            result: {} as Partial<BBoxObject>
+            result: {
+                x: marker.attr ? +marker.attr('x') : marker.x,
+                y: marker.attr ? +marker.attr('y') : marker.y,
+                width: marker.attr ? marker.attr('width') : marker.width,
+                height: marker.attr ? marker.attr('height') : marker.height
+            } as BBoxObject
         };
 
-        fireEvent(
-            this,
-            'getSelectionBox',
-            e,
-            (e: any): void => {
-                e.result = {
-                    x: marker.attr ? +marker.attr('x') : marker.x,
-                    y: marker.attr ? +marker.attr('y') : marker.y,
-                    width: marker.attr ? marker.attr('width') : marker.width,
-                    height: marker.attr ? marker.attr('height') : marker.height
-                };
-            }
-        );
+        fireEvent(this, 'getSelectionBox', e);
 
         return e.result;
     }
@@ -498,14 +491,6 @@ class Pointer {
         }
 
         if (selectionMarker && e) {
-            const selectionBox = this.getSelectionBox(selectionMarker),
-                selection: Pointer.SelectEventObject = {
-                    originalEvent: e, // #4890
-                    xAxis: [],
-                    yAxis: [],
-                    ...selectionBox
-                };
-
             /*
             // Start by false runZoom, unless when we have a mapView, in which
             // case the zoom will be handled in the selection event.
@@ -556,6 +541,7 @@ class Pointer {
 
             // A selection has been made
             if (this.hasDragged) {
+                const target = this.getSelectionBox(selectionMarker);
                 chart.transform({
                     axes: chart.axes.filter((a): boolean|undefined =>
                         a.zoomEnabled &&
@@ -564,14 +550,13 @@ class Pointer {
                             (a.coll === 'yAxis' && this.zoomY)
                         )
                     ),
-                    // The move and zoom properties are not suffient to zoom on
-                    // panes and polar charts.
-                    // moveX: x - chart.plotLeft,
-                    // moveY: y - chart.plotTop,
-                    // zoomX: width / chart.plotWidth,
-                    // zoomY: height / chart.plotHeight,
-                    selection,
-                    ...selectionBox
+                    selection: {
+                        originalEvent: e, // #4890
+                        xAxis: [],
+                        yAxis: [],
+                        ...target
+                    },
+                    target
                 });
             }
 

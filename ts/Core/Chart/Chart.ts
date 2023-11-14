@@ -3667,18 +3667,16 @@ class Chart {
         const {
                 axes = this.axes,
                 event,
-                height,
                 moveX,
                 moveY,
                 reset,
                 selection,
+                target,
                 trigger,
-                width,
-                x,
-                y,
                 zoomX,
                 zoomY
             } = params,
+            { x, y, width, height } = target || {},
             { inverted, resetZoomButton } = this;
 
         let hasZoomed = false,
@@ -4032,15 +4030,13 @@ namespace Chart {
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
-        height?: number;
         moveX?: number;
         moveY?: number;
+        reference?: Partial<BBoxObject>;
         reset?: boolean;
         selection?: Pointer.SelectEventObject;
+        target?: BBoxObject;
         trigger?: string;
-        width?: number;
-        x?: number;
-        y?: number;
         zoomX?: number;
         zoomY?: number;
     }
