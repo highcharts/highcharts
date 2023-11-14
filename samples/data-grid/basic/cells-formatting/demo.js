@@ -7,6 +7,7 @@ const columns = {
     metaData: ['a', 'b', 'c', 'd']
 };
 
+// eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataTable({ columns }),
     columns: {
