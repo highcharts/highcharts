@@ -65,7 +65,8 @@
 
 body,
 #demo-content {
-    background-color: #fff;
+    background-color: transparent;
+    background-color: black;
 }
 
 #promo {
@@ -75,15 +76,30 @@ body,
 #sale {
     position: absolute;
     z-index: 1000;
-    left: -82px;
-    top: -128px;
-    width: 158px;
+    left: -70px;
+    top: -82px;
+    width: 148px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #sale img {
-    width: 138px;
+    width: auto;
     margin-left: 0;
     margin-top: 0;
+}
+
+#sale #discount {
+    margin-bottom: 10px;
+}
+
+#sale #logo-type {
+    margin-bottom: 12px;
+}
+
+#sale #icon {
+    display: none;
 }
 
 #sale p {
@@ -94,6 +110,25 @@ body,
     text-align: center;
     font-weight: bold;
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
+#sale #dash-button {
+    background-color: #047857;
+    padding: 4px 8px;
+    color: white;
+    border-radius: 4px;
+    margin: 4px 20px;
+    width: auto;
+    display: block;
+    justify-self: center;
+}
+
+#sale #dash-button a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.6rem;
+    padding-top: 4px;
+    display: block;
 }
 
 #sale #date {
@@ -108,6 +143,15 @@ body,
 
 #sale span {
     display: none;
+}
+
+#sale #terms.labels span.text,
+#sale #terms.labels a {
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    color: #fff;
+    font-weight: 300;
+    font-size: 0.65rem;
+    opacity: 1;
 }
 
 #venn {
@@ -228,15 +272,6 @@ body,
     font-weight: 300;
     font-size: 0.8rem;
     opacity: 0;
-}
-
-#terms.labels span.text,
-#terms.labels a {
-    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.8rem;
-    opacity: 1;
 }
 
 .labels span.text:hover {
@@ -445,15 +480,24 @@ body,
     #sale {
         position: absolute;
         z-index: 1000;
-        left: -122px;
-        top: -162px;
-        width: 248px;
+        left: -84px;
+        top: -140px;
+        width: 168px;
     }
 
     #sale img {
-        width: 200px;
-        margin-left: -8px;
+        width: auto;
+        margin-left: 0;
         margin-top: 10px;
+    }
+
+    #sale #icon {
+        display: block;
+        margin-top: -20px;
+    }
+
+    #sale #logo-type {
+        margin-top: -20px;
     }
 
     #sale span {
@@ -463,6 +507,17 @@ body,
     #sale #date {
         font-size: 12px;
         margin: 10px 0 0;
+    }
+
+    #sale #dash-button {
+        padding: 6px 8px;
+        margin: 10px 12px;
+        width: auto;
+    }
+
+    #sale #dash-button a {
+        font-size: 0.8rem;
+        padding-top: 4px;
     }
 
     #sale p {
@@ -538,14 +593,35 @@ body,
     #sale {
         position: absolute;
         z-index: 1000;
-        left: -142px;
-        top: -182px;
-        width: 288px;
+        left: -122px;
+        top: -172px;
+        width: 248px;
+    }
+
+    #sale #dash-button {
+        padding: 8px 12px;
+        margin: 10px 35px;
+        width: auto;
+    }
+
+    #sale #dash-button a {
+        color: white;
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding-top: 4px;
+        display: block;
     }
 
     #sale img {
-        width: 280px;
-        margin-left: -8px;
+        width: auto;
+        margin-left: 0;
+        margin-top: -10px;
+        justify-self: center;
+    }
+
+    #sale #logo-type {
+        margin-top: -20px;
+        margin-bottom: 10px;
     }
 
     #sale p {

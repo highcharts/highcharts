@@ -1,3 +1,6 @@
+// const imgPath = 'http://192.168.1.176:3030/';
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@ffc1cc549ab7d0c8aa2cb7933f6026eb0cc0451d/samples/graphics/cyber-monday/';
+
 // title, tip, image
 const collection = ['Add to your Highcharts Collection', 'If you\'ve been holding out for a deal on a particular Highcharts data visualization libraries, you\'ll want to check out our Cyber Week Deal.', 'core.svg'];
 
@@ -15,8 +18,7 @@ const money = ['Save time<br>and money', 'With a low learning curve and detailed
 
 const curve = ['Dive in without a learning curve',  'Filled with helpful examples, our API reference will have you customizing your data visualizations in no time and make maintaining them a breeze.',  'cyber-curve.svg'];
 
-const terms = ['Offer Terms', 'Get 70% off Highcharts Dashboards when you purchase of any Highcharts Charting Library.', null];
-
+const terms = ['Offer Terms', 'Get 70% off <a href="https://www.highcharts.com/products/dashboards/">Highcharts Dashboards</a> Annual License with the purchase of any Highcharts Charting Library. The discount applies to the first year only. Licenses must be purchased in our <a href="https://shop.highcharts.com/">webshop.</a> Only one discount per purchase.', null];
 
 const presaleTips = [
     collection[1], frameworks[1], null, products[1],
@@ -54,9 +56,6 @@ const saleTitles = [
     customize[0], dataviz[0], creativity[0],
     null, money[0], null, null, null, curve[0], null, terms[0]
 ];
-
-
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/';
 
 const countDownDate = new Date('2023-11-07T07:00:00Z').getTime();
 const now = new Date().getTime();
@@ -371,7 +370,7 @@ const sale = {
             let html = '<div class="venntip">' +
             '<div id="tip-title">';
             if (img !== null) {
-                html = html + '<img src="' + imgPath + img + '"></img>';
+                html = html + '<img src="' + imgPath + img + '" alt="title"></img>';
             }
             html = html + '<span class="title">' + title + '</span></div>' +
             '<span>' + tiptext + '</span></div>';
@@ -392,7 +391,7 @@ const sale = {
                 description: 'Add to your Highcharts Collection'
             },
             dataLabels: {
-                format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg"><span class="text"><br>Add to your Highcharts Collection</span></div>',
+                format: '<div id="collection" class="labels"><img src="' + imgPath + 'cyber-collection.svg" alt="Highcharts collection icon"><span class="text"><br>Add to your Highcharts Collection</span></div>',
                 y: -10
 
             }
@@ -404,7 +403,7 @@ const sale = {
                 description: 'Integrate with your favorite frameworks'
             },
             dataLabels: {
-                format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
+                format: '<div id="frameworks" class="labels"><img src="' + imgPath + 'cyber-frameworks.svg" alt="frameworks icon"><span class="text"><br>Integrate with<br>your favorite<br>frameworks</span></div>'
             }
         }, {
             sets: ['4'],
@@ -425,7 +424,7 @@ const sale = {
                 description: 'Explore our latest products'
             },
             dataLabels: {
-                format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
+                format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg" alt="our products icon"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
                 y: -10
 
             }
@@ -437,7 +436,7 @@ const sale = {
                 description: 'Customize to fit your brand'
             },
             dataLabels: {
-                format: '<div id="customize" class="labels"><img src="' + imgPath + 'cyber-customize.svg"><span class="text"><br>Customize to<br>fit your brand</span></div>'
+                format: '<div id="customize" class="labels"><img src="' + imgPath + 'cyber-customize.svg" alt="customize icon"><span class="text"><br>Customize to<br>fit your brand</span></div>'
             }
         }, {
             sets: ['3', '2'],
@@ -447,7 +446,7 @@ const sale = {
             },
             name: 'dataviz',
             dataLabels: {
-                format: '<div id="dataviz" class="labels"><img src="' + imgPath + 'cyber-dataviz.svg"><span class="text"><br>Up your<br>data viz game</span></div>',
+                format: '<div id="dataviz" class="labels"><img src="' + imgPath + 'cyber-dataviz.svg" alt="data viz icon"><span class="text"><br>Up your<br>data viz game</span></div>',
                 y: -20,
                 x: 10
             }
@@ -459,7 +458,7 @@ const sale = {
             },
             name: 'creativity',
             dataLabels: {
-                format: '<div id="creativity" class="labels"><img src="' + imgPath + 'cyber-creativity.svg"><span class="text"><br>Unleash your<br>creativity</span></div>'
+                format: '<div id="creativity" class="labels"><img src="' + imgPath + 'cyber-creativity.svg" alt="creativity icon"><span class="text"><br>Unleash your<br>creativity</span></div>'
             }
         }, {
             sets: ['2', '4', '5'],
@@ -483,7 +482,7 @@ const sale = {
             },
             name: 'money',
             dataLabels: {
-                format: '<div id="money" class="labels"><img src="' + imgPath + 'cyber-money.svg"><span class="text"><br>Save time<br>and money</div>'
+                format: '<div id="money" class="labels"><img src="' + imgPath + 'cyber-money.svg" alt="money icon"><span class="text"><br>Save time<br>and money</div>'
             }
         }, {
             sets: ['2', '4'],
@@ -530,7 +529,7 @@ const sale = {
             name: 'curve',
             opacity: 1,
             dataLabels: {
-                format: '<div id="curve" class="labels"><img src="' + imgPath + 'cyber-curve.svg"><span class="text"><br>Dive in without a<br>learning curve</div>',
+                format: '<div id="curve" class="labels"><img src="' + imgPath + 'cyber-curve.svg" alt="learning curve icon"><span class="text"><br>Dive in without a<br>learning curve</div>',
                 y: -10
             },
             tooltip: {
@@ -561,11 +560,19 @@ const sale = {
             name: 'big deal',
             dataLabels: {
                 enabled: true,
-                format: `<div id="sale">
-                <div id="date">Nov 27 - Dec 3</div>
-                <img src="http://192.168.1.176:3030/product-logo.png"/>
+                format: `
+                <div id="sale">
+                <img id="discount" src="${imgPath}discount.svg" alt="70% off"/>
+                <img id="icon" src="${imgPath}icon.svg" 
+                alt="dashboards product icon"/>
+                <img id="logo-type" alt="Highcharts" 
+                src="${imgPath}logo-type.svg"/>
                 <p>Dashboards</p>
-                <div id="terms" class="labels"><span class="text">With the purchase of any <br>Highcharts Charting Library</span><a href="#">see terms</a></div>
+                <div id="terms" class="labels"><a href="#">see terms</a></div>
+                <div id="dash-button">
+                <a class="Button Button-secondary Button-small" 
+                href="https://www.highcharts.com/products/dashboards/">
+                <div class="Button-content">Explore Dashboards</div></a></div>
             </div>`
             }
         }]
