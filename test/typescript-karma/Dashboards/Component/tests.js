@@ -544,206 +544,204 @@ test('Data columnAssignment', async function (assert) {
 
     const dashboard = await Dashboards.board('container', {
         dataPool: {
-          connectors: [{
-            id: 'EUR-USD',
-            type: 'JSON',
-            options: {
-              data: [
-                ['Day', 'EUR', 'Rate'],
-                [1691971200000, 11, 1.0930],
-                [1692057600000, 23, 1.0926],
-                [1692144000000, 15, 1.0916]
-              ]
-            }
-          }, {
-            id: 'micro-element',
-            type: 'JSON',
-            options: {
-              firstRowAsNames: false,
-              columnNames: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
-              data: [
-                [1699434920314, 6, 5, 4, 1, 6, 9],
-                [1699494920314, 2, 6, 2, 5, 7, 9],
-                [1699534920314, 1, 9, 5, 3, 8, 8]
-              ]
-            }
-          }]
+            connectors: [{
+                id: 'EUR-USD',
+                type: 'JSON',
+                options: {
+                data: [
+                    ['Day', 'EUR', 'Rate'],
+                    [1691971200000, 11, 1.0930],
+                    [1692057600000, 23, 1.0926],
+                    [1692144000000, 15, 1.0916]
+                ]
+                }
+            }, {
+                id: 'micro-element',
+                type: 'JSON',
+                options: {
+                firstRowAsNames: false,
+                columnNames: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
+                data: [
+                    [1699434920314, 6, 5, 4, 1, 6, 9],
+                    [1699494920314, 2, 6, 2, 5, 7, 9],
+                    [1699534920314, 1, 9, 5, 3, 8, 8]
+                ]
+                }
+            }]
         },
         gui: {
-          layouts: [{
-            id: 'layout-1',
-            rows: [{
-              cells: [{
-                id: 'dashboard-col-0'
-              }, {
-                id: 'dashboard-col-1'
-              }, {
-                id: 'dashboard-col-2'
-              }]
-            }, {
-              cells: [{
-                id: 'dashboard-col-3'
-              }, {
-                id: 'dashboard-col-4'
-              }, {
-                id: 'dashboard-col-5'
-              }]
+            layouts: [{
+                id: 'layout-1',
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-0'
+                    }, {
+                        id: 'dashboard-col-1'
+                    }, {
+                        id: 'dashboard-col-2'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'dashboard-col-3'
+                    }, {
+                        id: 'dashboard-col-4'
+                    }, {
+                        id: 'dashboard-col-5'
+                    }]
+                }]
             }]
-          }]
         },
         components: [{
             cell: 'dashboard-col-0',
             type: 'Highcharts',
             connector: {
-              id: 'EUR-USD'
+                id: 'EUR-USD'
             },
             columnAssignment: {
-              Day: 'x',
-              EUR: 'custom.eur',
-              Rate: 'y'
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
             }
-          }, {
+        }, {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
-              id: 'EUR-USD'
+                id: 'EUR-USD'
             },
             columnAssignment: {
-              Day: 'x',
-              EUR: 'custom.eur',
-              Rate: 'y'
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
             },
             chartOptions: {
-              yAxis: [{}, {
-                opposite: true
-              }],
-              series: [{
-                name: 'EUR'
-              }, {
-                name: 'Rate',
-                yAxis: 1
-              }]
+                yAxis: [{}, {
+                    opposite: true
+                }],
+                series: [{
+                    name: 'EUR'
+                }, {
+                    name: 'Rate',
+                    yAxis: 1
+                }]
             }
-          }, {
+        }, {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
-              id: 'EUR-USD'
+                id: 'EUR-USD'
             },
             columnAssignment: {
-              Day: 'x',
-              EUR: 'custom.eur',
-              Rate: 'y'
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
             },
             chartOptions: {
-              yAxis: [{}, {
-                opposite: true
-              }],
-              series: [{
-                name: 'EUR',
-                yAxis: 1
-              }]
+                yAxis: [{}, {
+                    opposite: true
+                }],
+                series: [{
+                    name: 'EUR',
+                    yAxis: 1
+                }]
             }
-          },
-          {
+        }, {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
-              id: 'micro-element'
+                id: 'micro-element'
             },
             columnAssignment: {
-              'x': 'x',
-              'mySeries1': 'value',
-              'mySeries2': 'value',
-              seriesColumnMap: {
-                seriesName: 'mySeriesName',
-                pointColumnMap: {
-                  'open': 'myOpen',
-                  'high': 'myHigh',
-                  'low': 'myLow',
-                  'close': 'myClose'
+                'x': 'x',
+                'mySeries1': 'value',
+                'mySeries2': 'value',
+                seriesColumnMap: {
+                    seriesName: 'mySeriesName',
+                    pointColumnMap: {
+                        'open': 'myOpen',
+                        'high': 'myHigh',
+                        'low': 'myLow',
+                        'close': 'myClose'
+                    }
                 }
-              }
             },
             chartOptions: {
-              series: [{
-                name: 'mySeries1',
-                type: 'spline'
-              }, {
-                name: 'mySeries2',
-                type: 'line'
-              }, {
-                name: 'mySeriesName',
-                type: 'ohlc'
-              }]
+                series: [{
+                    name: 'mySeries1',
+                    type: 'spline'
+                }, {
+                    name: 'mySeries2',
+                    type: 'line'
+                }, {
+                    name: 'mySeriesName',
+                    type: 'ohlc'
+                }]
             }
-          }, {
+        }, {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
-              id: 'micro-element'
+            id: 'micro-element'
             },
             columnAssignment: {
-              'x': 'x',
-              'mySeries1': 'value',
-              'mySeries2': 'value',
-              seriesColumnMap: {
-                seriesName: 'mySeriesName',
-                pointColumnMap: {
-                  'open': 'myOpen',
-                  'high': 'myHigh',
-                  'low': 'myLow',
-                  'close': 'myClose'
+                'x': 'x',
+                'mySeries1': 'value',
+                'mySeries2': 'value',
+                seriesColumnMap: {
+                    seriesName: 'mySeriesName',
+                    pointColumnMap: {
+                        'open': 'myOpen',
+                        'high': 'myHigh',
+                        'low': 'myLow',
+                        'close': 'myClose'
+                    }
                 }
-              }
             },
             chartOptions: {
-              series: [{
-                name: 'mySeries1',
-                type: 'spline'
-              }, {
-                name: 'mySeries2',
-                type: 'line'
-              }, {
-                name: 'mySeriesName',
-                type: 'candlestick'
-              }]
+                series: [{
+                    name: 'mySeries1',
+                    type: 'spline'
+                }, {
+                    name: 'mySeries2',
+                    type: 'line'
+                }, {
+                    name: 'mySeriesName',
+                    type: 'candlestick'
+                }]
             }
-          }, {
+        }, {
             cell: 'dashboard-col-5',
             type: 'Highcharts',
             connector: {
-              id: 'EUR-USD'
+                id: 'EUR-USD'
             },
             columnAssignment: {
-              Day: 'x',
-              EUR: 'custom.eur',
-              Rate: 'y'
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
             },
             chartOptions: {
-              yAxis: [{
-                title: {
-                  text: 'EUR / USD'
-                }
-              }, {
-                title: {
-                  text: 'Rate'
-                },
-                opposite: true
-              }],
-              series: [{
-                name: 'Rate',
-                type: 'column'
-              }, {
-                name: 'fake trend',
-                data: [
-                  [1691971200000, 22],
-                  [1692316800000, 22]
-                ]
-              }]
+                yAxis: [{
+                    title: {
+                        text: 'EUR / USD'
+                    }
+                }, {
+                    title: {
+                    text: 'Rate'
+                    },
+                    opposite: true
+                }],
+                series: [{
+                    name: 'Rate',
+                    type: 'column'
+                }, {
+                    name: 'fake trend',
+                    data: [
+                        [1691971200000, 22],
+                        [1692316800000, 22]
+                    ]
+                }]
             }
-          }
-        ]
+        }]
     }, true);
     
     const mountedComponents = dashboard.mountedComponents;
