@@ -658,16 +658,6 @@ class HighchartsComponent extends Component {
             const seriesList = seriesNames.map((seriesName, index): Series => {
                 let i = 0;
 
-                // Disable dragging on series, which were created out of a
-                // columns which are created by MathModifier.
-                const shouldBeDraggable = !(
-                    modifierOptions?.type === 'Math' &&
-                    (modifierOptions as MathModifierOptions)
-                        .columnFormulas?.some(
-                            (formula): boolean => formula.column === seriesName
-                        )
-                );
-
                 while (i < chart.series.length) {
                     const series = chart.series[i];
                     const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
@@ -689,10 +679,7 @@ class HighchartsComponent extends Component {
 
                 const seriesOptions = {
                     name: seriesName,
-                    id: `${storeTableID}-series-${index}`,
-                    dragDrop: {
-                        draggableY: shouldBeDraggable
-                    }
+                    id: `${storeTableID}-series-${index}`
                 };
 
                 const relatedSeries =
