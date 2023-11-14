@@ -65,6 +65,9 @@
 
 body,
 #demo-content {
+    /* stylelint-disable max-line-length */
+    background: var(--diamond, linear-gradient(to bottom right, #474554 5%, #1f1e24 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 5%, #1f1e24 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 5%, #1f1e24 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 5%, #1f1e24 50%) top right / 50% 50% no-repeat);
+    /* stylelint-enable */
     background-color: transparent;
 
     /* background-color: black;
@@ -165,8 +168,6 @@ form {
     width: 100%;
     max-height: 800px;
     position: absolute;
-    /* stylelint-disable max-line-length */
-    /* stylelint-enable */
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     text-align: center;
 }
