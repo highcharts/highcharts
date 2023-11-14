@@ -50,20 +50,37 @@ const parseUpgradeNotes = p => {
 
 const loadPulls = async (
     since,
-    branches = 'master'
+    branches = 'master',
+    isDashboards
 ) => {
     let page = 1;
     let pulls = [];
+    let lastTagSha;
 
     const tags = await octokit.repos.listTags({
         owner: 'highcharts',
         repo: 'highcharts'
     }).catch(error);
 
+    lastTagSha = tags.data[0].commit.sha;
+
+    if (isDashboards) {
+        const dashboardsTags = await octokit.request(
+            'GET /repos/highcharts/highcharts/git/matching-refs/tags/dash',
+            {
+                owner: 'highcharts',
+                repo: 'highcharts'
+            }
+        );
+
+        lastTagSha =
+            dashboardsTags.data[dashboardsTags.data.length - 1].object.sha;
+    }
+
     const commit = await octokit.repos.getCommit({
         owner: 'highcharts',
         repo: 'highcharts',
-        ref: since || tags.data[0].commit.sha
+        ref: since || lastTagSha
     }).catch(error);
 
     console.log(
@@ -112,7 +129,7 @@ const loadPulls = async (
     return pulls;
 };
 
-module.exports = async (since, fromCache, branches) => {
+module.exports = async (since, fromCache, branches, isDashboards) => {
 
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
@@ -122,7 +139,7 @@ module.exports = async (since, fromCache, branches) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since, branches);
+        pulls = await loadPulls(since, branches, isDashboards);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 

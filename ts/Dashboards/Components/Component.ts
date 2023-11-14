@@ -967,9 +967,14 @@ abstract class Component {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
+
+        // call unmount
+        fireEvent(this, 'unmount');
+
         // Unregister events
         this.tableEvents.forEach((eventCallback): void => eventCallback());
         this.element.remove();
+
     }
 
     /** @internal */

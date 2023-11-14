@@ -19,6 +19,18 @@ describe('Add components through UI', () => {
         cy.toggleEditMode();
     });
 
+    it('should close the add component sidebar, clicking outside', function() {
+        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+        cy.board().then((board) => {
+            cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
+            cy.get('.highcharts-dashboards-edit-overlay-active').should('exist');
+
+            cy.get('#dashboard-col-1').first().trigger('click', {force: true});
+
+            cy.get('.highcharts-dashboards-edit-sidebar').should('not.have.class', 'highcharts-dashboards-edit-sidebar-show');
+        });
+    });
+
     it('should be able to add a layout', function() {
         grabComponent('layout');
         dropComponent('#dashboard-col-0');
