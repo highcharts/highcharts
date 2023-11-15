@@ -427,18 +427,28 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * The number of times the loop repeats the calculation of axis future
-     * dimensions while rendering the chart to find perfect axis fills and tick
-     * intervals. Use this property if the axes change after you redraw the
-     * chart.
+     * When a chart with an x and a y-axis is rendered, we first pre-render the
+     * labels of both in order to measure them. Then, if either of the axis
+     * labels take up so much space that it significantly affects the length of
+     * the other axis, we repeat the process.
+     *
+     * By default we stop at two axis layout runs, but it may be that the second
+     * run also alter the space required by either axis, for example if it
+     * causes the labels to rotate. In this situation, a subsequent redraw of
+     * the chart may cause the tick and label placement to change for apparently
+     * no reason.
+     *
+     * Use the `axisLayoutRuns` option to set the maximum allowed number of
+     * repetitions. But keep in mind that the default value of 2 is set because
+     * every run costs performance time.
      *
      * **Note:** Changing that option to higher than the default might decrease
      * performance significantly, especially with bigger sets of data.
      *
      * @type      {number}
-     * @default   1
+     * @default   2
      * @since     @next
-     * @apioption chart.axesLayoutRuns
+     * @apioption chart.axisLayoutRuns
      */
 
     /**
