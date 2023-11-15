@@ -348,9 +348,7 @@ function wrapRenderLabel(
     } else if (icon) {
 
         if (label) {
-            removeEvent(labelElement, 'mouseover');
-            removeEvent(labelElement, 'mouseout');
-            removeEvent(labelElement, 'click');
+            removeEvent(labelElement);
             label.css({ cursor: 'default' });
         }
 

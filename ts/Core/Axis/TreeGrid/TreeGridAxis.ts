@@ -56,6 +56,7 @@ const {
     isString,
     merge,
     pick,
+    removeEvent,
     wrap
 } = U;
 
@@ -832,6 +833,35 @@ function wrapSetTickInterval(
     }
 }
 
+/**
+ * Wrap axis redraw to remove TreeGrid events from ticks
+ *
+ * @private
+ * @function Highcharts.GridAxis#redraw
+ *
+ * @param {Function} proceed
+ * The original setTickInterval function.
+ */
+function wrapRedraw(
+    this: TreeGridAxisComposition,
+    proceed: Function
+): void {
+    const axis = this,
+        options = axis.options,
+        isTreeGrid = options.type === 'treegrid';
+
+    if (isTreeGrid) {
+        axis.tickPositions.forEach(function (pos): void {
+            const tick = axis.ticks[pos];
+            if (tick.label && tick.label.attachedTreeGridEvents) {
+                removeEvent(tick.label.element);
+                tick.label.attachedTreeGridEvents = false;
+            }
+        });
+    }
+    proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+}
+
 /* *
  *
  *  Classes
@@ -870,6 +900,7 @@ class TreeGridAxisAdditions {
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);
             wrap(axisProps, 'setTickInterval', wrapSetTickInterval);
+            wrap(axisProps, 'redraw', wrapRedraw);
 
             // Make utility functions available for testing.
             axisProps.utils = {
