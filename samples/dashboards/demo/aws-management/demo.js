@@ -157,19 +157,60 @@ Dashboards.board('container', {
             rows: [{
                 id: 'instance-details',
                 cells: [{
-                    id: 'instance'
+                    id: 'instance',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '25%'
+                        }
+                    }
                 }, {
-                    id: 'zone'
+                    id: 'zone',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '25%'
+                        }
+                    }
                 }, {
-                    id: 'ami'
+                    id: 'ami',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '25%'
+                        }
+                    }
                 }, {
-                    id: 'os'
+                    id: 'os',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '25%'
+                        }
+                    }
                 }]
             }, {
                 cells: [{
-                    id: 'disk-usage',
-                    height: 400
-                }, {
                     height: 400,
                     layout: {
                         rows: [{
@@ -185,21 +226,90 @@ Dashboards.board('container', {
                                 id: 'disk'
                             }]
                         }]
+                    },
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
+                }, {
+                    id: 'disk-usage',
+                    height: 400,
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
                     }
                 }]
             }, {
                 cells: [{
-                    id: 'cpu-utilization'
+                    id: 'instances-table',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
                 }, {
-                    id: 'instances-table'
+                    id: 'cpu-utilization',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '100%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
                 }]
             }, {
                 cells: [{
                     id: 'network-opt',
-                    height: 300
+                    height: 300,
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
                 }, {
                     id: 'disk-opt',
-                    height: 300
+                    height: 300,
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '50%'
+                        }
+                    }
                 }]
             }]
         }]
