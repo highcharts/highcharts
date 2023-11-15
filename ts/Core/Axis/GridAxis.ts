@@ -248,6 +248,11 @@ function compose<T extends typeof Axis>(
     if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
+            'afterGetPosition',
+            onTickAfterGetPosition
+        );
+        addEvent(
+            TickClass,
             'afterGetLabelPosition',
             onTickAfterGetLabelPosition
         );
@@ -1044,6 +1049,21 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
+}
+
+/**
+ * Add calculations to ticks if needed.
+ * @private
+ */
+function onTickAfterGetPosition(
+    this: Tick,
+    e: {
+        pos: PositionObject;
+    }
+): void {
+    if (this.axis.horiz && this.isFirst && (e.pos.x - this.axis.transB) < 2) {
+        e.pos.x = this.axis.transB;
+    }
 }
 
 /**
