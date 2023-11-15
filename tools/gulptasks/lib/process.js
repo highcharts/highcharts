@@ -68,6 +68,10 @@ function exec(command, options = {}) {
 
     return new Promise((resolve, reject) => {
 
+        if (/\b(?:curl|fetch|login|rm|ssh|sudo)\b/u.test(command)) {
+            throw new Error('Contains forbidden commands.');
+        }
+
         const cli = ChildProcess.exec(command, options, error => {
 
             if (error) {
