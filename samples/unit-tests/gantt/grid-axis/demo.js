@@ -1994,12 +1994,15 @@ QUnit.test(
             }
         });
 
-        try {
-            series.hide();
-        } catch (e) {
-            assert.ok(false, 'Hiding the series should not throw an error');
-            series.show();
-        }
+        series.hide();
+        assert.ok(true, 'Hiding the series should not throw an error');
+        assert.strictEqual(
+            series.group.attr('visibility'),
+            'hidden',
+            'The series should be hidden'
+        );
+
+        series.show();
     }
 );
 
