@@ -643,9 +643,9 @@ export default PictorialSeries;
  */
 
 /**
- * The paths include options describing the series image.
- * For further details on preparing the SVG image, please refer to the
- * [pictorial documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
+ * The paths include options describing the series image. For further details on
+ * preparing the SVG image, please refer to the [pictorial
+ * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
  *
  * @declare   Highcharts.SeriesPictorialPathsOptionsObject
  * @type      {Array<*>}
