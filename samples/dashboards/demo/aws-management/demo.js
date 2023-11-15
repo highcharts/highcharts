@@ -83,15 +83,6 @@ const data = [{
 ];
 
 
-Highcharts.setOptions({
-    credits: {
-        enabled: false
-    },
-    title: {
-        text: ''
-    }
-});
-
 const KPIOptions = {
     chart: {
         height: 165,
@@ -121,14 +112,28 @@ const generateLivePoint = (chart, addPoint) => {
     const newVal = Math.abs(Math.round((Math.random()) * 100));
 
     if (addPoint) {
-        chart.series[0].addPoint(newVal);
+        chart.series[0].addPoint(newVal, false, true);
         if (chart.series.length > 1) {
-            chart.series[1].addPoint(newVal + (Math.random() * 10));
+            chart.series[1].addPoint(
+                newVal + (Math.random() * 10),
+                false,
+                true
+            );
         }
+        chart.redraw();
     } else {
         chart.series[0].points[0].update(newVal);
     }
 };
+
+Highcharts.setOptions({
+    credits: {
+        enabled: false
+    },
+    title: {
+        text: ''
+    }
+});
 
 Dashboards.board('container', {
     dataPool: {
@@ -137,15 +142,12 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                columnNames: ['id', 'name'],
+                columnNames: ['id', 'name', 'type', 'public IP', 'state', 'health'],
                 data: [
-                    ['rsf934fds', 'Blue'],
-                    ['f0efnakr', 'Red'],
-                    ['mfaiks12', 'White'],
-                    ['15fqmfk', 'Green'],
-                    ['3rsf934fds', 'Orange'],
-                    ['5f0efnakr', 'Pink'],
-                    ['76mfaiks12', 'Violet']
+                    ['rsf934fds', 'Blue', 't3.micro', '54.123.45.61', 'running', 'critical'],
+                    ['f0efnakr', 'Red', 't3.small', '54.123.45.62', 'running', 'ok'],
+                    ['mfaiks12', 'White', 't3.medium', '54.123.45.63', 'running', 'warning'],
+                    ['15fqmfk', 'Green', 't3.xlarge', '54.123.45.64', 'running', 'ok']
                 ]
             }
         }]
