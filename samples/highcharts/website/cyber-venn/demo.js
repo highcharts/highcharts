@@ -63,6 +63,23 @@ const distance = countDownDate - now;
 
 
 const presale = {
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Venn diagram of Cyber Week deal benefits'
+        }
+    },
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                return point.accessibility.description;
+            }
+        },
+        screenReaderSection: {
+            beforeChartFormat: '<p>A venn diagram showing 8 major benefits of our big Cyber Week deal ' +
+                'that we will reveal on November 27. </p>'
+        },
+        landmarkVerbosity: 'one'
+    },
     chart: {
         backgroundColor: '#fff',
         styledMode: (true),
@@ -153,6 +170,9 @@ const presale = {
             value: 5,
             name: 'empty',
             notooltip: true,
+            accessibility: {
+                enabled: false
+            },
             dataLabels: {
                 enabled: false
             },
@@ -317,6 +337,23 @@ const presale = {
 };
 
 const sale = {
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Venn diagram of Cyber Week deal benefits'
+        }
+    },
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                return point.accessibility.description;
+            }
+        },
+        screenReaderSection: {
+            beforeChartFormat: '<p>A venn diagram showing 8 major benefits of our big Cyber Week deal: ' +
+                '70% off Highcharts Dashboards. </p>'
+        },
+        landmarkVerbosity: 'one'
+    },
     chart: {
         backgroundColor: '#fff',
         styledMode: (true),
@@ -410,6 +447,9 @@ const sale = {
             value: 5,
             name: 'empty',
             notooltip: true,
+            accessibility: {
+                enabled: false
+            },
             dataLabels: {
                 enabled: false
             },
