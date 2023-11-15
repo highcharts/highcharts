@@ -138,7 +138,7 @@ Highcharts.setOptions({
     }
 });
 
-Dashboards.board('container', {
+const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'instances',
@@ -612,7 +612,14 @@ Dashboards.board('container', {
         type: 'DataGrid',
         title: 'Instances',
         dataGridOptions: {
-            editable: false
+            editable: false,
+            events: {
+                row: {
+                    click: function (e) {
+                        console.log('clickOptions', board, this, e);
+                    }
+                }
+            }
         },
         connector: {
             id: 'instances'
