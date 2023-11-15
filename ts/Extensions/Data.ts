@@ -2461,14 +2461,14 @@ export default Data;
  * An array option that specifies the data type for each column in the series
  * loaded within the data module.
  *
- * @sample {highcharts} highcharts/data/column-types/
- *         X-axis categories based on CSV data
- * @sample {highstock} highcharts/data/column-types/
+ * Possible values: `"string"`, `"number"`, `"date"`.
+ *
+ * @sample {highcharts|highstock} highcharts/data/column-types/
  *         X-axis categories based on CSV data
  * @sample {highmaps} highcharts/data/column-types-map/
  *         Map chart created with fips from CSV
  *
- * @type      {string}
+ * @type      {Array<string>}
  * @since     @next
  * @apioption data.columnTypes
  */
