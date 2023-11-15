@@ -257,9 +257,9 @@ Tunnel.prototype.defaultOptions = merge(
                         x = (startXY.x + endXY.x) / 2;
 
                     return {
-                        x: x - this.graphic.width / 2,
+                        x: x - (this.graphic.width || 0) / 2,
                         y: getSecondCoordinate(startXY, endXY, x) -
-                        this.graphic.height / 2
+                        (this.graphic.height || 0) / 2
                     };
                 },
                 events: {

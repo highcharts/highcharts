@@ -21,7 +21,7 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
         arrayString.push(data.value);
     });
 
-    // querry send string that we need to convert into numbers
+    // query send string that we need to convert into numbers
     for (let i = 0; i < arrayString.length; i++) {
         if (arrayString[i] !== null) {
             arrayFinal.push(parseFloat(arrayString[i]));

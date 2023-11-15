@@ -76,6 +76,11 @@ Dashboards.board('container', {
                 chart: {
                     animation: false,
                     type: 'pie'
+                },
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
                 }
             }
         }, {

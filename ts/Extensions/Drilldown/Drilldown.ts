@@ -838,18 +838,23 @@ class ChartAdditions {
 
                             if (zoomingDrill) {
                                 // Fit to natural bounds
-                                chart.mapView.setView(void 0, 1, true, {
-                                    complete: function (): void {
-                                        // fire it only on complete in this
-                                        // place (once)
-                                        if (
-                                            Object.prototype.hasOwnProperty
-                                                .call(this, 'complete')
-                                        ) {
-                                            removeSeries(oldSeries);
+                                chart.mapView.setView(
+                                    void 0,
+                                    pick(chart.mapView.minZoom, 1),
+                                    true,
+                                    {
+                                        complete: function (): void {
+                                            // fire it only on complete in this
+                                            // place (once)
+                                            if (
+                                                Object.prototype.hasOwnProperty
+                                                    .call(this, 'complete')
+                                            ) {
+                                                removeSeries(oldSeries);
+                                            }
                                         }
                                     }
-                                });
+                                );
                             } else {
                                 // When user don't want to zoom into region only
                                 // fade out

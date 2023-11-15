@@ -258,7 +258,7 @@ function arc(
 }
 
 /** @private */
-function columnSeriesOnAfterColumnTranslate(
+function seriesOnAfterColumnTranslate(
     this: ColumnSeries
 ): void {
     if (
@@ -375,17 +375,17 @@ function columnSeriesOnAfterColumnTranslate(
 
 /** @private */
 function compose(
-    ColumnSeriesClass: typeof ColumnSeries,
+    SeriesClass: typeof Series,
     PieSeriesClass: typeof PieSeries,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, ColumnSeriesClass)) {
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(
-            ColumnSeriesClass,
+            SeriesClass as unknown as ColumnSeries,
             'afterColumnTranslate',
-            columnSeriesOnAfterColumnTranslate,
+            seriesOnAfterColumnTranslate,
             {
                 // After columnrange and polar column modifications
                 order: 9

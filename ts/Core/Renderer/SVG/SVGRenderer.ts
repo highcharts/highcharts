@@ -1499,56 +1499,59 @@ class SVGRenderer implements SVGRendererLike {
              * and the label size into consideration, and translates the image
              * to center within the label.
              */
-            ['width', 'height'].forEach(function (key: string): void {
-                img[key + 'Setter'] = function (value: any, key: string): void {
+            (
+                ['width', 'height'] as Array<'width'|'height'>
+            ).forEach((key): void => {
+                img[`${key}Setter`] = function (
+                    value: number, key: 'width'|'height'
+                ): void {
                     this[key] = value;
 
                     const {
-                        alignByTranslate,
-                        element,
-                        width,
-                        height,
-                        imgwidth,
+                            alignByTranslate,
+                            element,
+                            width,
+                            height,
+                            imgwidth,
+                            imgheight
+                        } = this,
+                        imgSize = key === 'width' ? imgwidth : imgheight;
+
+                    let scale = 1;
+
+                    // Scale and center the image within its container. The name
+                    // `backgroundSize` is taken from the CSS spec, but the
+                    // value `within` is made up. Other possible values in the
+                    // spec, `cover` and `contain`, can be implemented if
+                    // needed.
+                    if (
+                        options &&
+                        options.backgroundSize === 'within' &&
+                        width &&
+                        height &&
+                        imgwidth &&
                         imgheight
-                    } = this;
+                    ) {
+                        scale = Math.min(
+                            width / imgwidth,
+                            height / imgheight
+                        );
 
-                    let imgSize = this['img' + key];
-                    if (defined(imgSize)) {
-                        let scale = 1;
-                        // Scale and center the image within its container.
-                        // The name `backgroundSize` is taken from the CSS spec,
-                        // but the value `within` is made up. Other possible
-                        // values in the spec, `cover` and `contain`, can be
-                        // implemented if needed.
-                        if (
-                            options &&
-                            options.backgroundSize === 'within' &&
-                            width &&
-                            height
-                        ) {
-                            scale = Math.min(
-                                width / imgwidth,
-                                height / imgheight
-                            );
+                        // Update both width and height to keep the ratio
+                        // correct (#17315)
+                        attr(element, {
+                            width: Math.round(imgwidth * scale),
+                            height: Math.round(imgheight * scale)
+                        });
+                    } else if (element && imgSize) {
+                        element.setAttribute(key, imgSize);
+                    }
 
-                            imgSize = Math.round(imgSize * scale);
-
-                            // Update both width and height to keep the ratio
-                            // correct (#17315)
-                            attr(element, {
-                                width: Math.round(imgwidth * scale),
-                                height: Math.round(imgheight * scale)
-                            });
-                        } else if (element) {
-                            element.setAttribute(key, imgSize);
-                        }
-
-                        if (!alignByTranslate) {
-                            this.translate(
-                                ((width || 0) - (imgwidth * scale)) / 2,
-                                ((height || 0) - (imgheight * scale)) / 2
-                            );
-                        }
+                    if (!alignByTranslate && imgwidth && imgheight) {
+                        this.translate(
+                            ((width || 0) - (imgwidth * scale)) / 2,
+                            ((height || 0) - (imgheight * scale)) / 2
+                        );
                     }
                 };
             });
@@ -1631,6 +1634,9 @@ class SVGRenderer implements SVGRendererLike {
      * to {@link SVGElement} objects through the {@link SVGElement#clip}
      * function.
      *
+     * This function is deprecated as of v11.2. Instead, use a regular shape
+     * (`rect`, `path` etc), and the `SVGElement.clipTo` function.
+     *
      * @example
      * let circle = renderer.circle(100, 100, 100)
      *     .attr({ fill: 'red' })
@@ -1639,6 +1645,8 @@ class SVGRenderer implements SVGRendererLike {
      *
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
+     *
+     * @deprecated
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -1659,20 +1667,7 @@ class SVGRenderer implements SVGRendererLike {
         width?: number,
         height?: number
     ): SVGRenderer.ClipRectElement {
-        const
-            // Add a hyphen at the end to avoid confusion in testing indexes
-            // -1 and -10, -11 etc (#6550)
-            id = uniqueKey() + '-',
-            clipPath = (this.createElement('clipPath').attr({
-                id: id
-            }) as any).add(this.defs),
-            wrapper = this.rect(x, y, width, height, 0).add(clipPath);
-
-        wrapper.id = id;
-        wrapper.clipPath = clipPath;
-        wrapper.count = 0;
-
-        return wrapper;
+        return this.rect(x, y, width, height, 0);
     }
 
 

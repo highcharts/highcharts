@@ -24,6 +24,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *  Declarations
  *
  * */
+
 export interface XRangePointOptions extends ColumnPointOptions {
     partialFill?: XRangePointPartialFillOptions;
     x2?: number;

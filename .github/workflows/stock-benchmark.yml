@@ -1,0 +1,87 @@
+name: Stock benchmark
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'ts/Stock/**'
+      - 'ts/Core/Axis/OrdinalAxis.ts'
+      - 'ts/Extensions/Annotations/**'
+      - 'ts/Extensions/DataGrouping/**'
+      - 'test/ts-node-unit-tests/benchmark/Stock/'
+      - 'ts/Core/Chart/StockChart.ts'
+      - 'ts/Core/Axis/BrokenAxis.ts'
+      - '.github/workflows/stock-benchmark.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  stock-benchmark:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Benchmark
+        continue-on-error: true
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Stock/
+
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+        with:
+           clean: false # do not remove files from previous run
+      - run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Benchmark
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Stock/
+
+      - name: Benchmark comparison
+        run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-files
+          path: |
+            tmp/benchmarks
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+
+            const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
+
+            await createOrUpdateComment(github, context, 'Benchmark report - Stock', benchmarkMD || 'No table to show');
+
+
+      - name: Add to summary
+        if: ${{ always() }}
+        run: |
+          echo "## Benchmark metrics" >> $GITHUB_STEP_SUMMARY
+          cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY
+

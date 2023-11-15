@@ -1,0 +1,34 @@
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+
+<div id="container"></div>
+<div class="buttons-wrapper">
+  <div class="highcharts-description">
+    The demo allows you to convert the Highcharts Dashboards into JSON and create a new dashboard.<br><br>
+  
+    For testing, please click on the button "Export Dashboards" button. The JSON
+    with your "Highcharts Dashboards" configuration will be saved in the local
+    storage.<br><br>
+    
+    Click on the "Destroy chart" button for removing the current dashboard.<br><br>
+    
+    By clicking on "Import Dashboards" button, the new Dashboard will
+    be created, based on configuration, saved in the local storage.
+  </div>
+  <button id="export">Export Dashboards</button>
+  <button id="destroy" disabled>Destroy Dashboards</button>
+  <button id="import" disabled>Create Dashboards</button>
+  <div class="ls-status">Status: 
+    <span id="ls-status-content">the local storage is empty</span>.
+  </div>
+</div>
+
+<pre id="csv">Food,Vitamin A
+Beef Liver,6421
+Lamb Liver, 2122
+Cod Liver Oil, 1350
+Mackerel, 388
+Tuna, 214</pre>

@@ -112,7 +112,7 @@ function copyFile(fileSourcePath, fileTargetPath) {
  * @param {boolean} [includeEntries]
  *        Set to true to remove containing entries as well
  *
- * @param {Function} [filterCallback]
+ * @param {Function | undefined} [filterCallback]
  *        Callback to return `true` for files to delete.
  *
  * @return {void}
@@ -121,24 +121,25 @@ function copyFile(fileSourcePath, fileTargetPath) {
  */
 function deleteDirectory(
     directoryPath,
-    includeEntries,
-    filterCallback
+    includeEntries = true,
+    filterCallback = void 0
 ) {
-
     if (!FS.existsSync(directoryPath)) {
         return;
     }
 
     if (includeEntries) {
+        if (!filterCallback) {
+            FS.rmSync(directoryPath, { recursive: true });
+            return;
+        }
+
         getDirectoryPaths(directoryPath).forEach(
             path => deleteDirectory(path, true, filterCallback)
         );
 
         for (const filePath of getFilePaths(directoryPath)) {
-            if (
-                !filterCallback ||
-                filterCallback(filePath) === true
-            ) {
+            if (filterCallback(filePath) === true) {
                 deleteFile(filePath, true);
             }
         }
@@ -388,7 +389,7 @@ function isDotEntry(
         .split(SEP)
         .every(entry => (
             entry === '..' ||
-            !entry.startsWith('.')
+            entry.startsWith('.')
         ));
 }
 

@@ -48,9 +48,6 @@ jobs:
           clean: false
           fetch-depth: 0
 
-      - name: Merge master into PR branch
-        run: git merge origin/master --ff-only
-
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
@@ -111,9 +108,6 @@ jobs:
         with:
           clean: false
           fetch-depth: 0
-
-      - name: Merge master into PR branch
-        run: git merge origin/master --ff-only
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3

@@ -60,6 +60,7 @@ Dashboards.board('container', {
                 },
                 plotOptions: {
                     series: {
+                        animation: false,
                         dragDrop: {
                             draggableY: true
                         }

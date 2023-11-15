@@ -19,9 +19,8 @@ Dashboards.board('container', {
         contextMenu: {
             enabled: true,
             items: ['editMode']
-        },
+        }
     },
-
     gui: {
         layouts: [
             {
@@ -40,6 +39,14 @@ Dashboards.board('container', {
             cell: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
+                },
+                chart: {
+                    animation: false
+                },
                 series: [{
                     data: [1, 2, 1, 4]
                 }]

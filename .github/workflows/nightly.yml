@@ -42,10 +42,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: 'npm'
 
       - name: Install Dependencies
@@ -113,10 +113,10 @@ jobs:
           ref: 'nightly'
           fetch-depth: 0
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 
@@ -125,6 +125,7 @@ jobs:
         run: |
           npm i
           npm run build -- --CI true
+          npx gulp dist-verify
           npx gulp dist-release --force-yes
 
       - name: Upload to github
@@ -137,3 +138,51 @@ jobs:
           git add .
           git commit -m "Nightly build - ${{github.run_id}}"
           git push -u origin nightly
+
+  nightly_changelog:
+    runs-on: ubuntu-latest
+    env:
+      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # get the full history
+
+      - run: npm i
+
+      - name: Build tree.json
+        run: |
+          npx gulp scripts
+          npx gulp jsdoc-options
+
+      - name: Generate and upload nightly changelog
+        run: |
+          node changelog/generate --review
+          aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
+
+      - name: create list of merge commits
+        id: makelist
+        run: |
+          git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
+          echo "lines=$(cat 24hoursofhighcharts.list | grep -e "Merge" -c)" >> $GITHUB_OUTPUT
+
+      - name: Convert to JSON
+        if: ${{ steps.makelist.outputs.lines > 0 }}
+        run: |
+          node ./.github/scripts/createListJSON \
+            24hoursofhighcharts.list \
+            24hoursofhighcharts.json
+
+      - name: Call Slack webhook
+        id: slack
+        if: ${{ steps.makelist.outputs.lines > 0 }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload-file-path: "24hoursofhighcharts.json"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+

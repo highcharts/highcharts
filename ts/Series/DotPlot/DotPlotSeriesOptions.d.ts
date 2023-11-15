@@ -23,6 +23,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
     itemPadding?: number;
     states?: SeriesStatesOptions<DotPlotSeries>;
@@ -30,7 +31,7 @@ export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
 

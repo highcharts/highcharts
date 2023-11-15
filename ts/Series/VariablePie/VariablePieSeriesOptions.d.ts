@@ -37,4 +37,10 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
 
 export type VariablePieSizeByValue = ('area'|'radius');
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default VariablePieSeriesOptions;

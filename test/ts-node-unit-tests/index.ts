@@ -2,12 +2,16 @@ import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { reportError } from './test-utils';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
+import { argv } from 'node:process';
+import yargs from 'yargs/yargs';
 
 const TEST_PATH = join(__dirname, './tests');
 const CODE_PATH = join(__dirname, '../../code');
 
 const errors = [];
 let testCounter: number = 0;
+
+const { pattern } = yargs(argv).argv as any;
 
 starting('Unit tests');
 // require('./prepare-data');
@@ -19,7 +23,7 @@ if (!existsSync(CODE_PATH)) {
 
 if (existsSync(TEST_PATH)) {
     const testFiles = readdirSync(TEST_PATH)
-        .filter(file => file.includes('.test.ts'));
+        .filter(file => file.includes(pattern ?? '.test.ts'));
 
     testFiles.forEach(testFile => {
         const tests = require(join(TEST_PATH, testFile));

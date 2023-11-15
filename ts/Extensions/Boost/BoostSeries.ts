@@ -56,6 +56,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    destroyObjectProperties,
     error,
     extend,
     fireEvent,
@@ -568,19 +569,7 @@ function destroyGraphics(
         }
     });
 
-    const zonesSeries = series as (BoostSeriesComposition&LineSeries);
-
-    if (zonesSeries.getZonesGraphs) {
-        const props = zonesSeries.getZonesGraphs(
-            [['graph', 'highcharts-graph']]
-        ) as Array<[keyof LineSeries]>;
-        props.forEach((prop): void => {
-            const zoneGraph = zonesSeries[prop[0]] as (SVGElement|undefined);
-            if (zoneGraph) {
-                (zonesSeries as any)[prop[0]] = zoneGraph.destroy();
-            }
-        });
-    }
+    series.zones.forEach(destroyObjectProperties);
 }
 
 /**
@@ -1130,7 +1119,12 @@ function seriesRenderCanvas(this: Series): void {
 
             // Go back to prototype, ready to build
             delete (this as Partial<typeof this>).buildKDTree;
-            this.buildKDTree();
+
+            // Check that options exist, as async processing
+            // could mean the series is removed at this point (#19895)
+            if (this.options) {
+                this.buildKDTree();
+            }
 
             if (boostOptions.debug.timeKDTree) {
                 console.timeEnd('kd tree building'); // eslint-disable-line no-console

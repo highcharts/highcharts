@@ -231,7 +231,9 @@ function distCopy() {
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true);
+                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid']
+                    .some(name => fileName.includes(`${name}.css`)));
+
                 FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
                 LogLib.success('Created', directory);
 
@@ -245,7 +247,7 @@ function distCopy() {
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
-                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true);
+                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true, fileName => !(fileName.includes('dashboards-icons')));
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
