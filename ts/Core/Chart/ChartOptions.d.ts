@@ -109,7 +109,7 @@ export interface ChartOptions {
     marginRight?: number;
     marginTop?: number;
     numberFormatter?: NumberFormatterCallbackFunction;
-    axesLayoutRuns?: number;
+    axisLayoutRuns?: number;
     panKey?: string;
     panning?: ChartPanningOptions;
     pinchType?: string;
