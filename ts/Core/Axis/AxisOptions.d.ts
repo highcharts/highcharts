@@ -36,6 +36,10 @@ import type TickPositionsArray from './TickPositionsArray';
  * */
 
 declare module '../../Core/Options'{
+    interface DefaultOptions {
+        xAxis?: DeepPartial<XAxisOptions>;
+        yAxis?: DeepPartial<YAxisOptions>;
+    }
     interface Options {
         xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
         yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);

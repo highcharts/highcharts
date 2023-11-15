@@ -16,8 +16,7 @@
  *
  * */
 
-import type { AxisCollectionKey } from './Axis/AxisOptions';
-import type { Options } from './Options';
+import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
@@ -30,7 +29,7 @@ import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { isArray, merge } = U;
+const { merge } = U;
 
 /* *
  *
@@ -40,7 +39,7 @@ const { isArray, merge } = U;
 
 declare module './GlobalsLike' {
     interface GlobalsLike {
-        defaultOptions: Options;
+        defaultOptions: DefaultOptions;
         time: Time;
     }
 }
@@ -2782,7 +2781,7 @@ function getOptions(): Options {
  * Updated options.
  */
 function setOptions(
-    options: DeepPartial<Options>
+    options: DeepPartial<DefaultOptions>
 ): Options {
 
     // Copy in the default options
