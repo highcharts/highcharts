@@ -344,11 +344,14 @@ Dashboards.board('container', {
     }, {
         cell: 'health',
         type: 'HTML',
-        title: 'Health:',
+        class: 'health-indicator',
         elements: [{
-            tagName: 'h3',
-            textContent: 'critical',
-            class: 'critical'
+            tagName: 'div',
+            class: 'health-wrapper highcharts-ok-icon'
+        }, {
+            tagName: 'div',
+            class: 'health-title',
+            textContent: 'Health'
         }]
     }, {
         cell: 'disk',
