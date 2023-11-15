@@ -3,4 +3,5 @@
  authors:
    - Kamil Musialowski
  js_wrap: b
+ requiresManualTesting: true
 ...
