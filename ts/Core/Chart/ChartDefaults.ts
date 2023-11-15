@@ -1165,6 +1165,10 @@ const ChartDefaults: ChartOptions = {
             /**
              * The position of the button.
              *
+             * Note: Adjusting position values might cause overlap with chart
+             * elements. Ensure coordinates do not obstruct other components or
+             * data visibility.
+             *
              * @sample {highcharts} highcharts/chart/resetzoombutton-position/
              *         Above the plot area
              * @sample {highstock} highcharts/chart/resetzoombutton-position/
