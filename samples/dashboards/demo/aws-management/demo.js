@@ -104,6 +104,9 @@ const KPIOptions = {
             innerRadius: '80%',
             outerRadius: '100%'
         }
+    },
+    accessibility: {
+        typeDescription: 'The gauge chart with 1 data point.'
     }
 };
 
@@ -352,12 +355,26 @@ Dashboards.board('container', {
         type: 'Highcharts',
         chartOptions: {
             xAxis: {
-                categories: ['system files', 'media', 'documents', 'downloads']
+                categories: ['system files', 'media', 'documents', 'downloads'],
+                accessibility: {
+                    description: 'Disk categories'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'GB'
+                },
+                accessibility: {
+                    description: 'Gigabytes'
+                }
             },
             series: [{
                 type: 'bar',
                 data: [1, 2, 3, 1]
-            }]
+            }],
+            accessibility: {
+                description: 'The chart is displaying space on disk'
+            }
         }
     }, {
         cell: 'cpu-utilization',
@@ -378,6 +395,22 @@ Dashboards.board('container', {
                 type: 'spline',
                 data: [10, 20, 30, 10, 30, 10, 30]
             }]
+        },
+        xAxis: {
+            accessibility: {
+                description: 'Days'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Percents'
+            },
+            accessibility: {
+                description: 'Percents'
+            }
+        },
+        accessibility: {
+            description: 'The chart is displaying CPU usage'
         }
     }, {
         cell: 'cpu',
@@ -414,7 +447,12 @@ Dashboards.board('container', {
                 }],
                 innerRadius: '80%',
                 radius: '100%'
-            }]
+            }],
+            xAxis: {
+                accessibility: {
+                    description: 'Days'
+                }
+            }
         }
     }, {
         cell: 'memory',
@@ -509,7 +547,24 @@ Dashboards.board('container', {
             }, {
                 name: 'Network out',
                 data: [60, 40, 20, 20, 30, 40, 50]
-            }]
+            }],
+            xAxis: {
+                accessibility: {
+                    description: 'Days'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Bytes'
+                },
+                accessibility: {
+                    description: 'Bytes'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying amount of in and out
+                network operations`
+            }
         }
     }, {
         cell: 'disk-opt',
@@ -533,7 +588,24 @@ Dashboards.board('container', {
             }, {
                 name: 'Write operation',
                 data: [50, 30, 10, 20, 30, 40, 50]
-            }]
+            }],
+            xAxis: {
+                accessibility: {
+                    description: 'Days'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Operations'
+                },
+                accessibility: {
+                    description: 'Operations'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying amount of in and out
+                operations on disk`
+            }
         }
     }, {
         cell: 'instances-table',
