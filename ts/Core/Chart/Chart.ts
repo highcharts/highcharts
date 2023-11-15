@@ -3500,32 +3500,6 @@ class Chart {
                 .addClass('highcharts-reset-zoom')
                 .add()
                 .align(btnOptions.position, false, alignTo as any);
-
-            const contextMenuBBox = chart.exportingGroup?.getBBox(),
-                zoomButtonBBox: BBoxObject = {
-                    height: Number(chart.resetZoomButton?.attr('height') || 0),
-                    width: Number(chart.resetZoomButton?.attr('width') || 0),
-                    x: Number(chart.resetZoomButton?.attr('x') || 0),
-                    y: Number(chart.resetZoomButton?.attr('y') || 0)
-                };
-
-            if (
-                contextMenuBBox &&
-                !(
-                    // Check if any edge of the reset zoom button is outside
-                    // the bounds of the context menu.
-                    zoomButtonBBox.x > contextMenuBBox.x +
-                    contextMenuBBox.width ||
-                    zoomButtonBBox.x +
-                    zoomButtonBBox.width < contextMenuBBox.x ||
-                    zoomButtonBBox.y > contextMenuBBox.y +
-                    contextMenuBBox.height ||
-                    zoomButtonBBox.y +
-                    zoomButtonBBox.height < contextMenuBBox.y
-                )
-            ) {
-                btnOptions.position.y = 30;
-            }
         });
 
         fireEvent(this, 'afterShowResetZoom');
