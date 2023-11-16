@@ -3648,8 +3648,10 @@ class Chart {
             chart.transform({
                 axes,
                 event,
-                moveX: (chart.mouseDownX || 0) - event.chartX,
-                moveY: (chart.mouseDownY || 0) - event.chartY,
+                to: {
+                    x: event.chartX - (chart.mouseDownX || 0),
+                    y: event.chartY - (chart.mouseDownY || 0)
+                },
                 trigger: 'pan'
             });
             css(chart.container, { cursor: 'move' });
@@ -3660,6 +3662,13 @@ class Chart {
      * Pan and scale the chart. Used internally by mouse-pan, touch-pan,
      * touch-zoom, and mousewheel zoom.
      *
+     * The main positioning logic is created around two imaginary boxes. What is
+     * currently within the `from` rectangle, should be transformed to fill up
+     * the `to` rectangle. In a mouse zoom, the `from` rectangle is the selection,
+     * while the `to` rectangle is the full plot area. In a touch zoom, the
+     * `from` rectangle is made up of the last two-finger touch, while the `to``
+     * rectangle is the current touch.
+     *
      * @private
      * @function Highcharts.Chart#transform
      */
@@ -3667,16 +3676,12 @@ class Chart {
         const {
                 axes = this.axes,
                 event,
-                moveX,
-                moveY,
+                from = {},
                 reset,
                 selection,
-                target,
-                trigger,
-                zoomX,
-                zoomY
+                to = {},
+                trigger
             } = params,
-            { x, y, width, height } = target || {},
             { inverted, resetZoomButton } = this;
 
         let hasZoomed = false,
@@ -3693,14 +3698,23 @@ class Chart {
                     options,
                     reversed
                 } = axis,
-                // The x, y, width and height parameters are used for selection
-                // zoom. In this case, moveX, moveY, zoomX and zoomY are not
-                // enough because we need to tie the zoom to specific axes,
-                // either as panes or in polar charts.
-                move = (horiz ? moveX : moveY) ??
-                    ((horiz ? x : y) || 0) - axis.pos,
-                scale = (horiz ? zoomX : zoomY) ??
-                    ((horiz ? width : height) || len) / len,
+                /*
+                _move = ((horiz ? target.x : target.y) || 0) - axis.pos,
+                _scale = ((horiz ? target.width : target.height) || len) / len,
+                // */
+                wh = horiz ? 'width' : 'height',
+                xy = horiz ? 'x' : 'y',
+                toLength = to[wh] || axis.len,
+                fromLength = from[wh] || axis.len,
+                // If fingers pinched very close on this
+                // axis, treat as pan.
+                scale = Math.abs(toLength) < 10 ?
+                    1 :
+                    fromLength / toLength,
+                fromCenter = (from[xy] || 0) + fromLength / 2 - axis.pos,
+                toCenter = (to[xy] ?? axis.pos) +
+                    toLength / 2 - axis.pos,
+                move = fromCenter - scale * toCenter,
                 pointRangeDirection =
                     (reversed && !inverted) ||
                     (!reversed && inverted) ?
@@ -4030,15 +4044,11 @@ namespace Chart {
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
-        moveX?: number;
-        moveY?: number;
-        reference?: Partial<BBoxObject>;
+        to?: Partial<BBoxObject>;
         reset?: boolean;
         selection?: Pointer.SelectEventObject;
-        target?: BBoxObject;
+        from?: Partial<BBoxObject>;
         trigger?: string;
-        zoomX?: number;
-        zoomY?: number;
     }
 
     export interface CreateAxisOptionsObject {

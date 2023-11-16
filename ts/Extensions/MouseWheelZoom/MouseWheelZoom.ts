@@ -98,15 +98,24 @@ const zoomBy = function (
         axes = chart.axes;
     }
 
-    mouseX -= chart.plotLeft;
-    mouseY -= chart.plotTop;
-
     const hasZoomed = chart.transform({
         axes,
-        moveX: mouseX - howMuch * mouseX,
-        moveY: mouseY - howMuch * mouseY,
-        zoomX: howMuch,
-        zoomY: howMuch
+        // Create imaginary reference and target rectangles around the mouse
+        // point that scales up or down with `howMuch`;
+        to: {
+            x: mouseX - 5,
+            y: mouseY - 5,
+            // Must use 10 to get passed the limit for too small reference.
+            // Below this, the transform will default to a pan.
+            width: 10,
+            height: 10
+        },
+        from: {
+            x: mouseX - 5 * howMuch,
+            y: mouseY - 5 * howMuch,
+            width: 10 * howMuch,
+            height: 10 * howMuch
+        }
     });
 
     if (hasZoomed) {

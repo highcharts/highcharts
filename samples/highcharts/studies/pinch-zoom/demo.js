@@ -1,24 +1,21 @@
 /*
 To do
-- Remove Chart.zoom and Axis.zoom functions. Marker clusters need to be updated
-  to use Chart.transform.
-- Remove chart.plotLeft, chart.plotTop from the calculations. Check axis
-  positioning.
 - When to show reset zoom button? Investigate and run some combinations.
 - Refactor: touchpan and zoom now uses basically the same chart.axes.filter
   expression
-- Refactor: All zoom, pan, touch and wheel operations should be possible to
-  define using two rectangles, a reference (default to full chart), and a
-  target (like the selectionBox).
 - Clean up mouseDownX, mouseDownY, lastTouches, pinchStart. See if we can store
   one single event instead.
-- Check out if minPadding, maxPadding and threshold
-  can be refactored out and shared with setTickPositions.
+- Check out if minPadding, maxPadding and threshold can be refactored out and
+  shared with setTickPositions.
 - Check if marker/attr stuff is necessary in `getSelectionBox`. Simple .getBBox
   should be sufficient.
 - Stock chart: navigator not working after zooming on y. Reset button quirks.
-- More granular isPanning. When panning on x-axis, isPanning prevents end on
-  ticks on the y-axis. Maybe isPanning should be on the axis, not the chart.
+- When mousewheeling in on the pinch-zoom usdeur data, the y-axis jumps clear of
+  the start and end ticks. Consider a similar solution to minPadding and
+  maxPadding handling to avoid the jump. Why did it not work with `isPanning` on
+  the axis?
+- On multiple panes, make sure only zoomed axes are affected. Check target or
+  reference position (center point?) against axis position. Add/modify tests.
 */
 
 
@@ -30,7 +27,7 @@ To do
         .then(data =>
             data
             // .map(p => p[1])
-            // .slice(0, 20)
+            // .slice(0, 10)
         );
 
     Highcharts.chart('container', {
@@ -43,7 +40,8 @@ To do
             mouseWheel: {
                 enabled: true
             },
-            panKey: 'shift'
+            panKey: 'shift',
+            type: 'area'
         },
         title: {
             text: 'USD to EUR exchange rate over time',

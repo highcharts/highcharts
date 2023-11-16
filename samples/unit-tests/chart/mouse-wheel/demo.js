@@ -33,7 +33,7 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
         'Reset zoom button should display'
     );
 
-    controller.mouseWheel(200, 100, 1000);
+    controller.mouseWheel(200, 100, 1001);
 
     assert.strictEqual(
         chart.xAxis[0].min,

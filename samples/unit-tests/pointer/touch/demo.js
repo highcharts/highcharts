@@ -467,9 +467,10 @@ QUnit.test('Touch and panning', function (assert) {
         'Touch-device panning allows panning outside the xAxis options: min & max (#10633)'
     );
 
-    assert.strictEqual(
+    assert.close(
         chart.xAxis[0].max - chart.xAxis[0].min,
         initialRange,
+        0.0000001,
         'The x-axis range should not change during panning'
     );
 

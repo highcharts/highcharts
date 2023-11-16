@@ -17,6 +17,7 @@
  * */
 
 import type Axis from './Axis/Axis';
+import type BBoxObject from './Renderer/BBoxObject';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
 import type NodesComposition from '../Series/NodesComposition';
@@ -39,7 +40,6 @@ const {
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-import BBoxObject from './Renderer/BBoxObject';
 const {
     addEvent,
     attr,
@@ -541,7 +541,7 @@ class Pointer {
 
             // A selection has been made
             if (this.hasDragged) {
-                const target = this.getSelectionBox(selectionMarker);
+                const from = this.getSelectionBox(selectionMarker);
                 chart.transform({
                     axes: chart.axes.filter((a): boolean|undefined =>
                         a.zoomEnabled &&
@@ -554,9 +554,9 @@ class Pointer {
                         originalEvent: e, // #4890
                         xAxis: [],
                         yAxis: [],
-                        ...target
+                        ...from
                     },
-                    target
+                    from
                 });
             }
 
@@ -1371,6 +1371,7 @@ class Pointer {
                 touches
             }, (): void => {
 
+                /* /
                 const last0 = lastTouches[0],
                     last1 = lastTouches[1] ?? last0,
                     now0 = touches[0],
@@ -1405,8 +1406,33 @@ class Pointer {
                         transform[i ? 'zoomY' : 'zoomX'] = scale;
                     }
                 );
-
                 chart.transform(transform);
+                */
+                const boxFromTouches = (
+                    touches: PointerEvent[]
+                ): BBoxObject => {
+                    const finger0 = touches[0],
+                        finger1 = touches[1] || finger0;
+                    return {
+                        x: finger0.chartX,
+                        y: finger0.chartY,
+                        width: finger1.chartX - finger0.chartX,
+                        height: finger1.chartY - finger0.chartY
+                    };
+                };
+
+                chart.transform({
+                    axes: chart.axes
+                        .filter((axis): boolean|undefined =>
+                            axis.zoomEnabled &&
+                            (
+                                (this.zoomHor && axis.horiz) ||
+                                (this.zoomVert && !axis.horiz)
+                            )
+                        ),
+                    to: boxFromTouches(touches),
+                    from: boxFromTouches(lastTouches)
+                });
 
                 /* /
 

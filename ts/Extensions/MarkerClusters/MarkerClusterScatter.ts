@@ -668,7 +668,7 @@ function onPointDrillToCluster(
                 chart.pointer.zoomX = true;
                 chart.pointer.zoomY = true;
                 chart.transform({
-                    target: {
+                    from: {
                         x: x1Px,
                         y: y1Px,
                         width: x2Px - x1Px,
