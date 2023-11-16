@@ -181,7 +181,7 @@ These custom classes and ids can be used to style the dashboard:
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/styling" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance" allow="fullscreen"></iframe>
 
 ## Edit Mode classes
 You can also change how the Edit Mode looks like. The Edit mode is based on the

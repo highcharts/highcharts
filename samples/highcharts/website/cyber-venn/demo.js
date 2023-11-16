@@ -1,3 +1,4 @@
+
 // const imgPath = 'http://192.168.1.176:3030/';
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d645df6f0c5d8540e5d059a043051cd862f259d0/samples/graphics/cyber-monday/';
 
@@ -125,11 +126,9 @@ const presale = {
         outside: true,
         useHTML: true,
         formatter: function () {
-            console.log(this.point.notooltip);
             const tiptext = presaleTips[this.point.index];
             const img = presaleImages[this.point.index];
             const title = presaleTitles[this.point.index];
-
             const html = '<div class="venntip">' +
             '<div id="tip-title"><img src="' + imgPath + img + '"></img>' +
             '<span class="title">' + title + '</span></div>' +
@@ -185,6 +184,7 @@ const presale = {
             name: 'products',
             accessibility: {
                 description: 'Explore our latest products - We\'ve added several new exciting products and integrations to our offerings  this year. Check out our Roadmap for details.'
+
             },
             dataLabels: {
                 format: '<div id="products" class="labels"><img src="' + imgPath + 'cyber-products.svg"><span class="text"><br>Explore<br>our latest<br>products</span></div>',
@@ -630,5 +630,4 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         Highcharts.chart('venn', presale);
     }
-
 });

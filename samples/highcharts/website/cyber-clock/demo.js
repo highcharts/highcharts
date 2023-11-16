@@ -1,11 +1,16 @@
 // Set the date you're counting down to
-const countDownDate = new Date('2023-11-27T09:00:00').getTime();
+let countDownDate = new Date('2023-11-27T07:00:00Z').getTime();
+
 
 Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/';
+
+const small = window.matchMedia('(max-width: 300px)').matches;
+
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* shared gauge options */
 const gaugeOptions = {
@@ -107,7 +112,7 @@ const gaugeOptions = {
                     plotOptions: {
                         solidgauge: {
                             dataLabels: {
-                                y: -28
+                                y: -24
                             }
                         }
                     }
@@ -217,8 +222,6 @@ const gaugeOptions = {
 function updateCountdown(type) {
     const now = new Date().getTime();
 
-    // Set the date you're counting down to
-
     // Calculate the difference between now and the countdown date
     const distance = countDownDate - now;
 
@@ -237,9 +240,10 @@ function updateCountdown(type) {
     // document.getElementById('seconds').textContent = seconds;
 
     // If the countdown is over, display some text
-    if (distance < 0) {
+    if (distance <= 0) {
         // clearInterval(countdownInterval);
-        document.getElementById('countdown').innerHTML = 'EVENT HAS STARTED!';
+        countDownDate = new Date('2023-12-03T23:00:00Z').getTime();
+        document.getElementById('header').innerHTML = '<span style="font-weight:bold">70% Off </span> Highcharts Dashboards ends in:';
     }
 
     switch (type) {
@@ -271,6 +275,25 @@ function generateLabel(type) {
 }
 
 function generateCaption(type) {
+
+    if (small) {
+        switch (type) {
+        case 'seconds':
+            type = ':SECS';
+            break;
+        case 'minutes':
+            type = ':MINS';
+            break;
+        case 'hours':
+            type = ':HRS';
+            break;
+        case 'days':
+            type = ':DAYS';
+            break;
+        default:
+            console.log('no time');
+        }
+    }
     return {
         text: type,
         align: 'center'
@@ -305,21 +328,23 @@ function lightParticles() {
 
 /* gauges */
 
-Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
+let secondsInt, minutesInt, hoursInt, daysInt;
+
+const seconds = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                console.log(chart.chartWidth);
+                document.querySelector('#seconds .time').style.opacity = 0;
 
                 chart.series[1].points[0].update({
-                    y: updateCountdown('seconds')
+                    y: 60 - updateCountdown('seconds')
                 });
-                setInterval(() => {
+                secondsInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
-                        y: updateCountdown('seconds')
+                        y: 60 - updateCountdown('seconds')
                     }, false);
 
                     chart.series[1].update({
@@ -329,7 +354,12 @@ Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#seconds .time').style.opacity = 1;
+                }, 100);
             }
         }
     },
@@ -374,18 +404,20 @@ Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
 
         }]
 
-}));
+});
 
-Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
+const minutes = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#minutes .time').style.opacity = 0;
+
+                minutesInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
-                        y: updateCountdown('minutes')
+                        y: 60 - updateCountdown('minutes')
                     }, false);
 
                     chart.series[1].update({
@@ -395,7 +427,12 @@ Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#minutes .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -444,18 +481,20 @@ Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
             backgroundColor: 'transparent'
         }
     }]
-}));
+});
 
-Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
+const hours = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#hours .time').style.opacity = 0;
+
+                hoursInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
-                        y: updateCountdown('hours')
+                        y: 24 - updateCountdown('hours')
                     }, false);
 
                     chart.series[1].update({
@@ -465,7 +504,12 @@ Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#hours .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -510,18 +554,20 @@ Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
 
     }]
 
-}));
+});
 
-Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
+const days = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#days .time').style.opacity = 0;
+
+                daysInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
-                        y: updateCountdown('days')
+                        y: 20 - updateCountdown('days')
                     }, false);
 
                     chart.series[1].update({
@@ -531,7 +577,12 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#days .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -539,13 +590,14 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
     caption: generateCaption('days'),
     yAxis: {
         min: 0,
-        max: 59,
-        tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        max: 20,
+        tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+            13, 14, 15, 16, 17, 18, 19, 20],
         lineWidth: 0
     },
     series: [{
         name: 'Days base',
-        data: [12],
+        data: [20],
         dataLabels: {
             enabled: false
         },
@@ -559,7 +611,7 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
     },
     {
         name: 'Days',
-        data: [12 - updateCountdown('days')],
+        data: [20 - updateCountdown('days')],
         dataLabels: {
             useHTML: true,
             format: generateLabel('days')
@@ -573,7 +625,7 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
 
     }]
 
-}));
+});
 
 
 /* Background animation */
@@ -600,39 +652,25 @@ function lightStreaks(num) {
 }
 
 let streaksInterval = '';
+if (!small && !reduced) {
+    Highcharts.chart('container', {
+        chart: {
+            backgroundColor: 'transparent',
+            type: 'columnrange',
+            inverted: true,
+            animation: {
+                easing: 'easeOutQuint',
+                duration: 300
+            },
+            spacingLeft: 0,
+            spacingRight: 0,
+            margin: 0,
+            spacing: [0, 0, 0, 0],
+            events: {
+                load: function () {
+                    const chart = this;
+                    streaks = chart;
 
-Highcharts.chart('container', {
-    chart: {
-        backgroundColor: 'transparent',
-        type: 'columnrange',
-        inverted: true,
-        animation: {
-            easing: 'easeOutQuint',
-            duration: 300
-        },
-        spacingLeft: 0,
-        spacingRight: 0,
-        margin: 0,
-        spacing: [0, 0, 0, 0],
-        events: {
-            load: function () {
-                const chart = this;
-                streaks = chart;
-
-                setTimeout(() => {
-                    lightStreaks(1);
-                    lightStreaks(6);
-                }, 100);
-                setTimeout(() => {
-                    lightStreaks(2);
-                    lightStreaks(4);
-                }, 500);
-                setTimeout(() => {
-                    lightStreaks(3);
-                    lightStreaks(5);
-                }, 900);
-
-                streaksInterval = setInterval(function () {
                     setTimeout(() => {
                         lightStreaks(1);
                         lightStreaks(6);
@@ -645,263 +683,301 @@ Highcharts.chart('container', {
                         lightStreaks(3);
                         lightStreaks(5);
                     }, 900);
-                }, 3000);
-            },
-            redraw: function () {
-                lightParticles();
+
+                    if (!reduced) {
+                        streaksInterval = setInterval(function () {
+                            setTimeout(() => {
+                                lightStreaks(1);
+                                lightStreaks(6);
+                            }, 100);
+                            setTimeout(() => {
+                                lightStreaks(2);
+                                lightStreaks(4);
+                            }, 500);
+                            setTimeout(() => {
+                                lightStreaks(3);
+                                lightStreaks(5);
+                            }, 900);
+                        }, 3000);
+                    }
+
+                },
+                redraw: function () {
+                    if (!reduced) {
+                        lightParticles();
+                    }
+                }
             }
-        }
-    },
-    exporting: {
-        enabled: false
-    },
-    credits: {
-        enabled: false
-    },
-    legend: {
-        enabled: false
-    },
-    title: {
-        text: null
-    },
-    plotOptions: {
-        columnrange: {
-            animation: false,
-            enableMouseTracking: false,
-            pointWidth: 10,
-            borderRadius: '10px',
-            color: '#8087E8',
-            opacity: 0.4,
-            borderWidth: 0
-        }
-    },
-    xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
-            'Sep', 'Oct', 'Nov', 'Dec'],
-        gridLineColor: 'transparent'
-    },
-    {
-        min: 0,
-        max: 20,
-        tickInterval: 1
-    }],
-    yAxis: [
-        // 0
+        },
+        exporting: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        title: {
+            text: null
+        },
+        plotOptions: {
+            columnrange: {
+                animation: false,
+                enableMouseTracking: false,
+                pointWidth: 10,
+                borderRadius: '10px',
+                color: '#8087E8',
+                opacity: 0.4,
+                borderWidth: 0
+            }
+        },
+        xAxis: [{
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+                'Sep', 'Oct', 'Nov', 'Dec'],
+            gridLineColor: 'transparent'
+        },
         {
             min: 0,
             max: 20,
-            tickInterval: 1,
-            startOnTick: false,
-            gridLineColor: 'transparent'
-        },
-        // 1
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        },
-        // 2
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        },
-        // 3
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        },
-        // 4
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        },
-        // 5
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        },
-        // 6
-        {
-            min: 21,
-            max: 1000,
-            gridLineColor: 'transparent',
-            visible: false
-        }
-    ],
-    series: [{
-        borderWidth: 0,
-        opacity: 0,
-        data: [
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20],
-            [0, 20]
-        ]
-    },
-    {
-        yAxis: 1,
-        data: [
-            [0, 0],
-            [-100, 5]
-        ]
-    },
-    {
-        yAxis: 2,
-        data: [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [-100, 5]
-        ]
-    },
-    {
-        yAxis: 3,
-        data: [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [-100, 5]
-        ]
-    },
-    {
-        yAxis: 4,
-        data: [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [-100, 5]
-        ]
-    },
-    {
-        yAxis: 5,
-        data: [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [-100, 5]
-        ]
-    },
-    {
-        yAxis: 6,
-        data: [
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [-100, 5],
-            [0, 0]
-        ]
-    },
-    {
-        type: 'scatter',
-        animation: false,
-        enableMouseTracking: false,
-        className: 'particles',
-        color: 'transparent',
-        xAxis: 1,
-        yAxis: 0,
-        data: [
+            tickInterval: 1
+        }],
+        yAxis: [
+            // 0
             {
-                x: 4,
-                y: 1,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p2-outline.svg)',
-                    width: 38,
-                    height: 30
-                }
+                min: 0,
+                max: 20,
+                tickInterval: 1,
+                startOnTick: false,
+                gridLineColor: 'transparent'
             },
-
+            // 1
             {
-                x: 15,
-                y: 3,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p6-outline.svg)',
-                    width: 58,
-                    height: 45
-                }
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
             },
-
-
+            // 2
             {
-                x: 2,
-                y: 6,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p5-outline.svg)',
-                    width: 42,
-                    height: 60
-                }
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
             },
-
+            // 3
             {
-                x: 2,
-                y: 12,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p4-outline.svg)',
-                    width: 27,
-                    height: 50
-                }
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
             },
+            // 4
             {
-                x: 16,
-                y: 16,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p6b-outline.svg)',
-                    width: 71,
-                    height: 61
-                }
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
             },
+            // 5
             {
-                x: 5,
-                y: 17,
-                marker: {
-                    symbol: 'url(' + imgPath + 'p1-outline.svg)',
-                    width: 79,
-                    height: 58
-                }
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
+            },
+            // 6
+            {
+                min: 21,
+                max: 1000,
+                gridLineColor: 'transparent',
+                visible: false
             }
+        ],
+        series: [{
+            borderWidth: 0,
+            opacity: 0,
+            data: [
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20],
+                [0, 20]
+            ]
+        },
+        {
+            yAxis: 1,
+            data: [
+                [0, 0],
+                [-100, 5]
+            ]
+        },
+        {
+            yAxis: 2,
+            data: [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [-100, 5]
+            ]
+        },
+        {
+            yAxis: 3,
+            data: [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [-100, 5]
+            ]
+        },
+        {
+            yAxis: 4,
+            data: [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [-100, 5]
+            ]
+        },
+        {
+            yAxis: 5,
+            data: [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [-100, 5]
+            ]
+        },
+        {
+            yAxis: 6,
+            data: [
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [0, 0],
+                [-100, 5],
+                [0, 0]
+            ]
+        },
+        {
+            type: 'scatter',
+            animation: false,
+            enableMouseTracking: false,
+            className: 'particles',
+            color: 'transparent',
+            xAxis: 1,
+            yAxis: 0,
+            data: [
+                {
+                    x: 4,
+                    y: 1,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p2-outline.svg)',
+                        width: 38,
+                        height: 30
+                    }
+                },
+
+                {
+                    x: 15,
+                    y: 3,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p6-outline.svg)',
+                        width: 58,
+                        height: 45
+                    }
+                },
+
+
+                {
+                    x: 2,
+                    y: 6,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p5-outline.svg)',
+                        width: 42,
+                        height: 60
+                    }
+                },
+
+                {
+                    x: 2,
+                    y: 12,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p4-outline.svg)',
+                        width: 27,
+                        height: 50
+                    }
+                },
+                {
+                    x: 16,
+                    y: 16,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p6b-outline.svg)',
+                        width: 71,
+                        height: 61
+                    }
+                },
+                {
+                    x: 5,
+                    y: 17,
+                    marker: {
+                        symbol: 'url(' + imgPath + 'p1-outline.svg)',
+                        width: 79,
+                        height: 58
+                    }
+                }
+            ]
+        }
         ]
-    }
-    ]
-});
+    });
+}
+
+Highcharts.chart('seconds', seconds);
+Highcharts.chart('minutes', minutes);
+Highcharts.chart('hours', hours);
+Highcharts.chart('days', days);
+
 
 document.getElementById('stop').addEventListener('click', function () {
     clearInterval(streaksInterval);
     this.style.opacity = 0;
+});
+
+addEventListener('resize', function () {
+    clearInterval(secondsInt);
+    clearInterval(minutesInt);
+    clearInterval(hoursInt);
+    clearInterval(daysInt);
+
+    Highcharts.chart('seconds', seconds);
+    Highcharts.chart('minutes', minutes);
+    Highcharts.chart('hours', hours);
+    Highcharts.chart('days', days);
 });
 
 /* html version of countdown */

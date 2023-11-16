@@ -873,7 +873,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.isUpdating = true;
         if (pick(redraw, true)) {
-            chart.redraw();
+            chart.drawAnnotations();
         }
 
         fireEvent(this, 'afterUpdate');

@@ -449,6 +449,10 @@ async function setupBoard() {
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'TN' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -459,7 +463,9 @@ async function setupBoard() {
                 yAxis: {
                     accessibility: {
                         description: 'Celsius'
-                    }
+                    },
+                    max: 50,
+                    min: -10
                 }
             },
             states: {
@@ -473,6 +479,10 @@ async function setupBoard() {
         }, {
             cell: 'kpi-max-temperature',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'TX' + activeScale,
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -483,7 +493,9 @@ async function setupBoard() {
                 yAxis: {
                     accessibility: {
                         description: 'Celsius'
-                    }
+                    },
+                    max: 50,
+                    min: -10
                 }
             },
             states: {
@@ -497,6 +509,10 @@ async function setupBoard() {
         }, {
             cell: 'kpi-rain',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'RR1',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -507,7 +523,9 @@ async function setupBoard() {
                 yAxis: {
                     accessibility: {
                         description: 'Days'
-                    }
+                    },
+                    max: 10,
+                    min: 0
                 }
             },
             states: {
@@ -750,7 +768,6 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        kpiRain,
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
@@ -813,6 +830,12 @@ async function updateBoard(board, city, column, scale, newData) {
             stops: colorStops
         }
     });
+    kpiTemperature.update({
+        columnName: 'TN' + scale
+    });
+    kpiMaxTemperature.update({
+        columnName: 'TX' + scale
+    });
 
     // Update KPIs
     if (newData) {
@@ -824,16 +847,8 @@ async function updateBoard(board, city, column, scale, newData) {
                 citiesTable.getRowIndexBy('city', city)
             ) || '--'
         });
-    }
-    kpiTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TN' + scale, rangeEnd) || 0);
-    kpiMaxTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
-    kpiRain.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
 
-    // Update data grid and city chart
-    if (newData) {
+        // Update data grid and city chart
         const showCelsius = scale === 'C';
         const sharedColumnAssignment = {
             time: 'x',

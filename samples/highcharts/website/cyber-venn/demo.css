@@ -162,6 +162,7 @@ form {
     font-weight: 300;
     font-size: 0.65rem;
     opacity: 1;
+    background-color: #fff;
 }
 
 #venn {
@@ -460,6 +461,7 @@ form {
     fill-opacity: 1;
 }
 
+
 #venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
     fill: url(#ffflux-gradient);
     fill: red;
@@ -538,6 +540,7 @@ form {
         font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     }
 
+@media screen  and (min-width: 550px) {
     .highcharts-container {
         height: 580px;
     }
@@ -677,4 +680,5 @@ form {
     #dataviz img {
         margin-top: 20px;
     }
+
 }
