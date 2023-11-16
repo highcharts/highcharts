@@ -573,7 +573,7 @@ namespace DataLabel {
             dataLabelsGroup: SVGElement;
 
         // Resolve the animation
-        const { animation, defer } = splat(seriesDlOptions)[0],
+        const { animation, defer } = seriesDlOptions[0],
             animationConfig = defer ?
                 getDeferredAnimation(chart, animation, series) :
                 { defer: 0, duration: 0 };
