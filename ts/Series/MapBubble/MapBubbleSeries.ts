@@ -275,7 +275,7 @@ class MapBubbleSeries extends BubbleSeries {
         compareX?: boolean
     ): (Point|undefined) {
         return this.searchKDTree({
-            clientX: e.chartX - this.chart.plotLeft,
+            plotX: e.chartX - this.chart.plotLeft,
             plotY: e.chartY - this.chart.plotTop
         }, compareX, e);
     }
@@ -342,6 +342,8 @@ extend(MapBubbleSeries.prototype, {
     processData: mapProto.processData,
 
     projectPoint: mapPointProto.projectPoint,
+
+    kdAxisArray: ['plotX', 'plotY'],
 
     setData: mapProto.setData,
 
