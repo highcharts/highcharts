@@ -2161,4 +2161,18 @@ QUnit.test('slotWidth', assert => {
         axis.ticks[axis.tickPositions[3]].slotWidth < 30,
         '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
     );
+
+    axis.remove();
+    chart.xAxis[0].update({
+        tickInterval: 1000 * 60 * 60 * 24 * 30,
+        min: Date.UTC(2016, 11, 31),
+        max: Date.UTC(2018, 1, 1)
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].mark.getBBox().x,
+        chart.yAxis[0].axisLine.getBBox().x,
+        `First tick gridlines on x-axis should be aligned with the first tick
+        gridlines on y-axis (#19845).`
+    );
 });
