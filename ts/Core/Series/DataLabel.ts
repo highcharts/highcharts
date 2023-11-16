@@ -230,20 +230,10 @@ namespace DataLabel {
      * @private
      */
     function hasDataLabels(this: Series): boolean {
-        const series = this,
-            plotOptions = series.chart.options.plotOptions;
-
-        return splat(
-            mergeArrays(
-                mergeArrays(
-                    plotOptions?.series?.dataLabels,
-                    plotOptions?.[series.type]?.dataLabels
-                ),
-                series.options.dataLabels
-            )
-        ).some((o: DataLabelOptions|undefined): boolean|undefined =>
-            o?.enabled
-        );
+        return mergedDataLabelOptions(this)
+            .some((o: DataLabelOptions|undefined): boolean|undefined =>
+                o?.enabled
+            );
     }
 
     /**
@@ -572,25 +562,15 @@ namespace DataLabel {
             seriesOptions = series.options,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
-            plotOptions = chart.options.plotOptions,
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
-            );
-
-        let seriesDlOptions = seriesOptions.dataLabels,
-            pointOptions: Array<DataLabelOptions>,
-            dataLabelsGroup: SVGElement;
-
-        // Merge in plotOptions.dataLabels for series
-        seriesDlOptions = mergeArrays(
-            mergeArrays(
-                plotOptions?.series?.dataLabels,
-                plotOptions?.[series.type]?.dataLabels
             ),
-            seriesDlOptions
-        );
+            seriesDlOptions = mergedDataLabelOptions(series);
+
+        let pointOptions: Array<DataLabelOptions>,
+            dataLabelsGroup: SVGElement;
 
         // Resolve the animation
         const { animation, defer } = splat(seriesDlOptions)[0],
@@ -1001,6 +981,26 @@ namespace DataLabel {
             }
         }
         return res;
+    }
+
+    /**
+     * Merge plotOptions and series options for dataLabels.
+     * @private
+     */
+    function mergedDataLabelOptions(
+        series: Series
+    ): Array<DataLabelOptions> {
+        const plotOptions = series.chart.options.plotOptions;
+
+        return splat(
+            mergeArrays(
+                mergeArrays(
+                    plotOptions?.series?.dataLabels,
+                    plotOptions?.[series.type]?.dataLabels
+                ),
+                series.options.dataLabels
+            )
+        );
     }
 
     /**
