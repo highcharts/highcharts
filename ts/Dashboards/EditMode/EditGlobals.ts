@@ -30,6 +30,7 @@ const EditGlobals: EditGlobals = {
         resizeSnapY: PREFIX + 'resize-snap-y',
         separator: PREFIX + 'separator',
         contextMenuBtn: PREFIX + 'context-menu-btn',
+        contextMenuBtnText: PREFIX + 'context-menu-btn-text',
         contextMenu: PREFIX + 'context-menu',
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
@@ -179,6 +180,7 @@ namespace EditGlobals {
         contextDetectionPointer: string;
         contextMenu: string;
         contextMenuBtn: string;
+        contextMenuBtnText: string;
         contextMenuItem: string;
         currentEditedElement: string;
         customSelect: string;

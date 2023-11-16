@@ -3,6 +3,7 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
+            text: 'Menu',
             icon: 'https://code.highcharts.com/dashboards/gfx/dashboards-icons/series-types/icon-gauge.svg'
         }
     },

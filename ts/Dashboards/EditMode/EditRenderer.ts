@@ -62,26 +62,52 @@ function renderContextButton(
 
     if (editMode.options.contextMenu) {
         ctxBtnElement = createElement(
-            'button', {
+            'button',
+            {
                 className: EditGlobals.classNames.contextMenuBtn,
-                onclick: function (): void {
+                onclick: function (event: Event): void {
+                    event.stopPropagation();
                     editMode.onContextBtnClick();
                 }
             },
-            {
-                'background-image': 'url(' +
-                    editMode.options.contextMenu.icon +
-                ')'
-            } as any,
+            {},
             parentNode
         );
+
+        // Add the icon if defined.
+        if (editMode.options.contextMenu.icon) {
+            createElement(
+                'img',
+                {
+                    src: editMode.options.contextMenu.icon,
+                    className: EditGlobals.classNames.icon
+                },
+                {},
+                ctxBtnElement
+            );
+        }
+
+        // Add text next to the icon if defined.
+        if (editMode.options.contextMenu.text) {
+            createElement(
+                'span',
+                {
+                    className: EditGlobals.classNames.contextMenuBtnText,
+                    textContent: editMode.options.contextMenu.text
+                },
+                {},
+                ctxBtnElement
+            );
+        }
 
         ctxBtnElement.setAttribute(
             'aria-label',
             editMode.lang.accessibility.contextMenu.button
         );
-
-        ctxBtnElement.setAttribute('aria-expanded', 'false');
+        ctxBtnElement.setAttribute(
+            'aria-expanded',
+            'false'
+        );
     }
 
     return ctxBtnElement;
@@ -726,14 +752,16 @@ function renderButton(
     }
 
     button = createElement(
-        'button', {
+        'button',
+        {
             className: (
                 EditGlobals.classNames.button + ' ' +
                 (options.className || '')
             ),
             onclick: options.callback,
             textContent: options.text
-        }, options.style || {},
+        },
+        options.style || {},
         parentElement
     );
 
