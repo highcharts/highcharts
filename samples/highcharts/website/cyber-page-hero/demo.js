@@ -930,6 +930,7 @@ function stopStreaks() {
 
 document.getElementById('stop').addEventListener('click', function () {
     stopStreaks();
+    this.style.opacity = 0;
 });
 
 addEventListener('resize', function () {
