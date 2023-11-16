@@ -2279,6 +2279,26 @@ namespace AxisDefaults {
     };
 
     /**
+     * The Z axis or depth axis for 3D plots.
+     *
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
+     *
+     * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
+     *         Z-Axis with Categories
+     * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
+     *         Z-Axis with styling
+     *
+     * @type      {*|Array<*>}
+     * @extends   xAxis
+     * @since     5.0.0
+     * @product   highcharts
+     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+     *            nameToX, showEmpty, top, width
+     * @apioption zAxis
+     */
+
+    /**
      * The Y axis or value axis. Normally this is the vertical axis,
      * though if the chart is inverted this is the horizontal axis.
      * In case of multiple axes, the yAxis node is an array of
@@ -3128,26 +3148,6 @@ namespace AxisDefaults {
 
         lineWidth: 0
     };
-
-    /**
-     * The Z axis or depth axis for 3D plots.
-     *
-     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
-     * access to the axis.
-     *
-     * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
-     *         Z-Axis with Categories
-     * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
-     *         Z-Axis with styling
-     *
-     * @type      {*|Array<*>}
-     * @extends   xAxis
-     * @since     5.0.0
-     * @product   highcharts
-     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
-     *            nameToX, showEmpty, top, width
-     * @apioption zAxis
-     */
 
 }
 

@@ -33,11 +33,6 @@ const {
     splat
 } = U;
 
-defaultOptions.zAxis = merge(xAxis, {
-    offset: 0,
-    lineWidth: 0
-});
-
 /* *
  *
  *  Declarations
@@ -130,6 +125,12 @@ class ZAxis extends Axis implements AxisLike {
     ): void {
 
         if (U.pushUnique(composedMembers, ChartClass)) {
+
+            defaultOptions.zAxis = merge(xAxis, {
+                offset: 0,
+                lineWidth: 0
+            });
+
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;

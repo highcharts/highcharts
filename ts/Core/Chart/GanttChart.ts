@@ -27,7 +27,6 @@ import type Options from '../Options';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
-const { getOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
