@@ -27,6 +27,8 @@ function scriptsCompile(filePaths, config = {}) {
     const esModulesFolder = config.esModulesFolder || '/es-modules/',
         targetFolder = config.bundleTargetFolder || 'code';
 
+    const skipSourceMaps = config.skipSourceMaps || false;
+
     filePaths = filePaths instanceof Array ?
         filePaths :
         typeof argv.files === 'string' ?
@@ -70,19 +72,26 @@ function scriptsCompile(filePaths, config = {}) {
                 // hoist_funs: true
             },
             mangle: true,
-            sourceMap: true
+            sourceMap: !skipSourceMaps
         })
 
             .then(result => {
+                const sourceMapReference =
+                    skipSourceMaps ?
+                        '' :
+                        `//# sourceMappingURL=${path.basename(outputMapPath)}`;
+
                 // Write compiled file
                 fs.writeFileSync(
                     outputPath,
                     result.code.replace('@license ', '') +
-                    `//# sourceMappingURL=${path.basename(outputMapPath)}`
+                    sourceMapReference
                 );
 
-                // Write source map
-                fs.writeFileSync(outputMapPath, result.map);
+                if (!skipSourceMaps) {
+                    // Write source map
+                    fs.writeFileSync(outputMapPath, result.map);
+                }
 
                 logLib.success(
                     `Compiled ${inputPath} => ${outputPath}`,

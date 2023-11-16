@@ -19,6 +19,8 @@ const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';
 const pathToDistRepo = '../' + releaseRepo + '/';
 
+const scriptsCompile = require('./scripts-compile.js');
+
 /**
  * Asks user a question, and waits for input.
  * @param {string} question
@@ -174,7 +176,7 @@ function copyFiles() {
 
     const filesToIgnore = [
         '.DS_Store',
-        'package.json',
+        'package.json', // Is handled in `updateJSONFiles`
         '.js.map'
     ];
 
@@ -318,6 +320,11 @@ async function release() {
     const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md'];
     await removeFilesInFolder(pathToDistRepo, keepFiles);
     log.message('Successfully removed content of ' + pathToDistRepo);
+
+    // Rerun compile with sourceMaps disabled
+    await scriptsCompile(void 0, {
+        skipSourceMaps: true
+    });
 
     copyFiles();
     updateJSONFiles(version, PRODUCT_NAME);
