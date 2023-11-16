@@ -1,4 +1,3 @@
-
 // const imgPath = 'http://192.168.1.176:3030/';
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d645df6f0c5d8540e5d059a043051cd862f259d0/samples/graphics/cyber-monday/';
 
