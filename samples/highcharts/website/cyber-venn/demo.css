@@ -461,7 +461,6 @@ form {
     fill-opacity: 1;
 }
 
-
 #venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
     fill: url(#ffflux-gradient);
     fill: red;
@@ -540,145 +539,145 @@ form {
         font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     }
 
-@media screen  and (min-width: 550px) {
-    .highcharts-container {
-        height: 580px;
+    @media screen  and (min-width: 550px) {
+        .highcharts-container {
+            height: 580px;
+        }
+
+        #bigdeal img {
+            width: 239px;
+            height: 146px;
+            margin-left: -10px;
+        }
+
+        #curve img {
+            width: 60px;
+            height: 50px;
+        }
+
+        #money img {
+            width: 50px;
+            height: 45px;
+        }
+
+        #dataviz img {
+            width: 40px;
+            height: 54px;
+            margin-top: 40px;
+            margin-left: -10px;
+        }
+
+        #customize img {
+            width: 47px;
+            height: 40px;
+        }
+
+        #products span {
+            color: #fff;
+        }
+
+        #products img {
+            width: 45px;
+            height: 45px;
+            margin-top: 50px;
+        }
+
+        #collection img {
+            width: 198px;
+            height: 41px;
+        }
+
+        #creativity img {
+            width: 37px;
+            height: 50px;
+        }
+
+        #frameworks img {
+            width: 42px;
+            height: 50px;
+            margin-left: unset;
+        }
     }
 
-    #bigdeal img {
-        width: 239px;
-        height: 146px;
-        margin-left: -10px;
-    }
+    @media screen  and (min-width: 768px) {
+        #sale {
+            position: absolute;
+            z-index: 1000;
+            left: -122px;
+            top: -172px;
+            width: 248px;
+        }
 
-    #curve img {
-        width: 60px;
-        height: 50px;
-    }
+        #sale #dash-button {
+            padding: 8px 12px;
+            margin: 10px 35px;
+            width: auto;
+        }
 
-    #money img {
-        width: 50px;
-        height: 45px;
-    }
+        #sale #dash-button a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding-top: 4px;
+            display: block;
+        }
 
-    #dataviz img {
-        width: 40px;
-        height: 54px;
-        margin-top: 40px;
-        margin-left: -10px;
-    }
+        #sale img {
+            width: auto;
+            margin-left: 0;
+            margin-top: -10px;
+            justify-self: center;
+        }
 
-    #customize img {
-        width: 47px;
-        height: 40px;
-    }
+        #sale #logo-type {
+            margin-top: -20px;
+            margin-bottom: 10px;
+        }
 
-    #products span {
-        color: #fff;
-    }
+        #sale p {
+            font-size: 35px;
+        }
 
-    #products img {
-        width: 45px;
-        height: 45px;
-        margin-top: 50px;
-    }
+        #sale span {
+            display: block;
+        }
 
-    #collection img {
-        width: 198px;
-        height: 41px;
-    }
+        #sale #date {
+            font-size: 14px;
+            margin: -18px 0 0;
+        }
 
-    #creativity img {
-        width: 37px;
-        height: 50px;
-    }
+        #venn {
+            margin-top: -80px;
+        }
 
-    #frameworks img {
-        width: 42px;
-        height: 50px;
-        margin-left: unset;
-    }
-}
+        .venntip img {
+            max-width: 42px;
+            max-height: 42px;
+            padding: 4px;
+        }
 
-@media screen  and (min-width: 768px) {
-    #sale {
-        position: absolute;
-        z-index: 1000;
-        left: -122px;
-        top: -172px;
-        width: 248px;
-    }
+        .highcharts-container {
+            height: 800px;
+        }
 
-    #sale #dash-button {
-        padding: 8px 12px;
-        margin: 10px 35px;
-        width: auto;
-    }
+        .labels span.text {
+            opacity: 1;
+        }
 
-    #sale #dash-button a {
-        color: white;
-        text-decoration: none;
-        font-size: 0.9rem;
-        padding-top: 4px;
-        display: block;
-    }
+        .labels img {
+            margin-top: 0;
+        }
 
-    #sale img {
-        width: auto;
-        margin-left: 0;
-        margin-top: -10px;
-        justify-self: center;
-    }
+        #bigdeal img {
+            width: 239px;
+            height: 146px;
+            margin-left: -16px;
+            margin-top: 12px;
+        }
 
-    #sale #logo-type {
-        margin-top: -20px;
-        margin-bottom: 10px;
+        #dataviz img {
+            margin-top: 20px;
+        }
     }
-
-    #sale p {
-        font-size: 35px;
-    }
-
-    #sale span {
-        display: block;
-    }
-
-    #sale #date {
-        font-size: 14px;
-        margin: -18px 0 0;
-    }
-
-    #venn {
-        margin-top: -80px;
-    }
-
-    .venntip img {
-        max-width: 42px;
-        max-height: 42px;
-        padding: 4px;
-    }
-
-    .highcharts-container {
-        height: 800px;
-    }
-
-    .labels span.text {
-        opacity: 1;
-    }
-
-    .labels img {
-        margin-top: 0;
-    }
-
-    #bigdeal img {
-        width: 239px;
-        height: 146px;
-        margin-left: -16px;
-        margin-top: 12px;
-    }
-
-    #dataviz img {
-        margin-top: 20px;
-    }
-
 }
