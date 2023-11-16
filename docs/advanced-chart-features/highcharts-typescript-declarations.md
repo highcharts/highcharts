@@ -150,7 +150,7 @@ as illustrated with the below example.
 
 ### Steps
 
-* User proper typing in your extensions
+* Use proper typing in your extensions
 * Declare additional interfaces of your extensions in the Highcharts namespace
 * Make use of existing
   [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and
@@ -224,9 +224,9 @@ Highcharts.Point.prototype.highlight = function (
 };
 ```
 
-Note: If you like to replace existing functionallity of Highcharts, listen to
-the Highcharts events instead of overwriting functions and methods. That way you
-can avoid many unintended side effects. 
+Note: If you like to replace existing functionality of Highcharts, listen to the
+Highcharts events instead of overwriting functions and methods. That way you can
+avoid many unintended side effects. 
 
 
 
