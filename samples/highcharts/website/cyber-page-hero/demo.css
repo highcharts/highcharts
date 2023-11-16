@@ -254,7 +254,6 @@ body {
     z-index: 1000;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.8rem;
-    visibility: hidden;
 }
 
 @media screen  and (min-width: 360px) {
