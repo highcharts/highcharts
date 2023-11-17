@@ -58,10 +58,11 @@ function renderContextButton(
     parentNode: HTMLElement,
     editMode: EditMode
 ): HTMLElement|undefined {
-    let ctxBtnElement : HTMLElement|undefined;
+    const contextMenuOptions = editMode.options.contextMenu;
+    let contextButton : HTMLElement|undefined;
 
-    if (editMode.options.contextMenu) {
-        ctxBtnElement = createElement(
+    if (contextMenuOptions) {
+        contextButton = createElement(
             'button',
             {
                 className: EditGlobals.classNames.contextMenuBtn,
@@ -75,42 +76,42 @@ function renderContextButton(
         );
 
         // Add the icon if defined.
-        if (editMode.options.contextMenu.icon) {
+        if (contextMenuOptions.icon) {
             createElement(
                 'img',
                 {
-                    src: editMode.options.contextMenu.icon,
+                    src: contextMenuOptions.icon,
                     className: EditGlobals.classNames.icon
                 },
                 {},
-                ctxBtnElement
+                contextButton
             );
         }
 
         // Add text next to the icon if defined.
-        if (editMode.options.contextMenu.text) {
+        if (contextMenuOptions.text) {
             createElement(
                 'span',
                 {
                     className: EditGlobals.classNames.contextMenuBtnText,
-                    textContent: editMode.options.contextMenu.text
+                    textContent: contextMenuOptions.text
                 },
                 {},
-                ctxBtnElement
+                contextButton
             );
         }
 
-        ctxBtnElement.setAttribute(
+        contextButton.setAttribute(
             'aria-label',
             editMode.lang.accessibility.contextMenu.button
         );
-        ctxBtnElement.setAttribute(
+        contextButton.setAttribute(
             'aria-expanded',
             'false'
         );
     }
 
-    return ctxBtnElement;
+    return contextButton;
 }
 
 /**
