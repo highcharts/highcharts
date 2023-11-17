@@ -36,7 +36,6 @@ export interface TreeGetOptionsObject {
     before?: Function;
 }
 
-
 export interface TreeNode {
     children: Array<TreeNode>;
     data: (TreePointOptionsObject|null);
@@ -117,7 +116,6 @@ function getListOfParents(
             }
         }
     );
-
     return listOfParents;
 }
 
@@ -139,7 +137,6 @@ function getNode(
             level,
             parent: (parent || '')
         };
-
 
     let descendants = 0,
         height = 0,

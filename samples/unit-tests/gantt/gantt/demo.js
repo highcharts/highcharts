@@ -442,30 +442,26 @@
                     id: 'planning',
                     start: today.getTime(),
                     end: today.getTime() + 20 * day
-                },
-                {
+                }, {
                     name: 'Requirements',
                     id: 'requirements',
                     parent: 'planning',
                     start: today.getTime(),
                     end: today.getTime() + 5 * day
-                },
-                {
+                }, {
                     name: 'Design',
                     id: 'design',
                     dependency: 'requirements',
                     parent: 'planning',
                     start: today.getTime() + 3 * day,
                     end: today.getTime() + 20 * day
-                },
-                {
+                }, {
                     name: 'Layout',
                     id: 'layout',
                     parent: 'design',
                     start: today.getTime() + 3 * day,
                     end: today.getTime() + 10 * day
-                },
-                {
+                }, {
                     name: 'Develop',
                     id: 'develop',
                     start: today.getTime() + 5 * day,

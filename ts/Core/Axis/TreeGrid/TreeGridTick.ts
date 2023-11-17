@@ -501,7 +501,6 @@ class TreeGridTickAdditions {
             { treeGrid, brokenAxis } = axis,
             posMappedNodes = treeGrid.mapOfPosToGridNode;
 
-
         if (brokenAxis && posMappedNodes) {
             const node = posMappedNodes[pos],
                 breaks = treeGrid.expand(node);

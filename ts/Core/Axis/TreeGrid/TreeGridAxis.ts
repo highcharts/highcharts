@@ -329,7 +329,6 @@ function getTreeGridFromData(
             start: number,
             result: Record<string, GridNode>
         ): Record<string, GridNode> {
-
             const nodes = gridNode.nodes,
                 padding = 0.5;
 
