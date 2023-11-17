@@ -1062,8 +1062,10 @@ function onTickAfterGetPosition(
     }
 ): void {
     if (
-        this.axis.horiz && this.isFirst &&
-        // Two pixels as minimum to catch small shifts
+        this.axis.treeGrid &&
+        this.axis.horiz &&
+        this.isFirst &&
+        // Two pixels as minimum to catch small shifts #19845
         (e.pos.x - this.axis.transB) < pick(this.slotWidth, 2)
     ) {
         e.pos.x = this.axis.transB;
