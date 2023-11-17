@@ -256,6 +256,12 @@ body {
     font-size: 0.8rem;
 }
 
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
+}
+
 @media screen  and (min-width: 360px) {
     .landingpage #content #countdown {
         margin-top: 50px;

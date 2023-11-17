@@ -97,6 +97,7 @@ body,
 
 body {
     background-color: transparent;
+    background-color: black;
     height: 100%;
 }
 
@@ -297,6 +298,12 @@ body {
 
 .highcharts-label-box.highcharts-data-label-box {
     stroke: transparent;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
 }
 
 @media screen  and (min-width: 301px) {
