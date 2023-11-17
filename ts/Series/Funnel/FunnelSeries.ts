@@ -223,6 +223,9 @@ class FunnelSeries extends PieSeries {
                 alignTo,
                 isNew
             );
+            // Delete `alignAttr` for funnel and pyramid, because it is not
+            // used, but caused problems with the overlapping logic (#17545)
+            delete dataLabel.alignAttr;
         }
 
         if (inside) {
