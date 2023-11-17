@@ -628,7 +628,8 @@ function onAfterRender(this: Axis): void {
             (
                 axis.scrollbar ||
                 (axis.linkedParent && axis.linkedParent.scrollbar)
-            )
+            ) &&
+            axis.tickPositions.length
         ) {
             const tickmarkOffset = axis.tickmarkOffset,
                 lastTick = axis.tickPositions[
@@ -638,7 +639,6 @@ function onAfterRender(this: Axis): void {
 
             let label: SVGElement|undefined,
                 tickMark: SVGElement|undefined;
-
 
             while ((label = axis.hiddenLabels.pop()) && label.element) {
                 label.show(); // #15453
@@ -650,7 +650,7 @@ function onAfterRender(this: Axis): void {
                 tickMark.show(); // #16439
             }
 
-            // Hide/show firts tick label.
+            // Hide/show first tick label.
             label = axis.ticks[firstTick].label;
             if (label) {
                 if (min - firstTick > tickmarkOffset) {
