@@ -146,7 +146,7 @@ class ProxyProvider {
     /**
      * Create a group that will contain proxy elements. The group order is
      * automatically updated according to the last group order keys.
-     * 
+     *
      * Returns the added group.
      */
     public addGroup(

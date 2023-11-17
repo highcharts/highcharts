@@ -190,8 +190,15 @@ class MenuComponent extends AccessibilityComponent {
         const chart = this.chart,
             focusEl = chart.focusElement,
             a11y = chart.accessibility;
-        this.proxyProvider.clearGroup('chartMenu');
-        this.proxyMenuButton();
+
+        // Recreate the group only on initial load and chart resize, #18716
+        if (
+            !this.chart.hasLoaded ||
+            this.chart.isResizing
+        ) {
+            this.proxyProvider.clearGroup('chartMenu');
+            this.proxyMenuButton();
+        }
 
         if (
             this.exportButtonProxy &&

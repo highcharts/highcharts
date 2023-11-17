@@ -104,36 +104,42 @@ class NavigatorComponent extends AccessibilityComponent {
                 groupFormatStr = options.lang
                     .accessibility?.navigator.groupLabel;
 
-            // We just recreate the group for simplicity. Could consider
-            // updating the existing group if the verbosity has not changed.
-            this.proxyProvider.removeGroup('navigator');
-            this.proxyProvider.addGroup('navigator', 'div', {
-                role: verbosity === 'all' ? 'region' : 'group',
-                'aria-label': format(groupFormatStr, { chart }, chart)
-            });
+            // Update group on initial load or verbosity change, #18716
+            if (
+                !this.chart.hasLoaded ||
+                options.accessibility.oldLandmarkVerbosity !== verbosity
+            ) {
+                options.accessibility.oldLandmarkVerbosity = verbosity;
 
-            const handleFormatStr = options.lang
-                .accessibility?.navigator.handleLabel;
-            [0, 1].forEach((n): void => {
-                const handle = this.getHandleByIx(n);
-                if (handle) {
-                    const proxyEl = this.proxyProvider.addProxyElement(
-                        'navigator', {
-                            click: handle
-                        }, 'input', {
-                            type: 'range',
-                            'aria-label': format(handleFormatStr,
-                                { handleIx: n, chart }, chart)
-                        }
-                    );
+                this.proxyProvider.removeGroup('navigator');
+                this.proxyProvider.addGroup('navigator', 'div', {
+                    role: verbosity === 'all' ? 'region' : 'group',
+                    'aria-label': format(groupFormatStr, { chart }, chart)
+                });
 
-                    this[n ? 'maxHandleProxy' : 'minHandleProxy'] =
-                        proxyEl.innerElement as HTMLInputElement;
-                    proxyEl.innerElement.style.pointerEvents = 'none';
-                    proxyEl.innerElement.oninput =
-                        (): void => this.updateNavigator();
-                }
-            });
+                const handleFormatStr = options.lang
+                    .accessibility?.navigator.handleLabel;
+                [0, 1].forEach((n): void => {
+                    const handle = this.getHandleByIx(n);
+                    if (handle) {
+                        const proxyEl = this.proxyProvider.addProxyElement(
+                            'navigator', {
+                                click: handle
+                            }, 'input', {
+                                type: 'range',
+                                'aria-label': format(handleFormatStr,
+                                    { handleIx: n, chart }, chart)
+                            }
+                        );
+
+                        this[n ? 'maxHandleProxy' : 'minHandleProxy'] =
+                            proxyEl.innerElement as HTMLInputElement;
+                        proxyEl.innerElement.style.pointerEvents = 'none';
+                        proxyEl.innerElement.oninput =
+                            (): void => this.updateNavigator();
+                    }
+                });
+            }
             this.updateHandleValues();
         } else {
             this.proxyProvider.removeGroup('navigator');
