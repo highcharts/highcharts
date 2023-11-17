@@ -156,7 +156,6 @@ function renderLabelIcon(
     // Set the new position, and show or hide
     icon[shouldRender ? 'show' : 'hide'](); // #14904, #1338
 
-
     // Presentational attributes
     if (!renderer.styledMode) {
         icon
@@ -207,15 +206,15 @@ function wrapGetLabelPosition(
             [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
         );
 
-    let
-        mapOfPosToGridNode,
+    let mapOfPosToGridNode,
         node,
         level;
 
     if (isTreeGrid) {
-
-        const
-            { width = 0, padding = 0 } = (
+        const {
+                width = 0,
+                padding = 0
+            } = (
                 lbOptions && isObject(lbOptions.symbol, true) ?
                     lbOptions.symbol :
                     {}
@@ -247,7 +246,13 @@ function wrapRenderLabel(
     proceed: Function
 ): void {
     const tick = this,
-        { pos, axis, label, treeGrid: tickGrid, options: tickOptions } = tick,
+        {
+            pos,
+            axis,
+            label,
+            treeGrid: tickGrid,
+            options: tickOptions
+        } = tick,
         icon = tickGrid?.labelIcon,
         labelElement = label?.element,
         {
@@ -264,7 +269,10 @@ function wrapRenderLabel(
                 {}
         ),
         node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
-        { descendants, depth } = node || {},
+        {
+            descendants,
+            depth
+        } = node || {},
         hasDescendants = node && descendants && descendants > 0,
         level = depth,
         isTreeGridElement = (axisOptions.type === 'treegrid') && labelElement,
@@ -346,12 +354,8 @@ function wrapRenderLabel(
         });
 
     } else if (icon) {
-
-        if (label) {
-            removeEvent(labelElement);
-            label.css({ cursor: 'default' });
-        }
-
+        removeEvent(labelElement);
+        label?.css({ cursor: 'default' });
         icon.destroy();
     }
 }
@@ -493,15 +497,13 @@ class TreeGridTickAdditions {
      */
     public expand(redraw?: boolean): void {
 
-        const
-            { pos, axis } = this.tick,
+        const { pos, axis } = this.tick,
             { treeGrid, brokenAxis } = axis,
             posMappedNodes = treeGrid.mapOfPosToGridNode;
 
 
         if (brokenAxis && posMappedNodes) {
-            const
-                node = posMappedNodes[pos],
+            const node = posMappedNodes[pos],
                 breaks = treeGrid.expand(node);
 
             brokenAxis.setBreaks(breaks, pick(redraw, true));

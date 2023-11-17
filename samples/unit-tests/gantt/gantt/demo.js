@@ -376,12 +376,10 @@
             end: today + 2 * day
         };
         const {
-            series: [
-                {
-                    points,
-                    points: [point]
-                }
-            ]
+            series: [{
+                points,
+                points: [point]
+            }]
         } = chart;
         // Run Point.update
         point.update(updateValues);
@@ -418,9 +416,8 @@
         assert.strictEqual(
             chart.series[0].yAxis.treeGrid.tree.children.length,
             5,
-            'Orphaned nodes should appear as direct children of root'
+            'Orphaned nodes should appear as direct children of root (#15196).'
         );
-
     });
 
     QUnit.test('Collapsing subtasks', assert => {

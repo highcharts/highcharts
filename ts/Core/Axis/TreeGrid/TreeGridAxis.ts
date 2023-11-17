@@ -330,15 +330,12 @@ function getTreeGridFromData(
             result: Record<string, GridNode>
         ): Record<string, GridNode> {
 
-            const
-                nodes = gridNode.nodes,
+            const nodes = gridNode.nodes,
                 padding = 0.5;
 
-            let
-                end = start + (start === -1 ? 0 : numberOfSeries - 1);
+            let end = start + (start === -1 ? 0 : numberOfSeries - 1);
 
-            const
-                diff = (end - start) / 2,
+            const diff = (end - start) / 2,
                 pos = start + diff;
 
             nodes.forEach(function (node: TreeGridNode): void {
@@ -350,9 +347,7 @@ function getTreeGridFromData(
                     // Remove the property once used
                     delete data.seriesIndex;
                 }
-
                 node.pos = pos;
-
             });
 
             result[pos] = gridNode;
@@ -360,7 +355,6 @@ function getTreeGridFromData(
             gridNode.pos = pos;
             gridNode.tickmarkOffset = diff + padding;
             gridNode.collapseStart = end + padding;
-
 
             gridNode.children.forEach(function (child: GridNode): void {
                 setValues(child, end + 1, result);
@@ -445,15 +439,12 @@ function onBeforeRender(
                         (s.options.data || []).forEach(function (
                             data
                         ): void {
-
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
-
                                 data = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, data);
                                 s.pointClass.setGanttPointAliases(data);
-
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
@@ -971,7 +962,6 @@ class TreeGridAxisAdditions {
         axis.series.forEach(function (series): void {
             const data = series.options.data;
             if (node.id && data) {
-
                 const point = chart.get(node.id),
                     dataPoint = data[series.data.indexOf(
                         point as GanttPoint
