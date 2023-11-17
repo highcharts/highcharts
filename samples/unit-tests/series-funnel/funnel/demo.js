@@ -399,15 +399,16 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
+    dataLabel = chart.series[0].points[4].dataLabel;
+    const prevDataLabelPos = dataLabel.x;
+
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
 
-    dataLabel = chart.series[0].points[1].dataLabel;
-
-    assert.notEqual(
+    assert.equal(
         dataLabel.x,
-        dataLabel.alignAttr.x,
+        prevDataLabelPos,
         'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
     );
 
