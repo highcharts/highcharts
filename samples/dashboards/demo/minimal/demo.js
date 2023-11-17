@@ -32,7 +32,7 @@ Dashboards.board('container', {
                             width: '100%'
                         },
                         medium: {
-                            width: '50%'
+                            width: '100%'
                         },
                         large: {
                             width: '30%'
@@ -47,7 +47,7 @@ Dashboards.board('container', {
                                         width: '50%'
                                     },
                                     medium: {
-                                        width: '100%'
+                                        width: '50%'
                                     },
                                     large: {
                                         width: '100%'
@@ -60,7 +60,7 @@ Dashboards.board('container', {
                                         width: '50%'
                                     },
                                     medium: {
-                                        width: '100%'
+                                        width: '50%'
                                     },
                                     large: {
                                         width: '100%'
@@ -72,9 +72,31 @@ Dashboards.board('container', {
                         }]
                     }
                 }, {
-                    id: 'dashboard-col-0'
+                    id: 'dashboard-col-0',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '35%'
+                        }
+                    }
                 }, {
-                    id: 'dashboard-col-1'
+                    id: 'dashboard-col-1',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '35%'
+                        }
+                    }
                 }]
             }, {
                 cells: [{
@@ -99,13 +121,6 @@ Dashboards.board('container', {
         valueFormat: '{value}',
         subtitle: 'daily recommended dose'
     }, {
-        cell: 'title',
-        type: 'HTML',
-        elements: [{
-            tagName: 'h1',
-            textContent: 'MicroElement amount in Foods'
-        }]
-    }, {
         sync: {
             visibility: true,
             highlight: true,
@@ -122,7 +137,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Groceries'
+                }
             },
             yAxis: {
                 title: {
@@ -162,6 +180,24 @@ Dashboards.board('container', {
             },
             title: {
                 text: ''
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Vitamin A in food. Highcharts Interactive Chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Vitamin A amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA) of 900
+                micrograms.`,
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
     },
@@ -182,7 +218,10 @@ Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Groceries'
+                }
             },
             yAxis: {
                 title: {
@@ -222,6 +261,24 @@ Dashboards.board('container', {
                 animation: false,
                 type: 'column',
                 spacing: [30, 30, 30, 20]
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Iron in food. Highcharts Interactive Chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Iron amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA) of 8
+                micrograms.`,
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
     }, {

@@ -22,12 +22,12 @@ import type {
     BreadcrumbOptions,
     BreadcrumbsOptions
 } from './BreadcrumbsOptions';
+import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
 import Chart from '../../Core/Chart/Chart.js';
-import D from '../../Core/Defaults.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Core/Utilities.js';
@@ -212,7 +212,7 @@ class Breadcrumbs {
 
     public static compose(
         ChartClass: typeof Chart,
-        highchartsDefaultOptions: typeof D.defaultOptions
+        highchartsDefaultOptions: Options
     ): void {
 
         if (U.pushUnique(composedMembers, ChartClass)) {

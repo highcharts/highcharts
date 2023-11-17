@@ -363,3 +363,92 @@ QUnit.test('VBP series errors.', function (assert) {
     );
 
 });
+
+QUnit.test('YAxis extremes with VBP series.', function (assert) {
+    const data = [[
+            1631539800000,
+            150.63,
+            151.42,
+            148.75,
+            149.55
+        ], [
+            1631626200000,
+            150.35,
+            151.07,
+            146.91,
+            148.12
+        ], [
+            1631712600000,
+            148.56,
+            149.44,
+            146.37,
+            149.03
+        ], [
+            1631799000000,
+            148.44,
+            148.97,
+            147.22,
+            148.79
+        ], [
+            1631885400000,
+            148.82,
+            148.82,
+            145.76,
+            146.06
+        ]],
+        volume = [[
+            1631539800000,
+            102404300
+        ], [
+            1631626200000,
+            109296300
+        ], [
+            1631712600000,
+            83281300
+        ], [
+            1631799000000,
+            68034100
+        ], [
+            1631885400000,
+            129868800
+        ]];
+
+
+    const chart = Highcharts.stockChart('container', {
+        yAxis: [{
+            height: '60%'
+        }, {
+            top: '65%',
+            height: '35%',
+            offset: 0
+        }],
+        series: [{
+            type: 'candlestick',
+            id: 'AAPL',
+            name: 'AAPL',
+            data: data
+        }, {
+            type: 'column',
+            id: 'volume',
+            name: 'Volume',
+            data: volume,
+            yAxis: 1
+        }, {
+            type: 'vbp',
+            linkedTo: 'AAPL',
+            showInLegend: true,
+            compare: 'percent'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        144,
+        'YAxis min should remain unnaffected after adding VBP to chart, #16686.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        152,
+        'YAxis max should remain unnaffected after adding VBP to chart, #16686.'
+    );
+});

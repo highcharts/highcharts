@@ -21,7 +21,6 @@ import type Axis from '../Core/Axis/Axis';
 import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type { PathfinderAlgorithmFunction } from './PathfinderAlgorithms';
-import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
@@ -293,12 +292,7 @@ class Pathfinder {
         chart.series.forEach(function (series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
-                    const ganttPointOptions: GanttPointOptions = point.options,
-                        connects = (
-                            point.options &&
-                            point.options.connect &&
-                            splat(point.options.connect)
-                        );
+                    const ganttPointOptions: GanttPointOptions = point.options;
 
                     // For Gantt series the connect could be
                     // defined as a dependency
@@ -306,6 +300,11 @@ class Pathfinder {
                         ganttPointOptions.connect = ganttPointOptions
                             .dependency;
                     }
+
+                    const connects = (
+                        point.options?.connect &&
+                        splat(point.options.connect)
+                    );
 
                     let to: (Axis|Series|Point|undefined);
 

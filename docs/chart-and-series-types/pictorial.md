@@ -25,7 +25,7 @@ chart: {
 }
 ```
 
-The next step is to add an image. Use the [paths.definition](https://api.highcharts.com/highcharts/series.pictorial.paths.definition) option for this purpose. The image should be provided as an SVG path and should be cropped to maintain the correct proportions. Take notice that an image corresponds to one series, not one point.
+The next step is to add an image. Use the [paths.definition](https://api.highcharts.com/highcharts/series.pictorial.paths.definition) option for this purpose. The image needs to be specified as an SVG path and properly cropped to maintain the correct proportions and alignment. Make sure the SVG aligns with the coordinates (0, 0) on both the x and y axes within the `viewBox`. You can use free tools like [svg-path-editor](https://github.com/Yqnn/svg-path-editor) or Inkscape for this. Take notice that an image corresponds to one series, not to one point.
 
 As you can see in the following example, [series.stacking](https://api.highcharts.com/highcharts/series.pictorial.stacking) is also used. To understand how the Pictorial series works, think of a column series. If there are multiple series, the columns are grouped next to each other, but when they are [stacked](https://api.highcharts.com/highcharts/series.column.stacking), they form one column made up of these series. By analogy with this, you can imagine a column as an image, which is composed of several series to create one shape. Depending on your requirements, it can be used with `percent` or `normal` stacking.
 

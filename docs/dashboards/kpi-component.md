@@ -78,6 +78,9 @@ Dashboards.board('container', {
         title: 'My KPI',
         type: 'KPI',
         value: 10,
+        linkedValueTo: {
+            enabled: false
+        },
         chartOptions: {
           series: [{
               data: [734, 244, 685, 250, 920, 320, 200, 150]
@@ -86,6 +89,10 @@ Dashboards.board('container', {
     }]
 });
 ```
+
+By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#types/Dashboards_Plugins_KPIComponent.KPIComponent.LinkedValueToOptions) option as in the example above.
+
+You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 
 ## Working with data
 You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnName` param) as a value itself.
@@ -148,7 +155,8 @@ You can find more information about it in the [sync chapter](https://www.highcha
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions).
 
-
+## Highcharts Compatibility
+The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
 
 
 

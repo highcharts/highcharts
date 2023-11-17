@@ -255,14 +255,14 @@ class FlagsSeries extends ColumnSeries {
                     if (!boxesMap[point.plotX as any]) {
                         boxesMap[point.plotX as any] = {
                             align: centered ? 0.5 : 0,
-                            size: graphic.width,
+                            size: graphic.width || 0,
                             target: plotX as any,
                             anchorX: plotX as any
                         };
                     } else {
                         boxesMap[point.plotX as any].size = Math.max(
                             boxesMap[point.plotX as any].size,
-                            graphic.width
+                            graphic.width || 0
                         );
                     }
                 }

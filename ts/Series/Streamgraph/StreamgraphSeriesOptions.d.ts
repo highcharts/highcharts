@@ -31,7 +31,7 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

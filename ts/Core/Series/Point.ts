@@ -655,7 +655,7 @@ class Point {
      * @return {Highcharts.SeriesZonesOptionsObject}
      *         The zone item.
      */
-    public getZone(): SeriesZonesOptions {
+    public getZone(): Series.ZoneObject {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
@@ -1183,8 +1183,10 @@ class Point {
      *
      * @sample highcharts/members/point-select/
      *         Select a point from a button
+     * @sample highcharts/members/point-select-lasso/
+     *         Lasso selection
      * @sample highcharts/chart/events-selection-points/
-     *         Select a range of points through a drag selection
+     *         Rectangle selection
      * @sample maps/series/data-id/
      *         Select a point in Highmaps
      *

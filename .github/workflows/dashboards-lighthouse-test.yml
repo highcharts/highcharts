@@ -4,16 +4,20 @@ on:
     branches:
       - 'master'
     paths:
-      - 'test/cypress/performance/**'
-      - 'samples/cypress/dashboards/**'
+      - '.github/workflows/dashboards-lighthouse-test.yml'
+      - 'css/dashboards*'
+      - 'css/datagrid*'
       - 'samples/dashboards/**'
+      - 'test/cypress/dashboards/performance/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'css/**'
-      - '.github/workflows/dashboards-lighthouse-test.yml'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   cypress_lighthouse:
@@ -55,7 +59,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
-          config-file: test/cypress/configs/dashboards.lighthouse.config.mjs
+          config-file: test/cypress/dashboards/lighthouse.config.mjs
           install: false
 
       - name: Stop server
@@ -88,7 +92,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
-          config-file: test/cypress/configs/dashboards.lighthouse.config.mjs
+          config-file: test/cypress/dashboards/lighthouse.config.mjs
           install: false
 
       - name: Store artifacts
@@ -121,5 +125,3 @@ jobs:
             const markdown = readFileSync('./tmp/lighthousetable.md');
 
             await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');
-
-

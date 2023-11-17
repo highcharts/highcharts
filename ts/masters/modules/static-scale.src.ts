@@ -10,4 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/StaticScale.js';
+import Highcharts from '../../Core/Globals.js';
+import StaticScale from '../../Extensions/StaticScale.js';
+const G: AnyRecord = Highcharts;
+StaticScale.compose(G.Axis, G.Chart);
