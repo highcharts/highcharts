@@ -425,4 +425,48 @@ QUnit.test('Funnel dataLabels', function (assert) {
     chart.series[0].setData(data, true, false, false);
 
     assert.ok(true, '#16176: No error should occur');
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    inside: true,
+                    allowOverlap: true,
+                    rotation: 0
+                }
+            }
+        }
+    });
+
+    series.update({
+        dataLabels: {
+            align: 'center'
+        }
+    });
+
+    dataLabel = chart.series[0].points[1].dataLabel;
+
+    const insideDataLabelPos = dataLabel.x;
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    inside: false
+                }
+            }
+        }
+    });
+
+    const legendItem = chart.series[0].points[2].legendItem.group.element;
+
+    Highcharts.fireEvent(legendItem, 'mouseover');
+    Highcharts.fireEvent(legendItem, 'click');
+
+    assert.notEqual(
+        dataLabel.x,
+        insideDataLabelPos,
+        `DataLabel should be positioned outside the series after legend click
+        when inside is false. (#17545)`
+    );
 });
