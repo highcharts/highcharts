@@ -278,10 +278,9 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label.alignAttr.opacity = newOpacity;
                 label[label.isOld ? 'animate' : 'attr'](
-                    label.alignAttr,
-                    null as any,
+                    { opacity: newOpacity },
+                    void 0,
                     complete
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
