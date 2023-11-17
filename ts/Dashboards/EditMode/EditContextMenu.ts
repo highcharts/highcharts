@@ -205,6 +205,15 @@ namespace EditContextMenu {
          */
         icon?: string;
         /**
+         * The text added next to the icon.
+         * @default undefined
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/ | Add text next to icon}
+         */
+        text?: string;
+        /**
          * Width of the context menu.
          *
          * Try it:

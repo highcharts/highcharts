@@ -58,33 +58,60 @@ function renderContextButton(
     parentNode: HTMLElement,
     editMode: EditMode
 ): HTMLElement|undefined {
-    let ctxBtnElement : HTMLElement|undefined;
+    const contextMenuOptions = editMode.options.contextMenu;
+    let contextButton : HTMLElement|undefined;
 
-    if (editMode.options.contextMenu) {
-        ctxBtnElement = createElement(
-            'button', {
+    if (contextMenuOptions) {
+        contextButton = createElement(
+            'button',
+            {
                 className: EditGlobals.classNames.contextMenuBtn,
-                onclick: function (): void {
+                onclick: function (event: Event): void {
+                    event.stopPropagation();
                     editMode.onContextBtnClick();
                 }
             },
-            {
-                'background-image': 'url(' +
-                    editMode.options.contextMenu.icon +
-                ')'
-            } as any,
+            {},
             parentNode
         );
 
-        ctxBtnElement.setAttribute(
+        // Add the icon if defined.
+        if (contextMenuOptions.icon) {
+            createElement(
+                'img',
+                {
+                    src: contextMenuOptions.icon,
+                    className: EditGlobals.classNames.icon
+                },
+                {},
+                contextButton
+            );
+        }
+
+        // Add text next to the icon if defined.
+        if (contextMenuOptions.text) {
+            createElement(
+                'span',
+                {
+                    className: EditGlobals.classNames.contextMenuBtnText,
+                    textContent: contextMenuOptions.text
+                },
+                {},
+                contextButton
+            );
+        }
+
+        contextButton.setAttribute(
             'aria-label',
             editMode.lang.accessibility.contextMenu.button
         );
-
-        ctxBtnElement.setAttribute('aria-expanded', 'false');
+        contextButton.setAttribute(
+            'aria-expanded',
+            'false'
+        );
     }
 
-    return ctxBtnElement;
+    return contextButton;
 }
 
 /**
@@ -726,14 +753,16 @@ function renderButton(
     }
 
     button = createElement(
-        'button', {
+        'button',
+        {
             className: (
                 EditGlobals.classNames.button + ' ' +
                 (options.className || '')
             ),
             onclick: options.callback,
             textContent: options.text
-        }, options.style || {},
+        },
+        options.style || {},
         parentElement
     );
 
