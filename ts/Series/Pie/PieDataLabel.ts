@@ -487,6 +487,12 @@ namespace ColumnDataLabel {
                                 dataLabel.getBBox().height / 2
                         };
 
+                        // Overwrite alignAttr for funnel and pyramid, because
+                        // only for them it was previously defined (#17545)
+                        if (dataLabel.alignAttr && labelPosition.posAttribs) {
+                            dataLabel.alignAttr = labelPosition.posAttribs;
+                        }
+
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y;
 
