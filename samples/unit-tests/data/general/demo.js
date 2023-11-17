@@ -244,7 +244,7 @@ QUnit.test('Combination charts and column mapping', function (assert) {
     chart = Highcharts.chart('container', {
         data: {
             csv: 'code;value\n01007;58\n01003;10\n01041;32\n01085;84\n01133;12',
-            columnTypes: ['string', 'float']
+            columnTypes: ['string', 'number']
         }
     });
 
