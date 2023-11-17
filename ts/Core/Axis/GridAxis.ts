@@ -1062,7 +1062,7 @@ function onTickAfterGetPosition(
     }
 ): void {
     if (
-        this.axis.treeGrid &&
+        this.axis.options.grid?.enabled &&
         this.axis.horiz &&
         this.isFirst &&
         // Two pixels as minimum to catch small shifts #19845
