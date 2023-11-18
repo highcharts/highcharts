@@ -158,19 +158,21 @@ class FunnelSeries extends PieSeries {
         const series = point.series,
             reversed = series.options.reversed,
             dlBox = point.dlBox || point.shapeArgs,
-            align = options.align,
-            verticalAlign = options.verticalAlign,
+            { align, padding = 0, verticalAlign } = options,
             inside =
                 ((series.options || {}).dataLabels || {}).inside,
             centerY = series.center[1],
+            plotY = point.plotY || 0,
             pointPlotY = (
                 reversed ?
-                    2 * centerY - (point.plotY as any) :
-                    point.plotY
+                    2 * centerY - plotY :
+                    plotY
             ),
+            // #16176: Only SVGLabel has height set
+            dataLabelHeight = dataLabel.height ?? dataLabel.getBBox().height,
             widthAtLabel = series.getWidthAt(
-                (pointPlotY as any) - dlBox.height / 2 +
-                (dataLabel as any).height
+                pointPlotY - dlBox.height / 2 +
+                dataLabelHeight
             ),
             offset = verticalAlign === 'middle' ?
                 (dlBox.topWidth - dlBox.bottomWidth) / 4 :
@@ -179,17 +181,10 @@ class FunnelSeries extends PieSeries {
         let y = dlBox.y,
             x = dlBox.x;
 
-        // #16176: Only SVGLabel has height set
-        const dataLabelHeight = pick(
-            dataLabel.height,
-            dataLabel.getBBox().height
-        );
-
         if (verticalAlign === 'middle') {
             y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabelHeight +
-                (options.padding || 0);
+            y = dlBox.y - dlBox.height + dataLabelHeight + padding;
         }
 
         if (
@@ -198,9 +193,9 @@ class FunnelSeries extends PieSeries {
             verticalAlign === 'middle'
         ) {
             if (align === 'right') {
-                x = dlBox.x - (options.padding as any) + offset;
+                x = dlBox.x - padding + offset;
             } else if (align === 'left') {
-                x = dlBox.x + (options.padding as any) - offset;
+                x = dlBox.x + padding - offset;
             }
         }
 
@@ -212,6 +207,12 @@ class FunnelSeries extends PieSeries {
         };
 
         options.verticalAlign = 'bottom';
+        if (inside) {
+            // If the distance were positive (as default), the overlapping
+            // labels logic would skip these labels and they would be allowed
+            // to overlap.
+            options.distance = void 0;
+        }
 
         // Call the parent method
         if (inside && point.visible) {
