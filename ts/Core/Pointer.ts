@@ -299,17 +299,19 @@ class Pointer {
                 attrs.width = zoomHor ? 1 : chart.plotWidth;
                 attrs.height = zoomVert ? 1 : chart.plotHeight;
 
-                // Adjust the width of the selection marker
+                // Adjust the width of the selection marker. Firefox needs at
+                // least one pixel width or height in order to return a bounding
+                // box.
                 if (zoomHor) {
                     size = chartX - mouseDownX;
-                    attrs.width = Math.abs(size);
+                    attrs.width = Math.max(1, Math.abs(size));
                     attrs.x = (size > 0 ? 0 : size) + mouseDownX;
                 }
 
                 // Adjust the height of the selection marker
                 if (zoomVert) {
                     size = chartY - mouseDownY;
-                    attrs.height = Math.abs(size);
+                    attrs.height = Math.max(1, Math.abs(size));
                     attrs.y = (size > 0 ? 0 : size) + mouseDownY;
                 }
             }
@@ -450,12 +452,7 @@ class Pointer {
     public getSelectionBox(marker: SVGElement): BBoxObject {
         const e = {
             args: { marker },
-            result: {
-                x: marker.attr ? +marker.attr('x') : marker.x,
-                y: marker.attr ? +marker.attr('y') : marker.y,
-                width: marker.attr ? marker.attr('width') : marker.width,
-                height: marker.attr ? marker.attr('height') : marker.height
-            } as BBoxObject
+            result: marker.getBBox()
         };
 
         fireEvent(this, 'getSelectionBox', e);
