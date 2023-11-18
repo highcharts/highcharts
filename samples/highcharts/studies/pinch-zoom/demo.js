@@ -7,9 +7,6 @@ To do
   one single event instead.
 - Check out if minPadding, maxPadding and threshold can be refactored out and
   shared with setTickPositions.
-- Check if marker/attr stuff is necessary in `getSelectionBox`. Simple .getBBox
-  should be sufficient. Saves 45B. Fails test in Firefox because .getBBox()
-  returns 0,0.
 - Stock chart: navigator not working after zooming on y. Reset button quirks.
 - When mousewheeling in on the pinch-zoom usdeur data, the y-axis jumps clear of
   the start and end ticks. Consider a similar solution to minPadding and
