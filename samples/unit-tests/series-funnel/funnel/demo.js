@@ -236,8 +236,8 @@ QUnit.test('Funnel dataLabels', function (assert) {
     const data = [
         ['Website visits', 5654],
         ['Downloads', 4064],
-        ['Requested price list', 1987],
-        ['Invoice sent', 1976],
+        ['Requested price list', 198],
+        ['Invoice sent', 197],
         ['Finalized', 4201]
     ];
 
@@ -275,6 +275,12 @@ QUnit.test('Funnel dataLabels', function (assert) {
         ),
         point.dataLabel.x,
         'DataLabels centered horizontally inside the funnel (#10036)'
+    );
+
+    assert.deepEqual(
+        series.points.map(p => p.dataLabel.opacity),
+        [1, 1, 1, 0, 1],
+        'One of the data labels should be hidden by overlap detection'
     );
 
     series.update({
