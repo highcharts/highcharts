@@ -1008,7 +1008,6 @@ class WGLRenderer {
             }
 
             if (drawAsBar) {
-                // maxVal = y;
                 minVal = low;
 
                 if ((low as any) === false || typeof low === 'undefined') {
@@ -1019,7 +1018,10 @@ class WGLRenderer {
                     }
                 }
 
-                if (!isRange && !isStacked) {
+                if (
+                    (!isRange && !isStacked) ||
+                    yAxis.logarithmic // #16850
+                ) {
                     minVal = Math.max(
                         threshold === null ? yMin : threshold, // #5268
                         yMin
