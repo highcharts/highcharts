@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'The stem (simplified area) of the points should show'
+        text: 'The stem (simplified area) of the points should be visible'
     },
     yAxis: {
         type: 'logarithmic'
