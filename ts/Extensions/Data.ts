@@ -84,7 +84,7 @@ interface DataOptions {
     beforeParse?: DataBeforeParseCallbackFunction;
     columns?: Array<Array<DataValueType>>;
     columnsURL?: string;
-    columnTypes?: Array<string>;
+    columnTypes?: Array<'string'|'number'|'float'|'date'>;
     complete?: DataCompleteCallbackFunction;
     csv?: string;
     csvURL?: string;
@@ -2461,15 +2461,16 @@ export default Data;
  * An array option that specifies the data type for each column in the series
  * loaded within the data module.
  *
- * Possible values: `"string"`, `"number"`, `"date"`.
+ * Possible values: `"string"`, `"number"`, `"float"`, `"date"`.
  *
  * @sample {highcharts|highstock} highcharts/data/column-types/
  *         X-axis categories based on CSV data
  * @sample {highmaps} highcharts/data/column-types-map/
  *         Map chart created with fips from CSV
  *
- * @type      {Array<string>}
+ * @type      {Array<'string'|'number'|'float'|'date'>}
  * @since     @next
+ * @validvalue ["string", "number", "float", "date"]
  * @apioption data.columnTypes
  */
 
