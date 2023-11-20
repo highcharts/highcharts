@@ -200,7 +200,7 @@ function copyFiles() {
                     !path.endsWith('.d.ts')
                 ) &&
                 !pathsToIgnore.some(pattern => path.startsWith(pattern)) &&
-                !filesToIgnore.some(pattern => path.includes(pattern))
+                !filesToIgnore.some(pattern => path.endsWith(pattern))
             ))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);
