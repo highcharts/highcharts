@@ -38,6 +38,11 @@
     background-color: var(--gray);
 }
 
+.highcharts-dashboards-component.highcharts-dashboards-component-kpi-value {
+    font-size: 6em;
+    margin-top: 40px;
+}
+
 .highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0 {
     fill: var(--highcharts-color-5);
     stroke: var(--highcharts-color-5);
