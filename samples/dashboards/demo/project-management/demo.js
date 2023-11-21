@@ -36,6 +36,19 @@ Dashboards.board('container', {
                     [Date.UTC(2023, 5, 12), null, 21, 2]
                 ]
             }
+        }, {
+            id: 'taskByAssignee',
+            type: 'JSON',
+            options: {
+                data: [
+                    ['Assignee', 'Tasks'],
+                    ['Dev 1', 41],
+                    ['Dev 2', 28],
+                    ['Dev 3', 15],
+                    ['Dev 4', 14],
+                    ['Dev 5', 4]
+                ]
+            }
         }]
     },
     gui: {
@@ -215,16 +228,15 @@ Dashboards.board('container', {
         cell: 'dashboard-chart-1',
         type: 'Highcharts',
         title: 'Total task by assignee',
+        connector: {
+            id: 'taskByAssignee'
+        },
         chartOptions: {
-            xAxis: {
-                categories: ['Dev 1', 'Dev 2', 'Dev 3', 'Dev 4', 'Dev 5']
+            chart: {
+                type: 'column'
             },
-            series: [{
-                type: 'column',
-                data: [41, 28, 15, 14, 4]
-            }],
-            legend: {
-                enabled: false
+            xAxis: {
+                type: 'category'
             }
         }
     }, {
