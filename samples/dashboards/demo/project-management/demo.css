@@ -39,8 +39,12 @@
 }
 
 .highcharts-dashboards-component.highcharts-dashboards-component-kpi-value {
-    font-size: 6em;
+    font-size: 4em;
     margin-top: 40px;
+}
+
+.highcharts-dashboards-component-kpi-content .highcharts-dashboards-component-subtitle {
+    font-size: 1.4em;
 }
 
 .highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0 {
