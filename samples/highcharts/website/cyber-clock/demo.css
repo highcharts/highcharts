@@ -98,7 +98,6 @@ body,
 body {
     background-color: transparent;
     height: 100%;
-    margin-top: -130px;
 }
 
 .highcharts-container {
@@ -298,6 +297,12 @@ body {
 
 .highcharts-label-box.highcharts-data-label-box {
     stroke: transparent;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
 }
 
 @media screen  and (min-width: 301px) {

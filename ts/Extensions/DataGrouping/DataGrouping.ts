@@ -27,10 +27,12 @@ import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Core/Utilities.js';
+import Point from '../../Core/Series/Point';
 const {
     addEvent,
     extend,
-    isNumber
+    isNumber,
+    pick
 } = U;
 
 /* *
@@ -76,10 +78,12 @@ function onTooltipHeaderFormatter(
     this: Tooltip,
     e: Event&AnyRecord
 ): void {
+
     const chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
         series = labelConfig.series as Series,
+        point = labelConfig.point as Point,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
@@ -132,12 +136,20 @@ function onTooltipHeaderFormatter(
             );
         }
 
-        // now format the key
-        formattedKey = time.dateFormat(xDateFormat as any, labelConfig.key);
+        const groupStart = pick(
+                series.groupMap?.[point.index].groupStart,
+                labelConfig.key
+            ),
+            groupEnd = groupStart + currentDataGrouping?.totalRange - 1;
+
+        formattedKey = time.dateFormat(
+            xDateFormat as any,
+            groupStart
+        );
         if (xDateFormatEnd) {
             formattedKey += time.dateFormat(
                 xDateFormatEnd,
-                labelConfig.key + (currentDataGrouping as any).totalRange - 1
+                groupEnd
             );
         }
 

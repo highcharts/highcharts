@@ -87,6 +87,9 @@ body,
 }
 
 body {
+    /* stylelint-disable max-line-length */
+    background: var(--diamond, linear-gradient(to bottom right, #474554 5%, #1f1e24 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 5%, #1f1e24 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 5%, #1f1e24 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 5%, #1f1e24 50%) top right / 50% 50% no-repeat);
+    /* stylelint-enable */
     background-color: transparent;
     height: 100%;
 
@@ -251,7 +254,12 @@ body {
     z-index: 1000;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.8rem;
-    visibility: hidden;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
 }
 
 @media screen  and (min-width: 360px) {

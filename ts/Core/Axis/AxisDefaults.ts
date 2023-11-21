@@ -1465,8 +1465,10 @@ namespace AxisDefaults {
 
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * `xAxis.maxPadding`, but value is set in milliseconds. Can be set for
-         * both main `xAxis` and the navigator's `xAxis`.
+         * `xAxis.maxPadding`, but value is set in milliseconds. This property
+         * should be set to the same value for both the main `xAxis` and the
+         * navigator's `xAxis` to maintain consistent behavior during
+         * interactions such as dragging or resizing the navigator.
          *
          * @sample {highstock} stock/xaxis/overscroll/
          *         One minute overscroll with live data
@@ -1744,7 +1746,8 @@ namespace AxisDefaults {
          * For categorized axes only. If `on` the tick mark is placed in the
          * center of the category, if `between` the tick mark is placed between
          * categories. The default is `between` if the `tickInterval` is 1, else
-         * `on`.
+         * `on`. In order to render tick marks on a category axis it is necessary
+         * to provide a [tickWidth](#xAxis.tickWidth).
          *
          * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/
          *         "between" by default
