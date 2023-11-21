@@ -56,6 +56,7 @@ const {
     error,
     extend,
     fireEvent,
+    getClosestDistance,
     isArray,
     isNumber,
     pick,
@@ -667,6 +668,19 @@ function enterBoost(
     if (series.labelBySeries) {
         series.labelBySeries = series.labelBySeries.destroy();
     }
+
+    // Destroy existing points after zoom out
+    if (
+        series.type === 'scatter' &&
+        series.data.length
+    ) {
+        for (const point of series.data) {
+            if (point && point.destroy) {
+                point.destroy();
+            }
+        }
+        series.data.length = 0;
+    }
 }
 
 /**
@@ -849,42 +863,52 @@ function getPoint(
  * @private
  */
 function scatterProcessData(
-    series: Series
+    this: Series,
+    force?: boolean
 ): (boolean|undefined) {
+    const series = this,
+        options = series.options,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis;
 
-    if (series.isDirtyData) {
-        return;
+    // Process only on changes
+    if (
+        !series.isDirty &&
+        !xAxis.isDirty &&
+        !yAxis.isDirty &&
+        !force
+    ) {
+        return false;
     }
 
-    if (!series.boost) {
-        series.data.length = 0;
-        series.isDirty = true;
-        return;
-    }
+    series.yAxis.setTickInterval(); // Required to get tick-based zoom range
 
-    series.yAxis.setTickInterval();
-
-    const {
-            max: xMax,
-            min: xMin
-        } = series.xAxis.getExtremes(),
-        {
-            max: yMax,
-            min: yMin
-        } = series.yAxis.getExtremes();
+    const cropThreshold = options.cropThreshold,
+        data = options.data || series.data,
+        xData = this.xData as Array<number>,
+        yData = this.yData as Array<number>;
 
     if (
-        typeof yMin !== 'number' ||
-        typeof yMax !== 'number'
+        cropThreshold &&
+        !series.forceCrop &&
+        !series.getExtremesFromAll &&
+        !options.getExtremesFromAll &&
+        data.length < cropThreshold
     ) {
-        return;
+        series.processedXData = xData;
+        series.processedYData = yData;
+        return true;
     }
 
     const processedData: Array<PointOptions> = [],
         processedXData: Array<number> = [],
         processedYData: Array<number> = [],
-        xData = series.xData || [],
-        yData = series.yData || [];
+        xExtremes = xAxis.getExtremes(),
+        xMax = xExtremes.max,
+        xMin = xExtremes.min,
+        yExtremes = yAxis.getExtremes(),
+        yMax = yExtremes.max,
+        yMin = yExtremes.min;
 
     let cropped = false,
         x: number,
@@ -892,7 +916,7 @@ function scatterProcessData(
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
-        y = yData[i] as number;
+        y = yData[i];
 
         if (
             x >= xMin && x <= xMax &&
@@ -906,6 +930,7 @@ function scatterProcessData(
         }
     }
 
+    // Set properties as base processData
     series.cropped = cropped;
     series.cropStart = 0;
     series.processedData = processedData;
@@ -1295,17 +1320,17 @@ function wrapSeriesFunctions(
 
     // Special case for some types, when translate method is already wrapped
     if (method === 'translate') {
-        [
+        for (const type of [
             'column',
             'arearange',
             'columnrange',
             'heatmap',
             'treemap'
-        ].forEach(function (type: string): void {
+        ]) {
             if (seriesTypes[type]) {
                 wrap(seriesTypes[type].prototype, method, branch);
             }
-        });
+        }
     }
 }
 
@@ -1379,9 +1404,11 @@ function wrapSeriesProcessData(
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
-            proceed.apply(series, [].slice.call(arguments, 1));
-            if (series.type === 'scatter') {
-                scatterProcessData(series);
+            // extra check for zoomed scatter data
+            if (series.type === 'scatter' && !series.yAxis.treeGrid) {
+                scatterProcessData.call(series, arguments[1]);
+            } else {
+                proceed.apply(series, [].slice.call(arguments, 1));
             }
             dataToMeasure = series.processedXData;
         }
