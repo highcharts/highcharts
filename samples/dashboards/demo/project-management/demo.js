@@ -32,8 +32,8 @@ Dashboards.board('container', {
                     [Date.UTC(2023, 4, 15), 45, 111, 30],
                     [Date.UTC(2023, 4, 22), 68, 89, 13],
                     [Date.UTC(2023, 4, 29), 85, 93, 2],
-                    [Date.UTC(2023, 5, 5), 113, 44, 8],
-                    [Date.UTC(2023, 5, 12), null, 21, 2]
+                    [Date.UTC(2023, 5, 5), 113, 51, 8],
+                    [Date.UTC(2023, 5, 12), null, 51, 8]
                 ]
             }
         }, {
@@ -156,28 +156,16 @@ Dashboards.board('container', {
         type: 'KPI',
         title: 'Completed tasks',
         subtitle: 'task completed',
-        value: 28,
-        chartOptions: {
-            series: [{
-                type: 'column',
-                enableMouseTracking: false,
-                name: 'Previous sprints',
-                data: [0, 23, 22, 23, 17, 28]
-            }]
+        linkedValueTo: {
+            enabled: false
         }
     }, {
         cell: 'dashboard-kpi-2',
         type: 'KPI',
         title: 'Incomplete tasks',
         subtitle: 'to be done',
-        value: 10,
-        chartOptions: {
-            series: [{
-                type: 'column',
-                name: 'Previous sprints',
-                enableMouseTracking: false,
-                data: [20, 18, 23, 14, 19]
-            }]
+        linkedValueTo: {
+            enabled: false
         }
     }, {
         cell: 'dashboard-kpi-4',
@@ -190,12 +178,6 @@ Dashboards.board('container', {
             series: [{
                 type: 'pie',
                 keys: ['name', 'y'],
-                data: [
-                    ['Done', 113],
-                    ['To Do', 21],
-                    ['In Progress', 38],
-                    ['Blocked', 8]
-                ],
                 innerSize: '50%',
                 size: '110%',
                 dataLabels: {
@@ -354,4 +336,26 @@ Dashboards.board('container', {
             }
         }
     }]
-}, true);
+}, true).then(dashboard => {
+    const completedTaskKPI = dashboard.mountedComponents[1].component,
+        incompleteTaskKPI = dashboard.mountedComponents[2].component,
+        taskByStatusChart = dashboard.mountedComponents[3].component,
+        connectors = dashboard.dataPool.connectors,
+        cumulativeData = connectors.cumulativeData.table.columns,
+        completedTask = cumulativeData.Done[5] - cumulativeData.Done[4],
+        planedTask = cumulativeData['To Do'][4] - cumulativeData['To Do'][5],
+        blockedTask = cumulativeData.Blocked[5] - cumulativeData.Blocked[4],
+        inProgressTask = planedTask - completedTask;
+
+    completedTaskKPI.setValue(completedTask);
+    incompleteTaskKPI.setValue(inProgressTask);
+
+    taskByStatusChart.chart.series[0].update({
+        data: [
+            ['Done', completedTask],
+            ['To Do', inProgressTask],
+            ['In Progress', inProgressTask],
+            ['Blocked', blockedTask]
+        ]
+    });
+});
