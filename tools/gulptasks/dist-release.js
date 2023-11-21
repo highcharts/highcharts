@@ -19,8 +19,6 @@ const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';
 const pathToDistRepo = '../' + releaseRepo + '/';
 
-const scriptsCompile = require('./scripts-compile.js');
-
 /**
  * Asks user a question, and waits for input.
  * @param {string} question
