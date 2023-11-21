@@ -41,7 +41,7 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 data: [
-                    ['Assignee', 'Tasks'],
+                    ['Assignee', 'Completed tasks'],
                     ['Dev 1', 41],
                     ['Dev 2', 28],
                     ['Dev 3', 15],
@@ -204,6 +204,17 @@ Dashboards.board('container', {
                         }
                     }
                 }]
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Tasks by status, current sprint.
+                        Highcharts Interactive Chart.`
+                }
+            },
+            accessibility: {
+                description: `The chart shows the number of tasks by status.
+                    Pie is divided into four parts, to do, in progress, done and
+                    blocked.`
             }
         }
     }, {
@@ -219,6 +230,24 @@ Dashboards.board('container', {
             },
             xAxis: {
                 type: 'category'
+            },
+            yAxis: {
+                title: {
+                    text: 'Completed tasks'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Total task by assignee. Highcharts
+                        Interactive Chart.`
+                }
+            },
+            accessibility: {
+                description: `The chart shows the number of completed tasks by
+                    assignee.`
             }
         }
     }, {
@@ -299,7 +328,17 @@ Dashboards.board('container', {
                         end: Date.UTC(2023, 5, 12)
                     }
                 ]
-            }]
+            }],
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Timeline of the project. Highcharts
+                        Interactive Chart.`
+                }
+            },
+            accessibility: {
+                description: `The chart shows the timeline of the project. It is
+                    divided into tasks.`
+            }
         }
     }, {
         cell: 'dashboard-chart-cumulative',
@@ -333,6 +372,17 @@ Dashboards.board('container', {
                 align: 'left',
                 verticalAlign: 'top',
                 floating: false
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: `Tasks status over time. Highcharts
+                        Interactive Chart.`
+                }
+            },
+            accessibility: {
+                description: `The chart shows the number of tasks by status
+                    over time. The chart is divided into three parts, to do,
+                    done and blocked.`
             }
         }
     }]
