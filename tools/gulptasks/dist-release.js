@@ -321,11 +321,6 @@ async function release() {
     await removeFilesInFolder(pathToDistRepo, keepFiles);
     log.message('Successfully removed content of ' + pathToDistRepo);
 
-    // Rerun compile with sourceMaps disabled
-    await scriptsCompile(void 0, {
-        skipSourceMaps: true
-    });
-
     copyFiles();
     updateJSONFiles(version, PRODUCT_NAME);
     await runGit(version, argv.push);
