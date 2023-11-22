@@ -2235,9 +2235,8 @@ QUnit.test('slotWidth', assert => {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].mark.getBBox().x,
-        chart.yAxis[0].axisLine.getBBox().x,
-        `First tick gridlines on x-axis should be aligned with the first tick
-        gridlines on y-axis (#19845).`
+        chart.xAxis[0].tickPositions[0],
+        chart.xAxis[0].min,
+        'First tick on x-axis should be set to x-axis min value (#19845).'
     );
 });

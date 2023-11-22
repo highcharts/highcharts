@@ -248,11 +248,6 @@ function compose<T extends typeof Axis>(
     if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
-            'afterGetPosition',
-            onTickAfterGetPosition
-        );
-        addEvent(
-            TickClass,
             'afterGetLabelPosition',
             onTickAfterGetLabelPosition
         );
@@ -1065,27 +1060,6 @@ function onInit(
 }
 
 /**
- * Add calculations to ticks if needed.
- * @private
- */
-function onTickAfterGetPosition(
-    this: Tick,
-    e: {
-        pos: PositionObject;
-    }
-): void {
-    if (
-        this.axis.options.grid?.enabled &&
-        this.axis.horiz &&
-        this.isFirst &&
-        // Two pixels as minimum to catch small shifts #19845
-        (e.pos.x - this.axis.transB) < pick(this.slotWidth, 2)
-    ) {
-        e.pos.x = this.axis.transB;
-    }
-}
-
-/**
  * Center tick labels in cells.
  * @private
  */
@@ -1272,33 +1246,43 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  *       ticks and not the labels directly?
  */
 function onTrimTicks(this: Axis): void {
-    const axis = this;
-    const options = axis.options;
-    const gridOptions = options.grid || {};
-    const categoryAxis = axis.categories;
-    const tickPositions = axis.tickPositions;
-    const firstPos = tickPositions[0];
-    const lastPos = tickPositions[tickPositions.length - 1];
-    const linkedMin = axis.linkedParent && axis.linkedParent.min;
-    const linkedMax = axis.linkedParent && axis.linkedParent.max;
-    const min = linkedMin || axis.min;
-    const max = linkedMax || axis.max;
-    const tickInterval = axis.tickInterval;
-    const endMoreThanMin = (
-        firstPos < (min as any) &&
-        firstPos + tickInterval > (min as any)
-    );
-    const startLessThanMax = (
-        lastPos > (max as any) &&
-        lastPos - tickInterval < (max as any)
-    );
+    const axis = this,
+        options = axis.options,
+        gridOptions = options.grid || {},
+        categoryAxis = axis.categories,
+        tickPositions = axis.tickPositions,
+        firstPos = tickPositions[0],
+        secondPos = tickPositions[1],
+        lastPos = tickPositions[tickPositions.length - 1],
+        linkedMin = axis.linkedParent && axis.linkedParent.min,
+        linkedMax = axis.linkedParent && axis.linkedParent.max,
+        min = linkedMin || axis.min,
+        max = linkedMax || axis.max,
+        tickInterval = axis.tickInterval,
+        endMoreThanMin = (
+            min &&
+            firstPos < min &&
+            firstPos + tickInterval > min
+        ),
+        startLessThanMin = ( // #19845
+            min &&
+            min >= firstPos + tickInterval &&
+            min < secondPos
+        ),
+        startLessThanMax = (
+            max &&
+            lastPos > max &&
+            lastPos - tickInterval < max
+        );
 
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
         (axis.horiz || axis.isLinked)
     ) {
-        if (endMoreThanMin && !options.startOnTick) {
+        if (
+            (endMoreThanMin || startLessThanMin) && !options.startOnTick
+        ) {
             tickPositions[0] = min as any;
         }
 
