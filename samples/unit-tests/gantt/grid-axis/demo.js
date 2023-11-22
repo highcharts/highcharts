@@ -2225,8 +2225,9 @@ QUnit.test('slotWidth', assert => {
     assert.ok(
         yAxis.axisTitle.element.textContent.indexOf('...'),
         'The column title should contain an ellipsis'
-      
-    axis.remove();
+    );
+
+    xAxis.remove();
     chart.xAxis[0].update({
         tickInterval: 1000 * 60 * 60 * 24 * 30,
         min: Date.UTC(2016, 11, 31),
