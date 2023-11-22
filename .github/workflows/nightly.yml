@@ -30,6 +30,26 @@ jobs:
     with:
       testTimezones: true
 
+  notify_if_error:
+    runs-on: ubuntu-latest
+    needs: ['nightly_test_headless', 'nightly_test_bs']
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+
+    steps:
+      - name: do things
+        run: |
+          echo "\[https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}\]\(See run\)" > info.list
+          node ./.github/scripts/createListJSON \
+            info.list \
+            info.json
+      - name: Call Slack webhook
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload-file-path: "list.json"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:
