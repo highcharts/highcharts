@@ -36,12 +36,19 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') }}
 
     steps:
-      - name: do things
+      - name: Checkout repository scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts
+
+      - name: Create payload
         run: |
           echo "\[https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}\]\(See run\)" > info.list
           node ./.github/scripts/createListJSON \
             info.list \
             info.json
+
       - name: Call Slack webhook
         id: slack
         uses: slackapi/slack-github-action@v1.24.0
