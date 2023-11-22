@@ -1,0 +1,6 @@
+---
+ name: Navigator stickToMax false
+ authors:
+   - Kamil Musialowski
+ js_wrap: b
+...

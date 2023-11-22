@@ -40,7 +40,6 @@ const {
     isTouchDevice
 } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
-import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -108,18 +107,6 @@ class Navigator {
      *
      * */
 
-    public static compose(
-        AxisClass: typeof Axis,
-        ChartClass: typeof Chart,
-        SeriesClass: typeof Series
-    ): void {
-        NavigatorComposition.compose(
-            AxisClass,
-            ChartClass,
-            Navigator,
-            SeriesClass
-        );
-    }
 
     /* *
      *
