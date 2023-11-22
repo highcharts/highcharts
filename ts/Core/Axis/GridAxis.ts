@@ -489,7 +489,12 @@ function onAfterRender(this: Axis): void {
             firstTick = axis.ticks[axis.tickPositions[0]];
 
         // Adjust the title max width to the column width (#19657)
-        if (axisTitle && !axis.chart.styledMode && firstTick?.slotWidth) {
+        if (
+            axisTitle &&
+            !axis.chart.styledMode &&
+            firstTick?.slotWidth &&
+            !axis.options.title.style.width
+        ) {
             axisTitle.css({ width: `${firstTick.slotWidth}px` });
         }
 
