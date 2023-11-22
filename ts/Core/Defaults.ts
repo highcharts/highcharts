@@ -59,7 +59,7 @@ declare module './GlobalsLike' {
  * @optionparent
  * @private
  */
-const defaultOptions: Options = {
+const defaultOptions: DefaultOptions = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -2761,7 +2761,7 @@ const defaultTime = new Time(defaultOptions.time);
  * @return {Highcharts.Options}
  * Default options.
  */
-function getOptions(): Options {
+function getOptions(): DefaultOptions {
     return defaultOptions;
 }
 

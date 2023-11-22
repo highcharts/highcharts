@@ -1430,8 +1430,9 @@ namespace AxisDefaults {
          *
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
+         * @type      Boolean
+         * @apioption xAxis.opposite
          */
-        opposite: false,
 
         /**
          * In an ordinal axis, the points are equally spaced in the chart

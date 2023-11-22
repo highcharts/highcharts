@@ -164,7 +164,7 @@ export interface AxisOptions {
     minTickInterval?: number;
     offset?: number;
     offsets?: [number, number, number, number];
-    opposite: boolean;
+    opposite?: boolean;
     ordinal?: boolean;
     overscroll?: number;
     pane?: number;

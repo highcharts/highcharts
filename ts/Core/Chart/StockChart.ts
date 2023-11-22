@@ -132,7 +132,7 @@ function getDefaultAxisOptions(
             labels: {
                 y: -2
             },
-            opposite: pick(options.opposite, true),
+            opposite: defaultOptions.opposite ?? options.opposite ?? true,
             showLastLabel: !!(
                 // #6104, show last label by default for category axes
                 options.categories ||
@@ -286,10 +286,10 @@ class StockChart extends Chart {
 
             },
 
-            userOptions, // user's options
+            userOptions, // User's options
 
-            { // forced options
-                isStock: true // internal flag
+            { // Forced options
+                isStock: true // Internal flag
             }
         );
 
@@ -301,7 +301,6 @@ class StockChart extends Chart {
             xAxisOptions: AxisOptions,
             i: number
         ): AxisOptions => merge(
-            // defaultOptions.xAxis, // #3802
             getDefaultAxisOptions(
                 'xAxis',
                 xAxisOptions,
@@ -317,7 +316,6 @@ class StockChart extends Chart {
             yAxisOptions: YAxisOptions,
             i: number
         ): YAxisOptions => merge(
-            // defaultOptions.yAxis, // #3802
             getDefaultAxisOptions(
                 'yAxis',
                 yAxisOptions,

@@ -27,6 +27,7 @@ import type Options from '../Options';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
+const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -150,7 +151,9 @@ class GanttChart extends Chart {
                     grid: {
                         enabled: true
                     },
-                    opposite: true,
+                    opposite: defaultOptions.xAxis?.opposite ??
+                        xAxisOptions.opposite ??
+                        true,
                     linkedTo: defaultLinkedTo
                 },
                 // User options
