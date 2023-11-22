@@ -907,7 +907,7 @@ function scatterProcessData(
         yMin >= (yAxis.old.min || 0) &&
         yMax <= (yAxis.old.max || Number.MAX_VALUE)
     ) {
-        return;
+        return true;
     }
 
     // Without thresholds just assign data
@@ -957,8 +957,8 @@ function scatterProcessData(
     // Set properties as base processData
     series.cropped = cropped;
     series.cropStart = 0;
-    series.processedData = processedData;
-    series.processedXData = processedXData;
+    series.processedData = processedData; // For un-boosted points rendering
+    series.processedXData = processedXData; // For boosted points rendering
     series.processedYData = processedYData;
 
     return true;
