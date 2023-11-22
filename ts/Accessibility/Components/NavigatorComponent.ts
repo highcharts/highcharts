@@ -1,8 +1,7 @@
 /* *
  *
  *  (c) 2009-2023 Highsoft AS
- *
- *  Accessibility component for the navigator.
+
  *
  *  Author: Øystein Moseng
  *  License: www.highcharts.com/license

@@ -10,13 +10,13 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Navigator from '../../Stock/Navigator/StandaloneNavigator.js';
+import Navigator from '../../Stock/Navigator/Navigator.js';
+import StandaloneNavigator from '../../Stock/Navigator/StandaloneNavigator.js';
 import Highcharts from '../../Core/Globals.js';
+import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js';
 
 const G: AnyRecord = Highcharts;
+G.Navigator = StandaloneNavigator;
+NavigatorComposition.compose(G.Axis, Navigator, G.Series);
 
-Navigator.compose(G.Axis, G.Chart, G.Series);
-
-G.Navigator = Navigator;
-
-G.navigator = Navigator.navigator;
+G.navigator = StandaloneNavigator.navigator;
