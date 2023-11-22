@@ -1283,11 +1283,11 @@ function onTrimTicks(this: Axis): void {
         if (
             (endMoreThanMin || startLessThanMin) && !options.startOnTick
         ) {
-            tickPositions[0] = min as any;
+            tickPositions[0] = min;
         }
 
         if (startLessThanMax && !options.endOnTick) {
-            tickPositions[tickPositions.length - 1] = max as any;
+            tickPositions[tickPositions.length - 1] = max;
         }
     }
 }
