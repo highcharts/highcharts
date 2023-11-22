@@ -44,7 +44,7 @@ jobs:
 
       - name: Create payload
         run: |
-          echo "<https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}|See run page> for more information" > info.list
+          echo "[https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}](See run page) for more information" > info.list
           node ./.github/scripts/createListJSON \
             info.list \
             info.json
