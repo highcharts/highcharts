@@ -8,10 +8,6 @@ To do
 - Check out if minPadding, maxPadding and threshold can be refactored out and
   shared with setTickPositions.
 - Stock chart: navigator not working after zooming on y. Reset button quirks.
-- When mousewheeling in on the pinch-zoom usdeur data, the y-axis jumps clear of
-  the start and end ticks. Consider a similar solution to minPadding and
-  maxPadding handling to avoid the jump. Why did it not work with `isPanning` on
-  the axis?
 - On multiple panes, make sure only zoomed axes are affected. Check target or
   reference position (center point?) against axis position. Add/modify tests.
 */

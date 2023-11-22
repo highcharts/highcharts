@@ -348,7 +348,6 @@ class Chart {
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
     public subtitle?: SVGElement;
-    public isPanning?: boolean;
     public symbolCounter: number = void 0 as any;
     public time: Time = void 0 as any;
     public title?: SVGElement;
@@ -3848,11 +3847,11 @@ class Chart {
                         });
                     } else {
 
-                        // Temporarily flag the chart as `isPanning` in order to
+                        // Temporarily flag the axis as `isPanning` in order to
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        this.isPanning = trigger !== 'zoom';
+                        axis.isPanning = trigger !== 'zoom';
 
                         axis.setExtremes(
                             reset ? void 0 : newMin,

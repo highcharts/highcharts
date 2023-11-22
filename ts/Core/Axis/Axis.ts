@@ -232,6 +232,7 @@ class Axis {
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isOrdinal?: boolean;
+    public isPanning?: boolean;
     public isPinching?: boolean;
     public isRadial?: boolean;
     public isXAxis?: boolean;
@@ -1947,7 +1948,7 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            allowEndOnTick = !this.chart.isPanning,
+            allowEndOnTick = !this.isPanning,
             startOnTick = allowEndOnTick && options.startOnTick,
             endOnTick = allowEndOnTick && options.endOnTick;
 
@@ -2207,8 +2208,6 @@ class Axis {
                 (chartOptions.alignTicks !== false && options.alignTicks) ||
                 alignThresholds
             ) &&
-
-            !chart.isPanning &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
             options.startOnTick !== false &&
