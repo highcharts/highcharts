@@ -3544,8 +3544,7 @@ class Axis {
         }
 
         if (
-            axisTitleOptions &&
-            axisTitleOptions.text &&
+            axisTitleOptions?.text &&
             axisTitleOptions.enabled !== false
         ) {
             axis.addTitle(showAxis);
