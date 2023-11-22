@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "git clean -dfx && npm install && npx tsc",
+    "run-dev": "npm run build && npm run start",
+    "start": "webpack-dev-server --open"
   },
   "keywords": [],
   "author": "",
@@ -15,10 +17,11 @@
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "@highcharts/dashboards": "^1.1.1",
+    "@highcharts/dashboards": "^1.1.2",
     "highcharts": "^11.2.0"
   }
 }
