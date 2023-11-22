@@ -480,13 +480,18 @@ function onAfterInit(this: Axis): void {
  */
 function onAfterRender(this: Axis): void {
     const axis = this,
-        grid = axis.grid,
-        options = axis.options,
+        { axisTitle, grid, options } = axis,
         gridOptions = options.grid || {};
 
     if (gridOptions.enabled === true) {
         const min = axis.min || 0,
-            max = axis.max || 0;
+            max = axis.max || 0,
+            firstTick = axis.ticks[axis.tickPositions[0]];
+
+        // Adjust the title max width to the column width (#19657)
+        if (axisTitle && !axis.chart.styledMode && firstTick?.slotWidth) {
+            axisTitle.css({ width: `${firstTick.slotWidth}px` });
+        }
 
         // @todo acutual label padding (top, bottom, left, right)
         axis.maxLabelDimensions = axis.getMaxLabelDimensions(
@@ -790,7 +795,10 @@ function onAfterSetOptions(
             title: {
                 text: null,
                 reserveSpace: false,
-                rotation: 0
+                rotation: 0,
+                style: {
+                    textOverflow: 'ellipsis'
+                }
             },
 
             // In a grid axis, only allow one unit of certain types,
