@@ -862,11 +862,12 @@ function seriesRenderCanvas(this: Series): void {
         yData = options.yData || this.processedYData,
         rawData = options.data,
         xExtremes = xAxis.getExtremes(),
-        xMin = xExtremes.min,
-        xMax = xExtremes.max,
+        // Taking into account the offset of the min point #19497
+        xMin = xExtremes.min - (xAxis.minPointOffset || 0),
+        xMax = xExtremes.max + (xAxis.minPointOffset || 0),
         yExtremes = yAxis.getExtremes(),
-        yMin = yExtremes.min,
-        yMax = yExtremes.max,
+        yMin = yExtremes.min - (yAxis.minPointOffset || 0),
+        yMax = yExtremes.max + (yAxis.minPointOffset || 0),
         pointTaken: Record<string, boolean> = {},
         sampling = !!this.sampling,
         enableMouseTracking = options.enableMouseTracking,
@@ -1139,7 +1140,7 @@ function seriesRenderCanvas(this: Series): void {
         }
 
         eachAsync(
-            isStacked ? this.data : (xData || rawData),
+            isStacked ? this.data.slice(cropStart) : (xData || rawData),
             processPoint,
             doneProcessing
         );

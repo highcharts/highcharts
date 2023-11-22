@@ -236,8 +236,8 @@ QUnit.test('Funnel dataLabels', function (assert) {
     const data = [
         ['Website visits', 5654],
         ['Downloads', 4064],
-        ['Requested price list', 1987],
-        ['Invoice sent', 1976],
+        ['Requested price list', 198],
+        ['Invoice sent', 197],
         ['Finalized', 4201]
     ];
 
@@ -275,6 +275,12 @@ QUnit.test('Funnel dataLabels', function (assert) {
         ),
         point.dataLabel.x,
         'DataLabels centered horizontally inside the funnel (#10036)'
+    );
+
+    assert.deepEqual(
+        series.points.map(p => p.dataLabel.opacity),
+        [1, 1, 1, 0, 1],
+        'One of the data labels should be hidden by overlap detection'
     );
 
     series.update({
@@ -399,15 +405,16 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
+    dataLabel = chart.series[0].points[4].dataLabel;
+    const prevDataLabelPos = dataLabel.x;
+
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
     Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
 
-    dataLabel = chart.series[0].points[1].dataLabel;
-
-    assert.notEqual(
+    assert.equal(
         dataLabel.x,
-        dataLabel.alignAttr.x,
+        prevDataLabelPos,
         'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
     );
 
@@ -425,4 +432,48 @@ QUnit.test('Funnel dataLabels', function (assert) {
     chart.series[0].setData(data, true, false, false);
 
     assert.ok(true, '#16176: No error should occur');
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    inside: true,
+                    allowOverlap: true,
+                    rotation: 0
+                }
+            }
+        }
+    });
+
+    series.update({
+        dataLabels: {
+            align: 'center'
+        }
+    });
+
+    dataLabel = chart.series[0].points[1].dataLabel;
+
+    const insideDataLabelPos = dataLabel.x;
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    inside: false
+                }
+            }
+        }
+    });
+
+    const legendItem = chart.series[0].points[2].legendItem.group.element;
+
+    Highcharts.fireEvent(legendItem, 'mouseover');
+    Highcharts.fireEvent(legendItem, 'click');
+
+    assert.notEqual(
+        dataLabel.x,
+        insideDataLabelPos,
+        `DataLabel should be positioned outside the series after legend click
+        when inside is false. (#17545)`
+    );
 });

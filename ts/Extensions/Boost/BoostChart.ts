@@ -306,12 +306,10 @@ function onChartCallback(
     }
 
     addEvent(chart, 'predraw', preRender);
-    addEvent(chart, 'render', canvasToSVG);
-
-    // addEvent(chart, 'zoom', function () {
-    //     chart.boostForceChartBoost =
-    //         shouldForceChartSeriesBoosting(chart);
-    // });
+    // Use the load event rather than redraw, otherwise user load events will
+    // fire too early (#18755)
+    addEvent(chart, 'load', canvasToSVG, { order: -1 });
+    addEvent(chart, 'redraw', canvasToSVG);
 
     let prevX = -1;
     let prevY = -1;

@@ -79,29 +79,43 @@ export interface TreePointOptionsObject {
 function getListOfParents(
     data: Array<TreePointOptionsObject>
 ): Record<string, Array<TreePointOptionsObject>> {
-    const listOfParents = data.reduce((
-        prev,
-        curr
-    ): Record<string, Array<TreePointOptionsObject>> => {
-        const parent = pick(curr.parent, '');
+    const root = '',
+        ids: string[] = [],
+        listOfParents = data.reduce((
+            prev,
+            curr
+        ): Record<string, Array<TreePointOptionsObject>> => {
+            const { parent = '', id } = curr;
 
-        if (typeof prev[parent] === 'undefined') {
-            prev[parent] = [];
+            if (typeof prev[parent] === 'undefined') {
+                prev[parent] = [];
+            }
+
+            prev[parent].push(curr);
+
+            if (id) {
+                ids.push(id);
+            }
+
+            return prev;
+        }, {} as Record<string, Array<TreePointOptionsObject>>);
+
+    Object.keys(listOfParents).forEach(
+        (node: string): void => {
+            if ((node !== root) && (ids.indexOf(node) === -1)) {
+                const adoptedByRoot = listOfParents[node].map(
+                    function (orphan): TreePointOptionsObject {
+                        const { parent, ...parentExcluded } = orphan; // #15196
+                        return parentExcluded;
+                    }
+                );
+
+                listOfParents[root].push(...adoptedByRoot);
+
+                delete listOfParents[node];
+            }
         }
-        prev[parent].push(curr);
-        return prev;
-    }, {} as Record<string, Array<TreePointOptionsObject>>);
-    // parents = Object.keys(listOfParents);
-    // If parent does not exist, hoist parent to root of tree.
-    // parents.forEach((parent, list): void => {
-    //     const children = listOfParents[parent];
-    //     if ((parent !== '') && (ids.indexOf(parent) === -1)) {
-    //         for (const child of children) {
-    //             (list as any)[''].push(child);
-    //         }
-    //         delete (list as any)[parent];
-    //     }
-    // });
+    );
     return listOfParents;
 }
 
@@ -199,9 +213,7 @@ function getTree(
     data: Array<TreePointOptionsObject>,
     options: TreeGetOptionsObject
 ): TreeNode {
-    const mapOfIdToChildren = getListOfParents(data);
-
-    return getNode('', null, 1, null, mapOfIdToChildren, options);
+    return getNode('', null, 1, null, getListOfParents(data), options);
 }
 
 /* *
