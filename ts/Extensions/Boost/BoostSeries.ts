@@ -56,7 +56,6 @@ const {
     error,
     extend,
     fireEvent,
-    getClosestDistance,
     isArray,
     isNumber,
     pick,
@@ -680,6 +679,7 @@ function enterBoost(
             }
         }
         series.data.length = 0;
+        series.points.length = 0;
     }
 }
 
@@ -870,6 +870,7 @@ function scatterProcessData(
         options = series.options,
         xAxis = series.xAxis,
         yAxis = series.yAxis;
+    (window as any).TheSeries = series;
 
     // Process only on changes
     if (
@@ -881,34 +882,57 @@ function scatterProcessData(
         return false;
     }
 
-    series.yAxis.setTickInterval(); // Required to get tick-based zoom range
+    // Required to get tick-based zoom ranges
+    series.yAxis.setTickInterval();
 
-    const cropThreshold = options.cropThreshold,
+    const boostThreshold = options.boostThreshold || 0,
+        cropThreshold = options.cropThreshold,
         data = options.data || series.data,
-        xData = this.xData as Array<number>,
-        yData = this.yData as Array<number>;
+        xData = series.xData as Array<number>,
+        xExtremes = xAxis.getExtremes(),
+        xMax = xExtremes.max,
+        xMin = xExtremes.min,
+        yData = series.yData as Array<number>,
+        yExtremes = yAxis.getExtremes(),
+        yMax = yExtremes.max,
+        yMin = yExtremes.min;
 
+    // Skip processing in non-boost zoom
     if (
-        cropThreshold &&
-        !series.forceCrop &&
-        !series.getExtremesFromAll &&
-        !options.getExtremesFromAll &&
-        data.length < cropThreshold
+        !series.boosted &&
+        xAxis.old &&
+        yAxis.old &&
+        xMin >= (xAxis.old.min || 0) &&
+        xMax <= (xAxis.old.max || Number.MAX_VALUE) &&
+        yMin >= (yAxis.old.min || 0) &&
+        yMax <= (yAxis.old.max || Number.MAX_VALUE)
+    ) {
+        return;
+    }
+
+    // Without thresholds just assign data
+    if (
+        (
+            boostThreshold &&
+            data.length < boostThreshold
+        ) ||
+        (
+            cropThreshold &&
+            !series.forceCrop &&
+            !series.getExtremesFromAll &&
+            !options.getExtremesFromAll &&
+            data.length < cropThreshold
+        )
     ) {
         series.processedXData = xData;
         series.processedYData = yData;
         return true;
     }
 
+    // Filter unsorted scatter data for ranges
     const processedData: Array<PointOptions> = [],
         processedXData: Array<number> = [],
-        processedYData: Array<number> = [],
-        xExtremes = xAxis.getExtremes(),
-        xMax = xExtremes.max,
-        xMin = xExtremes.min,
-        yExtremes = yAxis.getExtremes(),
-        yMax = yExtremes.max,
-        yMin = yExtremes.min;
+        processedYData: Array<number> = [];
 
     let cropped = false,
         x: number,
