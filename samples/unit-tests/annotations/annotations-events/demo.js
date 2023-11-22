@@ -1,8 +1,11 @@
 QUnit.test('Annotations events - general', function (assert) {
+    const done = assert.async();
+
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
         closeEventCalled = 0,
+        chartRedrawEventCalled = 0,
         circleAfterUpdateCalled = 0,
         customButtonClicked = 0,
         popupOptions,
@@ -29,6 +32,13 @@ QUnit.test('Annotations events - general', function (assert) {
             ];
         },
         chart = Highcharts.chart('container', {
+            chart: {
+                events: {
+                    redraw() {
+                        chartRedrawEventCalled++;
+                    }
+                }
+            },
             exporting: {
                 buttons: {
                     customButton: {
@@ -138,7 +148,7 @@ QUnit.test('Annotations events - general', function (assert) {
         afterUpdateEventCalled,
         1,
         'annotations.events.afterUpdate called just once - after' +
-            '`annotation.update()`.'
+        '`annotation.update()`.'
     );
 
     var mouseDown = false,
@@ -265,7 +275,7 @@ QUnit.test('Annotations events - general', function (assert) {
     const xAxis = 0,
         yAxis = 1;
 
-    chart.addAnnotation({
+    const anno = chart.addAnnotation({
         type: 'basicAnnotation',
         shapes: [{
             type: 'path',
@@ -305,4 +315,68 @@ QUnit.test('Annotations events - general', function (assert) {
         '#19024, rectangle should resize to exact drag position.'
     );
 
+    const initialRedrawCounter = chartRedrawEventCalled;
+
+    chart.series[0].update({
+        kdTreeNow: false
+    }, false);
+
+    // Simulate mouse move on a chart to build a kdTree
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(1),
+        chart.yAxis[1].toPixels(10)
+    );
+
+    anno.update({
+        shapes: [{}]
+    });
+
+    assert.strictEqual(
+        initialRedrawCounter,
+        chartRedrawEventCalled,
+        'Chart redraw event should not be called when calling annotation.update, #20080.'
+    );
+
+    setTimeout(() => {
+        assert.ok(chart.series[0].kdTree, 'kdTree should be built upon mouse move on a chart.');
+        done();
+    }, 0);
+    let clicks = 0;
+
+    annotation = chart.addAnnotation({
+        labels: [{
+            useHTML: true,
+            text: 'test label',
+            point: {
+                x: 200,
+                y: 100
+            }
+        }],
+        events: {
+            click: function () {
+                clicks++;
+            }
+        },
+        shapes: [{
+            points: [{
+                x: 100,
+                y: 100
+            }, {
+                x: 200,
+                y: 100
+            }],
+            type: 'path',
+            strokeWidth: 10
+        }],
+        draggable: false
+    });
+
+    controller.click(chart.plotLeft + 105, chart.plotTop + 100);
+    controller.click(chart.plotLeft + 200, chart.plotTop + 75);
+
+    assert.equal(
+        clicks,
+        2,
+        'Click event should be correctly bound both for HTML annotation label and SVG path (#19926).'
+    );
 });

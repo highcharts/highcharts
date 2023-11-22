@@ -30,6 +30,7 @@ const EditGlobals: EditGlobals = {
         resizeSnapY: PREFIX + 'resize-snap-y',
         separator: PREFIX + 'separator',
         contextMenuBtn: PREFIX + 'context-menu-btn',
+        contextMenuBtnText: PREFIX + 'context-menu-btn-text',
         contextMenu: PREFIX + 'context-menu',
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
@@ -118,6 +119,9 @@ const EditGlobals: EditGlobals = {
         accessibility: {
             contextMenu: {
                 button: 'Context menu'
+            },
+            editMode: {
+                editMode: 'Edit mode toggle button'
             }
         },
         addComponent: 'Add component',
@@ -176,6 +180,7 @@ namespace EditGlobals {
         contextDetectionPointer: string;
         contextMenu: string;
         contextMenuBtn: string;
+        contextMenuBtnText: string;
         contextMenuItem: string;
         currentEditedElement: string;
         customSelect: string;
@@ -360,13 +365,25 @@ namespace EditGlobals {
 
     export interface LangAccessibilityOptions {
         contextMenu: LangAccessibilityOptionsContextMenu;
+        editMode: LangAccessibilityOptionsEditMode;
     }
 
     export interface LangAccessibilityOptionsContextMenu {
+        [key: string]: string;
+
         /**
          * @default 'Context menu'
          */
         button: string;
+    }
+
+    export interface LangAccessibilityOptionsEditMode {
+        [key: string]: string;
+
+        /**
+         * @default 'Edit mode'
+         */
+        editMode: string;
     }
 
     export type TLangKeys = 'editMode' | 'verticalSeparator';

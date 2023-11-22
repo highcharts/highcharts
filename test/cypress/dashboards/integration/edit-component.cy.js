@@ -162,8 +162,8 @@ describe('Editable component options', () => {
             );
 
             assert.deepEqual(
-                board.mountedComponents[0].component.chart.userOptions.plotOptions,
-                newChartOptions.plotOptions,
+                board.mountedComponents[0].component.chart.userOptions.plotOptions.series.dataLabels,
+                newChartOptions.plotOptions.series.dataLabels,
                 'New data labels options are applied on chart.'
             );
             assert.deepEqual(

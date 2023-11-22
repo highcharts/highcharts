@@ -263,7 +263,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 
             // Make sure the label is completely hidden to avoid catching clicks
             // (#4362)
-            if (label.alignAttr && label.placed) { // data labels
+            if (label.alignAttr && label.placed) { // Data labels
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
@@ -278,14 +278,13 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label.alignAttr.opacity = newOpacity;
                 label[label.isOld ? 'animate' : 'attr'](
-                    label.alignAttr,
-                    null as any,
+                    { opacity: newOpacity },
+                    void 0,
                     complete
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
-            } else { // other labels, tick labels
+            } else { // Other labels, tick labels
                 label.attr({
                     opacity: newOpacity
                 });

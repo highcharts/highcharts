@@ -36,6 +36,24 @@ async function verify() {
             'Path does not exist: ' + distPath
         );
     }
+
+    const pathsThatShouldBeIgnored = [
+        'highcharts/code/css/dashboards.css',
+        'highcharts/code/css/datagrid.css',
+        'highcharts/gfx/dashboards-icons'
+    ];
+
+    for (const path of pathsThatShouldBeIgnored) {
+        const distPath = join(DIST_DIR, path);
+
+        message('Checking', distPath);
+
+        assert.strictEqual(
+            existsSync(distPath),
+            false,
+            'Path that should not, does exist: ' + distPath
+        );
+    }
 }
 
 task('dist-verify', verify);
