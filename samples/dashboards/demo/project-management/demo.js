@@ -256,6 +256,9 @@ Dashboards.board('container', {
         title: 'Timeline',
         chartConstructor: 'ganttChart',
         chartOptions: {
+            chart: {
+                marginLeft: 10
+            },
             xAxis: [{
                 plotLines,
                 plotBands,
@@ -267,7 +270,9 @@ Dashboards.board('container', {
                 }
             }],
             yAxis: {
-                visible: false,
+                labels: {
+                    enabled: false
+                },
                 staticScale: 20
             },
             plotOptions: {
