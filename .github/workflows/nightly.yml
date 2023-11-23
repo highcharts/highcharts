@@ -41,7 +41,7 @@ jobs:
           sparse-checkout: |
             .github/scripts
 
-      - run: echo "${{ toJSON(needs) }}" > needs.json
+      - run: printf '%s\n' "${{ toJSON(needs) }}" > needs.json
       - uses: actions/upload-artifact@v3
         with:
           name: needs-context
