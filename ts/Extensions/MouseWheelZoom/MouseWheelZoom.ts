@@ -115,7 +115,8 @@ const zoomBy = function (
             y: mouseY - 5 * howMuch,
             width: 10 * howMuch,
             height: 10 * howMuch
-        }
+        },
+        trigger: 'mousewheel'
     });
 
     if (hasZoomed) {

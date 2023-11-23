@@ -7,6 +7,7 @@ To do
 - On multiple panes, make sure only zoomed axes are affected. Check target or
   reference position (center point?) against axis position. Add/modify tests.
 - Why is `mouseDownX` and `mouseDownY` registered on both Chart and Pointer?
+- Overscroll: Panning not working, goes to max when dropped first time.
 */
 
 
