@@ -6,6 +6,8 @@ body {
 #demo-content {
     box-shadow: none;
     background: none;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 pre {

@@ -1,4 +1,3 @@
-/* global buriedDefaults */
 const { Color, SVGRenderer } = Highcharts;
 
 let topology, ohlc;
@@ -161,22 +160,7 @@ const chartPreview = async theme => {
     });
 };
 
-const buildDefaults = () => {
-    buriedDefaults.colorAxis = Highcharts.merge(
-        buriedDefaults.xAxis,
-        buriedDefaults.colorAxis
-    );
-    buriedDefaults.yAxis = Highcharts.merge(
-        buriedDefaults.xAxis,
-        buriedDefaults.yAxis
-    );
-    return Highcharts.merge(
-        Highcharts.defaultOptions,
-        buriedDefaults
-    );
-};
-
-const defaultOptions = buildDefaults(),
+const defaultOptions = Highcharts.merge(Highcharts.defaultOptions),
     buttonTheme = SVGRenderer.buttonTheme;
 
 const generate = async () => {
@@ -296,12 +280,15 @@ const generate = async () => {
                     const paletteKey = colorMap[value];
                     if (!paletteKey) {
                         console.error(`Palette key missing for ${value}`);
+                    } else {
+                        const color = palette[paletteKey];
+                        if (!color) {
+                            console.error(
+                                `Color missing for ${value} in palette`
+                            );
+                        }
+                        theme[key] = color;
                     }
-                    const color = palette[paletteKey];
-                    if (!color) {
-                        console.error(`Color missing for ${value} in palette`);
-                    }
-                    theme[key] = color;
                 }
             }
         }
