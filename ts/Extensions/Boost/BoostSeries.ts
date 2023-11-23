@@ -680,6 +680,7 @@ function enterBoost(
         }
         series.data.length = 0;
         series.points.length = 0;
+        delete series.processedData;
     }
 }
 
@@ -739,6 +740,29 @@ function hasExtremes(
                 (isNumber(colorAxis.min) && isNumber(colorAxis.max))
             );
 }
+
+/**
+ * Used multiple times. In processData first on this.options.data, the second
+ * time it runs the check again after processedXData is built.
+ * If the data is going to be grouped, the series shouldn't be boosted.
+ * @private
+ */
+const getSeriesBoosting = (
+    series: BoostSeriesComposition,
+    data?: Array<(PointOptions|PointShortOptions)>
+): boolean => {
+    // Check if will be grouped.
+    if (series.forceCrop) {
+        return false;
+    }
+    return (
+        isChartSeriesBoosting(series.chart) ||
+        (
+            (data ? data.length : 0) >=
+            (series.options.boostThreshold || Number.MAX_VALUE)
+        )
+    );
+};
 
 /**
  * Extend series.destroy to also remove the fake k-d-tree points (#5137).
@@ -863,14 +887,13 @@ function getPoint(
  * @private
  */
 function scatterProcessData(
-    this: Series,
+    this: BoostSeriesComposition,
     force?: boolean
 ): (boolean|undefined) {
     const series = this,
         options = series.options,
         xAxis = series.xAxis,
         yAxis = series.yAxis;
-    (window as any).TheSeries = series;
 
     // Process only on changes
     if (
@@ -902,10 +925,10 @@ function scatterProcessData(
         !series.boosted &&
         xAxis.old &&
         yAxis.old &&
-        xMin >= (xAxis.old.min || 0) &&
-        xMax <= (xAxis.old.max || Number.MAX_VALUE) &&
-        yMin >= (yAxis.old.min || 0) &&
-        yMax <= (yAxis.old.max || Number.MAX_VALUE)
+        xMin >= (xAxis.old.min ?? Number.MIN_VALUE) &&
+        xMax <= (xAxis.old.max ?? Number.MAX_VALUE) &&
+        yMin >= (yAxis.old.min ?? Number.MIN_VALUE) &&
+        yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
         return true;
     }
@@ -957,9 +980,12 @@ function scatterProcessData(
     // Set properties as base processData
     series.cropped = cropped;
     series.cropStart = 0;
-    series.processedData = processedData; // For un-boosted points rendering
     series.processedXData = processedXData; // For boosted points rendering
     series.processedYData = processedYData;
+
+    if (!getSeriesBoosting(series, processedXData)) {
+        series.processedData = processedData; // For un-boosted points rendering
+    }
 
     return true;
 }
@@ -1388,30 +1414,6 @@ function wrapSeriesProcessData(
 ): void {
     let dataToMeasure = this.options.data;
 
-    /**
-     * Used twice in this function, first on this.options.data, the second
-     * time it runs the check again after processedXData is built.
-     * If the data is going to be grouped, the series shouldn't be boosted.
-     * @private
-     */
-    const getSeriesBoosting = (
-        data?: Array<(PointOptions|PointShortOptions)>
-    ): boolean => {
-        const series = this as BoostSeriesComposition;
-
-        // Check if will be grouped.
-        if (series.forceCrop) {
-            return false;
-        }
-        return (
-            isChartSeriesBoosting(series.chart) ||
-            (
-                (data ? data.length : 0) >=
-                (series.options.boostThreshold || Number.MAX_VALUE)
-            )
-        );
-    };
-
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition;
 
@@ -1420,7 +1422,7 @@ function wrapSeriesProcessData(
         // do default behaviour.
         if (
             // First pass with options.data:
-            !getSeriesBoosting(dataToMeasure) ||
+            !getSeriesBoosting(series, dataToMeasure) ||
             series.type === 'heatmap' ||
             series.type === 'scatter' ||
             series.type === 'treemap' ||
@@ -1439,7 +1441,7 @@ function wrapSeriesProcessData(
 
         // Set the isBoosting flag, second pass with processedXData to
         // see if we have zoomed.
-        series.boosted = getSeriesBoosting(dataToMeasure);
+        series.boosted = getSeriesBoosting(series, dataToMeasure);
 
         // Enter or exit boost mode
         if (series.boosted) {
