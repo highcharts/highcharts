@@ -1,10 +1,9 @@
-import { describe } from '../test-utils';
-import { JSDOM } from 'jsdom';
+import { describe, setupDOM } from '../test-utils';
 import { strictEqual } from 'assert';
 
 export function testDOMDependencies() {
     describe('Testing DOM dependencies...');
-    const dom = new JSDOM(
+    const {win} = setupDOM(
         `<!doctype html>
         <html>
             <body>
@@ -12,7 +11,8 @@ export function testDOMDependencies() {
             </body>
         </html>`
     );
-    const Highcharts = require('../../../code/highcharts.src.js')(dom.window);
+
+    const Highcharts = require('../../../code/highcharts.src.js')(win);
     Highcharts.chart('container', {
         series: [{
             data: [1, 2, 3],

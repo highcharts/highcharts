@@ -857,9 +857,8 @@ namespace Exporting {
                                     e.stopPropagation();
                                 }
                                 menu.hideMenu();
-                                if ((item as any).onclick) {
-                                    (item as any).onclick
-                                        .apply(chart, arguments);
+                                if (typeof item !== 'string' && item.onclick) {
+                                    item.onclick.apply(chart, arguments);
                                 }
                             }
                         }, void 0, innerMenu);
@@ -1219,6 +1218,11 @@ namespace Exporting {
                 }));
             }
         });
+
+        // Make sure the `colorAxis` object of the `defaultOptions` isn't used
+        // in the chart copy's user options, because a color axis should only be
+        // added when the user actually applies it.
+        options.colorAxis = chart.userOptions.colorAxis;
 
         // Generate the chart copy
         const chartCopy = new (chart.constructor as typeof Chart)(

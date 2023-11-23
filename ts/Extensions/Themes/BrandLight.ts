@@ -20,7 +20,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -41,7 +41,7 @@ namespace BrandLightTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
             '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
         chart: {
@@ -253,7 +253,7 @@ namespace BrandLightTheme {
     export function apply(): void {
         // Load the fonts
         createElement('link', {
-            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:200,300,400,600,700',
+            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700',
             rel: 'stylesheet',
             type: 'text/css'
         }, null as any, document.getElementsByTagName('head')[0]);

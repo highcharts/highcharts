@@ -480,13 +480,23 @@ function onAfterInit(this: Axis): void {
  */
 function onAfterRender(this: Axis): void {
     const axis = this,
-        grid = axis.grid,
-        options = axis.options,
+        { axisTitle, grid, options } = axis,
         gridOptions = options.grid || {};
 
     if (gridOptions.enabled === true) {
         const min = axis.min || 0,
-            max = axis.max || 0;
+            max = axis.max || 0,
+            firstTick = axis.ticks[axis.tickPositions[0]];
+
+        // Adjust the title max width to the column width (#19657)
+        if (
+            axisTitle &&
+            !axis.chart.styledMode &&
+            firstTick?.slotWidth &&
+            !axis.options.title.style.width
+        ) {
+            axisTitle.css({ width: `${firstTick.slotWidth}px` });
+        }
 
         // @todo acutual label padding (top, bottom, left, right)
         axis.maxLabelDimensions = axis.getMaxLabelDimensions(
@@ -623,7 +633,8 @@ function onAfterRender(this: Axis): void {
             (
                 axis.scrollbar ||
                 (axis.linkedParent && axis.linkedParent.scrollbar)
-            )
+            ) &&
+            axis.tickPositions.length
         ) {
             const tickmarkOffset = axis.tickmarkOffset,
                 lastTick = axis.tickPositions[
@@ -633,7 +644,6 @@ function onAfterRender(this: Axis): void {
 
             let label: SVGElement|undefined,
                 tickMark: SVGElement|undefined;
-
 
             while ((label = axis.hiddenLabels.pop()) && label.element) {
                 label.show(); // #15453
@@ -645,7 +655,7 @@ function onAfterRender(this: Axis): void {
                 tickMark.show(); // #16439
             }
 
-            // Hide/show firts tick label.
+            // Hide/show first tick label.
             label = axis.ticks[firstTick].label;
             if (label) {
                 if (min - firstTick > tickmarkOffset) {
@@ -790,7 +800,10 @@ function onAfterSetOptions(
             title: {
                 text: null,
                 reserveSpace: false,
-                rotation: 0
+                rotation: 0,
+                style: {
+                    textOverflow: 'ellipsis'
+                }
             },
 
             // In a grid axis, only allow one unit of certain types,

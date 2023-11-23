@@ -31,7 +31,6 @@ import type {
 } from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type {
-    LabelsItemsOptions,
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
@@ -39,7 +38,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
-    ChartResetZoomButtonOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
@@ -47,8 +45,7 @@ import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
-    SeriesTypeOptions,
-    SeriesTypePlotOptions
+    SeriesTypeOptions
 } from '../Series/SeriesType';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -78,7 +75,6 @@ const {
     svg,
     win
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -89,10 +85,12 @@ import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
+import Tick from '../Axis/Tick.js';
 const {
     addEvent,
     attr,
     createElement,
+    clamp,
     css,
     defined,
     diffObjects,
@@ -1073,7 +1071,7 @@ class Chart {
      * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
-        const options = this.options;
+        const options = this.userOptions;
 
         fireEvent(this, 'getAxes');
 
@@ -1098,6 +1096,10 @@ class Chart {
      *
      * @sample highcharts/plotoptions/series-allowpointselect-line/
      *         Get selected points
+     * @sample highcharts/members/point-select-lasso/
+     *         Lasso selection
+     * @sample highcharts/chart/events-selection-points/
+     *         Rectangle selection
      *
      * @function Highcharts.Chart#getSelectedPoints
      *
@@ -2375,15 +2377,21 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            renderAxes = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            axisLayoutRuns = chart.options.chart.axisLayoutRuns || 2,
+            renderAxes = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.render();
                     }
                 });
             };
 
-        let correction = 0; // correction for X axis labels
+        let expectedSpace = 0, // Correction for X axis labels
+            // If the plot area size has changed significantly, calculate tick
+            // positions again
+            redoHorizontal = true,
+            redoVertical: boolean|undefined,
+            run = 0;
 
         // Title
         chart.setTitle();
@@ -2393,63 +2401,90 @@ class Chart {
         fireEvent(chart, 'beforeMargins');
 
         // Get stacks
-        if (chart.getStacks) {
-            chart.getStacks();
-        }
+        chart.getStacks?.();
 
         // Get chart margins
         chart.getMargins(true);
         chart.setChartSize();
 
-        // Record preliminary dimensions for later comparison
-        const tempWidth = chart.plotWidth;
+        for (const axis of axes) {
+            const { options } = axis,
+                { labels } = options;
 
-        axes.some(function (axis: Axis): (boolean|undefined) {
             if (
                 axis.horiz &&
                 axis.visible &&
-                axis.options.labels.enabled &&
-                axis.series.length
+                labels.enabled &&
+                axis.series.length &&
+                axis.coll !== 'colorAxis' &&
+                !chart.polar
             ) {
-                // 21 is the most common correction for X axis labels
-                correction = 21;
-                return true;
-            }
-        } as any);
 
-        // use Math.max to prevent negative plotHeight
-        chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
-        const tempHeight = chart.plotHeight;
+                expectedSpace = options.tickLength;
+                axis.createGroups();
 
-        // Get margins by pre-rendering axes
-        axes.forEach(function (axis): void {
-            axis.setScale();
-        });
-        chart.getAxisMargins();
-
-        // If the plot area size has changed significantly, calculate tick
-        // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-        // Height is more sensitive, use lower threshold
-        const redoVertical = tempHeight / chart.plotHeight > 1.05;
-
-        if (redoHorizontal || redoVertical) {
-
-            axes.forEach(function (axis): void {
+                // Calculate extecped space based on dummy tick
+                const mockTick = new Tick(axis, 0, '', true),
+                    label = mockTick.createLabel('x', labels);
+                mockTick.destroy();
                 if (
+                    label &&
+                    pick(
+                        labels.reserveSpace,
+                        !isNumber(options.crossing)
+                    )
+                ) {
+                    expectedSpace = label.getBBox().height +
+                        labels.distance +
+                        Math.max(options.offset || 0, 0);
+                }
+
+                if (expectedSpace) {
+                    label?.destroy();
+                    break;
+                }
+            }
+        }
+
+        // Use Math.max to prevent negative plotHeight
+        chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
+
+        while (
+            (redoHorizontal || redoVertical || axisLayoutRuns > 1) &&
+            run < axisLayoutRuns // #19794
+        ) {
+
+            const tempWidth = chart.plotWidth,
+                tempHeight = chart.plotHeight;
+
+            for (const axis of axes) {
+                if (run === 0) {
+                    // Get margins by pre-rendering axes
+                    axis.setScale();
+
+                } else if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
                 ) {
-                    // update to reflect the new margins
+                    // Update to reflect the new margins
                     axis.setTickInterval(true);
                 }
-            });
-            chart.getMargins(); // second pass to check for new labels
+            }
+            if (run === 0) {
+                chart.getAxisMargins();
+            } else {
+                // Check again for new, rotated or moved labels
+                chart.getMargins();
+            }
+
+            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
+            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+
+            run++;
         }
 
         // Draw the borders and backgrounds
         chart.drawChartBox();
-
 
         // Axes
         if (chart.hasCartesianSeries) {

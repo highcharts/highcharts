@@ -115,6 +115,7 @@ class MenuItem {
                     options.text,
                 value: !!(options.getValue && options.getValue(item)),
                 lang: this.menu.editMode.lang,
+                langKey: langKey,
                 onchange: options.events?.click?.bind(item)
             });
         }

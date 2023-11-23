@@ -1,48 +1,11 @@
-Highcharts TypeScript Declarations (beta)
-=========================================
+Highcharts TypeScript Declarations
+==================================
 
-Highcharts 7 is the first release with integrated support for TypeScript through
+Highcharts provides integrated support for TypeScript through bundled
 declarations files. TypeScript-compatible editors can give you tooltips and
 suggestions for Highcharts as you type. The TypeScript compiler watches and
 points out potential problems while coding. The outcome is a faster and better
 fail-proofed development cycle for your Highcharts-based solutions.
-
-
-
-Summary of Changes from v7.2.1 to v8.0.0
-----------------------------------------
-
-With Highcharts v8 the file size of TypeScript declarations has been reduced by
-40 percent. This has been achieved by combining individual options to more
-generic shared options. Following are the most significant changes:
-
-|  Name Scheme in v7.2.1                 |  Name Scheme in v8.0.0                      |
-| -------------------------------------: | :------------------------------------------ |
-| `AccessibilityAnnounceNewDataOptions`  | `AccessibilityAnnounceNewDataOptionsObject` |
-| `DataLabelsFilterOperatorValue`        | `OptionsOperatorValue`                      |
-| `ExportingButtonsContextButtonOptions` | `ExportingButtonsOptionsObject`             |
-| `NavigatorSeriesDataGroupingOptions`   | `DataGroupingOptionsObject`                 |
-| `PlotLineAccessibilityOptions`¹        | `SeriesAccessibilityOptionsObject`          |
-| `PlotLineAnimationOptions`¹            | `AnimationOptionsObject`                    |
-| `PlotLineConnectorsOptions`¹           | `SeriesConnectorsOptionsObject`             |
-| `PlotLineDataGroupingOptions`¹         | `DataGroupingOptionsObject`                 |
-| `PlotLineEventsOptions`¹               | `SeriesEventsOptionsObject`                 |
-| `PlotLineLabelOptions`¹                | `SeriesLabelOptionsObject`                  |
-| `PlotLineMarkerOptions`¹               | `PointMarkerOptionsObject`                  |
-| `PlotLinePointOptions`¹                | `PlotSeriesPointOptions`                    |
-| `PlotLineStatesOptions`¹               | `SeriesStatesOptionsObject`                 |
-| `PlotLineTooltipOptions`¹              | `SeriesTooltipOptionsObject`                |
-| `PlotLineZonesOptions`¹                | `SeriesZonesOptionsObject`                  |
-| `SeriesLineDataOptions`²               | `PointOptionsObject`                        |
-| `XAxisAccessibilityOptions`³           | `AxisAccessibilityOptionsObject`            |
-| `XAxisCrosshairOptions`³               | `AxisCrosshairOptions`                      |
-| `XAxisCurrentDateIndicatorOptions`³    | `AxisCurrentDateIndicatorOptions`           |
-| `XAxisDateTimeLabelFormatsOptions`³    | `AxisDateTimeLabelFormatsOptions`           |
-| `XAxisMarkerOptions`³                  | `PointMarkerOptionsObject`                  |
-
-1) *Example, other series options like `PlotColumn…` are similar affected.*
-2) *Example, other series options like `SeriesColumn…` are similar affected.*
-3) *Example, other axis options like `ColorAxis…` are similar affected.*
 
 
 
@@ -52,7 +15,9 @@ Installation
 You need a TypeScript-capable Editor, like Microsoft's Visual Studio Code, for
 getting autocompletion and hints for Highcharts. Please note that Highcharts
 contains comprehensive declarations, which makes increased memory usage in a few
-editors like Webstorm necessary.
+editors like Webstorm necessary. The declarations are part of the Highcharts NPM
+package. The Highcharts NPM package can be installed in your project folder with
+`npm install highcharts`.
 
 
 
@@ -69,8 +34,8 @@ platform. The `tsconfig.json` below, covers a typical use case of Highcharts:
 {
     "compilerOptions": {
         "strict": true,
-        "target": "es5",
-        "module": "amd",
+        "target": "es2020",
+        "module": "es6",
         "moduleResolution": "node",
         "outDir": "mychart/",
     },
@@ -82,14 +47,17 @@ platform. The `tsconfig.json` below, covers a typical use case of Highcharts:
 
 If you place your TypeScript source code (`*.ts`) in one of your project
 folders, the TypeScript compiler will automatically find it, compile it and
-output the JavaScript compiled code (`*.js`) to the `outDir` folder. With the
-`exclude` property you prevent specified folders from compiling to TypeScript,
-for example files found in the `node_modules` folder.
+output the JavaScript compiled code (`*.js`) to the `outDir` folder.
+
+With the `exclude` property you prevent specified folders from compiling to
+TypeScript, for example files found in the `node_modules` folder.
+
 
 ### RequireJS
 
-Not every web browser is capable to load ES6 modules. Here comes RequireJS into
-action, but needs some configuration to support the Highcharts package:
+Not every web browser is capable to load ES6 modules. Here comes RequireJS for a
+compiler target of `AMD` into action. It needs some configuration to support the
+Highcharts package:
 
 ```js
 require.config({
@@ -124,94 +92,56 @@ Details about the configuration options can be found in the
 
 
 
-Migration
----------
+Using Highcharts Typing
+-----------------------
 
-### Migration from Definitely Typed
-
-If you previously used TypeScript declarations for Highcharts like
-`@types/highcharts`, you should uninstall them to prevent any mismatch:
-
-```sh
-npm uninstall @types/highcharts 
-```
-
-### Migration from JavaScript
-
-For full fail-proofed development you may convert your project's source code to
-TypeScript. The initial step is:
-
-```sh
-npm install typescript && npx tsc --init 
-```
-
-More information about migrating JavaScript projects to TypeScript can be found
-in the official
-[TypeScript handbook](http://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
+There are some subtle differences in using the Highcharts product bundles and
+the modules, either in classic namespace-based projects or as ES-module-based
+projects.
 
 
+### Highcharts Bundles
 
-Solving Problems
-----------------
+Starting point is one of the product bundles in the Highcharts NPM package. Best
+practice is to always use the default product bundle in TypeScript projects.
+This avoids conflicts between competing product bundles.
 
-### Debugging
+- For classic projects use:
+  ```ts
+  import Highcharts from 'highcharts';
+  ```
 
-If TypeScript is complaining about your Highcharts options, then it might not
-find the correct series as a reference. If that is the case, cast the series
-options explicitly to the desired type and you get more helpful error messages:
+- For ES module projects use:
+  ```ts
+  import Highcharts from 'highcharts/es-modules/masters/highcharts';
+  ```
 
-```ts
-series: [{
-    type: "line",
-    data: [1, 2, "3", 4, 5] as Highcharts.SeriesLineDataOptions
-}] 
-```
+Other possible product bundles are:
+- `../highcharts-gantt`
+- `../highmaps`
+- `../highstock`
 
-### Missing Modules
 
-Sometimes there isn't a TypeScript declaration for a Highcharts module
-available. Then cast the module and unknown functions to the `any` type. Create
-first a `global.d.ts` file in your root folder with the following file content:
+### Highcharts Modules
 
-```ts
-declare module '*';
-```
+With the help of Highcharts modules you can extend a Highcharts bundle with
+additional functionality, for example to provide A11y controls. 
 
-After that, you can use all JavaScript modules and cast the Highcharts namespace
-as required. For example:
+- For classic projects use:
+  ```ts
+  import Accessibility from 'highcharts/modules/accessibility';
+  Accessibility(Highcharts);
+  ```
 
-```ts
-import * as Highcharts from 'highcharts';
-
-// Module with declaration:
-import AccessibilityModule from 'highcharts/modules/accessibility';
-
-// Module with any type:
-import NewModule from 'highcharts/modules/new';
-
-// Initiate the chart
-(Highcharts as any).newChart('container', {
-    series: [{
-        type: 'new',
-        data: [1, 2, 3, 4, 5]
-    }]
-});
-```
-
-### Reporting Bugs
-
-The TypeScript declarations for Highcharts are in a beta state. They can be used
-in production, but we can't guarantee your code from breaking with future type
-updates. In that case, probably small modifications to the types will be
-necessary. If you found something in TypeScript that is not working as in our
-[documentation](https://api.highcharts.com/) or
-[demos](https://www.highcharts.com/demo), you can create an
-[issue report](https://github.com/highcharts/highcharts/issues) to inform us.
+- For ES module projects use:
+  ```ts
+  import Accessibility from 'highcharts/es-modules/masters/modules/accessibility';
+  ```
 
 
 
-Extending Highcharts in TypeScript
-----------------------------------
+Extending Highcharts Typing
+---------------------------
 
 The Highcharts libraries come with a huge amount of possibilities right out of
 the box, but for a special use case you might need to extend default behavior of
@@ -220,13 +150,14 @@ as illustrated with the below example.
 
 ### Steps
 
-* Set proper types for your extensions
-* Declare additional interfaces with your extensions to the Highcharts namespace
+* Use proper typing in your extensions
+* Declare additional interfaces of your extensions in the Highcharts namespace
 * Make use of existing
   [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and
   [interfaces](https://api.highcharts.com/class-reference/Highcharts.Dictionary_T_)
-* For a deep dive into TypeScript declaration take a look at the official
+* For a deep dive into TypeScript declarations take a look at the official
   [TypeScript guide](http://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
+
 
 ### Example
 
@@ -264,7 +195,7 @@ your code:
 
 ```ts
 // ...
-declare module 'highcharts/highcharts' {
+declare module 'highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }
@@ -277,7 +208,7 @@ Finally the source code of the example would look like this:
 ```ts
 import * as Highcharts from 'highcharts';
 
-declare module 'highcharts/highcharts' {
+declare module 'highcharts' {
     interface Point {
         highlight (event: Highcharts.PointerEventObject): void;
     }
@@ -292,3 +223,64 @@ Highcharts.Point.prototype.highlight = function (
     this.series.chart.xAxis[0].drawCrosshair(event, this);
 };
 ```
+
+Note: If you like to replace existing functionality of Highcharts, listen to the
+Highcharts events instead of overwriting functions and methods. That way you can
+avoid many unintended side effects. 
+
+
+
+Project Migration
+-----------------
+
+### Migration from JavaScript
+
+For full fail-proofed development you may convert your project's source code to
+TypeScript. The initial step is:
+
+```sh
+npm install typescript && npx tsc --init 
+```
+
+More information about migrating JavaScript projects to TypeScript can be found
+in the official
+[TypeScript handbook](http://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
+
+
+### Migration from Definitely Typed
+
+If you previously used TypeScript declarations for Highcharts like
+`@types/highcharts`, you should uninstall them to prevent any mismatch:
+
+```sh
+npm uninstall @types/highcharts 
+```
+
+
+
+Solving Problems
+----------------
+
+### Debugging
+
+If TypeScript is complaining about your Highcharts options, then it might not
+find the correct series as a reference. If that is the case, cast the series
+options explicitly to the desired type and you get more helpful error messages:
+
+```ts
+series: [{
+    type: "line",
+    data: [1, 2, "3", 4, 5]
+} as Highcharts.LineSeriesOptions] 
+```
+
+
+### Reporting Bugs
+
+Highcharts TypeScript declarations are in a beta state. They can be used in
+production, but will bring breaking changings in a future major version. In
+that case, some modifications to the types will be necessary. If you found
+something in TypeScript that is not working as in our
+[documentation](https://api.highcharts.com/) or
+[demos](https://www.highcharts.com/demo), you can create an
+[issue report](https://github.com/highcharts/highcharts/issues) to inform us.

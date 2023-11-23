@@ -193,15 +193,15 @@ namespace ColorAxisComposition {
     function onChartAfterGetAxes(
         this: Chart
     ): void {
-        const { options, userOptions } = this;
+        const { userOptions } = this;
 
         this.colorAxis = [];
 
         // If a `colorAxis` config is present in the user options (not in a
         // theme), instanciate it.
         if (userOptions.colorAxis) {
-            options.colorAxis = splat(options.colorAxis);
-            options.colorAxis.map((axisOptions): ColorAxis => (
+            userOptions.colorAxis = splat(userOptions.colorAxis);
+            userOptions.colorAxis.map((axisOptions): ColorAxis => (
                 new ColorAxisConstructor(
                     this,
                     axisOptions as Partial<ColorAxis.Options>

@@ -56,6 +56,7 @@ const {
     isString,
     merge,
     pick,
+    removeEvent,
     wrap
 } = U;
 
@@ -354,7 +355,6 @@ function getTreeGridFromData(
             gridNode.tickmarkOffset = diff + padding;
             gridNode.collapseStart = end + padding;
 
-
             gridNode.children.forEach(function (child: GridNode): void {
                 setValues(child, end + 1, result);
                 end = (child.collapseEnd || 0) - padding;
@@ -440,12 +440,10 @@ function onBeforeRender(
                         ): void {
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
-
                                 data = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, data);
                                 s.pointClass.setGanttPointAliases(data);
-
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
@@ -825,6 +823,35 @@ function wrapSetTickInterval(
     }
 }
 
+/**
+ * Wrap axis redraw to remove TreeGrid events from ticks
+ *
+ * @private
+ * @function Highcharts.GridAxis#redraw
+ *
+ * @param {Function} proceed
+ * The original setTickInterval function.
+ */
+function wrapRedraw(
+    this: TreeGridAxisComposition,
+    proceed: Function
+): void {
+    const axis = this,
+        options = axis.options,
+        isTreeGrid = options.type === 'treegrid';
+
+    if (isTreeGrid && axis.visible) {
+        axis.tickPositions.forEach(function (pos): void {
+            const tick = axis.ticks[pos];
+            if (tick.label && tick.label.attachedTreeGridEvents) {
+                removeEvent(tick.label.element);
+                tick.label.attachedTreeGridEvents = false;
+            }
+        });
+    }
+    proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+}
+
 /* *
  *
  *  Classes
@@ -863,6 +890,7 @@ class TreeGridAxisAdditions {
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);
             wrap(axisProps, 'setTickInterval', wrapSetTickInterval);
+            wrap(axisProps, 'redraw', wrapRedraw);
 
             // Make utility functions available for testing.
             axisProps.utils = {

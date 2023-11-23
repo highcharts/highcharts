@@ -494,7 +494,9 @@ const rangeSelector: RangeSelectorOptions = {
     inputSpacing: 5,
 
     /**
-     * The index of the button to appear pre-selected.
+     * The index of the button to appear pre-selected. If the selected range
+     * exceeds the total data range and the 'all' option is available,
+     * the 'all' option, showing the full range, is automatically selected.
      *
      * @type      {number}
      */

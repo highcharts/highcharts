@@ -462,31 +462,17 @@ namespace OrdinalAxis {
             ordinal = axis.ordinal,
             localMin = axis.old ? axis.old.min : axis.min,
             localA = axis.old ? axis.old.transA : axis.transA;
-        let positions = ordinal.positions; // for the current visible range
-
-        // The visible range contains only equally spaced values.
-        if (!positions) {
-            return val;
-        }
-
-        // Convert back from modivied value to pixels. // #15970
-        const pixelVal = correctFloat((val - (localMin as any)) * localA +
-                axis.minPixelPadding),
-            isInside = val >= positions[0] &&
-                val <= positions[positions.length - 1];
-
-        // If the value is not inside the plot area, use the extended positions.
-        // (array contains also points that are outside of the plotArea).
-        if (!isInside) {
-            positions = ordinal.getExtendedPositions();
-        }
+        // Always use extendedPositions (#19816)
+        let positions = ordinal.getExtendedPositions();
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions && positions.length) {
-            const indexOf = positions.indexOf(val);
-
-            const index = indexOf !== -1 ? indexOf : correctFloat(
+        if (positions.length) {
+            // Convert back from modivied value to pixels. // #15970
+            const pixelVal = correctFloat(
+                    (val - (localMin as number)) * localA +
+                    axis.minPixelPadding),
+                index = correctFloat(
                     ordinal.getIndexOfPoint(pixelVal, positions)
                 ),
                 mantissa = correctFloat(index % 1);
@@ -500,11 +486,9 @@ namespace OrdinalAxis {
 
                 return positions[Math.floor(index)] + mantissa * distance;
             }
-
-            // If the value is outside positions array, return initial value
-            return val; // #16784
         }
-        return val;
+        // If the value is outside positions array, return initial value
+        return val; // #16784
     }
 
     /**
@@ -1387,8 +1371,8 @@ namespace OrdinalAxis {
             ordinalArray: Array<number>
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
-                firstPointVal = ordinal.positions ? ordinal.positions[0] : 0;
+                axis = ordinal.axis;
+            let firstPointVal = 0;
 
             // Check whether the series has at least one point inside the chart
             const hasPointsInside = function (series: Series): boolean {
@@ -1418,6 +1402,7 @@ namespace OrdinalAxis {
                     hasPointsInside(series)
                 ) {
                     firstPointX = firstPoint.plotX;
+                    firstPointVal = firstPoint.x;
                 }
             });
 

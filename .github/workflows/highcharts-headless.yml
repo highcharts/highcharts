@@ -23,6 +23,9 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
+      - name: Build Highcharts
+        run: npx gulp scripts
+
       - name: Run unit tests
         run: npx ts-node test/ts-node-unit-tests/index.ts
 
@@ -54,6 +57,7 @@ jobs:
           start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
+          config-file: test/cypress/highcharts/config.mjs
           install: false
 
   ### HEADLESS LINUX ###
@@ -63,14 +67,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       ### SETUP ###
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'npm'
-      - uses: browser-actions/setup-chrome@latest
-        with:
-          chrome-version: stable
+      # browser-actions/setup-chrome installs chrome at a separate location
+      # which setup-chromedriver does not pick up, so doing it manually
+      - name: Update Chrome
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo apt update
+          sudo apt --only-upgrade install google-chrome-stable
+      - name: Chrome info
+        run: |
+          set CHROME_BIN $(which chrome || which google-chrome || which chromium)
+          echo $CHROME_BIN
+          $CHROME_BIN --version
+
       - uses: nanasess/setup-chromedriver@v2
       - uses: browser-actions/setup-firefox@latest
         with:
@@ -85,14 +101,11 @@ jobs:
       ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Check Chrome
-        run: |
-          chrome --version
-          whereis chrome
+
       - name: Run Tests (Chrome)
         run: |
           export DISPLAY=:99
-          npx gulp test --single-run --splitbrowsers Chrome
+          npx gulp test --single-run --splitbrowsers ChromeHeadless
       - name: Check Firefox
         run: |
           firefox --version
@@ -100,10 +113,10 @@ jobs:
       - name: Run Tests (Firefox)
         run: |
           export DISPLAY=:99
-          npx gulp test --single-run --splitbrowsers Firefox
+          npx gulp test --single-run --splitbrowsers Firefox --force
 
       - name: Run timezone tests
-        if: ${{ inputs.test_timezones }}
+        if: ${{ inputs.testTimezones }}
         run: |
           ./.github/scripts/test_timezones.sh -b=ChromeHeadless
 

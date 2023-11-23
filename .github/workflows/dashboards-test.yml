@@ -10,13 +10,13 @@ on:
   pull_request:
     branches: [ 'master' ]
     paths:
-      - 'test/cypress/visual/**'
-      - 'samples/cypress/dashboards/**'
+      - '.github/workflows/dashboards-test.yml'
+      - 'css/dashboards*'
+      - 'css/datagrid*'
       - 'samples/dashboards/**'
+      - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'css/**'
-      - '.github/workflows/dashboards-test.yml'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -47,3 +47,15 @@ jobs:
 
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils
+
+      - name: Run Cypress test
+        uses: cypress-io/github-action@v6
+        with:
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          wait-on: 'http://localhost:3031/dashboards.js'
+          browser: chrome
+          config-file: test/cypress/dashboards/config.mjs
+          install: false

@@ -1,11 +1,9 @@
-const speed = 200;
-
 Dashboards.board('container', {
     components: [{
         cell: 'kpi-00',
         type: 'KPI',
         title: 'Speed',
-        value: speed,
+        value: 200,
         valueFormat: '{value} km/h',
         chartOptions: {
             chart: {
@@ -30,7 +28,6 @@ Dashboards.board('container', {
                 },
                 rounded: true,
                 data: [{
-                    y: speed,
                     innerRadius: '60%',
                     outerRadius: '100%'
                 }]

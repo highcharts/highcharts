@@ -34,6 +34,8 @@ import Axis from '../Axis.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import ColorAxisLike from './ColorAxisLike.js';
+import D from '../../Defaults.js';
+const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
@@ -98,6 +100,8 @@ declare module '../../Series/SeriesOptions' {
     }
 }
 
+defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
+
 /* *
  *
  *  Class
@@ -124,8 +128,6 @@ class ColorAxis extends Axis implements AxisLike {
      *  Static Properties
      *
      * */
-
-    public static defaultColorAxisOptions = ColorAxisDefaults;
 
     public static defaultLegendLength: number = 200;
 
@@ -181,8 +183,6 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    // Prevents unnecessary padding with `hc-more`
-    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
@@ -218,24 +218,13 @@ class ColorAxis extends Axis implements AxisLike {
         const legend = chart.options.legend || {},
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical',
-            visible = userOptions.visible;
-
-        const options = merge(
-            ColorAxis.defaultColorAxisOptions,
-            userOptions,
-            {
-                showEmpty: false,
-                title: null,
-                visible: legend.enabled && visible !== false
-            }
-        );
+                legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options, 'colorAxis');
+        super.init(chart, userOptions, 'colorAxis');
 
         // Super.init saves the extended user options, now replace it with the
         // originals
@@ -282,11 +271,22 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
-        const axis = this;
 
-        super.setOptions(userOptions);
+        const options = merge(
+            defaultOptions.colorAxis as ColorAxis.Options,
+            userOptions,
+            // Forced options
+            {
+                showEmpty: false,
+                title: null,
+                visible: this.chart.options.legend.enabled &&
+                    userOptions.visible !== false
+            }
+        );
 
-        axis.options.crosshair = axis.options.marker;
+        super.setOptions(options);
+
+        this.options.crosshair = this.options.marker;
     }
 
     /**
@@ -627,14 +627,16 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Axis.PlotLinePathOptions): (SVGPath|null) {
+    public getPlotLinePath(
+        options: Axis.PlotLinePathOptions
+    ): (SVGPath|undefined) {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
             top = axis.top;
 
-        // crosshairs only
-        return isNumber(pos) ? // pos can be 0 (#3969)
+        // Crosshairs only
+        return isNumber(pos) ? // `pos` can be 0 (#3969)
             (
                 axis.horiz ? [
                     ['M', pos - 4, top - 6],

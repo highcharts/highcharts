@@ -36,6 +36,10 @@ import type TickPositionsArray from './TickPositionsArray';
  * */
 
 declare module '../../Core/Options'{
+    interface DefaultOptions {
+        xAxis?: DeepPartial<XAxisOptions>;
+        yAxis?: DeepPartial<YAxisOptions>;
+    }
     interface Options {
         xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
         yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
@@ -120,7 +124,7 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    categories?: Array<string>;
+    categories?: Array<string>|true;
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
@@ -149,7 +153,7 @@ export interface AxisOptions {
     minorGridLineDashStyle: DashStyleValue;
     minorGridLineWidth: number;
     minorTickColor: ColorType;
-    minorTickInterval?: ('auto'|null|number);
+    minorTickInterval?: ('auto'|number);
     minorTickLength: number;
     minorTickPosition: AxisTickPositionValue;
     minorTicks?: boolean;
@@ -160,7 +164,7 @@ export interface AxisOptions {
     minTickInterval?: number;
     offset?: number;
     offsets?: [number, number, number, number];
-    opposite: boolean;
+    opposite?: boolean;
     ordinal?: boolean;
     overscroll?: number;
     pane?: number;
@@ -235,7 +239,7 @@ export interface AxisTitleOptions {
     margin?: number;
     offset?: number;
     reserveSpace?: boolean;
-    rotation: number;
+    rotation?: number;
     style: CSSObject;
     text?: (string|null);
     textAlign?: AlignValue;

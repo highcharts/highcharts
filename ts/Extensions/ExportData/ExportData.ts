@@ -154,6 +154,35 @@ const composedMembers: Array<unknown> = [];
  * */
 
 /**
+ * Wrapper function for the download functions, which handles showing and hiding
+ * the loading message
+ *
+ * @private
+ *
+ */
+function wrapLoading(
+    this: Exporting.ChartComposition | Chart,
+    fn: Function
+): void {
+    const showMessage = Boolean(this.options.exporting?.showExportInProgress);
+
+    // Prefer requestAnimationFrame if available
+    const timeoutFn = win.requestAnimationFrame || setTimeout;
+
+    // Outer timeout avoids menu freezing on click
+    timeoutFn((): void => {
+        showMessage && this.showLoading(this.options.lang.exportInProgress);
+        timeoutFn((): void => {
+            try {
+                fn.call(this);
+            } finally {
+                showMessage && this.hideLoading();
+            }
+        });
+    });
+}
+
+/**
  * Generates a data URL of CSV for local download in the browser. This is the
  * default action for a click on the 'Download CSV' button.
  *
@@ -166,14 +195,17 @@ const composedMembers: Array<unknown> = [];
 function chartDownloadCSV(
     this: Exporting.ChartComposition
 ): void {
-    const csv = this.getCSV(true);
+    wrapLoading.call(this, (): void => {
+        const csv = this.getCSV(true);
 
-    downloadURL(
-        getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        this.getFilename() + '.csv'
-    );
+        downloadURL(
+            getBlobFromContent(csv, 'text/csv') ||
+                'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+            this.getFilename() + '.csv'
+        );
+    });
 }
+
 
 /**
  * Generates a data URL of an XLS document for local download in the browser.
@@ -188,8 +220,10 @@ function chartDownloadCSV(
 function chartDownloadXLS(
     this: Exporting.ChartComposition
 ): void {
-    const uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    wrapLoading.call(this, (): void => {
+        const uri = 'data:application/vnd.ms-excel;base64,',
+            template =
+            '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
             'xmlns="http://www.w3.org/TR/REC-html40">' +
             '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
@@ -206,15 +240,16 @@ function chartDownloadXLS(
             '</head><body>' +
             this.getTable(true) +
             '</body></html>',
-        base64 = function (s: string): string {
-            return win.btoa(unescape(encodeURIComponent(s))); // #50
-        };
+            base64 = function (s: string): string {
+                return win.btoa(unescape(encodeURIComponent(s))); // #50
+            };
 
-    downloadURL(
-        getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
-        this.getFilename() + '.xls'
-    );
+        downloadURL(
+            getBlobFromContent(template, 'application/vnd.ms-excel') ||
+                uri + base64(template),
+            this.getFilename() + '.xls'
+        );
+    });
 }
 
 /**
@@ -243,7 +278,7 @@ function chartGetCSV(
                 (1.1).toLocaleString()[1] :
                 '.'
         ),
-        // use ';' for direct to Excel
+        // Use ';' for direct to Excel
         itemDelimiter = pick(
             csvOptions.itemDelimiter,
             decimalPoint === ',' ? ';' : ','
@@ -582,16 +617,16 @@ function chartGetDataRows(
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
                 while (j < valueCount) {
-                    prop = pointArrayMap[j]; // y, z etc
+                    prop = pointArrayMap[j]; // `y`, `z` etc
                     val = (mockPoint as any)[prop];
                     rows[key][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
-                        // datetime yAxis
+                        // Datetime yAxis
                         categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                             time.dateFormat(csvOptions.dateFormat as any, val) :
                             null,
-                        // linear/log yAxis
+                        // Linear/log yAxis
                         val
                     );
                     j++;
@@ -999,12 +1034,10 @@ function chartHideData(
  * @private
  */
 function chartToggleDataTable(
-    this: Chart,
+    this: Exporting.ChartComposition,
     show?: boolean
 ): void {
-
     show = pick(show, !this.isDataTableVisible);
-
     // Create the div
     const createContainer = show && !this.dataTableDiv;
     if (createContainer) {
@@ -1052,12 +1085,12 @@ function chartToggleDataTable(
 
     if (
         options &&
-        options.menuItemDefinitions &&
-        lang &&
-        lang.viewData &&
-        lang.hideData &&
-        menuItems &&
-        exportDivElements
+            options.menuItemDefinitions &&
+            lang &&
+            lang.viewData &&
+            lang.hideData &&
+            menuItems &&
+            exportDivElements
     ) {
         const exportDivElement = exportDivElements[
             menuItems.indexOf('viewData')
@@ -1132,7 +1165,10 @@ function compose(
                 viewData: {
                     textKey: 'viewData',
                     onclick: function (): void {
-                        this.toggleDataTable();
+                        wrapLoading.call(
+                            this,
+                            this.toggleDataTable
+                        );
                     }
                 }
             } as Record<string, Exporting.MenuObject>);
@@ -1356,4 +1392,4 @@ export default ExportData;
  * @type {Array<Array<string>>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
