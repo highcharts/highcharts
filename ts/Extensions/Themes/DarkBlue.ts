@@ -18,7 +18,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -37,7 +37,7 @@ namespace DarkBlueTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
             '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
         chart: {

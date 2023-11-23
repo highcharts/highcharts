@@ -30,7 +30,6 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
-import AxisDefaults from './AxisDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
@@ -42,6 +41,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isObject,
     merge,
     pick,
     relativeLength,
@@ -117,7 +117,6 @@ namespace RadialAxis {
         angleRad: number;
         autoConnect?: boolean;
         center: Array<number>;
-        defaultPolarOptions: DeepPartial<Options>;
         endAngleRad: number;
         isCircular?: boolean;
         isHidden?: boolean;
@@ -212,24 +211,30 @@ namespace RadialAxis {
      * @private
      */
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
+        endOnTick: false,
+        gridLineWidth: 0,
         labels: {
             align: 'center',
             distance: -25,
             x: 0,
-            y: void 0 // auto
+            y: void 0 // Auto
         },
+        lineWidth: 1,
         minorGridLineWidth: 0,
         minorTickInterval: 'auto',
         minorTickLength: 10,
         minorTickPosition: 'inside',
         minorTickWidth: 1,
+        startOnTick: false,
         tickLength: 10,
+        tickPixelInterval: 100,
         tickPosition: 'inside',
         tickWidth: 2,
         title: {
-            rotation: 0
+            rotation: 0,
+            text: ''
         },
-        zIndex: 2 // behind dials, points in the series group
+        zIndex: 2 // Behind dials, points in the series group
     };
 
     /**
@@ -1074,31 +1079,12 @@ namespace RadialAxis {
                 modify(this);
             }
             isCircular = !isX;
-            if (isCircular) {
-                this.defaultPolarOptions = defaultRadialGaugeOptions;
-            }
 
         } else if (polar) {
             modify(this);
 
             // Check which axis is circular
             isCircular = this.horiz;
-
-            this.defaultPolarOptions = isCircular ?
-                defaultCircularOptions :
-                merge(
-                    coll === 'xAxis' ?
-                        AxisDefaults.defaultXAxisOptions :
-                        AxisDefaults.defaultYAxisOptions,
-                    defaultRadialOptions
-                );
-
-            // Apply the stack labels for yAxis in case of inverted chart
-            if (inverted && coll === 'yAxis') {
-                this.defaultPolarOptions.stackLabels = AxisDefaults
-                    .defaultYAxisOptions.stackLabels;
-                this.defaultPolarOptions.reversedStacks = true;
-            }
         }
 
         // Disable certain features on angular and polar axes
@@ -1445,10 +1431,39 @@ namespace RadialAxis {
         this: AxisComposition,
         userOptions: DeepPartial<Options>
     ): void {
+        const { coll } = this;
+        const { angular, inverted, polar } = this.chart;
+
+        let defaultPolarOptions: DeepPartial<Options> = {};
+
+        if (angular) {
+            if (!this.isXAxis) {
+                defaultPolarOptions = merge(
+                    defaultOptions.yAxis,
+                    defaultRadialGaugeOptions
+                );
+            }
+        } else if (polar) {
+            defaultPolarOptions = this.horiz ?
+                merge(defaultOptions.xAxis, defaultCircularOptions) :
+                merge(
+                    coll === 'xAxis' ?
+                        defaultOptions.xAxis :
+                        defaultOptions.yAxis,
+                    defaultRadialOptions
+                );
+        }
+
+        if (inverted && coll === 'yAxis') {
+            defaultPolarOptions.stackLabels = isObject(
+                defaultOptions.yAxis, true
+            ) ? defaultOptions.yAxis.stackLabels : {};
+            defaultPolarOptions.reversedStacks = true;
+        }
+
+
         const options = this.options = merge<Options>(
-            (this.constructor as typeof Axis).defaultOptions,
-            this.defaultPolarOptions,
-            (defaultOptions as any)[this.coll], // #16112
+            defaultPolarOptions as Options,
             userOptions
         );
 

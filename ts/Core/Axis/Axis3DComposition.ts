@@ -27,6 +27,8 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 
 import Axis3DDefaults from './Axis3DDefaults.js';
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { deg2rad } = H;
 import Math3D from '../Math3D.js';
@@ -447,7 +449,7 @@ class Axis3DAdditions {
         Tick3D.compose(TickClass);
 
         if (U.pushUnique(composedMembers, AxisClass)) {
-            merge(true, AxisClass.defaultOptions, Axis3DDefaults);
+            merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');
 
