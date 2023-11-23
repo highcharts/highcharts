@@ -6,6 +6,7 @@ To do
 - Stock chart: navigator not working after zooming on y. Reset button quirks.
 - On multiple panes, make sure only zoomed axes are affected. Check target or
   reference position (center point?) against axis position. Add/modify tests.
+- Why is `mouseDownX` and `mouseDownY` registered on both Chart and Pointer?
 */
 
 
@@ -20,12 +21,11 @@ To do
             // .slice(0, 10)
         );
 
-    Highcharts.chart('container', {
+    Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'x',
+            zoomType: 'y',
             panning: {
-                enabled: true,
-                type: 'x'
+                enabled: true
             },
             mouseWheel: {
                 enabled: true
