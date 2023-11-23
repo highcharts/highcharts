@@ -47,3 +47,6 @@ jobs:
 
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test
+
+      - name: Run Dashboards Cypress tests
+        run: npx gulp dashboards/cypress
