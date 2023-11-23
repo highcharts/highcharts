@@ -34,13 +34,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: ['nightly_test_headless', 'nightly_test_bs']
     if: ${{ always() && contains(needs.*.result, 'failure') }}
-
     steps:
       - name: Checkout repository scripts
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
             .github/scripts
+
+      - run: echo ${{ needs }} > needs.txt
+      - uses: upload-artifact
+        with:
+          name: needs-context
+          path: needs.txt
 
       - name: Create payload
         run: |
