@@ -25,6 +25,7 @@ import type {
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
     AxisOptions,
+    AxisSetExtremesEventObject,
     AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
@@ -218,7 +219,7 @@ class Axis {
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: number;
     public dataMin?: number;
-    public eventArgs?: any;
+    public eventArgs?: AxisSetExtremesEventObject;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
     public expectedSpace: number|undefined;
     public finalTickAmt?: number;
@@ -2635,12 +2636,9 @@ class Axis {
         max?: number,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
-        eventArguments?: Record<string, any>
+        eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
-        const axis = this,
-            chart = axis.chart;
-
-        axis.series.forEach((serie): void => {
+        this.series.forEach((serie): void => {
             delete serie.kdTree;
         });
 
@@ -2651,16 +2649,21 @@ class Axis {
         );
 
         // Fire the event
-        fireEvent(axis, 'setExtremes', eventArguments, (e): void => {
+        fireEvent(
+            this,
+            'setExtremes',
+            eventArguments,
+            (e: AxisSetExtremesEventObject): void => {
 
-            axis.userMin = (e as any).min;
-            axis.userMax = (e as any).max;
-            axis.eventArgs = eventArguments;
+                this.userMin = e.min;
+                this.userMax = e.max;
+                this.eventArgs = e;
 
-            if (redraw) {
-                chart.redraw(animation);
+                if (redraw) {
+                    this.chart.redraw(animation);
+                }
             }
-        });
+        );
     }
 
     /**

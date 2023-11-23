@@ -17,6 +17,7 @@
  * */
 
 import type Axis from './Axis.js';
+import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
@@ -81,7 +82,7 @@ function onAxisInit(
  */
 function onAxisSetExtremes(
     this: Axis,
-    e: AnyRecord
+    e: AxisSetExtremesEventObject
 ): void {
     const axis = this as NavigatorAxisComposition,
         chart = axis.chart,
@@ -92,14 +93,16 @@ function onAxisSetExtremes(
         rangeSelector = chartOptions.rangeSelector,
         zoomType = chart.zooming.type;
 
+    let zoomed: boolean|undefined;
+
     if (
         axis.isXAxis &&
         (navigator?.enabled || rangeSelector?.enabled)
     ) {
 
         // For y only zooming, ignore the X axis completely
-        if (zoomType === 'y') {
-            e.zoomed = false;
+        if (zoomType === 'y' && e.trigger === 'zoom') {
+            zoomed = false;
 
         // For xy zooming, record the state of the zoom before zoom selection,
         // then when the reset button is pressed, revert to this state. This
@@ -128,7 +131,7 @@ function onAxisSetExtremes(
         }
 
     }
-    if (typeof e.zoomed !== 'undefined') {
+    if (typeof zoomed !== 'undefined') {
         e.preventDefault();
     }
 }

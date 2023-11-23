@@ -26,6 +26,9 @@ import type GradientColor from '../Color/GradientColor';
 import type { OptionsOverflowValue } from '../Options';
 import type Point from '../Series/Point';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type {
+    RangeSelectorButtonOptions
+} from '../../Stock/RangeSelector/RangeSelectorOptions';
 import type Tick from './Tick';
 import type TickPositionsArray from './TickPositionsArray';
 
@@ -212,10 +215,15 @@ export interface AxisSetExtremesEventCallback {
     (this: Axis, evt: AxisSetExtremesEventObject): void;
 }
 
-export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
+export interface AxisSetExtremesEventObject {
+    DOMEvent?: any;
+    max?: number;
+    min?: number;
     preventDefault: Function;
+    rangeSelectorButton?: RangeSelectorButtonOptions;
     target: SVGElement;
-    trigger: string;
+    trigger?: string;
+    triggerOp?: string;
     type: 'setExtremes';
 }
 

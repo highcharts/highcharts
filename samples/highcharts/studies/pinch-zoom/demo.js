@@ -1,9 +1,9 @@
 /*
 To do
 - When to show reset zoom button? Investigate and run some combinations.
+    - Mousewheeling on stock => Reset zoom does nothing
 - Check out if minPadding, maxPadding and threshold can be refactored out and
   shared with setTickPositions.
-- Stock chart: navigator not working after zooming on y. Reset button quirks.
 - On multiple panes, make sure only zoomed axes are affected. Check target or
   reference position (center point?) against axis position. Add/modify tests.
 - Why is `mouseDownX` and `mouseDownY` registered on both Chart and Pointer?
