@@ -670,7 +670,7 @@ function enterBoost(
 
     // Destroy existing points after zoom out
     if (
-        series.type === 'scatter' &&
+        series.is('scatter') &&
         series.data.length
     ) {
         for (const point of series.data) {
