@@ -534,6 +534,16 @@
             `After clicking the tick label again, the proper point should not be
             collapsed.`
         );
+
+        chart.yAxis[0].update({
+            visible: false
+        });
+
+        assert.ok(
+            true,
+            `There shouldn't be any error in the console after changing the
+            visibility of axis (#20180).`
+        );
     });
 
     QUnit.test('No series', function (assert) {

@@ -840,7 +840,7 @@ function wrapRedraw(
         options = axis.options,
         isTreeGrid = options.type === 'treegrid';
 
-    if (isTreeGrid) {
+    if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos): void {
             const tick = axis.ticks[pos];
             if (tick.label && tick.label.attachedTreeGridEvents) {
