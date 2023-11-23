@@ -57,7 +57,7 @@ jobs:
             const list = Object.keys(needsJSON).filter(key => {
               const value = needsJSON[key];
               return typeof value === 'object' && value.result === 'failure';
-            });
+            }).map(key => `* ${key}`);
 
             console.log(list);
 
