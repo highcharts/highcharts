@@ -674,9 +674,7 @@ function enterBoost(
         series.data.length
     ) {
         for (const point of series.data) {
-            if (point && point.destroy) {
-                point.destroy();
-            }
+            point?.destroy?.();
         }
         series.data.length = 0;
         series.points.length = 0;
@@ -1424,15 +1422,13 @@ function wrapSeriesProcessData(
         if (
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||
-            series.type === 'heatmap' ||
-            series.type === 'scatter' ||
-            series.type === 'treemap' ||
+            series.is('scatter') ||
             // processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
             // extra check for zoomed scatter data
-            if (series.type === 'scatter' && !series.yAxis.treeGrid) {
+            if (series.is('scatter') && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
