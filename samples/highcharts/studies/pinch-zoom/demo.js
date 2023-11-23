@@ -1,10 +1,6 @@
 /*
 To do
 - When to show reset zoom button? Investigate and run some combinations.
-- Refactor: touchpan and zoom now uses basically the same chart.axes.filter
-  expression
-- Clean up mouseDownX, mouseDownY, lastTouches, pinchStart. See if we can store
-  one single event instead.
 - Check out if minPadding, maxPadding and threshold can be refactored out and
   shared with setTickPositions.
 - Stock chart: navigator not working after zooming on y. Reset button quirks.

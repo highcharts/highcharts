@@ -321,20 +321,16 @@ class Pointer {
      * @function Highcharts.Pointer#drag
      */
     public drag(e: PointerEvent): void {
-        const chart = this.chart,
-            chartOptions = chart.options.chart,
+        const { chart, mouseDownX = 0, mouseDownY = 0 } = this,
+            { panning, panKey, selectionMarkerFill } = chart.options.chart,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
-            mouseDownX = (this.mouseDownX || 0),
-            mouseDownY = (this.mouseDownY || 0),
-            panningEnabled = isObject(chartOptions.panning) ?
-                chartOptions.panning && chartOptions.panning.enabled :
-                chartOptions.panning,
-            panKey = (
-                chartOptions.panKey && (e as any)[chartOptions.panKey + 'Key']
-            );
+            panningEnabled = isObject(panning) ?
+                panning.enabled :
+                panning,
+            panKeyPressed = panKey && e[`${panKey}Key`];
 
         let chartX = e.chartX,
             chartY = e.chartY,
@@ -362,7 +358,7 @@ class Pointer {
             chartY = plotTop + plotHeight;
         }
 
-        // determine if the mouse has moved more than 10px
+        // Determine if the mouse has moved more than 10px
         this.hasDragged = Math.sqrt(
             Math.pow(mouseDownX - chartX, 2) +
             Math.pow(mouseDownY - chartY, 2)
@@ -380,12 +376,12 @@ class Pointer {
             const { shapeType, attrs } =
                 this.getSelectionMarkerAttrs(chartX, chartY);
 
-            // make a selection
+            // Make a selection
             if (
                 (chart.hasCartesianSeries || chart.mapView) &&
                 this.hasZoom &&
                 clickedInside &&
-                !panKey
+                !panKeyPressed
             ) {
                 if (!selectionMarker) {
                     this.selectionMarker = selectionMarker =
@@ -401,7 +397,7 @@ class Pointer {
                     if (!chart.styledMode) {
                         selectionMarker.attr({
                             fill:
-                                chartOptions.selectionMarkerFill ||
+                                selectionMarkerFill ||
                                 color(Palette.highlightColor80)
                                     .setOpacity(0.25).get()
                         });
@@ -417,7 +413,7 @@ class Pointer {
 
             // Panning
             if (clickedInside && !selectionMarker && panningEnabled) {
-                chart.pan(e, chartOptions.panning as any);
+                chart.pan(e, panning as any);
             }
         }
     }
@@ -600,8 +596,8 @@ class Pointer {
             const isCloserX = (p1.distX as any) - (p2.distX as any),
                 isCloser = (p1.dist as any) - (p2.dist as any),
                 isAbove = (
-                    (p2.series.group && p2.series.group.zIndex) -
-                    (p1.series.group && p1.series.group.zIndex)
+                    p2.series.group?.zIndex -
+                    p1.series.group?.zIndex
                 );
 
             let result;
@@ -657,16 +653,12 @@ class Pointer {
         point: Point,
         inverted?: boolean
     ): (Pointer.CoordinatesObject|undefined) {
-        const series = point.series,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
+        const { xAxis, yAxis } = point.series,
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
-            let x = pick<number|undefined, number>(
-                point.clientX, point.plotX as any
-            );
-            let y = point.plotY || 0;
+            let x = point.clientX ?? point.plotX ?? 0,
+                y = point.plotY || 0;
 
             if (
                 (point as NodesComposition.PointComposition).isNode &&
@@ -720,8 +712,7 @@ class Pointer {
             scaleY: 1
         };
 
-        const offsetWidth = container.offsetWidth;
-        const offsetHeight = container.offsetHeight;
+        const { offsetHeight, offsetWidth } = container;
 
         // #13342 - tooltip was not visible in Chrome, when chart
         // updates height.
@@ -754,12 +745,12 @@ class Pointer {
             yAxis: []
         };
 
-        this.chart.axes.forEach(function (axis: Axis): void {
-            (coordinates as any)[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
-                axis: axis,
+        for (const axis of this.chart.axes) {
+            coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
+                axis,
                 value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
             });
-        });
+        }
 
         return coordinates;
     }
@@ -983,12 +974,9 @@ class Pointer {
         this.chart = chart;
 
         // Do we need to handle click on a touch device?
-        this.runChartClick = Boolean(
-            options.chart.events && options.chart.events.click
-        );
+        this.runChartClick = Boolean(options.chart.events?.click);
 
         this.pinchDown = [];
-        // this.lastValidTouch = {};
 
         this.setDOMEvents();
 
@@ -1020,7 +1008,7 @@ class Pointer {
     ): T {
         const touches = (e as TouchEvent).touches;
 
-        // iOS (#2757)
+        // Position for iOS (#2757)
         const ePos = (
             touches ?
                 touches.length ?
@@ -1069,13 +1057,13 @@ class Pointer {
                 this.inClass(pEvt.target as any, 'highcharts-tracker')
             ) {
 
-                // the series click event
+                // The series click event
                 fireEvent(hoverPoint.series, 'click', extend(pEvt, {
                     point: hoverPoint
                 }));
 
-                // the point click event
-                if (chart.hoverPoint) { // it may be destroyed (#1844)
+                // The point click event
+                if (chart.hoverPoint) { // It may be destroyed (#1844)
                     hoverPoint.firePointEvent('click', pEvt);
                 }
 
@@ -1083,7 +1071,7 @@ class Pointer {
             } else {
                 extend(pEvt, this.getCoordinates(pEvt));
 
-                // fire a click event in the chart
+                // Fire a click event in the chart
                 if (
                     chart.isInsidePlot(
                         pEvt.chartX - plotLeft,
@@ -1126,11 +1114,8 @@ class Pointer {
             this.zoomOption(e);
 
             // #295, #13737 solve conflict between container drag and chart zoom
-            if (
-                isPrimaryButton &&
-                e.preventDefault
-            ) {
-                e.preventDefault();
+            if (isPrimaryButton) {
+                e.preventDefault?.();
             }
 
             this.dragStart(e as PointerEvent);
@@ -1143,7 +1128,7 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseLeave
      */
     public onContainerMouseLeave(e: MouseEvent): void {
-        const chart = charts[pick(Pointer.hoverChartIndex, -1)];
+        const { pointer } = charts[pick(Pointer.hoverChartIndex, -1)] || {};
 
         e = this.normalize(e);
 
@@ -1151,13 +1136,13 @@ class Pointer {
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
-            chart &&
+            pointer &&
             e.relatedTarget &&
             !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
         ) {
-            chart.pointer.reset();
+            pointer.reset();
             // Also reset the chart position, used in #149 fix
-            chart.pointer.chartPosition = void 0;
+            pointer.chartPosition = void 0;
         }
     }
 
@@ -1223,10 +1208,7 @@ class Pointer {
      * @function Highcharts.Pointer#onDocumentTouchEnd
      */
     public onDocumentTouchEnd(e: PointerEvent): void {
-        const hoverChart = charts[pick(Pointer.hoverChartIndex, -1)];
-        if (hoverChart) {
-            hoverChart.pointer.drop(e);
-        }
+        this.onDocumentMouseUp(e);
     }
 
     /**

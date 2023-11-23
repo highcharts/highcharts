@@ -109,7 +109,7 @@ export interface ChartOptions {
     marginRight?: number;
     marginTop?: number;
     numberFormatter?: NumberFormatterCallbackFunction;
-    panKey?: string;
+    panKey?: 'ctrl'|'shift';
     panning?: ChartPanningOptions;
     pinchType?: string;
     plotBackgroundColor?: ColorType;
