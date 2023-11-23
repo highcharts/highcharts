@@ -41,11 +41,11 @@ jobs:
           sparse-checkout: |
             .github/scripts
 
-      - run: echo ${{ needs }} > needs.txt
-      - uses: upload-artifact
+      - run: echo ${{ toJSON(needs) }} > needs.json
+      - uses: actions/upload-artifact@v3
         with:
           name: needs-context
-          path: needs.txt
+          path: needs.json
 
       - name: Create payload
         run: |
