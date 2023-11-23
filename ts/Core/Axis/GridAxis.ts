@@ -1254,25 +1254,31 @@ function onTrimTicks(this: Axis): void {
         firstPos = tickPositions[0],
         secondPos = tickPositions[1],
         lastPos = tickPositions[tickPositions.length - 1],
+        beforeLastPos = tickPositions[tickPositions.length - 2],
         linkedMin = axis.linkedParent && axis.linkedParent.min,
         linkedMax = axis.linkedParent && axis.linkedParent.max,
         min = linkedMin || axis.min,
         max = linkedMax || axis.max,
         tickInterval = axis.tickInterval,
-        endMoreThanMin = (
-            min &&
-            firstPos < min &&
-            firstPos + tickInterval > min
-        ),
         startLessThanMin = ( // #19845
-            min &&
+            isNumber(min) &&
             min >= firstPos + tickInterval &&
             min < secondPos
         ),
+        endMoreThanMin = (
+            isNumber(min) &&
+            firstPos < min &&
+            firstPos + tickInterval > min
+        ),
         startLessThanMax = (
-            max &&
+            isNumber(max) &&
             lastPos > max &&
             lastPos - tickInterval < max
+        ),
+        endMoreThanMax = (
+            isNumber(max) &&
+            max <= lastPos - tickInterval &&
+            max > beforeLastPos
         );
 
     if (
@@ -1286,7 +1292,7 @@ function onTrimTicks(this: Axis): void {
             tickPositions[0] = min;
         }
 
-        if (startLessThanMax && !options.endOnTick) {
+        if ((startLessThanMax || endMoreThanMax) && !options.endOnTick) {
             tickPositions[tickPositions.length - 1] = max;
         }
     }

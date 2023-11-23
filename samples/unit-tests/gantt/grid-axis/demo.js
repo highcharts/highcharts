@@ -2231,12 +2231,18 @@ QUnit.test('slotWidth', assert => {
     chart.xAxis[0].update({
         tickInterval: 1000 * 60 * 60 * 24 * 30,
         min: Date.UTC(2016, 11, 31),
-        max: Date.UTC(2018, 1, 1)
+        max: Date.UTC(2018, 1, 30)
     });
 
     assert.strictEqual(
         chart.xAxis[0].tickPositions[0],
         chart.xAxis[0].min,
         'First tick on x-axis should be set to x-axis min value (#19845).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[chart.xAxis[0].tickPositions.length - 1],
+        chart.xAxis[0].max,
+        'Last tick on x-axis should be set to x-axis max value (#19845).'
     );
 });
