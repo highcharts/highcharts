@@ -52,7 +52,7 @@ jobs:
         with:
           script: |
             const { writeFileSync } = require('fs');
-            const needsJSON = JSON.parse("${{ toJSON(needs) }}");
+            const needsJSON = require('needs.json');
 
             const list = Object.keys(needsJSON).filter(key => {
               const value = needsJSON[key];
