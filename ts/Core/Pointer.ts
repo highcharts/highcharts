@@ -34,8 +34,7 @@ import Color from './Color/Color.js';
 const { parse: color } = Color;
 import H from './Globals.js';
 const {
-    charts,
-    noop
+    charts
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -44,7 +43,6 @@ const {
     addEvent,
     attr,
     css,
-    defined,
     extend,
     find,
     fireEvent,
@@ -133,13 +131,9 @@ class Pointer {
 
     public chartPosition?: Pointer.ChartPositionObject;
 
-    public hasDragged: (false|number);
-
-    public hasPinched?: boolean;
+    public hasDragged: false|number;
 
     public hasZoom?: boolean;
-
-    public hoverX?: (Point|Array<Point>);
 
     public initiated?: boolean;
 
@@ -567,7 +561,7 @@ class Pointer {
         if (chart && isNumber(chart.index)) {
             css(chart.container, { cursor: chart._cursor as any });
             chart.cancelClick = +this.hasDragged > 10; // #370
-            chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
+            chart.mouseIsDown = this.hasDragged = false;
             this.pinchDown = [];
         }
     }
@@ -1844,7 +1838,7 @@ class Pointer {
                 axis.hideCrosshair();
             });
 
-            pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null as any;
+            chart.hoverPoints = chart.hoverPoint = void 0;
         }
     }
 
@@ -2206,7 +2200,7 @@ class Pointer {
                 // however, the touchmove doesn't fire unless the finger moves
                 // more than ~4px. So we emulate this behaviour in Android by
                 // checking how much it moved, and cancelling on small
-                // distances. #3450.
+                // distances. #3450. Tested and still relevant as of 2023.
                 if (e.type === 'touchmove') {
                     hasMoved = pinchDown[0] ? // #5266
                         (
