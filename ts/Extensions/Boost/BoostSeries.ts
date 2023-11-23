@@ -891,9 +891,11 @@ function scatterProcessData(
     force?: boolean
 ): (boolean|undefined) {
     const series = this,
-        options = series.options,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis;
+        {
+            options,
+            xAxis,
+            yAxis
+        } = series;
 
     // Process only on changes
     if (
@@ -905,7 +907,8 @@ function scatterProcessData(
         return false;
     }
 
-    // Required to get tick-based zoom ranges
+    // Required to get tick-based zoom ranges that take options into account
+    // like `minPadding`, `maxPadding`, `startOnTick`, `endOnTick`.
     series.yAxis.setTickInterval();
 
     const boostThreshold = options.boostThreshold || 0,
@@ -925,9 +928,9 @@ function scatterProcessData(
         !series.boosted &&
         xAxis.old &&
         yAxis.old &&
-        xMin >= (xAxis.old.min ?? Number.MIN_VALUE) &&
+        xMin >= (xAxis.old.min ?? -Number.MAX_VALUE) &&
         xMax <= (xAxis.old.max ?? Number.MAX_VALUE) &&
-        yMin >= (yAxis.old.min ?? Number.MIN_VALUE) &&
+        yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
         return true;
@@ -935,10 +938,8 @@ function scatterProcessData(
 
     // Without thresholds just assign data
     if (
-        (
-            boostThreshold &&
-            data.length < boostThreshold
-        ) ||
+        !boostThreshold ||
+        data.length < boostThreshold ||
         (
             cropThreshold &&
             !series.forceCrop &&
