@@ -47,12 +47,31 @@ jobs:
           name: needs-context
           path: needs.json
 
-      - name: Create payload
-        run: |
-          echo "See the run on github (https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}) for more information" > info.list
-          node ./.github/scripts/createListJSON \
-            info.list \
-            info.json
+      - name: Create list of failed jobs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { writeFileSync } = require('fs');
+            const needsJSON = JSON.parse("${{ toJSON(needs) }}");
+
+            const list = Object.keys(needsJSON).filter(key => {
+              const value = needsJSON[key];
+              return typeof value === 'object' && value.result === 'failure';
+            });
+
+            console.log(list);
+
+            const listBody = JSON.stringify({
+              date: (new Date()).toLocaleDateString('no-NO'),
+              body: 'Errors occured in the following job(s):\n'+
+                list.join('\n') +
+                'See the run on github (https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}) for more information'
+            });
+
+            writeFileSync(
+              'info.json',
+              listBody
+            );
 
       - name: Call Slack webhook
         id: slack
