@@ -3036,7 +3036,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(lineHeight);
+            newTickInterval = getStep(lineHeight * 0.75);
         }
 
         this.autoRotation = autoRotation;
