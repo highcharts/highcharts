@@ -1247,6 +1247,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  */
 function onTrimTicks(this: Axis): void {
     const axis = this,
+        chart = axis.chart,
         options = axis.options,
         gridOptions = options.grid || {},
         categoryAxis = axis.categories,
@@ -1284,7 +1285,7 @@ function onTrimTicks(this: Axis): void {
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
-        (axis.horiz || axis.isLinked)
+        (axis.isXAxis || axis.isLinked)
     ) {
         if (
             (endMoreThanMin || startLessThanMin) && !options.startOnTick

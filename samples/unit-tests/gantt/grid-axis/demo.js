@@ -2161,8 +2161,7 @@ QUnit.test(
 );
 
 QUnit.test('slotWidth', assert => {
-
-    const chart = Highcharts.ganttChart('container', {
+    let chart = Highcharts.ganttChart('container', {
         chart: {
             width: 1000
         },
@@ -2244,5 +2243,27 @@ QUnit.test('slotWidth', assert => {
         chart.xAxis[0].tickPositions[chart.xAxis[0].tickPositions.length - 1],
         chart.xAxis[0].max,
         'Last tick on x-axis should be set to x-axis max value (#19845).'
+    );
+
+    chart = Highcharts.ganttChart('container', {
+        chart: {
+            inverted: true
+        },
+        xAxis: [{
+            tickInterval: 563609302.32558
+        }],
+        series: [{
+            data: [{
+                start: Date.UTC(2018, 11, 1),
+                end: Date.UTC(2018, 11, 2)
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        2,
+        `For inverted chart, grid x-axis should be closed from both sides
+        with two ticks.`
     );
 });
