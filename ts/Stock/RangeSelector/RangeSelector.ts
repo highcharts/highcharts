@@ -1056,7 +1056,7 @@ class RangeSelector {
             // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
                 updateExtremes();
-                if (H.isChrome) { // #19289
+                if (!H.isFirefox) { // #19289
                     rangeSelector.hideInput(name);
                     input.blur();
                 }
