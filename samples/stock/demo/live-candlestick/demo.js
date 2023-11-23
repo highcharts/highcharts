@@ -944,7 +944,6 @@ function getNewPoint(i) {
 Highcharts.stockChart('container', {
 
     chart: {
-        height: 800,
         events: {
             load() {
                 const chart = this,
