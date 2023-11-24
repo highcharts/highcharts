@@ -105,13 +105,15 @@ class StandaloneNavigator {
     }
 
     public bind(axisOrChart: Axis | Chart): void {
-        let axis = (axisOrChart instanceof Axis) ?
-            axisOrChart :
-            axisOrChart.xAxis[0];
+        const axis = (axisOrChart instanceof Chart) ?
+            axisOrChart.xAxis[0] :
+            axisOrChart;
 
-        this.boundAxes.push(axis)
+        if (!(axis instanceof Axis)) return;
 
-        const {min, max} = this.getNavigatorExtremes();
+        const { min, max } = this.navigator.xAxis;
+
+        this.boundAxes.push(axis);
         axis.setExtremes(min, max);
     }
 
@@ -122,8 +124,13 @@ class StandaloneNavigator {
         });
     }
 
-    public unbind(axisOrChart: Chart | Axis) {
-        let axis = (axisOrChart instanceof Axis) ?
+    public unbind(axisOrChart?: Chart | Axis) {
+        if (!axisOrChart) {
+            this.boundAxes.length = 0;
+            return;
+        }
+
+        const axis = (axisOrChart instanceof Axis) ?
             axisOrChart :
             axisOrChart.xAxis[0];
 
@@ -164,7 +171,7 @@ class StandaloneNavigator {
     }
 
     public getNavigatorExtremes() {
-        // from options or from series extremes
+        // TODO: from options or from series extremes
         return this.navigator.xAxis.getExtremes();
     }
 }
