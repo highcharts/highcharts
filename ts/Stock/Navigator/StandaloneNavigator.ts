@@ -110,14 +110,24 @@ class StandaloneNavigator {
             axisOrChart.xAxis[0];
 
         this.boundAxes.push(axis)
+
+        const {min, max} = this.getNavigatorExtremes();
+        axis.setExtremes(min, max);
     }
 
     public destroy() {
-
+        // TODO: destroy other stuff too
         this.eventsToUnbind.forEach((f) => {
             f();
         });
-        // destroy chart, navigator etc
+    }
+
+    public unbind(axisOrChart: Chart | Axis) {
+        let axis = (axisOrChart instanceof Axis) ?
+            axisOrChart :
+            axisOrChart.xAxis[0];
+
+        this.boundAxes = this.boundAxes.filter(a => a !== axis);
     }
 
     constructor(element: (string|globalThis.HTMLElement), options: StandaloneNavigatorOptions) {
