@@ -4147,7 +4147,8 @@ class Series {
             // animation has first run. This happens when calling update
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
-            animation = series.finishedAnimating && { animation: false },
+            animation = series.finishedAnimating &&
+                { animation: series.userOptions?.animation || false }, // #20183
             kinds = {} as Record<string, number>;
         let seriesOptions: SeriesOptions,
             n,
