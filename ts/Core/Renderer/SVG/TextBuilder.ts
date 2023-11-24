@@ -268,7 +268,7 @@ class TextBuilder {
                         width,
                         // Substract the font face to make room for the ellipsis
                         // itself
-                        0.8 * dy,
+                        dy,
                         // Build the text to test for
                         (text: string, currentIndex: number): string =>
                             text.substring(0, currentIndex) + '\u2026'
@@ -482,14 +482,14 @@ class TextBuilder {
         words: (Array<string>|undefined),
         startAt: number,
         width: number,
-        endPad: number,
+        lineHeight: number,
         getString: Function
     ): void {
         const svgElement = this.svgElement,
             { rotation } = svgElement,
             // Cache the lengths to avoid checking the same twice
             lengths = [] as Array<number>,
-            innerWidth = Math.max(0, width - endPad),
+            innerWidth = Math.max(0, width - lineHeight * 0.8),
             parentElement = textNode
                 .parentElement as unknown as SVGTextElement|null;
 
@@ -563,20 +563,24 @@ class TextBuilder {
                 }
             }
 
+            // Shorter than a single character - remove it
+            if (width < lineHeight / 2) {
+                textNode.textContent = '';
+
             // If the new text length is one less than the original, we don't
             // need the ellipsis
-            if (!(text && maxIndex === text.length - 1)) {
+            } else if (!(text && maxIndex === text.length - 1)) {
                 textNode.textContent = str || getString(
                     text || words,
                     Math.max(1, currentIndex)
                 );
                 // If the maxIndex is 0 or 1, we're only left with the first
                 // letter or nothing at all. In this case, mimic HTML/CSS and
-                // clip to the first letter + an ellipsis.
-                if (currentIndex < 2 && parentElement) {
+                // clip to the first letter + an ellipsis. #20192.
+                if (text && currentIndex < 2 && parentElement) {
                     css(parentElement, {
                         clipPath:
-                        `polygon(0  0, ${width}px 0, ${width}px 100%, 0 100%)`
+                            `polygon(0 0,${width}px 0,${width}px 100%,0 100%)`
                     });
                 }
             }
