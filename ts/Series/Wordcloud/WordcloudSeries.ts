@@ -195,7 +195,7 @@ class WordcloudSeries extends ColumnSeries {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        for (const point of data) {
+        data.forEach((point): void => {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -218,7 +218,7 @@ class WordcloudSeries extends ColumnSeries {
                 height: bBox.height,
                 width: bBox.width
             };
-        }
+        });
 
         // Calculate the playing field.
         field = getPlayingField(xAxis.len, yAxis.len, data);
@@ -227,7 +227,7 @@ class WordcloudSeries extends ColumnSeries {
         });
 
         // Draw all the points.
-        for (const point of data) {
+        data.forEach((point): void => {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -337,7 +337,7 @@ class WordcloudSeries extends ColumnSeries {
                 shapeArgs: void 0,
                 shapeType: 'text'
             });
-        }
+        });
 
         // Destroy the element after use.
         testElement = testElement.destroy() as any;

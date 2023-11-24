@@ -259,13 +259,13 @@ class Funnel3DSeries extends ColumnSeries {
             */
 
         // get the total sum
-        for (const point of data) {
+        data.forEach((point): void => {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
-        }
+        });
 
-        for (const point of data) {
+        data.forEach((point): void => {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
@@ -360,7 +360,7 @@ class Funnel3DSeries extends ColumnSeries {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 cumulative += fraction;
             }
-        }
+        });
     }
 
 }
