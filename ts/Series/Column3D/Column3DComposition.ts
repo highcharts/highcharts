@@ -129,7 +129,7 @@ function columnSeriesTranslate3dShapes(
     }
 
     z += (seriesOptions.groupZPadding || 1);
-    for (const point of series.data) {
+    series.data.forEach((point): void => {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
@@ -231,7 +231,7 @@ function columnSeriesTranslate3dShapes(
                 point.tooltipPos = [translatedTTPos.x, translatedTTPos.y];
             }
         }
-    }
+    });
     // store for later use #4067
     series.z = z;
 }
@@ -415,7 +415,7 @@ function wrapColumnSeriesAnimate(
 
 
         if (init) {
-            for (const point of series.data) {
+            series.data.forEach((point): void => {
                 if (point.y !== null) {
                     point.height = (point.shapeArgs as any).height;
                     point.shapey = (point.shapeArgs as any).y; // #2968
@@ -436,10 +436,10 @@ function wrapColumnSeriesAnimate(
                         }
                     }
                 }
-            }
+            });
 
-        } else { // run the animation
-            for (const point of series.data) {
+        } else { // Run the animation
+            series.data.forEach((point): void => {
                 if (point.y !== null) {
                     (point.shapeArgs as any).height = point.height;
                     (point.shapeArgs as any).y = point.shapey; // #2968
@@ -455,7 +455,7 @@ function wrapColumnSeriesAnimate(
                         );
                     }
                 }
-            }
+            });
 
             // redraw datalabels to the correct position
             this.drawDataLabels();
@@ -555,7 +555,7 @@ function wrapColumnSeriesSetVisible(
     const series = this;
 
     if (series.chart.is3d()) {
-        for (const point of series.data) {
+        series.data.forEach((point): void => {
             point.visible = point.options.visible = vis =
                 typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;
@@ -566,7 +566,7 @@ function wrapColumnSeriesSetVisible(
                     visibility: vis ? 'visible' : 'hidden'
                 });
             }
-        }
+        });
     }
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 }

@@ -247,7 +247,7 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        for (const point of series.data) {
+        series.data.forEach((point): void => {
 
             const shapeArgs = point.shapeArgs;
 
@@ -274,7 +274,7 @@ class Pie3DSeries extends PieSeries {
                     Math.cos(alpha * deg2rad)
                 )
             };
-        }
+        });
     }
 
     /**

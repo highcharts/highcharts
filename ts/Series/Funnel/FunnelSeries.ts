@@ -417,15 +417,15 @@ class FunnelSeries extends PieSeries {
         */
 
         // get the total sum
-        for (const point of data) {
+        data.forEach((point): void => {
             if (point.y && point.isValid() &&
                 (!ignoreHiddenPoint || point.visible !== false)
             ) {
                 sum += point.y;
             }
-        }
+        });
 
-        for (const point of data) {
+        data.forEach((point): void => {
             // set start and end positions
             y5 = null;
             fraction = sum ? (point.y as any) / sum : 0;
@@ -636,7 +636,7 @@ class FunnelSeries extends PieSeries {
                 (!ignoreHiddenPoint || point.visible !== false)) {
                 cumulative += fraction;
             }
-        }
+        });
 
         fireEvent(series, 'afterTranslate');
     }
