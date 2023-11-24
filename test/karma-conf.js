@@ -164,14 +164,21 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-function getProductTests(product){
+function getProductTests (productString) {
     const productTestsMap = require('./karma-product-tests.js');
-    const productTests = productTestsMap[product];
-    if (!productTests) {
-        throw new Error(`Product ${product} not found in karma-product-tests.js`);
+
+    const products = productString.split(',');
+    const tests = [];
+    for (const product of products) {
+        const productTests = [];
+        tests.push(...productTestsMap[product]);
+
+        if (!productTests) {
+            console.error(`Product ${product} not found in karma-product-tests.js`);
+        }
     }
 
-    return productTests;
+    return tests;
 }
 
 module.exports = function (config) {
