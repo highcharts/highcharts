@@ -1,7 +1,7 @@
 const nav = Highcharts.navigator('container', {
     navigator: {
         series: [{
-            data: Array.from({length: 50}, (_, x) => Math.floor(Math.sin(x / 10) * 20))
+            data: Array.from({length: 35}, (_, x) => Math.floor(Math.sin(x / 10) * 20))
         }]
     }
 })
@@ -21,4 +21,4 @@ const chart2 = Highcharts.chart('chart2', {
 
 
 nav.bind(chart1);
-nav.bind(chart2.xAxis[0]);
+// nav.bind(chart2.xAxis[0]);
