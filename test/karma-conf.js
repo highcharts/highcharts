@@ -164,6 +164,16 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
+function getProductTests(product){
+    const productTestsMap = require('./karma-product-tests.js');
+    const productTests = productTestsMap[product];
+    if (!productTests) {
+        throw new Error(`Product ${product} not found in karma-product-tests.js`);
+    }
+
+    return productTests;
+}
+
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
@@ -223,7 +233,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = (
+    let tests = (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -232,6 +242,12 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
+
+
+    if (argv.product) {
+        const productTests = getProductTests(argv.product);
+        tests = productTests.map(path => `samples/unit-tests/${path}/**/demo.js`);
+    }
 
     // Get the files
     let files = require('./karma-files.json');
