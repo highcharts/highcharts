@@ -499,7 +499,8 @@ class TextBuilder {
             maxIndex = (text || words || '').length,
             currentIndex = maxIndex,
             str,
-            actualWidth: number;
+            actualWidth: number,
+            clipPath = 'none';
 
         const getSubStringLength = function (
             charEnd: number,
@@ -577,13 +578,16 @@ class TextBuilder {
                 // If the maxIndex is 0 or 1, we're only left with the first
                 // letter or nothing at all. In this case, mimic HTML/CSS and
                 // clip to the first letter + an ellipsis. #20192.
-                if (text && currentIndex < 2 && parentElement) {
-                    css(parentElement, {
-                        clipPath:
-                            `polygon(0 0,${width}px 0,${width}px 100%,0 100%)`
-                    });
+                if (currentIndex < 2) {
+                    clipPath = (
+                        `polygon(0 0,${width}px 0,${width}px 100%,0 100%)`
+                    );
                 }
             }
+        }
+
+        if (text && parentElement) {
+            css(parentElement, { clipPath });
         }
 
         // When doing line wrapping, prepare for the next line by removing the
