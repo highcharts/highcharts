@@ -1,12 +1,13 @@
 import type { NavigatorOptions } from './NavigatorOptions';
-import type ScrollbarOptions from '../Scrollbar/ScrollbarOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator from './Navigator.js';
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
+import Axis from '../../Core/Axis/Axis.js';
 const {
     merge,
     isString,
+    addEvent
 } = U;
 
 type StandaloneNavigatorOptions = {
@@ -66,10 +67,12 @@ const forcedNavOptions = {
 class StandaloneNavigator {
 
     public time = G.time;
+    public eventsToUnbind: Array<Function> = [];
     public navigator: Navigator;
     public initSeries = (G as any).Chart.prototype.initSeries;
     public renderTo: any;
     public container:  any;
+    public boundAxes: Array<Axis> = [];
     public numberFormatter = (G as any).numberFormat;
     public pointer = {
         normalize: (e: any) => {
@@ -101,6 +104,22 @@ class StandaloneNavigator {
         return nav;
     }
 
+    public bind(axisOrChart: Axis | Chart): void {
+        let axis = (axisOrChart instanceof Axis) ?
+            axisOrChart :
+            axisOrChart.xAxis[0];
+
+        this.boundAxes.push(axis)
+    }
+
+    public destroy() {
+
+        this.eventsToUnbind.forEach((f) => {
+            f();
+        });
+        // destroy chart, navigator etc
+    }
+
     constructor(element: (string|globalThis.HTMLElement), options: StandaloneNavigatorOptions) {
         this.options = options;
         const chart = new Chart(element, options);
@@ -125,6 +144,13 @@ class StandaloneNavigator {
 
         let { min, max } = this.getNavigatorExtremes();
         nav.render(min, max);
+
+        this.eventsToUnbind.push(addEvent(this.navigator.chart.xAxis[0], 'setExtremes', (e) => {
+            const {min, max} = e as {min: number, max: number};
+            this.boundAxes.forEach(axis => {
+                axis.setExtremes(min, max)
+            })
+        }));
     }
 
     public getNavigatorExtremes() {
