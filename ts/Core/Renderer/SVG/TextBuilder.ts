@@ -488,7 +488,7 @@ class TextBuilder {
         const svgElement = this.svgElement,
             { rotation } = svgElement,
             // Cache the lengths to avoid checking the same twice
-            lengths = [] as Array<number>,
+            lengths: Array<number> = [],
             innerWidth = Math.max(0, width - lineHeight * 0.8),
             parentElement = textNode
                 .parentElement as unknown as SVGTextElement|null;
@@ -500,12 +500,12 @@ class TextBuilder {
             currentIndex = maxIndex,
             str,
             actualWidth: number,
-            clipPath = 'none';
+            clipWidth: number|undefined;
 
-        const getSubStringLength = function (
+        const getSubStringLength = (
             charEnd: number,
             concatenatedEnd?: number
-        ): number {
+        ): number => {
             // The `charEnd` is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
@@ -579,15 +579,17 @@ class TextBuilder {
                 // letter or nothing at all. In this case, mimic HTML/CSS and
                 // clip to the first letter + an ellipsis. #20192.
                 if (currentIndex < 2) {
-                    clipPath = (
-                        `polygon(0 0,${width}px 0,${width}px 100%,0 100%)`
-                    );
+                    clipWidth = width;
                 }
             }
         }
 
         if (text && parentElement) {
-            css(parentElement, { clipPath });
+            css(parentElement, {
+                clipPath: clipWidth ?
+                    `polygon(0 0,${width}px 0,${width}px 100%,0 100%)` :
+                    'none'
+            });
         }
 
         // When doing line wrapping, prepare for the next line by removing the
@@ -596,8 +598,11 @@ class TextBuilder {
             words.splice(0, currentIndex);
         }
 
-        svgElement.actualWidth = actualWidth;
-        svgElement.rotation = rotation; // Apply rotation again.
+        extend(svgElement, {
+            actualWidth,
+            clipWidth,
+            rotation // Apply rotation again
+        });
     }
 
     /*
