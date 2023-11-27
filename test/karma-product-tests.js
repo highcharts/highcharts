@@ -20,5 +20,6 @@ module.exports = {
         'indicator-*'
     ],
     Gantt: ['gantt'],
-    Maps: ['maps']
+    Maps: ['maps'],
+    Dashboards: []
 };
