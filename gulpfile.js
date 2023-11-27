@@ -93,6 +93,8 @@ Gulp.registry(new GulpForwardReference());
     'test-tree',
     'test-docs',
     'test-ts',
+    'test-before',
+    'test-after',
     'reset-visual-references',
     'tsdoc',
     'tsdoc-debug',

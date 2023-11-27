@@ -47,7 +47,7 @@ function getProducts(logPaths) {
     }
 
     function mark(product) {
-        if (affectedProducts.indexOf(product) !== -1) {
+        if (!affectedProducts.includes(product)) {
             affectedProducts.push(product);
         }
     }
@@ -193,6 +193,62 @@ function saveRun({
     FS.writeFileSync(configFile, JSON.stringify(configuration));
 }
 
+const TEST_PRODUCTS_CONFIG_FILE = 'test-products.tmp.json';
+
+function handleProductArgs() {
+    const process = require('node:process');
+    const yargs = require('yargs/yargs');
+    const { argv } = yargs(process.argv);
+    const log = require('./log');
+
+    if (process.env.DEBUG) {
+        log.message(argv);
+    }
+
+    if (argv.product) {
+        return argv.product.split(',');
+    }
+
+    if (argv.modifiedProduct) {
+        return getProducts(true);
+    }
+
+    return false;
+}
+
+function setProductsConfig() {
+    const fs = require('node:fs');
+    const products = handleProductArgs();
+
+    fs.writeFileSync(
+        TEST_PRODUCTS_CONFIG_FILE,
+        JSON.stringify({
+            products
+        })
+    );
+
+    return products;
+}
+
+function resetProductsConfig() {
+    const fs = require('node:fs');
+    fs.rmSync(TEST_PRODUCTS_CONFIG_FILE, {
+        force: true
+    });
+}
+
+function getProductsConfig() {
+    const fs = require('node:fs');
+    try {
+        return JSON.parse(fs.readFileSync(TEST_PRODUCTS_CONFIG_FILE));
+    } catch {
+        // try to get fresh products if not stored
+        return {
+            products: setProductsConfig()
+        };
+    }
+}
+
 /* *
  *
  *  Exports
@@ -203,5 +259,8 @@ module.exports = {
     checkProduct,
     getProducts,
     shouldRun,
-    saveRun
+    saveRun,
+    getProductsConfig,
+    setProductsConfig,
+    resetProductsConfig
 };

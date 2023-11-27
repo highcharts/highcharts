@@ -241,6 +241,10 @@ async function test() {
     const argv = require('yargs').argv;
     const log = require('./lib/log');
 
+    const { setProductsConfig } = require('./lib/test');
+
+    setProductsConfig();
+
     const { shouldRun, saveRun } = require('./lib/test');
 
     if (argv.help) {
@@ -398,4 +402,4 @@ Set a different disconnect timeout from default config
     }
 }
 
-gulp.task('test', gulp.series('test-docs', 'scripts', test));
+gulp.task('test', gulp.series('test-before', 'test-docs', 'scripts', test, 'test-after'));

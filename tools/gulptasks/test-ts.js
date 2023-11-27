@@ -4,7 +4,8 @@
 
 const gulp = require('gulp');
 const path = require('path');
-
+const process = require('node:process');
+const yargs = require('yargs/yargs');
 
 /* *
  *
@@ -25,6 +26,21 @@ const JS_DIRECTORY = path.join(BASE, 'js');
 const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'typescript-karma', 'karma-conf.js');
 
 const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
+
+const argv = yargs(process.argv).argv;
+
+const { getProductsConfig } = require('./lib/test');
+
+const productsConfig = getProductsConfig();
+
+const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
+
+// Skip building and testing if Dashboards and Data is not modified
+// TODO: Could possibly be handled in a super-gulp-task
+const shouldSkip = !forceRun &&
+    productsConfig.products &&
+    !productsConfig.products.includes('Core') &&
+    !productsConfig.products.includes('Dashboards');
 
 /* *
  *
@@ -47,11 +63,7 @@ const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
  */
 async function testTS() {
     const log = require('./lib/log');
-    const Yargs = require('yargs');
     const { shouldRun, saveRun } = require('./lib/test');
-
-
-    const argv = Yargs.argv;
 
     if (argv.help) {
         log.message(`
@@ -109,7 +121,6 @@ Available arguments for 'gulp test':
         return;
     }
 
-    const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
 
     const runConfig = {
         configFile: CONFIGURATION_FILE,
@@ -177,4 +188,16 @@ Available arguments for 'gulp test':
     }
 }
 
-gulp.task('test-ts', gulp.series('dashboards/scripts', 'scripts', testTS));
+gulp.task(
+    'test-ts',
+    gulp.series(
+        'test-before',
+        ...(shouldSkip ? [] :
+            [
+                'dashboards/scripts',
+                'scripts',
+                testTS
+            ]),
+        'test-after'
+    )
+);
