@@ -26,10 +26,12 @@ QUnit.test('Label position after redraw (#4133)', function (assert) {
         }]
     });
 
-    assert.ok(
-        true,
-        `There shouldn't be any error in the console cropped data have empty
-        elements in array (#20097).`
+    assert.strictEqual(
+        chart.series[0].data[0],
+        void 0,
+        `First element should be undefined (empty) and there shouldn't be any
+        error in the console while cropped data have empty elements in array
+        (#20097).`
     );
 
     chart.xAxis[0].update({
