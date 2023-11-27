@@ -768,11 +768,7 @@ function wrapInit(
 
         }, userOptions, { // User options
             // Forced options
-            reversed: true,
-            // grid.columns is not supported in treegrid
-            _grid: {
-                columns: void 0
-            }
+            reversed: true
         });
     }
 
@@ -801,8 +797,9 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
-        linkedParent = typeof options.linkedTo === 'number' &&
-            this.chart[axis.coll]?.[options.linkedTo],
+        linkedParent = typeof options.linkedTo === 'number' ?
+            this.chart[axis.coll]?.[options.linkedTo] :
+            void 0,
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -816,6 +813,7 @@ function wrapSetTickInterval(
         axis.setAxisTranslation();
 
         axis.tickInterval = 1;
+        axis.tickmarkOffset = 0.5;
         axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?
             axis.treeGrid.getTickPositions() :
             [];
@@ -831,11 +829,9 @@ function wrapSetTickInterval(
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            axis.tickmarkOffset = 0;
             axis.tickPositions = linkedParent.tickPositions;
-        } else {
-            axis.tickmarkOffset = 0.5;
         }
+        axis.linkedParent = linkedParent;
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
     }

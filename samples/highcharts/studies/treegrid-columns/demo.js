@@ -72,7 +72,8 @@ Highcharts.ganttChart('container', {
             columns: [{
                 title: {
                     text: 'Primary'
-                }
+                },
+                categories: ['Prepare', 'Execute']
             }, {
                 title: {
                     text: 'Secondary'
