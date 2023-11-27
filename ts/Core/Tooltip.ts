@@ -603,10 +603,12 @@ class Tooltip {
     ): PositionObject {
 
         const chart = this.chart,
+            inverted = chart.inverted,
+            polar = chart.polar,
             distance = this.distance,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
-            h = (chart.inverted && (point as any).h) || 0, // #4117 ???
+            h = (inverted && (point as any).h) || 0, // #4117 ???
             outside = this.outside,
             playingField = this.getPlayingField(),
             outerWidth = playingField.width,
@@ -653,7 +655,7 @@ class Tooltip {
         // Handle negative points or reversed axis (#13780)
         let flipped = !!point.negative;
         if (
-            !chart.polar &&
+            !polar &&
             chart.hoverSeries &&
             chart.hoverSeries.yAxis &&
             chart.hoverSeries.yAxis.reversed
@@ -664,7 +666,7 @@ class Tooltip {
         const preferFarSide = !this.followPointer &&
             pick(
                 point.ttBelow,
-                !chart.inverted === flipped
+                polar ? (!polar && inverted) : !inverted === flipped
             ), // #4984
 
             /*
@@ -773,7 +775,7 @@ class Tooltip {
             };
 
         // Under these conditions, prefer the tooltip on the side of the point
-        if (chart.inverted || (this.len as any) > 1) {
+        if ((inverted && !polar) || (this.len as any) > 1) {
             swap();
         }
         run();
