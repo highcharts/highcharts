@@ -443,10 +443,14 @@ function onAfterInit(this: Axis): void {
                     scrollbar: {
                         enabled: false
                     }
+                },
+                // Avoid recursion
+                {
+                    grid: {
+                        columns: void 0
+                    }
                 }
             );
-
-            delete (columnOptions.grid as any).columns; // Prevent recursion
 
             const column = new Axis(
                 axis.chart,
