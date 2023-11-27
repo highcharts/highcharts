@@ -1,0 +1,1 @@
+1. Check if every event is logged in the console (`mount`, `unmount`, `resize`, `update`).
