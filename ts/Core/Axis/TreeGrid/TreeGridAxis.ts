@@ -770,7 +770,7 @@ function wrapInit(
             // Forced options
             reversed: true,
             // grid.columns is not supported in treegrid
-            grid: {
+            _grid: {
                 columns: void 0
             }
         });
@@ -801,6 +801,8 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        linkedParent = typeof options.linkedTo === 'number' &&
+            this.chart[axis.coll]?.[options.linkedTo],
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -809,15 +811,31 @@ function wrapSetTickInterval(
 
         fireEvent(axis, 'foundExtremes');
 
-        // setAxisTranslation modifies the min and max according to
-        // axis breaks.
+        // `setAxisTranslation` modifies the min and max according to axis
+        // breaks.
         axis.setAxisTranslation();
 
-        axis.tickmarkOffset = 0.5;
         axis.tickInterval = 1;
         axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?
             axis.treeGrid.getTickPositions() :
             [];
+
+        if (linkedParent) {
+
+            const linkedParentExtremes = linkedParent.getExtremes();
+            axis.min = pick(
+                linkedParentExtremes.min,
+                linkedParentExtremes.dataMin
+            );
+            axis.max = pick(
+                linkedParentExtremes.max,
+                linkedParentExtremes.dataMax
+            );
+            axis.tickmarkOffset = 0;
+            axis.tickPositions = linkedParent.tickPositions;
+        } else {
+            axis.tickmarkOffset = 0.5;
+        }
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
     }

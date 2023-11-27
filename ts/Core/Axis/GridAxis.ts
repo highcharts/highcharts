@@ -437,8 +437,6 @@ function onAfterInit(this: Axis): void {
                 {
                     isInternal: true,
                     linkedTo: 0,
-                    // Force to behave like category axis
-                    type: 'category',
                     // Disable by default the scrollbar on the grid axis
                     scrollbar: {
                         enabled: false
