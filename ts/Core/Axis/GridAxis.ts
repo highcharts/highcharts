@@ -1572,6 +1572,8 @@ export default GridAxis;
  *
  * @sample gantt/demo/left-axis-table
  *         Left axis as a table
+ * @sample gantt/demo/treegrid-columns
+ *         Collapsible tree grid with columns
  *
  * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns
