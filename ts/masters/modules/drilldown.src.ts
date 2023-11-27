@@ -24,3 +24,4 @@ Drilldown.compose(
     G.SVGRenderer,
     G.Tick
 );
+export default Highcharts;

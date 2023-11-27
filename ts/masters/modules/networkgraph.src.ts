@@ -14,3 +14,4 @@ import Highcharts from '../../Core/Globals.js';
 import NetworkgraphSeries from '../../Series/Networkgraph/NetworkgraphSeries.js';
 const G: AnyRecord = Highcharts;
 NetworkgraphSeries.compose(G.Chart);
+export default Highcharts;

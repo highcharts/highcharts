@@ -16,3 +16,4 @@ import Highcharts from '../../Core/Globals.js';
 import SeriesOnPointComposition from '../../Series/SeriesOnPointComposition.js';
 const G: AnyRecord = Highcharts;
 SeriesOnPointComposition.compose(G.Series, G.Chart);
+export default Highcharts;

@@ -18,3 +18,4 @@ import ErrorMessages from '../../Extensions/Debugger/ErrorMessages.js';
 const G: AnyRecord = Highcharts;
 G.errorMessages = ErrorMessages;
 Debugger.compose(G.Chart);
+export default Highcharts;

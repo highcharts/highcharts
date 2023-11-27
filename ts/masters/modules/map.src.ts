@@ -37,3 +37,4 @@ GeoJSONComposition.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 MapNavigation.compose(MapChart, G.Pointer, G.SVGRenderer);
 MapView.compose(MapChart);
+export default Highcharts;

@@ -30,7 +30,7 @@ const gulp = require('gulp');
  * @return {Promise<void>}
  * Promise to keep
  */
-function scriptsJS() {
+async function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
@@ -38,46 +38,43 @@ function scriptsJS() {
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
-    return new Promise((resolve, reject) => {
+    // const BuildScripts = buildTool.getBuildScripts({
+    //     debug: (argv.d || argv.debug || false),
+    //     files: (
+    //         (argv.file) ?
+    //             argv.file.split(',') :
+    //             null
+    //     ),
+    //     type: (argv.type || null)
+    // });
 
-        const BuildScripts = buildTool.getBuildScripts({
-            debug: (argv.d || argv.debug || false),
-            files: (
-                (argv.file) ?
-                    argv.file.split(',') :
-                    null
-            ),
-            type: (argv.type || null)
-        });
+    logLib.message('Generating code...');
 
-        logLib.message('Generating code...');
+    processLib.isRunning('scripts-js', true);
 
-        processLib.isRunning('scripts-js', true);
+    try {
+        // assemble JS files
+        // await BuildScripts.fnFirstBuild();
 
-        BuildScripts
-            // assemble JS files
-            .fnFirstBuild()
-            // deleting invalid masters DTS
-            .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
-                path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
-            ))
-            // copy valid native DTS
-            .then(() => fsLib.copyAllFiles(
-                'js/',
-                'code/es-modules/',
-                true,
-                sourcePath => sourcePath.endsWith('.d.ts')
-            ))
-            .then(() => logLib.success('Created code'))
-            .then(function (output) {
-                processLib.isRunning('scripts-js', false);
-                resolve(output);
-            })
-            .catch(function (error) {
-                processLib.isRunning('scripts-js', false);
-                reject(error);
-            });
-    });
+        // deleting invalid masters DTS
+        fsLib
+            .getFilePaths('js/masters/', true)
+            .forEach(path => path.endsWith('.d.ts') && fsLib.deleteFile(path));
+
+        // copy valid native DTS
+        fsLib.copyAllFiles(
+            'js/',
+            'code/es-modules/',
+            true
+        );
+
+        await processLib.exec('npx webpack -c tools/webpacks/highcharts.webpack.mjs');
+
+        logLib.success('Created code');
+    } finally {
+        processLib.isRunning('scripts-js', false);
+    }
+
 }
 
 gulp.task('scripts-js', scriptsJS);

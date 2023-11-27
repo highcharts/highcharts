@@ -22,3 +22,4 @@ G.post = HttpUtilities.post;
 // Classes
 G.Data = Data;
 G.HttpUtilities = HttpUtilities;
+export default Highcharts;

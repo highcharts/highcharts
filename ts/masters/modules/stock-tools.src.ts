@@ -21,3 +21,4 @@ const G: AnyRecord = Highcharts;
 G.Toolbar = Toolbar;
 StockTools.compose(NavigationBindings);
 StockToolsGui.compose(G.Chart, NavigationBindings);
+export default Highcharts;

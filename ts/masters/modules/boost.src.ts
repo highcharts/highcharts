@@ -26,3 +26,5 @@ Boost.compose(
     G.seriesTypes,
     G.Color
 );
+
+export default Highcharts;

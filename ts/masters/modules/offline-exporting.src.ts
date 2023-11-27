@@ -21,3 +21,4 @@ G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
 G.downloadURL = DownloadURL.downloadURL;
 // Compose
 OfflineExporting.compose(G.Chart);
+export default Highcharts;

@@ -22,3 +22,4 @@ const G: AnyRecord = Highcharts;
 G.initCanvasBoost = function (): void {
     BoostCanvas.compose(G.Chart, G.Series, G.seriesTypes);
 };
+export default Highcharts;

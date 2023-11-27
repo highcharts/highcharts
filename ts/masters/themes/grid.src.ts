@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import GridTheme from '../../Extensions/Themes/Grid.js';
 H.theme = GridTheme.options;
 GridTheme.apply();
+export default H;

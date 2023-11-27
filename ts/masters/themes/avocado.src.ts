@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import AvocadoTheme from '../../Extensions/Themes/Avocado.js';
 H.theme = AvocadoTheme.options;
 AvocadoTheme.apply();
+export default H;

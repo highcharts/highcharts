@@ -16,3 +16,4 @@ import Highcharts from '../../Core/Globals.js';
 import MouseWheelZoom from '../../Extensions/MouseWheelZoom/MouseWheelZoom.js';
 const G: AnyRecord = Highcharts;
 MouseWheelZoom.compose(G.Chart);
+export default Highcharts;

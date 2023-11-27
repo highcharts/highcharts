@@ -15,3 +15,4 @@ import Annotation from '../../Extensions/Annotations/Annotation.js';
 const G: AnyRecord = Highcharts;
 G.Annotation = Annotation;
 Annotation.compose(G.Chart, G.Pointer, G.SVGRenderer);
+export default Highcharts;

@@ -15,3 +15,5 @@ import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
 
 const G: AnyRecord = Highcharts;
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
+
+export default Highcharts;

@@ -19,3 +19,4 @@ G.ajax = HttpUtilities.ajax;
 G.getJSON = HttpUtilities.getJSON;
 G.post = HttpUtilities.post;
 Exporting.compose(G.Chart, G.Renderer);
+export default Highcharts;

@@ -10,10 +10,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import './broken-axis.src.js';
 import './datagrouping.src.js';
 import './mouse-wheel-zoom.src.js';
-import Highcharts from '../../Core/Globals.js';
 import DataModifyComposition from '../../Series/DataModifyComposition.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
@@ -39,3 +39,4 @@ OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
 StockChart.compose(G.Axis, G.Series, G.SVGRenderer);
+export default Highcharts;

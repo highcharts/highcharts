@@ -35,3 +35,4 @@ G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.Formula = Formula;
+export default Highcharts;

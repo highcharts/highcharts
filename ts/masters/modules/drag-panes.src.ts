@@ -18,3 +18,4 @@ import DragPanes from '../../Extensions/DragPanes/DragPanes.js';
 const G: AnyRecord = Highcharts;
 G.AxisResizer = AxisResizer;
 DragPanes.compose(G.Axis, G.Pointer);
+export default Highcharts;

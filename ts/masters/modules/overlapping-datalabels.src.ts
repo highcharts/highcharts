@@ -12,3 +12,4 @@ import Highcharts from '../../Core/Globals.js';
 import OverlappingDataLabels from '../../Extensions/OverlappingDataLabels.js';
 const G: AnyRecord = Highcharts;
 OverlappingDataLabels.compose(G.Chart);
+export default Highcharts;

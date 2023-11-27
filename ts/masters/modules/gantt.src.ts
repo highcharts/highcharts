@@ -42,3 +42,4 @@ RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
 XRangeSeries.compose(G.Axis);
 StaticScale.compose(G.Axis, G.Chart);
+export default Highcharts;

@@ -20,3 +20,4 @@ G.dataURLtoBlob = DownloadURL.dataURLtoBlob;
 G.downloadURL = DownloadURL.downloadURL;
 // Compose
 ExportData.compose(G.Chart);
+export default Highcharts;

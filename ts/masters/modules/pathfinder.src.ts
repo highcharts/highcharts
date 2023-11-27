@@ -17,3 +17,4 @@ const G: AnyRecord = Highcharts;
 G.Pathfinder = Pathfinder;
 ArrowSymbols.compose(G.SVGRenderer);
 Pathfinder.compose(G.Chart, G.Point);
+export default Highcharts;

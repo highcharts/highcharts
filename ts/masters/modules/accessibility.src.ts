@@ -37,3 +37,5 @@ Accessibility.compose(
     G.SVGElement,
     G.RangeSelector
 );
+
+export default Highcharts;

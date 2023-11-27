@@ -16,3 +16,4 @@ import PatternFill from '../../Extensions/PatternFill.js';
 const G: AnyRecord = Highcharts;
 G.patterns = PatternFill.patterns;
 PatternFill.compose(G.Chart, G.Series, G.SVGRenderer);
+export default Highcharts;

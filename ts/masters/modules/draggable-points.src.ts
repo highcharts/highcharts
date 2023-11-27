@@ -12,3 +12,4 @@ import Highcharts from '../../Core/Globals.js';
 import DraggablePoints from '../../Extensions/DraggablePoints/DraggablePoints.js';
 const G: AnyRecord = Highcharts;
 DraggablePoints.compose(G.Chart, G.Series);
+export default Highcharts;

@@ -20,3 +20,4 @@ G.dataGrouping = {
     approximations: ApproximationRegistry
 };
 DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
+export default Highcharts;

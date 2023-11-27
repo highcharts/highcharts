@@ -14,3 +14,4 @@ import '../../Series/Heatmap/HeatmapSeries.js';
 const G: AnyRecord = Highcharts;
 G.ColorAxis = ColorAxis;
 ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
+export default Highcharts;

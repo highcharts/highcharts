@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import SunsetTheme from '../../Extensions/Themes/Sunset.js';
 H.theme = SunsetTheme.options;
 SunsetTheme.apply();
+export default H;

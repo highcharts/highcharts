@@ -13,3 +13,4 @@ import BrokenAxis from '../../Core/Axis/BrokenAxis.js';
 const G: AnyRecord = Highcharts;
 // Compositions
 BrokenAxis.compose(G.Axis, G.Series);
+export default Highcharts;

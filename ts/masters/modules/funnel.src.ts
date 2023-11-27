@@ -15,3 +15,4 @@ import FunnelSeries from '../../Series/Funnel/FunnelSeries.js';
 import '../../Series/Pyramid/PyramidSeries.js';
 const G: AnyRecord = Highcharts;
 FunnelSeries.compose(G.Chart);
+export default Highcharts;

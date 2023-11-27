@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import DarkBlueTheme from '../../Extensions/Themes/DarkBlue.js';
 H.theme = DarkBlueTheme.options;
 DarkBlueTheme.apply();
+export default H;

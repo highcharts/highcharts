@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import BrandDark from '../../Extensions/Themes/BrandDark.js';
 H.theme = BrandDark.options;
 BrandDark.apply();
+export default H;

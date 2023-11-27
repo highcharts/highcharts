@@ -15,3 +15,4 @@ import Highcharts from '../../Core/Globals.js';
 import HeikinAshiSeries from '../../Series/HeikinAshi/HeikinAshiSeries.js';
 const G: AnyRecord = Highcharts;
 HeikinAshiSeries.compose(G.Series, G.Axis);
+export default Highcharts;
