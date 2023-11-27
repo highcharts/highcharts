@@ -634,7 +634,7 @@
             });
 
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.axisLineExtra,
+                chart.yAxis[0].grid.axisLineExtra,
                 'The extra left line for grid should exist.'
             );
             assert.notOk(
@@ -647,27 +647,27 @@
             );
 
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+                chart.yAxis[0].ticks[0].label.textStr,
                 'Task A',
                 'First tick on the left columns should be Task A.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[2].label.textStr,
+                chart.yAxis[0].ticks[2].label.textStr,
                 'Task C',
                 'Third tick on the left columns should be Task C.'
             );
             chart.yAxis[0].setExtremes(0.4, 2.4);
 
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.lowerBorder,
+                chart.yAxis[0].grid.lowerBorder,
                 'The extra lower border for grid should exist.'
             );
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.upperBorder,
+                chart.yAxis[0].grid.upperBorder,
                 'The extra upper border for grid should exist.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+                chart.yAxis[0].ticks[0].label.textStr,
                 'Task A',
                 'First tick on the left columns should be Task A.'
             );
@@ -688,7 +688,7 @@
                 'First tick mark on the left columns should exist.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+                chart.yAxis[0].ticks[3].label.textStr,
                 'Task D',
                 'Last visible tick on the left columns should be Task D.'
             );
@@ -700,7 +700,7 @@
             chart.yAxis[0].setExtremes(1, 3);
 
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+                chart.yAxis[0].ticks[3].label.textStr,
                 'Task D',
                 'Last visible tick on the left columns should be Task D.'
             );

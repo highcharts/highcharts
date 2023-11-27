@@ -217,10 +217,10 @@ function compose<T extends typeof Axis>(
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
+        wrap(AxisClass.prototype, 'getOffset', wrapGetOffset);
 
         // Add event handlers
         addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterGetOffset', onAfterGetOffset);
         addEvent(
             AxisClass,
             'afterGetTitlePosition',
@@ -336,14 +336,34 @@ function getMaxLabelDimensions(
  * Handle columns and getOffset.
  * @private
  */
-function onAfterGetOffset(this: Axis): void {
+function wrapGetOffset(this: Axis, proceed: Function): void {
     const {
-        grid
-    } = this;
+            grid
+        } = this,
+        // On the left side we handle the columns first because the offset is
+        // calculated from the plot area and out
+        columnsFirst = this.side === 3;
 
-    (grid && grid.columns || []).forEach(function (column: Axis): void {
-        column.getOffset();
-    });
+    if (!columnsFirst) {
+        proceed.apply(this);
+    }
+
+    if (!grid?.isColumn) {
+        let columns = grid?.columns || [];
+
+        if (columnsFirst) {
+            columns = columns.slice().reverse();
+        }
+        columns
+            .forEach((column): void => {
+                column.getOffset();
+            });
+    }
+
+    if (columnsFirst) {
+        proceed.apply(this);
+    }
+
 }
 
 /**
@@ -431,9 +451,7 @@ function onAfterInit(this: Axis): void {
         while (++columnIndex < gridOptions.columns.length) {
             const columnOptions = merge(
                 userOptions,
-                gridOptions.columns[
-                    gridOptions.columns.length - columnIndex - 1
-                ],
+                gridOptions.columns[columnIndex],
                 {
                     isInternal: true,
                     linkedTo: 0,
@@ -957,10 +975,10 @@ function onAfterSetOptions2(
     const gridOptions = userOptions && userOptions.grid || {};
     const columns = gridOptions.columns;
 
-    // Add column options to the parent axis. Children has their column
-    // options set on init in onGridAxisAfterInit.
+    // Add column options to the parent axis. Children has their column options
+    // set on init in onGridAxisAfterInit.
     if (gridOptions.enabled && columns) {
-        merge(true, axis.options, columns[columns.length - 1]);
+        merge(true, axis.options, columns[0]);
     }
 }
 
@@ -1386,13 +1404,19 @@ class GridAxisAdditions {
         const chart = axis.chart;
         const columnIndex = axis.grid.columnIndex;
         const columns = (
-            axis.linkedParent && axis.linkedParent.grid.columns ||
-            axis.grid.columns
+            axis.linkedParent?.grid.columns ||
+            axis.grid.columns ||
+            []
         );
         const parentAxis = columnIndex ? axis.linkedParent : axis;
 
         let thisIndex = -1,
             lastIndex = 0;
+
+        // Main axis is to the left
+        if (axis.side === 3) {
+            return !axis.linkedParent;
+        }
 
         (
             (chart[axis.coll] || []) as Array<Axis>
@@ -1413,7 +1437,7 @@ class GridAxisAdditions {
             lastIndex === thisIndex &&
             (
                 isNumber(columnIndex) ?
-                    (columns as any).length === columnIndex :
+                    columns.length === columnIndex :
                     true
             )
         );
