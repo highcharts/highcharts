@@ -760,8 +760,7 @@ function wrapInit(
                     x: -5,
                     y: -5,
                     height: 10,
-                    width: 10,
-                    padding: 5
+                    width: 10
                 }
             },
             uniqueNames: false

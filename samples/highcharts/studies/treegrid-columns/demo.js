@@ -59,24 +59,29 @@ const day = 24 * 36e5,
         owner: 'Berta'
     }];
 
-Highcharts.ganttChart('container', {
+const options = {
     title: {
         text: 'Treegrid with columns study'
     },
     series: [{
         data
     }],
-    xAxis: [{}],
+    xAxis: [{
+        custom: {
+            weekendPlotBands: true
+        }
+    }, {}],
     yAxis: {
         grid: {
+            borderColor: 'rgba(128,128,128,0.2)',
             columns: [{
                 title: {
-                    text: 'Primary'
+                    text: 'Task'
                 },
                 categories: ['Prepare', 'Execute']
             }, {
                 title: {
-                    text: 'Secondary'
+                    text: 'Owner'
                 },
                 labels: {
                     formatter: ctx => data[ctx.value]?.owner || 'NN'
@@ -85,4 +90,41 @@ Highcharts.ganttChart('container', {
         }
     }
 
+};
+
+
+// Plug-in to render plot bands for the weekends
+Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
+    if (e.target.options.custom && e.target.options.custom.weekendPlotBands) {
+        const axis = e.target,
+            chart = axis.chart,
+            day = 24 * 36e5,
+            isWeekend = t => /[06]/.test(chart.time.dateFormat('%w', t)),
+            plotBands = [];
+
+        let inWeekend = false;
+
+        for (
+            let x = Math.floor(axis.min / day) * day;
+            x <= Math.ceil(axis.max / day) * day;
+            x += day
+        ) {
+            const last = plotBands.at(-1);
+            if (isWeekend(x) && !inWeekend) {
+                plotBands.push({
+                    from: x,
+                    color: 'rgba(128,128,128,0.05)'
+                });
+                inWeekend = true;
+            }
+
+            if (!isWeekend(x) && inWeekend && last) {
+                last.to = x;
+                inWeekend = false;
+            }
+        }
+        axis.options.plotBands = plotBands;
+    }
 });
+
+Highcharts.ganttChart('container', options);
