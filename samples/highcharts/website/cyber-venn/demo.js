@@ -610,7 +610,7 @@ const sale = {
                 <div id="terms" class="labels"><a href="#">see terms</a></div>
                 <div id="dash-button">
                 <a class="Button Button-secondary Button-small" 
-                href="https://www.highcharts.com/products/dashboards/">
+                href="https://www.highcharts.com/products/dashboards/" target="_top">
                 <div class="Button-content">Explore Dashboards</div></a></div>
             </div>`
             }
