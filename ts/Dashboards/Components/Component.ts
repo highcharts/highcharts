@@ -1060,12 +1060,12 @@ abstract class Component {
         let result = component.getEditableOptions() as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (!result) {
-                return;
-            }
-
             if (isArray(result)) {
                 result = result[0];
+            }
+
+            if (!result) {
+                return;
             }
 
             result = result[propertyPath[i]];
