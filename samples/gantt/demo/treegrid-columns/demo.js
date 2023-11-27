@@ -61,10 +61,18 @@ const day = 24 * 36e5,
 
 const options = {
     title: {
-        text: 'Treegrid with columns study'
+        text: 'Tree grid with columns'
     },
     series: [{
-        data
+        data,
+        dataLabels: {
+            enabled: true,
+            format: '{point.name}',
+            style: {
+                fontWeight: 'normal',
+                textOutline: 'none'
+            }
+        }
     }],
     xAxis: [{
         custom: {
