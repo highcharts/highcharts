@@ -854,17 +854,19 @@ class Point {
 
         if (!this.destroyed) {
             const { plotX, series } = this,
-                { chart, xAxis, yAxis } = series;
+                { chart, xAxis, yAxis } = series,
+                { polar } = chart;
 
             let posX = 0,
                 posY = 0;
 
             if (isNumber(plotX) && isNumber(plotY)) {
                 if (chartCoordinates) {
-                    posX = xAxis ? xAxis.pos : chart.plotLeft;
-                    posY = yAxis ? yAxis.pos : chart.plotTop;
+                    posX = xAxis && !polar ? xAxis.pos : chart.plotLeft;
+                    posY = yAxis && !polar ? yAxis.pos : chart.plotTop;
                 }
-                return chart.inverted && xAxis && yAxis ?
+
+                return chart.inverted && !polar && xAxis && yAxis ?
                     [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
                     [plotX + posX, plotY + posY];
             }
