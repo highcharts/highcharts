@@ -324,9 +324,7 @@ function wrapAxisGetSlotWidth(
     tick: Tick
 ): number {
     const axis = this,
-        chart = axis.chart,
-        ticks = axis.ticks,
-        gridGroup = axis.gridGroup;
+        { chart, gridGroup, tickPositions, ticks } = axis;
 
     if (
         axis.categories &&
@@ -350,9 +348,9 @@ function wrapAxisGetSlotWidth(
                     pick(options3d.viewDistance, 0)
                 )
             },
-            tickId = tick.pos,
-            prevTick = ticks[tickId - 1],
-            nextTick = ticks[tickId + 1];
+            index = tickPositions.indexOf(tick.pos),
+            prevTick = ticks[tickPositions[index - 1]],
+            nextTick = ticks[tickPositions[index + 1]];
 
         let labelPos,
             prevLabelPos,
@@ -360,12 +358,7 @@ function wrapAxisGetSlotWidth(
 
         // Check whether the tick is not the first one and previous tick
         // exists, then calculate position of previous label.
-        if (
-            tickId !== 0 &&
-            prevTick &&
-            prevTick.label &&
-            prevTick.label.xy
-        ) {
+        if (prevTick?.label?.xy) {
             prevLabelPos = perspective3D({ // #8621
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,

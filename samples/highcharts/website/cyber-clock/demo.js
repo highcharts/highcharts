@@ -242,7 +242,7 @@ function updateCountdown(type) {
     // If the countdown is over, display some text
     if (distance <= 0) {
         // clearInterval(countdownInterval);
-        countDownDate = new Date('2023-12-03T23:00:00Z').getTime();
+        countDownDate = new Date('2023-12-04T07:00:00Z').getTime();
         document.getElementById('header').innerHTML = 'Our <span style="font-weight:bold">Big Deal</span> ends in:';
     }
 
