@@ -70,12 +70,16 @@ Highcharts.ganttChart('container', {
     yAxis: {
         grid: {
             columns: [{
-                title: 'Secondary',
-                labels: {
-                    formatter: ctx => data[ctx.value].owner
+                title: {
+                    text: 'Primary'
                 }
             }, {
-                title: 'Primary'
+                title: {
+                    text: 'Secondary'
+                },
+                labels: {
+                    formatter: ctx => data[ctx.value]?.owner || 'NN'
+                }
             }]
         }
     }

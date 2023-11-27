@@ -70,9 +70,9 @@ QUnit.test('isOuterAxis()', function (assert) {
         ]
     });
 
-    assert.notOk(
+    assert.ok(
         chart.xAxis[0].grid.isOuterAxis(),
-        'Rightmost left x-axis is not outerAxis'
+        'On the left side, the first axis should be the outerAxis'
     );
 
     assert.ok(
