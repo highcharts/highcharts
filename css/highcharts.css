@@ -284,6 +284,11 @@
     transition: stroke 150ms;
 }
 
+.highcharts-tooltip .highcharts-tracker {
+    fill: none;
+    stroke: none;
+}
+
 .highcharts-tooltip text {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
