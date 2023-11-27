@@ -181,7 +181,7 @@ function getProductTests () {
 
     console.log(`Running tests for products: ${products.join(', ')}`);
 
-    const tests = [];
+    const tests = productTestsMap.always;
     for (const product of products) {
         const productTests = [];
         tests.push(...productTestsMap[product]);
