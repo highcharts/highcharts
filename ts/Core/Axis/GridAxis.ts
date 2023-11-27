@@ -533,6 +533,7 @@ function onAfterRender(this: Axis): void {
                     > _________________________
         Into this:    |______|______|______|__|
                                                 */
+
         if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
 
             const lineWidth = options.lineWidth;
@@ -1409,8 +1410,9 @@ class GridAxisAdditions {
         let thisIndex = -1,
             lastIndex = 0;
 
-        // Main axis is to the left
-        if (axis.side === 3) {
+        // On the left side, when we have columns (not only multiple axes), the
+        // main axis is to the left
+        if (axis.side === 3 && !chart.inverted && columns.length) {
             return !axis.linkedParent;
         }
 
