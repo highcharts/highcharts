@@ -17,6 +17,14 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
+        /* Colors for data series and points */
+        --highcharts-color-0: #a2ffd2;
+        --highcharts-color-1: #aecefa;
+        --highcharts-color-2: #f3d485;
+        --highcharts-color-3: #ffb1aa;
+        --highcharts-color-5: #dadada;
+
+        /* Extra colors */
         --gray: #333;
     }
 }
@@ -83,8 +91,15 @@
 
 .highcharts-plot-line {
     stroke-width: 3px;
+    stroke: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-plot-line-label {
     fill: var(--highcharts-neutral-color-100);
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#dashboard-chart-2 .highcharts-data-label text {
+    fill: var(--highcharts-neutral-color-0);
 }
