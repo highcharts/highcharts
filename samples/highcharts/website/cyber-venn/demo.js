@@ -398,12 +398,12 @@ const sale = {
     },
     tooltip: {
         outside: true,
+        distance: 80,
         useHTML: true,
         formatter: function () {
             const tiptext = saleTips[this.point.index];
             // const img = saleImages[this.point.index];
             const title = saleTitles[this.point.index];
-
             const html = `<div class="venntip"><b>${title}</b>
             <br><span>${tiptext}</span></div>`;
             if (this.point.notooltip !== true) {
@@ -418,14 +418,19 @@ const sale = {
         point: {
             events: {
                 mouseOver: function () {
-                    // console.log('over', this.tooltip);
-                    if (this.name === 'big deal') {
-                        return false;
+                    if (this.name === 'creativity' || this.name === 'customize') {
+                        this.series.chart.update({
+                            tooltip: {
+                                distance: 60
+                            }
+                        });
+                    } else {
+                        this.series.chart.update({
+                            tooltip: {
+                                distance: 80
+                            }
+                        });
                     }
-                },
-                mouseOut: function () {
-                    return false;
-                    // console.log(this);
                 }
             }
         },
@@ -643,7 +648,6 @@ setTimeout(function () {
 
     [].forEach.call(labels, function (element) {
         element.addEventListener('mouseout', function () {
-            // console.log('OUT');
             chart.tooltip.hide();
         });
     });
