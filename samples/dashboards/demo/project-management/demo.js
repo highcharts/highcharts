@@ -3,7 +3,8 @@ const plotLines = [{
             text: 'Today',
             align: 'right'
         },
-        value: Date.UTC(2023, 5, 4)
+        value: Date.UTC(2023, 5, 4),
+        zIndex: 10
     }],
     plotBands = [{
         from: Date.UTC(2023, 4, 8),
@@ -155,7 +156,7 @@ Dashboards.board('container', {
         cell: 'dashboard-kpi-1',
         type: 'KPI',
         title: 'Completed tasks',
-        subtitle: 'task completed',
+        subtitle: 'tasks completed',
         linkedValueTo: {
             enabled: false
         }
@@ -170,7 +171,7 @@ Dashboards.board('container', {
     }, {
         cell: 'dashboard-kpi-4',
         type: 'Highcharts',
-        title: 'Task by status',
+        title: 'Tasks by status',
         chartOptions: {
             xAxis: {
                 categories: ['Done', 'To Do', 'In Progress', 'Blocked']
@@ -180,9 +181,6 @@ Dashboards.board('container', {
                 keys: ['name', 'y'],
                 innerSize: '50%',
                 size: '110%',
-                dataLabels: {
-                    enabled: false
-                },
                 showInLegend: true
             }],
             legend: {
@@ -190,6 +188,11 @@ Dashboards.board('container', {
                 align: 'right',
                 verticalAlign: 'center',
                 layout: 'vertical'
+            },
+            tooltip: {
+                headerFormat: '',
+                pointFormat: `<span style="color:{point.color}">\u25CF</span>
+                    Tasks {point.name}: <b>{point.y}</b><br/>`
             },
             responsive: {
                 rules: [{
@@ -214,13 +217,16 @@ Dashboards.board('container', {
             accessibility: {
                 description: `The chart shows the number of tasks by status.
                     Pie is divided into four parts, to do, in progress, done and
-                    blocked.`
+                    blocked.`,
+                point: {
+                    descriptionFormat: '{name}: {y} tasks.'
+                }
             }
         }
     }, {
         cell: 'dashboard-chart-1',
         type: 'Highcharts',
-        title: 'Total task by assignee',
+        title: 'Total tasks by assignee',
         connector: {
             id: 'taskByAssignee'
         },
@@ -229,7 +235,10 @@ Dashboards.board('container', {
                 type: 'column'
             },
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Developer'
+                }
             },
             yAxis: {
                 title: {
@@ -241,7 +250,7 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: `Total task by assignee. Highcharts
+                    chartContainerLabel: `Total tasks by assignee. Highcharts
                         Interactive Chart.`
                 }
             },
@@ -267,6 +276,9 @@ Dashboards.board('container', {
                 },
                 grid: {
                     borderWidth: 0
+                },
+                accessibility: {
+                    description: 'Timeline axis.'
                 }
             }],
             yAxis: {
@@ -342,7 +354,16 @@ Dashboards.board('container', {
             },
             accessibility: {
                 description: `The chart shows the timeline of the project. It is
-                    divided into tasks.`
+                    divided into tasks.`,
+                typeDescription: `The Gantt chart shows the timeline of
+                    the project.`,
+                point: {
+                    descriptionFormatter: function (point) {
+                        return `Task ${point.name} starts on
+                        ${Highcharts.dateFormat('%e %b %Y', point.start)}, ends
+                        on ${Highcharts.dateFormat('%e %b %Y', point.end)}.`;
+                    }
+                }
             }
         }
     }, {
