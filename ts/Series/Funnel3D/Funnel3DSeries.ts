@@ -209,7 +209,7 @@ class Funnel3DSeries extends ColumnSeries {
                 plotHeight
             ),
             neckY = (centerY - height / 2) + height - neckHeight,
-            data = series.data;
+            points = series.points;
 
         let sum = 0,
             cumulative = 0, // start at top
@@ -259,13 +259,13 @@ class Funnel3DSeries extends ColumnSeries {
             */
 
         // get the total sum
-        data.forEach((point): void => {
+        for (const point of points) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
-        });
+        }
 
-        data.forEach((point): void => {
+        for (const point of points) {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
@@ -360,7 +360,7 @@ class Funnel3DSeries extends ColumnSeries {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 cumulative += fraction;
             }
-        });
+        }
     }
 
 }

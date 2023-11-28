@@ -929,13 +929,13 @@ class SunburstSeries extends TreemapSeries {
         series.mapOptionsToLevel = mapOptionsToLevel;
 
         // #10669 - verify if all nodes have unique ids
-        series.data.forEach((child): void => {
-            if (nodeIds[child.id]) {
+        for (const point of series.points) {
+            if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
             // map
-            nodeIds[child.id] = true;
-        });
+            nodeIds[point.id] = true;
+        }
 
         // reset object
         nodeIds = {};
