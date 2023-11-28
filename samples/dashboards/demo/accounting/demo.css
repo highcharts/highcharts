@@ -1,0 +1,143 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+
+/* Dashboards */
+
+.highcharts-dashboards-component-title {
+    font-size: 1rem;
+    font-weight: 100;
+    margin-top: 25px;
+    margin-bottom: 4px;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-dashboards-component-subtitle {
+    font-weight: 100;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-dashboards-component-kpi-value {
+    font-size: 2.5rem;
+}
+
+#rev-chart-kpi .highcharts-dashboards-component-kpi-value,
+#cost-chart-kpi .highcharts-dashboards-component-kpi-value,
+#res-chart-kpi .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
+
+/* Highcharts */
+
+:root,
+.highcharts-light {
+    --highcharts-color-0: #4689eb;
+    --highcharts-color-1: #e6e6e6;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-color-1: #4c4c4c;
+    }
+}
+
+.gauge .highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.gauge .highcharts-title {
+    font-size: 0.8rem;
+}
+
+.highcharts-data-label-box {
+    display: none;
+}
+
+.highcharts-gauge-series .highcharts-pivot,
+.highcharts-gauge-series .highcharts-dial {
+    fill: var(--highcharts-neutral-color-60);
+    stroke: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-plot-band {
+    fill-opacity: 1;
+}
+
+.highcharts-plot-band.null-band {
+    fill: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-plot-band.warn-band {
+    fill: #ffa92e;
+}
+
+.highcharts-plot-band.opt-band {
+    fill: #a2efbb;
+}
+
+.highcharts-plot-band.high-band {
+    fill: #8383e5;
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-neutral-color-60);
+}
+
+/* Custom */
+
+.unit {
+    font-size: 11px;
+}
+
+.prediction-line {
+    fill: #debd5b;
+    stroke: #debd5b;
+    stroke-dasharray: 1px 4px;
+}
+
+/* Popup */
+
+#popup {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff5;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#popup .container {
+    height: 60%;
+    width: 90%;
+    max-height: 800px;
+    max-width: 900px;
+    min-height: 100px;
+    min-width: 100px;
+    background: #555;
+    position: relative;
+}
+
+#datagrid-container {
+    width: 100%;
+    height: 100%;
+}
+
+#popup .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: transparent;
+    border: 0;
+    color: var(--highcharts-neutral-color-100);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+}
+
+#popup .close:hover {
+    color: #d33;
+}
