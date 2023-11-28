@@ -439,7 +439,7 @@ function wrapColumnSeriesAnimate(
             }
 
         } else { // Run the animation
-            series.points.forEach((point): void => {
+            for (const point of series.points) {
                 if (point.y !== null) {
                     (point.shapeArgs as any).height = point.height;
                     (point.shapeArgs as any).y = point.shapey; // #2968
@@ -455,7 +455,7 @@ function wrapColumnSeriesAnimate(
                         );
                     }
                 }
-            });
+            }
 
             // redraw datalabels to the correct position
             this.drawDataLabels();
