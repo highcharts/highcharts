@@ -18,11 +18,12 @@ const chartPreview = async theme => {
                 mouseWheel: {
                     type: ''
                 }
-            }
+            },
+            borderRadius: 3
         },
 
         title: {
-            text: 'Chart preview'
+            text: ''
         },
 
         xAxis: {
@@ -94,7 +95,8 @@ const chartPreview = async theme => {
     // Create the chart
     Highcharts.mapChart('container-map', {
         chart: {
-            map: topology
+            map: topology,
+            borderRadius: 3
         },
 
         title: {
@@ -133,6 +135,10 @@ const chartPreview = async theme => {
         ).then(response => response.json());
     }
     Highcharts.stockChart('container-stock', {
+        chart: {
+            borderRadius: 3
+        },
+
         rangeSelector: {
             selected: 1
         },
@@ -179,12 +185,18 @@ const generate = async () => {
 
     const pre = document.getElementById('css'),
         neutralPreview = document.getElementById('neutral-preview'),
-        highlightPreview = document.getElementById('highlight-preview');
-    document.body.style.backgroundColor = backgroundColor;
-    document.body.style.color = neutralColor100;
+        highlightPreview = document.getElementById('highlight-preview'),
+        pageTextColor = Highcharts.SVGRenderer.prototype
+            .getContrast(backgroundColor);
+    document.body.style.color = pageTextColor;
+    document.body.style.backgroundColor = Highcharts.SVGRenderer.prototype
+        .getContrast(document.body.style.color)
+        .replace('#000000', '#222222');
     [...document.querySelectorAll('.demo-content pre,.demo-content a')].forEach(
         element => {
-            element.style.color = highlightColor100;
+            element.style.color = pageTextColor === '#ffffff' ?
+                'lightgreen' :
+                'green';
         }
     );
 

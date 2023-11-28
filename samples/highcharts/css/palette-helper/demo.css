@@ -3,6 +3,14 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+h3 {
+    margin-top: 2em;
+}
+
+.clear {
+    clear: both;
+}
+
 #demo-content {
     box-shadow: none;
     background: none;
@@ -64,13 +72,14 @@ input[type="color"]::-moz-color-swatch {
 }
 
 #container-map {
-    width: 40%;
+    width: calc(40% - 10px);
     float: left;
 }
 
 #container-stock {
     width: 60%;
     float: left;
+    margin-left: 10px;
 }
 
 @media screen and (max-width: 600px) {
@@ -80,5 +89,6 @@ input[type="color"]::-moz-color-swatch {
 
     #container-stock {
         width: auto;
+        margin: 0;
     }
 }
