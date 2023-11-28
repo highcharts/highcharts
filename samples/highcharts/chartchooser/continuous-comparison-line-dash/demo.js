@@ -24,7 +24,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e340a13/samples/data/operating-systems-trends.csv'
+        csvURL: 'https://www.highcharts.com/samples/data/operating-systems-trends.csv'
     },
 
     series: [{
