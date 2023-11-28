@@ -176,7 +176,7 @@ class WordcloudSeries extends ColumnSeries {
             }),
             maxWeight = Math.max.apply(null, weights),
             // concat() prevents from sorting the original array.
-            data = series.points.concat().sort((a, b): number => (
+            points = series.points.concat().sort((a, b): number => (
                 b.weight - a.weight // Sort descending
             ));
 
@@ -195,7 +195,7 @@ class WordcloudSeries extends ColumnSeries {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        data.forEach((point): void => {
+        for (const point of points) {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -218,16 +218,16 @@ class WordcloudSeries extends ColumnSeries {
                 height: bBox.height,
                 width: bBox.width
             };
-        });
+        }
 
         // Calculate the playing field.
-        field = getPlayingField(xAxis.len, yAxis.len, data);
+        field = getPlayingField(xAxis.len, yAxis.len, points);
         const spiral = getSpiral(series.spirals[options.spiral as any], {
             field: field
         });
 
         // Draw all the points.
-        data.forEach((point): void => {
+        for (const point of points) {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -238,7 +238,7 @@ class WordcloudSeries extends ColumnSeries {
                     fontSize: fontSize + 'px'
                 }, options.style as any),
                 placement = placementStrategy(point, {
-                    data: data,
+                    data: points,
                     field: field,
                     placed: placed,
                     rotation: rotation
@@ -337,7 +337,7 @@ class WordcloudSeries extends ColumnSeries {
                 shapeArgs: void 0,
                 shapeType: 'text'
             });
-        });
+        }
 
         // Destroy the element after use.
         testElement = testElement.destroy() as any;
