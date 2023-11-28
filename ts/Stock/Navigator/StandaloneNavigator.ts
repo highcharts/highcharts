@@ -6,15 +6,17 @@ import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 const {
     merge,
-    isString,
-    addEvent
+    addEvent,
+    pick
 } = U;
 
 type StandaloneNavigatorOptions = {
-    navigator: NavigatorOptions,
-    width: number,
-    height: number,
-    colors: []
+    navigator: NavigatorOptions;
+    width: number;
+    height: number;
+    min: number;
+    max: number;
+    colors: [];
 }
 
 const defaultNavOptions = {
@@ -66,23 +68,10 @@ const forcedNavOptions = {
 }
 class StandaloneNavigator {
 
-    public time = G.time;
     public eventsToUnbind: Array<Function> = [];
     public navigator: Navigator;
-    public initSeries = (G as any).Chart.prototype.initSeries;
-    public renderTo: any;
-    public container:  any;
     public boundAxes: Array<Axis> = [];
-    public numberFormatter = (G as any).numberFormat;
-    public pointer = {
-        normalize: (e: any) => {
-            e.chartX = e.pageX;
-            e.chartY = e.pageY;
-            return e;
-        }
-    };
     public options: StandaloneNavigatorOptions;
-    public userOptions = {}
 
     public static navigator(
         renderTo: (string|globalThis.HTMLElement),
@@ -124,6 +113,12 @@ class StandaloneNavigator {
         });
     }
 
+    public update(newOptions: Partial<StandaloneNavigatorOptions>) {
+        newOptions = merge(this.options, newOptions, forcedNavOptions);
+        // this.navigator.chart.update(newOptions.chart);
+        // this.navigator.update(newOptions.navigator);
+    }
+
     public unbind(axisOrChart?: Chart | Axis) {
         if (!axisOrChart) {
             this.boundAxes.length = 0;
@@ -159,7 +154,7 @@ class StandaloneNavigator {
             s.redraw();
         });
 
-        let { min, max } = this.getNavigatorExtremes();
+        let { min, max } = this.getInitialExtremes();
         nav.render(min, max);
 
         this.eventsToUnbind.push(addEvent(this.navigator.chart.xAxis[0], 'setExtremes', (e) => {
@@ -170,9 +165,27 @@ class StandaloneNavigator {
         }));
     }
 
-    public getNavigatorExtremes() {
-        // TODO: from options or from series extremes
-        return this.navigator.xAxis.getExtremes();
+    public getRange(): Axis.ExtremesObject {
+        const { min, max } = this.navigator.chart.xAxis[0].getExtremes(),
+            { userMin, userMax, min: dataMin, max: dataMax } =
+                this.navigator.xAxis.getExtremes();
+
+        return { min: pick(min, dataMin), max: pick(max, dataMax), dataMin, dataMax, userMin, userMax }
+    }
+
+    public setRange(min?: number, max?: number): void {
+        this.navigator.chart.xAxis[0].setExtremes(min, max);
+    }
+
+    public getInitialExtremes() {
+        const { min, max } = this.options,
+            { min: defaultMin, max: defaultMax } =
+                this.navigator.xAxis.getExtremes();
+
+        return {
+            min: min || defaultMin,
+            max: max || defaultMax
+        }
     }
 }
 
