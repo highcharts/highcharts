@@ -307,9 +307,6 @@ const generate = async () => {
         return Object.keys(theme).length ? theme : undefined;
     };
     const theme = findColors(defaultOptions);
-    SVGRenderer.buttonTheme = Highcharts.merge(
-        buttonTheme, findColors(buttonTheme)
-    );
 
     // Further extend the theme with some colors that are computed at runtime
     // and not available through the options structure.
