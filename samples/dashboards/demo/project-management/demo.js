@@ -1,15 +1,13 @@
 const plotLines = [{
-        label: {
-            text: 'Today',
-            align: 'right'
-        },
-        value: Date.UTC(2023, 5, 4),
-        zIndex: 10
-    }],
-    plotBands = [{
-        from: Date.UTC(2023, 4, 8),
-        to: Date.UTC(2023, 4, 22)
-    }];
+    label: {
+        text: 'Today',
+        align: 'left',
+        rotation: 0,
+        y: 0
+    },
+    value: Date.UTC(2023, 5, 4),
+    zIndex: 10
+}];
 
 Highcharts.setOptions({
     credits: {
@@ -270,7 +268,6 @@ Dashboards.board('container', {
             },
             xAxis: [{
                 plotLines,
-                plotBands,
                 dateTimeLabelFormats: {
                     day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
                 },
@@ -354,7 +351,8 @@ Dashboards.board('container', {
             },
             accessibility: {
                 description: `The chart shows the timeline of the project. It is
-                    divided into tasks.`,
+                    divided into tasks. There also is a line indicating today's
+                    date.`,
                 typeDescription: `The Gantt chart shows the timeline of
                     the project.`,
                 point: {
@@ -391,7 +389,16 @@ Dashboards.board('container', {
             xAxis: {
                 type: 'datetime',
                 plotLines,
-                plotBands
+                accessibility: {
+                    description: `Axis showing the time from the start of the
+                    project (1 May 2023) to the end of if (12 June 2023). With
+                    today's date marked.`
+                }
+            },
+            yAxis: {
+                accessibility: {
+                    description: 'Number of tasks.'
+                }
             },
             legend: {
                 enabled: true,
@@ -408,7 +415,18 @@ Dashboards.board('container', {
             accessibility: {
                 description: `The chart shows the number of tasks by status
                     over time. The chart is divided into three parts, to do,
-                    done and blocked.`
+                    done and blocked. There also is a line indicating today's
+                    date.`,
+                point: {
+                    descriptionFormatter: function (point) {
+                        return `Week from
+                            ${Highcharts.dateFormat('%e %b %Y', point.x)} Tasks
+                            ${point.series.name}: ${point.y}`;
+                    }
+                },
+                series: {
+                    descriptionFormat: 'Tasks that are {series.name}.'
+                }
             }
         }
     }]
