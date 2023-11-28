@@ -50,7 +50,7 @@ const options = {
     }]
 };
 
-// Imitate getting point from backend:
+// Imitate getting point from backend
 function getNewPoint(i, data) {
     const lastPoint = data[data.length - 1];
 
@@ -80,6 +80,7 @@ function getNewPoint(i, data) {
     ];
 }
 
+// On load, start the interval that adds points
 options.chart = {
     events: {
         load() {
@@ -108,6 +109,7 @@ options.chart = {
     }
 };
 
+// Apply the data to the options
 options.series[0].data = [
     [
         1317888000000,
@@ -1021,4 +1023,5 @@ options.series[0].data = [
     ]
 ];
 
+// Create the chart
 Highcharts.stockChart('container', options);
