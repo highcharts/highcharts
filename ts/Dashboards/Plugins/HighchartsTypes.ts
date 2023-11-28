@@ -32,6 +32,8 @@ import type { default as H } from 'highcharts/es-modules/Core/Globals';
  *
  * */
 
+// If you are adding types here, please also add them to the
+// tools/gulptasks/dashboards/scripts-dts/es-modules/Dashboards/Plugins/HighchartsTypes.d.ts
 
 export type { default as Axis } from 'highcharts/es-modules/Core/Axis/Axis';
 
