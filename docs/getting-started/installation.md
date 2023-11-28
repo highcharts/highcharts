@@ -3,7 +3,7 @@ Installation
 
 ## Loading Highcharts
 
-This article is about installing Highcharts Core, Stock, Maps or Gantt. If you want to install Highcharts Dashboards, see [Dashboards Installation](https://www.highcharts.com/docs/dashboards/installation)
+This article is about installing Highcharts Core, Stock, Maps or Gantt. If you want to install Highcharts Dashboards, see [Dashboards Installation](https://www.highcharts.com/docs/dashboards/installation).
 
 There are many ways to use Highcharts, and you can choose the one that works best with your project.
 
