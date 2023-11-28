@@ -1,5 +1,5 @@
 // const imgPath = 'http://192.168.1.176:3030/';
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d645df6f0c5d8540e5d059a043051cd862f259d0/samples/graphics/cyber-monday/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/cyber-monday/';
 
 // title, tip, image
 const collection = ['Add to your Highcharts Collection', 'If you\'ve been holding out for a deal on a particular Highcharts data visualization libraries, you\'ll want to check out our Cyber Week Deal.', 'core.svg'];
@@ -619,9 +619,9 @@ const sale = {
                 format: `
                 <div id="sale">
                 <img id="discount" src="${imgPath}discount.svg" alt="70% off"/>
-                <img id="icon" src="${imgPath}icon.svg" 
+                <img id="icon" src="${imgPath}icon.svg"
                 alt="dashboards product icon"/>
-                <img id="logo-type" alt="Highcharts" 
+                <img id="logo-type" alt="Highcharts"
                 src="${imgPath}logo-type.svg"/>
                 <p>Dashboards</p>
                 <div id="terms" class="labels"><a href="#">see terms</a></div>

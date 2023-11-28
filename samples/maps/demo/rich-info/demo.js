@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const csv = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-history.csv'
+        'https://www.highcharts.com/samples/data/world-population-history.csv'
     ).then(response => response.text());
 
     // Very simple and case-specific CSV string splitting
