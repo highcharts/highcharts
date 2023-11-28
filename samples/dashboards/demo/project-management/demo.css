@@ -5,11 +5,11 @@
 :root,
 .highcharts-light {
     /* Colors for data series and points */
-    --highcharts-color-0: #8cb8a3;
-    --highcharts-color-1: #636c79;
-    --highcharts-color-2: #e6d3a4;
-    --highcharts-color-3: #fb8d83;
-    --highcharts-color-5: #ccc;
+    --highcharts-color-0: #10643b;
+    --highcharts-color-1: #223f69;
+    --highcharts-color-2: #725200;
+    --highcharts-color-3: #6e1b14;
+    --highcharts-color-5: #404040;
 
     /* Extra colors */
     --gray: #ccc;
@@ -81,7 +81,7 @@
     stroke-width: 0;
 }
 
-.highcharts-plot-lines-0 .highcharts-plot-line {
+.highcharts-plot-line {
     stroke-width: 3px;
 }
 
