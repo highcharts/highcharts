@@ -1164,19 +1164,65 @@ namespace Component {
      * The sync can be an object configuration containing: `highlight`,
      * `visibility` or `extremes`. For the Navigator Component `crossfilter`
      * sync can be used.
-     * ```
+     *
      * Example:
+     * ```
      * {
      *     highlight: true
      * }
      * ```
-     *
      */
     export interface SyncOptions {
-        highlight?: boolean | Sync.OptionsEntry;
-        visibility?: boolean | Sync.OptionsEntry;
-        extremes?: boolean | Sync.OptionsEntry;
-        crossfilter?: boolean | CrossfilterSyncOptions;
+        /**
+         * Crossfilter sync is available for Navigator components. Modifies data
+         * by selecting only those rows that meet common ranges.
+         *
+         * Alternatively to the boolean value, it can accept an object
+         * containing additional options for operating this type of
+         * synchronization.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
+         *
+         * @default false
+         */
+        crossfilter?: boolean|CrossfilterSyncOptions;
+        /**
+         * Extremes sync is available for Highcharts, KPI, DataGrid and
+         * Navigator components. Sets a common range of displayed data. For the
+         * KPI Component sets the last value.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * @default false
+         */
+        extremes?: boolean|Sync.OptionsEntry;
+        /**
+         * Highlight sync is available for Highcharts and DataGrid components.
+         * It allows to highlight hovered corresponding rows in the table and
+         * chart points.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * @default false
+         */
+        highlight?: boolean|Sync.OptionsEntry;
+        /**
+         * Visibility sync is available for Highcharts and DataGrid components.
+         * Synchronizes the visibility of data from a hidden/shown series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+         *
+         * @default false
+         */
+        visibility?: boolean|Sync.OptionsEntry;
     }
 
     /**
@@ -1184,13 +1230,15 @@ namespace Component {
      */
     export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
         /**
-         * Whether navigators should affect each other or only the connector.
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
          *
          * @default false
          */
         affectNavigator?: boolean;
     }
 
+    /** @internal */
     export type SyncType = keyof SyncOptions;
 
     export interface ComponentOptions {
