@@ -83,13 +83,13 @@ const externals = [async function (info) {
         case 'Core/Renderer/RendererUtilities':
         case 'Core/Utilities':
             return createUMDConfig();
-        case 'Series/Line/ColumnSeries':
+        case 'Series/Column/ColumnSeries':
             return createUMDConfig('Series', 'types', 'column');
         case 'Series/Line/LineSeries':
             return createUMDConfig('Series', 'types', 'line');
-        case 'Series/Line/PieSeries':
+        case 'Series/Pie/PieSeries':
             return createUMDConfig('Series', 'types', 'pie');
-        case 'Series/Line/ScatterSeries':
+        case 'Series/Scatter/ScatterSeries':
             return createUMDConfig('Series', 'types', 'line');
         default:
             return void 0;

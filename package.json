@@ -61,6 +61,7 @@
     "@typescript-eslint/parser": "^5.50.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
+    "bundle-declarations-webpack-plugin": "^4.0.1",
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
