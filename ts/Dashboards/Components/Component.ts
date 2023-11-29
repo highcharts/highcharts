@@ -438,10 +438,13 @@ abstract class Component {
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = sync[handlerName];
+                        const handler = sync[handlerName as Component.SyncType];
 
                         if (handler && typeof handler === 'object') {
-                            carry[handlerName] = handler;
+                            carry[handlerName] = merge(
+                                defaultHandlers[handlerName],
+                                handler
+                            );
                         }
                         if (handler && typeof handler === 'boolean') {
                             carry[handlerName] = defaultHandlers[handlerName];
@@ -1169,7 +1172,26 @@ namespace Component {
      * ```
      *
      */
-    export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
+    export interface SyncOptions {
+        highlight?: boolean | Sync.OptionsEntry;
+        visibility?: boolean | Sync.OptionsEntry;
+        extremes?: boolean | Sync.OptionsEntry;
+        crossfilter?: boolean | CrossfilterSyncOptions;
+    }
+
+    /**
+     * The crossfilter sync options.
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether navigators should affect each other or only the connector.
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
+    export type SyncType = keyof SyncOptions;
 
     export interface ComponentOptions {
 
