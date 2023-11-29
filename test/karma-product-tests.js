@@ -1,8 +1,7 @@
 // Map of products to subfolders of unit-tests to run
 module.exports = {
     always: [
-        'accessibility',
-        'tooltip'
+        'accessibility'
     ],
     Core: [
         'axis',
@@ -17,7 +16,8 @@ module.exports = {
         'highcharts',
         'styled-mode',
         'legend',
-        'polar'
+        'polar',
+        'tooltip'
     ],
     Stock: [
         'stock-tools',
@@ -26,13 +26,13 @@ module.exports = {
         'indicator-sma',
         'series-candlestick',
         'navigator',
-        'rangeselector'
+        'rangeselector',
+        'tooltip'
     ],
     Gantt: ['gantt'],
     Maps: [
         'maps',
-        'coloraxis',
-        'mapview'
+        'coloraxis'
     ],
     Dashboards: []
 };
