@@ -60,6 +60,7 @@ const externals = [async function (info) {
         case 'Core/Animation/Fx':
         case 'Core/Axis/Axis':
         case 'Core/Axis/PlotLineOrBand/PlotLineOrBand':
+        case 'Core/Axis/Stacking/StackItem':
         case 'Core/Axis/Tick':
         case 'Core/Chart/Chart':
         case 'Core/Color/Color':
@@ -74,8 +75,8 @@ const externals = [async function (info) {
         case 'Core/Series/Series':
         case 'Core/Series/SeriesRegistry':
         case 'Core/Templating':
-        case 'Core/Tooltip':
         case 'Core/Time':
+        case 'Core/Tooltip':
             return createUMDConfig(name);
         case 'Core/Animation/AnimationUtilities':
         case 'Core/Defaults':
@@ -83,6 +84,12 @@ const externals = [async function (info) {
         case 'Core/Renderer/RendererUtilities':
         case 'Core/Utilities':
             return createUMDConfig();
+        case 'Series/Area/AreaSeries':
+            return createUMDConfig('Series', 'types', 'area');
+        case 'Series/AreaSpline/AreaSplineSeries':
+            return createUMDConfig('Series', 'types', 'areaspline');
+        case 'Series/Bar/BarSeries':
+            return createUMDConfig('Series', 'types', 'bar');
         case 'Series/Column/ColumnSeries':
             return createUMDConfig('Series', 'types', 'column');
         case 'Series/Line/LineSeries':
@@ -90,7 +97,9 @@ const externals = [async function (info) {
         case 'Series/Pie/PieSeries':
             return createUMDConfig('Series', 'types', 'pie');
         case 'Series/Scatter/ScatterSeries':
-            return createUMDConfig('Series', 'types', 'line');
+            return createUMDConfig('Series', 'types', 'scatter');
+        case 'Series/Spline/SplineSeries':
+            return createUMDConfig('Series', 'types', 'spline');
         default:
             return void 0;
     }

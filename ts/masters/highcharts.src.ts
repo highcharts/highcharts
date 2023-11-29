@@ -106,12 +106,15 @@ BorderRadius.compose(Series, PieSeries, SVGElement, SVGRenderer);
 DataLabel.compose(Series);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
-OverlappingDataLabels.compose(Chart);
 PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
 ScrollablePlotArea.compose(Axis, Chart, Series);
 StackingAxis.compose(Axis, Chart, Series);
 Tooltip.compose(Pointer);
+if (!G.OverlappingDataLabels) {
+    G.OverlappingDataLabels = OverlappingDataLabels;
+    OverlappingDataLabels.compose(Chart);
+}
 // Default Export
 export default G;
