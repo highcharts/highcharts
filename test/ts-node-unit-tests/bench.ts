@@ -55,7 +55,6 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
             stackSizeMb: 20
         },
         stdout: false // pipe to main,
-        
         },
     );
 
@@ -106,7 +105,7 @@ function quartile (arr: number[], q:number) {
     return sorted[base];
 };
 
-async function runRest(testFile: string) : Promise<BenchResults>{
+async function runTest(testFile: string) : Promise<BenchResults>{
     const { config } = await import(testFile);
 
     const results = [];
@@ -186,7 +185,7 @@ async function benchmark(){
         for (const testFile of testFiles) {
             const testdir =testFile.replace(/[^/]*$/, '').replace(BENCH_PATH, '');
             const dirPath = reportDir + testdir;
-            const data = await runRest(testFile);
+            const data = await runTest(testFile);
 
             if (!existsSync(dirPath)){
                 await mkdir(dirPath, { recursive: true });
