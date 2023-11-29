@@ -729,7 +729,8 @@ class NavigatorComponent extends Component {
                     values = columnValues;
                 }
 
-                for (let value of values) {
+                for (let i = 0; i < values.length; i++) {
+                    let value = values[i];
 
                     if (value === null) {
                         continue;
