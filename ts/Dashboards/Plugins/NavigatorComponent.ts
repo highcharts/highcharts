@@ -671,7 +671,7 @@ class NavigatorComponent extends Component {
             let values: DataTable.Column = [],
                 data: (
                     Array<(number|string|null)>|
-                    Array<[(number|string), number]>
+                    Array<[number|string, number|null]>
                 );
 
             if (options.sync.crossfilter) {
@@ -757,10 +757,10 @@ class NavigatorComponent extends Component {
 
                 data = seriesData;
                 if (min !== void 0) {
-                    data.unshift([min, null] as any);
+                    data.unshift([min, null]);
                 }
                 if (max !== void 0) {
-                    data.push([max, null] as any);
+                    data.push([max, null]);
                 }
             } else if (typeof values[0] === 'string') {
                 data = values.slice() as Array<string>;
