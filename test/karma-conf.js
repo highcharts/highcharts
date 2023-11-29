@@ -164,38 +164,8 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-function getProductTests () {
-    const { getProductsConfig, resetProductsConfig } = require('../tools/gulptasks/lib/test.js');
-    const productsConfig = getProductsConfig();
-
-    // Remove the temporary config file
-    resetProductsConfig();
-
-    const productTestsMap = require('./karma-product-tests.js');
-
-    const products = productsConfig.products;
-
-    if (!products) {
-       return false;
-    }
-
-    console.log(`Running tests for products: ${products.join(', ')}`);
-
-    const tests = productTestsMap.always;
-    for (const product of products) {
-        const productTests = [];
-        tests.push(...productTestsMap[product]);
-
-        if (!productTests) {
-            console.error(`Product ${product} not found in karma-product-tests.js`);
-        }
-    }
-
-    return tests;
-}
 
 module.exports = function (config) {
-
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
 
@@ -253,7 +223,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    let tests = (
+    const tests = config.tests ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -262,16 +232,6 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
-
-    const productTests = getProductTests();
-    if (productTests) {
-        tests = productTests.map(path => `samples/unit-tests/${path}/**/demo.js`);
-    }
-
-    if (tests.length === 0) {
-        // TODO: Exit before spawning the server
-        tests.push('unit-tests/no-data/**/demo.js');
-    }
 
     // Get the files
     let files = require('./karma-files.json');

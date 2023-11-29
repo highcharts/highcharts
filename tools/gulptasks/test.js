@@ -241,74 +241,20 @@ async function test() {
     const argv = require('yargs').argv;
     const log = require('./lib/log');
 
-    const { setProductsConfig } = require('./lib/test');
+    const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
-    setProductsConfig();
+    if (argv.help || argv.helpme) {
+        log.message(
+            `HIGHCHARTS TYPESCRIPT TEST RUNNER
 
-    const { shouldRun, saveRun } = require('./lib/test');
-
-    if (argv.help) {
-        log.message(`
-HIGHCHARTS TEST RUNNER
-
-Available arguments for 'gulp test':
-
---browsers
-Comma separated list of browsers to test. Available browsers are
-'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
-installed on the local system. Defaults to ChromeHeadless.
-
-In addition, virtual browsers from Browserstack are supported. They are
-prefixed by the operating system. Available BrowserStack browsers are
-'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
-Win.IE'.
-
-For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
-
-A shorthand option, '--browsers all', runs all BrowserStack machines.
-
---browsercount
-Number of browserinstances to spread/shard the tests across. Default value is 2.
-Will default use ChromeHeadless browser. For other browsers specify
-argument --splitbrowsers (same usage as above --browsers argument).
-
---debug
-Skips rebuilding and prints some debugging info.
-
---force
-Forces all tests without cached results.
-
---speak
-Says if tests failed or succeeded.
-
---tests
-Comma separated list of tests to run. Defaults to '*.*' that runs all tests
-in the 'samples/' directory.
-Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
-directory.
-
---testsAbsolutePath
-Comma separated list of tests to run. By default runs all tests
-in the 'samples/' directory.
-Example:
-'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
-runs all tests in the file.
-
---visualcompare
+Available arguments for 'gulp test':` +
+            HELP_TEXT_COMMON +
+            `--visualcompare
 Performs a visual comparison of the output and creates a reference.svg and candidate.svg
 when doing so. A JSON file with the results is produced in the location
 specified by config.imageCapture.resultsOutputPath.
-
---ts
-Compile TypeScript-based tests.
-
---dots
-Use the less verbose 'dots' reporter
-
---timeout
-Set a different disconnect timeout from default config
-
-`);
+            `
+        );
         return;
     }
 
@@ -351,22 +297,38 @@ Set a different disconnect timeout from default config
         log.message('Run `gulp test --help` for available options');
 
         const KarmaServer = require('karma').Server;
+        const { parseConfig } = require('karma').config;
+
         const PluginError = require('plugin-error');
         const {
             reporters: defaultReporters,
             browserDisconnectTimeout: defaultTimeout
         } = require(KARMA_CONFIG_FILE);
 
+        const { getProductTests } = require('./lib/test');
+        const productTests = getProductTests();
+
+        // If false, there's no modified products
+        // If undefined, there's no product argument, so fall back to karma config
+        if (productTests === false) {
+            log.message('No tests to run');
+            return;
+        }
+
+        const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
+            reporters: argv.dots ? ['dots'] : defaultReporters,
+            browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
+            singleRun: true,
+            tests: productTests ?
+                productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
+                void 0,
+            client: {
+                cliArgs: argv
+            }
+        });
+
         await new Promise((resolve, reject) => new KarmaServer(
-            {
-                configFile: KARMA_CONFIG_FILE,
-                reporters: argv.dots ? ['dots'] : defaultReporters,
-                browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-                singleRun: true,
-                client: {
-                    cliArgs: argv
-                }
-            },
+            karmaConfig,
             err => {
 
                 // Force exit in BrowserStack GitHub Action
@@ -402,4 +364,4 @@ Set a different disconnect timeout from default config
     }
 }
 
-gulp.task('test', gulp.series('test-before', 'test-docs', 'scripts', test, 'test-after'));
+gulp.task('test', gulp.series('test-docs', 'scripts', test));
