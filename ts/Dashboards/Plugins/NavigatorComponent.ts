@@ -30,7 +30,7 @@ import type {
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
-import type { RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
@@ -39,6 +39,7 @@ const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import U from '../../Core/Utilities.js';
+import DataTable from 'highcharts/es-modules/Data/DataTable';
 const {
     addEvent,
     diffObjects,
@@ -665,18 +666,68 @@ class NavigatorComponent extends Component {
             const table = this.connector.table,
                 options = this.options,
                 column = this.getColumnAssignment(),
-                values = (table.getColumn(column[0], true) || []);
+                columnValues = table.getColumn(column[0], true) || [];
 
-            let data: (
-                Array<(number|string|null)>|
-                Array<[(number|string), number]>
-            );
+            let values: DataTable.Column = [],
+                data: (
+                    Array<(number|string|null)>|
+                    Array<[(number|string), number]>
+                );
 
             if (options.sync.crossfilter) {
                 const seriesData: Array<[(number|string), number]> = [],
-                    xData: Array<(number|string)> = [];
+                    xData: Array<(number|string)> = [],
+                    modifierOptions = table.getModifier()?.options;
 
-                let index: number;
+                let index: number,
+                    max: number|undefined = void 0,
+                    min: number|undefined = void 0;
+
+                if (
+                    options.crossfilterOptions?.syncNavigators &&
+                    modifierOptions?.type === 'Range'
+                ) {
+                    const appliedRanges =
+                        (modifierOptions as RangeModifierOptions).ranges.filter(
+                            (range): boolean => range.column !== column[0]
+                        ),
+                        rangedColumns = appliedRanges.map(
+                            (range): DataTable.Column => (
+                                table.getColumn(range.column, true) || []
+                            )
+                        );
+
+                    for (let i = 0; i < columnValues.length; i++) {
+                        let value = columnValues[i];
+
+                        if (
+                            value === null ||
+                            value === void 0 ||
+                            !isNumber(+value)
+                        ) {
+                            continue;
+                        }
+
+                        value = +value;
+                        if (max === void 0 || max < value) {
+                            max = value;
+                        }
+                        if (min === void 0 || min > value) {
+                            min = value;
+                        }
+
+                        if (appliedRanges.every((range, j): boolean => (
+                            rangedColumns[j][i] as string|number|boolean >=
+                                (range.minValue ?? -Infinity) &&
+                            rangedColumns[j][i] as string|number|boolean <=
+                                (range.maxValue ?? Infinity)
+                        ))) {
+                            values.push(value);
+                        }
+                    }
+                } else {
+                    values = columnValues;
+                }
 
                 for (let value of values) {
 
@@ -703,6 +754,12 @@ class NavigatorComponent extends Component {
                 ));
 
                 data = seriesData;
+                if (min !== void 0) {
+                    data.unshift([min, null] as any);
+                }
+                if (max !== void 0) {
+                    data.push([max, null] as any);
+                }
             } else if (typeof values[0] === 'string') {
                 data = values.slice() as Array<string>;
             } else {
