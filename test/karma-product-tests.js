@@ -1,25 +1,38 @@
 // Map of products to subfolders of unit-tests to run
 module.exports = {
-    always: ['accessibility'],
+    always: [
+        'accessibility',
+        'tooltip'
+    ],
     Core: [
         'axis',
         'chart',
         'exporting',
         'point',
+        'series',
         'series-line',
         'series-column',
         'series-pie',
-        'tooltip',
+        'series-scatter',
         'highcharts',
-        'styled-mode'
+        'styled-mode',
+        'legend',
+        'polar'
     ],
     Stock: [
         'stock-tools',
         'stockchart',
         'indicators',
-        'indicator-*'
+        'indicator-sma',
+        'series-candlestick',
+        'navigator',
+        'rangeselector'
     ],
     Gantt: ['gantt'],
-    Maps: ['maps'],
+    Maps: [
+        'maps',
+        'coloraxis',
+        'mapview'
+    ],
     Dashboards: []
 };
