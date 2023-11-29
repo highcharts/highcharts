@@ -37,6 +37,9 @@ import Component from '../Components/Component.js';
 const NavigatorComponentDefaults:
 Globals.DeepPartial<NavigatorComponentOptions> = {
     type: 'Navigator',
+    crossfilterOptions: {
+        syncNavigators: false
+    },
     chartOptions: {
         chart: {
             animation: false,
@@ -102,7 +105,8 @@ Globals.DeepPartial<NavigatorComponentOptions> = {
             enabled: false
         },
         xAxis: {
-            visible: false
+            visible: false,
+            minRange: Number.MIN_VALUE
         },
         yAxis: {
             visible: false
