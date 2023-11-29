@@ -323,7 +323,7 @@ specified by config.imageCapture.resultsOutputPath.
             reporters: argv.dots ? ['dots'] : defaultReporters,
             browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
             singleRun: true,
-            tests: productTests ?
+            tests: Array.isArray(productTests) ?
                 productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
                 void 0,
             client: {
