@@ -20,7 +20,12 @@ const mastersFolder = Path.join(sourceFolder, 'masters');
 const targetFolder = './code/';
 
 const namespace = 'Highcharts';
-const productMasters = ['highcharts', 'highcharts-gantt', 'highmaps', 'highstock'];
+const productMasters = [
+    'highcharts',
+    'highcharts-gantt',
+    'highmaps',
+    'highstock'
+];
 
 /* *
  *
@@ -49,8 +54,10 @@ const externals = [async function (info) {
         .relative(sourceFolder, Path.join(info.context, info.request))
         .replace(/\.js$/u, '');
     const name = Path.posix.basename(path);
+    const issuer = Path.posix.basename(info.issuer || '', '.src.js');
 
     switch (path) {
+        case 'Core/Animation/Fx':
         case 'Core/Axis/Axis':
         case 'Core/Axis/PlotLineOrBand/PlotLineOrBand':
         case 'Core/Axis/Tick':
@@ -69,10 +76,11 @@ const externals = [async function (info) {
         case 'Core/Templating':
         case 'Core/Tooltip':
         case 'Core/Time':
-        case 'Map/MapView':
             return createUMDConfig(name);
+        case 'Core/Animation/AnimationUtilities':
         case 'Core/Defaults':
         case 'Core/Globals':
+        case 'Core/Renderer/RendererUtilities':
         case 'Core/Utilities':
             return createUMDConfig();
         case 'Series/Line/ColumnSeries':
@@ -86,6 +94,7 @@ const externals = [async function (info) {
         default:
             return void 0;
     }
+
 }];
 
 const webpacks = FSLib

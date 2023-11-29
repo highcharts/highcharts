@@ -44,8 +44,7 @@ const { getOptions } = D;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
-import RangeSelectorDefaults from
-    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import U from '../Utilities.js';
 const {
@@ -61,8 +60,6 @@ const {
     pushUnique,
     splat
 } = U;
-
-import '../Pointer.js';
 
 /* *
  *
