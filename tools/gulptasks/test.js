@@ -276,6 +276,20 @@ specified by config.imageCapture.resultsOutputPath.
         testsDirectory: TESTS_DIRECTORY
     };
 
+    const { getProductTests } = require('./lib/test');
+    const productTests = getProductTests();
+
+    // If false, there's no modified products
+    // If undefined, there's no product argument, so fall back to karma config
+    if (productTests === false) {
+        log.message('No tests to run, exiting early');
+        return;
+    }
+    const { runTasks } = require('./lib/gulp');
+
+    // Conditionally build required code
+    await runTasks('scripts');
+
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
             log.failure(error.message);
@@ -304,16 +318,6 @@ specified by config.imageCapture.resultsOutputPath.
             reporters: defaultReporters,
             browserDisconnectTimeout: defaultTimeout
         } = require(KARMA_CONFIG_FILE);
-
-        const { getProductTests } = require('./lib/test');
-        const productTests = getProductTests();
-
-        // If false, there's no modified products
-        // If undefined, there's no product argument, so fall back to karma config
-        if (productTests === false) {
-            log.message('No tests to run');
-            return;
-        }
 
         const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
             reporters: argv.dots ? ['dots'] : defaultReporters,
@@ -364,4 +368,4 @@ specified by config.imageCapture.resultsOutputPath.
     }
 }
 
-gulp.task('test', gulp.series('test-docs', 'scripts', test));
+gulp.task('test', gulp.series('test-docs', test));
