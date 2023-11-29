@@ -37,9 +37,6 @@ import Component from '../Components/Component.js';
 const NavigatorComponentDefaults:
 Globals.DeepPartial<NavigatorComponentOptions> = {
     type: 'Navigator',
-    crossfilterOptions: {
-        syncNavigators: false
-    },
     chartOptions: {
         chart: {
             animation: false,

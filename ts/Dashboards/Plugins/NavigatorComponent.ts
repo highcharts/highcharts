@@ -684,7 +684,8 @@ class NavigatorComponent extends Component {
                     min: number|undefined = void 0;
 
                 if (
-                    options.crossfilterOptions?.syncNavigators &&
+                    options.sync.crossfilter !== true &&
+                    options.sync.crossfilter.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
                     const appliedRanges =

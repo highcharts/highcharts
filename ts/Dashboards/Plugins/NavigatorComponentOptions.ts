@@ -73,25 +73,8 @@ export interface NavigatorComponentOptions extends Component.ComponentOptions {
      */
     columnAssignments?: Record<string, string | null>;
 
-    /**
-     * Crossfilter sync options.
-     */
-    crossfilterOptions?: CrossfilterOptions;
-
     type: 'Navigator';
 
-}
-
-/**
- * Crossfilter sync options.
- */
-export interface CrossfilterOptions {
-    /**
-     * Whether navigators should affect each other or only the connector.
-     *
-     * @default false
-     */
-    syncNavigators: boolean;
 }
 
 
