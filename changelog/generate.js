@@ -160,7 +160,7 @@ const getFile = url => new Promise((resolve, reject) => {
                         // Remove series-specific members so that we may isolate
                         // it to plotOptions.series.shortKey
                         const m = longKey.match(
-                            new RegExp('plotOptions\.([a-zA-Z\.]+)\.' + shortKey)
+                            new RegExp('plotOptions\\.([a-zA-Z\\.]+)\\.' + shortKey)
                         );
                         return !m || m[1] === 'series';
                     });
