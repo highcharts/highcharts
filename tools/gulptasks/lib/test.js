@@ -229,13 +229,24 @@ function getProductTests() {
     }
 
     const tests = productTestsMap.always;
-    for (const product of products) {
-        const productTests = [];
-        tests.push(...productTestsMap[product]);
+    const nonProducts = [];
 
-        if (!productTests) {
-            log.warn(`Product ${product} not found in karma-product-tests.js`);
+    for (const product of products) {
+        if (productTestsMap[product]) {
+            tests.push(...productTestsMap[product]);
+        } else {
+            nonProducts.push(product);
         }
+    }
+
+    if (nonProducts.length) {
+        const availableProducts = Object.keys(productTestsMap)
+            .filter(key => key !== 'always');
+        const errorMessage = `Products(s) "${nonProducts.join(', ')}" not found in karma-product-tests.js
+
+Available products are: ${availableProducts.join(', ')}`;
+
+        throw new Error(errorMessage);
     }
 
     return tests;
