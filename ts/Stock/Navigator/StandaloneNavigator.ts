@@ -107,10 +107,14 @@ class StandaloneNavigator {
     }
 
     public destroy() {
-        // TODO: destroy other stuff too
+        // Disconnect events
         this.eventsToUnbind.forEach((f) => {
             f();
         });
+        this.boundAxes.length = 0;
+        this.eventsToUnbind.length = 0;
+        this.navigator.destroy();
+        this.navigator.chart.destroy();
     }
 
     public update(newOptions: Partial<StandaloneNavigatorOptions>) {
@@ -170,7 +174,14 @@ class StandaloneNavigator {
             { userMin, userMax, min: dataMin, max: dataMax } =
                 this.navigator.xAxis.getExtremes();
 
-        return { min: pick(min, dataMin), max: pick(max, dataMax), dataMin, dataMax, userMin, userMax }
+        return {
+            min: pick(min, dataMin),
+            max: pick(max, dataMax),
+            dataMin,
+            dataMax,
+            userMin,
+            userMax
+        }
     }
 
     public setRange(min?: number, max?: number): void {
