@@ -124,7 +124,7 @@ class ZAxis extends Axis implements AxisLike {
 
         if (U.pushUnique(composedMembers, ChartClass)) {
 
-            defaultOptions.zAxis = merge(Axis.defaults.xAxis, {
+            defaultOptions.zAxis = merge(defaultOptions.xAxis, {
                 offset: 0,
                 lineWidth: 0
             });

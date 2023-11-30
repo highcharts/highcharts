@@ -179,8 +179,6 @@ class Axis {
         'userMin'
     ];
 
-    public static defaults = AxisDefaults;
-
     /* *
      *
      *  Constructors
