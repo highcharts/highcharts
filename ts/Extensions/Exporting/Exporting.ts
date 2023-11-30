@@ -1231,6 +1231,11 @@ namespace Exporting {
             }
         });
 
+        // Make sure the `colorAxis` object of the `defaultOptions` isn't used
+        // in the chart copy's user options, because a color axis should only be
+        // added when the user actually applies it.
+        options.colorAxis = chart.userOptions.colorAxis;
+
         // Generate the chart copy
         const chartCopy = new (chart.constructor as typeof Chart)(
             options,

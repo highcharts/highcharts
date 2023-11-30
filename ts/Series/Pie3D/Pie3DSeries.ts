@@ -247,8 +247,7 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        for (const point of series.data) {
-
+        for (const point of series.points) {
             const shapeArgs = point.shapeArgs;
 
             point.shapeType = 'arc3d';

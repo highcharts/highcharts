@@ -87,6 +87,22 @@ async function distRelease() {
         true
     );
 
+    // Copy datagrid files to separate directory
+
+    const dataGridFiles = [
+        'datagrid.js',
+        'datagrid.src.js',
+        'datagrid.js.map',
+        'css/datagrid.css'
+    ];
+
+    dataGridFiles.forEach(file => {
+        fsLib.copyFile(
+            path.join(buildFolder, 'js-gzip', file),
+            path.join(buildFolder, '../', 'datagrid/js-gzip', file)
+        );
+    });
+
     // Change version
 
     await processLib.exec(`npm version --no-git-tag-version ${release}`, {

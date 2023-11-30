@@ -5,7 +5,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/cyber-monday/';
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

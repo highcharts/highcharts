@@ -2161,8 +2161,7 @@ QUnit.test(
 );
 
 QUnit.test('slotWidth', assert => {
-
-    const chart = Highcharts.ganttChart('container', {
+    let chart = Highcharts.ganttChart('container', {
         chart: {
             width: 1000
         },
@@ -2225,5 +2224,46 @@ QUnit.test('slotWidth', assert => {
     assert.ok(
         yAxis.axisTitle.element.textContent.indexOf('...'),
         'The column title should contain an ellipsis'
+    );
+
+    xAxis.remove();
+    chart.xAxis[0].update({
+        tickInterval: 1000 * 60 * 60 * 24 * 30,
+        min: Date.UTC(2016, 11, 31),
+        max: Date.UTC(2018, 1, 30)
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[0],
+        chart.xAxis[0].min,
+        'First tick on x-axis should be set to x-axis min value (#19845).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[chart.xAxis[0].tickPositions.length - 1],
+        chart.xAxis[0].max,
+        'Last tick on x-axis should be set to x-axis max value (#19845).'
+    );
+
+    chart = Highcharts.ganttChart('container', {
+        chart: {
+            inverted: true
+        },
+        xAxis: [{
+            tickInterval: 563609302.32558
+        }],
+        series: [{
+            data: [{
+                start: Date.UTC(2018, 11, 1),
+                end: Date.UTC(2018, 11, 2)
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        2,
+        `For inverted chart, grid x-axis should be closed from both sides
+        with two ticks.`
     );
 });

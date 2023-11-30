@@ -1,0 +1,1 @@
+1. Enable the edit mode and click on the component, the toolbar should not be visible.
