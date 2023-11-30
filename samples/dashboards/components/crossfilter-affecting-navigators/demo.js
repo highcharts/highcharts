@@ -44,6 +44,7 @@ Dashboards.board('container', {
         },
         sync: {
             crossfilter: {
+                enabled: true,
                 affectNavigator: true
             }
         },
@@ -63,6 +64,7 @@ Dashboards.board('container', {
         },
         sync: {
             crossfilter: {
+                enabled: true,
                 affectNavigator: true
             }
         },
@@ -82,6 +84,7 @@ Dashboards.board('container', {
         },
         sync: {
             crossfilter: {
+                enabled: true,
                 affectNavigator: true
             }
         },
