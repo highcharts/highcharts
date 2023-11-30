@@ -11,7 +11,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
 import MapNavigation from '../../Maps/MapNavigation.js';
 import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
@@ -22,8 +21,8 @@ import GeoJSONComposition from '../../Maps/GeoJSONComposition.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 import MapView from '../../Maps/MapView.js';
 import Projection from '../../Maps/Projection.js';
+import './coloraxis.src.js';
 const G: AnyRecord = Highcharts;
-G.ColorAxis = ColorAxis;
 G.MapChart = MapChart;
 G.mapChart = G.Map = MapChart.mapChart;
 G.MapNavigation = MapNavigation;
@@ -32,7 +31,6 @@ G.maps = MapChart.maps;
 G.Projection = Projection;
 G.geojson = GeoJSONComposition.geojson;
 G.topo2geo = GeoJSONComposition.topo2geo;
-ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
 GeoJSONComposition.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 MapNavigation.compose(MapChart, G.Pointer, G.SVGRenderer);

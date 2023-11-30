@@ -13,6 +13,8 @@
 import Highcharts from '../../Core/Globals.js';
 import ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
 const G: AnyRecord = Highcharts;
-G.ColorAxis = ColorAxis;
-ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
+if (!G.ColorAxis) {
+    G.ColorAxis = ColorAxis;
+    ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
+}
 export default Highcharts;
