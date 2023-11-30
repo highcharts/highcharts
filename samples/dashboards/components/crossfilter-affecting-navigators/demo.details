@@ -1,12 +1,10 @@
 ---
 name: Affect navigator crossfilter option demo
-author:
-  - Sophie Bremer
-  - Dawid Dragula
+authors:
+  - Sophie Bremer, Dawid Dragula
 js_wrap: b
 tags:
   - Highcharts Dashboards demo
 categories:
   - General
-use_png_thumbnail: true
 ...

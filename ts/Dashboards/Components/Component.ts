@@ -431,23 +431,41 @@ abstract class Component {
         ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
-        const syncHandlers = Object.keys(sync)
+        const syncHandlers = (Object.keys(sync) as Component.SyncType[])
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = sync[handlerName as Component.SyncType];
+                        const handler = sync[handlerName];
 
-                        if (handler && typeof handler === 'object') {
-                            carry[handlerName] = merge(
-                                defaultHandlers[handlerName],
-                                handler
-                            );
-                        }
-                        if (handler && typeof handler === 'boolean') {
-                            carry[handlerName] = defaultHandlers[handlerName];
+                        if (handler === true) {
+                            carry[handlerName] = {
+                                enabled: true,
+                                ...defaultHandlers[handlerName]
+                            };
+                        } else if (handler && handler.enabled) {
+                            const defaultHandler = defaultHandlers[handlerName];
+
+                            if (defaultHandler) {
+                                if (
+                                    handler.emitter === true ||
+                                    handler.emitter === void 0
+                                ) {
+                                    handler.emitter =
+                                        defaultHandlers[handlerName].emitter;
+                                }
+                                if (
+                                    handler.handler === true ||
+                                    handler.emitter === void 0
+                                ) {
+                                    handler.handler =
+                                        defaultHandlers[handlerName].handler;
+                                }
+                            }
+
+                            carry[handlerName] = handler;
                         }
                     }
 
