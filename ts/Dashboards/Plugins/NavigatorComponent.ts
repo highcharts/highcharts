@@ -466,7 +466,11 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        if (this.options.sync.crossfilter) {
+        const crossfilterOptions = this.options.sync.crossfilter;
+        if ((
+            typeof crossfilterOptions === 'object' &&
+            crossfilterOptions.enabled
+        ) || crossfilterOptions) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
@@ -666,7 +670,8 @@ class NavigatorComponent extends Component {
             const table = this.connector.table,
                 options = this.options,
                 column = this.getColumnAssignment(),
-                columnValues = table.getColumn(column[0], true) || [];
+                columnValues = table.getColumn(column[0], true) || [],
+                crossfilterOptions = options.sync.crossfilter;
 
             let values: DataTable.Column = [],
                 data: (
@@ -674,7 +679,11 @@ class NavigatorComponent extends Component {
                     Array<[number|string, number|null]>
                 );
 
-            if (options.sync.crossfilter) {
+            if ((
+                typeof crossfilterOptions === 'object' &&
+                crossfilterOptions.enabled
+            ) || crossfilterOptions) {
+
                 const seriesData: Array<[(number|string), number]> = [],
                     xData: Array<(number|string)> = [],
                     modifierOptions = table.getModifier()?.options;
@@ -684,8 +693,8 @@ class NavigatorComponent extends Component {
                     min: number|undefined = void 0;
 
                 if (
-                    options.sync.crossfilter !== true &&
-                    options.sync.crossfilter.affectNavigator &&
+                    crossfilterOptions !== true &&
+                    crossfilterOptions.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
                     const appliedRanges =
@@ -800,7 +809,8 @@ class NavigatorComponent extends Component {
         options: Partial<NavigatorComponentOptions>,
         shouldRerender: boolean = true
     ): Promise<void> {
-        const chart = this.chart;
+        const chart = this.chart,
+            crossfilterOptions = this.options.sync.crossfilter;
 
         await super.update(options, false);
 
@@ -812,7 +822,10 @@ class NavigatorComponent extends Component {
             chart.update(
                 merge(
                     (
-                        this.options.sync.crossfilter ?
+                        (
+                            typeof crossfilterOptions === 'object' &&
+                            crossfilterOptions.enabled
+                        ) || crossfilterOptions ?
                             {
                                 navigator: {
                                     xAxis: {
