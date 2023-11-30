@@ -765,6 +765,10 @@ class NavigatorComponent extends Component {
                 ));
 
                 data = seriesData;
+
+                // Add a minimum and maximum of the unmodified column with null
+                // values to maintain the correct extremes without having to
+                // refresh them.
                 if (min !== void 0) {
                     data.unshift([min, null]);
                 }
