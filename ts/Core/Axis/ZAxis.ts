@@ -21,8 +21,6 @@ import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
-import AxisDefaults from './AxisDefaults.js';
-const { xAxis } = AxisDefaults;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import U from '../Utilities.js';
@@ -126,7 +124,7 @@ class ZAxis extends Axis implements AxisLike {
 
         if (U.pushUnique(composedMembers, ChartClass)) {
 
-            defaultOptions.zAxis = merge(xAxis, {
+            defaultOptions.zAxis = merge(Axis.defaults.xAxis, {
                 offset: 0,
                 lineWidth: 0
             });
