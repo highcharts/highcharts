@@ -59,7 +59,7 @@ function getHTML(path) {
         // load async, so sometimes they're loaded prior to screenshot,
         // sometimes not
         .replace(
-            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
         );
 
@@ -86,9 +86,9 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
-            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-\.]+$)/
         ) || src.match(
-            /^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
         if (innerMatch) {
@@ -107,7 +107,7 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to the map collection
         innerMatch = src.match(
-            /^(https:\/\/code.highcharts.com\/mapdata\/([a-z\/\.\-]+))$/
+            /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
         if (innerMatch) {
             filename = innerMatch[2];
