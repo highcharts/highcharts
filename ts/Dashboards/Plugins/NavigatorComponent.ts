@@ -467,10 +467,10 @@ class NavigatorComponent extends Component {
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
         const crossfilterOptions = this.options.sync.crossfilter;
-        if ((
+        if (crossfilterOptions === true || (
             typeof crossfilterOptions === 'object' &&
             crossfilterOptions.enabled
-        ) || crossfilterOptions) {
+        )) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
@@ -679,10 +679,10 @@ class NavigatorComponent extends Component {
                     Array<[number|string, number|null]>
                 );
 
-            if ((
+            if (crossfilterOptions === true || (
                 typeof crossfilterOptions === 'object' &&
                 crossfilterOptions.enabled
-            ) || crossfilterOptions) {
+            )) {
 
                 const seriesData: Array<[(number|string), number]> = [],
                     xData: Array<(number|string)> = [],
@@ -826,10 +826,10 @@ class NavigatorComponent extends Component {
             chart.update(
                 merge(
                     (
-                        (
+                        crossfilterOptions === true || (
                             typeof crossfilterOptions === 'object' &&
                             crossfilterOptions.enabled
-                        ) || crossfilterOptions ?
+                        ) ?
                             {
                                 navigator: {
                                     xAxis: {
