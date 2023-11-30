@@ -31,9 +31,16 @@ import type { default as H } from 'highcharts';
  *  Declarations
  *
  * */
-
-// If you are adding types here, please also add them to the
-// tools/gulptasks/dashboards/scripts-dts/es-modules/Dashboards/Plugins/HighchartsTypes.d.ts
+export namespace Axis {
+    export interface ExtremesObject {
+        dataMax: number;
+        dataMin: number;
+        max: number;
+        min: number;
+        userMax?: number;
+        userMin?: number;
+    }
+}
 
 export type Axis = typeof H['Axis'];
 

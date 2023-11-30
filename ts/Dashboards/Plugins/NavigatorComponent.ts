@@ -453,8 +453,8 @@ class NavigatorComponent extends Component {
 
         const charter = (
             NavigatorComponent.charter ||
-            Globals.win.Highcharts as H
-        );
+            Globals.win.Highcharts
+        ) as any;
 
         this.chartContainer = Globals.win.document.createElement('div');
         this.chart = charter

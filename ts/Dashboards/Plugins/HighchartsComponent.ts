@@ -736,22 +736,21 @@ class HighchartsComponent extends Component {
      *
      */
     private createChart(): Chart {
-        const charter = (
-            HighchartsComponent.charter ||
-            Globals.win.Highcharts
-        );
+        const charter = HighchartsComponent.charter || Globals.win.Highcharts;
 
-        if (this.chartConstructor !== 'chart') {
-            const factory = charter[this.chartConstructor];
-            if (factory) {
-                try {
-                    return new factory(this.chartContainer, this.chartOptions);
-                } catch {
-                    error(
-                        'The Highcharts component is misconfigured: `' +
-                        this.cell.id + '`'
-                    );
-                }
+        if (!this.chartConstructor) {
+            this.chartConstructor = 'chart';
+        }
+
+        const factory = charter[this.chartConstructor] as any;
+        if (factory) {
+            try {
+                return factory(this.chartContainer, this.chartOptions);
+            } catch {
+                error(
+                    'The Highcharts component is misconfigured: `' +
+                    this.cell.id + '`'
+                );
             }
         }
 
