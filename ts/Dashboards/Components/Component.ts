@@ -1251,6 +1251,7 @@ namespace Component {
      * Example:
      * ```
      * {
+     *     enabled: true,
      *     affectNavigator: true
      * }
      * ```
