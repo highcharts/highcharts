@@ -148,13 +148,13 @@ const getFile = url => new Promise((resolve, reject) => {
             // objects
             if (replacements.length > 1) {
                 replacements = replacements.filter(
-                    longKey => longKey.lastIndexOf(shortKey) === longKey.length - shortKey.length
+                    longKey => longKey.startsWith(shortKey)
                 );
 
                 // Check if it is a member on the root series options
                 if (
                     replacements.length > 1 &&
-                    replacements.indexOf(`plotOptions.series.${shortKey}`) !== -1
+                    replacements.includes(`plotOptions.series.${shortKey}`)
                 ) {
                     replacements = replacements.filter(longKey => {
                         // Remove series-specific members so that we may isolate
