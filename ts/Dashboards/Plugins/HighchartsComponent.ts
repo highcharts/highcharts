@@ -55,21 +55,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/GlobalsLike' {
-    interface GlobalsLike {
-        chart: typeof Chart.chart;
-        ganttChart: typeof Chart.chart;
-        mapChart: typeof Chart.chart;
-        stockChart: typeof Chart.chart;
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -88,7 +73,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: H;
+    public static charter: H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -753,13 +738,14 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as H
+            Globals.win.Highcharts
         );
+
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];
             if (factory) {
                 try {
-                    return factory(this.chartContainer, this.chartOptions);
+                    return new factory(this.chartContainer, this.chartOptions);
                 } catch {
                     error(
                         'The Highcharts component is misconfigured: `' +
@@ -773,8 +759,7 @@ class HighchartsComponent extends Component {
             throw new Error('Chart constructor not found');
         }
 
-        this.chart = charter.chart(this.chartContainer, this.chartOptions);
-        return this.chart;
+        return this.chart as any;
     }
 
     /**

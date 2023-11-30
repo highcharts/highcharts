@@ -23,7 +23,7 @@
  * */
 
 
-import type { default as H } from 'highcharts/es-modules/Core/Globals';
+import type { default as H } from 'highcharts';
 
 
 /* *
@@ -35,34 +35,29 @@ import type { default as H } from 'highcharts/es-modules/Core/Globals';
 // If you are adding types here, please also add them to the
 // tools/gulptasks/dashboards/scripts-dts/es-modules/Dashboards/Plugins/HighchartsTypes.d.ts
 
-export type { default as Axis } from 'highcharts/es-modules/Core/Axis/Axis';
+export type Axis = typeof H['Axis'];
 
-export type { default as AxisOptions } from 'highcharts/es-modules/Core/Axis/AxisOptions';
+export type AxisOptions = typeof H['AxisOptions'];
 
-export type { default as Chart } from 'highcharts/es-modules/Core/Chart/Chart';
+export type Chart = typeof H['Chart'];
 
-export type { default as Globals } from 'highcharts/es-modules/Core/Globals';
+export type Globals = typeof H['Globals'];
 
 export type Highcharts = typeof H;
 
-export type { default as Options } from 'highcharts/es-modules/Core/Options';
+export type Options = typeof H['Options'];
 
-export type {
-    default as OrdinalAxis
-} from 'highcharts/es-modules/Core/Axis/OrdinalAxis';
+export type OrdinalAxis = typeof H['OrdinalAxis'];
 
-export type { default as Pane } from 'highcharts/es-modules/Extensions/Pane/Pane';
+export type Pane = typeof H['Pane'];
 
-export type { default as Point } from 'highcharts/es-modules/Core/Series/Point';
+export type Point = typeof H['Point'];
 
-export type {
-    default as PolarComposition
-} from 'highcharts/es-modules/Series/PolarComposition';
+export type PolarComposition = typeof H['PolarComposition'];
 
-export type { default as Series } from 'highcharts/es-modules/Core/Series/Series';
+export type Series = typeof H['Series'];
 
-export type { default as SeriesOptions } from 'highcharts/es-modules/Core/Series/SeriesOptions';
-
+export type SeriesOptions = typeof H['SeriesOptions'];
 
 /* *
  *

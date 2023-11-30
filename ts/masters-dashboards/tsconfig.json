@@ -8,8 +8,8 @@
         "outDir": "../../js/",
         "rootDir": "../",
         "paths": {
-            "highcharts/es-modules/*": [
-                "../*"
+            "highcharts": [
+                "../masters/highcharts.src"
             ]
         }
     },

@@ -7,6 +7,14 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import type OrdinalAxis from '../Core/Axis/OrdinalAxis';
+import type Pane from '../Extensions/Pane/Pane';
+import type PolarComposition from '../Series/PolarComposition';
+
+import type GanttChart from '../Core/Chart/GanttChart';
+import type StockChart from '../Core/Chart/StockChart';
+import type MapChart from '../Core/Chart/MapChart';
+
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
 import Defaults from '../Core/Defaults.js';
@@ -111,4 +119,36 @@ ScrollablePlotArea.compose(Axis, Chart, Series);
 StackingAxis.compose(Axis, Chart, Series);
 Tooltip.compose(Pointer);
 // Default Export
-export default G;
+export default G as typeof H;
+// Typing for Dashboards; gets replaced by declarations generator
+type GanttChartType = typeof GanttChart;
+type StockChartType = typeof StockChart;
+type MapChartType = typeof MapChart;
+
+type AxisType = typeof Axis;
+type ChartType = Chart;
+type Globals = typeof Highcharts;
+type OrdinalAxis = typeof OrdinalAxis;
+type PaneType = typeof Pane;
+type PointType = Point;
+type PolarCompositionType = typeof PolarComposition;
+type SeriesType = Series;
+
+declare namespace H {
+    export const chart: Chart;
+    export const ganttChart: GanttChartType;
+    export const stockChart: StockChartType;
+    export const mapChart: MapChartType;
+
+    export const Axis: AxisType;
+    export const AxisOptions: Axis['options'];
+    export const Chart: ChartType;
+    export const Globals: Globals;
+    export const OrdinalAxis: OrdinalAxis;
+    export const Options: Chart['options'];
+    export const Pane: PaneType;
+    export const Point: PointType;
+    export const PolarComposition: PolarCompositionType;
+    export const Series: SeriesType;
+    export const SeriesOptions: Series['options'];
+}
