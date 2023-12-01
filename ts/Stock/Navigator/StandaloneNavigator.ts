@@ -4,6 +4,7 @@ import Navigator from './Navigator.js';
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
+import StandaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
 const {
     merge,
     addEvent,
@@ -26,49 +27,6 @@ type StandaloneNavigatorOptions = {
     colors: [];
 }
 
-const defaultNavOptions = {
-	width: 400,
-	height: 50,
-    tooltip: {
-        enabled: false
-    },
-	navigator: {
-        enabled: true
-    },
-	scrollbar: {
-        enabled: false
-    },
-    legend: {
-        enabled: false
-    },
-    yAxis: {
-        height: 0,
-        visible: false
-    },
-    xAxis: {
-        visible: false
-    },
-    title: {
-        text: null
-    },
-    chart: {
-        spacing: [0, 0, 0, 0],
-        margin: [0, 0, 0, 0]
-    }
-};
-
-const forcedNavOptions = {
-    navigator: {
-        enabled: true
-    },
-    xAxis: {
-
-    },
-    yAxis: {
-
-    }
-}
-
 class StandaloneNavigator {
 
     public eventsToUnbind: Array<Function> = [];
@@ -82,9 +40,8 @@ class StandaloneNavigator {
     ): StandaloneNavigator {
         const mergedOptions = merge(
         (G as any).getOptions(),
-            defaultNavOptions,
-            options,
-            forcedNavOptions
+            StandaloneNavigatorDefaults,
+            options
         ) as StandaloneNavigatorOptions
 
         let nav =  new StandaloneNavigator(renderTo, mergedOptions);
@@ -121,7 +78,7 @@ class StandaloneNavigator {
     }
 
     public update(newOptions: Partial<StandaloneNavigatorOptions>) {
-        newOptions = merge(this.options, newOptions, forcedNavOptions);
+        newOptions = merge(this.options, newOptions);
         // this.navigator.chart.update(newOptions.chart);
         // this.navigator.update(newOptions.navigator);
     }
