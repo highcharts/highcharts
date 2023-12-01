@@ -9,7 +9,7 @@
         "rootDir": "../",
         "paths": {
             "highcharts": [
-                "../Dashboards/highcharts.d.ts"
+                "../Dashboards/highcharts"
             ]
         }
     },

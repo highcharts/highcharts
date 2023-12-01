@@ -47,19 +47,11 @@ export type AxisOptions = H.AxisOptions;
 
 export type Chart = H.Chart;
 
-export type Globals = any;
-
 export type Highcharts = typeof H;
 
 export type Options = H.Options;
 
-export type OrdinalAxis = any;
-
-export type Pane = any;
-
 export type Point = H.Point;
-
-export type PolarComposition = any;
 
 export type Series = H.Series;
 
