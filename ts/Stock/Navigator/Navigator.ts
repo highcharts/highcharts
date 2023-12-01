@@ -83,6 +83,18 @@ function numExt(
     }
 }
 
+interface SetRangeEvent {
+    min: number;
+    max: number;
+    redraw: boolean;
+    animation?: boolean;
+    options: {
+        trigger: 'navigator' | 'scrollbar';
+        triggerOp: string;
+        DOMEvent: any;
+    }
+}
+
 /* *
  *
  *  Class
@@ -903,13 +915,16 @@ class Navigator {
                     fixedMax
                 );
                 if (defined(ext.min)) { // #7411
-                    chart.xAxis[0].setExtremes(
-                        Math.min(ext.min, ext.max),
-                        Math.max(ext.min, ext.max),
-                        true,
-                        null as any, // auto animation
-                        { trigger: 'navigator' }
-                    );
+                    fireEvent(this, 'setRange', {
+                        min: Math.min(ext.min, ext.max),
+                        max: Math.max(ext.min, ext.max),
+                        redraw: true,
+                        animation: null as any, // auto animation
+                        options: {
+                            trigger: 'navigator'
+                        }
+
+                    } as SetRangeEvent);
                 }
             }
         }
@@ -1106,19 +1121,16 @@ class Navigator {
             );
 
             if (defined(ext.min)) {
-                chart.xAxis[0].setExtremes(
-                    Math.min(ext.min, ext.max),
-                    Math.max(ext.min, ext.max),
-                    true,
-                    // Run animation when clicking buttons, scrollbar track etc,
-                    // but not when dragging handles or scrollbar
-                    navigator.hasDragged ? false : (null as any),
-                    {
+                fireEvent(this, 'setRange', {
+                    min: Math.min(ext.min, ext.max),
+                    max: Math.max(ext.min, ext.max),
+                    animation: navigator.hasDragged ? false : (null as any),
+                    options: {
                         trigger: 'navigator',
                         triggerOp: 'navigator-drag',
                         DOMEvent: DOMEvent // #1838
                     }
-                );
+                } as SetRangeEvent);
             }
         }
 
@@ -2023,7 +2035,16 @@ class Navigator {
                                 0
                         ) + navigator.navigatorOptions.margin;
                 }
-            )
+            ),
+            addEvent(Navigator, 'setRange', function (this: Navigator, e: SetRangeEvent) {
+                this.chart.xAxis[0].setExtremes(
+                    e.min,
+                    e.max,
+                    e.redraw,
+                    e.animation,
+                    e.options
+                );
+            })
         );
     }
 

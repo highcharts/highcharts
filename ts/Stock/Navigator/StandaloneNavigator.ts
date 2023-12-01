@@ -7,8 +7,15 @@ import Axis from '../../Core/Axis/Axis.js';
 const {
     merge,
     addEvent,
+    fireEvent,
     pick
 } = U;
+
+declare module "../../Core/GlobalsLike.d.ts" {
+	interface GlobalsLike {
+		navigators: Array<StandaloneNavigator>;
+	}
+}
 
 type StandaloneNavigatorOptions = {
     navigator: NavigatorOptions;
@@ -50,11 +57,6 @@ const defaultNavOptions = {
     }
 };
 
-declare module "../../Core/GlobalsLike.d.ts" {
-	interface GlobalsLike {
-		navigators: Array<StandaloneNavigator>;
-	}
-}
 const forcedNavOptions = {
     navigator: {
         enabled: true
@@ -66,6 +68,7 @@ const forcedNavOptions = {
 
     }
 }
+
 class StandaloneNavigator {
 
     public eventsToUnbind: Array<Function> = [];
@@ -185,7 +188,7 @@ class StandaloneNavigator {
     }
 
     public setRange(min?: number, max?: number): void {
-        this.navigator.chart.xAxis[0].setExtremes(min, max);
+        fireEvent(this.navigator, 'setRange', { min, max, trigger: 'navigator' });
     }
 
     public getInitialExtremes() {
