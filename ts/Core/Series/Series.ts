@@ -24,6 +24,8 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
@@ -66,8 +68,6 @@ const {
     svg,
     win
 } = H;
-import type Legend from '../Legend/Legend';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';

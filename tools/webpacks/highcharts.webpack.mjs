@@ -65,6 +65,7 @@ const externals = [async function (info) {
         case 'Core/Chart/Chart':
         case 'Core/Color/Color':
         case 'Core/Legend/Legend':
+        case 'Core/Legend/LegendSymbol':
         case 'Core/Pointer':
         case 'Core/Renderer/HTML/AST':
         case 'Core/Renderer/SVG/SVGElement':

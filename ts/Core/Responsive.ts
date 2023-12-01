@@ -24,12 +24,8 @@ const {
     diffObjects,
     extend,
     find,
-    isArray,
-    isObject,
     merge,
-    objectEach,
     pick,
-    splat,
     uniqueKey
 } = U;
 
