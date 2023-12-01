@@ -8,17 +8,22 @@ describe('Crossfilter with affectNavigator option', () => {
     });
 
     it('should modify a table and crossfilters content', () => {
+        /**
+         * An array of objects specifying:
+         *  - handle - index handle element in the navigator we want to drag,
+         *  - pageX - absolute X position to which the handle is to be dragged.
+         */
         const moves = [{
-            handle: 0,
+            handle: 0, // 1st navigator, right handle
             pageX: 250
         }, {
-            handle: 1,
+            handle: 1, // 1st navigator, left handle
             pageX: 200
         }, {
-            handle: 4,
+            handle: 4, // 3rd navigator, right handle
             pageX: 800
         }, {
-            handle: 5,
+            handle: 5, // 3rd navigator, left handle
             pageX: 770
         }];
     
@@ -31,10 +36,9 @@ describe('Crossfilter with affectNavigator option', () => {
         cy.get('.highcharts-datagrid-row').should('have.length', 4);
 
         cy.board().then(board => {
-            const middleChart = board.mountedComponents[1].component.chart;
-            assert.strictEqual(
-                middleChart.series[0].points.length,
-                6,
+            assert.ok(
+                board.mountedComponents[1].component.chart
+                    .series[0].points.length === 6,
                 'The middle navigator should have 6 points.'
             );
         });

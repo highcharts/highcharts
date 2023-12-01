@@ -42,6 +42,7 @@ import U from '../../Core/Utilities.js';
 import DataTable from 'highcharts/es-modules/Data/DataTable';
 const {
     addEvent,
+    defined,
     diffObjects,
     isNumber,
     merge,
@@ -697,24 +698,23 @@ class NavigatorComponent extends Component {
                     crossfilterOptions.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
-                    const appliedRanges =
-                        (modifierOptions as RangeModifierOptions).ranges.filter(
-                            (range): boolean => range.column !== column[0]
-                        ),
-                        rangedColumns = appliedRanges.map(
-                            (range): DataTable.Column => (
-                                table.getColumn(range.column, true) || []
-                            )
-                        );
+                    const appliedRanges: RangeModifierRangeOptions[] = [],
+                        rangedColumns: DataTable.Column[] = [],
+                        { ranges } = (modifierOptions as RangeModifierOptions);
 
-                    for (let i = 0; i < columnValues.length; i++) {
+                    for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
+                        if (ranges[i].column !== column[0]) {
+                            appliedRanges.push(ranges[i]);
+                            rangedColumns.push(table.getColumn(
+                                ranges[i].column, true
+                            ) || []);
+                        }
+                    }
+
+                    for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
                         let value = columnValues[i];
 
-                        if (
-                            value === null ||
-                            value === void 0 ||
-                            !isNumber(+value)
-                        ) {
+                        if (!defined(value) || !isNumber(+value)) {
                             continue;
                         }
 
@@ -726,12 +726,23 @@ class NavigatorComponent extends Component {
                             min = value;
                         }
 
-                        if (appliedRanges.every((range, j): boolean => (
-                            rangedColumns[j][i] as string|number|boolean >=
-                                (range.minValue ?? -Infinity) &&
-                            rangedColumns[j][i] as string|number|boolean <=
-                                (range.maxValue ?? Infinity)
-                        ))) {
+                        let allConditionsMet = true;
+                        for (
+                            let j = 0, iEnd = appliedRanges.length;
+                            j < iEnd; j++
+                        ) {
+                            const range = appliedRanges[j];
+                            if (!(
+                                rangedColumns[j][i] as string|number|boolean >=
+                                    (range.minValue ?? -Infinity) &&
+                                rangedColumns[j][i] as string|number|boolean <=
+                                    (range.maxValue ?? Infinity)
+                            )) {
+                                allConditionsMet = false;
+                                break;
+                            }
+                        }
+                        if (allConditionsMet) {
                             values.push(value);
                         }
                     }
@@ -739,7 +750,7 @@ class NavigatorComponent extends Component {
                     values = columnValues;
                 }
 
-                for (let i = 0; i < values.length; i++) {
+                for (let i = 0, iEnd = values.length; i < iEnd; i++) {
                     let value = values[i];
 
                     if (value === null) {
