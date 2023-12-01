@@ -22,8 +22,7 @@
  *
  * */
 
-
-import type { default as H } from 'highcharts';
+import type * as H from 'highcharts';
 
 
 /* *
@@ -42,29 +41,29 @@ export namespace Axis {
     }
 }
 
-export type Axis = typeof H['Axis'];
+export type Axis = H.Axis;
 
-export type AxisOptions = typeof H['AxisOptions'];
+export type AxisOptions = H.AxisOptions;
 
-export type Chart = typeof H['Chart'];
+export type Chart = H.Chart;
 
-export type Globals = typeof H['Globals'];
+export type Globals = any;
 
 export type Highcharts = typeof H;
 
-export type Options = typeof H['Options'];
+export type Options = H.Options;
 
-export type OrdinalAxis = typeof H['OrdinalAxis'];
+export type OrdinalAxis = any;
 
-export type Pane = typeof H['Pane'];
+export type Pane = any;
 
-export type Point = typeof H['Point'];
+export type Point = H.Point;
 
-export type PolarComposition = typeof H['PolarComposition'];
+export type PolarComposition = any;
 
-export type Series = typeof H['Series'];
+export type Series = H.Series;
 
-export type SeriesOptions = typeof H['SeriesOptions'];
+export type SeriesOptions = H.SeriesOptions;
 
 /* *
  *
