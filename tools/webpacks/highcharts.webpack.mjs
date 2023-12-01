@@ -43,19 +43,47 @@ function createUMDConfig(...pathMembers) {
     };
 }
 
-/* *
- *
- *  Distribution
- *
- * */
-
-const externals = [async function (info) {
+async function resolveExternals(info) {
+    // eslint-disable-next-line no-invalid-this
+    const masterName = this.masterName;
     const path = Path.posix
         .relative(sourceFolder, Path.join(info.context, info.request))
-        .replace(/\.js$/u, '');
+        .replace(/(?:\.src)?\.js$/u, '');
     const name = Path.posix.basename(path);
-    const issuer = Path.posix.basename(info.issuer || '', '.src.js');
 
+    // Quick exit on entry point
+    if (masterName === name) {
+        return void 0;
+    }
+
+    // Check for product-specific additions
+    if (
+        masterName !== 'gantt' &&
+        masterName !== 'pathfinder'
+    ) {
+        switch (path) {
+            case 'Gantt/Pathfinder':
+                return createUMDConfig(name);
+            default:
+                break;
+        }
+    }
+
+    // Check for product-specific additions
+    if (
+        masterName !== 'map' &&
+        masterName !== 'coloraxis'
+    ) {
+        switch (path) {
+            case 'Core/Axis/Color/ColorAxis':
+            case 'Series/ColorMapComposition':
+                return createUMDConfig(name);
+            default:
+                break;
+        }
+    }
+
+    // Fallback to core namespace
     switch (path) {
         case 'Core/Animation/Fx':
         case 'Core/Axis/Axis':
@@ -105,7 +133,13 @@ const externals = [async function (info) {
             return void 0;
     }
 
-}];
+}
+
+/* *
+ *
+ *  Distribution
+ *
+ * */
 
 const webpacks = FSLib
     .getFilePaths(mastersFolder, true)
@@ -165,7 +199,9 @@ const webpacks = FSLib
         };
         if (!productMasters.includes(masterName)) {
             webpackConfig.externalsType = 'umd';
-            webpackConfig.externals = externals;
+            webpackConfig.externals = [resolveExternals.bind({
+                masterName
+            })];
         }
         return webpackConfig;
     });

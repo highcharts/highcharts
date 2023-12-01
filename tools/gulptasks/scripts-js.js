@@ -68,7 +68,7 @@ async function scriptsJS() {
             true
         );
 
-        await processLib.exec('npx webpack -c tools/webpacks/highcharts.webpack.mjs');
+        await processLib.exec('npx webpack -c tools/webpacks/highcharts.webpack.mjs', { silent: 2 });
 
         logLib.success('Created code');
     } finally {

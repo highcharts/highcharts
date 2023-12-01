@@ -11,7 +11,9 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import './coloraxis.src.js';
 import MapNavigation from '../../Maps/MapNavigation.js';
+import ColorMapComposition from '../../Series/ColorMapComposition.js';
 import '../../Series/Map/MapSeries.js';
 import '../../Series/MapLine/MapLineSeries.js';
 import '../../Series/MapPoint/MapPointSeries.js';
@@ -21,8 +23,8 @@ import GeoJSONComposition from '../../Maps/GeoJSONComposition.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 import MapView from '../../Maps/MapView.js';
 import Projection from '../../Maps/Projection.js';
-import './coloraxis.src.js';
 const G: AnyRecord = Highcharts;
+G.ColorMapComposition = ColorMapComposition;
 G.MapChart = MapChart;
 G.mapChart = G.Map = MapChart.mapChart;
 G.MapNavigation = MapNavigation;
