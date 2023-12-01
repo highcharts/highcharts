@@ -438,34 +438,28 @@ abstract class Component {
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = sync[handlerName];
+                        const handler = sync[handlerName],
+                            defaultHandler = defaultHandlers[handlerName];
 
                         if (handler === true) {
-                            carry[handlerName] = {
-                                enabled: true,
-                                ...defaultHandlers[handlerName]
-                            };
+                            carry[handlerName] = defaultHandler;
                         } else if (handler && handler.enabled) {
-                            const defaultHandler = defaultHandlers[handlerName];
-
                             if (defaultHandler) {
-                                if (
-                                    handler.emitter === true ||
-                                    handler.emitter === void 0
-                                ) {
-                                    handler.emitter =
-                                        defaultHandlers[handlerName].emitter;
-                                }
-                                if (
-                                    handler.handler === true ||
-                                    handler.emitter === void 0
-                                ) {
-                                    handler.handler =
-                                        defaultHandlers[handlerName].handler;
+                                const keys: (keyof Sync.OptionsEntry)[] = [
+                                    'emitter', 'handler'
+                                ];
+
+                                carry[handlerName] = {};
+                                for (const key of keys) {
+                                    if (
+                                        handler[key] === true ||
+                                        handler[key] === void 0
+                                    ) {
+                                        carry[handlerName][key] =
+                                            defaultHandler[key] as any;
+                                    }
                                 }
                             }
-
-                            carry[handlerName] = handler;
                         }
                     }
 
