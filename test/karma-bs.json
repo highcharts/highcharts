@@ -30,7 +30,7 @@
     "Win.Chrome": {
         "base": "BrowserStack",
         "browser": "chrome",
-        "browser_version": "103.0",
+        "browser_version": "118.0",
         "os": "Windows",
         "os_version": "10"
     },
