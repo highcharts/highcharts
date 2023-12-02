@@ -23,9 +23,9 @@
     "Mac.Safari": {
         "base": "BrowserStack",
         "browser": "safari",
-        "browser_version": "14.1",
+        "browser_version": "15.6",
         "os": "OS X",
-        "os_version": "Big Sur"
+        "os_version": "Ventura"
     },
     "Win.Chrome": {
         "base": "BrowserStack",
