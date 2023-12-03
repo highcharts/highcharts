@@ -193,7 +193,7 @@ class SVGElement implements SVGElementLike {
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
-    // @todo public textWidth?: number;
+    public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
