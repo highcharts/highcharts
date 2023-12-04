@@ -26,17 +26,20 @@ import './datagrouping.src.js';
 import './mouse-wheel-zoom.src.js';
 const G: AnyRecord = Highcharts;
 // Classes
-G.Navigator = Navigator;
+G.OrdinalAxis = OrdinalAxis;
 G.RangeSelector = RangeSelector;
 G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);
-Navigator.compose(G.Axis, G.Chart, G.Series);
 OHLCSeries.compose(G.Series);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 RangeSelector.compose(G.Axis, G.Chart);
 StockChart.compose(G.Axis, G.Series, G.SVGRenderer);
+if (!G.Navigator) {
+    Navigator.compose(G.Axis, G.Chart, G.Series);
+    G.Navigator = Navigator;
+}
 if (!G.Scrollbar) {
     G.Scrollbar = Scrollbar;
     Scrollbar.compose(G.Axis);

@@ -390,10 +390,10 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
 
     axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
+        Highcharts.OrdinalAxis.Additions.prototype.getIndexOfPoint;
     axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
+        Highcharts.OrdinalAxis.Additions.prototype.findIndexOf;
     function lin2val(val) {
         return Highcharts.Axis.prototype.lin2val.call(axis, val);
     }

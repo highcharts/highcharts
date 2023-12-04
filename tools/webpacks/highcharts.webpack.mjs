@@ -57,30 +57,41 @@ async function resolveExternals(info) {
     }
 
     // Check for product-specific additions
-    if (
-        masterName !== 'gantt' &&
-        masterName !== 'pathfinder'
-    ) {
-        switch (path) {
-            case 'Gantt/Pathfinder':
+    switch (path) {
+        case 'Core/Axis/Color/ColorAxis':
+        case 'Series/ColorMapComposition':
+            if (
+                masterName !== 'map' &&
+                masterName !== 'coloraxis'
+            ) {
                 return createUMDConfig(name);
-            default:
-                break;
-        }
-    }
-
-    // Check for product-specific additions
-    if (
-        masterName !== 'map' &&
-        masterName !== 'coloraxis'
-    ) {
-        switch (path) {
-            case 'Core/Axis/Color/ColorAxis':
-            case 'Series/ColorMapComposition':
+            }
+            break;
+        case 'Core/Axis/OrdinalAxis':
+            if (masterName !== 'stock') {
                 return createUMDConfig(name);
-            default:
-                break;
-        }
+            }
+            break;
+        case 'Gantt/Pathfinder':
+            if (
+                masterName !== 'gantt' &&
+                masterName !== 'pathfinder'
+            ) {
+                return createUMDConfig(name);
+            }
+            break;
+        case 'Stock/Navigator/Navigator':
+        case 'Stock/RangeSelector/RangeSelector':
+        case 'Stock/Scrollbar/Scrollbar':
+            if (
+                masterName !== 'gantt' &&
+                masterName !== 'stock'
+            ) {
+                return createUMDConfig(name);
+            }
+            break;
+        default:
+            break;
     }
 
     // Fallback to core namespace

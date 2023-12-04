@@ -28,16 +28,18 @@ const G: AnyRecord = Highcharts;
 G.Connection = Connection;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
-G.Navigator = Navigator;
 G.RangeSelector = RangeSelector;
 // Compositions
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
-Navigator.compose(G.Axis, G.Chart, G.Series);
 RangeSelector.compose(G.Axis, G.Chart);
 XRangeSeries.compose(G.Axis);
 StaticScale.compose(G.Axis, G.Chart);
+if (!G.Navigator) {
+    Navigator.compose(G.Axis, G.Chart, G.Series);
+    G.Navigator = Navigator;
+}
 if (!G.Scrollbar) {
     G.Scrollbar = Scrollbar;
     Scrollbar.compose(G.Axis);
