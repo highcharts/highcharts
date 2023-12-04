@@ -559,7 +559,7 @@ class Board implements Serializable<Board, Board.JSON> {
             board.editMode.hideToolbars(['cell', 'row']);
             board.editMode.hideContextPointer();
 
-             // update expanded context menu container 
+            // update expanded context menu container
             if (editModeTools.contextMenu) {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
