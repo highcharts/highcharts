@@ -1,0 +1,6 @@
+---
+ name: Fips from CSV with column types
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

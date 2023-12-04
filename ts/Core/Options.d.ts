@@ -72,6 +72,9 @@ export interface Options {
     global: GlobalOptions;
 }
 
+export interface DefaultOptions extends Options {
+}
+
 export type OptionsOverflowValue = ('allow'|'justify');
 
 export type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');

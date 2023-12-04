@@ -25,7 +25,7 @@ export default defineConfig({
     fixturesFolder: 'test/cypress/fixtures',
     e2e: {
         baseUrl: 'http://localhost:3030/samples/view?mobile=true&path=/',
-        specPattern: `test/cypress/${productsPattern}/integration/*.cy.{js,jsx,ts,tsx}`,
+        specPattern: `test/cypress/${productsPattern}/integration/**/*.cy.{js,jsx,ts,tsx}`,
         supportFile: 'test/cypress/support/index.js',
         testIsolation: false
     }

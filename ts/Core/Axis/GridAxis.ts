@@ -217,10 +217,10 @@ function compose<T extends typeof Axis>(
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
+        wrap(AxisClass.prototype, 'getOffset', wrapGetOffset);
 
         // Add event handlers
         addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterGetOffset', onAfterGetOffset);
         addEvent(
             AxisClass,
             'afterGetTitlePosition',
@@ -336,14 +336,34 @@ function getMaxLabelDimensions(
  * Handle columns and getOffset.
  * @private
  */
-function onAfterGetOffset(this: Axis): void {
+function wrapGetOffset(this: Axis, proceed: Function): void {
     const {
-        grid
-    } = this;
+            grid
+        } = this,
+        // On the left side we handle the columns first because the offset is
+        // calculated from the plot area and out
+        columnsFirst = this.side === 3;
 
-    (grid && grid.columns || []).forEach(function (column: Axis): void {
-        column.getOffset();
-    });
+    if (!columnsFirst) {
+        proceed.apply(this);
+    }
+
+    if (!grid?.isColumn) {
+        let columns = grid?.columns || [];
+
+        if (columnsFirst) {
+            columns = columns.slice().reverse();
+        }
+        columns
+            .forEach((column): void => {
+                column.getOffset();
+            });
+    }
+
+    if (columnsFirst) {
+        proceed.apply(this);
+    }
+
 }
 
 /**
@@ -431,22 +451,22 @@ function onAfterInit(this: Axis): void {
         while (++columnIndex < gridOptions.columns.length) {
             const columnOptions = merge(
                 userOptions,
-                gridOptions.columns[
-                    gridOptions.columns.length - columnIndex - 1
-                ],
+                gridOptions.columns[columnIndex],
                 {
                     isInternal: true,
                     linkedTo: 0,
-                    // Force to behave like category axis
-                    type: 'category',
                     // Disable by default the scrollbar on the grid axis
                     scrollbar: {
                         enabled: false
                     }
+                },
+                // Avoid recursion
+                {
+                    grid: {
+                        columns: void 0
+                    }
                 }
             );
-
-            delete (columnOptions.grid as any).columns; // Prevent recursion
 
             const column = new Axis(
                 axis.chart,
@@ -480,13 +500,23 @@ function onAfterInit(this: Axis): void {
  */
 function onAfterRender(this: Axis): void {
     const axis = this,
-        grid = axis.grid,
-        options = axis.options,
+        { axisTitle, grid, options } = axis,
         gridOptions = options.grid || {};
 
     if (gridOptions.enabled === true) {
         const min = axis.min || 0,
-            max = axis.max || 0;
+            max = axis.max || 0,
+            firstTick = axis.ticks[axis.tickPositions[0]];
+
+        // Adjust the title max width to the column width (#19657)
+        if (
+            axisTitle &&
+            !axis.chart.styledMode &&
+            firstTick?.slotWidth &&
+            !axis.options.title.style.width
+        ) {
+            axisTitle.css({ width: `${firstTick.slotWidth}px` });
+        }
 
         // @todo acutual label padding (top, bottom, left, right)
         axis.maxLabelDimensions = axis.getMaxLabelDimensions(
@@ -507,6 +537,7 @@ function onAfterRender(this: Axis): void {
                     > _________________________
         Into this:    |______|______|______|__|
                                                 */
+
         if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
 
             const lineWidth = options.lineWidth;
@@ -623,7 +654,8 @@ function onAfterRender(this: Axis): void {
             (
                 axis.scrollbar ||
                 (axis.linkedParent && axis.linkedParent.scrollbar)
-            )
+            ) &&
+            axis.tickPositions.length
         ) {
             const tickmarkOffset = axis.tickmarkOffset,
                 lastTick = axis.tickPositions[
@@ -633,7 +665,6 @@ function onAfterRender(this: Axis): void {
 
             let label: SVGElement|undefined,
                 tickMark: SVGElement|undefined;
-
 
             while ((label = axis.hiddenLabels.pop()) && label.element) {
                 label.show(); // #15453
@@ -645,7 +676,7 @@ function onAfterRender(this: Axis): void {
                 tickMark.show(); // #16439
             }
 
-            // Hide/show firts tick label.
+            // Hide/show first tick label.
             label = axis.ticks[firstTick].label;
             if (label) {
                 if (min - firstTick > tickmarkOffset) {
@@ -790,7 +821,10 @@ function onAfterSetOptions(
             title: {
                 text: null,
                 reserveSpace: false,
-                rotation: 0
+                rotation: 0,
+                style: {
+                    textOverflow: 'ellipsis'
+                }
             },
 
             // In a grid axis, only allow one unit of certain types,
@@ -942,10 +976,10 @@ function onAfterSetOptions2(
     const gridOptions = userOptions && userOptions.grid || {};
     const columns = gridOptions.columns;
 
-    // Add column options to the parent axis. Children has their column
-    // options set on init in onGridAxisAfterInit.
+    // Add column options to the parent axis. Children has their column options
+    // set on init in onGridAxisAfterInit.
     if (gridOptions.enabled && columns) {
-        merge(true, axis.options, columns[columns.length - 1]);
+        merge(true, axis.options, columns[0]);
     }
 }
 
@@ -1233,38 +1267,55 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  *       ticks and not the labels directly?
  */
 function onTrimTicks(this: Axis): void {
-    const axis = this;
-    const options = axis.options;
-    const gridOptions = options.grid || {};
-    const categoryAxis = axis.categories;
-    const tickPositions = axis.tickPositions;
-    const firstPos = tickPositions[0];
-    const lastPos = tickPositions[tickPositions.length - 1];
-    const linkedMin = axis.linkedParent && axis.linkedParent.min;
-    const linkedMax = axis.linkedParent && axis.linkedParent.max;
-    const min = linkedMin || axis.min;
-    const max = linkedMax || axis.max;
-    const tickInterval = axis.tickInterval;
-    const endMoreThanMin = (
-        firstPos < (min as any) &&
-        firstPos + tickInterval > (min as any)
-    );
-    const startLessThanMax = (
-        lastPos > (max as any) &&
-        lastPos - tickInterval < (max as any)
-    );
+    const axis = this,
+        chart = axis.chart,
+        options = axis.options,
+        gridOptions = options.grid || {},
+        categoryAxis = axis.categories,
+        tickPositions = axis.tickPositions,
+        firstPos = tickPositions[0],
+        secondPos = tickPositions[1],
+        lastPos = tickPositions[tickPositions.length - 1],
+        beforeLastPos = tickPositions[tickPositions.length - 2],
+        linkedMin = axis.linkedParent && axis.linkedParent.min,
+        linkedMax = axis.linkedParent && axis.linkedParent.max,
+        min = linkedMin || axis.min,
+        max = linkedMax || axis.max,
+        tickInterval = axis.tickInterval,
+        startLessThanMin = ( // #19845
+            isNumber(min) &&
+            min >= firstPos + tickInterval &&
+            min < secondPos
+        ),
+        endMoreThanMin = (
+            isNumber(min) &&
+            firstPos < min &&
+            firstPos + tickInterval > min
+        ),
+        startLessThanMax = (
+            isNumber(max) &&
+            lastPos > max &&
+            lastPos - tickInterval < max
+        ),
+        endMoreThanMax = (
+            isNumber(max) &&
+            max <= lastPos - tickInterval &&
+            max > beforeLastPos
+        );
 
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
-        (axis.horiz || axis.isLinked)
+        (axis.isXAxis || axis.isLinked)
     ) {
-        if (endMoreThanMin && !options.startOnTick) {
-            tickPositions[0] = min as any;
+        if (
+            (endMoreThanMin || startLessThanMin) && !options.startOnTick
+        ) {
+            tickPositions[0] = min;
         }
 
-        if (startLessThanMax && !options.endOnTick) {
-            tickPositions[tickPositions.length - 1] = max as any;
+        if ((startLessThanMax || endMoreThanMax) && !options.endOnTick) {
+            tickPositions[tickPositions.length - 1] = max;
         }
     }
 }
@@ -1354,13 +1405,20 @@ class GridAxisAdditions {
         const chart = axis.chart;
         const columnIndex = axis.grid.columnIndex;
         const columns = (
-            axis.linkedParent && axis.linkedParent.grid.columns ||
-            axis.grid.columns
+            axis.linkedParent?.grid.columns ||
+            axis.grid.columns ||
+            []
         );
         const parentAxis = columnIndex ? axis.linkedParent : axis;
 
         let thisIndex = -1,
             lastIndex = 0;
+
+        // On the left side, when we have columns (not only multiple axes), the
+        // main axis is to the left
+        if (axis.side === 3 && !chart.inverted && columns.length) {
+            return !axis.linkedParent;
+        }
 
         (
             (chart[axis.coll] || []) as Array<Axis>
@@ -1381,7 +1439,7 @@ class GridAxisAdditions {
             lastIndex === thisIndex &&
             (
                 isNumber(columnIndex) ?
-                    (columns as any).length === columnIndex :
+                    columns.length === columnIndex :
                     true
             )
         );
@@ -1516,6 +1574,8 @@ export default GridAxis;
  *
  * @sample gantt/demo/left-axis-table
  *         Left axis as a table
+ * @sample gantt/demo/treegrid-columns
+ *         Collapsible tree grid with columns
  *
  * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns

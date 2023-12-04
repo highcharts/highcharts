@@ -64,11 +64,8 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    syncTimeout
+    pick
 } = U;
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
 
 /* *
  *

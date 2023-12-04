@@ -134,9 +134,7 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
-        for (i = 0; i < series.data.length; i++) {
-            rawPoint = series.data[i];
-
+        series.data.forEach((rawPoint): void => {
             if (zAxis && zAxis.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
@@ -161,20 +159,19 @@ class Series3D extends Series {
             });
 
             rawPointsX.push(rawPoint.plotX || 0);
-        }
+        });
 
         series.rawPointsX = rawPointsX;
 
         const projectedPoints = perspective(rawPoints, chart, true);
 
-        for (i = 0; i < series.data.length; i++) {
-            rawPoint = series.data[i];
+        series.data.forEach((rawPoint, i): void => {
             projectedPoint = projectedPoints[i];
 
             rawPoint.plotX = projectedPoint.x;
             rawPoint.plotY = projectedPoint.y;
             rawPoint.plotZ = projectedPoint.z;
-        }
+        });
     }
 
 }

@@ -5,6 +5,12 @@
         'https://demo-live-data.highcharts.com/aapl-c.json'
     ).then(response => response.json());
 
+    Highcharts.setOptions({
+        lang: {
+            rangeSelectorZoom: 'Granularity'
+        }
+    });
+
     // Create the chart
     Highcharts.stockChart('container', {
 

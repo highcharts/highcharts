@@ -30,6 +30,54 @@ jobs:
     with:
       testTimezones: true
 
+  notify_if_error:
+    runs-on: ubuntu-latest
+    needs: ['nightly_test_headless', 'nightly_test_bs']
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    env:
+      JSON_NEEDS: ${{ toJSON(needs) }}
+    steps:
+      - name: Checkout repository scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/scripts
+
+      - name: Create list of failed jobs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { writeFileSync } = require('fs');
+            const needsJSON = JSON.parse(process.env.JSON_NEEDS);
+
+            const list = Object.keys(needsJSON).filter(key => {
+              const value = needsJSON[key];
+              return typeof value === 'object' && value.result === 'failure';
+            }).map(key => `* ${key}`);
+
+            console.log(list);
+
+            const listBody = JSON.stringify({
+              date: (new Date()).toLocaleDateString('no-NO'),
+              body: 'Errors occured in the following job(s):\n'+
+                list.join('\n') +
+                '\n\n'+
+                'See the run on github (https://github.com/highcharts/highcharts/actions/runs/${{ github.run_id }}) for more information'
+            });
+
+            writeFileSync(
+              'info.json',
+              listBody
+            );
+
+      - name: Call Slack webhook
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload-file-path: "info.json"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:
@@ -165,16 +213,21 @@ jobs:
           aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
 
       - name: create list of merge commits
+        id: makelist
         run: |
           git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
-          cat 24hoursofhighcharts.list
+          echo "lines=$(cat 24hoursofhighcharts.list | grep -e "Merge" -c)" >> $GITHUB_OUTPUT
+
       - name: Convert to JSON
+        if: ${{ steps.makelist.outputs.lines > 0 }}
         run: |
           node ./.github/scripts/createListJSON \
             24hoursofhighcharts.list \
             24hoursofhighcharts.json
+
       - name: Call Slack webhook
         id: slack
+        if: ${{ steps.makelist.outputs.lines > 0 }}
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload-file-path: "24hoursofhighcharts.json"

@@ -129,7 +129,7 @@ function columnSeriesTranslate3dShapes(
     }
 
     z += (seriesOptions.groupZPadding || 1);
-    for (const point of series.data) {
+    for (const point of series.points) {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
@@ -415,7 +415,7 @@ function wrapColumnSeriesAnimate(
 
 
         if (init) {
-            for (const point of series.data) {
+            for (const point of series.points) {
                 if (point.y !== null) {
                     point.height = (point.shapeArgs as any).height;
                     point.shapey = (point.shapeArgs as any).y; // #2968
@@ -438,8 +438,8 @@ function wrapColumnSeriesAnimate(
                 }
             }
 
-        } else { // run the animation
-            for (const point of series.data) {
+        } else { // Run the animation
+            for (const point of series.points) {
                 if (point.y !== null) {
                     (point.shapeArgs as any).height = point.height;
                     (point.shapeArgs as any).y = point.shapey; // #2968
@@ -555,7 +555,7 @@ function wrapColumnSeriesSetVisible(
     const series = this;
 
     if (series.chart.is3d()) {
-        for (const point of series.data) {
+        for (const point of series.points) {
             point.visible = point.options.visible = vis =
                 typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;

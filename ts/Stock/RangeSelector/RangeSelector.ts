@@ -518,7 +518,8 @@ class RangeSelector {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        let selectedExists = isNumber(selected);
+        let selectedExists = isNumber(selected),
+            isSelectedTooGreat = false;
 
         rangeSelector.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
@@ -546,6 +547,10 @@ class RangeSelector {
                 // Disable the All button if we're already showing all
                 isAllButAlreadyShowingAll = false,
                 isSameRange = range === actualRange;
+
+            if (isSelected && isTooGreatRange) {
+                isSelectedTooGreat = true;
+            }
 
             // Months and years have a variable range so we check the extremes
             if (
@@ -581,6 +586,7 @@ class RangeSelector {
             // across the night gap.
             const disable = (
                 !allButtonsEnabled &&
+                !(isSelectedTooGreat && type === 'all') &&
                 (
                     isTooGreatRange ||
                     isTooSmallRange ||
@@ -589,6 +595,7 @@ class RangeSelector {
                 )
             );
             const select = (
+                (isSelectedTooGreat && type === 'all') ||
                 (isSelected && isSameRange) ||
                 (isSameRange && !selectedExists && !isYTDButNotSelected) ||
                 (isSelected && rangeSelector.frozenStates)
@@ -616,6 +623,11 @@ class RangeSelector {
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
                     rangeSelector.setSelected();
+                } else if (
+                    (state === 2 && !defined(selected)) ||
+                    isSelectedTooGreat
+                ) {
+                    rangeSelector.setSelected(i);
                 }
             }
         });
