@@ -443,10 +443,19 @@ const configs: {
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
-                            const [series] = chart.series.length > 1 && cursor.column ?
-                                chart.series.filter((series): boolean => series.name === cursor.column) :
-                                chart.series;
+                            let [series] = chart.series;
 
+                            // #20133 - Highcharts dashboards don't sync
+                            // tooltips when charts have multiple series
+                            if (chart.series.length > 1 && cursor.column) {
+                                const relatedSeries = chart.series.filter(
+                                    (series): boolean => series.name === cursor.column
+                                );
+
+                                if (relatedSeries.length > 0) {
+                                    [series] = relatedSeries;
+                                }
+                            }
 
                             if (series && series.visible && cursor.row !== void 0) {
                                 const point = series.points[cursor.row - offset];

@@ -43,10 +43,6 @@ Dashboards.board('container', {
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }],
             chart: {
                 animation: false,
                 type: 'column'
@@ -77,16 +73,15 @@ Dashboards.board('container', {
         sync: {
             visibility: true,
             highlight: true
+        },
+        columnAssignment: {
+            $NOK: 'y'
         }
     }, {
         cell: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             type: 'column',
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }],
             chart: {
                 animation: false
             },
@@ -102,6 +97,10 @@ Dashboards.board('container', {
         sync: {
             visibility: true,
             highlight: true
+        },
+        columnAssignment: {
+            $GME: 'y',
+            $AMC: 'y'
         }
     }]
 }, true);
