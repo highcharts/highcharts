@@ -441,10 +441,10 @@ abstract class Component {
                         const handler = sync[handlerName],
                             defaultHandler = defaultHandlers[handlerName];
 
-                        if (handler === true) {
-                            carry[handlerName] = defaultHandler;
-                        } else if (handler && handler.enabled) {
-                            if (defaultHandler) {
+                        if (defaultHandler) {
+                            if (handler === true) {
+                                carry[handlerName] = defaultHandler;
+                            } else if (handler && handler.enabled) {
                                 const keys: (keyof Sync.OptionsEntry)[] = [
                                     'emitter', 'handler'
                                 ];

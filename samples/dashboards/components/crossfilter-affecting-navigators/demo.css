@@ -6,10 +6,7 @@ h2 {
     text-align: center;
 }
 
+.navigator-container .highcharts-series-0,
 #csv {
-    display: none;
-}
-
-.navigator-container .highcharts-series-0 {
     display: none;
 }

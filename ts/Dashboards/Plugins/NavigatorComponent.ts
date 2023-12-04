@@ -45,6 +45,7 @@ const {
     defined,
     diffObjects,
     isNumber,
+    isObject,
     merge,
     pick
 } = U;
@@ -469,8 +470,7 @@ class NavigatorComponent extends Component {
 
         const crossfilterOptions = this.options.sync.crossfilter;
         if (crossfilterOptions === true || (
-            typeof crossfilterOptions === 'object' &&
-            crossfilterOptions.enabled
+            isObject(crossfilterOptions) && crossfilterOptions.enabled
         )) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
@@ -681,8 +681,7 @@ class NavigatorComponent extends Component {
                 );
 
             if (crossfilterOptions === true || (
-                typeof crossfilterOptions === 'object' &&
-                crossfilterOptions.enabled
+                isObject(crossfilterOptions) && crossfilterOptions.enabled
             )) {
 
                 const seriesData: Array<[(number|string), number]> = [],
@@ -711,11 +710,8 @@ class NavigatorComponent extends Component {
                         }
                     }
 
-                    for (
-                        let i = 0, iEnd = columnValues.length,
-                            jEnd = appliedRanges.length;
-                        i < iEnd; i++
-                    ) {
+                    const appliedRagesLength = appliedRanges.length;
+                    for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
                         let value = columnValues[i];
 
                         if (!defined(value) || !isNumber(+value)) {
@@ -731,7 +727,7 @@ class NavigatorComponent extends Component {
                         }
 
                         let allConditionsMet = true;
-                        for (let j = 0; j < jEnd; j++) {
+                        for (let j = 0; j < appliedRagesLength; j++) {
                             const range = appliedRanges[j];
                             if (!(
                                 rangedColumns[j][i] as string|number|boolean >=
@@ -839,7 +835,7 @@ class NavigatorComponent extends Component {
                 merge(
                     (
                         crossfilterOptions === true || (
-                            typeof crossfilterOptions === 'object' &&
+                            isObject(crossfilterOptions) &&
                             crossfilterOptions.enabled
                         ) ?
                             {
