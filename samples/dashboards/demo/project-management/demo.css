@@ -55,11 +55,7 @@
     font-size: 1.4em;
 }
 
-.highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0 {
-    fill: var(--highcharts-color-5);
-    stroke: var(--highcharts-color-5);
-}
-
+.highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0,
 #dashboard-chart-1 .highcharts-point.highcharts-color-0 {
     fill: var(--highcharts-color-5);
     stroke: var(--highcharts-color-5);
@@ -69,10 +65,7 @@
     fill: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-dashboards-component.highcharts-dashboards-component-kpi {
-    border-radius: 10px;
-}
-
+.highcharts-dashboards-component.highcharts-dashboards-component-kpi,
 .highcharts-dashboards-component.highcharts-dashboards-component-highcharts {
     border-radius: 10px;
 }
@@ -81,10 +74,7 @@
     fill: transparent;
 }
 
-#dashboard-chart-2 .highcharts-grid-axis .highcharts-tick {
-    stroke-width: 0;
-}
-
+#dashboard-chart-2 .highcharts-grid-axis .highcharts-tick,
 #dashboard-chart-2 .highcharts-axis-line {
     stroke-width: 0;
 }
