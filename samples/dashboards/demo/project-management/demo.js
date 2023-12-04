@@ -6,7 +6,7 @@ const plotLines = [{
         y: 0
     },
     value: Date.UTC(2023, 5, 4),
-    zIndex: 10
+    zIndex: 7
 }];
 
 Highcharts.setOptions({
@@ -55,10 +55,6 @@ Dashboards.board('container', {
             rows: [{
                 id: 'current-sprint',
                 cells: [{
-                    id: 'dashboard-header',
-                    width: '100%',
-                    height: 50
-                }, {
                     layout: {
                         rows: [{
                             cells: [{
@@ -137,20 +133,6 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-header',
-        type: 'HTML',
-        elements: [{
-            tagName: 'div',
-            id: 'dashboard-title',
-            children: [{
-                tagName: 'h2',
-                textContent: 'Current sprint',
-                attributes: {
-                    id: 'main-title'
-                }
-            }]
-        }]
-    }, {
         cell: 'dashboard-kpi-1',
         type: 'KPI',
         title: 'Completed tasks',
@@ -428,9 +410,9 @@ Dashboards.board('container', {
         }
     }]
 }, true).then(dashboard => {
-    const completedTaskKPI = dashboard.mountedComponents[1].component,
-        incompleteTaskKPI = dashboard.mountedComponents[2].component,
-        taskByStatusChart = dashboard.mountedComponents[3].component,
+    const completedTaskKPI = dashboard.mountedComponents[0].component,
+        incompleteTaskKPI = dashboard.mountedComponents[1].component,
+        taskByStatusChart = dashboard.mountedComponents[2].component,
         connectors = dashboard.dataPool.connectors,
         cumulativeData = connectors.cumulativeData.table.columns,
         completedTask = cumulativeData.Done[5] - cumulativeData.Done[4],
