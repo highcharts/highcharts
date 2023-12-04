@@ -3490,17 +3490,16 @@ class Series {
         e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
-        const { chart, xAxis, yAxis } = this,
-            { inverted, polar } = chart,
-            isInvertedAndPolar = inverted && polar;
+        const { xAxis, yAxis } = this,
+            inverted = this.chart.inverted;
 
         return this.searchKDTree({
-            clientX: inverted && !polar ?
+            clientX: inverted ?
                 xAxis.len - e.chartY + xAxis.pos :
-                e.chartX - (isInvertedAndPolar ? yAxis.pos : xAxis.pos),
-            plotY: inverted && !polar ?
+                e.chartX - xAxis.pos,
+            plotY: inverted ?
                 yAxis.len - e.chartX + yAxis.pos :
-                e.chartY - (isInvertedAndPolar ? xAxis.pos : yAxis.pos)
+                e.chartY - yAxis.pos
         }, compareX, e);
     }
 
