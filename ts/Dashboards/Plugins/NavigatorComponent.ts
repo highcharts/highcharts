@@ -711,7 +711,11 @@ class NavigatorComponent extends Component {
                         }
                     }
 
-                    for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
+                    for (
+                        let i = 0, iEnd = columnValues.length,
+                            jEnd = appliedRanges.length;
+                        i < iEnd; i++
+                    ) {
                         let value = columnValues[i];
 
                         if (!defined(value) || !isNumber(+value)) {
@@ -727,10 +731,7 @@ class NavigatorComponent extends Component {
                         }
 
                         let allConditionsMet = true;
-                        for (
-                            let j = 0, iEnd = appliedRanges.length;
-                            j < iEnd; j++
-                        ) {
+                        for (let j = 0; j < jEnd; j++) {
                             const range = appliedRanges[j];
                             if (!(
                                 rangedColumns[j][i] as string|number|boolean >=
