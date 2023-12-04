@@ -666,7 +666,7 @@ class Tooltip {
         const preferFarSide = !this.followPointer &&
             pick(
                 point.ttBelow,
-                polar ? (!polar && inverted) : !inverted === flipped
+                polar ? false : !inverted === flipped
             ), // #4984
 
             /*
