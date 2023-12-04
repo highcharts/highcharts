@@ -34,16 +34,12 @@
     text-align: left;
 }
 
-#dashboard-header #dashboard-title {
-    text-align: center;
-}
-
-#dashboard-header #main-title {
-    margin: 0 auto;
-}
-
-#current-sprint {
-    background-color: var(--gray);
+.dashboard-header .dashboard-title,
+.dashboard-header .dashboard-description {
+    background-color: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
+    margin: 0;
+    padding-left: 20px;
 }
 
 .highcharts-dashboards-component.highcharts-dashboards-component-kpi-value {
