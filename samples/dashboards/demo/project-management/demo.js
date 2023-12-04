@@ -171,9 +171,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         title: 'Tasks by status',
         chartOptions: {
-            xAxis: {
-                categories: ['Done', 'To Do', 'In Progress', 'Blocked']
-            },
             series: [{
                 type: 'pie',
                 keys: ['name', 'y'],
@@ -269,7 +266,7 @@ Dashboards.board('container', {
             xAxis: [{
                 plotLines,
                 dateTimeLabelFormats: {
-                    day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
+                    day: '%e<br><span style="opacity: 0.5; font-size: 0.7em;">%a</span>'
                 },
                 grid: {
                     borderWidth: 0
