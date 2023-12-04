@@ -50,10 +50,8 @@ function getProperties() {
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
-    let previous;
-    do {
-        previous = html;
-        html = html.replace(
+    html = html
+        .replace(
             /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
             ''
         )
@@ -64,7 +62,6 @@ function getHTML(path) {
             /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
         );
-    } while(previous !== html);
 
     return html + '\n';
 }
