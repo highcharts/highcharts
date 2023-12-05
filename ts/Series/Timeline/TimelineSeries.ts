@@ -87,13 +87,13 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
-    public data: Array<TimelinePoint> = void 0 as any;
+    public data!: Array<TimelinePoint>;
 
-    public options: TimelineSeriesOptions = void 0 as any;
+    public options!: TimelineSeriesOptions;
 
-    public points: Array<TimelinePoint> = void 0 as any;
+    public points!: Array<TimelinePoint>;
 
-    public userOptions: TimelineSeriesOptions = void 0 as any;
+    public userOptions!: TimelineSeriesOptions;
 
     public visibilityMap: Array<(boolean|TimelinePoint|TimelinePointOptions)> = void 0 as any;
 

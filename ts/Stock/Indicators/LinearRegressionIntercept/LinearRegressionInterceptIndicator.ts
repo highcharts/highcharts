@@ -80,9 +80,9 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionInterceptPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionInterceptPoint> = void 0 as any;
+    public data!: Array<LinearRegressionInterceptPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionInterceptPoint>;
 
     /* *
      *

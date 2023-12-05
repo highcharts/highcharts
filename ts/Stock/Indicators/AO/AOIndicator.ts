@@ -126,9 +126,9 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AOPoint> = void 0 as any;
-    public options: AOOptions = void 0 as any;
-    public points: Array<AOPoint> = void 0 as any;
+    public data!: Array<AOPoint>;
+    public options!: AOOptions;
+    public points!: Array<AOPoint>;
 
     /* *
      *

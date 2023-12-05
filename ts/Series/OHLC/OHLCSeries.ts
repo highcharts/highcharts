@@ -149,11 +149,11 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public data: Array<OHLCPoint> = void 0 as any;
+    public data!: Array<OHLCPoint>;
 
-    public options: OHLCSeriesOptions = void 0 as any;
+    public options!: OHLCSeriesOptions;
 
-    public points: Array<OHLCPoint> = void 0 as any;
+    public points!: Array<OHLCPoint>;
 
     /* *
      *

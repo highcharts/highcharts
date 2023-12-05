@@ -246,10 +246,10 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PSARPoint> = void 0 as any;
-    public nameComponents: Array<string> = void 0 as any;
-    public points: Array<PSARPoint> = void 0 as any;
-    public options: PSAROptions = void 0 as any;
+    public data!: Array<PSARPoint>;
+    public nameComponents!: Array<string>;
+    public points!: Array<PSARPoint>;
+    public options!: PSAROptions;
 
     /* *
      *

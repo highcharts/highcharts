@@ -85,9 +85,9 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionAnglePoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionAnglePoint> = void 0 as any;
+    public data!: Array<LinearRegressionAnglePoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionAnglePoint>;
 
     /* *
      *

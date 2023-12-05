@@ -148,9 +148,9 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<XRangePoint> = void 0 as any;
-    public options: XRangeSeriesOptions = void 0 as any;
-    public points: Array<XRangePoint> = void 0 as any;
+    public data!: Array<XRangePoint>;
+    public options!: XRangeSeriesOptions;
+    public points!: Array<XRangePoint>;
 
     /* *
      *

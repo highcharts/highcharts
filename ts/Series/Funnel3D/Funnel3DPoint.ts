@@ -45,13 +45,13 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public dlBoxRaw: Record<string, number> = void 0 as any;
+    public dlBoxRaw!: Record<string, number>;
 
     public options: Funnel3DPointOptions = void 0 as any;
 
     public series: Funnel3DSeries = void 0 as any;
 
-    public y: number = void 0 as any;
+    public y!: number;
 
 }
 

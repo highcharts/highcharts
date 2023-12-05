@@ -131,11 +131,11 @@ class FunnelSeries extends PieSeries {
 
     public centerX?: number;
 
-    public data: Array<FunnelPoint> = void 0 as any;
+    public data!: Array<FunnelPoint>;
 
-    public options: FunnelSeriesOptions = void 0 as any;
+    public options!: FunnelSeriesOptions;
 
-    public points: Array<FunnelPoint> = void 0 as any;
+    public points!: Array<FunnelPoint>;
 
     /* *
      *

@@ -172,7 +172,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * */
 
-    public alignedObjects: Array<SVGElement> = void 0 as any;
+    public alignedObjects!: Array<SVGElement>;
 
     public allowHTML?: boolean;
 
@@ -182,7 +182,7 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#box
      * @type {Highcharts.SVGDOMElement}
      */
-    public box: globalThis.SVGElement = void 0 as any;
+    public box!: globalThis.SVGElement;
 
     /**
      * The wrapper for the root `svg` node of the renderer.
@@ -190,13 +190,13 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#boxWrapper
      * @type {Highcharts.SVGElement}
      */
-    public boxWrapper: SVGElement = void 0 as any;
+    public boxWrapper!: SVGElement;
 
-    public cache: Record<string, BBoxObject> = void 0 as any;
+    public cache!: Record<string, BBoxObject>;
 
-    public cacheKeys: Array<string> = void 0 as any;
+    public cacheKeys!: Array<string>;
 
-    public chartIndex: number = void 0 as any;
+    public chartIndex!: number;
 
     /**
      * A pointer to the `defs` node of the root SVG.
@@ -204,7 +204,7 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#defs
      * @type {Highcharts.SVGElement}
      */
-    public defs: SVGElement = void 0 as any;
+    public defs!: SVGElement;
 
     /**
      * Whether the rendered content is intended for export.
@@ -214,11 +214,11 @@ class SVGRenderer implements SVGRendererLike {
      */
     public forExport?: boolean;
     public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
-    public gradients: Record<string, SVGElement> = void 0 as any;
-    public height: number = void 0 as any;
-    public imgCount: number = void 0 as any;
+    public gradients!: Record<string, SVGElement>;
+    public height!: number;
+    public imgCount!: number;
     public rootFontSize: string|undefined;
-    public style: CSSObject = void 0 as any;
+    public style!: CSSObject;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
 
@@ -229,8 +229,8 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#url
      * @type {string}
      */
-    public url: string = void 0 as any;
-    public width: number = void 0 as any;
+    public url!: string;
+    public width!: number;
 
     /* *
      *

@@ -241,11 +241,11 @@ class GeoHeatmapSeries extends MapSeries {
      *
      * */
 
-    public options: GeoHeatmapSeriesOptions = void 0 as any;
+    public options!: GeoHeatmapSeriesOptions;
 
-    public data: Array<GeoHeatmapPoint> = void 0 as any;
+    public data!: Array<GeoHeatmapPoint>;
 
-    public points: Array<GeoHeatmapPoint> = void 0 as any;
+    public points!: Array<GeoHeatmapPoint>;
 
     public canvas?: HTMLCanvasElement = void 0 as any;
 

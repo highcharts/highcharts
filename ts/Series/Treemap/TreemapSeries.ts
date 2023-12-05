@@ -196,31 +196,31 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
-    public axisRatio: number = void 0 as any;
+    public axisRatio!: number;
 
     public colorValueData?: Array<number>;
 
     public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
-    public data: Array<TreemapPoint> = void 0 as any;
+    public data!: Array<TreemapPoint>;
 
     public drillUpButton?: SVGElement;
 
     public idPreviousRoot?: string;
 
-    public mapOptionsToLevel: Record<string, TreemapSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, TreemapSeriesOptions>;
 
-    public nodeMap: Record<string, TreemapNode> = void 0 as any;
+    public nodeMap!: Record<string, TreemapNode>;
 
     public nodeList: TreemapNode[] = void 0 as any;
 
-    public options: TreemapSeriesOptions = void 0 as any;
+    public options!: TreemapSeriesOptions;
 
-    public points: Array<TreemapPoint> = void 0 as any;
+    public points!: Array<TreemapPoint>;
 
-    public rootNode: string = void 0 as any;
+    public rootNode!: string;
 
-    public tree: TreemapNode = void 0 as any;
+    public tree!: TreemapNode;
 
     public level?: number = void 0 as any;
 

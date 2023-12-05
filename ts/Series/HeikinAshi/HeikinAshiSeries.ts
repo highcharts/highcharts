@@ -174,15 +174,15 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
-    public data: Array<HeikinAshiPoint> = void 0 as any;
+    public data!: Array<HeikinAshiPoint>;
 
     public heikiashiData: Array<Array<number>> = [];
 
-    public options: HeikinAshiSeriesOptions = void 0 as any;
+    public options!: HeikinAshiSeriesOptions;
 
-    public points: Array<HeikinAshiPoint> = void 0 as any;
+    public points!: Array<HeikinAshiPoint>;
 
-    public yData: Array<Array<number>> = void 0 as any;
+    public yData!: Array<Array<number>>;
 
     public processedYData: Array<Array<(number|null)>> = void 0 as any;
 

@@ -153,11 +153,11 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AroonPoint> = void 0 as any;
+    public data!: Array<AroonPoint>;
 
-    public options: AroonOptions = void 0 as any;
+    public options!: AroonOptions;
 
-    public points: Array<AroonPoint> = void 0 as any;
+    public points!: Array<AroonPoint>;
 
     /* *
      *

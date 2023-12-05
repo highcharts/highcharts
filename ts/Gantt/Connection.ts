@@ -86,12 +86,12 @@ class Connection {
     * Properties
     *
     * */
-    public chart: Chart = void 0 as any;
-    public fromPoint: Point = void 0 as any;
-    public graphics: Record<string, SVGElement> = void 0 as any;
+    public chart!: Chart;
+    public fromPoint!: Point;
+    public graphics!: Record<string, SVGElement>;
     public options?: ConnectorsOptions;
-    public pathfinder: Pathfinder = void 0 as any;
-    public toPoint: Point = void 0 as any;
+    public pathfinder!: Pathfinder;
+    public toPoint!: Point;
 
     /**
      * Initialize the Connection object. Used as constructor only.

@@ -118,13 +118,13 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    public paths: Array<PictorialPathOptions> = void 0 as any;
+    public paths!: Array<PictorialPathOptions>;
 
-    public data: Array<PictorialPoint> = void 0 as any;
+    public data!: Array<PictorialPoint>;
 
-    public options: PictorialSeriesOptions = void 0 as any;
+    public options!: PictorialSeriesOptions;
 
-    public points: Array<PictorialPoint> = void 0 as any;
+    public points!: Array<PictorialPoint>;
 
     /* *
      *

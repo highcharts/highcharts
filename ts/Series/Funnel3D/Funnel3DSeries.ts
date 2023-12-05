@@ -83,7 +83,7 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
     public centerX?: number;
 

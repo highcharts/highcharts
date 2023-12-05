@@ -105,9 +105,9 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<OBVPoint> = void 0 as any;
-    public points: Array<OBVPoint> = void 0 as any;
-    public options: OBVOptions = void 0 as any;
+    public data!: Array<OBVPoint>;
+    public points!: Array<OBVPoint>;
+    public options!: OBVOptions;
 
     /* *
      *

@@ -487,17 +487,17 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<BubblePoint> = void 0 as any;
+    public data!: Array<BubblePoint>;
 
     public displayNegative: BubbleSeriesOptions['displayNegative'];
 
-    public maxPxSize: number = void 0 as any;
+    public maxPxSize!: number;
 
-    public minPxSize: number = void 0 as any;
+    public minPxSize!: number;
 
-    public options: BubbleSeriesOptions = void 0 as any;
+    public options!: BubbleSeriesOptions;
 
-    public points: Array<BubblePoint> = void 0 as any;
+    public points!: Array<BubblePoint>;
 
     public radii: Array<(number|null)> = void 0 as any;
 

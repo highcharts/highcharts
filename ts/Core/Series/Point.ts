@@ -137,7 +137,7 @@ class Point {
 
     public graphics?: Array<SVGElement|undefined>;
 
-    public id: string = void 0 as any;
+    public id!: string;
 
     public isNew?: boolean;
 
@@ -168,7 +168,7 @@ class Point {
      * @name Highcharts.Point#name
      * @type {string}
      */
-    public name: string = void 0 as any;
+    public name!: string;
 
     public nonZonedColor?: ColorType;
 
@@ -188,7 +188,7 @@ class Point {
      * @name Highcharts.Point#options
      * @type {Highcharts.PointOptionsObject}
      */
-    public options: PointOptions = void 0 as any;
+    public options!: PointOptions;
 
     /**
      * The percentage for points in a stacked series, pies or gauges.
@@ -206,7 +206,7 @@ class Point {
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-    public series: Series = void 0 as any;
+    public series!: Series;
 
     /**
      * The attributes of the rendered SVG shape like in `column` or `pie`
@@ -243,7 +243,7 @@ class Point {
      */
     public visible: boolean = true;
 
-    public x: number = void 0 as any;
+    public x!: number;
 
     public y?: (number|null);
 

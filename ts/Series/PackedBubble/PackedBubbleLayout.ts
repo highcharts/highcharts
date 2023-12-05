@@ -127,7 +127,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public enableSimulation?: boolean;
     public index: number = NaN;
     public nodes: Array<PackedBubblePoint> = [];
-    public options: PackedBubbleLayout.Options = void 0 as any;
+    public options!: PackedBubbleLayout.Options;
     public series: Array<PackedBubbleSeries> = [];
 
     /* *

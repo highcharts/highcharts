@@ -152,7 +152,7 @@ class DMIIndicator extends SMAIndicator {
      *
      * */
 
-    public options: DMIOptions = void 0 as any;
+    public options!: DMIOptions;
 
     /* *
      *

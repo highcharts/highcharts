@@ -172,17 +172,17 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    public data: Array<SMAPoint> = void 0 as any;
+    public data!: Array<SMAPoint>;
 
-    public dataEventsToUnbind: Array<Function> = void 0 as any;
+    public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent: LineSeriesType = void 0 as any;
+    public linkedParent!: LineSeriesType;
 
     public nameBase?: string;
 
-    public options: SMAOptions = void 0 as any;
+    public options!: SMAOptions;
 
-    public points: Array<SMAPoint> = void 0 as any;
+    public points!: Array<SMAPoint>;
 
     /* *
      *

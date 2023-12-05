@@ -120,10 +120,10 @@ class Accessibility {
      *
      * */
 
-    public chart: Accessibility.ChartComposition = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
-    public keyboardNavigation: KeyboardNavigation = void 0 as any;
-    public proxyProvider: ProxyProvider = void 0 as any;
+    public chart!: Accessibility.ChartComposition;
+    public components!: Accessibility.ComponentsObject;
+    public keyboardNavigation!: KeyboardNavigation;
+    public proxyProvider!: ProxyProvider;
     public zombie?: boolean; // Zombie object on old browsers
 
 

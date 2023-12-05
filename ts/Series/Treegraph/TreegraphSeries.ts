@@ -102,25 +102,25 @@ class TreegraphSeries extends TreemapSeries {
      *
      * */
 
-    public data: Array<TreegraphPoint> = void 0 as any;
+    public data!: Array<TreegraphPoint>;
 
-    public options: TreegraphSeriesOptions = void 0 as any;
+    public options!: TreegraphSeriesOptions;
 
-    public points: Array<TreegraphPoint> = void 0 as any;
+    public points!: Array<TreegraphPoint>;
 
-    public layoutModifier: LayoutModifiers = void 0 as any;
+    public layoutModifier!: LayoutModifiers;
 
-    public nodeMap: Record<string, TreegraphNode> = void 0 as any;
+    public nodeMap!: Record<string, TreegraphNode>;
 
-    public tree: TreegraphNode = void 0 as any;
+    public tree!: TreegraphNode;
 
     public nodeList: Array<TreegraphNode> = [];
 
-    public layoutAlgorythm: TreegraphLayout = void 0 as any;
+    public layoutAlgorythm!: TreegraphLayout;
 
     public links: Array<TreegraphLink> = [];
 
-    public mapOptionsToLevel: Record<string, TreegraphSeriesLevelOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, TreegraphSeriesLevelOptions>;
 
     /* *
      *

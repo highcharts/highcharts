@@ -73,11 +73,11 @@ class VariwideSeries extends ColumnSeries {
      * */
 
     public crispOption?: boolean;
-    public data: Array<VariwidePoint> = void 0 as any;
-    public options: VariwideSeriesOptions = void 0 as any;
-    public points: Array<VariwidePoint> = void 0 as any;
-    public relZ: Array<number> = void 0 as any;
-    public totalZ: number = void 0 as any;
+    public data!: Array<VariwidePoint>;
+    public options!: VariwideSeriesOptions;
+    public points!: Array<VariwidePoint>;
+    public relZ!: Array<number>;
+    public totalZ!: number;
     public zData?: Array<number> = void 0 as any;
 
     /* *
