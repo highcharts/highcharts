@@ -281,7 +281,6 @@ class DataGrid {
 
         (this.containerResizeObserver = new ResizeObserver((): void => {
             this.updateGridElements();
-            console.log('resize');
         })).observe(this.container);
     }
 
@@ -757,7 +756,7 @@ class DataGrid {
 
         // Explicit height is needed for overflow: hidden to work, to make sure
         // innerContainer is not scrollable by user input
-        this.innerContainer.style.height = (outerHeight || 200) + 'px';
+        this.innerContainer.style.height = outerHeight + 'px';
 
         // Calculate how many of the bottom rows is needed to potentially
         // overflow innerContainer and use it to add extra rows to scrollHeight
