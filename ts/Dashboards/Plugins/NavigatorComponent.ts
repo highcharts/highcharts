@@ -39,7 +39,7 @@ const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import U from '../../Core/Utilities.js';
-import DataTable from 'highcharts/es-modules/Data/DataTable';
+import DataTable from '../../Data/DataTable.js';
 const {
     addEvent,
     defined,
