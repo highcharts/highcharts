@@ -179,24 +179,24 @@ class SVGRenderer implements SVGRendererLike {
      *
      * */
 
-    public alignedObjects!: Array<SVGElement>;
+    public alignedObjects: Array<SVGElement>;
     public allowHTML?: boolean;
-    public box!: globalThis.SVGElement;
-    public boxWrapper!: SVGElement;
-    public cache!: Record<string, BBoxObject>;
-    public cacheKeys!: Array<string>;
+    public box: globalThis.SVGElement;
+    public boxWrapper: SVGElement;
+    public cache: Record<string, BBoxObject>;
+    public cacheKeys: Array<string>;
     public chartIndex!: number;
-    public defs!: SVGElement;
+    public defs: SVGElement;
     public forExport?: boolean;
     public globalAnimation!: (boolean|Partial<AnimationOptions>);
-    public gradients!: Record<string, SVGElement>;
+    public gradients: Record<string, SVGElement>;
     public height!: number;
-    public imgCount!: number;
+    public imgCount: number;
     public rootFontSize: string|undefined;
     public style!: CSSObject;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
-    public url!: string;
+    public url: string;
     public width!: number;
 
     /* *
@@ -250,11 +250,11 @@ class SVGRenderer implements SVGRendererLike {
                 .attr({
                     version: '1.1',
                     'class': 'highcharts-root'
-                }) as any,
-            element = boxWrapper.element;
+                }),
+            element = boxWrapper.element as SVGDOMElement;
 
         if (!styledMode) {
-            boxWrapper.css(this.getStyle(style as any));
+            boxWrapper.css(this.getStyle(style || {}));
         }
 
         container.appendChild(element);
@@ -268,9 +268,9 @@ class SVGRenderer implements SVGRendererLike {
             attr(element, 'xmlns', this.SVG_NS);
         }
 
-        this.box = element as any;
+        this.box = element;
         this.boxWrapper = boxWrapper;
-        renderer.alignedObjects = [];
+        this.alignedObjects = [];
 
         this.url = this.getReferenceURL();
 
@@ -281,15 +281,15 @@ class SVGRenderer implements SVGRendererLike {
             doc.createTextNode('Created with @product.name@ @product.version@')
         );
 
-        renderer.defs = this.createElement('defs').add();
-        renderer.allowHTML = allowHTML;
-        renderer.forExport = forExport;
-        renderer.styledMode = styledMode;
-        renderer.gradients = {}; // Object where gradient SvgElements are stored
-        renderer.cache = {}; // Cache for numerical bounding boxes
-        renderer.cacheKeys = [];
-        renderer.imgCount = 0;
-        renderer.rootFontSize = boxWrapper.getStyle('font-size');
+        this.defs = this.createElement('defs').add();
+        this.allowHTML = allowHTML;
+        this.forExport = forExport;
+        this.styledMode = styledMode;
+        this.gradients = {}; // Object where gradient SvgElements are stored
+        this.cache = {}; // Cache for numerical bounding boxes
+        this.cacheKeys = [];
+        this.imgCount = 0;
+        this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
 
