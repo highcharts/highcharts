@@ -455,9 +455,9 @@ class NavigatorComponent extends Component {
         this.options = merge(NavigatorComponent.defaultOptions, options);
 
         const charter = (
-            NavigatorComponent.charter ||
+            NavigatorComponent.charter.Chart ||
             Globals.win.Highcharts
-        ) as any;
+        );
 
         this.chartContainer = Globals.win.document.createElement('div');
         this.chart = charter

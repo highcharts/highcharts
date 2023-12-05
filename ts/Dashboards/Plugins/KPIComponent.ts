@@ -340,7 +340,7 @@ class KPIComponent extends Component {
         super.render();
         this.updateElements();
 
-        const charter = KPIComponent.charter as any;
+        const charter = KPIComponent.charter?.Chart;
 
         if (
             charter &&
