@@ -77,18 +77,8 @@ class AreaRangePoint extends AreaPoint {
 
     public isTopInside?: boolean;
 
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
     public high!: number;
 
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
     public low!: number;
 
     public options!: AreaRangePointOptions;
@@ -106,6 +96,18 @@ class AreaRangePoint extends AreaPoint {
     public plotX!: number;
 
     public series!: AreaRangeSeries;
+
+    /**
+     * Range series only. The high or maximum value for each data point.
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
 
     /* *
      *

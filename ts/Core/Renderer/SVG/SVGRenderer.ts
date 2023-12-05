@@ -140,12 +140,37 @@ let hasInternalReferenceBug: (boolean|undefined);
  */
 class SVGRenderer implements SVGRendererLike {
 
-    /* *
+    /**
+     * The root `svg` node of the renderer.
      *
-     *  Constructors
+     * @name Highcharts.SVGRenderer#box
+     * @type {Highcharts.SVGDOMElement}
+     */
+    /**
+     * The wrapper for the root `svg` node of the renderer.
      *
-     * */
-
+     * @name Highcharts.SVGRenderer#boxWrapper
+     * @type {Highcharts.SVGElement}
+     */
+    /**
+     * A pointer to the `defs` node of the root SVG.
+     *
+     * @name Highcharts.SVGRenderer#defs
+     * @type {Highcharts.SVGElement}
+     */
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
+    /**
+     * Page url used for internal references.
+     *
+     * @private
+     * @name Highcharts.SVGRenderer#url
+     * @type {string}
+     */
     public constructor(
         container: HTMLDOMElement,
         width: number,
@@ -173,45 +198,13 @@ class SVGRenderer implements SVGRendererLike {
      * */
 
     public alignedObjects!: Array<SVGElement>;
-
     public allowHTML?: boolean;
-
-    /**
-     * The root `svg` node of the renderer.
-     *
-     * @name Highcharts.SVGRenderer#box
-     * @type {Highcharts.SVGDOMElement}
-     */
     public box!: globalThis.SVGElement;
-
-    /**
-     * The wrapper for the root `svg` node of the renderer.
-     *
-     * @name Highcharts.SVGRenderer#boxWrapper
-     * @type {Highcharts.SVGElement}
-     */
     public boxWrapper!: SVGElement;
-
     public cache!: Record<string, BBoxObject>;
-
     public cacheKeys!: Array<string>;
-
     public chartIndex!: number;
-
-    /**
-     * A pointer to the `defs` node of the root SVG.
-     *
-     * @name Highcharts.SVGRenderer#defs
-     * @type {Highcharts.SVGElement}
-     */
     public defs!: SVGElement;
-
-    /**
-     * Whether the rendered content is intended for export.
-     *
-     * @name Highcharts.SVGRenderer#forExport
-     * @type {boolean | undefined}
-     */
     public forExport?: boolean;
     public globalAnimation!: (boolean|Partial<AnimationOptions>);
     public gradients!: Record<string, SVGElement>;
@@ -221,14 +214,6 @@ class SVGRenderer implements SVGRendererLike {
     public style!: CSSObject;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
-
-    /**
-     * Page url used for internal references.
-     *
-     * @private
-     * @name Highcharts.SVGRenderer#url
-     * @type {string}
-     */
     public url!: string;
     public width!: number;
 
