@@ -31,6 +31,13 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
+interface PdfFontOptions {
+    bold?: string;
+    bolditalic?: string;
+    italic?: string;
+    normal?: string;
+}
+
 export interface ExportingOptions {
     allowHTML?: boolean;
     allowTableSorting?: boolean;
@@ -43,12 +50,7 @@ export interface ExportingOptions {
     formAttributes?: HTMLAttributes;
     libURL?: string;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
-    pdfFont?: {
-        bold?: string;
-        bolditalic?: string;
-        italic?: string;
-        normal?: string;
-    };
+    pdfFont?: PdfFontOptions;
     printMaxWidth?: number;
     scale?: number;
     sourceHeight?: number;

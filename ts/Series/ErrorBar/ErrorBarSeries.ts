@@ -97,7 +97,7 @@ class ErrorBarSeries extends BoxPlotSeries {
             AreaRangeSeries.prototype.drawDataLabels.call(series);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            for (const point of series.data) {
+            for (const point of series.points) {
                 point.y = (point as any)[valKey];
             }
         }
