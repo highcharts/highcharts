@@ -39,7 +39,7 @@ const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import U from '../../Core/Utilities.js';
-import DataTable from 'highcharts/es-modules/Data/DataTable';
+import DataTable from '../../Data/DataTable.js';
 const {
     addEvent,
     defined,
@@ -455,8 +455,8 @@ class NavigatorComponent extends Component {
         this.options = merge(NavigatorComponent.defaultOptions, options);
 
         const charter = (
-            NavigatorComponent.charter ||
-            Globals.win.Highcharts as H
+            NavigatorComponent.charter.Chart ||
+            Globals.win.Highcharts
         );
 
         this.chartContainer = Globals.win.document.createElement('div');

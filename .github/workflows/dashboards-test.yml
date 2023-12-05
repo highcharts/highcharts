@@ -45,6 +45,9 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
+      - name: Build Highcharts definitions
+        run: npx gulp jsdoc-dts
+
       - name: Run Dashboards Tests
         run: npx gulp dashboards/test
 
