@@ -31,6 +31,25 @@ describe('Components in layout', () => {
         });
     });
 
+    it('Context menu should reflow when width of board is changing ', () => {
+        // click on context button
+        cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+
+        cy.board().then((board) => {
+            cy.get('.highcharts-dashboards-edit-context-menu').invoke('css', 'left').then(leftValue => {
+                board.container.style.width = '1000px';
+                cy.viewport('macbook-13').wait(200);
+
+                cy.get('.highcharts-dashboards-edit-context-menu').invoke('css', 'left').then(updatedLeftVal => {
+                    assert.ok(
+                        parseFloat(leftValue) < parseFloat(updatedLeftVal),
+                        'The position of context menu has been updated.'
+                    );
+                });
+            });
+        });
+    });
+
 });
 
 describe('Chart synchronized series state', () => {

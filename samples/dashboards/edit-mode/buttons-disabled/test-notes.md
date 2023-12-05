@@ -1,0 +1,1 @@
+1. Enable teh edit mode and verify that the RWD buttons are disabled.

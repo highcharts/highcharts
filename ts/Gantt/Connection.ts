@@ -17,7 +17,6 @@
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
@@ -137,21 +136,19 @@ class Connection {
      */
     public renderPath(
         path: SVGPath,
-        attribs?: SVGAttributes,
-        animation?: (boolean|DeepPartial<AnimationOptions>)
+        attribs?: SVGAttributes
     ): void {
         const connection = this,
             chart = this.chart,
             styledMode = chart.styledMode,
-            pathfinder = chart.pathfinder,
-            animate = !chart.options.chart.forExport && animation !== false,
+            pathfinder = this.pathfinder,
             anim: SVGAttributes = {};
 
         let pathGraphic = connection.graphics && connection.graphics.path;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
-        if (!(pathfinder as any).group) {
-            (pathfinder as any).group = chart.renderer.g()
+        if (!pathfinder.group) {
+            pathfinder.group = chart.renderer.g()
                 .addClass('highcharts-pathfinder-group')
                 .attr({ zIndex: -1 })
                 .add(chart.seriesGroup);
@@ -160,12 +157,12 @@ class Connection {
         // Shift the group to compensate for plot area.
         // Note: Do this always (even when redrawing a path) to avoid issues
         // when updating chart in a way that changes plot metrics.
-        (pathfinder as any).group.translate(chart.plotLeft, chart.plotTop);
+        pathfinder.group.translate(chart.plotLeft, chart.plotTop);
 
         // Create path if does not exist
         if (!(pathGraphic && pathGraphic.renderer)) {
             pathGraphic = chart.renderer.path()
-                .add((pathfinder as any).group);
+                .add(pathfinder.group);
             if (!styledMode) {
                 pathGraphic.attr({
                     opacity: 0
@@ -179,7 +176,7 @@ class Connection {
         if (!styledMode) {
             anim.opacity = 1;
         }
-        pathGraphic[animate ? 'animate' : 'attr'](anim, animation as any);
+        pathGraphic.animate(anim);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -436,7 +433,7 @@ class Connection {
         }
 
         // Add the calculated path to the pathfinder group
-        connection.renderPath(path, attribs, series.options.animation);
+        connection.renderPath(path, attribs);
 
         // Render the markers
         connection.addMarker(

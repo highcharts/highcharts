@@ -50,6 +50,10 @@ synchronize extremes in a shared crossfilter. This crossfilter is managed by a
 a RangeModifier which sources the table of a connector. All components have to
 share the same connector and table to make the crossfilter work.
 
+For crossfilter sync, you can enable the `affectNavigators` option, which
+causes, in addition to changing the content of the table, also the content of
+other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
+
 Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 ### Crossfilter Example

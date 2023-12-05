@@ -6,7 +6,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/cyber-monday/';
 
 const small = window.matchMedia('(max-width: 300px)').matches;
 
@@ -242,7 +242,7 @@ function updateCountdown(type) {
     // If the countdown is over, display some text
     if (distance <= 0) {
         // clearInterval(countdownInterval);
-        countDownDate = new Date('2023-12-03T23:00:00Z').getTime();
+        countDownDate = new Date('2023-12-04T07:00:00Z').getTime();
         document.getElementById('header').innerHTML = 'Our <span style="font-weight:bold">Big Deal</span> ends in:';
     }
 

@@ -760,19 +760,14 @@ function wrapInit(
                     x: -5,
                     y: -5,
                     height: 10,
-                    width: 10,
-                    padding: 5
+                    width: 10
                 }
             },
             uniqueNames: false
 
         }, userOptions, { // User options
             // Forced options
-            reversed: true,
-            // grid.columns is not supported in treegrid
-            grid: {
-                columns: void 0
-            }
+            reversed: true
         });
     }
 
@@ -801,6 +796,9 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        linkedParent = typeof options.linkedTo === 'number' ?
+            this.chart[axis.coll]?.[options.linkedTo] :
+            void 0,
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -809,15 +807,30 @@ function wrapSetTickInterval(
 
         fireEvent(axis, 'foundExtremes');
 
-        // setAxisTranslation modifies the min and max according to
-        // axis breaks.
+        // `setAxisTranslation` modifies the min and max according to axis
+        // breaks.
         axis.setAxisTranslation();
 
-        axis.tickmarkOffset = 0.5;
         axis.tickInterval = 1;
+        axis.tickmarkOffset = 0.5;
         axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?
             axis.treeGrid.getTickPositions() :
             [];
+
+        if (linkedParent) {
+
+            const linkedParentExtremes = linkedParent.getExtremes();
+            axis.min = pick(
+                linkedParentExtremes.min,
+                linkedParentExtremes.dataMin
+            );
+            axis.max = pick(
+                linkedParentExtremes.max,
+                linkedParentExtremes.dataMax
+            );
+            axis.tickPositions = linkedParent.tickPositions;
+        }
+        axis.linkedParent = linkedParent;
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
     }

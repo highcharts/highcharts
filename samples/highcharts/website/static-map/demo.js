@@ -24,7 +24,7 @@ const finalMap = function () {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+            'https://www.highcharts.com/samples/data/world-population-density.json'
         ).then(response => response.json());
 
         // Assign id's

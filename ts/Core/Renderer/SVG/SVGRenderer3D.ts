@@ -473,14 +473,9 @@ namespace SVGRenderer3D {
         type: string,
         shapeArgs: SVGAttributes
     ): SVGElement3D {
-        // base
-        const elem3d = new SVGElement3D.types[type]();
-
-        // init
-        elem3d.init(this, 'g');
+        const elem3d = new SVGElement3D.types[type](this, 'g');
         elem3d.initArgs(shapeArgs);
 
-        // return
         return elem3d;
     }
 

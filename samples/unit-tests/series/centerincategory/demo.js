@@ -54,6 +54,13 @@ QUnit.test('series.centerInCategory', function (assert) {
                     [1, 2],
                     [3, 4]
                 ]
+            },
+            // #20221, a series that does not support centerInCategory should
+            // not affect the layout of the ones that do
+            {
+                name: 'Line',
+                type: 'line',
+                data: [1]
             }
         ]
     });

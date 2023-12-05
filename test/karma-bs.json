@@ -23,14 +23,14 @@
     "Mac.Safari": {
         "base": "BrowserStack",
         "browser": "safari",
-        "browser_version": "14.1",
+        "browser_version": "16.5",
         "os": "OS X",
-        "os_version": "Big Sur"
+        "os_version": "Ventura"
     },
     "Win.Chrome": {
         "base": "BrowserStack",
         "browser": "chrome",
-        "browser_version": "103.0",
+        "browser_version": "118.0",
         "os": "Windows",
         "os_version": "10"
     },
