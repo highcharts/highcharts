@@ -26,6 +26,7 @@ import './datagrouping.src.js';
 import './mouse-wheel-zoom.src.js';
 const G: AnyRecord = Highcharts;
 // Classes
+G.OrdinalAxis = OrdinalAxis;
 G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
