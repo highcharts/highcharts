@@ -277,7 +277,6 @@ class DataGrid {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
         this.render();
-        this.updateGridElements();
 
         (this.containerResizeObserver = new ResizeObserver((): void => {
             this.updateGridElements();
