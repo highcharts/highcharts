@@ -87,11 +87,11 @@ class Funnel3DSeries extends ColumnSeries {
 
     public centerX?: number;
 
-    public data: Array<Funnel3DPoint> = void 0 as any;
+    public data!: Array<Funnel3DPoint>;
 
-    public options: Funnel3DSeriesOptions = void 0 as any;
+    public options!: Funnel3DSeriesOptions;
 
-    public points: Array<Funnel3DPoint> = void 0 as any;
+    public points!: Array<Funnel3DPoint>;
 
     /* *
      *

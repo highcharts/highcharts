@@ -190,7 +190,7 @@ class ColorAxis extends Axis implements AxisLike {
     public legendItem?: LegendItemObject;
     public name?: string;
     public options!: ColorAxis.Options;
-    public stops: GradientColor['stops'] = void 0 as any;
+    public stops!: GradientColor['stops'];
     public visible: boolean = true;
 
     /* *

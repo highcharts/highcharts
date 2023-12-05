@@ -123,7 +123,7 @@ class WaterfallSeries extends ColumnSeries {
 
     public stackedYPos!: Array<number>;
 
-    public stackKey: 'waterfall' = void 0 as any;
+    public stackKey!: 'waterfall';
 
     public xData!: Array<number>;
 

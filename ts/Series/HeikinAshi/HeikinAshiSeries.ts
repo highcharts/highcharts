@@ -177,7 +177,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public yData!: Array<Array<number>>;
 
-    public processedYData: Array<Array<(number|null)>> = void 0 as any;
+    public processedYData!: Array<Array<(number|null)>>;
 
     /* *
      *

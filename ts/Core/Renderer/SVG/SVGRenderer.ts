@@ -213,7 +213,7 @@ class SVGRenderer implements SVGRendererLike {
      * @type {boolean | undefined}
      */
     public forExport?: boolean;
-    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
+    public globalAnimation!: (boolean|Partial<AnimationOptions>);
     public gradients!: Record<string, SVGElement>;
     public height!: number;
     public imgCount!: number;

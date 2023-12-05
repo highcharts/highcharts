@@ -247,9 +247,9 @@ class GeoHeatmapSeries extends MapSeries {
 
     public points!: Array<GeoHeatmapPoint>;
 
-    public canvas?: HTMLCanvasElement = void 0 as any;
+    public canvas?: HTMLCanvasElement;
 
-    public context?: CanvasRenderingContext2D = void 0 as any;
+    public context?: CanvasRenderingContext2D;
 
     public isDirtyCanvas: boolean = true;
 

@@ -89,7 +89,7 @@ class KeyboardNavigation {
     public components!: Accessibility.ComponentsObject;
     public currentModuleIx: number = NaN;
     public eventProvider!: EventProvider;
-    public exitAnchor?: DOMElementType = void 0 as any;
+    public exitAnchor?: DOMElementType;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;

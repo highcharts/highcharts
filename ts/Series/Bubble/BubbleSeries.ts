@@ -493,11 +493,11 @@ class BubbleSeries extends ScatterSeries {
 
     public points!: Array<BubblePoint>;
 
-    public radii: Array<(number|null)> = void 0 as any;
+    public radii!: Array<(number|null)>;
 
-    public yData: Array<(number|null)> = void 0 as any;
+    public yData!: Array<(number|null)>;
 
-    public zData: Array<(number|null)> = void 0 as any;
+    public zData!: Array<(number|null)>;
 
     public zMax: BubbleSeriesOptions['zMax'];
 

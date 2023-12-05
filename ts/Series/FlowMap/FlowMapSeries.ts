@@ -344,8 +344,8 @@ class FlowMapSeries extends MapLineSeries {
     public data!: Array<FlowMapPoint>;
     public options!: FlowMapSeriesOptions;
     public points!: Array<FlowMapPoint>;
-    public smallestWeight?: number = void 0 as any;
-    public greatestWeight?: number = void 0 as any;
+    public smallestWeight?: number;
+    public greatestWeight?: number;
     public centerOfPoints!: PositionObject;
 
     /**

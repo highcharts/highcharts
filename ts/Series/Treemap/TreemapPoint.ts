@@ -70,7 +70,7 @@ class TreemapPoint extends ScatterPoint {
 
     public sortIndex?: number;
 
-    public value: (number|null) = void 0 as any;
+    public value!: (number|null);
 
     /* *
      *

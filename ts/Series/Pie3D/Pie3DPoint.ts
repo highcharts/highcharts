@@ -40,7 +40,7 @@ class Pie3DPoint extends PiePoint {
      *
      * */
 
-    public series: Pie3DSeries = void 0 as any;
+    public series!: Pie3DSeries;
 
     /* *
      *

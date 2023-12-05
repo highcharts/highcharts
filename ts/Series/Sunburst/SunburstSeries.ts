@@ -476,7 +476,7 @@ class SunburstSeries extends TreemapSeries {
 
     public points!: Array<SunburstPoint>;
 
-    public shapeRoot?: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeRoot?: SunburstNode.NodeValuesObject;
 
     public startAndEndRadians!: CU.RadianAngles;
 
