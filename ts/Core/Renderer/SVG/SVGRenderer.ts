@@ -567,10 +567,7 @@ class SVGRenderer implements SVGRendererLike {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        const wrapper = new this.Element();
-
-        wrapper.init(this as any, nodeName);
-        return wrapper;
+        return new this.Element(this, nodeName);
     }
 
     /**

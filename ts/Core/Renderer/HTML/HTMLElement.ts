@@ -85,8 +85,8 @@ declare module '../SVG/SVGElementLike' {
             baseline: number
         ): void;
         textSetter(value: string): void;
-        translateXSetter(value: any, key: string): void;
-        translateYSetter(value: any, key: string): void;
+        translateXSetter(value: number, key: string): void;
+        translateYSetter(value: number, key: string): void;
     }
 }
 
@@ -171,8 +171,7 @@ class HTMLElement extends SVGElement {
      * @private
      */
     public htmlCss(styles: CSSObject): HTMLElement {
-        const wrapper = this,
-            element = wrapper.element,
+        const { element } = this,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
             isSettingWidth = (
@@ -180,40 +179,36 @@ class HTMLElement extends SVGElement {
                 styles &&
                 'width' in styles
             ),
-            textWidth = pick(
-                isSettingWidth && styles.width,
-                void 0
-            );
+            textWidth = isSettingWidth && styles.width;
 
         let doTransform;
 
         if (isSettingWidth) {
             delete styles.width;
-            wrapper.textWidth = textWidth as any;
+            this.textWidth = pInt(textWidth) || void 0;
             doTransform = true;
         }
 
-        if (styles && styles.textOverflow === 'ellipsis') {
+        if (styles?.textOverflow === 'ellipsis') {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
-        wrapper.styles = extend(wrapper.styles, styles);
-        css(wrapper.element, styles);
+        extend(this.styles, styles);
+        css(element, styles);
 
         // Now that all styles are applied, to the transform
         if (doTransform) {
-            wrapper.htmlUpdateTransform();
+            this.htmlUpdateTransform();
         }
 
-        return wrapper;
+        return this;
     }
 
     /**
-     * useHTML method for calculating the bounding box based on offsets.
+     * The useHTML method for calculating the bounding box based on offsets.
      */
     public htmlGetBBox(): BBoxObject {
-        const wrapper = this,
-            element = wrapper.element;
+        const { element } = this;
 
         return {
             x: element.offsetLeft,
@@ -227,56 +222,57 @@ class HTMLElement extends SVGElement {
      * @private
      */
     public htmlUpdateTransform(): void {
-        // aligning non added elements is expensive
+        // Aligning non added elements is expensive
         if (!this.added) {
             this.alignOnAdd = true;
             return;
         }
 
-        const wrapper = this,
-            renderer = wrapper.renderer,
-            elem = wrapper.element,
-            translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0,
-            x = wrapper.x || 0,
-            y = wrapper.y || 0,
-            align = wrapper.textAlign || 'left',
+        const {
+                element,
+                renderer,
+                rotation,
+                styles,
+                textAlign = 'left',
+                textWidth,
+                translateX = 0,
+                translateY = 0,
+                x = 0,
+                y = 0
+            } = this,
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[align],
-            styles = wrapper.styles,
-            whiteSpace = styles && styles.whiteSpace;
+            } as Record<string, number>)[textAlign],
+            whiteSpace = styles?.whiteSpace;
 
-        /** @private */
-        function getTextPxLength(): number {
-            if (wrapper.textPxLength) {
-                return wrapper.textPxLength;
+        // Get the pixel length of the text
+        const getTextPxLength = (): number => {
+            if (this.textPxLength) {
+                return this.textPxLength;
             }
             // Reset multiline/ellipsis in order to read width (#4928,
             // #5417)
-            css(elem, {
+            css(element, {
                 width: '',
                 whiteSpace: whiteSpace || 'nowrap'
             });
-            return elem.offsetWidth;
-        }
+            return element.offsetWidth;
+        };
 
-        // apply translate
-        css(elem, {
-            marginLeft: translateX as any,
-            marginTop: translateY as any
+        // Apply translate
+        css(element, {
+            marginLeft: `${translateX}px`,
+            marginTop: `${translateY}px`
         });
 
-        if (elem.tagName === 'SPAN') {
-            const rotation = wrapper.rotation,
-                textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
-                currentTextTransform = [
-                    rotation,
-                    align,
-                    elem.innerHTML,
-                    wrapper.textWidth,
-                    wrapper.textAlign
-                ].join(',');
+        if (element.tagName === 'SPAN') {
+            const currentTextTransform = [
+                rotation,
+                textAlign,
+                element.innerHTML,
+                textWidth,
+                this.textAlign
+            ].join(',');
 
             let baseline,
                 hasBoxWidthChanged = false;
@@ -285,77 +281,78 @@ class HTMLElement extends SVGElement {
             // avoid the getTextPxLength function using elem.offsetWidth.
             // Calling offsetWidth affects rendering time as it forces layout
             // (#7656).
-            if (textWidth !== wrapper.oldTextWidth) { // #983, #1254
-                const textPxLength = getTextPxLength();
+            if (textWidth !== this.oldTextWidth) { // #983, #1254
+                const textPxLength = getTextPxLength(),
+                    textWidthNum = textWidth || 0;
                 if (
                     (
-                        (textWidth > wrapper.oldTextWidth) ||
-                        textPxLength > textWidth
+                        (textWidthNum > this.oldTextWidth) ||
+                        textPxLength > textWidthNum
                     ) && (
                         // Only set the width if the text is able to word-wrap,
                         // or text-overflow is ellipsis (#9537)
-                        /[ \-]/.test(elem.textContent || elem.innerText) ||
-                        elem.style.textOverflow === 'ellipsis'
+                        /[ \-]/.test(
+                            element.textContent || element.innerText
+                        ) ||
+                        element.style.textOverflow === 'ellipsis'
                     )
                 ) {
-                    css(elem, {
-                        width: (textPxLength > textWidth) || rotation ?
+                    css(element, {
+                        width: (textPxLength > textWidthNum) || rotation ?
                             textWidth + 'px' :
                             'auto', // #16261
                         display: 'block',
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
-                    wrapper.oldTextWidth = textWidth;
+                    this.oldTextWidth = textWidth;
                     hasBoxWidthChanged = true; // #8159
                 }
             }
-            wrapper.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
+            this.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
 
 
             // Do the calculations and DOM access only if properties changed
-            if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(elem).b;
+            if (currentTextTransform !== this.cTT) {
+                baseline = renderer.fontMetrics(element).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.
                 if (
                     defined(rotation) &&
                     (
-                        (rotation !== (wrapper.oldRotation || 0)) ||
-                        (align !== wrapper.oldAlign)
+                        (rotation !== (this.oldRotation || 0)) ||
+                        (textAlign !== this.oldAlign)
                     )
                 ) {
-                    wrapper.setSpanRotation(
-                        rotation as any,
+                    this.setSpanRotation(
+                        rotation,
                         alignCorrection,
                         baseline
                     );
                 }
 
-                (wrapper.getSpanCorrection as any)(
+                this.getSpanCorrection(
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && wrapper.textPxLength) || // #7920
-                        elem.offsetWidth
+                        (!defined(rotation) && this.textPxLength) || // #7920
+                        element.offsetWidth
                     ),
                     baseline,
-                    alignCorrection,
-                    rotation,
-                    align
+                    alignCorrection
                 );
             }
 
-            // apply position with correction
-            css(elem, {
-                left: (x + (wrapper.xCorr || 0)) + 'px',
-                top: (y + (wrapper.yCorr || 0)) + 'px'
+            // Apply position with correction
+            css(element, {
+                left: (x + (this.xCorr || 0)) + 'px',
+                top: (y + (this.yCorr || 0)) + 'px'
             });
 
-            // record current text transform
-            wrapper.cTT = currentTextTransform;
-            wrapper.oldRotation = rotation;
-            wrapper.oldAlign = align;
+            // Record current text transform
+            this.cTT = currentTextTransform;
+            this.oldRotation = rotation;
+            this.oldAlign = textAlign;
         }
     }
 
@@ -368,29 +365,13 @@ class HTMLElement extends SVGElement {
         alignCorrection: number,
         baseline: number
     ): void {
-        const getTransformKey = (): (TransformKeyType|undefined) => (isMS &&
-            !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        void 0);
-
-        const rotationStyle: CSSObject = {},
-            cssTransformKey = getTransformKey();
-
-        if (cssTransformKey) {
-            rotationStyle[cssTransformKey] = rotationStyle.transform =
-                'rotate(' + rotation + 'deg)';
-            (rotationStyle as any)[
-                cssTransformKey + (isFirefox ? 'Origin' : '-origin')
-            ] = rotationStyle.transformOrigin =
-                (alignCorrection * 100) + '% ' + baseline + 'px';
-            css(this.element, rotationStyle);
-        }
+        // CSS transform and transform-origin both supported without prefix
+        // since Firefox 16 (2012), IE 10 (2012), Chrome 36 (2014), Safari 9
+        // (2015).;
+        css(this.element, {
+            transform: `rotate(${rotation}deg)`,
+            transformOrigin: `${alignCorrection * 100}% ${baseline}px`
+        });
     }
 }
 

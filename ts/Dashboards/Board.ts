@@ -554,8 +554,16 @@ class Board implements Serializable<Board, Board.JSON> {
         let layout;
 
         if (board.editMode) {
+            const editModeTools = board.editMode.tools;
+
             board.editMode.hideToolbars(['cell', 'row']);
             board.editMode.hideContextPointer();
+
+            // update expanded context menu container
+            if (editModeTools.contextMenu) {
+                editModeTools.contextMenu
+                    .updatePosition(editModeTools.contextButtonElement);
+            }
         }
 
         for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {

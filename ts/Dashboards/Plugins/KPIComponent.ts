@@ -34,9 +34,8 @@ import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from '../Components/Component.js';
-import Templating from '../../Core/Templating.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
-
+import Templating from '../../Core/Templating.js';
 const {
     format
 } = Templating;
@@ -341,7 +340,7 @@ class KPIComponent extends Component {
         super.render();
         this.updateElements();
 
-        const charter = KPIComponent.charter;
+        const charter = KPIComponent.charter?.Chart;
 
         if (
             charter &&

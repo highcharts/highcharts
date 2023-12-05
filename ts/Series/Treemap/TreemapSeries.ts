@@ -422,7 +422,7 @@ class TreemapSeries extends ScatterSeries {
             style &&
             !defined(style.textOverflow) &&
             dataLabel.text &&
-            dataLabel.getBBox().width > dataLabel.text.textWidth
+            dataLabel.getBBox().width > (dataLabel.text.textWidth || 0)
         ) {
             dataLabel.css({
                 textOverflow: 'ellipsis',
