@@ -67,9 +67,12 @@ async function resolveExternals(info) {
                 return createUMDConfig(name);
             }
             break;
-        case 'Core/Axis/OrdinalAxis':
-            if (masterName !== 'stock') {
-                return createUMDConfig(name);
+        case 'Extensions/DataGrouping/ApproximationRegistry':
+            if (
+                masterName !== 'datagrouping' &&
+                masterName !== 'stock'
+            ) {
+                return createUMDConfig('dataGrouping', 'approximations');
             }
             break;
         case 'Gantt/Pathfinder':

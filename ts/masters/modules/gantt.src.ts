@@ -21,24 +21,25 @@ import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 import StaticScale from '../../Extensions/StaticScale.js';
 import './pathfinder.src.js';
 // Series
-import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
+import './xrange.src.js';
 import GanttSeries from '../../Series/Gantt/GanttSeries.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Connection = Connection;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
-G.RangeSelector = RangeSelector;
 // Compositions
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
-RangeSelector.compose(G.Axis, G.Chart);
-XRangeSeries.compose(G.Axis);
 StaticScale.compose(G.Axis, G.Chart);
 if (!G.Navigator) {
-    Navigator.compose(G.Axis, G.Chart, G.Series);
     G.Navigator = Navigator;
+    Navigator.compose(G.Axis, G.Chart, G.Series);
+}
+if (!G.RangeSelector) {
+    G.RangeSelector = RangeSelector;
+    RangeSelector.compose(G.Axis, G.Chart);
 }
 if (!G.Scrollbar) {
     G.Scrollbar = Scrollbar;

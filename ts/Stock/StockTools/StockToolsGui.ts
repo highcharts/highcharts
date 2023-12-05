@@ -256,8 +256,8 @@ function onChartRender(
         button
     ) {
         if (
-            this.navigationBindings.constructor.prototype.utils
-                .isPriceIndicatorEnabled(this.series)
+            this.navigationBindings.utils
+                ?.isPriceIndicatorEnabled?.(this.series)
         ) {
             button.firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';

@@ -1205,6 +1205,7 @@ function compose(
     }
 
     if (XRangeSeries && U.pushUnique(composedMembers, XRangeSeries)) {
+        console.log('composing...');
         XRangeSeries.prototype.keyToAxis = {
             x2: 'x'
         };

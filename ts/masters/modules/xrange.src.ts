@@ -11,7 +11,12 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+const oldXRange = Highcharts.seriesTypes.xrange;
 import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 const G: AnyRecord = Highcharts;
-XRangeSeries.compose(G.Axis);
+if (oldXRange) {
+    G.seriesTypes.xrange = oldXRange;
+} else {
+    XRangeSeries.compose(G.Axis);
+}
 export default Highcharts;

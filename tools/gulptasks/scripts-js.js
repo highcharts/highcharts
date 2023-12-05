@@ -34,6 +34,7 @@ async function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
+    const fs = require('node:fs/promises');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
@@ -68,7 +69,12 @@ async function scriptsJS() {
             true
         );
 
-        await processLib.exec('npx webpack -c tools/webpacks/highcharts.webpack.mjs', { silent: 2 });
+        const log = await processLib.exec(
+            'npx webpack -c tools/webpacks/highcharts.webpack.mjs',
+            { silent: 2 }
+        );
+
+        await fs.writeFile('webpack.log', log);
 
         logLib.success('Created code');
     } finally {
