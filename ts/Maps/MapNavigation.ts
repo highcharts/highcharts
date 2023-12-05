@@ -148,7 +148,6 @@ class MapNavigation {
     ) {
         this.chart = chart;
         this.navButtons = [];
-        this.init(chart);
     }
 
     /* *
@@ -167,22 +166,6 @@ class MapNavigation {
      *  Functions
      *
      * */
-
-    /**
-     * Initialize function.
-     *
-     * @function MapNavigation#init
-     *
-     * @param {Highcharts.Chart} chart
-     *        The Chart instance.
-     *
-     * @return {void}
-     */
-    public init(
-        chart: MapChart
-    ): void {
-        this.chart = chart;
-    }
 
     /**
      * Update the map navigation with new options. Calling this is the same as
