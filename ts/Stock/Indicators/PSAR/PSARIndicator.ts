@@ -247,7 +247,7 @@ class PSARIndicator extends SMAIndicator {
      * */
 
     public data!: Array<PSARPoint>;
-    public nameComponents!: Array<string>;
+    public nameComponents: Array<string>|undefined = void 0;
     public points!: Array<PSARPoint>;
     public options!: PSAROptions;
 
@@ -402,7 +402,7 @@ class PSARIndicator extends SMAIndicator {
 
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
 }
 
 /* *

@@ -174,13 +174,13 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof TrendLinePoint;
 }
 
 extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
-    nameComponents: (false as any)
+    nameComponents: void 0
 });
 
 /* *
