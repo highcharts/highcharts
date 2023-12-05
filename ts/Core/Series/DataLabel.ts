@@ -469,16 +469,18 @@ namespace DataLabel {
         const filter = options.filter;
 
         if (filter) {
-            const op = filter.operator;
-            const prop = (point as any)[filter.property];
-            const val = filter.value;
+            const op = filter.operator,
+                prop = (point as any)[filter.property],
+                val = filter.value;
             if (
                 (op === '>' && prop > (val as any)) ||
                 (op === '<' && prop < (val as any)) ||
                 (op === '>=' && prop >= (val as any)) ||
                 (op === '<=' && prop <= (val as any)) ||
                 (op === '==' && prop == val) || // eslint-disable-line eqeqeq
-                (op === '===' && prop === val)
+                (op === '===' && prop === val) ||
+                (op === '!=' && prop != val) || // eslint-disable-line eqeqeq
+                (op === '!==' && prop !== val)
             ) {
                 return true;
             }
