@@ -121,7 +121,7 @@ class Point {
      * @name Highcharts.Point#category
      * @type {number|string}
      */
-    public category: (number|string) = void 0 as any;
+    public category!: (number|string);
 
     public color?: ColorType;
 

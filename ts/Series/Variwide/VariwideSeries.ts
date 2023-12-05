@@ -78,7 +78,7 @@ class VariwideSeries extends ColumnSeries {
     public points!: Array<VariwidePoint>;
     public relZ!: Array<number>;
     public totalZ!: number;
-    public zData?: Array<number> = void 0 as any;
+    public zData?: Array<number>;
 
     /* *
      *

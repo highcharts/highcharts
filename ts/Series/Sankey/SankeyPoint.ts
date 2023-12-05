@@ -56,7 +56,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public linkBase!: Array<number>;
 
-    public linkColorMode: ('from'|'gradient'|'to') = void 0 as any;
+    public linkColorMode!: ('from'|'gradient'|'to');
 
     public linksFrom!: Array<SankeyPoint>;
 

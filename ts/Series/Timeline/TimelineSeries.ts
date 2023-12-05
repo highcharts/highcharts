@@ -95,7 +95,7 @@ class TimelineSeries extends LineSeries {
 
     public userOptions!: TimelineSeriesOptions;
 
-    public visibilityMap: Array<(boolean|TimelinePoint|TimelinePointOptions)> = void 0 as any;
+    public visibilityMap!: Array<(boolean|TimelinePoint|TimelinePointOptions)>;
 
     public visiblePointsCount?: number;
 

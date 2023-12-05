@@ -212,7 +212,7 @@ class TreemapSeries extends ScatterSeries {
 
     public nodeMap!: Record<string, TreemapNode>;
 
-    public nodeList: TreemapNode[] = void 0 as any;
+    public nodeList!: TreemapNode[];
 
     public options!: TreemapSeriesOptions;
 
@@ -222,7 +222,7 @@ class TreemapSeries extends ScatterSeries {
 
     public tree!: TreemapNode;
 
-    public level?: number = void 0 as any;
+    public level?: number;
 
     /* *
      *

@@ -53,7 +53,7 @@ class HeatmapPoint extends ScatterPoint {
 
     public series!: HeatmapSeries;
 
-    public value: (number|null) = void 0 as any;
+    public value!: (number|null);
 
     public x!: number;
 

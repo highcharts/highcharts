@@ -244,7 +244,7 @@ class VBPIndicator extends SMAIndicator {
     public rangeStep!: number;
     public volumeDataArray!: Array<number>;
     public zoneStarts!: Array<number>;
-    public zoneLinesSVG?: SVGElement = void 0 as any;
+    public zoneLinesSVG?: SVGElement;
 
     /* *
      *

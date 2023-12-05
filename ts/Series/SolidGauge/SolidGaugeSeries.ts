@@ -81,7 +81,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     public axis!: SolidGaugeAxis;
     public yAxis!: SolidGaugeAxis;
-    public startAngleRad: SolidGaugeSeries['thresholdAngleRad'] = void 0 as any;
+    public startAngleRad!: SolidGaugeSeries['thresholdAngleRad'];
     public thresholdAngleRad!: number;
 
     /* *

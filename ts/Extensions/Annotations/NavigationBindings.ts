@@ -511,7 +511,7 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (NavigationBindingsOptions|null) = void 0 as any;
+    public selectedButton!: (NavigationBindingsOptions|null);
     public stepIndex?: number;
     public steps?: boolean;
 

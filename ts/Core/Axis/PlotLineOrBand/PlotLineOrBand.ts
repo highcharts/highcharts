@@ -108,7 +108,7 @@ class PlotLineOrBand {
      * @name Highcharts.PlotLineOrBand#id
      * @type {string}
      */
-    public id?: string = void 0 as any;
+    public id?: string;
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
