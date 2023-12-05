@@ -171,25 +171,7 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#url
      * @type {string}
      */
-    public constructor(
-        container: HTMLDOMElement,
-        width: number,
-        height: number,
-        style?: CSSObject,
-        forExport?: boolean,
-        allowHTML?: boolean,
-        styledMode?: boolean
-    ) {
-        this.init(
-            container,
-            width,
-            height,
-            style,
-            forExport,
-            allowHTML,
-            styledMode
-        );
-    }
+
 
     /* *
      *
@@ -253,7 +235,7 @@ class SVGRenderer implements SVGRendererLike {
      * does, it will avoid setting presentational attributes in some cases, but
      * not when set explicitly through `.attr` and `.css` etc.
      */
-    public init(
+    public constructor(
         container: HTMLDOMElement,
         width: number,
         height: number,
@@ -261,7 +243,7 @@ class SVGRenderer implements SVGRendererLike {
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
-    ): void {
+    ) {
         const renderer = this,
             boxWrapper = renderer
                 .createElement('svg')

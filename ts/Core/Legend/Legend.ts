@@ -111,17 +111,6 @@ class Legend {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(chart: Chart, options: LegendOptions) {
-        this.chart = chart;
-        this.init(chart, options);
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -142,7 +131,7 @@ class Legend {
 
     public currentPage?: number;
 
-    public display: boolean = false;
+    public display?: boolean;
 
     public down?: SVGElement;
 
@@ -194,7 +183,7 @@ class Legend {
 
     public pages: Array<number> = [];
 
-    public proximate: boolean = false;
+    public proximate?: boolean;
 
     public scrollGroup!: SVGElement;
 
@@ -234,7 +223,7 @@ class Legend {
      * @param {Highcharts.LegendOptions} options
      * Legend options.
      */
-    public init(chart: Chart, options: LegendOptions): void {
+    public constructor(chart: Chart, options: LegendOptions) {
         /**
          * Chart of this legend.
          *
