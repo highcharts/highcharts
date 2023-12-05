@@ -45,7 +45,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    error,
     diffObjects,
     isString,
     merge,
@@ -747,7 +746,7 @@ class HighchartsComponent extends Component {
             try {
                 return factory(this.chartContainer, this.chartOptions);
             } catch {
-                error(
+                throw new Error(
                     'The Highcharts component is misconfigured: `' +
                     this.cell.id + '`'
                 );
