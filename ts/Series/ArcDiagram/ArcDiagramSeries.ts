@@ -121,8 +121,11 @@ class ArcDiagramSeries extends SankeySeries {
         offset: '100%',
 
         /**
-         * The global link weight. If not set, width is calculated per link,
-         * depending on the weight value.
+         * The global link weight, in pixels. If not set, width is calculated
+         * per link, depending on the weight value.
+         *
+         * @sample highcharts/series-arcdiagram/link-weight
+         *         Link weight
          *
          * @type    {number}
          * @since 10.0.0
