@@ -63,6 +63,7 @@ const SOURCE_GLOBS = [
     'js/Maps/GeoJSONComposition.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
+    'ts/Series/AreaRange/AreaRangePoint.js',
     'js/Series/AreaRange/AreaRangeSeries.js',
     'js/Series/Column/ColumnSeries.js',
     'js/Series/Networkgraph/NetworkgraphSeries.js',
