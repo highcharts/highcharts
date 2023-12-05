@@ -43,7 +43,10 @@ Dashboards.board('container', {
             Agriculture: 'y'
         },
         sync: {
-            crossfilter: true
+            crossfilter: {
+                enabled: true,
+                affectNavigator: true
+            }
         },
         chartOptions: {
             title: {
@@ -60,7 +63,10 @@ Dashboards.board('container', {
             Industry: 'y'
         },
         sync: {
-            crossfilter: true
+            crossfilter: {
+                enabled: true,
+                affectNavigator: true
+            }
         },
         chartOptions: {
             title: {
@@ -77,7 +83,10 @@ Dashboards.board('container', {
             Services: 'y'
         },
         sync: {
-            crossfilter: true
+            crossfilter: {
+                enabled: true,
+                affectNavigator: true
+            }
         },
         chartOptions: {
             title: {
