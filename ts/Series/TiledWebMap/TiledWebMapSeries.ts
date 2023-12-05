@@ -166,7 +166,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
-    public options: TiledWebMapSeriesOptions = void 0 as any;
+    public options!: TiledWebMapSeriesOptions;
 
     public tiles: Record<string, TilesItem> | undefined;
 

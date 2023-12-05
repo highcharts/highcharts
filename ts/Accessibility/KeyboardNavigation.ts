@@ -85,16 +85,16 @@ class KeyboardNavigation {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
+    public chart!: Chart;
+    public components!: Accessibility.ComponentsObject;
     public currentModuleIx: number = NaN;
-    public eventProvider: EventProvider = void 0 as any;
+    public eventProvider!: EventProvider;
     public exitAnchor?: DOMElementType = void 0 as any;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public tabindexContainer: HTMLDOMElement = void 0 as any;
+    public tabindexContainer!: HTMLDOMElement;
     public tabbingInBackwards?: boolean;
 
     /* *

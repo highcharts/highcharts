@@ -44,8 +44,8 @@ class PictorialPoint extends ColumnPoint {
      *
      * */
 
-    public options: PictorialPointOptions = void 0 as any;
-    public series: PictorialSeries = void 0 as any;
+    public options!: PictorialPointOptions;
+    public series!: PictorialSeries;
     public pathDef: string | SVGPath | undefined = void 0 as any;
 
     /* *

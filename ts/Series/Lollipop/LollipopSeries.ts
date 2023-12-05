@@ -147,9 +147,9 @@ class LollipopSeries extends Series {
      *
      * */
 
-    public data: Array<LollipopPoint> = void 0 as any;
-    public options: LollipopSeriesOptions = void 0 as any;
-    public points: Array<LollipopPoint> = void 0 as any;
+    public data!: Array<LollipopPoint>;
+    public options!: LollipopSeriesOptions;
+    public points!: Array<LollipopPoint>;
 
     /**
      * Extend the series' drawPoints method by applying a connector

@@ -131,12 +131,12 @@ class NewDataAnnouncer {
      *
      * */
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public chart: Accessibility.ChartComposition;
     public dirty: NewDataAnnouncer.DirtyObject = {
         allSeries: {}
     };
-    public eventProvider: EventProvider = void 0 as any;
+    public eventProvider!: EventProvider;
     public lastAnnouncementTime: number = 0;
     public queuedAnnouncement?: NewDataAnnouncer.QueuedAnnouncementObject;
     public queuedAnnouncementTimer?: number;

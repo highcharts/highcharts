@@ -111,11 +111,11 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
-    public data: Array<GanttPoint> = void 0 as any;
+    public data!: Array<GanttPoint>;
 
-    public options: GanttSeriesOptions = void 0 as any;
+    public options!: GanttSeriesOptions;
 
-    public points: Array<GanttPoint> = void 0 as any;
+    public points!: Array<GanttPoint>;
 
     /* *
      *

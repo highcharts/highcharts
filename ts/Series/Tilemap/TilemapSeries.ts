@@ -172,13 +172,13 @@ class TilemapSeries extends HeatmapSeries {
      *
      * */
 
-    public data: Array<TilemapPoint> = void 0 as any;
+    public data!: Array<TilemapPoint>;
 
-    public options: TilemapSeriesOptions = void 0 as any;
+    public options!: TilemapSeriesOptions;
 
-    public points: Array<TilemapPoint> = void 0 as any;
+    public points!: Array<TilemapPoint>;
 
-    public tileShape: TilemapShapes.DefinitionObject = void 0 as any;
+    public tileShape!: TilemapShapes.DefinitionObject;
 
     /* *
      *

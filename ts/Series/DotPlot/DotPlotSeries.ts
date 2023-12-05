@@ -75,11 +75,11 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<DotPlotPoint> = void 0 as any;
+    public data!: Array<DotPlotPoint>;
 
-    public options: DotPlotSeriesOptions = void 0 as any;
+    public options!: DotPlotSeriesOptions;
 
-    public points: Array<DotPlotPoint> = void 0 as any;
+    public points!: Array<DotPlotPoint>;
 
     /* *
      *

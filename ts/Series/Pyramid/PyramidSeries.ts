@@ -73,11 +73,11 @@ class PyramidSeries extends FunnelSeries {
      *
      * */
 
-    public data: Array<PyramidPoint> = void 0 as any;
+    public data!: Array<PyramidPoint>;
 
-    public options: PyramidSeriesOptions = void 0 as any;
+    public options!: PyramidSeriesOptions;
 
-    public points: Array<PyramidPoint> = void 0 as any;
+    public points!: Array<PyramidPoint>;
 
 }
 

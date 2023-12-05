@@ -74,11 +74,11 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<CylinderPoint> = void 0 as any;
+    public data!: Array<CylinderPoint>;
 
-    public options: CylinderSeriesOptions = void 0 as any;
+    public options!: CylinderSeriesOptions;
 
-    public points: Array<CylinderPoint> = void 0 as any;
+    public points!: Array<CylinderPoint>;
 
 }
 

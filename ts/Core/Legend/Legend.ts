@@ -132,7 +132,7 @@ class Legend {
 
     public baseline?: number;
 
-    public box: SVGElement = void 0 as any;
+    public box!: SVGElement;
 
     public chart: Chart;
 
@@ -140,7 +140,7 @@ class Legend {
 
     public clipRect?: SVGElement;
 
-    public contentGroup: SVGElement = void 0 as any;
+    public contentGroup!: SVGElement;
 
     public currentPage?: number;
 
@@ -154,7 +154,7 @@ class Legend {
 
     public fullHeight?: number;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
     public initialItemY: number = 0;
 
@@ -188,7 +188,7 @@ class Legend {
 
     public offsetWidth: number = 0;
 
-    public options: LegendOptions = void 0 as any;
+    public options!: LegendOptions;
 
     public padding: number = 0;
 
@@ -198,7 +198,7 @@ class Legend {
 
     public proximate: boolean = false;
 
-    public scrollGroup: SVGElement = void 0 as any;
+    public scrollGroup!: SVGElement;
 
     public scrollOffset?: number;
 

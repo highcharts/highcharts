@@ -151,7 +151,7 @@ class MapNavigation {
 
     public chart: MapChart;
     public navButtons: Array<SVGElement>;
-    public navButtonsGroup: SVGElement = void 0 as any;
+    public navButtonsGroup!: SVGElement;
     public unbindDblClick?: Function;
     public unbindMouseWheel?: Function;
 

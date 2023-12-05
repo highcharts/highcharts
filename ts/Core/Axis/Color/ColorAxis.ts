@@ -183,13 +183,13 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
     public coll = 'colorAxis' as const;
-    public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
+    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
     public name?: string;
-    public options: ColorAxis.Options = void 0 as any;
+    public options!: ColorAxis.Options;
     public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;
 

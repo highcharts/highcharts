@@ -93,7 +93,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
 
     public removeDropdownKeydownHandler?: Function;
 

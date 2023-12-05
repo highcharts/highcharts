@@ -92,9 +92,9 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<TrendLinePoint> = void 0 as any;
-    public options: TrendLineOptions = void 0 as any;
-    public points: Array<TrendLinePoint> = void 0 as any;
+    public data!: Array<TrendLinePoint>;
+    public options!: TrendLineOptions;
+    public points!: Array<TrendLinePoint>;
     public updateAllPoints?: boolean = true;
 
     /* *

@@ -128,9 +128,9 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<StochasticPoint> = void 0 as any;
-    public options: StochasticOptions = void 0 as any;
-    public points: Array<StochasticPoint> = void 0 as any;
+    public data!: Array<StochasticPoint>;
+    public options!: StochasticOptions;
+    public points!: Array<StochasticPoint>;
 
     /* *
      *

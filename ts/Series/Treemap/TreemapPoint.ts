@@ -56,15 +56,15 @@ class TreemapPoint extends ScatterPoint {
 
     public imageUrl?: string;
 
-    public name: string = void 0 as any;
+    public name!: string;
 
-    public node: TreemapNode = void 0 as any;
+    public node!: TreemapNode;
 
-    public options: TreemapPointOptions = void 0 as any;
+    public options!: TreemapPointOptions;
 
     public parent?: string;
 
-    public series: TreemapSeries = void 0 as any;
+    public series!: TreemapSeries;
 
     public shapeType: 'arc'|'circle'|'image'|'path'|'rect'|'text' = 'rect';
 

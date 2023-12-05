@@ -102,7 +102,7 @@ class ColumnSeries extends Series {
      *
      * */
 
-    public borderWidth: number = void 0 as any;
+    public borderWidth!: number;
 
     public columnIndex?: number;
 
@@ -112,15 +112,15 @@ class ColumnSeries extends Series {
 
     public dashStyle?: DashStyleValue;
 
-    public data: Array<ColumnPoint> = void 0 as any;
+    public data!: Array<ColumnPoint>;
 
     public dense?: boolean;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
-    public options: ColumnSeriesOptions = void 0 as any;
+    public options!: ColumnSeriesOptions;
 
-    public points: Array<ColumnPoint> = void 0 as any;
+    public points!: Array<ColumnPoint>;
 
     public pointXOffset?: number;
 

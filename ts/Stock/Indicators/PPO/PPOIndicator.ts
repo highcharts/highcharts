@@ -100,9 +100,9 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
-    public data: Array<PPOPoint> = void 0 as any;
-    public options: PPOOptions = void 0 as any;
-    public points: Array<PPOPoint> = void 0 as any;
+    public data!: Array<PPOPoint>;
+    public options!: PPOOptions;
+    public points!: Array<PPOPoint>;
 
     /* *
      *

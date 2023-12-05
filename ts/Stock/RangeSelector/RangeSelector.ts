@@ -169,7 +169,7 @@ class RangeSelector {
      *
      * */
 
-    public buttons: Array<SVGElement> = void 0 as any;
+    public buttons!: Array<SVGElement>;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
@@ -191,7 +191,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: RangeSelectorOptions = void 0 as any;
+    public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;

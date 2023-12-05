@@ -222,7 +222,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);

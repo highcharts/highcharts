@@ -53,9 +53,9 @@ class VariwidePoint extends ColumnPoint {
      *
      * */
 
-    public crosshairWidth: number = void 0 as any;
-    public options: VariwidePointOptions = void 0 as any;
-    public series: VariwideSeries = void 0 as any;
+    public crosshairWidth!: number;
+    public options!: VariwidePointOptions;
+    public series!: VariwideSeries;
 
     /* *
      *
