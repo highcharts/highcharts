@@ -534,7 +534,7 @@ class SMAIndicator extends LineSeries {
 interface SMAIndicator extends IndicatorLike {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
     useCommonDataGrouping: boolean;

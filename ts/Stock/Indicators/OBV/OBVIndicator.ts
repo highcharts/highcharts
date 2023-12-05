@@ -197,12 +197,12 @@ class OBVIndicator extends SMAIndicator {
  * */
 
 interface OBVIndicator {
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
 }
 
 extend(OBVIndicator.prototype, {
-    nameComponents: void 0 as any
+    nameComponents: void 0
 });
 
 /* *
