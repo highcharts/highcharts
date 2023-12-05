@@ -691,7 +691,7 @@ class HighchartsComponent extends Component {
      * @private
      *
      */
-    private getChart(): Chart {
+    private getChart(): Chart|undefined {
         return this.chart || this.createChart();
     }
 
@@ -734,17 +734,23 @@ class HighchartsComponent extends Component {
      * @private
      *
      */
-    private createChart(): Chart {
+    private createChart(): Chart|undefined {
         const charter = HighchartsComponent.charter || Globals.win.Highcharts;
 
         if (!this.chartConstructor) {
             this.chartConstructor = 'chart';
         }
 
-        const factory = charter[this.chartConstructor] as any;
-        if (factory) {
+        const Factory = charter[this.chartConstructor];
+        if (Factory) {
             try {
-                return factory(this.chartContainer, this.chartOptions);
+                if (this.chartConstructor === 'chart') {
+                    return charter.Chart.chart(
+                        this.chartContainer,
+                        this.chartOptions
+                    );
+                }
+                return new Factory(this.chartContainer, this.chartOptions);
             } catch {
                 throw new Error(
                     'The Highcharts component is misconfigured: `' +
@@ -757,7 +763,7 @@ class HighchartsComponent extends Component {
             throw new Error('Chart constructor not found');
         }
 
-        return this.chart as any;
+        return this.chart;
     }
 
     /**
