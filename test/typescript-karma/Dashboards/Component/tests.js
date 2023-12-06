@@ -559,7 +559,7 @@ test('KPI Component updating', async function (assert) {
     }, true),
         kpi = dashboard.mountedComponents[0].component;
 
-    assert.ok(!kpi.chart, 'KPI Component should be loaded without a chart.');
+    assert.notOk(kpi.chart, 'KPI Component should be loaded without a chart.');
 
     kpi.update({
         value: 2,
