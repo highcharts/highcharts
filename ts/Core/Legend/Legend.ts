@@ -353,7 +353,7 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const { group, label, line, symbol } = item.legendItem || {};
+        const { area, group, label, line, symbol } = item.legendItem || {};
 
         if (group) {
             group[visible ? 'removeClass' : 'addClass'](
@@ -362,12 +362,11 @@ class Legend {
         }
 
         if (!this.chart.styledMode) {
-            const { itemHiddenStyle } = this,
-                hiddenColor = (itemHiddenStyle as any).color,
-                symbolColor = visible ?
-                    (item.color || hiddenColor) :
-                    hiddenColor,
-                markerOptions = item.options && (item.options as any).marker;
+            const { itemHiddenStyle = {} } = this,
+                hiddenColor = itemHiddenStyle.color,
+                symbolColor = (visible && item.color) || hiddenColor,
+                itemOptions = (item as Series).options,
+                markerOptions = itemOptions.marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
             label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
@@ -378,7 +377,7 @@ class Legend {
 
                 // Apply marker options
                 if (markerOptions && symbol.isMarker) { // #585
-                    symbolAttr = (item as any).pointAttribs();
+                    symbolAttr = (item as Series).pointAttribs();
                     if (!visible) {
                         // #6769
                         symbolAttr.stroke = symbolAttr.fill = hiddenColor;
@@ -387,6 +386,13 @@ class Legend {
 
                 symbol.attr(symbolAttr);
             }
+
+            area?.attr({
+                fill: visible ?
+                    (itemOptions.fillColor || item.color) :
+                    hiddenColor,
+                'fill-opacity': itemOptions.fillOpacity ?? 0.75
+            });
         }
 
         fireEvent(this, 'afterColorizeItem', { item, visible });

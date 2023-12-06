@@ -218,7 +218,7 @@ class AreaSeries extends LineSeries {
          */
         threshold: 0,
 
-        legendSymbol: 'rectangle'
+        legendSymbol: 'areaMarker'
 
     });
 
