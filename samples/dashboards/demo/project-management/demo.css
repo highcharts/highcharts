@@ -5,10 +5,13 @@
 :root,
 .highcharts-light {
     /* Colors for data series and points */
-    --highcharts-color-0: #10643b;
-    --highcharts-color-1: #223f69;
-    --highcharts-color-2: #725200;
-    --highcharts-color-3: #6e1b14;
+    --highcharts-color-0: #69a285;
+    --highcharts-color-0-variant: #335041;
+    --highcharts-color-1: #ffbb07;
+    --highcharts-color-1-variant: #745405;
+    --highcharts-color-2: #636d7a;
+    --highcharts-color-3: #fc6556;
+    --highcharts-color-3-variant: #ad261a;
     --highcharts-color-5: #404040;
 
     /* Extra colors */
@@ -18,11 +21,9 @@
 @media (prefers-color-scheme: dark) {
     :root {
         /* Colors for data series and points */
-        --highcharts-color-0: #a2ffd2;
-        --highcharts-color-1: #aecefa;
-        --highcharts-color-2: #f3d485;
-        --highcharts-color-3: #ffb1aa;
-        --highcharts-color-5: #dadada;
+        --highcharts-color-0: #93cbae;
+        --highcharts-color-0-variant: #badfcc;
+        --highcharts-color-5: #c4c4c4;
 
         /* Extra colors */
         --gray: #333;
@@ -51,7 +52,6 @@
     font-size: 1.4em;
 }
 
-.highcharts-dashboards-component-kpi-chart-container .highcharts-point.highcharts-color-0,
 #dashboard-chart-1 .highcharts-point.highcharts-color-0 {
     fill: var(--highcharts-color-5);
     stroke: var(--highcharts-color-5);
@@ -75,6 +75,42 @@
     stroke-width: 0;
 }
 
+#dashboard-chart-2 .highcharts-data-label text {
+    fill: #000;
+}
+
+#cumulative .highcharts-color-2 {
+    fill: var(--highcharts-color-3);
+    fill-opacity: 1;
+}
+
+#cumulative .highcharts-area-series.highcharts-color-0 .highcharts-graph {
+    stroke: var(--highcharts-color-0-variant);
+}
+
+#cumulative .highcharts-area-series.highcharts-color-0 .highcharts-point {
+    fill: var(--highcharts-color-0-variant);
+    stroke: var(--highcharts-color-0-variant);
+}
+
+#cumulative .highcharts-area-series.highcharts-color-1 .highcharts-graph {
+    stroke: var(--highcharts-color-1-variant);
+}
+
+#cumulative .highcharts-area-series.highcharts-color-1 .highcharts-point {
+    fill: var(--highcharts-color-1-variant);
+    stroke: var(--highcharts-color-1-variant);
+}
+
+#cumulative .highcharts-area-series.highcharts-color-2 .highcharts-graph {
+    stroke: var(--highcharts-color-3-variant);
+}
+
+#cumulative .highcharts-area-series.highcharts-color-2 .highcharts-point {
+    fill: var(--highcharts-color-3-variant);
+    stroke: var(--highcharts-color-3-variant);
+}
+
 .highcharts-plot-line {
     stroke-width: 3px;
     stroke: var(--highcharts-neutral-color-100);
@@ -84,8 +120,4 @@
     fill: var(--highcharts-neutral-color-100);
     font-size: 1em;
     font-weight: bold;
-}
-
-#dashboard-chart-2 .highcharts-data-label text {
-    fill: var(--highcharts-neutral-color-0);
 }

@@ -158,7 +158,11 @@ Dashboards.board('container', {
                 keys: ['name', 'y'],
                 innerSize: '50%',
                 size: '110%',
-                showInLegend: true
+                showInLegend: true,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.percentage:,.1f}%'
+                }
             }],
             legend: {
                 enabled: true,
