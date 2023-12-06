@@ -565,7 +565,7 @@ test('KPI Component updating', async function (assert) {
         value: 2,
         chartOptions: {
             series: [{
-            data: [1, 2, 3]
+                data: [1, 2, 3]
             }]
         }
     });
