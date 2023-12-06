@@ -284,7 +284,7 @@ abstract class Component {
      *
      * @internal
      */
-    public activeGroup: ComponentGroup | undefined = void 0;
+    public activeGroup: ComponentGroup | undefined;
 
     /** @internal */
     public abstract sync: Sync;
