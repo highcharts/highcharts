@@ -26,7 +26,6 @@ import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
-import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -36,7 +35,10 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { dateFormats } = H;
+const {
+    composed,
+    dateFormats
+} = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -140,14 +142,6 @@ enum GridAxisSide {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -210,8 +204,11 @@ function compose<T extends typeof Axis>(
     ChartClass: typeof Chart,
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
+    const id = 'Core/GridAxis';
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (!composed[id]) {
+        composed[id] = true;
+
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
@@ -239,13 +236,9 @@ function compose<T extends typeof Axis>(
         addEvent(AxisClass, 'afterTickSize', onAfterTickSize);
         addEvent(AxisClass, 'trimTicks', onTrimTicks);
         addEvent(AxisClass, 'destroy', onDestroy);
-    }
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
-    }
 
-    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

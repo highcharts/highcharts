@@ -21,6 +21,8 @@ import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
 import AST from './AST.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -46,19 +48,9 @@ declare module '../SVG/SVGRendererLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
 class HTMLRenderer extends SVGRenderer {
@@ -73,8 +65,11 @@ class HTMLRenderer extends SVGRenderer {
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
+        const id = 'Core/HTMLRenderer';
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             const htmlRendererProto = HTMLRenderer.prototype,
                 svgRendererProto = SVGRendererClass.prototype;
 

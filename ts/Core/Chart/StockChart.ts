@@ -41,6 +41,8 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
+import H from '../Globals.js';
+const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
@@ -384,14 +386,6 @@ namespace StockChart {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -402,21 +396,20 @@ namespace StockChart {
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const id = 'Core/StockChart';
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
-        }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
             SeriesClass.prototype.forceCropping = seriesForceCropping;
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
-        }
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
         }
 

@@ -254,6 +254,13 @@ namespace Globals {
     export const charts: GlobalsLike['charts'] = [];
 
     /**
+     * A shared registry between all bundles to keep track of applied
+     * compositions.
+     * @private
+     */
+    export const composed: Record<string, boolean> = {};
+
+    /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the
      * specifier as key, and a function which takes the timestamp as

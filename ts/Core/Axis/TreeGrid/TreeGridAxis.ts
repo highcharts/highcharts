@@ -42,6 +42,8 @@ import type {
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -137,14 +139,6 @@ interface TreeGridObject {
     collapsedNodes: Array<GridNode>;
     tree: TreeNode;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -892,8 +886,11 @@ class TreeGridAxisAdditions {
         SeriesClass: typeof Series,
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
+        const id = 'Core/TreeGridAxis';
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
                 AxisClass.keepProps.push('treeGrid');
             }
@@ -910,9 +907,6 @@ class TreeGridAxisAdditions {
                 getNode: Tree.getNode
             };
 
-        }
-
-        if (U.pushUnique(composedMembers, TickClass)) {
             if (!TickConstructor) {
                 TickConstructor = TickClass;
             }

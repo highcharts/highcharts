@@ -28,6 +28,8 @@ import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
@@ -118,19 +120,9 @@ namespace BrokenAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Adds support for broken axes.
@@ -140,8 +132,11 @@ namespace BrokenAxis {
         AxisClass: T,
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
+        const id = 'Core/BrokenAxis';
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -152,9 +147,7 @@ namespace BrokenAxis {
                 onAxisAfterSetTickPositions
             );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;

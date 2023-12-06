@@ -19,17 +19,15 @@
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
 
+import H from './Globals.js';
+const { composed } = H;
 import U from './Utilities.js';
 const {
     diffObjects,
     extend,
     find,
-    isArray,
-    isObject,
     merge,
-    objectEach,
     pick,
-    splat,
     uniqueKey
 } = U;
 
@@ -113,14 +111,6 @@ namespace Responsive {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -131,8 +121,11 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
+        const id = 'Core/Responsive';
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             extend(
                 ChartClass.prototype as Composition,
                 {

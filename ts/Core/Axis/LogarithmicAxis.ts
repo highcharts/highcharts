@@ -18,6 +18,8 @@
 
 import type Axis from './Axis';
 
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -66,19 +68,9 @@ namespace LogarithmicAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Provides logarithmic support for axes.
@@ -87,8 +79,11 @@ namespace LogarithmicAxis {
     export function compose<T extends typeof Axis>(
         AxisClass: T
     ): (T&typeof Composition) {
+        const id = 'Core/LogarithmicAxis';
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);

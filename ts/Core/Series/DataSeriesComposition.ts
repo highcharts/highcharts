@@ -27,6 +27,8 @@ import type {
 import type Series from './Series';
 
 import DataTable from '../../Data/DataTable.js';
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -57,14 +59,6 @@ declare module './SeriesOptions' {
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -188,15 +182,18 @@ class DataSeriesAdditions {
     public static compose(
         SeriesClass: typeof Series
     ): void {
+        const id = 'Core/DataSeries';
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
+            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
+
             addEvent(SeriesClass, 'init', function (): void {
                 this.datas = new DataSeriesAdditions(
                     this as DataSeriesComposition
                 );
             });
-
-            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             wrap(seriesProto, 'generatePoints', wrapSeriesGeneratePoints);
             wrap(seriesProto, 'setData', wrapSeriesSetData);
