@@ -5,6 +5,7 @@ on:
 
 permissions:
   issues: write
+  pull-requests: write
 
 jobs:
   stale:
@@ -20,4 +21,3 @@ jobs:
             for your contributions!
           stale-issue-label: "Status: Stale"
           exempt-issue-labels: 'pinned,security'
-          exempt-all-pr-assignees: true # don't close PRs with assignee
