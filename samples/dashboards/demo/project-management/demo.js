@@ -41,11 +41,11 @@ Dashboards.board('container', {
             options: {
                 data: [
                     ['Assignee', 'Completed tasks'],
-                    ['Dev 1', 41],
-                    ['Dev 2', 28],
-                    ['Dev 3', 15],
-                    ['Dev 4', 14],
-                    ['Dev 5', 4]
+                    ['Alex', 41],
+                    ['Jasmine', 28],
+                    ['Ryan', 15],
+                    ['Emily', 14],
+                    ['Jordan', 4]
                 ]
             }
         }]
@@ -281,44 +281,44 @@ Dashboards.board('container', {
                 data: [
                     {
                         name: 'F:1352',
-                        start: Date.UTC(2023, 4, 1),
-                        end: Date.UTC(2023, 4, 22)
+                        start: Date.UTC(2023, 4, 1, 9),
+                        end: Date.UTC(2023, 4, 22, 17)
                     }, {
                         name: 'I.20-00',
-                        start: Date.UTC(2023, 4, 1),
-                        end: Date.UTC(2023, 4, 8)
+                        start: Date.UTC(2023, 4, 1, 9),
+                        end: Date.UTC(2023, 4, 8, 17)
                     }, {
                         name: 'I.20-01',
-                        start: Date.UTC(2023, 4, 8),
-                        end: Date.UTC(2023, 4, 15)
+                        start: Date.UTC(2023, 4, 8, 9),
+                        end: Date.UTC(2023, 4, 15, 17)
                     }, {
                         name: 'F:2741',
-                        start: Date.UTC(2023, 4, 15),
-                        end: Date.UTC(2023, 5, 5)
+                        start: Date.UTC(2023, 4, 15, 9),
+                        end: Date.UTC(2023, 5, 5, 17)
                     }, {
                         name: 'I.20-02',
-                        start: Date.UTC(2023, 4, 15),
-                        end: Date.UTC(2023, 4, 22)
+                        start: Date.UTC(2023, 4, 15, 9),
+                        end: Date.UTC(2023, 4, 22, 17)
                     }, {
                         name: 'I.20-03',
-                        start: Date.UTC(2023, 4, 22),
-                        end: Date.UTC(2023, 4, 29)
+                        start: Date.UTC(2023, 4, 22, 9),
+                        end: Date.UTC(2023, 4, 29, 17)
                     }, {
                         name: 'I.20-04',
-                        start: Date.UTC(2023, 4, 29),
-                        end: Date.UTC(2023, 5, 5)
+                        start: Date.UTC(2023, 4, 29, 9),
+                        end: Date.UTC(2023, 5, 5, 17)
                     }, {
                         name: 'I.20-05',
-                        start: Date.UTC(2023, 5, 5),
-                        end: Date.UTC(2023, 5, 12)
+                        start: Date.UTC(2023, 5, 5, 9),
+                        end: Date.UTC(2023, 5, 12, 17)
                     }, {
                         name: 'F:1982',
-                        start: Date.UTC(2023, 4, 1),
-                        end: Date.UTC(2023, 4, 29)
+                        start: Date.UTC(2023, 4, 1, 9),
+                        end: Date.UTC(2023, 4, 29, 17)
                     }, {
                         name: 'F:673',
-                        start: Date.UTC(2023, 4, 29),
-                        end: Date.UTC(2023, 5, 12)
+                        start: Date.UTC(2023, 4, 29, 9),
+                        end: Date.UTC(2023, 5, 12, 17)
                     }
                 ]
             }],
@@ -362,7 +362,11 @@ Dashboards.board('container', {
             },
             plotOptions: {
                 series: {
-                    stacking: 'normal'
+                    stacking: 'normal',
+                    label: {
+                        enabled: true,
+                        useHTML: true
+                    }
                 }
             },
             xAxis: {
@@ -375,6 +379,9 @@ Dashboards.board('container', {
                 }
             },
             yAxis: {
+                title: {
+                    text: 'Number of tasks'
+                },
                 accessibility: {
                     description: 'Number of tasks.'
                 }
