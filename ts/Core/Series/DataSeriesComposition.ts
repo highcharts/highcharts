@@ -97,7 +97,7 @@ function wrapSeriesGeneratePoints(
         cursor = cropStart + i;
         point = data[cursor];
         if (!point) {
-            point = data[cursor] = (new PointClass()).init(
+            point = data[cursor] = new PointClass(
                 this,
                 processedYData[cursor],
                 processedXData[i]

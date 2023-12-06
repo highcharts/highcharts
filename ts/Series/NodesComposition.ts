@@ -191,7 +191,7 @@ namespace NodesComposition {
 
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
-            const newNode = (new PointClass()).init(
+            const newNode = new PointClass(
                 this,
                 extend({
                     className: 'highcharts-node',

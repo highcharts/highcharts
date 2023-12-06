@@ -404,7 +404,7 @@ function getGroupedPoints(point: Point): Array<Point> {
     if (series.boosted) { // #11156
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             points.push(
-                (new series.pointClass()).init( // eslint-disable-line new-cap
+                new series.pointClass( // eslint-disable-line new-cap
                     series,
                     data[i]
                 )
