@@ -466,7 +466,11 @@ class Pointer {
         for (const axis of chart.axes) {
             if (axis.isPanning) {
                 axis.isPanning = false;
-                if (axis.options.startOnTick || axis.options.endOnTick) {
+                if (
+                    axis.options.startOnTick ||
+                    axis.options.endOnTick ||
+                    axis.series.some((s): boolean|undefined => s.boosted)
+                ) {
                     axis.forceRedraw = true;
                     axis.setExtremes(axis.userMin, axis.userMax, false);
                     redraw = true;
@@ -1404,7 +1408,8 @@ class Pointer {
                             )
                         ),
                     to: boxFromTouches(touches),
-                    from: boxFromTouches(lastTouches)
+                    from: boxFromTouches(lastTouches),
+                    trigger: e.type
                 });
 
                 /* /

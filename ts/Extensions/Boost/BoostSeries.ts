@@ -1034,6 +1034,17 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+
+    // When touch-zooming or mouse-panning, re-rendering the canvas would not
+    // perform fast enough. Instead, let the axes redraw, and temporarily dim
+    // the series itself. A future improvement of this may be to scale and
+    // transform the series canvas.
+    if (xAxis.isPanning || yAxis.isPanning) {
+        this.renderTarget?.css({ opacity: 0.2, filter: 'blur(5px)' });
+        return;
+    }
+    this.renderTarget?.css({ opacity: 1, filter: '' });
+
     // Get or create the renderer
     renderer = createAndAttachRenderer(chart, this);
 

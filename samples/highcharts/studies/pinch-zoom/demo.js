@@ -1,15 +1,21 @@
-/*
-To do
-- When to show reset zoom button? Investigate and run some combinations.
-    - Mousewheeling on stock => Reset zoom does nothing
-- Check out if minPadding, maxPadding and threshold can be refactored out and
-  shared with setTickPositions.
-- On multiple panes, make sure only zoomed axes are affected. Check target or
-  reference position (center point?) against axis position. Add/modify tests.
-- Why is `mouseDownX` and `mouseDownY` registered on both Chart and Pointer?
-- Overscroll: Panning not working, goes to max when dropped first time.
-*/
+function log() {
+    document.getElementById('log').innerText += Array.from(arguments)
+        .join(', ') + '\n';
+}
 
+// Boost scale preview
+/*
+Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
+    if (e.trigger === 'touchmove') {
+        const range = this.max - this.min,
+            scale = (e.max - e.min) / range;
+
+        log(scale);
+
+        e.preventDefault();
+    }
+});
+*/
 
 (async () => {
 
@@ -22,17 +28,18 @@ To do
             // .slice(0, 10)
         );
 
-    Highcharts.stockChart('container', {
+    Highcharts.chart('container', {
         chart: {
-            zoomType: 'y',
+            zoomType: 'xy',
             panning: {
-                enabled: true
+                enabled: true,
+                type: 'xy'
             },
             mouseWheel: {
                 enabled: true
             },
             panKey: 'shift',
-            type: 'area'
+            type: 'line'
         },
         title: {
             text: 'USD to EUR exchange rate over time',
@@ -50,7 +57,9 @@ To do
         yAxis: {
             title: {
                 text: 'Exchange rate'
-            }
+            },
+            startOnTick: false,
+            endOnTick: false
         },
         tooltip: {
             followTouchMove: false,
@@ -63,29 +72,8 @@ To do
             selected: 2
         },
         plotOptions: {
-            area: {
-                fillColor: {
-                    linearGradient: {
-                        x1: 0,
-                        y1: 0,
-                        x2: 0,
-                        y2: 1
-                    },
-                    stops: [
-                        [0, Highcharts.getOptions().colors[0]],
-                        [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                    ]
-                },
-                marker: {
-                    radius: 2
-                },
-                lineWidth: 1,
-                states: {
-                    hover: {
-                        lineWidth: 1
-                    }
-                },
-                threshold: null
+            series: {
+                boostThreshold: 1
             }
         },
 
