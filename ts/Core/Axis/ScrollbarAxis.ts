@@ -20,6 +20,8 @@ import type Axis from './Axis';
 import type ScrollbarType from '../../Stock/Scrollbar/Scrollbar';
 import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -59,26 +61,18 @@ interface ScrollbarAxis extends Axis {
 namespace ScrollbarAxis {
 
     /* *
-    *
-    *  Constants
-    *
-    * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-    *
-    *  Variables
-    *
-    * */
+     *
+     *  Variables
+     *
+     * */
 
     let Scrollbar: typeof ScrollbarType;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Attaches to axis events to create scrollbars if enabled.
@@ -95,12 +89,13 @@ namespace ScrollbarAxis {
         AxisClass: typeof Axis,
         ScrollbarClass: typeof ScrollbarType
     ): void {
+        const id = 'Core/ScollbarAxis';
 
-        if (pushUnique(composedMembers, ScrollbarClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             Scrollbar = ScrollbarClass;
-        }
 
-        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'afterGetOffset', onAxisAfterGetOffset);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);

@@ -35,6 +35,8 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
+import H from '../Globals.js';
+const { composed } = H;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
@@ -139,8 +141,6 @@ declare module '../../Core/Renderer/SVG/SVGElementLike' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 namespace DataLabel {
 
     /* *
@@ -209,19 +209,9 @@ namespace DataLabel {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Check if this series has data labels, either a series-level setting, or
@@ -493,8 +483,11 @@ namespace DataLabel {
      * @private
      */
     export function compose(SeriesClass: typeof Series): void {
+        const id = 'Core/DataLabel';
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.initDataLabelsGroup = initDataLabelsGroup;

@@ -29,6 +29,8 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
+import H from '../../Globals.js';
+const { composed } = H;
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -93,14 +95,6 @@ namespace ColorAxisComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -113,8 +107,6 @@ namespace ColorAxisComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -125,13 +117,16 @@ namespace ColorAxisComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
+        const id = 'Core/ColorAxis';
 
-        if (!ColorAxisConstructor) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             ColorAxisConstructor = ColorAxisClass;
-        }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype;
+            const chartProto = ChartClass.prototype,
+                fxProto = FxClass.prototype,
+                seriesProto = SeriesClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
             chartProto.collectionsWithInit.colorAxis = [
@@ -141,16 +136,10 @@ namespace ColorAxisComposition {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             wrapChartCreateAxis(ChartClass);
-        }
-
-        if (U.pushUnique(composedMembers, FxClass)) {
-            const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
-        }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
                 LegendClass,
@@ -158,18 +147,16 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             extend(
-                SeriesClass.prototype,
+                seriesProto,
                 {
                     optionalAxis: 'colorAxis',
                     translateColors: seriesTranslateColors
                 }
             );
             extend(
-                SeriesClass.prototype.pointClass.prototype,
+                seriesProto.pointClass.prototype,
                 {
                     setVisible: pointSetVisible
                 }

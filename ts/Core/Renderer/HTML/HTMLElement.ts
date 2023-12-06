@@ -26,12 +26,7 @@ import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import H from '../../Globals.js';
-const {
-    isFirefox,
-    isMS,
-    isWebKit,
-    win
-} = H;
+const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
@@ -92,19 +87,9 @@ declare module '../SVG/SVGElementLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 class HTMLElement extends SVGElement {
 
@@ -121,8 +106,11 @@ class HTMLElement extends SVGElement {
     public static compose<T extends typeof SVGElement>(
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
+        const id = 'Core/HTMLElement';
 
-        if (U.pushUnique(composedMembers, SVGElementClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

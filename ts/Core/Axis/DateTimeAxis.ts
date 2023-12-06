@@ -21,6 +21,8 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -91,14 +93,6 @@ namespace DateTimeAxis{
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -110,8 +104,11 @@ namespace DateTimeAxis{
     export function compose<T extends typeof Axis>(
         AxisClass: T
     ): (typeof Composition&T) {
+        const id = 'Core/DateTimeAxis';
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

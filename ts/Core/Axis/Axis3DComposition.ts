@@ -30,7 +30,10 @@ import Axis3DDefaults from './Axis3DDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { deg2rad } = H;
+const {
+    composed,
+    deg2rad
+} = H;
 import Math3D from '../Math3D.js';
 const {
     perspective,
@@ -91,14 +94,6 @@ declare module '../Series/PointLike' {
 export declare class Axis3DComposition extends RadialAxis.AxisComposition {
     axis3D: Axis3DAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -439,9 +434,13 @@ class Axis3DAdditions {
         AxisClass: typeof Axis,
         TickClass: typeof Tick
     ): void {
+        const id = 'Core/Axis3D';
+
         Tick3D.compose(TickClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');

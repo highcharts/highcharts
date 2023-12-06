@@ -21,20 +21,15 @@
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
+
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     extend,
     wrap
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -48,8 +43,11 @@ const composedMembers: Array<unknown> = [];
 function compose(
     TickClass: typeof Tick
 ): void {
+    const id = 'Core/Tick3D';
 
-    if (U.pushUnique(composedMembers, TickClass)) {
+    if (!composed[id]) {
+        composed[id] = true;
+
         addEvent(
             TickClass,
             'afterGetLabelPosition',

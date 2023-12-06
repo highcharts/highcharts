@@ -25,6 +25,8 @@ import type { YAxisOptions } from '../AxisOptions';
 import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Axis from '../Axis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
@@ -676,14 +678,6 @@ namespace StackingAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -697,20 +691,18 @@ namespace StackingAxis {
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
+        const id = 'Core/StackingAxis';
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!composed[id]) {
+            composed[id] = true;
+
+            const chartProto = ChartClass.prototype,
+                seriesProto = SeriesClass.prototype;
+
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
-        }
-
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype;
 
             chartProto.getStacks = chartGetStacks;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
             seriesProto.modifyStacks = seriesModifyStacks;
