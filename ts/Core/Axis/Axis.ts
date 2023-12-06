@@ -51,6 +51,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
+const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -104,6 +105,8 @@ const getNormalizedTickInterval = (
     ),
     !!axis.tickAmount
 );
+
+extend(defaultOptions, { xAxis, yAxis: merge(xAxis, yAxis) });
 
 /* *
  *
@@ -164,8 +167,6 @@ class Axis {
      *  Static Properties
      *
      * */
-
-    public static readonly defaultOptions = AxisDefaults.defaultXAxisOptions;
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
@@ -586,23 +587,29 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
+        const sideSpecific = this.horiz ?
+            // Top and bottom axis defaults
+            {
+                labels: {
+                    autoRotation: [-45]
+                },
+                margin: 15
+            } :
+            // Left and right axis, title rotated 90 or 270 degrees
+            // respectively
+            {
+                title: {
+                    rotation: 90 * this.side
+                }
+            };
+
         this.options = merge(
-            AxisDefaults.defaultXAxisOptions,
-            (this.coll === 'yAxis') && AxisDefaults.defaultYAxisOptions,
-            [
-                AxisDefaults.defaultTopAxisOptions,
-                AxisDefaults.defaultRightAxisOptions,
-                AxisDefaults.defaultBottomAxisOptions,
-                AxisDefaults.defaultLeftAxisOptions
-            ][this.side],
-            merge(
-                // If set in setOptions (#1053):
-                defaultOptions[this.coll],
-                userOptions
-            )
+            sideSpecific,
+            defaultOptions[this.coll] as AxisOptions,
+            userOptions
         );
 
-        fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
+        fireEvent(this, 'afterSetOptions', { userOptions });
     }
 
     /**
@@ -2964,7 +2971,7 @@ class Axis {
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.75em
-            lineHeight = this.labelMetrics().h * 0.75,
+            lineHeight = this.labelMetrics().h,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -3030,7 +3037,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(lineHeight);
+            newTickInterval = getStep(lineHeight * 0.75);
         }
 
         this.autoRotation = autoRotation;
@@ -3351,7 +3358,7 @@ class Axis {
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: axisTitleOptions.rotation,
+                    rotation: axisTitleOptions.rotation || 0,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');
@@ -3545,8 +3552,7 @@ class Axis {
         }
 
         if (
-            axisTitleOptions &&
-            axisTitleOptions.text &&
+            axisTitleOptions?.text &&
             axisTitleOptions.enabled !== false
         ) {
             axis.addTitle(showAxis);

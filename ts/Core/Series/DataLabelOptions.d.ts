@@ -33,7 +33,9 @@ import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
  *
  * */
 
-export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
+export type DataLabelFilterOperatorValue = (
+    '>'|'<'|'>='|'<='|'=='|'==='|'!='|'!=='
+);
 
 export interface TextPathAttributes extends SVGAttributes {
     startOffset?: string;

@@ -27,7 +27,7 @@ import type Options from '../Options';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
-const { getOptions } = D;
+const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     isArray,
@@ -91,8 +91,7 @@ class GanttChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        const defaultOptions = getOptions(),
-            xAxisOptions = userOptions.xAxis,
+        const xAxisOptions = userOptions.xAxis,
             yAxisOptions = userOptions.yAxis;
 
         let defaultLinkedTo: number;
@@ -121,7 +120,7 @@ class GanttChart extends Chart {
                 }
             } as Options,
 
-            userOptions, // user's options
+            userOptions, // User's options
 
             // forced options
             {
@@ -132,9 +131,9 @@ class GanttChart extends Chart {
         userOptions.xAxis = xAxisOptions;
         userOptions.yAxis = yAxisOptions;
 
-        // apply X axis options to both single and multi x axes
-        // If user hasn't defined axes as array, make it into an array and add a
-        // second axis by default.
+        // Apply X axis options to both single and multi x axes If user hasn't
+        // defined axes as array, make it into an array and add a second axis by
+        // default.
         options.xAxis = (
             !isArray(userOptions.xAxis) ?
                 [userOptions.xAxis || {}, {}] :
@@ -147,27 +146,31 @@ class GanttChart extends Chart {
                 defaultLinkedTo = 0;
             }
             return merge(
-                defaultOptions.xAxis,
-                { // defaults
+                // Defaults
+                {
                     grid: {
                         enabled: true
                     },
-                    opposite: true,
+                    opposite: defaultOptions.xAxis?.opposite ??
+                        xAxisOptions.opposite ??
+                        true,
                     linkedTo: defaultLinkedTo
                 },
-                xAxisOptions, // user options
-                { // forced options
+                // User options
+                xAxisOptions,
+                // Forced options
+                {
                     type: 'datetime'
                 }
             );
         });
 
-        // apply Y axis options to both single and multi y axes
+        // Apply Y axis options to both single and multi y axes
         options.yAxis = (splat(userOptions.yAxis || {})).map((
             yAxisOptions: YAxisOptions
         ): YAxisOptions => merge(
-            defaultOptions.yAxis, // #3802
-            { // defaults
+            // Defaults
+            {
                 grid: {
                     enabled: true
                 },
@@ -181,7 +184,8 @@ class GanttChart extends Chart {
                 type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
 
             } as YAxisOptions,
-            yAxisOptions // user options
+            // User options
+            yAxisOptions
         ));
         super.init(options, callback);
     }

@@ -45,28 +45,12 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    error,
     diffObjects,
     isString,
     merge,
     splat,
     uniqueKey
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/GlobalsLike' {
-    interface GlobalsLike {
-        chart: typeof Chart.chart;
-        ganttChart: typeof Chart.chart;
-        mapChart: typeof Chart.chart;
-        stockChart: typeof Chart.chart;
-    }
-}
 
 /* *
  *
@@ -88,7 +72,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: H;
+    public static charter: H;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -707,7 +691,7 @@ class HighchartsComponent extends Component {
      * @private
      *
      */
-    private getChart(): Chart {
+    private getChart(): Chart|undefined {
         return this.chart || this.createChart();
     }
 
@@ -750,22 +734,28 @@ class HighchartsComponent extends Component {
      * @private
      *
      */
-    private createChart(): Chart {
-        const charter = (
-            HighchartsComponent.charter ||
-            Globals.win.Highcharts as H
-        );
-        if (this.chartConstructor !== 'chart') {
-            const factory = charter[this.chartConstructor];
-            if (factory) {
-                try {
-                    return factory(this.chartContainer, this.chartOptions);
-                } catch {
-                    error(
-                        'The Highcharts component is misconfigured: `' +
-                        this.cell.id + '`'
+    private createChart(): Chart|undefined {
+        const charter = HighchartsComponent.charter || Globals.win.Highcharts;
+
+        if (!this.chartConstructor) {
+            this.chartConstructor = 'chart';
+        }
+
+        const Factory = charter[this.chartConstructor];
+        if (Factory) {
+            try {
+                if (this.chartConstructor === 'chart') {
+                    return charter.Chart.chart(
+                        this.chartContainer,
+                        this.chartOptions
                     );
                 }
+                return new Factory(this.chartContainer, this.chartOptions);
+            } catch {
+                throw new Error(
+                    'The Highcharts component is misconfigured: `' +
+                    this.cell.id + '`'
+                );
             }
         }
 
@@ -773,7 +763,6 @@ class HighchartsComponent extends Component {
             throw new Error('Chart constructor not found');
         }
 
-        this.chart = charter.chart(this.chartContainer, this.chartOptions);
         return this.chart;
     }
 

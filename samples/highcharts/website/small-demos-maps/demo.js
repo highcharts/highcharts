@@ -454,7 +454,7 @@ function clusters() {
         ).then(response => response.json());
 
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json'
+            'https://www.highcharts.com/samples/data/european-train-stations-near-airports.json'
         ).then(response => response.json());
 
         Highcharts.mapChart('container', {

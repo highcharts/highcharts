@@ -118,7 +118,7 @@ namespace DateTimeAxis{
 
             axisProto.getTimeTicks = getTimeTicks;
 
-            addEvent(AxisClass, 'init', onInit);
+            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
         }
 
         return AxisClass as (typeof Composition&T);
@@ -150,20 +150,16 @@ namespace DateTimeAxis{
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['userOptions'] }
+    function onAfterSetOptions(
+        this: Axis
     ): void {
-        const axis = this;
-        const options = e.userOptions;
-
-        if (options.type !== 'datetime') {
-            axis.dateTime = void 0;
+        if (this.options.type !== 'datetime') {
+            this.dateTime = void 0;
             return;
         }
 
-        if (!axis.dateTime) {
-            axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
+        if (!this.dateTime) {
+            this.dateTime = new Additions(this as DateTimeAxis.Composition);
         }
     }
 

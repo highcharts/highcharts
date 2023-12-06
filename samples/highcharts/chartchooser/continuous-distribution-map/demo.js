@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c116b6fa6948448/samples/data/us-counties-unemployment.json'
+        'https://www.highcharts.com/samples/data/us-counties-unemployment.json'
     ).then(response => response.json());
 
     // Add state acronym for tooltip

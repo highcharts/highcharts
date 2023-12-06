@@ -34,6 +34,19 @@ const { extend } = U;
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/KDPointSearchObjectLike' {
+    interface KDPointSearchObjectLike {
+        plotX?: number;
+        plotY?: number;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
