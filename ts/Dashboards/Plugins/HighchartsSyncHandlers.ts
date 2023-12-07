@@ -464,8 +464,8 @@ const configs: {
                                 cursor.row !== void 0
                             ) {
                                 const point = series.points[cursor.row - offset],
-                                useSharedTooltip = chart.tooltip?.shared;
-    
+                                    useSharedTooltip = chart.tooltip?.shared;
+
                                 if (point) {
                                     const hoverPoint = chart.hoverPoint,
                                         /* eslint-disable max-len */
