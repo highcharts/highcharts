@@ -358,7 +358,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composed, 'Core/RadialAxis')) {
+        if (U.pushUnique(composed, compose)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',

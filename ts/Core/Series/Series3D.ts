@@ -85,7 +85,7 @@ class Series3D extends Series {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, 'Core/Series3D')) {
+        if (U.pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();

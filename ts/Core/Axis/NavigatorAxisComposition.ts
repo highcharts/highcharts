@@ -149,7 +149,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composed, 'Core/NavigatorAxis')) {
+        if (U.pushUnique(composed, this.compose)) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

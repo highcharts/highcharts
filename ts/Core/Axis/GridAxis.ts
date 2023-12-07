@@ -205,7 +205,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (U.pushUnique(composed, 'Core/GridAxis')) {
+    if (U.pushUnique(composed, compose)) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;

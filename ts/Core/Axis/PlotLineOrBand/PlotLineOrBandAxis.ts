@@ -203,7 +203,7 @@ namespace PlotLineOrBandAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, 'Core/PlotLineOrBandAxis')) {
+        if (U.pushUnique(composed, compose)) {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(

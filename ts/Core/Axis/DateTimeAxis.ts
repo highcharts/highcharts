@@ -105,7 +105,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composed, 'Core/DateTimeAxis')) {
+        if (U.pushUnique(composed, compose)) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

@@ -118,7 +118,7 @@ namespace ColorAxisComposition {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, 'Core/ColorAxis')) {
+        if (U.pushUnique(composed, compose)) {
             ColorAxisConstructor = ColorAxisClass;
 
             const chartProto = ChartClass.prototype,

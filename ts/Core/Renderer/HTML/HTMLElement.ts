@@ -107,7 +107,7 @@ class HTMLElement extends SVGElement {
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
 
-        if (U.pushUnique(composed, 'Core/HTMLElement')) {
+        if (U.pushUnique(composed, this.compose)) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

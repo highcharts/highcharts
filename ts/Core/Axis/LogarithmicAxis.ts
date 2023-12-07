@@ -80,7 +80,7 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, 'Core/LogarithmicAxis')) {
+        if (U.pushUnique(composed, compose)) {
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);
