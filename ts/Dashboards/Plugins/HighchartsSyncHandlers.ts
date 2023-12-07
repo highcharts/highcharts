@@ -458,18 +458,14 @@ const configs: {
                                 }
                             }
 
-                            if (
-                                series &&
-                                series.visible &&
-                                cursor.row !== void 0
-                            ) {
+                            if (series?.visible &&cursor.row !== void 0) {
                                 const point = series.points[cursor.row - offset],
                                     useSharedTooltip = chart.tooltip?.shared;
 
                                 if (point) {
                                     const hoverPoint = chart.hoverPoint,
-                                        /* eslint-disable max-len */
-                                        hoverSeries = hoverPoint?.series || chart.hoverSeries,
+                                        hoverSeries = hoverPoint?.series ||
+                                            chart.hoverSeries,
                                         points = chart.pointer.getHoverData(
                                             point,
                                             hoverSeries,
@@ -479,8 +475,8 @@ const configs: {
                                         );
 
                                     chart.tooltip && chart.tooltip.refresh(
-                                        /* eslint-disable max-len */
-                                        useSharedTooltip ? points.hoverPoints : point
+                                        useSharedTooltip ?
+                                            points.hoverPoints : point
                                     );
                                 }
                             }
