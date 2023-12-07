@@ -12,10 +12,10 @@ const {
     pick
 } = U;
 
-declare module "../../Core/GlobalsLike.d.ts" {
-	interface GlobalsLike {
-		navigators: Array<StandaloneNavigator>;
-	}
+declare module '../../Core/GlobalsLike.d.ts' {
+    interface GlobalsLike {
+        navigators: Array<StandaloneNavigator>;
+    }
 }
 
 type StandaloneNavigatorOptions = {
@@ -25,7 +25,7 @@ type StandaloneNavigatorOptions = {
     min: number;
     max: number;
     colors: [];
-}
+};
 
 class StandaloneNavigator {
 
@@ -39,17 +39,19 @@ class StandaloneNavigator {
         options: DeepPartial<StandaloneNavigatorOptions>
     ): StandaloneNavigator {
         const mergedOptions = merge(
-        (G as any).getOptions(),
+            (G as any).getOptions(),
             StandaloneNavigatorDefaults,
             options
-        ) as StandaloneNavigatorOptions
+        ) as StandaloneNavigatorOptions;
 
-        let nav =  new StandaloneNavigator(renderTo, mergedOptions);
+        const nav = new StandaloneNavigator(renderTo, mergedOptions);
+
         if (!G.navigators) {
-            G.navigators = [nav]
+            G.navigators = [nav];
         } else {
             G.navigators.push(nav);
         }
+
         return nav;
     }
 
@@ -58,7 +60,9 @@ class StandaloneNavigator {
             axisOrChart.xAxis[0] :
             axisOrChart;
 
-        if (!(axis instanceof Axis)) return;
+        if (!(axis instanceof Axis)) {
+            return;
+        }
 
         const { min, max } = this.navigator.xAxis;
 
@@ -66,9 +70,9 @@ class StandaloneNavigator {
         axis.setExtremes(min, max);
     }
 
-    public destroy() {
+    public destroy(): void {
         // Disconnect events
-        this.eventsToUnbind.forEach((f) => {
+        this.eventsToUnbind.forEach((f): void => {
             f();
         });
         this.boundAxes.length = 0;
@@ -77,13 +81,16 @@ class StandaloneNavigator {
         this.navigator.chart.destroy();
     }
 
-    public update(newOptions: Partial<StandaloneNavigatorOptions>) {
-        newOptions = merge(this.options, newOptions);
-        // this.navigator.chart.update(newOptions.chart);
-        // this.navigator.update(newOptions.navigator);
+    public update(
+        newOptions: Partial<StandaloneNavigatorOptions>,
+        redraw?: boolean
+    ):void {
+        this.options = merge(this.options, newOptions);
+
+        this.navigator.chart.update(this.options, redraw);
     }
 
-    public unbind(axisOrChart?: Chart | Axis) {
+    public unbind(axisOrChart?: Chart | Axis): void {
         if (!axisOrChart) {
             this.boundAxes.length = 0;
             return;
@@ -93,10 +100,13 @@ class StandaloneNavigator {
             axisOrChart :
             axisOrChart.xAxis[0];
 
-        this.boundAxes = this.boundAxes.filter(a => a !== axis);
+        this.boundAxes = this.boundAxes.filter((a): boolean => a !== axis);
     }
 
-    constructor(element: (string|globalThis.HTMLElement), options: StandaloneNavigatorOptions) {
+    constructor(
+        element: (string | globalThis.HTMLElement),
+        options: StandaloneNavigatorOptions
+    ) {
         this.options = options;
         const chart = new Chart(element, options);
 
@@ -105,28 +115,35 @@ class StandaloneNavigator {
         this.initNavigator();
     }
 
-    public initNavigator() {
+    public initNavigator(): void {
         const nav = this.navigator;
         nav.top = 0;
         nav.xAxis.setScale();
         nav.yAxis.setScale();
         nav.xAxis.render();
         nav.yAxis.render();
-        nav.series?.forEach(s => {
+        nav.series?.forEach((s): void => {
             s.translate();
             s.render();
             s.redraw();
         });
 
-        let { min, max } = this.getInitialExtremes();
+        const { min, max } = this.getInitialExtremes();
         nav.render(min, max);
 
-        this.eventsToUnbind.push(addEvent(this.navigator.chart.xAxis[0], 'setExtremes', (e) => {
-            const {min, max} = e as {min: number, max: number};
-            this.boundAxes.forEach(axis => {
-                axis.setExtremes(min, max)
-            })
-        }));
+        this.eventsToUnbind.push(
+            addEvent(
+                this.navigator.chart.xAxis[0],
+                'setExtremes',
+                (e): void => {
+                    const { min, max } = e as { min: number, max: number };
+
+                    this.boundAxes.forEach((axis): void => {
+                        axis.setExtremes(min, max);
+                    });
+                }
+            )
+        );
     }
 
     public getRange(): Axis.ExtremesObject {
@@ -141,14 +158,18 @@ class StandaloneNavigator {
             dataMax,
             userMin,
             userMax
-        }
+        };
     }
 
     public setRange(min?: number, max?: number): void {
-        fireEvent(this.navigator, 'setRange', { min, max, trigger: 'navigator' });
+        fireEvent(
+            this.navigator,
+            'setRange',
+            { min, max, trigger: 'navigator' }
+        );
     }
 
-    public getInitialExtremes() {
+    public getInitialExtremes(): { min: number, max: number } {
         const { min, max } = this.options,
             { min: defaultMin, max: defaultMax } =
                 this.navigator.xAxis.getExtremes();
@@ -156,7 +177,7 @@ class StandaloneNavigator {
         return {
             min: min || defaultMin,
             max: max || defaultMax
-        }
+        };
     }
 }
 
