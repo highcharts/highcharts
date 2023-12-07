@@ -104,11 +104,8 @@ namespace DateTimeAxis{
     export function compose<T extends typeof Axis>(
         AxisClass: T
     ): (typeof Composition&T) {
-        const id = 'Core/DateTimeAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/DateTimeAxis')) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

@@ -886,16 +886,13 @@ class TreeGridAxisAdditions {
         SeriesClass: typeof Series,
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
-        const id = 'Core/TreeGridAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
+        if (U.pushUnique(composed, 'Core/TreeGridAxis')) {
+            const axisProps = AxisClass.prototype;
 
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
                 AxisClass.keepProps.push('treeGrid');
             }
-
-            const axisProps = AxisClass.prototype;
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);

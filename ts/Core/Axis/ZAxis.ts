@@ -117,11 +117,8 @@ class ZAxis extends Axis implements AxisLike {
     public static compose(
         ChartClass: typeof Chart
     ): void {
-        const id = 'Core/ZAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/ZAxis')) {
             const chartProto = ChartClass.prototype;
 
             defaultOptions.zAxis = merge(xAxis, {

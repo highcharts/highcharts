@@ -26,8 +26,7 @@ import U from '../Utilities.js';
 const {
     addEvent,
     defined,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -89,11 +88,8 @@ namespace ScrollbarAxis {
         AxisClass: typeof Axis,
         ScrollbarClass: typeof ScrollbarType
     ): void {
-        const id = 'Core/ScollbarAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/ScollbarAxis')) {
             Scrollbar = ScrollbarClass;
 
             addEvent(AxisClass, 'afterGetOffset', onAxisAfterGetOffset);

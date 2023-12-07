@@ -483,11 +483,8 @@ namespace DataLabel {
      * @private
      */
     export function compose(SeriesClass: typeof Series): void {
-        const id = 'Core/DataLabel';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/DataLabel')) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.initDataLabelsGroup = initDataLabelsGroup;

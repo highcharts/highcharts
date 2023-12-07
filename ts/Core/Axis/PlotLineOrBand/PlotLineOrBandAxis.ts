@@ -202,11 +202,8 @@ namespace PlotLineOrBandAxis {
         PlotLineOrBandType: typeof PlotLineOrBand,
         AxisClass: T
     ): (T&typeof Composition) {
-        const id = 'Core/PlotLineOrBandAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/PlotLineOrBandAxis')) {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(

@@ -258,7 +258,7 @@ namespace Globals {
      * compositions.
      * @private
      */
-    export const composed: Record<string, boolean> = {};
+    export const composed: Array<string> = [];
 
     /**
      * A hook for defining additional date format specifiers. New

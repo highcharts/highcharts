@@ -65,11 +65,8 @@ class HTMLRenderer extends SVGRenderer {
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
-        const id = 'Core/HTMLRenderer';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/HTMLRenderer')) {
             const htmlRendererProto = HTMLRenderer.prototype,
                 svgRendererProto = SVGRendererClass.prototype;
 

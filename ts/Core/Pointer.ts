@@ -2198,11 +2198,8 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        const id = 'Core/Pointer';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch

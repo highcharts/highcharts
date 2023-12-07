@@ -60,7 +60,6 @@ const {
     isString,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -396,11 +395,8 @@ namespace StockChart {
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        const id = 'Core/StockChart';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/StockChart')) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);

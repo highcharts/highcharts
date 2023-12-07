@@ -33,7 +33,6 @@ const {
     extend,
     merge,
     pick,
-    pushUnique,
     isNumber
 } = U;
 
@@ -85,11 +84,8 @@ class Series3D extends Series {
     public static compose(
         SeriesClass: typeof Series
     ): void {
-        const id = 'Core/Series3D';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Series3D')) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();

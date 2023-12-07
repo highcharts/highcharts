@@ -27,8 +27,7 @@ import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    objectEach,
-    pushUnique
+    objectEach
 } = U;
 
 /* *
@@ -99,11 +98,8 @@ namespace WaterfallAxis {
         AxisClass: typeof Axis,
         ChartClass: typeof Chart
     ): void {
-        const id = 'Core/WaterfallAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/WaterfallAxis')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);

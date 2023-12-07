@@ -121,11 +121,8 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
-        const id = 'Core/Responsive';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Responsive')) {
             extend(
                 ChartClass.prototype as Composition,
                 {
