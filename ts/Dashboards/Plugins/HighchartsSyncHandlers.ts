@@ -449,7 +449,6 @@ const configs: {
                             // tooltips when charts have multiple series
                             if (chart.series.length > 1 && cursor.column) {
                                 const relatedSeries = chart.series.filter(
-                                    /* eslint-disable max-len */
                                     (series): boolean => series.name === cursor.column
                                 );
 
