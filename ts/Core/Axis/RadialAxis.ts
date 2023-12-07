@@ -357,11 +357,8 @@ namespace RadialAxis {
         AxisClass: T,
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
-        const id = 'Core/RadialAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/RadialAxis')) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',

@@ -132,11 +132,8 @@ namespace BrokenAxis {
         AxisClass: T,
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
-        const id = 'Core/BrokenAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/BrokenAxis')) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

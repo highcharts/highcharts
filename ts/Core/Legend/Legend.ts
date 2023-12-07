@@ -1757,11 +1757,8 @@ namespace Legend {
     export function compose(
         ChartClass: typeof Chart
     ): void {
-        const id = 'Core/Legend';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Legend')) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

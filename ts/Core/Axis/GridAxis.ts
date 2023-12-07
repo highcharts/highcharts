@@ -204,11 +204,8 @@ function compose<T extends typeof Axis>(
     ChartClass: typeof Chart,
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
-    const id = 'Core/GridAxis';
 
-    if (!composed[id]) {
-        composed[id] = true;
-
+    if (U.pushUnique(composed, 'Core/GridAxis')) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;

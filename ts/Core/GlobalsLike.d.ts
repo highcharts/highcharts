@@ -37,7 +37,7 @@ export interface GlobalsLike {
     readonly SVG_NS: string;
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
-    readonly composed: Record<string, boolean>;
+    readonly composed: Array<string>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;

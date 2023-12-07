@@ -52,8 +52,7 @@ const {
     defined,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -204,11 +203,8 @@ namespace SVGRenderer3D {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        const id = 'Core/SVGRenderer3D';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/SVGRenderer3D')) {
             extend(SVGRendererClass.prototype, {
                 Element3D: SVGElement3D,
                 arc3d,

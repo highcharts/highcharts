@@ -379,11 +379,8 @@ class TreeGridTickAdditions {
     public static compose(
         TickClass: typeof Tick
     ): void {
-        const id = 'Core/TreeGridTick';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/TreeGridTick')) {
             const tickProto = TickClass.prototype;
 
             addEvent(TickClass, 'init', onTickInit);

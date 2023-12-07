@@ -148,11 +148,8 @@ class NavigatorAxisAdditions {
     public static compose(
         AxisClass: typeof Axis
     ): void {
-        const id = 'Core/NavigatorAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/NavigatorAxis')) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

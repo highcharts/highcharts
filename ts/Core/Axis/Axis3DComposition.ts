@@ -434,13 +434,10 @@ class Axis3DAdditions {
         AxisClass: typeof Axis,
         TickClass: typeof Tick
     ): void {
-        const id = 'Core/Axis3D';
 
         Tick3D.compose(TickClass);
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Axis3D')) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');

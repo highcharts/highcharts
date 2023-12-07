@@ -280,11 +280,8 @@ namespace MSPointer {
     export function compose(
         ChartClass: typeof Chart
     ): void {
-        const id = 'Core/MSPointer';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/MSPointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

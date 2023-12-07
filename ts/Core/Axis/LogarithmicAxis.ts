@@ -79,11 +79,8 @@ namespace LogarithmicAxis {
     export function compose<T extends typeof Axis>(
         AxisClass: T
     ): (T&typeof Composition) {
-        const id = 'Core/LogarithmicAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/LogarithmicAxis')) {
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);

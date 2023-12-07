@@ -106,11 +106,8 @@ class HTMLElement extends SVGElement {
     public static compose<T extends typeof SVGElement>(
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
-        const id = 'Core/HTMLElement';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/HTMLElement')) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

@@ -43,11 +43,8 @@ const {
 function compose(
     TickClass: typeof Tick
 ): void {
-    const id = 'Core/Tick3D';
 
-    if (!composed[id]) {
-        composed[id] = true;
-
+    if (U.pushUnique(composed, 'Core/Tick3D')) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

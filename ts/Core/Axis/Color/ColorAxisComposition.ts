@@ -117,11 +117,8 @@ namespace ColorAxisComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-        const id = 'Core/ColorAxis';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/ColorAxis')) {
             ColorAxisConstructor = ColorAxisClass;
 
             const chartProto = ChartClass.prototype,

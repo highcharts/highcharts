@@ -1901,11 +1901,8 @@ namespace Tooltip {
     export function compose(
         PointerClass: typeof Pointer
     ): void {
-        const id = 'Core/Tooltip';
 
-        if (!composed[id]) {
-            composed[id] = true;
-
+        if (U.pushUnique(composed, 'Core/Tooltip')) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 
