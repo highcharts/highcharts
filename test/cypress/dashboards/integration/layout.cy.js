@@ -109,4 +109,39 @@ describe('Chart synchronized series state', () => {
         });
     });
 
+    it('should sync shared tooltip between two charts sharing the same connector', () => {
+
+        cy.board().then((board) => {
+            board.mountedComponents[1].component.chart.update({
+                tooltip: {
+                    shared: true
+                }
+            });
+
+            cy.get('.chart-container')
+                .get('.highcharts-point').first()
+                .as('firstPoint')
+
+            cy.get('@firstPoint').trigger('mouseover');
+
+            // Second chart should now have a tooltip
+            cy.get('.chart-container').last().within((chart => {
+                cy.get('.highcharts-tooltip-box')
+                    .should('exist')
+            }));
+
+            // Move mouse away from the chart area
+            cy.get('.chart-container').first().trigger('mousemove', {
+                pageX: 500,
+                pageY: 500
+            });
+
+            // Second chart should now not have a tooltip
+            cy.get('.chart-container').last().within(() => {
+                cy.get('.highcharts-tooltip-box')
+                    .should('not.be.visible') // the container is there, but not visible
+            });
+        });
+    });
+
 });

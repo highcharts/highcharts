@@ -449,6 +449,7 @@ const configs: {
                             // tooltips when charts have multiple series
                             if (chart.series.length > 1 && cursor.column) {
                                 const relatedSeries = chart.series.filter(
+                                    /* eslint-disable max-len */
                                     (series): boolean => series.name === cursor.column
                                 );
 
@@ -457,11 +458,30 @@ const configs: {
                                 }
                             }
 
-                            if (series && series.visible && cursor.row !== void 0) {
-                                const point = series.points[cursor.row - offset];
-
+                            if (
+                                series &&
+                                series.visible &&
+                                cursor.row !== void 0
+                            ) {
+                                const point = series.points[cursor.row - offset],
+                                useSharedTooltip = chart.tooltip?.shared;
+    
                                 if (point) {
-                                    chart.tooltip && chart.tooltip.refresh(point);
+                                    const hoverPoint = chart.hoverPoint,
+                                        /* eslint-disable max-len */
+                                        hoverSeries = hoverPoint?.series || chart.hoverSeries,
+                                        points = chart.pointer.getHoverData(
+                                            point,
+                                            hoverSeries,
+                                            chart.series,
+                                            true,
+                                            true
+                                        );
+
+                                    chart.tooltip && chart.tooltip.refresh(
+                                        /* eslint-disable max-len */
+                                        useSharedTooltip ? points.hoverPoints : point
+                                    );
                                 }
                             }
                         }
