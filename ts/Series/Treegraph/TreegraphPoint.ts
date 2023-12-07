@@ -40,8 +40,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -95,12 +94,12 @@ class TreegraphPoint extends TreemapPoint {
             series = point.series,
             parentGroup = point.graphic && point.graphic.parentGroup,
             levelOptions =
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
+                series.mapOptionsToLevel[point.node.level || 0] || {},
             btnOptions = merge(
                 series.options.collapseButton,
                 levelOptions.collapseButton,
                 point.options.collapseButton
-            ) as CollapseButtonOptions,
+            ),
             { width, height, shape, style } = btnOptions,
             padding = 2,
             chart = this.series.chart,
@@ -182,9 +181,16 @@ class TreegraphPoint extends TreemapPoint {
     }
 
     public toggleCollapse(state?: boolean): void {
-        this.collapsed = pick(state, !this.collapsed);
-        fireEvent(this.series, 'toggleCollapse');
-        this.series.redraw();
+        const series = this.series;
+        this.collapsed = this.options.collapsed = state ?? !this.collapsed;
+
+        // Update userOptions.data
+        if (series.options.data) {
+            series.options.data[series.data.indexOf(this)] = this.options;
+        }
+
+        fireEvent(series, 'toggleCollapse');
+        series.redraw();
     }
 
     public destroy(): void {
@@ -228,7 +234,7 @@ class TreegraphPoint extends TreemapPoint {
 addEvent(TreegraphPoint, 'mouseOut', function (): void {
     const btn = this.collapseButton,
         btnOptions = this.collapseButtonOptions;
-    if (btn && btnOptions && btnOptions.onlyOnHover && !this.collapsed) {
+    if (btn && btnOptions?.onlyOnHover && !this.collapsed) {
         btn.animate({ opacity: 0 });
     }
 });
@@ -237,9 +243,7 @@ addEvent(TreegraphPoint, 'mouseOver', function (): void {
     if (this.collapseButton && this.visible) {
         this.collapseButton.animate(
             { opacity: 1 },
-            this.series.options.states &&
-            this.series.options.states.hover &&
-            this.series.options.states.hover.animation
+            this.series.options.states?.hover?.animation
         );
     }
 });
