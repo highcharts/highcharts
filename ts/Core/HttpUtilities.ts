@@ -20,7 +20,7 @@ import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type JSON from './JSON';
 
 import G from '../Core/Globals.js';
-const { doc } = G;
+const { doc, win } = G;
 import U from '../Core/Utilities.js';
 const {
     createElement,
@@ -190,12 +190,22 @@ function getJSON(
  *
  * @param {Highcharts.Dictionary<string>} [formAttributes]
  * Additional attributes for the post request
+ *
+ * @param {boolean} [useFormSubmit]
+ * Use form.submit instead of fetch
  */
 function post(
     url: string,
-    data: object,
-    formAttributes?: HTMLAttributes
+    data: Record<string, any>,
+    formAttributes?: HTMLAttributes,
+    useFormSubmit?: boolean
 ): void {
+    if (useFormSubmit === void 0) {
+        useFormSubmit = formAttributes !== void 0 ||
+            typeof win.FormData === 'undefined' ||
+            typeof win.fetch === 'undefined';
+    }
+
     // create the form
     const form: HTMLFormElement = createElement('form', merge({
         method: 'post',
@@ -214,8 +224,32 @@ function post(
         }, void 0, form);
     });
 
-    // submit
-    form.submit();
+    if (useFormSubmit) {
+        // submit
+        form.submit();
+    } else {
+        const formData = new win.FormData(form);
+        formData.append('b64', 'true');
+
+        const { filename, type } = data;
+
+        win.fetch(url, {
+            method: 'POST',
+            body: formData
+        }).then((res: Response): void => {
+            if (res.ok) {
+                res.text().then((text: string): void => {
+                    const link = document.createElement('a');
+                    link.href = `data:${type};base64,${text}`;
+                    link.download = filename;
+                    link.click();
+
+                    discardElement(link);
+                });
+            }
+
+        });
+    }
 
     // clean up
     discardElement(form);
