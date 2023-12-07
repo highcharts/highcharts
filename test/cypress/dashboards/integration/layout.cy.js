@@ -110,7 +110,6 @@ describe('Chart synchronized series state', () => {
     });
 
     it('should sync shared tooltip between two charts sharing the same connector', () => {
-
         cy.board().then((board) => {
             board.mountedComponents[1].component.chart.update({
                 tooltip: {

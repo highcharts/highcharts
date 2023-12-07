@@ -51,9 +51,6 @@ Dashboards.board('container', {
                 series: {
                     animation: false
                 }
-            },
-            tooltip: {
-                shared: true
             }
         },
         events: {
@@ -92,9 +89,6 @@ Dashboards.board('container', {
                 series: {
                     animation: false
                 }
-            },
-            tooltip: {
-                shared: true
             }
         },
         connector: {
