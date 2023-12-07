@@ -457,7 +457,7 @@ const configs: {
                                 }
                             }
 
-                            if (series?.visible &&cursor.row !== void 0) {
+                            if (series?.visible && cursor.row !== void 0) {
                                 const point = series.points[cursor.row - offset],
                                     useSharedTooltip = chart.tooltip?.shared;
 
