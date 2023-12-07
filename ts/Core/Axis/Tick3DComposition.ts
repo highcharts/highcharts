@@ -44,7 +44,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (U.pushUnique(composed, 'Core/Tick3D')) {
+    if (U.pushUnique(composed, compose)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

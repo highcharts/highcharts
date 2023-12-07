@@ -118,7 +118,7 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, 'Core/ZAxis')) {
+        if (U.pushUnique(composed, this.compose)) {
             const chartProto = ChartClass.prototype;
 
             defaultOptions.zAxis = merge(xAxis, {

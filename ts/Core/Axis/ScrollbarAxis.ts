@@ -89,7 +89,7 @@ namespace ScrollbarAxis {
         ScrollbarClass: typeof ScrollbarType
     ): void {
 
-        if (U.pushUnique(composed, 'Core/ScollbarAxis')) {
+        if (U.pushUnique(composed, compose)) {
             Scrollbar = ScrollbarClass;
 
             addEvent(AxisClass, 'afterGetOffset', onAxisAfterGetOffset);

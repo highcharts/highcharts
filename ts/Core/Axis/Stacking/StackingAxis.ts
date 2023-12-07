@@ -692,7 +692,7 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, 'Core/StackingAxis')) {
+        if (U.pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype,
                 seriesProto = SeriesClass.prototype;
 

@@ -122,7 +122,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, 'Core/Responsive')) {
+        if (U.pushUnique(composed, compose)) {
             extend(
                 ChartClass.prototype as Composition,
                 {

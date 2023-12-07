@@ -133,7 +133,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (U.pushUnique(composed, 'Core/BrokenAxis')) {
+        if (U.pushUnique(composed, compose)) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

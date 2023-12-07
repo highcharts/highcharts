@@ -145,7 +145,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composed, 'Core/OrdinalAxis')) {
+        if (U.pushUnique(composed, compose)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;

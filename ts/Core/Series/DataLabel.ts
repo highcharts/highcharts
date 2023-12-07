@@ -484,7 +484,7 @@ namespace DataLabel {
      */
     export function compose(SeriesClass: typeof Series): void {
 
-        if (U.pushUnique(composed, 'Core/DataLabel')) {
+        if (U.pushUnique(composed, compose)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.initDataLabelsGroup = initDataLabelsGroup;

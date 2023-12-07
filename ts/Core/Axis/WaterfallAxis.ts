@@ -99,7 +99,7 @@ namespace WaterfallAxis {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, 'Core/WaterfallAxis')) {
+        if (U.pushUnique(composed, compose)) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);

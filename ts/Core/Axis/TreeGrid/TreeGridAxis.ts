@@ -887,7 +887,7 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (U.pushUnique(composed, 'Core/TreeGridAxis')) {
+        if (U.pushUnique(composed, this.compose)) {
             const axisProps = AxisClass.prototype;
 
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {

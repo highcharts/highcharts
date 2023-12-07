@@ -1758,7 +1758,7 @@ namespace Legend {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, 'Core/Legend')) {
+        if (U.pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

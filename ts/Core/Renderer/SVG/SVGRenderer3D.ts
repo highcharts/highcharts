@@ -204,7 +204,7 @@ namespace SVGRenderer3D {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composed, 'Core/SVGRenderer3D')) {
+        if (U.pushUnique(composed, compose)) {
             extend(SVGRendererClass.prototype, {
                 Element3D: SVGElement3D,
                 arc3d,
