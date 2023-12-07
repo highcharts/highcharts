@@ -137,7 +137,6 @@ namespace LegendSymbol {
         legendItem.line = renderer
             .path()
             .addClass('highcharts-graph')
-            .attr(attr)
             .add(legendItemGroup);
 
         if (hasArea) {
@@ -155,16 +154,16 @@ namespace LegendSymbol {
         }
 
         if (symbolWidth) {
-            const d: SVGPath = [
+            attr.d = [
                 ['M', lineSizer, verticalCenter],
                 ['L', symbolWidth - lineSizer, verticalCenter]
             ];
 
-            legendItem.line.attr({ d });
+            legendItem.line.attr(attr);
 
             legendItem.area?.attr({
                 d: [
-                    ...d,
+                    ...attr.d,
                     ['L', symbolWidth - lineSizer, baseline],
                     ['L', lineSizer, baseline]
                 ]

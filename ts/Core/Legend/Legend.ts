@@ -365,8 +365,7 @@ class Legend {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
                 symbolColor = (visible && item.color) || hiddenColor,
-                itemOptions = (item as Series).options,
-                markerOptions = itemOptions.marker;
+                { fillColor, fillOpacity, marker } = (item as Series).options;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
             label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
@@ -376,7 +375,7 @@ class Legend {
             if (symbol) {
 
                 // Apply marker options
-                if (markerOptions && symbol.isMarker) { // #585
+                if (marker && symbol.isMarker) { // #585
                     symbolAttr = (item as Series).pointAttribs();
                     if (!visible) {
                         // #6769
@@ -388,10 +387,8 @@ class Legend {
             }
 
             area?.attr({
-                fill: visible ?
-                    (itemOptions.fillColor || item.color) :
-                    hiddenColor,
-                'fill-opacity': itemOptions.fillOpacity ?? 0.75
+                fill: visible ? (fillColor || item.color) : hiddenColor,
+                'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
             });
         }
 
