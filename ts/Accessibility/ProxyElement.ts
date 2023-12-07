@@ -133,8 +133,6 @@ class ProxyElement {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Fake a click event on the target.

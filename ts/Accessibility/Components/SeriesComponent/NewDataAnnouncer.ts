@@ -26,6 +26,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
+const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -416,15 +417,6 @@ namespace NewDataAnnouncer {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    export const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -436,7 +428,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composed, compose)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',

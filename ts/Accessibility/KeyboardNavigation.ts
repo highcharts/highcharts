@@ -28,6 +28,7 @@ import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
+    composed,
     doc,
     win
 } = H;
@@ -100,8 +101,6 @@ class KeyboardNavigation {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -568,19 +567,9 @@ namespace KeyboardNavigation {
 
     /* *
      *
-     *  Construction
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Composition function.
@@ -591,13 +580,11 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
-        }
 
-        if (U.pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 
