@@ -667,6 +667,9 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     const chart = Highcharts.stockChart('container', {
             series: data,
+            boost: {
+                enabled: false
+            },
             legend: {
                 enabled: true
             }
@@ -675,10 +678,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (line and scatter) are visible, circular translation of
         the date should return the same value.`
     );
@@ -689,10 +690,8 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `After zooming, when the scatterer series is not visible, a circular
         translation of the date should return the same value.`
     );
@@ -703,10 +702,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     // Perform the exact same tests as above
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (scatter and line) are visible, circular translation of
         the date should return the same value.`
     );
@@ -717,11 +714,9 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
-        `After zooming, when the scatterer series is not visible, a circular
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
+        `After zooming, when the scatter series is not visible, a circular
         translation of the date should return the same value.`
     );
 });
