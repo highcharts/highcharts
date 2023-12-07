@@ -47,7 +47,8 @@ const {
     isArray,
     isNumber,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 /* *
@@ -293,10 +294,10 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public setAxisSize(): void {
-        const axis = this;
-        const symbol = axis.legendItem && axis.legendItem.symbol;
-        const chart = axis.chart;
-        const legendOptions = chart.options.legend || {};
+        const axis = this,
+            chart = axis.chart,
+            symbol = axis.legendItem && axis.legendItem.symbol,
+            legendOptions = chart.options.legend || {};
 
         let x,
             y,
@@ -314,13 +315,16 @@ class ColorAxis extends Axis implements AxisLike {
             this.len = this.horiz ? width : height;
             this.pos = this.horiz ? x : y;
         } else {
+            const width = this.options.width ?
+                    relativeLength(this.options.width, chart.plotWidth) :
+                    legendOptions.symbolWidth,
+                height = this.options.height ?
+                    relativeLength(this.options.height, chart.plotHeight) :
+                    legendOptions.symbolHeight;
             // Fake length for disabled legend to avoid tick issues
             // and such (#5205)
-            this.len = (
-                this.horiz ?
-                    legendOptions.symbolWidth :
-                    legendOptions.symbolHeight
-            ) || ColorAxis.defaultLegendLength;
+            this.len = (this.horiz ? width : height) ||
+                ColorAxis.defaultLegendLength;
         }
     }
 
@@ -401,6 +405,7 @@ class ColorAxis extends Axis implements AxisLike {
         item: ColorAxis
     ): void {
         const axis = this,
+            chart = axis.chart,
             legendItem = item.legendItem || {},
             padding = legend.padding,
             legendOptions = legend.options,
@@ -408,11 +413,15 @@ class ColorAxis extends Axis implements AxisLike {
             itemDistance = pick(legendOptions.itemDistance, 10),
             horiz = axis.horiz,
             width = pick(
-                legendOptions.symbolWidth,
+                this.options.width ?
+                    relativeLength(this.options.width, chart.plotWidth) :
+                    legendOptions.symbolWidth,
                 horiz ? ColorAxis.defaultLegendLength : 12
             ),
             height = pick(
-                legendOptions.symbolHeight,
+                this.options.height ?
+                    relativeLength(this.options.height, chart.plotHeight) :
+                    legendOptions.symbolHeight,
                 horiz ? 12 : ColorAxis.defaultLegendLength
             ),
             labelPadding = pick(
