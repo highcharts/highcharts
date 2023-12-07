@@ -29,7 +29,10 @@ import type ProxyElement from '../ProxyElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -648,21 +651,9 @@ namespace LegendComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -710,13 +701,11 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;
-        }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',

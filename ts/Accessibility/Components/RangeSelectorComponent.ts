@@ -24,16 +24,18 @@ import type Accessibility from '../Accessibility';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../Utils/Announcer.js';
+import Chart from '../../Core/Chart/Chart.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
     getAxisRangeDescription
 } = ChartUtilities;
-import Announcer from '../Utils/Announcer.js';
-import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -46,8 +48,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 
 /**
@@ -630,21 +630,9 @@ namespace RangeSelectorComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -704,15 +692,13 @@ namespace RangeSelectorComponent {
         RangeSelectorClass: typeof RangeSelector
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightRangeSelectorButton = (
                 chartHighlightRangeSelectorButton
             );
-        }
 
-        if (U.pushUnique(composedMembers, RangeSelectorClass)) {
             addEvent(
                 RangeSelector,
                 'afterBtnClick',

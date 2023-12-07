@@ -29,7 +29,10 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
@@ -680,14 +683,6 @@ namespace SeriesKeyboardNavigation {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -902,24 +897,18 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        if (U.pushUnique(composed, compose)) {
+            const chartProto = ChartClass.prototype as ChartComposition,
+                pointProto = PointClass.prototype as PointComposition,
+                seriesProto = SeriesClass.prototype as SeriesComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical
             );
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
-        }
-
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**
              * Set for which series types it makes sense to move to the closest

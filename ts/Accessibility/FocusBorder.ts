@@ -26,6 +26,8 @@ import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
@@ -102,8 +104,6 @@ namespace FocusBorderComposition {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     // Attributes that trigger a focus border update
     const svgElementBorderUpdateTriggers = [
         'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
@@ -115,8 +115,6 @@ namespace FocusBorderComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -125,17 +123,14 @@ namespace FocusBorderComposition {
         SVGElementClass: typeof SVGElement
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        if (U.pushUnique(composed, compose)) {
+            const chartProto = ChartClass.prototype as ChartComposition,
+                svgElementProto = (
+                    SVGElementClass.prototype as SVGElementCompositon
+                );
 
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
-        }
-
-        if (U.pushUnique(composedMembers, SVGElementClass)) {
-            const svgElementProto = (
-                SVGElementClass.prototype as SVGElementCompositon
-            );
 
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;
