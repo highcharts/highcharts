@@ -21,16 +21,10 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 import type { SymbolTypeRegistry } from '../Core/Renderer/SVG/SymbolType';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const { pushUnique } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -65,7 +59,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (pushUnique(composed, compose)) {
         symbols = SVGRendererClass.prototype.symbols;
         symbols.bottombutton = bottomButton;
         symbols.topbutton = topButton;
