@@ -43,7 +43,11 @@ function task() {
             copyPath => fslib.copyAllFiles(
                 copyPath,
                 path.join(TARGET_DIRECTORY, copyPath),
-                true
+                true,
+                fileName =>
+                    !['dashboards', 'datagrid']
+                        .some(name => fileName.includes(`${name}.css`))
+
             )
         );
 
