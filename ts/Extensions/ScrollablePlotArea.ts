@@ -41,6 +41,8 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
+import H from '../Core/Globals.js';
+const { composed } = H;
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
 const {
@@ -82,14 +84,6 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
         scrollablePlotBox?: BBoxObject;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -386,11 +380,9 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-    }
 
-    if (pushUnique(composedMembers, ChartClass)) {
         extend(ChartClass.prototype, {
             applyFixed: chartApplyFixed,
             moveFixedElements: chartMoveFixedElements,
@@ -398,9 +390,7 @@ function compose(
         });
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
         addEvent(ChartClass, 'render', onChartRender);
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'show', onSeriesShow);
     }
 

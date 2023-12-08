@@ -27,8 +27,11 @@ import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
-import G from '../Core/Globals.js';
-const { noop } = G;
+import H from '../Core/Globals.js';
+const {
+    composed,
+    noop
+} = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -75,8 +78,6 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const defaultBorderRadiusOptions: BorderRadiusOptionsObject = {
     radius: 0,
@@ -381,7 +382,9 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composed, compose)) {
+        const symbols = SVGRendererClass.prototype.symbols;
+
         addEvent(
             SeriesClass as unknown as ColumnSeries,
             'afterColumnTranslate',
@@ -391,22 +394,14 @@ function compose(
                 order: 9
             }
         );
-    }
 
-    if (pushUnique(composedMembers, PieSeriesClass)) {
         addEvent(PieSeriesClass, 'afterTranslate', pieSeriesOnAfterTranslate);
-    }
 
-    if (pushUnique(composedMembers, SVGElementClass)) {
         SVGElementClass.symbolCustomAttribs.push(
             'borderRadius',
             'brBoxHeight',
             'brBoxY'
         );
-    }
-
-    if (pushUnique(composedMembers, SVGRendererClass)) {
-        const symbols = SVGRendererClass.prototype.symbols;
 
         oldArc = symbols.arc;
         oldRoundedRect = symbols.roundedRect;

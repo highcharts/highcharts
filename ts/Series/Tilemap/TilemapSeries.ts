@@ -23,7 +23,10 @@ import type Axis from '../../Core/Axis/Axis';
 import type TilemapSeriesOptions from './TilemapSeriesOptions';
 
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -64,14 +67,6 @@ declare module '../../Core/Series/SeriesOptions' {
         enabled?: boolean;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -161,7 +156,7 @@ class TilemapSeries extends HeatmapSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(
                 AxisClass,
                 'afterSetAxisTranslation',
