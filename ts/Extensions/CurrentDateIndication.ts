@@ -33,6 +33,8 @@ import type {
 } from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
@@ -87,8 +89,6 @@ interface CurrentDateIndicatorOptions {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 /**
  * Show an indicator on the axis for the current date and time. Can be a
@@ -157,11 +157,9 @@ function compose(
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composed, AxisClass)) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-    }
 
-    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
 
         wrap(

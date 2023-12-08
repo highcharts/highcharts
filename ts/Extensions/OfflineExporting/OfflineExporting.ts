@@ -37,13 +37,12 @@ const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    composed,
+    doc,
+    win
 } = H;
 import HU from '../../Core/HttpUtilities.js';
-const {
-    ajax
-} = HU;
+const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -167,7 +166,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;

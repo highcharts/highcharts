@@ -36,6 +36,8 @@ import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -122,8 +124,6 @@ export interface DataGroupingResultObject {
  * */
 
 const baseGeneratePoints = seriesProto.generatePoints;
-
-const composedMembers: Array<Function> = [];
 
 /* *
  *
@@ -475,7 +475,7 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (U.pushUnique(composedMembers, PointClass)) {
+    if (U.pushUnique(composed, compose)) {
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -484,9 +484,7 @@ function compose(
                 return false;
             }
         });
-    }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 
