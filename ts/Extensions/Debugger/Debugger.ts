@@ -20,10 +20,11 @@ import type Chart from '../../Core/Chart/Chart';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import ErrorMessages from './ErrorMessages.js';
-import H from '../../Core/Globals.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import ErrorMessages from './ErrorMessages.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -54,8 +55,6 @@ declare module '../../Core/Chart/ChartOptions'{
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const defaultOptions = {
     /**
@@ -89,15 +88,11 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composed, compose)) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
-    }
 
-    if (U.pushUnique(composedMembers, H)) {
         addEvent(H, 'displayError', onHighchartsDisplayError);
-    }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(defaultOptions);
     }
 

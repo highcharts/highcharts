@@ -21,6 +21,8 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -49,14 +51,6 @@ declare module '../../Core/Axis/AxisLike' {
 export interface PostProcessDataEvent {
     hasExtremesChanged?: boolean;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
 
 /* *
  *
@@ -115,7 +109,7 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composed, compose)) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.

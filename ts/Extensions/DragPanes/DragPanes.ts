@@ -27,7 +27,8 @@ import type Pointer from '../../Core/Pointer';
 import AxisResizer from './AxisResizer.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -61,14 +62,6 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -81,7 +74,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composed, compose)) {
         merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
@@ -89,9 +82,7 @@ function compose(
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',

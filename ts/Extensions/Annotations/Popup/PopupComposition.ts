@@ -27,6 +27,8 @@ import type {
 import type NavigationBindings from '../NavigationBindings';
 import type Pointer from '../../../Core/Pointer';
 
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -49,14 +51,6 @@ interface PopupConfigObject {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -69,7 +63,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, NagivationBindingsClass)) {
+    if (U.pushUnique(composed, compose)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',
@@ -80,9 +74,7 @@ function compose(
             'showPopup',
             onNavigationBindingsShowPopup
         );
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'onContainerMouseDown',

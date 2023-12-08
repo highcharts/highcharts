@@ -27,8 +27,9 @@ import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    composed,
+    doc,
+    win
 } = H;
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
@@ -41,8 +42,6 @@ const {
  *  Constants
  *
  * */
-
-const composedClasses: Array<Function> = [];
 
 const contexts = [
     'webgl',
@@ -77,7 +76,7 @@ function compose(
         }
     }
 
-    if (ColorClass && U.pushUnique(composedClasses, ColorClass)) {
+    if (ColorClass && U.pushUnique(composed, compose)) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap
