@@ -2324,26 +2324,35 @@ class Chart {
 
         // Apply new links
         chartSeries.forEach(function (series): void {
-            let linkedTo = series.options.linkedTo;
+            const { linkedTo } = series.options;
 
-            if (isString(linkedTo)) {
+            if (linkedTo && isString(linkedTo)) {
+                let seriesLinkedTo: Series | undefined;
                 if (linkedTo === ':previous') {
-                    linkedTo = chart.series[(series.index as any) - 1] as any;
+                    seriesLinkedTo = chart.series[series.index - 1];
                 } else {
-                    linkedTo = chart.get(linkedTo as any) as any;
+                    seriesLinkedTo = chart.get(linkedTo) as Series | undefined;
                 }
                 // #3341 avoid mutual linking
-                if (linkedTo && (linkedTo as any).linkedParent !== series) {
-                    (linkedTo as any).linkedSeries.push(series);
-                    series.linkedParent = linkedTo as any;
+                if (
+                    seriesLinkedTo &&
+                    seriesLinkedTo.linkedParent !== series) {
+                    seriesLinkedTo.linkedSeries.push(series);
+                    /**
+                     * Parent series of the current series.
+                     *
+                     * @name Highcharts.Series#linkedParent
+                     * @type {Highcharts.Series}
+                     */
+                    series.linkedParent = seriesLinkedTo;
 
-                    if ((linkedTo as any).enabledDataSorting) {
+                    if (seriesLinkedTo.enabledDataSorting) {
                         series.setDataSortingOptions();
                     }
 
                     series.visible = pick(
                         series.options.visible,
-                        (linkedTo as any).options.visible,
+                        seriesLinkedTo.options.visible,
                         series.visible
                     ); // #3879
                 }
