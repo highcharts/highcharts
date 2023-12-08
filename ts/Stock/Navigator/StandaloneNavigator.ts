@@ -1,4 +1,5 @@
 import type { NavigatorOptions } from './NavigatorOptions';
+import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator from './Navigator.js';
 import G from '../../Core/Globals.js';
@@ -55,7 +56,21 @@ class StandaloneNavigator {
         return nav;
     }
 
+
+    constructor(
+        element: (string | globalThis.HTMLElement),
+        options: StandaloneNavigatorOptions
+    ) {
+        this.options = options;
+        const chart = new Chart(element, options);
+
+        this.navigator = new Navigator(chart);
+        chart.navigator = this.navigator;
+        this.initNavigator();
+    }
+
     public bind(axisOrChart: Axis | Chart): void {
+        const nav = this;
         const axis = (axisOrChart instanceof Chart) ?
             axisOrChart.xAxis[0] :
             axisOrChart;
@@ -67,6 +82,13 @@ class StandaloneNavigator {
         const { min, max } = this.navigator.xAxis;
 
         this.boundAxes.push(axis);
+
+        axis.series.forEach((series): void => {
+            if (series.options.showInNavigator) {
+                nav.addSeries(series.options);
+            }
+        });
+
         axis.setExtremes(min, max);
     }
 
@@ -103,16 +125,13 @@ class StandaloneNavigator {
         this.boundAxes = this.boundAxes.filter((a): boolean => a !== axis);
     }
 
-    constructor(
-        element: (string | globalThis.HTMLElement),
-        options: StandaloneNavigatorOptions
-    ) {
-        this.options = options;
-        const chart = new Chart(element, options);
+    public addSeries(seriesOptions: SeriesOptions): void {
+        this.navigator.chart.addSeries(merge(
+            seriesOptions,
+            { showInNavigator: pick(seriesOptions.showInNavigator, true) }
+        ));
 
-        this.navigator = new Navigator(chart);
-        chart.navigator = this.navigator;
-        this.initNavigator();
+        this.navigator.setBaseSeries();
     }
 
     public initNavigator(): void {

@@ -31,15 +31,14 @@
  * @optionparent navigator
  */
 const StandaloneNavigatorDefaults = {
-	width: 400,
-	height: 50,
+    height: 50,
     tooltip: {
         enabled: false
     },
-	navigator: {
+    navigator: {
         enabled: true
     },
-	scrollbar: {
+    scrollbar: {
         enabled: false
     },
     legend: {
@@ -58,6 +57,18 @@ const StandaloneNavigatorDefaults = {
     chart: {
         spacing: [0, 0, 0, 0],
         margin: [0, 0, 0, 0]
+    },
+    plotOptions: {
+        series: {
+            states: {
+                hover: {
+                    enabled: false
+                }
+            },
+            marker: {
+                enabled: false
+            }
+        }
     }
 };
 
