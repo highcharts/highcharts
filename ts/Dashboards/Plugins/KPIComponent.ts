@@ -290,18 +290,6 @@ class KPIComponent extends Component {
             {},
             this.contentElement
         );
-
-        if (this.options.chartOptions) {
-            this.chartContainer = createElement(
-                'div',
-                {
-                    className: `${options.className}-chart-container`
-                },
-                {},
-                this.contentElement
-            );
-        }
-
     }
 
     /* *
@@ -345,9 +333,27 @@ class KPIComponent extends Component {
         if (
             charter &&
             this.options.chartOptions &&
-            !this.chart &&
-            this.chartContainer
+            !this.chart
         ) {
+            if (!this.chartContainer) {
+                this.chartContainer = createElement(
+                    'div',
+                    {
+                        className: `${this.options.className}-chart-container`
+                    }, {
+                        height: '100%'
+                    },
+                    this.contentElement
+                );
+
+                if (!this.cell.container.style.height) {
+                    // If the cell height is specified, clear dimensions to make
+                    // the container to adjust to the chart height.
+                    this.contentElement.style.height = '100%';
+                    super.resize(null, null);
+                }
+            }
+
             this.chart = charter.chart(this.chartContainer, merge(
                 KPIComponent.defaultChartOptions,
                 this.options.chartOptions
