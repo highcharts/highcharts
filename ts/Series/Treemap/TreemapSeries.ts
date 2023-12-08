@@ -40,7 +40,10 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapComposition from '../ColorMapComposition.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -66,7 +69,6 @@ const {
     extend,
     fireEvent,
     isArray,
-    isNumber,
     isObject,
     isString,
     merge,
@@ -92,8 +94,6 @@ interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
  * */
 
 const axisMax = 100;
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -184,7 +184,7 @@ class TreemapSeries extends ScatterSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterBindAxes', onSeriesAfterBindAxes);
         }
 

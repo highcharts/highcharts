@@ -100,14 +100,6 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
- * Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Composition
  *
  * */
@@ -179,7 +171,6 @@ namespace OfflineExporting {
         return ChartClass as (typeof Composition&T);
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Get data URL to an image of an SVG and call download on it options
      * object:
