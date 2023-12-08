@@ -223,7 +223,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = config.tests ? config.tests : (
+    const tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
