@@ -119,7 +119,7 @@ const filesize = async () => {
     const list = await commandLine(`git stash list | grep -m1 ${stashName}`);
 
     if (list.length) {
-        const stashRegex = new RegExp(`^stash\@\{(.*)\}:.+?${stashName}`);
+        const stashRegex = new RegExp(`^stash\\@\\{(.*)\\}:.+?${stashName}`);
         const match = list.match(stashRegex);
         if (!match.length) {
             throw new Error('could not find filesize stash, aborting');

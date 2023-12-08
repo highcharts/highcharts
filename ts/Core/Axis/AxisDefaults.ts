@@ -55,7 +55,7 @@ namespace AxisDefaults {
      * @type         {*|Array<*>}
      * @optionparent xAxis
      */
-    export const defaultXAxisOptions: XAxisOptions = {
+    export const xAxis: XAxisOptions = {
 
         /**
          * When using multiple axis, the ticks of two or more opposite axes
@@ -827,7 +827,6 @@ namespace AxisDefaults {
              * @product   highcharts highstock gantt
              * @apioption xAxis.labels.autoRotation
              */
-            autoRotation: void 0,
 
             /**
              * When each category width is more than this many pixels, we don't
@@ -1320,6 +1319,8 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/yaxis/minortickspermajor/
          *         2 minor ticks per major tick on Y axis
          *
+         * @since  11.0.0
+         *
          * @type {number}
          */
         minorTicksPerMajor: 5,
@@ -1431,8 +1432,9 @@ namespace AxisDefaults {
          *
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
+         * @type      Boolean
+         * @apioption xAxis.opposite
          */
-        opposite: false,
 
         /**
          * In an ordinal axis, the points are equally spaced in the chart
@@ -1908,12 +1910,16 @@ namespace AxisDefaults {
 
             /**
              * The rotation of the text in degrees. 0 is horizontal, 270 is
-             * vertical reading from bottom to top.
+             * vertical reading from bottom to top. Defaults to 0 for horizontal
+             * axes, 270 for left-side axes and 90 for right-side axes.
              *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Horizontal
+             * @sample    {highcharts} highcharts/yaxis/title-offset/
+             *            Horizontal
+             *
+             * @type      {number}
+             * @default   undefined
+             * @apioption xAxis.title.rotation
              */
-            rotation: 0,
 
             /**
              * The actual text of the axis title. It can contain basic HTML tags
@@ -2279,6 +2285,26 @@ namespace AxisDefaults {
     };
 
     /**
+     * The Z axis or depth axis for 3D plots.
+     *
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
+     *
+     * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
+     *         Z-Axis with Categories
+     * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
+     *         Z-Axis with styling
+     *
+     * @type      {*|Array<*>}
+     * @extends   xAxis
+     * @since     5.0.0
+     * @product   highcharts
+     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+     *            nameToX, showEmpty, top, width
+     * @apioption zAxis
+     */
+
+    /**
      * The Y axis or value axis. Normally this is the vertical axis,
      * though if the chart is inverted this is the horizontal axis.
      * In case of multiple axes, the yAxis node is an array of
@@ -2292,7 +2318,7 @@ namespace AxisDefaults {
      * @excluding    currentDateIndicator,ordinal,overscroll
      * @optionparent yAxis
      */
-    export const defaultYAxisOptions: DeepPartial<YAxisOptions> = {
+    export const yAxis: DeepPartial<YAxisOptions> = {
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -2916,15 +2942,6 @@ namespace AxisDefaults {
              */
 
             /**
-             * The rotation of the text in degrees. 0 is horizontal, 270 is
-             * vertical reading from bottom to top.
-             *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Horizontal
-             */
-            rotation: 270,
-
-            /**
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
@@ -3136,70 +3153,7 @@ namespace AxisDefaults {
         gridLineWidth: 1,
 
         lineWidth: 0
-
-        // tickWidth: 0
     };
-
-    /**
-     * The Z axis or depth axis for 3D plots.
-     *
-     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
-     * access to the axis.
-     *
-     * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
-     *         Z-Axis with Categories
-     * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
-     *         Z-Axis with styling
-     *
-     * @type      {*|Array<*>}
-     * @extends   xAxis
-     * @since     5.0.0
-     * @product   highcharts
-     * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
-     *            nameToX, showEmpty, top, width
-     * @apioption zAxis
-     */
-
-    // This variable extends the defaultOptions for left axes.
-    export const defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
-        title: {
-            rotation: 270
-        }
-    };
-
-    // This variable extends the defaultOptions for right axes.
-    export const defaultRightAxisOptions: DeepPartial<AxisOptions> = {
-        title: {
-            rotation: 90
-        }
-    };
-
-    // This variable extends the defaultOptions for bottom axes.
-    export const defaultBottomAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            autoRotation: [-45]
-            // overflow: undefined,
-            // staggerLines: null
-        },
-        margin: 15,
-        title: {
-            rotation: 0
-        }
-    };
-
-    // This variable extends the defaultOptions for top axes.
-    export const defaultTopAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            autoRotation: [-45]
-            // overflow: undefined
-            // staggerLines: null
-        },
-        margin: 15,
-        title: {
-            rotation: 0
-        }
-    };
-
 
 }
 

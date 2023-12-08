@@ -431,20 +431,35 @@ abstract class Component {
         ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
-        const syncHandlers = Object.keys(sync)
+        const syncHandlers = (Object.keys(sync) as Component.SyncType[])
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = sync[handlerName];
+                        const handler = sync[handlerName],
+                            defaultHandler = defaultHandlers[handlerName];
 
-                        if (handler && typeof handler === 'object') {
-                            carry[handlerName] = handler;
-                        }
-                        if (handler && typeof handler === 'boolean') {
-                            carry[handlerName] = defaultHandlers[handlerName];
+                        if (defaultHandler) {
+                            if (handler === true) {
+                                carry[handlerName] = defaultHandler;
+                            } else if (handler && handler.enabled) {
+                                const keys: (keyof Sync.OptionsEntry)[] = [
+                                    'emitter', 'handler'
+                                ];
+
+                                carry[handlerName] = {};
+                                for (const key of keys) {
+                                    if (
+                                        handler[key] === true ||
+                                        handler[key] === void 0
+                                    ) {
+                                        carry[handlerName][key] =
+                                            defaultHandler[key] as any;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -1060,12 +1075,12 @@ abstract class Component {
         let result = component.getEditableOptions() as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (!result) {
-                return;
-            }
-
             if (isArray(result)) {
                 result = result[0];
+            }
+
+            if (!result) {
+                return;
             }
 
             result = result[propertyPath[i]];
@@ -1161,15 +1176,98 @@ namespace Component {
      * The sync can be an object configuration containing: `highlight`,
      * `visibility` or `extremes`. For the Navigator Component `crossfilter`
      * sync can be used.
-     * ```
+     *
      * Example:
+     * ```
      * {
      *     highlight: true
      * }
      * ```
-     *
      */
-    export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
+    export interface SyncOptions {
+        /**
+         * Crossfilter sync is available for Navigator components. Modifies data
+         * by selecting only those rows that meet common ranges.
+         *
+         * Alternatively to the boolean value, it can accept an object
+         * containing additional options for operating this type of
+         * synchronization.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Crossfilter with affectNavigators enabled }
+         *
+         * @default false
+         */
+        crossfilter?: boolean|CrossfilterSyncOptions;
+        /**
+         * Extremes sync is available for Highcharts, KPI, DataGrid and
+         * Navigator components. Sets a common range of displayed data. For the
+         * KPI Component sets the last value.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * @default false
+         */
+        extremes?: boolean|Sync.OptionsEntry;
+        /**
+         * Highlight sync is available for Highcharts and DataGrid components.
+         * It allows to highlight hovered corresponding rows in the table and
+         * chart points.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * @default false
+         */
+        highlight?: boolean|Sync.OptionsEntry;
+        /**
+         * Visibility sync is available for Highcharts and DataGrid components.
+         * Synchronizes the visibility of data from a hidden/shown series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+         *
+         * @default false
+         */
+        visibility?: boolean|Sync.OptionsEntry;
+    }
+
+    /**
+     * The crossfilter sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     affectNavigator: true
+     * }
+     * ```
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
+    /** @internal */
+    export type SyncType = keyof SyncOptions;
 
     export interface ComponentOptions {
 

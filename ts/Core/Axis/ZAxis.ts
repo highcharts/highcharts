@@ -21,6 +21,10 @@ import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
+import AxisDefaults from './AxisDefaults.js';
+const { xAxis } = AxisDefaults;
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -121,6 +125,12 @@ class ZAxis extends Axis implements AxisLike {
     ): void {
 
         if (U.pushUnique(composedMembers, ChartClass)) {
+
+            defaultOptions.zAxis = merge(xAxis, {
+                offset: 0,
+                lineWidth: 0
+            });
+
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;
@@ -222,20 +232,6 @@ class ZAxis extends Axis implements AxisLike {
             chart.options.chart.options3d.depth
         ) || 0;
         this.right = chart.chartWidth - this.width - this.left;
-    }
-
-    /**
-     * @private
-     */
-    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
-
-        userOptions = merge<DeepPartial<AxisOptions>>({
-            offset: 0,
-            lineWidth: 0
-        }, userOptions);
-
-
-        super.setOptions(userOptions);
     }
 
 }

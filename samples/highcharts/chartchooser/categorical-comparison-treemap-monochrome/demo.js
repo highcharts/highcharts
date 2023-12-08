@@ -2,7 +2,7 @@
 
 
     const dataJson = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json'
+        'https://www.highcharts.com/samples/data/denmark-export-2018.json'
     ).then(response => response.json());
 
     Highcharts.chart('container', {

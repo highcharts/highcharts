@@ -150,7 +150,7 @@ export declare class PolarSeriesComposition extends Series {
     animate(init?: boolean): void;
     searchPoint: (
         PolarSeriesComposition['kdByAngle'] extends true ?
-            typeof searchPointByAngle :
+            typeof searchPointByAngleOrInverted :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
@@ -671,8 +671,8 @@ function onSeriesAfterTranslate(
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
         series.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (series.kdByAngle) {
-            series.searchPoint = searchPointByAngle;
+        if (series.kdByAngle || chart.inverted) {
+            series.searchPoint = searchPointByAngleOrInverted;
         } else {
             series.options.findNearestPointBy = 'xy';
         }
@@ -750,24 +750,31 @@ function onSeriesAfterTranslate(
 }
 
 /**
- * Search a k-d tree by the point angle, used for shared tooltips in polar
+ * Search a k-d tree by the point angle (used for shared tooltips in polar) or
+ * the inverted point.
  * charts
  * @private
  */
-function searchPointByAngle(
+function searchPointByAngleOrInverted(
     this: Series,
     e: PointerEvent
 ): (Point|undefined) {
     const series = this,
         chart = series.chart,
         xAxis = series.xAxis,
+        yAxis = series.yAxis,
         center = xAxis.pane && xAxis.pane.center,
         plotX = e.chartX - (center && center[0] || 0) - chart.plotLeft,
         plotY = e.chartY - (center && center[1] || 0) - chart.plotTop;
 
-    return series.searchKDTree({
+    const searchKDTreePoint = chart.inverted ? {
+        clientX: e.chartX - yAxis.pos,
+        plotY: e.chartY - xAxis.pos
+    } : {
         clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-    });
+    };
+
+    return series.searchKDTree(searchKDTreePoint);
 }
 
 /**
@@ -1413,6 +1420,29 @@ function wrapSplineSeriesGetPointSpline(
     return ret;
 }
 
+/**
+ * Extend the point pos method to calculate point positions for the polar chart.
+ * @private
+ */
+function wrapPointPos(
+    this: PolarPoint,
+    proceed: Function,
+    chartCoordinates?: boolean,
+    plotY: number|undefined = this.plotY
+): [number, number]|undefined {
+    const { plotX, series } = this,
+        { chart } = series;
+
+    if (chart.polar && !this.destroyed && isNumber(plotX) && isNumber(plotY)) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
+    }
+
+    return proceed.call(this, chartCoordinates, plotY);
+}
+
 /* *
  *
  *  Class
@@ -1438,6 +1468,7 @@ class PolarAdditions {
         PointerClass: typeof Pointer,
         SeriesClass: typeof Series,
         TickClass: typeof Tick,
+        PointClass: typeof Point,
         AreaSplineRangeSeriesClass: typeof AreaSplineRangeSeries,
         ColumnSeriesClass: typeof ColumnSeries,
         LineSeriesClass: typeof LineSeries,
@@ -1492,6 +1523,12 @@ class PolarAdditions {
             const seriesProto = SeriesClass.prototype;
 
             wrap(seriesProto, 'animate', wrapSeriesAnimate);
+        }
+
+        if (U.pushUnique(composedMembers, PointClass)) {
+            const pointProto = PointClass.prototype;
+
+            wrap(pointProto, 'pos', wrapPointPos);
         }
 
         if (

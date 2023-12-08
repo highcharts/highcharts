@@ -1,0 +1,11 @@
+---
+name: Live candlestick chart
+authors:
+  - Kamil Musialowski
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - General:
+      priority: 0
+...

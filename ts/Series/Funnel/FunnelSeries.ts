@@ -314,7 +314,7 @@ class FunnelSeries extends PieSeries {
             neckWidth = getLength(options.neckWidth, plotWidth),
             neckHeight = getLength(options.neckHeight, plotHeight),
             neckY = (centerY - height / 2) + height - neckHeight,
-            data = series.data,
+            points = series.points,
             borderRadius = relativeLength(
                 borderRadiusObject.radius,
                 width
@@ -417,7 +417,7 @@ class FunnelSeries extends PieSeries {
         */
 
         // get the total sum
-        for (const point of data) {
+        for (const point of points) {
             if (point.y && point.isValid() &&
                 (!ignoreHiddenPoint || point.visible !== false)
             ) {
@@ -425,7 +425,7 @@ class FunnelSeries extends PieSeries {
             }
         }
 
-        for (const point of data) {
+        for (const point of points) {
             // set start and end positions
             y5 = null;
             fraction = sum ? (point.y as any) / sum : 0;
@@ -465,7 +465,7 @@ class FunnelSeries extends PieSeries {
             if (borderRadius && (
                 radiusScope === 'point' ||
                 point.index === 0 ||
-                point.index === data.length - 1 ||
+                point.index === points.length - 1 ||
                 y5 !== null
             )) {
                 // Creating the path of funnel points with rounded corners
@@ -523,7 +523,7 @@ class FunnelSeries extends PieSeries {
 
                     if (
                         radiusScope === 'stack' &&
-                        point.index !== data.length - 1
+                        point.index !== points.length - 1
                     ) {
                         path.push(['L', x4, y5], ['L', x3, y5]);
                     } else {

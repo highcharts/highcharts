@@ -27,6 +27,8 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 
 import Axis3DDefaults from './Axis3DDefaults.js';
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { deg2rad } = H;
 import Math3D from '../Math3D.js';
@@ -322,9 +324,7 @@ function wrapAxisGetSlotWidth(
     tick: Tick
 ): number {
     const axis = this,
-        chart = axis.chart,
-        ticks = axis.ticks,
-        gridGroup = axis.gridGroup;
+        { chart, gridGroup, tickPositions, ticks } = axis;
 
     if (
         axis.categories &&
@@ -348,9 +348,9 @@ function wrapAxisGetSlotWidth(
                     pick(options3d.viewDistance, 0)
                 )
             },
-            tickId = tick.pos,
-            prevTick = ticks[tickId - 1],
-            nextTick = ticks[tickId + 1];
+            index = tickPositions.indexOf(tick.pos),
+            prevTick = ticks[tickPositions[index - 1]],
+            nextTick = ticks[tickPositions[index + 1]];
 
         let labelPos,
             prevLabelPos,
@@ -358,12 +358,7 @@ function wrapAxisGetSlotWidth(
 
         // Check whether the tick is not the first one and previous tick
         // exists, then calculate position of previous label.
-        if (
-            tickId !== 0 &&
-            prevTick &&
-            prevTick.label &&
-            prevTick.label.xy
-        ) {
+        if (prevTick?.label?.xy) {
             prevLabelPos = perspective3D({ // #8621
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,
@@ -447,7 +442,7 @@ class Axis3DAdditions {
         Tick3D.compose(TickClass);
 
         if (U.pushUnique(composedMembers, AxisClass)) {
-            merge(true, AxisClass.defaultOptions, Axis3DDefaults);
+            merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');
 

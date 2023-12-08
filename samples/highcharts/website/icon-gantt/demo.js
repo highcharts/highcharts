@@ -518,7 +518,7 @@ const ganttChart = function () {
     btnCloseAddTask.onclick = hideDialog;
 
 };
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const gantt = {
     chart: {
         // width: 500,

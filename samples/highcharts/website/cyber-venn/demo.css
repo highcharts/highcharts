@@ -6,7 +6,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 100;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-200 - latin */
@@ -15,7 +15,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 200;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-300 - latin */
@@ -24,7 +24,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 300;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-regular - latin */
@@ -33,7 +33,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 400;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-500 - latin */
@@ -42,7 +42,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 500;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-600 - latin */
@@ -51,7 +51,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 600;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-700 - latin */
@@ -60,7 +60,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 700;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2");
 }
 
 body,
@@ -163,7 +163,6 @@ form {
     font-weight: 300;
     font-size: 0.65rem;
     opacity: 1;
-    background-color: #fff;
 }
 
 #venn {
@@ -229,18 +228,44 @@ form {
     color: #f0f0f0;
 }
 
-.tip .tip-box {
+.tip .tip-box,
+#tip {
     fill: #46465c;
     stroke: transparent;
     color: #f0f0f0;
+    max-width: 200px;
+    width: 200px;
+}
+
+#tip {
+    background-color: #46465c;
+    border-radius: 4px;
+    border: 1px solid #acabba;
+    padding: 12px;
+    font-size: 0.8rem;
+    line-height: 1rem;
+    position: absolute;
+    left: -90px;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 100;
     max-width: 300px;
     width: 300px;
+}
+
+#tip a {
+    color: #f0f0f0;
+}
+
+#tip a:hover {
+    color: #ccc;
 }
 
 .highcharts-tooltip-box {
     stroke-width: 1px;
     fill: #46465c;
-    stroke: #46465c;
+    stroke: #acabba;
     fill-opacity: 1;
 }
 
@@ -286,6 +311,7 @@ form {
 
 .labels span.text:hover {
     font-weight: 600;
+    cursor: pointer;
 }
 
 .labels img {
@@ -541,6 +567,11 @@ form {
     }
 
     @media screen  and (min-width: 550px) {
+        #tip {
+            left: -60px;
+            top: 170px;
+        }
+
         .highcharts-container {
             height: 580px;
         }
@@ -601,6 +632,11 @@ form {
     }
 
     @media screen  and (min-width: 768px) {
+        #tip {
+            left: -40px;
+            top: 220px;
+        }
+
         #sale {
             position: absolute;
             z-index: 1000;

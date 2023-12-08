@@ -12,7 +12,7 @@ By default, the theme is set to the system default theme through the `prefers-co
 You can also force the color scheme by setting the class to the dashboard container.
 
 ```html
-<div id="container" class="highcharts-dashboards-dark ">
+<div id="container" class="highcharts-dark">
 ```
 
 ### Live example
