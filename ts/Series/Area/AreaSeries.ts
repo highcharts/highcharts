@@ -186,6 +186,9 @@ class AreaSeries extends LineSeries {
          * Whether the whole area or just the line should respond to mouseover
          * tooltips and other mouse or touch events.
          *
+         * Note: This option is also useful when multiple series overlap and all
+         * of these series should respond to mouse or touch events.
+         *
          * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
          *         Display the tooltip when the area is hovered
          *
