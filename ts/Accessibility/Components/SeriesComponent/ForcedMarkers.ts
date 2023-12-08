@@ -31,7 +31,8 @@ const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -74,7 +75,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',

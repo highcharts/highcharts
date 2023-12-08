@@ -37,6 +37,7 @@ const {
     extend,
     merge,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -118,7 +119,7 @@ namespace ColorAxisComposition {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             ColorAxisConstructor = ColorAxisClass;
 
             const chartProto = ChartClass.prototype,

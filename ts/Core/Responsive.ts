@@ -28,6 +28,7 @@ const {
     find,
     merge,
     pick,
+    pushUnique,
     uniqueKey
 } = U;
 
@@ -122,7 +123,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             extend(
                 ChartClass.prototype as Composition,
                 {

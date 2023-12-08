@@ -46,6 +46,7 @@ const {
     addEvent,
     merge,
     pick,
+    pushUnique,
     wrap
 } = U;
 
@@ -437,7 +438,7 @@ class Axis3DAdditions {
 
         Tick3D.compose(TickClass);
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');

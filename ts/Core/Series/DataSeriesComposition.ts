@@ -35,6 +35,7 @@ const {
     fireEvent,
     isNumber,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -183,7 +184,7 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             addEvent(SeriesClass, 'init', function (): void {

@@ -40,7 +40,8 @@ const {
     addEvent,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -507,7 +508,7 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;

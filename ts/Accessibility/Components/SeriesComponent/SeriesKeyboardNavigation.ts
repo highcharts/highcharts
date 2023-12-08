@@ -36,7 +36,8 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -897,7 +898,7 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition,
                 pointProto = PointClass.prototype as PointComposition,
                 seriesProto = SeriesClass.prototype as SeriesComposition;

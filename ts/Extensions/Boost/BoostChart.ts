@@ -34,7 +34,8 @@ const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -75,7 +76,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && U.pushUnique(composed, compose)) {
+    if (wglMode && pushUnique(composed, compose)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 

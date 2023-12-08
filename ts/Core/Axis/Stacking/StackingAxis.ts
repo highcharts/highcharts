@@ -40,7 +40,8 @@ const {
     isArray,
     isNumber,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -692,7 +693,7 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype,
                 seriesProto = SeriesClass.prototype;
 

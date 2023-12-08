@@ -35,6 +35,7 @@ const {
     defined,
     error,
     pick,
+    pushUnique,
     timeUnits
 } = U;
 
@@ -145,7 +146,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;

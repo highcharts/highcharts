@@ -28,7 +28,8 @@ import U from '../../Utilities.js';
 const {
     erase,
     extend,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -203,7 +204,7 @@ namespace PlotLineOrBandAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(

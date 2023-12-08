@@ -24,7 +24,8 @@ import U from '../Utilities.js';
 const {
     addEvent,
     normalizeTickInterval,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -80,7 +81,7 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);

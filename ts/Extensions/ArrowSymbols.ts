@@ -23,6 +23,7 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import H from '../Core/Globals.js';
 const { composed } = H;
 import U from '../Core/Utilities.js';
+const { pushUnique } = U;
 
 /* *
  *
@@ -141,7 +142,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         const symbols = SVGRendererClass.prototype.symbols;
 
         symbols.arrow = arrow;

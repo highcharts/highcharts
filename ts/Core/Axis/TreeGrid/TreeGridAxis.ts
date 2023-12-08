@@ -58,6 +58,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -887,7 +888,7 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const axisProps = AxisClass.prototype;
 
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {

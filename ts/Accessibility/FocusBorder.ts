@@ -32,7 +32,8 @@ import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -123,7 +124,7 @@ namespace FocusBorderComposition {
         SVGElementClass: typeof SVGElement
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition,
                 svgElementProto = (
                     SVGElementClass.prototype as SVGElementCompositon

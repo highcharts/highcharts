@@ -73,7 +73,8 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -1117,7 +1118,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype,
             exportingOptions = getOptions().exporting;
 

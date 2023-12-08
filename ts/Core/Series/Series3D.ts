@@ -31,9 +31,10 @@ import U from '../Utilities.js';
 const {
     addEvent,
     extend,
+    isNumber,
     merge,
     pick,
-    isNumber
+    pushUnique
 } = U;
 
 /* *
@@ -85,7 +86,7 @@ class Series3D extends Series {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();
