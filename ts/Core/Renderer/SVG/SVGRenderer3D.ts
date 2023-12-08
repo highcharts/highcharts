@@ -52,7 +52,8 @@ const {
     defined,
     extend,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -204,7 +205,7 @@ namespace SVGRenderer3D {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             extend(SVGRendererClass.prototype, {
                 Element3D: SVGElement3D,
                 arc3d,

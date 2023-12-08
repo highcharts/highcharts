@@ -50,6 +50,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     timeUnits,
     wrap
 } = U;
@@ -205,7 +206,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;

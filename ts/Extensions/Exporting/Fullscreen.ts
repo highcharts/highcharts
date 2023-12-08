@@ -31,7 +31,8 @@ const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 /* *
@@ -101,7 +102,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }

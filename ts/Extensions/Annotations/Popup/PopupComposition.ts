@@ -33,6 +33,7 @@ import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -63,7 +64,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',

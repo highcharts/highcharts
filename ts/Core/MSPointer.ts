@@ -35,6 +35,7 @@ const {
     css,
     objectEach,
     pick,
+    pushUnique,
     removeEvent
 } = U;
 
@@ -281,7 +282,7 @@ namespace MSPointer {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

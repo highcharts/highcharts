@@ -56,7 +56,8 @@ const {
     isObject,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -422,7 +423,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:

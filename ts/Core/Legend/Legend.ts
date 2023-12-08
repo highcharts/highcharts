@@ -58,6 +58,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     stableSort,
     syncTimeout
@@ -1758,7 +1759,7 @@ namespace Legend {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

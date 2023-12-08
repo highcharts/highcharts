@@ -50,7 +50,8 @@ const {
     error,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 AST.allowedAttributes.push(
@@ -158,7 +159,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;

@@ -50,6 +50,7 @@ const {
     objectEach,
     pick,
     pInt,
+    pushUnique,
     splat
 } = U;
 
@@ -484,7 +485,7 @@ namespace DataLabel {
      */
     export function compose(SeriesClass: typeof Series): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.initDataLabelsGroup = initDataLabelsGroup;

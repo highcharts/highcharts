@@ -36,7 +36,8 @@ import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -225,7 +226,7 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.symbols.connector = symbolConnector;

@@ -53,6 +53,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     splat,
     syncTimeout
 } = U;
@@ -1902,7 +1903,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 

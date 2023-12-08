@@ -29,7 +29,8 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
-    attr
+    attr,
+    pushUnique
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -501,7 +502,7 @@ namespace MenuComponent {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = Chart.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;

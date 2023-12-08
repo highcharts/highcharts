@@ -41,7 +41,8 @@ const {
     isString,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -209,7 +210,7 @@ class Breadcrumbs {
         highchartsDefaultOptions: Options
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(
                 ChartClass,

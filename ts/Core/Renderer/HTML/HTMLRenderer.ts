@@ -30,7 +30,8 @@ const {
     attr,
     createElement,
     extend,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -66,7 +67,7 @@ class HTMLRenderer extends SVGRenderer {
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const htmlRendererProto = HTMLRenderer.prototype,
                 svgRendererProto = SVGRendererClass.prototype;
 

@@ -42,6 +42,7 @@ const {
     isObject,
     isNumber,
     pick,
+    pushUnique,
     wrap
 } = U;
 
@@ -380,7 +381,7 @@ class TreeGridTickAdditions {
         TickClass: typeof Tick
     ): void {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const tickProto = TickClass.prototype;
 
             addEvent(TickClass, 'init', onTickInit);

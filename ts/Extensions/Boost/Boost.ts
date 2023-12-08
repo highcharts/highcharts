@@ -34,7 +34,8 @@ const {
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
-    error
+    error,
+    pushUnique
 } = U;
 
 /* *
@@ -76,7 +77,7 @@ function compose(
         }
     }
 
-    if (ColorClass && U.pushUnique(composed, compose)) {
+    if (ColorClass && pushUnique(composed, compose)) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap

@@ -28,7 +28,8 @@ const {
     addEvent,
     extend,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -109,7 +110,7 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.

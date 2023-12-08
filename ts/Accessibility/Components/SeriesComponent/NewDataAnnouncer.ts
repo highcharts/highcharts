@@ -30,7 +30,8 @@ const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    defined
+    defined,
+    pushUnique
 } = U;
 
 import Announcer from '../../Utils/Announcer.js';
@@ -428,7 +429,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',

@@ -33,7 +33,7 @@ const {
     css,
     defined,
     extend,
-    pick,
+    pushUnique,
     pInt
 } = U;
 
@@ -107,7 +107,7 @@ class HTMLElement extends SVGElement {
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
 
-        if (U.pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, this.compose)) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

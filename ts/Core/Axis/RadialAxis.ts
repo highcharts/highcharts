@@ -47,6 +47,7 @@ const {
     isObject,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     wrap
 } = U;
@@ -358,7 +359,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',

@@ -33,6 +33,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -74,7 +75,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update

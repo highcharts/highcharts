@@ -34,7 +34,8 @@ const {
     addEvent,
     extend,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -56,7 +57,7 @@ function compose(
 
     if (
         TooltipClass &&
-        U.pushUnique(composed, compose)
+        pushUnique(composed, compose)
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }

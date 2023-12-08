@@ -29,7 +29,8 @@ const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -91,7 +92,7 @@ namespace A11yI18nComposition {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.langFormat = langFormat;

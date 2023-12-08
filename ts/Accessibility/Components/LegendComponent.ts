@@ -40,6 +40,7 @@ const {
     fireEvent,
     isNumber,
     pick,
+    pushUnique,
     syncTimeout
 } = U;
 
@@ -701,7 +702,7 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;

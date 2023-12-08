@@ -39,7 +39,8 @@ import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr
+    attr,
+    pushUnique
 } = U;
 
 
@@ -692,7 +693,7 @@ namespace RangeSelectorComponent {
         RangeSelectorClass: typeof RangeSelector
     ): void {
 
-        if (U.pushUnique(composed, compose)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightRangeSelectorButton = (

@@ -60,6 +60,7 @@ const {
     isArray,
     isNumber,
     pick,
+    pushUnique,
     wrap,
     defined
 } = U;
@@ -202,7 +203,7 @@ function compose<T extends typeof Series>(
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
 
-    if (U.pushUnique(composed, compose)) {
+    if (pushUnique(composed, compose)) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
             seriesProto = SeriesClass.prototype as BoostSeriesComposition;
 
