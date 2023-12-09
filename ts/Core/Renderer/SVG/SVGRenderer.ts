@@ -172,39 +172,6 @@ class SVGRenderer implements SVGRendererLike {
      * @type {string}
      */
 
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public alignedObjects: Array<SVGElement>;
-    public allowHTML?: boolean;
-    public box: globalThis.SVGElement;
-    public boxWrapper: SVGElement;
-    public cache: Record<string, BBoxObject>;
-    public cacheKeys: Array<string>;
-    public chartIndex!: number;
-    public defs: SVGElement;
-    public forExport?: boolean;
-    public globalAnimation!: (boolean|Partial<AnimationOptions>);
-    public gradients: Record<string, SVGElement>;
-    public height!: number;
-    public imgCount: number;
-    public rootFontSize: string|undefined;
-    public style!: CSSObject;
-    public styledMode?: boolean;
-    public unSubPixelFix?: Function;
-    public url: string;
-    public width!: number;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
     /**
      * Initialize the SVGRenderer. Overridable initializer function that takes
      * the same parameters as the constructor.
@@ -320,6 +287,38 @@ class SVGRenderer implements SVGRendererLike {
         }
     }
 
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public alignedObjects: Array<SVGElement>;
+    public allowHTML?: boolean;
+    public box: globalThis.SVGElement;
+    public boxWrapper: SVGElement;
+    public cache: Record<string, BBoxObject>;
+    public cacheKeys: Array<string>;
+    public chartIndex!: number;
+    public defs: SVGElement;
+    public forExport?: boolean;
+    public globalAnimation!: (boolean|Partial<AnimationOptions>);
+    public gradients: Record<string, SVGElement>;
+    public height!: number;
+    public imgCount: number;
+    public rootFontSize: string|undefined;
+    public style!: CSSObject;
+    public styledMode?: boolean;
+    public unSubPixelFix?: Function;
+    public url: string;
+    public width!: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
