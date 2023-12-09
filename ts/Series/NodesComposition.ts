@@ -129,14 +129,6 @@ namespace NodesComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -148,21 +140,15 @@ namespace NodesComposition {
         PointClass: typeof Point,
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
+        const pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
+        pointProto.setNodeState = setNodeState;
+        pointProto.setState = setNodeState;
+        pointProto.update = updateNode;
 
-            pointProto.setNodeState = setNodeState;
-            pointProto.setState = setNodeState;
-            pointProto.update = updateNode;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
-            seriesProto.destroy = destroy;
-            seriesProto.setData = setData;
-        }
+        seriesProto.destroy = destroy;
+        seriesProto.setData = setData;
 
         return SeriesClass as (T&typeof SeriesComposition);
     }

@@ -51,6 +51,12 @@ function requires(globPatterns, taskNames) {
     });
 }
 
+function runTasks(...tasks) {
+    return new Promise(resolve => {
+        gulp.series(tasks)(resolve);
+    });
+}
+
 /* *
  *
  *  Exports
@@ -58,5 +64,6 @@ function requires(globPatterns, taskNames) {
  * */
 
 module.exports = {
-    requires
+    requires,
+    runTasks
 };

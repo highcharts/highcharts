@@ -23,6 +23,7 @@ import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
     charts,
+    composed,
     doc,
     noop,
     win
@@ -34,6 +35,7 @@ const {
     css,
     objectEach,
     pick,
+    pushUnique,
     removeEvent
 } = U;
 
@@ -269,14 +271,6 @@ namespace MSPointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -284,9 +278,11 @@ namespace MSPointer {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

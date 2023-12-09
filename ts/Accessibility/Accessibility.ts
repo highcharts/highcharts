@@ -31,13 +31,17 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -46,7 +50,7 @@ const {
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
-import FocusBorder from './FocusBorder.js';
+import FocusBorderComposition from './FocusBorder.js';
 import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
@@ -132,8 +136,6 @@ class Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -377,8 +379,6 @@ namespace Accessibility {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const i18nFormat = A11yI18n.i18nFormat;
 
     /* *
@@ -386,8 +386,6 @@ namespace Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroy with chart.
@@ -495,6 +493,7 @@ namespace Accessibility {
         SVGElementClass: typeof SVGElement,
         RangeSelectorClass?: typeof RangeSelector
     ): void {
+
         // Ordered:
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
@@ -502,14 +501,14 @@ namespace Accessibility {
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
         A11yI18n.compose(ChartClass);
-        FocusBorder.compose(ChartClass, SVGElementClass);
+        FocusBorderComposition.compose(ChartClass, SVGElementClass);
 
         // RangeSelector
         if (RangeSelectorClass) {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
@@ -553,17 +552,13 @@ namespace Accessibility {
                     }
                 );
             });
-        }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
                 pointOnUpdate
             );
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(

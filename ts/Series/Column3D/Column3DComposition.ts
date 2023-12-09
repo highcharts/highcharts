@@ -34,6 +34,8 @@ import type {
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import U from '../../Core/Utilities.js';
@@ -89,14 +91,6 @@ declare module '../../Core/Series/SeriesOptions' {
         inactiveOtherPoints?: boolean;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -242,69 +236,72 @@ function compose(
     StackItemClass: typeof StackItem
 ): void {
 
-    if (pushUnique(composedMembers, SeriesClass)) {
-        const seriesProto = SeriesClass.prototype;
+    if (pushUnique(composed, compose)) {
+        const seriesProto = SeriesClass.prototype,
+            stackItemProto = StackItemClass.prototype,
+            {
+                column: ColumnSeriesClass,
+                columnRange: ColumnRangeSeriesClass
+            } = SeriesClass.types;
 
         wrap(seriesProto, 'alignDataLabel', wrapSeriesAlignDataLabel);
         wrap(seriesProto, 'justifyDataLabel', wrapSeriesJustifyDataLabel);
-    }
-
-    if (pushUnique(composedMembers, StackItemClass)) {
-        const stackItemProto = StackItemClass.prototype;
 
         wrap(stackItemProto, 'getStackBox', wrapStackItemGetStackBox);
-    }
 
-    const {
-        column: ColumnSeriesClass,
-        columnRange: ColumnRangeSeriesClass
-    } = SeriesClass.types;
+        if (ColumnSeriesClass) {
+            const columnSeriesProto = ColumnSeriesClass.prototype,
+                columnPointProto = columnSeriesProto.pointClass.prototype;
 
-    if (
-        ColumnSeriesClass &&
-        pushUnique(composedMembers, ColumnSeriesClass)
-    ) {
-        const columnSeriesProto = ColumnSeriesClass.prototype,
-            columnPointProto = columnSeriesProto.pointClass.prototype;
+            columnSeriesProto.translate3dPoints = (): void => void 0;
+            columnSeriesProto.translate3dShapes = columnSeriesTranslate3dShapes;
 
-        columnSeriesProto.translate3dPoints = (): void => void 0;
-        columnSeriesProto.translate3dShapes = columnSeriesTranslate3dShapes;
+            addEvent(columnSeriesProto, 'afterInit', onColumnSeriesAfterInit);
 
-        addEvent(columnSeriesProto, 'afterInit', onColumnSeriesAfterInit);
+            wrap(
+                columnPointProto,
+                'hasNewShapeType',
+                wrapColumnPointHasNewShapeType
+            );
+            wrap(columnSeriesProto, 'animate', wrapColumnSeriesAnimate);
+            wrap(columnSeriesProto, 'plotGroup', wrapColumnSeriesPlotGroup);
+            wrap(
+                columnSeriesProto,
+                'pointAttribs',
+                wrapColumnSeriesPointAttribs
+            );
+            wrap(columnSeriesProto, 'setState', wrapColumnSeriesSetState);
+            wrap(columnSeriesProto, 'setVisible', wrapColumnSeriesSetVisible);
+            wrap(columnSeriesProto, 'translate', wrapColumnSeriesTranslate);
+        }
 
-        wrap(
-            columnPointProto,
-            'hasNewShapeType',
-            wrapColumnPointHasNewShapeType
-        );
-        wrap(columnSeriesProto, 'animate', wrapColumnSeriesAnimate);
-        wrap(columnSeriesProto, 'plotGroup', wrapColumnSeriesPlotGroup);
-        wrap(columnSeriesProto, 'pointAttribs', wrapColumnSeriesPointAttribs);
-        wrap(columnSeriesProto, 'setState', wrapColumnSeriesSetState);
-        wrap(columnSeriesProto, 'setVisible', wrapColumnSeriesSetVisible);
-        wrap(columnSeriesProto, 'translate', wrapColumnSeriesTranslate);
-    }
+        if (ColumnRangeSeriesClass) {
+            const columnRangeSeriesProto = ColumnRangeSeriesClass.prototype,
+                columnRangePointProto =
+                    columnRangeSeriesProto.pointClass.prototype;
 
-    if (
-        ColumnRangeSeriesClass &&
-        pushUnique(composedMembers, ColumnRangeSeriesClass)
-    ) {
-        const columnRangeSeriesProto = ColumnRangeSeriesClass.prototype,
-            columnRangePointProto = columnRangeSeriesProto.pointClass.prototype;
-
-        wrap(
-            columnRangePointProto,
-            'hasNewShapeType',
-            wrapColumnPointHasNewShapeType
-        );
-        wrap(columnRangeSeriesProto, 'plotGroup', wrapColumnSeriesPlotGroup);
-        wrap(
-            columnRangeSeriesProto,
-            'pointAttribs',
-            wrapColumnSeriesPointAttribs
-        );
-        wrap(columnRangeSeriesProto, 'setState', wrapColumnSeriesSetState);
-        wrap(columnRangeSeriesProto, 'setVisible', wrapColumnSeriesSetVisible);
+            wrap(
+                columnRangePointProto,
+                'hasNewShapeType',
+                wrapColumnPointHasNewShapeType
+            );
+            wrap(
+                columnRangeSeriesProto,
+                'plotGroup',
+                wrapColumnSeriesPlotGroup
+            );
+            wrap(
+                columnRangeSeriesProto,
+                'pointAttribs',
+                wrapColumnSeriesPointAttribs
+            );
+            wrap(columnRangeSeriesProto, 'setState', wrapColumnSeriesSetState);
+            wrap(
+                columnRangeSeriesProto,
+                'setVisible',
+                wrapColumnSeriesSetVisible
+            );
+        }
     }
 
 }

@@ -44,6 +44,7 @@ import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     SVG_NS,
     win
@@ -63,6 +64,7 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     uniqueKey
 } = U;
@@ -255,8 +257,6 @@ namespace Exporting {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     // These CSS properties are not inlined. Remember camelCase.
     const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
@@ -305,8 +305,6 @@ namespace Exporting {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Add the export button to the chart, with options.
@@ -647,7 +645,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.afterPrint = afterPrint;
@@ -674,7 +672,7 @@ namespace Exporting {
             );
 
             if (G.isSafari) {
-                G.win.matchMedia('print').addListener(
+                win.matchMedia('print').addListener(
                     function (
                         this: MediaQueryList,
                         mqlEvent: MediaQueryListEvent
@@ -690,9 +688,7 @@ namespace Exporting {
                     }
                 );
             }
-        }
 
-        if (U.pushUnique(composedMembers, setOptions)) {
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
                 defaultOptions.exporting

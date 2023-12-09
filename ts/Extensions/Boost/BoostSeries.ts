@@ -45,6 +45,7 @@ import D from '../../Core/Defaults.js';
 const { getOptions } = D;
 import H from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     noop,
     win
@@ -59,6 +60,7 @@ const {
     isArray,
     isNumber,
     pick,
+    pushUnique,
     wrap,
     defined
 } = U;
@@ -137,8 +139,6 @@ export declare class BoostSeriesComposition extends Series {
 
 const CHUNK_SIZE = 3000;
 
-const composedMembers: Array<unknown> = [];
-
 /* *
  *
  *  Variables
@@ -203,11 +203,12 @@ function compose<T extends typeof Series>(
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composed, compose)) {
+        const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
+            seriesProto = SeriesClass.prototype as BoostSeriesComposition;
+
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
         addEvent(SeriesClass, 'hide', onSeriesHide);
-
-        const seriesProto = SeriesClass.prototype as BoostSeriesComposition;
 
         if (wglMode) {
             seriesProto.renderCanvas = seriesRenderCanvas;
@@ -234,11 +235,6 @@ function compose<T extends typeof Series>(
         ).forEach((method): void =>
             wrapSeriesFunctions(seriesProto, seriesTypes, method)
         );
-    }
-
-    if (U.pushUnique(composedMembers, getOptions)) {
-        const plotOptions =
-            getOptions().plotOptions as SeriesTypePlotOptions;
 
         // Set default options
         Boostables.forEach((type: string): void => {
@@ -249,93 +245,78 @@ function compose<T extends typeof Series>(
                 seriesTypes[type].prototype.fillOpacity = true;
             }
         });
-    }
 
-    if (wglMode) {
-        const {
-            area: AreaSeries,
-            areaspline: AreaSplineSeries,
-            bubble: BubbleSeries,
-            column: ColumnSeries,
-            heatmap: HeatmapSeries,
-            scatter: ScatterSeries,
-            treemap: TreemapSeries
-        } = seriesTypes;
+        if (wglMode) {
+            const {
+                area: AreaSeries,
+                areaspline: AreaSplineSeries,
+                bubble: BubbleSeries,
+                column: ColumnSeries,
+                heatmap: HeatmapSeries,
+                scatter: ScatterSeries,
+                treemap: TreemapSeries
+            } = seriesTypes;
 
-        if (
-            AreaSeries &&
-            U.pushUnique(composedMembers, AreaSeries)
-        ) {
-            extend(AreaSeries.prototype, {
-                fill: true,
-                fillOpacity: true,
-                sampling: true
-            });
-        }
-
-        if (
-            AreaSplineSeries &&
-            U.pushUnique(composedMembers, AreaSplineSeries)
-        ) {
-            extend(AreaSplineSeries.prototype, {
-                fill: true,
-                fillOpacity: true,
-                sampling: true
-            });
-        }
-
-        if (
-            BubbleSeries &&
-            U.pushUnique(composedMembers, BubbleSeries)
-        ) {
-            const bubbleProto = BubbleSeries.prototype;
-
-            // By default, the bubble series does not use the KD-tree, so force
-            // it to.
-            delete (bubbleProto as Partial<Series>).buildKDTree;
-            // seriesTypes.bubble.prototype.directTouch = false;
-
-            // Needed for markers to work correctly
-            wrap(
-                bubbleProto,
-                'markerAttribs',
-                function (
-                    this: typeof bubbleProto,
-                    proceed: Function
-                ): boolean {
-                    if (this.boosted) {
-                        return false;
-                    }
-                    return proceed.apply(this, [].slice.call(arguments, 1));
-                }
-            );
-        }
-
-        if (
-            ColumnSeries &&
-            U.pushUnique(composedMembers, ColumnSeries)
-        ) {
-            extend(ColumnSeries.prototype, {
-                fill: true,
-                sampling: true
-            });
-        }
-
-        if (
-            ScatterSeries &&
-            U.pushUnique(composedMembers, ScatterSeries)
-        ) {
-            ScatterSeries.prototype.fill = true;
-        }
-
-        // We need to handle heatmaps separatly, since we can't perform the
-        // size/color calculations in the shader easily.
-        // @todo This likely needs future optimization.
-        [HeatmapSeries, TreemapSeries].forEach((SC): void => {
-            if (SC && U.pushUnique(composedMembers, SC)) {
-                wrap(SC.prototype, 'drawPoints', wrapSeriesDrawPoints);
+            if (AreaSeries) {
+                extend(AreaSeries.prototype, {
+                    fill: true,
+                    fillOpacity: true,
+                    sampling: true
+                });
             }
-        });
+
+            if (AreaSplineSeries) {
+                extend(AreaSplineSeries.prototype, {
+                    fill: true,
+                    fillOpacity: true,
+                    sampling: true
+                });
+            }
+
+            if (BubbleSeries) {
+                const bubbleProto = BubbleSeries.prototype;
+
+                // By default, the bubble series does not use the KD-tree, so
+                // force it to.
+                delete (bubbleProto as Partial<Series>).buildKDTree;
+                // SeriesTypes.bubble.prototype.directTouch = false;
+
+                // Needed for markers to work correctly
+                wrap(
+                    bubbleProto,
+                    'markerAttribs',
+                    function (
+                        this: typeof bubbleProto,
+                        proceed: Function
+                    ): boolean {
+                        if (this.boosted) {
+                            return false;
+                        }
+                        return proceed.apply(this, [].slice.call(arguments, 1));
+                    }
+                );
+            }
+
+            if (ColumnSeries) {
+                extend(ColumnSeries.prototype, {
+                    fill: true,
+                    sampling: true
+                });
+            }
+
+            if (ScatterSeries) {
+                ScatterSeries.prototype.fill = true;
+            }
+
+            // We need to handle heatmaps separatly, since we can't perform the
+            // size/color calculations in the shader easily.
+            // @todo This likely needs future optimization.
+            [HeatmapSeries, TreemapSeries].forEach((SC): void => {
+                if (SC) {
+                    wrap(SC.prototype, 'drawPoints', wrapSeriesDrawPoints);
+                }
+            });
+        }
     }
 
     return SeriesClass as (T&typeof BoostSeriesComposition);

@@ -22,6 +22,8 @@ import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
 
+import H from '../Globals.js';
+const { composed } = H;
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
@@ -29,10 +31,10 @@ import U from '../Utilities.js';
 const {
     addEvent,
     extend,
+    isNumber,
     merge,
     pick,
-    pushUnique,
-    isNumber
+    pushUnique
 } = U;
 
 /* *
@@ -60,14 +62,6 @@ declare module './SeriesLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
@@ -92,12 +86,13 @@ class Series3D extends Series {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();
                 }
             });
+
             extend(SeriesClass.prototype, {
                 translate3dPoints: Series3D.prototype.translate3dPoints
             });

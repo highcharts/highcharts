@@ -614,8 +614,7 @@ const ChartDefaults: ChartOptions = {
      * @productdesc {highcharts}
      * If a bar series is present in the chart, it will be inverted
      * automatically. Inverting the chart doesn't have an effect if there
-     * are no cartesian series in the chart, or if the chart is
-     * [polar](#chart.polar).
+     * are no cartesian series in the chart.
      *
      * @sample {highcharts} highcharts/chart/inverted/
      *         Inverted line

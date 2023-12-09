@@ -22,6 +22,8 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
@@ -57,14 +59,6 @@ interface TilesItem {
     actualTilesCount: number,
     loaded: boolean
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -161,7 +155,7 @@ class TiledWebMapSeries extends MapSeries {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(ChartClass, 'beforeMapViewInit', onChartBeforeMapViewInit);
         }
     }

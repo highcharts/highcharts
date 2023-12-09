@@ -1319,6 +1319,8 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/yaxis/minortickspermajor/
          *         2 minor ticks per major tick on Y axis
          *
+         * @since  11.0.0
+         *
          * @type {number}
          */
         minorTicksPerMajor: 5,

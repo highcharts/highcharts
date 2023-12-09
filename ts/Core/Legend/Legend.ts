@@ -40,6 +40,7 @@ import F from '../Templating.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
+    composed,
     marginNames
 } = H;
 import Point from '../Series/Point.js';
@@ -57,6 +58,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     stableSort,
     syncTimeout
@@ -1735,14 +1737,6 @@ namespace Legend {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1750,9 +1744,11 @@ namespace Legend {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

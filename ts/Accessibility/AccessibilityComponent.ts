@@ -77,7 +77,6 @@ class AccessibilityComponent {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the class

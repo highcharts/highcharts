@@ -30,14 +30,15 @@ import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
     seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
+        column: { prototype: columnProto },
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -50,7 +51,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -77,14 +79,6 @@ declare module '../../Core/Series/SeriesLike' {
 type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -475,7 +469,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
         }
 
