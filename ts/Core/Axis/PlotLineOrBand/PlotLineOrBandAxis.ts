@@ -311,7 +311,7 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-                (result as any).isFlat = isFlat;
+                result.isFlat = isFlat;
             }
 
         }
