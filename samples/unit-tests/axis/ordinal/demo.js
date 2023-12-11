@@ -308,7 +308,8 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         but changed respectively.`
     );
 
-    const extendedOrdinalPositionsLength = chart.xAxis[0].ordinal.getExtendedPositions();
+    const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.getExtendedPositions();
     chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
 
     assert.notStrictEqual(
@@ -1172,4 +1173,31 @@ QUnit.test('Selection zoom with ordinal and multiple series.', assert => {
 
     assert.close(actualMin, 1692634691003, 1,
         'The xAxis should be zoomed correctly to selection.');
+});
+
+QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
+    const linePoints = [10, 14, 20, 25],
+        scatterPoints = [10, 14, 20, 25, 10, 10],
+        scatterPointInterval = 15,
+        chart = Highcharts.stockChart('container', {
+            boost: {
+                enabled: false
+            },
+            series: [{
+                type: 'line',
+                data: linePoints,
+                pointInverval: 10
+            }, {
+                type: 'scatter',
+                data: scatterPoints,
+                pointInterval: scatterPointInterval
+            }]
+        });
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        (scatterPoints.length - 1) * scatterPointInterval,
+        'Max extreme should be equal to the last point in scatter series.'
+    );
+
 });
