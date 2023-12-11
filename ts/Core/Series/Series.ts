@@ -433,7 +433,9 @@ class Series {
             visible = options.visible !== false;
 
         /**
-         * All child series belonging to the current series.
+         * All child series that are linked to the current series through the
+         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+         * option.
          *
          * @name Highcharts.Series#linkedSeries
          * @type {Array<Highcharts.Series>}

@@ -2326,35 +2326,37 @@ class Chart {
         chartSeries.forEach(function (series): void {
             const { linkedTo } = series.options;
 
-            if (linkedTo && isString(linkedTo)) {
-                let seriesLinkedTo: Series | undefined;
+            if (isString(linkedTo)) {
+                let linkedParent: Series | undefined;
                 if (linkedTo === ':previous') {
-                    seriesLinkedTo = chart.series[series.index - 1];
+                    linkedParent = chart.series[series.index - 1];
                 } else {
-                    seriesLinkedTo = chart.get(linkedTo) as Series | undefined;
+                    linkedParent = chart.get(linkedTo) as Series | undefined;
                 }
                 // #3341 avoid mutual linking
                 if (
-                    seriesLinkedTo &&
-                    seriesLinkedTo.linkedParent !== series
+                    linkedParent &&
+                    linkedParent.linkedParent !== series
                 ) {
-                    seriesLinkedTo.linkedSeries.push(series);
+                    linkedParent.linkedSeries.push(series);
                     /**
-                     * Parent series of the current series.
+                     * The parent series of the current series, if the current
+                     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+                     * setting.
                      *
                      * @name Highcharts.Series#linkedParent
                      * @type {Highcharts.Series}
                      * @readonly
                      */
-                    series.linkedParent = seriesLinkedTo;
+                    series.linkedParent = linkedParent;
 
-                    if (seriesLinkedTo.enabledDataSorting) {
+                    if (linkedParent.enabledDataSorting) {
                         series.setDataSortingOptions();
                     }
 
                     series.visible = pick(
                         series.options.visible,
-                        seriesLinkedTo.options.visible,
+                        linkedParent.options.visible,
                         series.visible
                     ); // #3879
                 }
