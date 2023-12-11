@@ -153,9 +153,25 @@ const exporting: ExportingOptions = {
      * make sure the generated image is received in another frame, or a custom
      * `enctype` or `encoding` can be set.
      *
+     * To modify the request, use [fetchOptions](#exporting.fetchOptions)
+     * instead.
+     *
+     * @deprecated
      * @type      {Highcharts.HTMLAttributes}
      * @since     3.0.8
      * @apioption exporting.formAttributes
+     */
+
+    /**
+     * Options for the fetch request used when sending the SVG to the export
+     * server.
+     *
+     * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
+     * for more information
+     *
+     * @type {Object}
+     * @since next
+     * @apioption exporting.fetchOptions
      */
 
     /**
