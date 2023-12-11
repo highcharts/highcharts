@@ -49,7 +49,8 @@ const {
     isString,
     merge,
     splat,
-    uniqueKey
+    uniqueKey,
+    isObject
 } = U;
 
 /* *
@@ -589,13 +590,6 @@ class HighchartsComponent extends Component {
             const columnNames = table.modified.getColumnNames();
             const columnAssignment = this.options.columnAssignment ||
                 this.getDefaultColumnAssignment(columnNames);
-            const seriesColumnMap = columnAssignment.seriesColumnMap;
-            // eslint-disable-next-line max-len
-            const pointColumnMap = (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.pointColumnMap;
-            const pointColumnMapValues = pointColumnMap &&
-                Object.keys(pointColumnMap).map(
-                    (key): string => pointColumnMap[key]
-                );
             const xKeyMap: Record<string, string> = {};
 
             this.emit({ type: 'afterPresentationModifier', table: table });
@@ -603,14 +597,6 @@ class HighchartsComponent extends Component {
             // Remove series names that match the xKeys
             const seriesNames = table.modified.getColumnNames()
                 .filter((name): boolean => {
-                    if (
-                        pointColumnMap &&
-                        pointColumnMapValues &&
-                        pointColumnMapValues.indexOf(name) !== -1
-                    ) {
-                        return false;
-                    }
-
                     const isVisible = this.activeGroup ?
                         this.activeGroup
                             .getSharedState()
@@ -630,13 +616,13 @@ class HighchartsComponent extends Component {
                 });
 
             // create empty series for mapping custom props of data
-            if (seriesColumnMap) {
-                seriesNames.push(
-                    (
-                        seriesColumnMap as HighchartsComponent.seriesColumnMap
-                    ).seriesName
-                );
-            }
+            Object.keys(columnAssignment).forEach(
+                function (key):void {
+                    if (isObject(columnAssignment[key])) {
+                        seriesNames.push(key);
+                    }
+                }
+            );
 
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
@@ -681,11 +667,23 @@ class HighchartsComponent extends Component {
 
             // Insert the data
             seriesList.forEach((series): void => {
-                const xKey = Object.keys(xKeyMap)[0];
-                // eslint-disable-next-line max-len
-                const isSeriesColumnMap = series.name === (seriesColumnMap as HighchartsComponent.seriesColumnMap)?.seriesName;
+                const xKey = Object.keys(xKeyMap)[0],
+                    isSeriesColumnMap =
+                        isObject(columnAssignment[series.name]),
+                    pointColumnMapValues:Array<string> = [];
+
+                if (isSeriesColumnMap) {
+                    const pointColumns =
+                        columnAssignment[series.name] as Record<string, string>;
+
+                    Object.keys(pointColumns).forEach((key):void => {
+                        pointColumnMapValues.push(pointColumns[key]);
+                    });
+                }
+
                 const columnKeys = isSeriesColumnMap ?
                     [xKey].concat(pointColumnMapValues) : [xKey, series.name];
+
                 const seriesTable = new DataTable({
                     columns: table.modified.getColumns(columnKeys)
                 });
@@ -705,8 +703,9 @@ class HighchartsComponent extends Component {
                         arr.push(
                             [row.x].concat(
                                 pointColumnMapValues.map(
-                                    // eslint-disable-next-line max-len
-                                    (value: string):number|undefined => row[value]
+                                    function (value: string):number|undefined {
+                                        return row[value];
+                                    }
                                 )
                             )
                         );
@@ -1057,7 +1056,7 @@ namespace HighchartsComponent {
          * }
          * ```
          */
-        columnAssignment?: Record<string, string|seriesColumnMap>;
+        columnAssignment?: Record<string, string|Record<string, string>>;
     }
 
     /**
@@ -1072,22 +1071,16 @@ namespace HighchartsComponent {
      * Example
      * columnAssignment: {
      *      'Dates': 'x',
-     *       seriesColumnMap: {
-     *           seriesName: 'mySeriesName',
-     *           pointColumnMap: {
+     *      'mySeriesName': {
      *             'open': 'myOpen',
      *             'high': 'myHigh',
      *             'low': 'myLow',
      *             'close': 'myClose'
-     *          }
-     *       }
+     *      }
      * }
      * ```
     */
-    export interface seriesColumnMap {
-        seriesName: string;
-        pointColumnMap: Record<string, string>
-    }
+
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;

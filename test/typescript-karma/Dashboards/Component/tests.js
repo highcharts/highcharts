@@ -691,14 +691,11 @@ test('Data columnAssignment', async function (assert) {
                 'x': 'x',
                 'mySeries1': 'value',
                 'mySeries2': 'value',
-                seriesColumnMap: {
-                    seriesName: 'mySeriesName',
-                    pointColumnMap: {
-                        'open': 'myOpen',
-                        'high': 'myHigh',
-                        'low': 'myLow',
-                        'close': 'myClose'
-                    }
+                'mySeriesName': {
+                    'open': 'myOpen',
+                    'high': 'myHigh',
+                    'low': 'myLow',
+                    'close': 'myClose'
                 }
             },
             chartOptions: {
@@ -717,20 +714,17 @@ test('Data columnAssignment', async function (assert) {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
-            id: 'micro-element'
+                id: 'micro-element'
             },
             columnAssignment: {
                 'x': 'x',
                 'mySeries1': 'value',
                 'mySeries2': 'value',
-                seriesColumnMap: {
-                    seriesName: 'mySeriesName',
-                    pointColumnMap: {
-                        'open': 'myOpen',
-                        'high': 'myHigh',
-                        'low': 'myLow',
-                        'close': 'myClose'
-                    }
+                'mySeriesName': {
+                    'open': 'myOpen',
+                    'high': 'myHigh',
+                    'low': 'myLow',
+                    'close': 'myClose'
                 }
             },
             chartOptions: {
@@ -763,7 +757,7 @@ test('Data columnAssignment', async function (assert) {
                     }
                 }, {
                     title: {
-                    text: 'Rate'
+                        text: 'Rate'
                     },
                     opposite: true
                 }],
