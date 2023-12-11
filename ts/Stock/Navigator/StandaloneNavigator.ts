@@ -34,18 +34,13 @@ class StandaloneNavigator {
     public navigator: Navigator;
     public boundAxes: Array<Axis> = [];
     public options: StandaloneNavigatorOptions;
+    public userOptions: DeepPartial<StandaloneNavigatorOptions>;
 
     public static navigator(
         renderTo: (string|globalThis.HTMLElement),
-        options: DeepPartial<StandaloneNavigatorOptions>
+        userOptions: DeepPartial<StandaloneNavigatorOptions>
     ): StandaloneNavigator {
-        const mergedOptions = merge(
-            (G as any).getOptions(),
-            StandaloneNavigatorDefaults,
-            options
-        ) as StandaloneNavigatorOptions;
-
-        const nav = new StandaloneNavigator(renderTo, mergedOptions);
+        const nav = new StandaloneNavigator(renderTo, userOptions);
 
         if (!G.navigators) {
             G.navigators = [nav];
@@ -59,10 +54,16 @@ class StandaloneNavigator {
 
     constructor(
         element: (string | globalThis.HTMLElement),
-        options: StandaloneNavigatorOptions
+        userOptions: DeepPartial<StandaloneNavigatorOptions>
     ) {
-        this.options = options;
-        const chart = new Chart(element, options);
+        this.userOptions = userOptions;
+        this.options = merge(
+            (G as any).getOptions(),
+            StandaloneNavigatorDefaults,
+            userOptions
+        ) as StandaloneNavigatorOptions;
+
+        const chart = new Chart(element, this.options);
 
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;
