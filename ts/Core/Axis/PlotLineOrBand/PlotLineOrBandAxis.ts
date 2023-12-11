@@ -111,7 +111,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band.
+     * The added plot band, or `undefined` if the options are not valid.
      */
     function addPlotBand(
         this: Composition,
@@ -187,7 +187,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line.
+     * The added plot line, or `undefined` if the options are not valid.
      */
     function addPlotLine(
         this: Composition,
