@@ -30,6 +30,8 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -155,14 +157,6 @@ namespace ConnectionComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -174,7 +168,9 @@ namespace ConnectionComposition {
         PointClass: typeof Point
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
+            const pointProto = PointClass.prototype;
+
             // Initialize Pathfinder for charts
             ChartClass.prototype.callbacks.push(function (
                 chart: Chart
@@ -187,17 +183,11 @@ namespace ConnectionComposition {
                     this.pathfinder.update(true); // First draw, defer render
                 }
             });
-        }
-
-        if (pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype;
 
             pointProto.getMarkerVector = pointGetMarkerVector;
             pointProto.getPathfinderAnchorPoint = pointGetPathfinderAnchorPoint;
             pointProto.getRadiansToVector = pointGetRadiansToVector;
-        }
 
-        if (pushUnique(composedMembers, setOptions)) {
             // Set default Pathfinder options
             setOptions(ConnectorsDefaults);
         }

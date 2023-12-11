@@ -47,9 +47,9 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
-    public options: VennPointOptions = void 0 as any;
+    public options!: VennPointOptions;
 
-    public series: VennSeries = void 0 as any;
+    public series!: VennSeries;
 
     public sets?: Array<string>;
 

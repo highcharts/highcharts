@@ -62,11 +62,11 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    public data: Array<ScatterPoint> = void 0 as any;
+    public data!: Array<ScatterPoint>;
 
-    public options: ScatterSeriesOptions = void 0 as any;
+    public options!: ScatterSeriesOptions;
 
-    public points: Array<ScatterPoint> = void 0 as any;
+    public points!: Array<ScatterPoint>;
 
     /* *
      *

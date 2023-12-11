@@ -140,12 +140,37 @@ let hasInternalReferenceBug: (boolean|undefined);
  */
 class SVGRenderer implements SVGRendererLike {
 
-    /* *
+    /**
+     * The root `svg` node of the renderer.
      *
-     *  Constructors
+     * @name Highcharts.SVGRenderer#box
+     * @type {Highcharts.SVGDOMElement}
+     */
+    /**
+     * The wrapper for the root `svg` node of the renderer.
      *
-     * */
-
+     * @name Highcharts.SVGRenderer#boxWrapper
+     * @type {Highcharts.SVGElement}
+     */
+    /**
+     * A pointer to the `defs` node of the root SVG.
+     *
+     * @name Highcharts.SVGRenderer#defs
+     * @type {Highcharts.SVGElement}
+     */
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
+    /**
+     * Page url used for internal references.
+     *
+     * @private
+     * @name Highcharts.SVGRenderer#url
+     * @type {string}
+     */
     public constructor(
         container: HTMLDOMElement,
         width: number,
@@ -172,65 +197,25 @@ class SVGRenderer implements SVGRendererLike {
      *
      * */
 
-    public alignedObjects: Array<SVGElement> = void 0 as any;
-
+    public alignedObjects!: Array<SVGElement>;
     public allowHTML?: boolean;
-
-    /**
-     * The root `svg` node of the renderer.
-     *
-     * @name Highcharts.SVGRenderer#box
-     * @type {Highcharts.SVGDOMElement}
-     */
-    public box: globalThis.SVGElement = void 0 as any;
-
-    /**
-     * The wrapper for the root `svg` node of the renderer.
-     *
-     * @name Highcharts.SVGRenderer#boxWrapper
-     * @type {Highcharts.SVGElement}
-     */
-    public boxWrapper: SVGElement = void 0 as any;
-
-    public cache: Record<string, BBoxObject> = void 0 as any;
-
-    public cacheKeys: Array<string> = void 0 as any;
-
-    public chartIndex: number = void 0 as any;
-
-    /**
-     * A pointer to the `defs` node of the root SVG.
-     *
-     * @name Highcharts.SVGRenderer#defs
-     * @type {Highcharts.SVGElement}
-     */
-    public defs: SVGElement = void 0 as any;
-
-    /**
-     * Whether the rendered content is intended for export.
-     *
-     * @name Highcharts.SVGRenderer#forExport
-     * @type {boolean | undefined}
-     */
+    public box!: globalThis.SVGElement;
+    public boxWrapper!: SVGElement;
+    public cache!: Record<string, BBoxObject>;
+    public cacheKeys!: Array<string>;
+    public chartIndex!: number;
+    public defs!: SVGElement;
     public forExport?: boolean;
-    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
-    public gradients: Record<string, SVGElement> = void 0 as any;
-    public height: number = void 0 as any;
-    public imgCount: number = void 0 as any;
+    public globalAnimation!: (boolean|Partial<AnimationOptions>);
+    public gradients!: Record<string, SVGElement>;
+    public height!: number;
+    public imgCount!: number;
     public rootFontSize: string|undefined;
-    public style: CSSObject = void 0 as any;
+    public style!: CSSObject;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
-
-    /**
-     * Page url used for internal references.
-     *
-     * @private
-     * @name Highcharts.SVGRenderer#url
-     * @type {string}
-     */
-    public url: string = void 0 as any;
-    public width: number = void 0 as any;
+    public url!: string;
+    public width!: number;
 
     /* *
      *
@@ -567,10 +552,7 @@ class SVGRenderer implements SVGRendererLike {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        const wrapper = new this.Element();
-
-        wrapper.init(this as any, nodeName);
-        return wrapper;
+        return new this.Element(this, nodeName);
     }
 
     /**

@@ -1,0 +1,481 @@
+/* ibm-plex-sans-100 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 100;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-200 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 200;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-300 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 300;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-regular - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-500 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 500;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-600 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 600;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-700 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 700;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body,
+#demo-content {
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 !important;
+}
+
+#demo-content {
+    background-color: transparent;
+    height: 400px;
+    max-height: 400px;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+.top-bar {
+    box-shadow: none;
+}
+
+body {
+    /* stylelint-disable max-line-length */
+    background: var(--diamond, linear-gradient(to bottom right, #474554 5%, #1f1e24 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 5%, #1f1e24 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 5%, #1f1e24 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 5%, #1f1e24 50%) top right / 50% 50% no-repeat);
+    /* stylelint-enable */
+    background-color: transparent;
+    height: 100%;
+
+    /* margin-top: -81px; */
+}
+
+.highcharts-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#container {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    width: 100% !important;
+    top: 0;
+}
+
+#countdown2 {
+    opacity: 0;
+    position: absolute;
+}
+
+.landingpage {
+    position: relative;
+}
+
+.landingpage #content {
+    width: 100%;
+    height: 400px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 100px auto;
+    justify-content: center;
+}
+
+.landingpage #content #cyber {
+    grid-column: 1 / 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: self-end;
+    text-align: right;
+    width: 95%;
+}
+
+.landingpage #content #week {
+    grid-column: 2 / 2;
+    text-align: left;
+    grid-row: 1;
+    justify-self: start;
+    align-self: self-end;
+    width: 95%;
+    padding-left: 16px;
+}
+
+.landingpage #content #date {
+    display: none;
+}
+
+.landingpage #content #countdown {
+    height: 120px;
+    display: flex;
+    gap: 4px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin-top: 50px;
+    grid-column: 1 / 3;
+    grid-row: 2;
+    justify-self: center;
+    align-self: self-start;
+    max-width: 320px;
+}
+
+.landingpage #content #countdown .highcharts-caption {
+    transform: translateY(-5px);
+}
+
+.landingpage #content img {
+    max-height: 34px;
+    min-height: 34px;
+}
+
+.landingpage #content h1 {
+    display: none;
+}
+
+.landingpage #content #date-below {
+    display: none;
+}
+
+.highcharts-solidgauge-series .highcharts-point {
+    fill: #6ee7b7;
+}
+
+.highcharts-columnrange-series.highcharts-series-0 .highcharts-point {
+    fill: #fff;
+}
+
+.homepage #content h1 span {
+    color: #6ee7b7;
+}
+
+.highcharts-series-7 image {
+    filter: saturate(2);
+    opacity: 1;
+    transition: all 500ms;
+}
+
+/* gauges */
+
+.highcharts-pane {
+    stroke: #6ee7b7;
+    stroke-width: 1;
+    fill-opacity: 0.8;
+}
+
+.landingpage #content #countdown .gauge {
+    border: 0;
+    width: 120px;
+    height: 120px;
+}
+
+/* data labels */
+.landingpage #content #countdown .highcharts-data-label .time {
+    width: 82px;
+    text-align: center;
+}
+
+.landingpage #content #countdown .highcharts-data-label .time div {
+    font-size: 1.8rem;
+    color: #6ee7b7;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    font-weight: 500;
+}
+
+/* caption */
+.landingpage #content #countdown .highcharts-caption {
+    font-size: 0.5em !important;
+    font-weight: normal;
+    fill: #e3e3e8 !important;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.highcharts-label-box.highcharts-data-label-box {
+    stroke: transparent;
+    fill: transparent;
+}
+
+.highcharts-label-box.highcharts-data-label-box {
+    stroke: transparent;
+}
+
+#stop {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 250px;
+    z-index: 1000;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
+}
+
+@media screen  and (min-width: 360px) {
+    .landingpage #content #countdown {
+        margin-top: 50px;
+        min-width: 340px;
+        max-width: 360px;
+        width: 100%;
+    }
+
+    .landingpage #content img {
+        max-height: 40px;
+        min-height: 40px;
+    }
+
+    #stop {
+        top: 260px;
+    }
+}
+
+@media screen  and (min-width: 576px) {
+    .landingpage #content {
+        grid-template-rows: 130px auto;
+    }
+
+    .landingpage #content #countdown {
+        margin-top: 40px;
+        min-width: 530px;
+    }
+
+    .landingpage #content img {
+        max-height: 60px;
+        min-height: 60px;
+    }
+
+    .landingpage #content #countdown .gauge {
+        border: 0;
+        width: 110px;
+        height: 110px;
+    }
+
+    .landingpage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.6rem;
+        margin-top: -10px;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.6rem !important;
+    }
+
+    #stop {
+        top: 290px;
+    }
+}
+
+@media screen  and (min-width: 768px) {
+    .landingpage #content #countdown {
+        margin-top: 30px;
+        min-width: 580px;
+        max-width: 580px;
+    }
+
+    .highcharts-pane {
+        stroke: #6ee7b7;
+    }
+
+    .landingpage #content #countdown .gauge {
+        border: 0;
+        width: 110px;
+        height: 110px;
+    }
+
+    #container {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .landingpage #content {
+        grid-template-rows: 140px auto;
+    }
+
+    .landingpage #content img {
+        max-height: 60px;
+        min-height: 60px;
+    }
+
+    #stop {
+        top: 276px;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+    }
+}
+
+@media screen  and (min-width: 992px) {
+    #demo-content {
+        height: 400px;
+        max-height: 400px;
+    }
+
+    #container {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .landingpage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.4rem;
+        margin-top: -4px;
+        margin-bottom: 0;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: none;
+    }
+
+    #stop {
+        top: 282px;
+    }
+}
+
+@media screen  and (min-width: 1200px) {
+    .landingpage #content {
+        width: 100%;
+        height: 400px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto;
+        border: 0 solid red;
+    }
+
+    .landingpage #content #cyber {
+        grid-column: 1 / 1;
+        grid-row: 1;
+        justify-self: end;
+        padding-right: 20px;
+        padding-left: 0;
+        align-self: center;
+    }
+
+    .landingpage #content #countdown {
+        grid-column: 2 / 2;
+        grid-row: 1;
+        min-width: 520px;
+        height: 400px;
+        gap: 10px;
+        margin-top: unset;
+    }
+
+    .landingpage #content #week {
+        grid-column: 3 / 3;
+        grid-row: 1;
+        padding-left: 20px;
+        align-self: center;
+    }
+
+    .landingpage #content #countdown .highcharts-data-label .time div {
+        margin-top: 0;
+        font-size: 2.6rem;
+    }
+
+    .landingpage #content img {
+        max-height: 65px;
+        min-height: 65px;
+    }
+
+    .landingpage #content #countdown .gauge {
+        border: 0;
+        width: 120px;
+        height: 120px;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: translateY(5px);
+    }
+
+    #stop {
+        top: 260px;
+    }
+}
+
+@media screen  and (min-width: 1400px) {
+    .landingpage #content #countdown {
+        width: 700px;
+        gap: px;
+    }
+
+    .landingpage #content img {
+        max-height: 110px !important;
+        min-height: 110px !important;
+        width: 320px !important;
+    }
+
+    .landingpage #content #countdown .gauge {
+        width: 145px;
+        height: 145px;
+    }
+
+    .landingpage #content #countdown .highcharts-data-label .time {
+        width: 145px;
+    }
+
+    .landingpage #content #countdown .highcharts-data-label .time div {
+        font-size: 3rem;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+
+    .landingpage #content #countdown .highcharts-caption {
+        font-size: 0.7em !important;
+        transform: none;
+    }
+
+    #stop {
+        top: 270px;
+    }
+}

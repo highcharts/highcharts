@@ -21,7 +21,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
 import D from '../../Core/Defaults.js';
@@ -41,7 +41,7 @@ namespace SunsetTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: ['#FDD089', '#FF7F79', '#A0446E', '#251535'],
 
         colorAxis: {

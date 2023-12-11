@@ -60,17 +60,17 @@ class SunburstPoint extends TreemapPoint {
 
     public outerArcLength?: number;
 
-    public node: SunburstNode = void 0 as any;
+    public node!: SunburstNode;
 
-    public options: SunburstPointOptions = void 0 as any;
+    public options!: SunburstPointOptions;
 
-    public series: SunburstSeries = void 0 as any;
+    public series!: SunburstSeries;
 
-    public shapeExisting: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeExisting!: SunburstNode.NodeValuesObject;
 
     public sliced?: boolean;
 
-    public shapeType: ('arc'|'circle'|'path'|'rect'|'text') = void 0 as any;
+    public shapeType!: ('arc'|'circle'|'path'|'rect'|'text');
 
     /* *
      *

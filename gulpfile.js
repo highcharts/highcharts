@@ -34,6 +34,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/dist-productsjs',
     'dashboards/dist-release',
     'dashboards/dist-upload',
+    'dashboards/dist-verify',
     'dashboards/dist-zip',
     'dashboards/scripts',
     'dashboards/scripts-css',

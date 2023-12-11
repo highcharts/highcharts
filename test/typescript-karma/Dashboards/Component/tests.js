@@ -536,6 +536,43 @@ test('DataGrid component with dataTable', async function (assert) {
     );
 });
 
+test('KPI Component updating', async function (assert) {
+    const container = document.createElement('div');
+    container.id = 'container';
+    
+    const dashboard = await Dashboards.board('container', {
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-cell-1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            cell: 'dashboard-cell-1',
+            type: 'KPI',
+            title: 'Value',
+            value: 1
+        }]
+    }, true),
+        kpi = dashboard.mountedComponents[0].component;
+
+    assert.notOk(kpi.chart, 'KPI Component should be loaded without a chart.');
+
+    kpi.update({
+        value: 2,
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }
+    });
+
+    assert.ok(kpi.chart, 'KPI Component should have a chart after update.');
+});
+
 test('Data columnAssignment', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
@@ -602,7 +639,7 @@ test('Data columnAssignment', async function (assert) {
                 EUR: 'custom.eur',
                 Rate: 'y'
             }
-        }, {
+            }, {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
@@ -624,7 +661,7 @@ test('Data columnAssignment', async function (assert) {
                     yAxis: 1
                 }]
             }
-        }, {
+            }, {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
@@ -644,7 +681,7 @@ test('Data columnAssignment', async function (assert) {
                     yAxis: 1
                 }]
             }
-        }, {
+            }, {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
@@ -676,7 +713,7 @@ test('Data columnAssignment', async function (assert) {
                     type: 'ohlc'
                 }]
             }
-        }, {
+            }, {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
@@ -708,7 +745,7 @@ test('Data columnAssignment', async function (assert) {
                     type: 'candlestick'
                 }]
             }
-        }, {
+            }, {
             cell: 'dashboard-col-5',
             type: 'Highcharts',
             connector: {
@@ -743,101 +780,99 @@ test('Data columnAssignment', async function (assert) {
             }
         }]
     }, true);
-    
+
     const mountedComponents = dashboard.mountedComponents;
 
     // basic column assignment
     assert.ok(
-        mountedComponents[0].component.chart.series.length === 2,
-        'Columns parsed to series.'
+    mountedComponents[0].component.chart.series.length === 2,
+    'Columns parsed to series.'
     );
 
     // columnAssigment merged with the same series options array
     assert.ok(
-        mountedComponents[1].component.chart.series.length === 2,
-        'Columns parsed to series.'
+    mountedComponents[1].component.chart.series.length === 2,
+    'Columns parsed to series.'
     );
 
     assert.ok(
-        mountedComponents[1].component.chart.series[0].yAxis.index === 0,
-        'First series is assigned to basic yAxis.'
+    mountedComponents[1].component.chart.series[0].yAxis.index === 0,
+    'First series is assigned to basic yAxis.'
     );
 
     assert.ok(
-        mountedComponents[1].component.chart.series[1].yAxis.index === 1,
-        'First series is assigned to opposite yAxis.'
+    mountedComponents[1].component.chart.series[1].yAxis.index === 1,
+    'First series is assigned to opposite yAxis.'
     );
 
     // columnAssigment merged with shorter series options array
     assert.ok(
-        mountedComponents[2].component.chart.series.length === 2,
-        'Columns parsed to series.'
+    mountedComponents[2].component.chart.series.length === 2,
+    'Columns parsed to series.'
     );
 
     assert.ok(
-        mountedComponents[2].component.chart.series[0].yAxis.index === 1,
-        'First series is assigned to basic yAxis.'
+    mountedComponents[2].component.chart.series[0].yAxis.index === 1,
+    'First series is assigned to basic yAxis.'
     );
 
     assert.ok(
-        mountedComponents[2].component.chart.series[1].yAxis.index === 0,
-        'First series is assigned to opposite yAxis.'
+    mountedComponents[2].component.chart.series[1].yAxis.index === 0,
+    'First series is assigned to opposite yAxis.'
     );
 
     // columnAssigment and seriesColumnMap (mapping columns into point props)
     // OHLC
     assert.ok(
-        mountedComponents[3].component.chart.series.length === 3,
-        'Columns parsed to series.'
+    mountedComponents[3].component.chart.series.length === 3,
+    'Columns parsed to series.'
     );
 
     assert.ok(
-        mountedComponents[3].component.chart.series[2].type === 'ohlc',
-        'OHLC series is initialized.'
+    mountedComponents[3].component.chart.series[2].type === 'ohlc',
+    'OHLC series is initialized.'
     );
 
     assert.ok(
-        mountedComponents[3].component.chart.series[2].points.length > 0,
-        'OHLC points are created.'
+    mountedComponents[3].component.chart.series[2].points.length > 0,
+    'OHLC points are created.'
     );
 
     assert.ok(
-        mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
-        'OHLC point is an array of open/low/high/close'
+    mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
+    'OHLC point is an array of open/low/high/close'
     );
 
     // Candlestick
     assert.ok(
-        mountedComponents[4].component.chart.series.length === 3,
-        'Columns parsed to series.'
+    mountedComponents[4].component.chart.series.length === 3,
+    'Columns parsed to series.'
     );
 
     assert.ok(
-        mountedComponents[4].component.chart.series[2].type === 'candlestick',
-        'Candlestick series is initialized.'
+    mountedComponents[4].component.chart.series[2].type === 'candlestick',
+    'Candlestick series is initialized.'
     );
 
     assert.ok(
-        mountedComponents[4].component.chart.series[2].points.length > 0,
-        'Candlestick points are created.'
+    mountedComponents[4].component.chart.series[2].points.length > 0,
+    'Candlestick points are created.'
     );
 
     // columnAssigment, series options array and extra series with data
     assert.ok(
-        mountedComponents[5].component.chart.series.length === 3,
-        'Columns parsed to series.'
+    mountedComponents[5].component.chart.series.length === 3,
+    'Columns parsed to series.'
     );
 
     assert.ok(
-        mountedComponents[5].component.chart.series[1].name === 'fake trend',
-        'Implicited series is created.'
+    mountedComponents[5].component.chart.series[1].name === 'fake trend',
+    'Implicited series is created.'
     );
 
     assert.ok(
-        mountedComponents[5].component.chart.series[2].points.length > 0,
-        'Points are created in implicited series.'
+    mountedComponents[5].component.chart.series[2].points.length > 0,
+    'Points are created in implicited series.'
     );
-    
 
 });
-

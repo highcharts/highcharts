@@ -60,11 +60,11 @@ class StreamgraphSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<StreamgraphPoint> = void 0 as any;
+    public data!: Array<StreamgraphPoint>;
 
-    public points: Array<StreamgraphPoint> = void 0 as any;
+    public points!: Array<StreamgraphPoint>;
 
-    public options: StreamgraphSeriesOptions = void 0 as any;
+    public options!: StreamgraphSeriesOptions;
 
     /* *
      *

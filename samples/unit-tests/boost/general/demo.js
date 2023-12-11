@@ -60,6 +60,7 @@ QUnit.test(
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Dynamically removing and adding series (#7499)',
     function (assert) {
+
         var chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
@@ -114,6 +115,39 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[0].boost.target,
             'No individual boost.target after the second series is added'
         );
+
+        function getData(n) {
+            const arr = new Array(n);
+
+            let i = 0;
+            let x = Date.UTC(new Date().getUTCFullYear(), 0, 1) - n * 36e5;
+
+            for (; i < n; i = i + 1, x = x + 36e5) {
+                arr[i] = [x, 2 * Math.sin(i / 100)];
+            }
+
+            return arr;
+        }
+
+        const done = assert.async();
+        // wait for ~1 second
+        setTimeout(() => {
+            // Failure will be a global TypeError,
+            // which QUnit catches by itself
+            assert.ok(
+                true,
+                'Removing a series before it is fully rendered should not cause error'
+            );
+            done();
+        }, 1000);
+
+        // Add a series that takes enough time to process
+        // that it will not be fully rendered before calling remove
+        chart.addSeries({
+            data: getData(5000)
+        });
+
+        chart.series[chart.series.length - 1].remove();
     }
 );
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
@@ -376,6 +410,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.navigator.top + chart.navigator.height - chart.plotTop,
             'Clip rect should take into account navigator boosted series, #17820.'
         );
+
     }
 );
 

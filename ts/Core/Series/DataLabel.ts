@@ -35,6 +35,8 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
+import H from '../Globals.js';
+const { composed } = H;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
@@ -48,6 +50,7 @@ const {
     objectEach,
     pick,
     pInt,
+    pushUnique,
     splat
 } = U;
 
@@ -139,8 +142,6 @@ declare module '../../Core/Renderer/SVG/SVGElementLike' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 namespace DataLabel {
 
     /* *
@@ -209,19 +210,9 @@ namespace DataLabel {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Check if this series has data labels, either a series-level setting, or
@@ -230,11 +221,10 @@ namespace DataLabel {
      * @private
      */
     function hasDataLabels(this: Series): boolean {
-        return splat(
-            this.options.dataLabels || {}
-        ).some((o: DataLabelOptions|undefined): boolean|undefined =>
-            o?.enabled
-        );
+        return mergedDataLabelOptions(this)
+            .some((o: DataLabelOptions|undefined): boolean|undefined =>
+                o?.enabled
+            );
     }
 
     /**
@@ -470,16 +460,18 @@ namespace DataLabel {
         const filter = options.filter;
 
         if (filter) {
-            const op = filter.operator;
-            const prop = (point as any)[filter.property];
-            const val = filter.value;
+            const op = filter.operator,
+                prop = (point as any)[filter.property],
+                val = filter.value;
             if (
                 (op === '>' && prop > (val as any)) ||
                 (op === '<' && prop < (val as any)) ||
                 (op === '>=' && prop >= (val as any)) ||
                 (op === '<=' && prop <= (val as any)) ||
                 (op === '==' && prop == val) || // eslint-disable-line eqeqeq
-                (op === '===' && prop === val)
+                (op === '===' && prop === val) ||
+                (op === '!=' && prop != val) || // eslint-disable-line eqeqeq
+                (op === '!==' && prop !== val)
             ) {
                 return true;
             }
@@ -493,7 +485,7 @@ namespace DataLabel {
      */
     export function compose(SeriesClass: typeof Series): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, compose)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.initDataLabelsGroup = initDataLabelsGroup;
@@ -563,28 +555,18 @@ namespace DataLabel {
             seriesOptions = series.options,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
-            plotOptions = chart.options.plotOptions,
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
-            );
+            ),
+            seriesDlOptions = mergedDataLabelOptions(series);
 
-        let seriesDlOptions = seriesOptions.dataLabels,
-            pointOptions: Array<DataLabelOptions>,
+        let pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
 
-        // Merge in plotOptions.dataLabels for series
-        seriesDlOptions = mergeArrays(
-            mergeArrays(
-                plotOptions?.series?.dataLabels,
-                plotOptions?.[series.type]?.dataLabels
-            ),
-            seriesDlOptions
-        );
-
         // Resolve the animation
-        const { animation, defer } = splat(seriesDlOptions)[0],
+        const { animation, defer } = seriesDlOptions[0],
             animationConfig = defer ?
                 getDeferredAnimation(chart, animation, series) :
                 { defer: 0, duration: 0 };
@@ -992,6 +974,26 @@ namespace DataLabel {
             }
         }
         return res;
+    }
+
+    /**
+     * Merge plotOptions and series options for dataLabels.
+     * @private
+     */
+    function mergedDataLabelOptions(
+        series: Series
+    ): Array<DataLabelOptions> {
+        const plotOptions = series.chart.options.plotOptions;
+
+        return splat(
+            mergeArrays(
+                mergeArrays(
+                    plotOptions?.series?.dataLabels,
+                    plotOptions?.[series.type]?.dataLabels
+                ),
+                series.options.dataLabels
+            )
+        );
     }
 
     /**

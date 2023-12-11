@@ -1488,7 +1488,7 @@ namespace Chart3D {
          * */
 
         public chart: Composition;
-        public frame3d: FrameObject = void 0 as any;
+        public frame3d!: FrameObject;
 
         /* *
          *

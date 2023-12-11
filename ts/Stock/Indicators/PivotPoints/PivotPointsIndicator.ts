@@ -107,11 +107,11 @@ class PivotPointsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PivotPointsPoint> = void 0 as any;
-    public options: PivotPointsOptions = void 0 as any;
-    public points: Array<PivotPointsPoint> = void 0 as any;
-    public endPoint: number = void 0 as any;
-    public plotEndPoint: number = void 0 as any;
+    public data!: Array<PivotPointsPoint>;
+    public options!: PivotPointsOptions;
+    public points!: Array<PivotPointsPoint>;
+    public endPoint!: number;
+    public plotEndPoint!: number;
 
     /* *
      *

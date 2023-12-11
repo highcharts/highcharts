@@ -153,5 +153,11 @@ Dashboards.board('container', {
 }, true);
 
 setTimeout(() => {
+    Dashboards.boards[0].mountedComponents[0].component.update({
+        title: 'Updated title'
+    });
+}, 1000);
+
+setTimeout(() => {
     Dashboards.boards[0].mountedComponents[1].cell.destroy();
-}, 3000);
+}, 2000);

@@ -1,6 +1,8 @@
 /*!*
  *
  *  Copyright (c) Highsoft AS. All rights reserved.
+ * 
+ *  Transpile with `npx gulp scripts && npx gulp jsdoc-dts && npx tsc -b test`.
  *
  *!*/
 
@@ -612,6 +614,40 @@ class TestController {
         debug: boolean = false
     ): void {
         this.triggerEvent('mouseup', chartX, chartY, extra, debug);
+    }
+
+    /**
+     * Triggers mouse wheel event on the chart.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     *
+     * @param extra
+     * Extra properties for the event arguments for the scroll deltas.
+     * For only `deltaY`, use number primitive.
+     *
+     * @param debug
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
+     */
+    public mouseWheel (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ): void {
+        // If extra is a number, convert it to object as deltaY
+        if (typeof extra === 'number') {
+            extra = {
+                deltaY: extra
+            };
+        }
+        this.setPosition(chartX, chartY);
+        this.triggerEvent('wheel', chartX, chartY, extra, debug);
     }
 
     /**

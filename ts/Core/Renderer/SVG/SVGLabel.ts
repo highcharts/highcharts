@@ -93,8 +93,7 @@ class SVGLabel extends SVGElement {
         baseline?: boolean,
         className?: string
     ) {
-        super();
-        this.init(renderer, 'g');
+        super(renderer, 'g');
 
         this.textStr = str;
         this.x = x;

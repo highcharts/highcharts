@@ -19,7 +19,7 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/';
 
 function showElements(elements) {
     [].forEach.call(

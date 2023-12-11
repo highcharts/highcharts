@@ -240,6 +240,20 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         `Name should be mapped correctly from CSV for packed bubble series,
         which is non-cartesian (#19143).`
     );
+
+    chart = Highcharts.chart('container', {
+        data: {
+            csv: 'code;value\n01007;58\n01003;10\n01041;32\n01085;84\n01133;12',
+            columnTypes: ['string', 'number']
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].options.type,
+        'category',
+        `After setting first column as string in data.columnTypes, x-axis should
+        be configured as category axis (#16920).`
+    );
 });
 
 QUnit.test('Data config on updates and setOptions', function (assert) {

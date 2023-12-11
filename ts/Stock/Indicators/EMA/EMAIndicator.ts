@@ -92,11 +92,11 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<EMAPoint> = void 0 as any;
+    public data!: Array<EMAPoint>;
 
-    public options: EMAOptions = void 0 as any;
+    public options!: EMAOptions;
 
-    public points: Array<EMAPoint> = void 0 as any;
+    public points!: Array<EMAPoint>;
 
     /* *
      *
