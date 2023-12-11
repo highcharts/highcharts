@@ -91,7 +91,7 @@ async function testTS() {
     }
 
     // Conditionally build required code
-    await runTasks('dashboards/scripts', 'scripts');
+    await gulp.series('dashboards/scripts', 'scripts')();
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
@@ -101,7 +101,7 @@ async function testTS() {
                 '✖ The files have not been built' +
                 ' since the last source code changes.' +
                 ' Run `npx gulp` and try again.' +
-                ' If this error occures contantly ' +
+                ' If this error occures constantly ' +
                 ' without a reason, try `npx gulp test-ts --force`.'
             );
 
