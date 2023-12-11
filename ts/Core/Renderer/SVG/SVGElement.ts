@@ -2204,7 +2204,9 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#updateTransform
      */
-    public updateTransform(): void {
+    public updateTransform(
+        attrib: 'transform' | 'patternTransform' = 'transform'
+    ): void {
         const {
             element,
             matrix,
@@ -2245,7 +2247,7 @@ class SVGElement implements SVGElementLike {
         }
 
         if (transform.length && !(this.text || this).textPath) {
-            element.setAttribute('transform', transform.join(' '));
+            element.setAttribute(attrib, transform.join(' '));
         }
     }
 

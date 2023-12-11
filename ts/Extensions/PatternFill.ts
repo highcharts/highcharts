@@ -24,7 +24,8 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart.js';
 import type ColorString from '../Core/Color/ColorString';
 import type Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type Series from '../Core/Series/Series.js';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type { SVGDOMElement } from '../Core/Renderer/DOMElementType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -34,8 +35,9 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
+import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
-import type PositionObject from '../Core/Renderer/PositionObject';
+import { Palette } from '../Core/Color/Palettes';
 const {
     addEvent,
     attr,
@@ -148,11 +150,10 @@ function compose(
     if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'render', onSeriesRender);
         wrap(SeriesClass.prototype, 'getColor', wrapSeriesGetColor);
-        addEvent(
-            SeriesClass,
-            'afterRender',
-            seriesAfterRenderPatternScaleCorrection
-        );
+
+        // Pattern scale corrections
+        addEvent(SeriesClass, 'afterRender', onPatternScaleCorrection);
+        addEvent(SeriesClass, 'mapZoomComplete', onPatternScaleCorrection);
     }
 
     if (pushUnique(composedMembers, SVGRendererClass)) {
@@ -402,7 +403,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value = '#343434';
+        value: string = Palette.neutralColor80;
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -647,16 +648,18 @@ function rendererAddPattern(
 ): (SVGElement|undefined) {
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
-        color: ColorString = options.color || '#343434',
+        color: ColorString = options.color || Palette.neutralColor80,
         defaultSize = 32,
-        height: number = (
-            options.height || (options._height as any) || defaultSize
-        ),
+        height = options.height ||
+            (typeof options._height === 'number' ? options._height : 0) ||
+            defaultSize,
         rect = (fill: ColorString): SVGElement => this
             .rect(0, 0, width, height)
             .attr({ fill })
             .add(pattern),
-        width: number = options.width || (options._width as any) || defaultSize;
+        width = options.width ||
+            (typeof options._width === 'number' ? options._width : 0) ||
+            defaultSize;
 
     let attribs: SVGAttributes,
         id = options.id,
@@ -802,55 +805,17 @@ function wrapSeriesGetColor(
 }
 
 /**
- * Scales the pattern element to the given scales.
- * @private
- *
- * @param {SVGDOMElement} element
- * Pattern element to scale.
- *
- * @param {number} scaleX
- * X scale to apply on the element.
- *
- * @param {number} scaleY
- * Y scale to apply on the element.
- */
-function setPatternScale(
-    element: SVGDOMElement,
-    scaleX: number,
-    scaleY: number
-): void {
-    // Get the current patternTransform value.
-    let transform = attr(element, 'patternTransform') || '';
-
-    // Regular expression to match various transforms.
-    const scaleRegex = /scale\([^)]+\)/;
-    const newScale = `scale(${scaleX}, ${scaleY})`;
-
-    // Check if scale is already present.
-    if (scaleRegex.test(transform)) {
-        // Update existing scale value.
-        transform = transform.replace(scaleRegex, newScale);
-    } else {
-        // Add new scale value if not present.
-        transform = `${transform} ${newScale}`.trim();
-    }
-
-    // Set the updated patternTransform value.
-    attr(element, 'patternTransform', transform);
-}
-
-/**
  * Scale patterns inversly to the series it's used in.
  * Maintains a visual (1,1) scale regardless of size.
  * @private
  */
-function seriesAfterRenderPatternScaleCorrection(
+function onPatternScaleCorrection(
     this: Series
 ): void {
     const series = this;
 
     // If not a series used in a map chart, skip it.
-    if (!series.chart.mapView) {
+    if (!series.chart?.mapView) {
         return;
     }
 
@@ -858,34 +823,47 @@ function seriesAfterRenderPatternScaleCorrection(
         renderer = chart.renderer,
         patterns = renderer.patternElements;
 
-    // Only scale if we have patterns to scale. #19980
+    // Only scale if we have patterns to scale.
     if (renderer.defIds?.length && patterns) {
         // Filter for points which have patterns that don't use images assigned
         // and has a group scale available.
         series.points.filter(function (p: Point): boolean {
+            const point: MapPoint = (p as MapPoint);
+
+            // No graphic we can fetch id from, filter out this point.
+            if (!point.graphic) {
+                return false;
+            }
+
             return (
-                p.graphic?.element.hasAttribute('fill') ||
-                p.graphic?.element.hasAttribute('color') ||
-                p.graphic?.element.hasAttribute('stroke')
+                point.graphic.element.hasAttribute('fill') ||
+                point.graphic.element.hasAttribute('color') ||
+                point.graphic.element.hasAttribute('stroke')
             ) &&
-            !(p?.options.color as any)?.pattern?.image &&
-            (p as any).group?.scaleX &&
-            (p as any).group?.scaleY;
+            !(point.options.color as any)?.pattern?.image &&
+            !!point.group?.scaleX &&
+            !!point.group?.scaleY;
         })
             // Map up pattern id's and their scales.
             .map(function (p: Point): [string, PositionObject] {
+                const point: MapPoint = (p as MapPoint);
                 // Parse the id from the graphic element of the point.
                 const id = (
-                    p.graphic?.element.getAttribute('fill') ||
-                    p.graphic?.element.getAttribute('color') ||
-                    p.graphic?.element.getAttribute('stroke') || ''
+                    point.graphic?.element.getAttribute('fill') ||
+                    point.graphic?.element.getAttribute('color') ||
+                    point.graphic?.element.getAttribute('stroke') || ''
                 )
                     .replace(renderer.url, '')
                     .replace('url(#', '')
                     .replace(')', '');
 
-                const pGroup = (p as any).group;
-                return [id, { x: pGroup.scaleX, y: pGroup.scaleY }];
+                return [
+                    id,
+                    {
+                        x: point.group?.scaleX || 1,
+                        y: point.group?.scaleY || 1
+                    }
+                ];
             })
             // Filter out colors and other non-patterns, as well as duplicates.
             .filter(function (
@@ -893,7 +871,8 @@ function seriesAfterRenderPatternScaleCorrection(
                 index: number,
                 arr: [string, PositionObject][]
             ): boolean {
-                return id.indexOf('highcharts-pattern-') !== -1 &&
+                return id !== '' &&
+                id.indexOf('highcharts-pattern-') !== -1 &&
                 !arr.some(function (
                     [otherID, _]: [string, PositionObject],
                     otherIndex: number
@@ -902,11 +881,9 @@ function seriesAfterRenderPatternScaleCorrection(
                 });
             })
             .forEach(function ([id, scale]: [string, PositionObject]): void {
-                setPatternScale(
-                    patterns[id].element as SVGDOMElement,
-                    1 / scale.x,
-                    1 / scale.y
-                );
+                patterns[id].scaleX = 1 / scale.x;
+                patterns[id].scaleY = 1 / scale.y;
+                patterns[id].updateTransform('patternTransform');
             });
     }
 }
