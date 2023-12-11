@@ -117,9 +117,9 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ADPoint> = void 0 as any;
-    public options: ADOptions = void 0 as any;
-    public points: Array<ADPoint> = void 0 as any;
+    public data!: Array<ADPoint>;
+    public options!: ADOptions;
+    public points!: Array<ADPoint>;
 
     /* *
      *

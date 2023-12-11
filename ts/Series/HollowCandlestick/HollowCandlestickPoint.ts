@@ -39,7 +39,7 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-    public series: HollowCandlestickSeries = void 0 as any;
+    public series!: HollowCandlestickSeries;
 
     /* *
      *

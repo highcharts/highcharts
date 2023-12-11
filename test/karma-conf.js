@@ -164,8 +164,8 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-module.exports = function (config) {
 
+module.exports = function (config) {
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
 
@@ -223,7 +223,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = (
+    const tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :

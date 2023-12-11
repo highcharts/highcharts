@@ -80,9 +80,9 @@ class CMOIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<CMOPoint> = void 0 as any;
-    public options: CMOOptions = void 0 as any;
-    public points: Array<CMOPoint> = void 0 as any;
+    public data!: Array<CMOPoint>;
+    public options!: CMOOptions;
+    public points!: Array<CMOPoint>;
 
     /* *
      *

@@ -22,11 +22,14 @@ import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
+import H from '../../Globals.js';
+const { composed } = H;
 import U from '../../Utilities.js';
 const {
     erase,
     extend,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -80,14 +83,6 @@ namespace PlotLineOrBandAxis {
         removePlotBandOrLine(id: string): void;
         removePlotLine(id: string): void;
     }
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -209,11 +204,9 @@ namespace PlotLineOrBandAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (!PlotLineOrBandClass) {
+        if (pushUnique(composed, compose)) {
             PlotLineOrBandClass = PlotLineOrBandType;
-        }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
             extend(
                 AxisClass.prototype as Composition,
                 {

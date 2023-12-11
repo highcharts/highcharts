@@ -58,9 +58,9 @@ class TimelinePoint extends LinePoint {
 
     public label?: string;
 
-    public options: TimelinePointOptions = void 0 as any;
+    public options!: TimelinePointOptions;
 
-    public series: TimelineSeries = void 0 as any;
+    public series!: TimelineSeries;
 
     public userDLOptions?: TimelineDataLabelOptions;
 

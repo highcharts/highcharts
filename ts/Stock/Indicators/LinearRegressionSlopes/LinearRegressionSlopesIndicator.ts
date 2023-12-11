@@ -79,9 +79,9 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
+    public data!: Array<LinearRegressionSlopesPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionSlopesPoint>;
 
     /* *
      *

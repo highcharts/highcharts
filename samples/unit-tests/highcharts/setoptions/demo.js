@@ -32,16 +32,10 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         },
         tooltip: {
             split: false
+        },
+        xAxis: {
+            type: 'datetime'
         }
-        /*,
-        yAxis: [
-            {
-                title: {
-                    text: 'Custom title'
-                }
-            }
-        ]
-        */
     });
 
     chart = $('#container')
@@ -65,6 +59,12 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         chart.tooltip.split,
         false,
         'The instanciated tooltip should not be split (#7307)'
+    );
+
+    assert.strictEqual(
+        typeof chart.xAxis[0].dateTime,
+        'object',
+        'The axis should have dateTime props'
     );
 
     // Skip this. Default options for corresponding index has never been

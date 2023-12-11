@@ -31,7 +31,11 @@ import type TooltipOptions from './TooltipOptions';
 import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
-const { doc, isSafari } = H;
+const {
+    composed,
+    doc,
+    isSafari
+} = H;
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -49,6 +53,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     splat,
     syncTimeout
 } = U;
@@ -602,22 +607,18 @@ class Tooltip {
         point: Point
     ): PositionObject {
 
-        const chart = this.chart,
-            inverted = chart.inverted,
-            polar = chart.polar,
-            distance = this.distance,
+        const { distance, chart, outside } = this,
+            { inverted, plotLeft, plotTop, polar } = chart,
+            { plotX = 0, plotY = 0 } = point,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (inverted && (point as any).h) || 0, // #4117 ???
-            outside = this.outside,
-            playingField = this.getPlayingField(),
-            outerWidth = playingField.width,
-            outerHeight = playingField.height,
+            { height: outerHeight, width: outerWidth } = this.getPlayingField(),
             chartPosition = chart.pointer.getChartPosition(),
-            scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+            scaleX = (val: number): number => (
                 val * chartPosition.scaleX
             ),
-            scaleY = (val: number): number => ( // eslint-disable-line no-confusing-arrow
+            scaleY = (val: number): number => (
                 val * chartPosition.scaleY
             ),
             // Build parameter arrays for firstDimension()/secondDimension()
@@ -633,19 +634,18 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX((point.plotX as any) + chart.plotLeft) :
+                            scaleX(plotX + plotLeft) :
                         chartPosition.top - distance +
-                            scaleY((point.plotY as any) + chart.plotTop),
+                            scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
                     // Not outside, no scaling is needed
                     isX ? boxWidth : boxHeight,
-                    isX ? (point.plotX as any) + chart.plotLeft :
-                        (point.plotY as any) + chart.plotTop,
-                    isX ? chart.plotLeft : chart.plotTop,
-                    isX ? chart.plotLeft + chart.plotWidth :
-                        chart.plotTop + chart.plotHeight
+                    isX ? plotX + plotLeft : plotY + plotTop,
+                    isX ? plotLeft : plotTop,
+                    isX ? plotLeft + chart.plotWidth :
+                        plotTop + chart.plotHeight
                 ]);
             };
         let first = buildDimensionArray('y'),
@@ -656,9 +656,7 @@ class Tooltip {
         let flipped = !!point.negative;
         if (
             !polar &&
-            chart.hoverSeries &&
-            chart.hoverSeries.yAxis &&
-            chart.hoverSeries.yAxis.reversed
+            chart.hoverSeries?.yAxis?.reversed
         ) {
             flipped = !flipped;
         }
@@ -730,12 +728,13 @@ class Tooltip {
                 scaledInnerSize: number, // #11329
                 point: number
             ): (boolean|undefined) {
-                let retVal;
                 // Too close to the edge, return false and swap dimensions
                 if (point < distance || point > outerSize - distance) {
-                    retVal = false;
+                    return false;
+                }
+
                 // Align left/top
-                } else if (point < innerSize / 2) {
+                if (point < innerSize / 2) {
                     ret[dim] = 1;
                 // Align right/bottom
                 } else if (point > outerSize - scaledInnerSize / 2) {
@@ -744,20 +743,16 @@ class Tooltip {
                 } else {
                     ret[dim] = point - innerSize / 2;
                 }
-                return retVal;
             },
 
             /*
              * Swap the dimensions
              */
             swap = function (count?: boolean): void {
-                const temp = first;
-
-                first = second;
-                second = temp;
+                [first, second] = [second, first];
                 swapped = count;
             },
-            run = function (): void {
+            run = (): void => {
                 if (firstDimension.apply(0, first as any) !== false) {
                     if (
                         secondDimension.apply(0, second as any) === false &&
@@ -1897,14 +1892,6 @@ namespace Tooltip {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1916,7 +1903,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 

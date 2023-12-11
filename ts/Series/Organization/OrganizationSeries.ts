@@ -78,11 +78,11 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<OrganizationPoint> = void 0 as any;
+    public data!: Array<OrganizationPoint>;
 
-    public options: OrganizationSeriesOptions = void 0 as any;
+    public options!: OrganizationSeriesOptions;
 
-    public points: Array<OrganizationPoint> = void 0 as any;
+    public points!: Array<OrganizationPoint>;
 
     /* *
      *

@@ -25,12 +25,14 @@ import Controllable from './Controllable.js';
 import ControllableDefaults from './ControllableDefaults.js';
 const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
+const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     defined,
     extend,
     merge,
+    pushUnique,
     uniqueKey
 } = U;
 
@@ -67,8 +69,6 @@ interface MarkerSetterFunction {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const markerEndSetter = createMarkerSetter('marker-end');
 
@@ -213,12 +213,10 @@ class ControllablePath extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
-        }
-
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composed, this.compose)) {
             const svgRendererProto = SVGRendererClass.prototype;
+
+            addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
 
             svgRendererProto.addMarker = svgRendererAddMarker;
         }
