@@ -2336,13 +2336,15 @@ class Chart {
                 // #3341 avoid mutual linking
                 if (
                     seriesLinkedTo &&
-                    seriesLinkedTo.linkedParent !== series) {
+                    seriesLinkedTo.linkedParent !== series
+                ) {
                     seriesLinkedTo.linkedSeries.push(series);
                     /**
                      * Parent series of the current series.
                      *
                      * @name Highcharts.Series#linkedParent
                      * @type {Highcharts.Series}
+                     * @readonly
                      */
                     series.linkedParent = seriesLinkedTo;
 
