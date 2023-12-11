@@ -139,10 +139,10 @@ class KlingerIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<KlingerPoint> = void 0 as any;
-    public points: Array<KlingerPoint> = void 0 as any;
-    public options: KlingerOptions = void 0 as any;
-    public volumeSeries: LineSeries = void 0 as any;
+    public data!: Array<KlingerPoint>;
+    public points!: Array<KlingerPoint>;
+    public options!: KlingerOptions;
+    public volumeSeries!: LineSeries;
 
     /* *
      *

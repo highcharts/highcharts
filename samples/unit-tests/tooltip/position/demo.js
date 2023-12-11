@@ -312,3 +312,30 @@ QUnit.test('Tooltip position with inverted multiple axes', assert => {
         'Tooltip position on inverted chart with multiple axes should appear at point (#14771).'
     );
 });
+
+QUnit.test('Tooltip position for inverted polar chart.', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true,
+            polar: true
+        },
+        series: [{
+            data: [7, 2, 3, 4, 5]
+        }]
+    });
+
+    const point1 = chart.series[0].points[1];
+    point1.onMouseOver();
+
+    assert.equal(
+        chart.tooltip.now.anchorX,
+        Math.round(point1.plotX + chart.plotLeft),
+        'Tooltip x position should be valid.'
+    );
+
+    assert.equal(
+        chart.tooltip.now.anchorY,
+        Math.round(point1.plotY + chart.plotTop),
+        'Tooltip y position should be valid.'
+    );
+});

@@ -33,7 +33,10 @@ import type { YAxisOptions } from './AxisOptions';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -44,6 +47,7 @@ const {
     isObject,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     wrap
 } = U;
@@ -183,8 +187,6 @@ namespace RadialAxis {
      *  Constants
      *
      * */
-
-    const composedMembers: Array<unknown> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -357,7 +359,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -383,9 +385,7 @@ namespace RadialAxis {
                 'initialAxisTranslation',
                 onAxisInitialAxisTranslation
             );
-        }
 
-        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',

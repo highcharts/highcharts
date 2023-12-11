@@ -47,7 +47,7 @@ function getProducts(logPaths) {
     }
 
     function mark(product) {
-        if (affectedProducts.indexOf(product) !== -1) {
+        if (!affectedProducts.includes(product)) {
             affectedProducts.push(product);
         }
     }
@@ -193,6 +193,127 @@ function saveRun({
     FS.writeFileSync(configFile, JSON.stringify(configuration));
 }
 
+function handleProductArgs() {
+    const process = require('node:process');
+    const yargs = require('yargs/yargs');
+    const { argv } = yargs(process.argv);
+    const log = require('./log');
+
+    if (process.env.DEBUG) {
+        log.message(argv);
+    }
+
+    if (argv.product) {
+        return argv.product.split(',');
+    }
+
+    if (argv.modified) {
+        return getProducts(true);
+    }
+
+    return false;
+}
+
+function getProductTests() {
+    const log = require('./log');
+    const productTestsMap = require('../../../test/karma-product-tests.js');
+
+    const products = handleProductArgs();
+
+    if (Array.isArray(products) && products.length === 0) {
+        return false;
+    }
+
+    if (!Array.isArray(products)) {
+        return void 0;
+    }
+
+    const tests = productTestsMap.always;
+    const nonProducts = [];
+
+    for (const product of products) {
+        if (productTestsMap[product]) {
+            tests.push(...productTestsMap[product]);
+        } else {
+            nonProducts.push(product);
+        }
+    }
+
+    if (nonProducts.length) {
+        const availableProducts = Object.keys(productTestsMap)
+            .filter(key => key !== 'always');
+        const errorMessage = `Products(s) "${nonProducts.join(', ')}" not found in karma-product-tests.js
+
+Available products are: ${availableProducts.join(', ')}`;
+
+        throw new Error(errorMessage);
+    }
+
+    return tests;
+}
+
+const HELP_TEXT_COMMON = `
+
+--browsers
+Comma separated list of browsers to test. Available browsers are
+'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
+installed on the local system. Defaults to ChromeHeadless.
+
+In addition, virtual browsers from Browserstack are supported. They are
+prefixed by the operating system. Available BrowserStack browsers are
+'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
+Win.IE'.
+
+For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
+
+A shorthand option, '--browsers all', runs all BrowserStack machines.
+
+--browsercount
+Number of browserinstances to spread/shard the tests across. Default value is 2.
+Will default use ChromeHeadless browser. For other browsers specify
+argument --splitbrowsers (same usage as above --browsers argument).
+
+--debug
+Skips rebuilding and prints some debugging info.
+
+--force
+Forces all tests without cached results.
+
+--modified
+Runs tests for products affected by modified files staged for commit.
+
+--product
+Comma separated list of products to test.
+Available products are Core, Gantt, Maps, Stock and Dashboards.
+
+--speak
+Says if tests failed or succeeded.
+
+--tests
+Comma separated list of tests to run. Defaults to '*.*' that runs all tests
+in the 'samples/' directory.
+Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
+directory.
+
+--testsAbsolutePath
+Comma separated list of tests to run. By default runs all tests
+in the 'samples/' directory.
+Example:
+'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
+runs all tests in the file.
+
+--ts
+Compile TypeScript-based tests.
+
+--dots
+Use the less verbose 'dots' reporter
+
+--timeout
+Set a different disconnect timeout from default config
+
+`;
+
+
 /* *
  *
  *  Exports
@@ -203,5 +324,8 @@ module.exports = {
     checkProduct,
     getProducts,
     shouldRun,
-    saveRun
+    saveRun,
+    handleProductArgs,
+    getProductTests,
+    HELP_TEXT_COMMON
 };

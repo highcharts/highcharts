@@ -100,15 +100,15 @@ class MapPoint extends ScatterPoint {
 
     public middleY?: number;
 
-    public options: MapPointOptions = void 0 as any;
+    public options!: MapPointOptions;
 
-    public path: SVGPath = void 0 as any;
+    public path!: SVGPath;
 
     public projectedPath?: SVGPath;
 
     public properties?: Record<string, (number|string)>;
 
-    public series: MapSeries = void 0 as any;
+    public series!: MapSeries;
 
     /* *
      *

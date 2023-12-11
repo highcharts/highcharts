@@ -21,6 +21,8 @@ import type ColorType from '../Core/Color/ColorType';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -67,14 +69,6 @@ export interface LastVisiblePriceLabelOptions {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Composition
  *
  * */
@@ -84,7 +78,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
     }
 }

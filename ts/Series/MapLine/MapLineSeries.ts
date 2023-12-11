@@ -62,11 +62,11 @@ class MapLineSeries extends MapSeries {
      *
      * */
 
-    public data: Array<MapLinePoint> = void 0 as any;
+    public data!: Array<MapLinePoint>;
 
-    public options: MapLineSeriesOptions = void 0 as any;
+    public options!: MapLineSeriesOptions;
 
-    public points: Array<MapLinePoint> = void 0 as any;
+    public points!: Array<MapLinePoint>;
 
     /* *
      *

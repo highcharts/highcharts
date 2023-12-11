@@ -25,11 +25,14 @@ import AxisDefaults from './AxisDefaults.js';
 const { xAxis } = AxisDefaults;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     merge,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -60,14 +63,6 @@ declare module '../Options' {
         );
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -124,7 +119,8 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const chartProto = ChartClass.prototype;
 
             defaultOptions.zAxis = merge(xAxis, {
                 offset: 0,
@@ -132,8 +128,6 @@ class ZAxis extends Axis implements AxisLike {
             });
 
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
-
-            const chartProto = ChartClass.prototype;
 
             chartProto.addZAxis = chartAddZAxis;
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];

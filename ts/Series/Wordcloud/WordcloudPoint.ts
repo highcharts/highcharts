@@ -45,13 +45,13 @@ class WordcloudPoint extends ColumnPoint {
      *
      * */
 
-    public dimensions: SizeObject = void 0 as any;
+    public dimensions!: SizeObject;
     public lastCollidedWith?: WordcloudPoint;
-    public options: WordcloudPointOptions = void 0 as any;
-    public polygon?: WordcloudUtils.PolygonObject = void 0 as any;
-    public rect?: PolygonBoxObject = void 0 as any;
+    public options!: WordcloudPointOptions;
+    public polygon?: WordcloudUtils.PolygonObject;
+    public rect?: PolygonBoxObject;
     public rotation?: (boolean|number);
-    public series: WordcloudSeries = void 0 as any;
+    public series!: WordcloudSeries;
 
     /* *
      *
