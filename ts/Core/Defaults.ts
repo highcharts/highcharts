@@ -1893,8 +1893,11 @@ const defaultOptions: DefaultOptions = {
      */
     tooltip: {
         /**
-         * The color of the tooltip border. When `undefined`, the border takes
-         * the color of the corresponding series or point.
+         * The color of the tooltip border. Note that the border color is only
+         * visible if a [borderWidth](#tooltip.borderWidth) is set. When `borderWidth`
+         * is set to `0`, the border will not be visible, regardless of the `borderColor` setting.
+         * When `borderColor` is `undefined`, the border takes the color of the
+         * corresponding series or point.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
          *         Follow series by default
