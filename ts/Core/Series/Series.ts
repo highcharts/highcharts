@@ -437,6 +437,7 @@ class Series {
          *
          * @name Highcharts.Series#linkedSeries
          * @type {Array<Highcharts.Series>}
+         * @readonly
          */
         series.linkedSeries = [];
         // Bind the axes
