@@ -10,10 +10,10 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import TreemapSeries from '../../Series/Treemap/TreemapSeries.js';
 import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
+import TreemapSeries from '../../Series/Treemap/TreemapSeries.js';
 const G: AnyRecord = Highcharts;
-G.Breadcrumbs = Breadcrumbs;
-Breadcrumbs.compose(G.Chart, G.defaultOptions);
+G.Breadcrumbs = G.Breadcrumbs || Breadcrumbs;
+G.Breadcrumbs.compose(G.Chart, G.defaultOptions);
 TreemapSeries.compose(G.Series);
 export default Highcharts;

@@ -20,15 +20,15 @@ import ChartUtilities from '../../Accessibility/Utils/ChartUtilities.js';
 import HTMLUtilities from '../../Accessibility/Utils/HTMLUtilities.js';
 import KeyboardNavigationHandler from '../../Accessibility/KeyboardNavigationHandler.js';
 import SeriesDescriber from '../../Accessibility/Components/SeriesComponent/SeriesDescriber.js';
-
 const G: AnyRecord = Highcharts;
+// Classes
 G.i18nFormat = Accessibility.i18nFormat;
 G.A11yChartUtilities = ChartUtilities;
 G.A11yHTMLUtilities = HTMLUtilities;
 G.AccessibilityComponent = AccessibilityComponent;
 G.KeyboardNavigationHandler = KeyboardNavigationHandler;
 G.SeriesAccessibilityDescriber = SeriesDescriber;
-
+// Compositions
 Accessibility.compose(
     G.Chart,
     G.Legend,
@@ -37,5 +37,4 @@ Accessibility.compose(
     G.SVGElement,
     G.RangeSelector
 );
-
 export default Highcharts;

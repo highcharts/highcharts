@@ -11,9 +11,6 @@
 import Highcharts from '../../Core/Globals.js';
 import BrokenAxis from '../../Core/Axis/BrokenAxis.js';
 const G: AnyRecord = Highcharts;
-// Compositions
-if (!G.BrokenAxis) {
-    G.BrokenAxis = BrokenAxis;
-    BrokenAxis.compose(G.Axis, G.Series);
-}
+G.BrokenAxis = G.BrokenAxis || BrokenAxis;
+G.BrokenAxis.compose(G.Axis, G.Series);
 export default Highcharts;

@@ -15,11 +15,9 @@ import ApproximationDefaults from '../../Extensions/DataGrouping/ApproximationDe
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import DataGrouping from '../../Extensions/DataGrouping/DataGrouping.js';
 const G: AnyRecord = Highcharts;
-if (!G.dataGrouping) {
-    G.dataGrouping = {
-        approximationDefaults: ApproximationDefaults,
-        approximations: ApproximationRegistry
-    };
-    DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
-}
+G.dataGrouping = {
+    approximationDefaults: ApproximationDefaults,
+    approximations: ApproximationRegistry
+};
+DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
 export default Highcharts;

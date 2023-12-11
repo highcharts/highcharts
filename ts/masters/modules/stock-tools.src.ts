@@ -18,10 +18,8 @@ import StockTools from '../../Stock/StockTools/StockTools.js';
 import StockToolsGui from '../../Stock/StockTools/StockToolsGui.js';
 import Toolbar from '../../Stock/StockTools/StockToolbar.js';
 const G: AnyRecord = Highcharts;
+G.NavigationBindings = G.NavigationBindings || NavigationBindings;
 G.Toolbar = Toolbar;
-if (!G.NavigationBindings) {
-    G.NavigationBindings = NavigationBindings;
-}
 StockTools.compose(G.NavigationBindings);
 StockToolsGui.compose(G.Chart, G.NavigationBindings);
 export default Highcharts;

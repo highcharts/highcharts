@@ -377,10 +377,10 @@ function seriesOnAfterColumnTranslate(
 /** @private */
 function compose(
     SeriesClass: typeof Series,
-    PieSeriesClass: typeof PieSeries,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const PieSeriesClass = SeriesClass.types.pie;
 
     if (pushUnique(composed, compose)) {
         const symbols = SVGRendererClass.prototype.symbols;

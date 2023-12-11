@@ -18,31 +18,25 @@ import GanttChart from '../../Core/Chart/GanttChart.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
-import StaticScale from '../../Extensions/StaticScale.js';
 import './pathfinder.src.js';
+import './static-scale.src.js';
 // Series
 import './xrange.src.js';
 import GanttSeries from '../../Series/Gantt/GanttSeries.js';
 const G: AnyRecord = Highcharts;
 // Classes
-G.Connection = Connection;
-G.GanttChart = GanttChart;
-G.ganttChart = GanttChart.ganttChart;
+G.Connection = G.Connection || Connection;
+G.GanttChart = G.GanttChart || GanttChart;
+G.Navigator = G.Navigator || Navigator;
+G.RangeSelector = G.RangeSelector || RangeSelector;
+G.Scrollbar = G.Scrollbar || Scrollbar;
+// Functions
+G.ganttChart = G.GanttChart.ganttChart;
 // Compositions
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
-StaticScale.compose(G.Axis, G.Chart);
-if (!G.Navigator) {
-    G.Navigator = Navigator;
-    Navigator.compose(G.Axis, G.Chart, G.Series);
-}
-if (!G.RangeSelector) {
-    G.RangeSelector = RangeSelector;
-    RangeSelector.compose(G.Axis, G.Chart);
-}
-if (!G.Scrollbar) {
-    G.Scrollbar = Scrollbar;
-    Scrollbar.compose(G.Axis);
-}
+G.Navigator.compose(G.Axis, G.Chart, G.Series);
+G.RangeSelector.compose(G.Axis, G.Chart);
+G.Scrollbar.compose(G.Axis);
 export default Highcharts;

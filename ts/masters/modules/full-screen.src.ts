@@ -14,6 +14,6 @@
 import Highcharts from '../../Core/Globals.js';
 import Fullscreen from '../../Extensions/Exporting/Fullscreen.js';
 const G: AnyRecord = Highcharts;
-G.Fullscreen = Fullscreen;
-Fullscreen.compose(G.Chart);
+G.Fullscreen = G.Fullscreen || Fullscreen;
+G.Fullscreen.compose(G.Chart);
 export default Highcharts;

@@ -16,6 +16,6 @@ import Highcharts from '../../Core/Globals.js';
 import Debugger from '../../Extensions/Debugger/Debugger.js';
 import ErrorMessages from '../../Extensions/Debugger/ErrorMessages.js';
 const G: AnyRecord = Highcharts;
-G.errorMessages = ErrorMessages;
+G.errorMessages = G.errorMessages || ErrorMessages;
 Debugger.compose(G.Chart);
 export default Highcharts;

@@ -24,17 +24,21 @@ import MapChart from '../../Core/Chart/MapChart.js';
 import MapView from '../../Maps/MapView.js';
 import Projection from '../../Maps/Projection.js';
 const G: AnyRecord = Highcharts;
+// Classes
 G.ColorMapComposition = ColorMapComposition;
-G.MapChart = MapChart;
-G.mapChart = G.Map = MapChart.mapChart;
-G.MapNavigation = MapNavigation;
-G.MapView = MapView;
-G.maps = MapChart.maps;
-G.Projection = Projection;
+G.MapChart = G.MapChart || MapChart;
+G.MapNavigation = G.MapNavigation || MapNavigation;
+G.MapView = G.MapView || MapView;
+G.Projection = G.Projection || Projection;
+// Functions
+G.mapChart = G.Map = G.MapChart.mapChart;
+G.maps = G.MapChart.maps;
 G.geojson = GeoJSONComposition.geojson;
 G.topo2geo = GeoJSONComposition.topo2geo;
+// Compositions
 GeoJSONComposition.compose(G.Chart);
 MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 MapNavigation.compose(MapChart, G.Pointer, G.SVGRenderer);
 MapView.compose(MapChart);
+// Default Export
 export default Highcharts;

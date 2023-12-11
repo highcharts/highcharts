@@ -285,10 +285,9 @@ specified by config.imageCapture.resultsOutputPath.
         log.message('No tests to run, exiting early');
         return;
     }
-    const { runTasks } = require('./lib/gulp');
 
     // Conditionally build required code
-    await runTasks('scripts');
+    await gulp.task('scripts')();
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
