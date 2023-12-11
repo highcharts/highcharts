@@ -35,24 +35,11 @@ Highcharts.getSVG = function (charts) {
         </svg>`;
 };
 
-
-const notifyOnUnload = () => {
-    console.error('beforeunload was triggered'); // It should not be
-
-    setTimeout(
-        () => {
-            window.removeEventListener('beforeunload', notifyOnUnload);
-        },
-        1000
-    );
-};
-
 /**
  * Create a global exportCharts method that takes an array of charts as an
  * argument, and exporting options as the second argument
  */
 Highcharts.exportCharts = function (charts, options) {
-    window.addEventListener('beforeunload', notifyOnUnload, { once: true });
 
     // Merge the options
     options = Highcharts.merge(Highcharts.getOptions().exporting, options);
@@ -133,11 +120,5 @@ document.getElementById('export-png').addEventListener('click', () =>
 document.getElementById('export-pdf').addEventListener('click', () =>
     Highcharts.exportCharts([chart1, chart2], {
         type: 'application/pdf'
-    })
-);
-
-document.getElementById('export-svg').addEventListener('click', () =>
-    Highcharts.exportCharts([chart1, chart2], {
-        type: 'image/svg+xml'
     })
 );
