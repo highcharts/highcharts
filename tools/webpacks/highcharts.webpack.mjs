@@ -172,7 +172,7 @@ const webpacks = FSLib
             },
             output: {
                 filename: `./${masterPath}`,
-                globalObject: 'window',
+                globalObject: 'this',
                 library: {
                     export: 'default',
                     name: {

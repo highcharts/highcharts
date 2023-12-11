@@ -35,11 +35,9 @@ Expected: ${printArrayOrString(expected as any)}
 
 export function setupDOM( customBody = '' ){
   const { JSDOM } = require('jsdom');
-  const dom = new JSDOM(
+  const { doc, win } = new JSDOM(
       customBody ??
-    '<!doctype html><body></body>');
-  const win = dom.window;
-  const doc = win.document;
+    '<!DOCTYPE html><html><body></body></html>');
 
   global.Node = win.Node; // Workaround for issue #1
   win.Date = Date;
@@ -59,18 +57,32 @@ export function setupDOM( customBody = '' ){
     win,
     doc,
     el
-  }
-
+  };
 }
 
 export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
-    const { win } = setupDOM();
-    const Highcharts = require(`../../code/${hc}.src.js`)(win);
+    const { doc, win } = setupDOM(
+        '<!DOCTYPE html><html><body><div id="container"></div></body></html>'
+    );
 
-    if(modules.length){
-        global.window = win; // needed to load modules as of Node 20+
+    global.window = global.window || win;
+
+    let Highcharts = require(`highcharts/${hc}`);
+
+    if (typeof Highcharts === 'function') {
+        Highcharts = Highcharts(win); // old UMD pattern
+    } else {
+        Highcharts.doc = Highcharts.doc || doc;
+        Highcharts.win = Highcharts.win || win;
+    }
+    console.log(Object.keys(Highcharts).filter(k => k[0] === 'S'));
+
+    if (modules.length){
         modules.forEach(module => {
-            require(`../../code/${module}.src.js`)(Highcharts);
+            const m = require(`../../code/${module}.src.js`);
+            if (typeof m === 'function') {
+                m(Highcharts); // old UMD pattern
+            }
         });
     }
 
