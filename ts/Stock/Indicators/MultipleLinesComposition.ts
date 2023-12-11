@@ -69,8 +69,6 @@ namespace MultipleLinesComposition {
     *
     * */
 
-    const composedMembers: Array<unknown> = [];
-
     /**
      * Additional lines DOCS names. Elements of linesApiNames array should
      * be consistent with DOCS line names defined in your implementation.
@@ -133,32 +131,30 @@ namespace MultipleLinesComposition {
         IndicatorClass: T
     ): (T&typeof IndicatorComposition) {
 
-        if (U.pushUnique(composedMembers, IndicatorClass)) {
-            const proto = IndicatorClass.prototype as IndicatorComposition;
+        const proto = IndicatorClass.prototype as IndicatorComposition;
 
-            proto.linesApiNames = (
-                proto.linesApiNames ||
-                linesApiNames.slice()
-            );
-            proto.pointArrayMap = (
-                proto.pointArrayMap ||
-                pointArrayMap.slice()
-            );
-            proto.pointValKey = (
-                proto.pointValKey ||
-                pointValKey
-            );
+        proto.linesApiNames = (
+            proto.linesApiNames ||
+            linesApiNames.slice()
+        );
+        proto.pointArrayMap = (
+            proto.pointArrayMap ||
+            pointArrayMap.slice()
+        );
+        proto.pointValKey = (
+            proto.pointValKey ||
+            pointValKey
+        );
 
-            proto.areaLinesNames = (
-                proto.areaLinesNames ||
-                areaLinesNames.slice()
-            );
+        proto.areaLinesNames = (
+            proto.areaLinesNames ||
+            areaLinesNames.slice()
+        );
 
-            proto.drawGraph = indicatorDrawGraph;
-            proto.getGraphPath = indicatorGetGraphPath;
-            proto.toYData = indicatorToYData;
-            proto.translate = indicatorTranslate;
-        }
+        proto.drawGraph = indicatorDrawGraph;
+        proto.getGraphPath = indicatorGetGraphPath;
+        proto.toYData = indicatorToYData;
+        proto.translate = indicatorTranslate;
 
         return IndicatorClass as (T&typeof IndicatorComposition);
     }

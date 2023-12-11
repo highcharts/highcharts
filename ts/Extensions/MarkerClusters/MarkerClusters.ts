@@ -43,6 +43,8 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 import MarkerClusterScatter from './MarkerClusterScatter.js';
 import U from '../../Core/Utilities.js';
@@ -235,8 +237,6 @@ export interface MarkerClusterSplitDataObject {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 (defaultOptions.plotOptions || {}).series = merge(
     (defaultOptions.plotOptions || {}).series,
     MarkerClusterDefaults
@@ -255,31 +255,24 @@ function compose(
     highchartsDefaultOptions: Options,
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, compose)) {
+        const PointClass = SeriesClass.prototype.pointClass,
+            { scatter: ScatterSeries } = SeriesClass.types;
+
         addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
-    }
 
-    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'render', onChartRender);
-    }
 
-    if (pushUnique(composedMembers, PointClass)) {
         addEvent(PointClass, 'drillToCluster', onPointDrillToCluster);
         addEvent(PointClass, 'update', onPointUpdate);
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
-    }
 
-    const {
-        scatter: ScatterSeries
-    } = SeriesClass.types;
-
-    if (ScatterSeries) {
-        MarkerClusterScatter.compose(highchartsDefaultOptions, ScatterSeries);
+        if (ScatterSeries) {
+            MarkerClusterScatter
+                .compose(highchartsDefaultOptions, ScatterSeries);
+        }
     }
 
 }

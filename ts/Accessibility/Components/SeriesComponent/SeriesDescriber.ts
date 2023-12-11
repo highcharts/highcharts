@@ -109,7 +109,7 @@ function findFirstPointWithGraphic(
  * order to describe a point that has no graphic.
  * @private
  */
-function shouldAddMockPoint(point: Point): boolean {
+function shouldAddMockPoint(point: Point): boolean|undefined {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const series = point.series,

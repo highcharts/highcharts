@@ -21,14 +21,18 @@ import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const { isTouchDevice } = H;
+const {
+    composed,
+    isTouchDevice
+} = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -46,14 +50,6 @@ declare module './AxisComposition' {
 export declare class NavigatorAxisComposition extends Axis {
     navigatorAxis: NavigatorAxisAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -161,7 +157,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

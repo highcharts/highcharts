@@ -81,16 +81,16 @@ class AxisResizer {
      *
      * */
 
-    public axis: Axis = void 0 as any;
-    public controlLine: SVGElement = void 0 as any;
+    public axis!: Axis;
+    public controlLine!: SVGElement;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
     public hasDragged?: boolean;
-    public lastPos: number = void 0 as any;
+    public lastPos!: number;
     public mouseDownHandler?: Function;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public options: AxisResizeOptions = void 0 as any;
+    public options!: AxisResizeOptions;
 
     /* *
      *

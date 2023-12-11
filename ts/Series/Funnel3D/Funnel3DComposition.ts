@@ -32,7 +32,10 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
-const { charts } = H;
+const {
+    charts,
+    composed
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -89,14 +92,6 @@ interface Funnel3DPathsObject extends SVGPath3D {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -106,7 +101,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (pushUnique(composed, compose)) {
         const rendererProto =
             SVGRendererClass.prototype as SVGRenderer3D.Composition;
 

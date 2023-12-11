@@ -464,23 +464,23 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<SunburstPoint> = void 0 as any;
+    public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel: Record<string, SunburstSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
 
-    public nodeMap: Record<string, SunburstNode> = void 0 as any;
+    public nodeMap!: Record<string, SunburstNode>;
 
-    public options: SunburstSeriesOptions = void 0 as any;
+    public options!: SunburstSeriesOptions;
 
-    public points: Array<SunburstPoint> = void 0 as any;
+    public points!: Array<SunburstPoint>;
 
-    public shapeRoot?: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeRoot?: SunburstNode.NodeValuesObject;
 
-    public startAndEndRadians: CU.RadianAngles = void 0 as any;
+    public startAndEndRadians!: CU.RadianAngles;
 
-    public tree: SunburstNode = void 0 as any;
+    public tree!: SunburstNode;
 
     /* *
      *

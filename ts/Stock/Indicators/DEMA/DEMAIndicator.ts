@@ -83,10 +83,10 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
-    public EMApercent: number = void 0 as any;
-    public data: Array<DEMAPoint> = void 0 as any;
-    public options: DEMAOptions = void 0 as any;
-    public points: Array<DEMAPoint> = void 0 as any;
+    public EMApercent!: number;
+    public data!: Array<DEMAPoint>;
+    public options!: DEMAOptions;
+    public points!: Array<DEMAPoint>;
 
     /* *
      *

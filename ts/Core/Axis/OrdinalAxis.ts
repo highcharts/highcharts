@@ -24,6 +24,7 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
+const { composed } = H;
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -35,6 +36,7 @@ const {
     error,
     isNumber,
     pick,
+    pushUnique,
     timeUnits
 } = U;
 
@@ -81,16 +83,6 @@ declare module './AxisType' {
         OrdinalAxis: OrdinalAxis.Composition;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* eslint-disable valid-jsdoc */
 
 /* *
  *
@@ -155,7 +147,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -177,12 +169,9 @@ namespace OrdinalAxis {
                 'initialAxisTranslation',
                 onAxisInitialAxisTranslation
             );
-        }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
-        }
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
 

@@ -69,11 +69,11 @@ class CandlestickSeries extends OHLCSeries {
      *
      * */
 
-    public data: Array<CandlestickPoint> = void 0 as any;
+    public data!: Array<CandlestickPoint>;
 
-    public options: CandlestickSeriesOptions = void 0 as any;
+    public options!: CandlestickSeriesOptions;
 
-    public points: Array<CandlestickPoint> = void 0 as any;
+    public points!: Array<CandlestickPoint>;
 
     /* *
      *
