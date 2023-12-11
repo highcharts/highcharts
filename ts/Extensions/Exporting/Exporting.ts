@@ -1056,7 +1056,7 @@ namespace Exporting {
             width: exportingOptions.width,
             scale: exportingOptions.scale,
             svg: svg
-        }, exportingOptions.formAttributes as any);
+        }, exportingOptions.fetchOptions);
     }
 
     /**

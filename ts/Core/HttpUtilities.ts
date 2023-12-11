@@ -188,71 +188,41 @@ function getJSON(
  * @param {Object} data
  * Post data
  *
- * @param {Highcharts.Dictionary<string>} [formAttributes]
+ * @param {RequestInit} [fetchOptions]
  * Additional attributes for the post request
- *
- * @param {boolean} [useFormSubmit]
- * Use form.submit instead of fetch
  */
+
 function post(
     url: string,
     data: Record<string, any>,
-    formAttributes?: HTMLAttributes,
-    useFormSubmit?: boolean
-): void {
-    if (useFormSubmit === void 0) {
-        useFormSubmit = formAttributes !== void 0 ||
-            typeof win.FormData === 'undefined' ||
-            typeof win.fetch === 'undefined';
-    }
-
-    // create the form
-    const form: HTMLFormElement = createElement('form', merge({
-        method: 'post',
-        action: url,
-        enctype: 'multipart/form-data'
-    }, formAttributes), {
-        display: 'none'
-    }, doc.body) as unknown as HTMLFormElement;
-
+    fetchOptions?: RequestInit
+): Promise<void> {
+    const formData = new win.FormData();
     // add the data
     objectEach(data, function (val: string, name: string): void {
-        createElement('input', {
-            type: 'hidden',
-            name: name,
-            value: val
-        }, void 0, form);
+        formData.append(name, val);
     });
 
-    if (useFormSubmit) {
-        // submit
-        form.submit();
-    } else {
-        const formData = new win.FormData(form);
-        formData.append('b64', 'true');
+    formData.append('b64', 'true');
 
-        const { filename, type } = data;
+    const { filename, type } = data;
 
-        win.fetch(url, {
-            method: 'POST',
-            body: formData
-        }).then((res: Response): void => {
-            if (res.ok) {
-                res.text().then((text: string): void => {
-                    const link = document.createElement('a');
-                    link.href = `data:${type};base64,${text}`;
-                    link.download = filename;
-                    link.click();
+    return win.fetch(url, {
+        method: 'POST',
+        body: formData,
+        ...fetchOptions
+    }).then((res: Response): void => {
+        if (res.ok) {
+            res.text().then((text: string): void => {
+                const link = document.createElement('a');
+                link.href = `data:${type};base64,${text}`;
+                link.download = filename;
+                link.click();
 
-                    discardElement(link);
-                });
-            }
-
-        });
-    }
-
-    // clean up
-    discardElement(form);
+                discardElement(link);
+            });
+        }
+    });
 }
 
 /* *
