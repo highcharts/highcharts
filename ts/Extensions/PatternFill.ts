@@ -150,7 +150,6 @@ function compose(
         // Pattern scale corrections
         addEvent(SeriesClass, 'afterRender', onPatternScaleCorrection);
         addEvent(SeriesClass, 'mapZoomComplete', onPatternScaleCorrection);
-    }
 
         extend(SVGRendererClass.prototype, {
             addPattern: rendererAddPattern
