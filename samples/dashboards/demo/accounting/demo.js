@@ -1,66 +1,78 @@
 const currentMonth = Date.UTC(2023, 9);
 const data = [
-    ['Date', 'Budget', 'Cost', 'Revenue'],
-    [Date.UTC(2019, 0), 7000000, 6200000, 8200000],
-    [Date.UTC(2019, 1), 7500000, 5800000, 8700000],
-    [Date.UTC(2019, 2), 7000000, 7500000, 8200000],
-    [Date.UTC(2019, 3), 7000000, 6400000, 8200000],
-    [Date.UTC(2019, 4), 7500000, 6700000, 8700000],
-    [Date.UTC(2019, 5), 7000000, 7300000, 8200000],
-    [Date.UTC(2019, 6), 7500000, 6900000, 8700000],
-    [Date.UTC(2019, 7), 7000000, 7100000, 8200000],
-    [Date.UTC(2019, 8), 7500000, 6800000, 8700000],
-    [Date.UTC(2019, 9), 7000000, 5900000, 8200000],
-    [Date.UTC(2019, 10), 7000000, 6300000, 8200000],
-    [Date.UTC(2019, 11), 7500000, 6500000, 8700000],
-    [Date.UTC(2020, 0), 7000000, 7200000, 8200000],
-    [Date.UTC(2020, 1), 7000000, 6600000, 8200000],
-    [Date.UTC(2020, 2), 7500000, 5700000, 8700000],
-    [Date.UTC(2020, 3), 7000000, 7000000, 8200000],
-    [Date.UTC(2020, 4), 7500000, 6300000, 8700000],
-    [Date.UTC(2020, 5), 7000000, 6800000, 8200000],
-    [Date.UTC(2020, 6), 7500000, 6200000, 8700000],
-    [Date.UTC(2020, 7), 7000000, 7400000, 8200000],
-    [Date.UTC(2020, 8), 7500000, 6900000, 8700000],
-    [Date.UTC(2020, 9), 7000000, 7100000, 8200000],
-    [Date.UTC(2020, 10), 7500000, 7300000, 8700000],
-    [Date.UTC(2020, 11), 7000000, 6800000, 8200000],
-    [Date.UTC(2021, 0), 7500000, 6200000, 8700000],
-    [Date.UTC(2021, 1), 7000000, 6500000, 8200000],
-    [Date.UTC(2021, 2), 7500000, 6700000, 8700000],
-    [Date.UTC(2021, 3), 7000000, 7200000, 8200000],
-    [Date.UTC(2021, 4), 7500000, 6400000, 8700000],
-    [Date.UTC(2021, 5), 7000000, 5900000, 8200000],
-    [Date.UTC(2021, 6), 7500000, 6100000, 8700000],
-    [Date.UTC(2021, 7), 8000000, 6300000, 9200000],
-    [Date.UTC(2021, 8), 8500000, 7000000, 9700000],
-    [Date.UTC(2021, 9), 8000000, 8500000, 9200000],
-    [Date.UTC(2021, 10), 8500000, 8000000, 9700000],
-    [Date.UTC(2021, 11), 8000000, 8300000, 9200000],
-    [Date.UTC(2022, 0), 8500000, 8600000, 9700000],
-    [Date.UTC(2022, 1), 8000000, 8800000, 9200000],
-    [Date.UTC(2022, 2), 8500000, 8500000, 9700000],
-    [Date.UTC(2022, 3), 8000000, 7500000, 9200000],
-    [Date.UTC(2022, 4), 8500000, 8700000, 9700000],
-    [Date.UTC(2022, 5), 8000000, 9500000, 10200000],
-    [Date.UTC(2022, 6), 8500000, 8200000, 8700000],
-    [Date.UTC(2022, 7), 8000000, 8900000, 10700000],
-    [Date.UTC(2022, 8), 8500000, 9200000, 9200000],
-    [Date.UTC(2022, 9), 8000000, 7800000, 7800000],
-    [Date.UTC(2022, 10), 8500000, 8500000, 8000000],
-    [Date.UTC(2022, 11), 8000000, 7800000, 8000000],
-    [Date.UTC(2023, 0), 8500000, 6900000, 8700000],
-    [Date.UTC(2023, 1), 8000000, 7100000, 8900000],
-    [Date.UTC(2023, 2), 8500000, 7200000, 8000000],
-    [Date.UTC(2023, 3), 8000000, 7400000, 8000000],
-    [Date.UTC(2023, 4), 8500000, 6900000, 8700000],
-    [Date.UTC(2023, 5), 8000000, 7100000, 8900000],
-    [Date.UTC(2023, 6), 8500000, 7500000, 8000000],
-    [Date.UTC(2023, 7), 8000000, 7300000, 8700000],
-    [Date.UTC(2023, 8), 8500000, 7600000, 8900000],
-    [Date.UTC(2023, 9), 8000000, 7600000, 8900000],
-    [Date.UTC(2023, 10), 7500000, null, null],
-    [Date.UTC(2023, 11), 7600000, null, null]
+    ['Date', 'Budget', 'Cost', 'Revenue', 'CostPredP', 'RevPredP', 'CostPredO', 'RevPredO'],
+    [Date.UTC(2019, 0), 7000000, 6200000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 1), 7500000, 5800000, 8700000, null, null, null, null],
+    [Date.UTC(2019, 2), 7000000, 7500000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 3), 7000000, 6400000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 4), 7500000, 6700000, 8700000, null, null, null, null],
+    [Date.UTC(2019, 5), 7000000, 7300000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 6), 7500000, 6900000, 8700000, null, null, null, null],
+    [Date.UTC(2019, 7), 7000000, 7100000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 8), 7500000, 6800000, 8700000, null, null, null, null],
+    [Date.UTC(2019, 9), 7000000, 5900000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 10), 7000000, 6300000, 8200000, null, null, null, null],
+    [Date.UTC(2019, 11), 7500000, 6500000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 0), 7000000, 7200000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 1), 7000000, 6600000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 2), 7500000, 5700000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 3), 7000000, 7000000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 4), 7500000, 6300000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 5), 7000000, 6800000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 6), 7500000, 6200000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 7), 7000000, 7400000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 8), 7500000, 6900000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 9), 7000000, 7100000, 8200000, null, null, null, null],
+    [Date.UTC(2020, 10), 7500000, 7300000, 8700000, null, null, null, null],
+    [Date.UTC(2020, 11), 7000000, 6800000, 8200000, null, null, null, null],
+    [Date.UTC(2021, 0), 7500000, 6200000, 8700000, null, null, null, null],
+    [Date.UTC(2021, 1), 7000000, 6500000, 8200000, null, null, null, null],
+    [Date.UTC(2021, 2), 7500000, 6700000, 8700000, null, null, null, null],
+    [Date.UTC(2021, 3), 7000000, 7200000, 8200000, null, null, null, null],
+    [Date.UTC(2021, 4), 7500000, 6400000, 8700000, null, null, null, null],
+    [Date.UTC(2021, 5), 7000000, 5900000, 8200000, null, null, null, null],
+    [Date.UTC(2021, 6), 7500000, 6100000, 8700000, null, null, null, null],
+    [Date.UTC(2021, 7), 8000000, 6300000, 9200000, null, null, null, null],
+    [Date.UTC(2021, 8), 8500000, 7000000, 9700000, null, null, null, null],
+    [Date.UTC(2021, 9), 8000000, 8500000, 9200000, null, null, null, null],
+    [Date.UTC(2021, 10), 8500000, 8000000, 9700000, null, null, null, null],
+    [Date.UTC(2021, 11), 8000000, 8300000, 9200000, null, null, null, null],
+    [Date.UTC(2022, 0), 8500000, 8600000, 9700000, null, null, null, null],
+    [Date.UTC(2022, 1), 8000000, 8800000, 9200000, null, null, null, null],
+    [Date.UTC(2022, 2), 8500000, 8500000, 9700000, null, null, null, null],
+    [Date.UTC(2022, 3), 8000000, 7500000, 9200000, null, null, null, null],
+    [Date.UTC(2022, 4), 8500000, 8700000, 9700000, null, null, null, null],
+    [Date.UTC(2022, 5), 8000000, 9500000, 10200000, null, null, null, null],
+    [Date.UTC(2022, 6), 8500000, 8200000, 8700000, null, null, null, null],
+    [Date.UTC(2022, 7), 8000000, 8900000, 10700000, null, null, null, null],
+    [Date.UTC(2022, 8), 8500000, 9200000, 9200000, null, null, null, null],
+    [Date.UTC(2022, 9), 8000000, 7800000, 7800000, null, null, null, null],
+    [Date.UTC(2022, 10), 8500000, 8500000, 8000000, null, null, null, null],
+    [Date.UTC(2022, 11), 8000000, 7800000, 8000000, null, null, null, null],
+    [Date.UTC(2023, 0), 8500000, 6900000, 8700000, null, null, null, null],
+    [Date.UTC(2023, 1), 8000000, 7100000, 8900000, null, null, null, null],
+    [Date.UTC(2023, 2), 8500000, 7200000, 8000000, null, null, null, null],
+    [Date.UTC(2023, 3), 8000000, 7400000, 8000000, null, null, null, null],
+    [Date.UTC(2023, 4), 8500000, 6900000, 8700000, null, null, null, null],
+    [Date.UTC(2023, 5), 8000000, 7100000, 8900000, null, null, null, null],
+    [Date.UTC(2023, 6), 8500000, 7500000, 8000000, null, null, null, null],
+    [Date.UTC(2023, 7), 8000000, 7300000, 8700000, null, null, null, null],
+    [Date.UTC(2023, 8), 8500000, 7600000, 8900000, null, null, null, null],
+    [Date.UTC(2023, 9), 8000000, 7600000, 8900000, null, null, null, null],
+    [Date.UTC(2023, 10), 7500000, null, null, 79e5, 82e5, 69e5, 90e5],
+    [Date.UTC(2023, 11), 7600000, null, null, 80e5, 83e5, 70e5, 92e5],
+    [Date.UTC(2024, 0), null, null, null, 79e5, 83e5, 70e5, 91e5],
+    [Date.UTC(2024, 1), null, null, null, 80e5, 80e5, 74e5, 92e5],
+    [Date.UTC(2024, 2), null, null, null, 82e5, 81e5, 73e5, 94e5],
+    [Date.UTC(2024, 3), null, null, null, 81e5, 84e5, 74e5, 92e5],
+    [Date.UTC(2024, 4), null, null, null, 79e5, 82e5, 72e5, 92e5],
+    [Date.UTC(2024, 5), null, null, null, 81e5, 82e5, 73e5, 90e5],
+    [Date.UTC(2024, 6), null, null, null, 82e5, 83e5, 74e5, 91e5],
+    [Date.UTC(2024, 7), null, null, null, 84e5, 85e5, 75e5, 92e5],
+    [Date.UTC(2024, 8), null, null, null, 83e5, 85e5, 74e5, 93e5],
+    [Date.UTC(2024, 9), null, null, null, 82e5, 82e5, 75e5, 93e5],
+    [Date.UTC(2024, 10), null, null, null, 83e5, 83e5, 74e5, 92e5],
+    [Date.UTC(2024, 11), null, null, null, 81e5, 84e5, 75e5, 93e5]
 ];
 
 const commonGaugeOptions = {
@@ -122,11 +134,16 @@ const commonColumnOptions = {
     },
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2023)
+        min: Date.UTC(2023),
+        max: Date.UTC(2023, 11)
     },
     yAxis: {
         tickInterval: 2e6
     },
+    series: [{
+        name: 'Budget',
+        colorIndex: 1
+    }],
     plotOptions: {
         column: {
             point: {
@@ -154,7 +171,25 @@ const board = Dashboards.board('container', {
                         formula: 'D1-C1'
                     }, {
                         column: 'AccResult',
-                        formula: 'SUM(E$1:E1)'
+                        formula: 'SUM(I$1:I1)'
+                    }, {
+                        column: 'CostPredA',
+                        formula: 'AVERAGE(E1,G1)'
+                    }, {
+                        column: 'RevPredA',
+                        formula: 'AVERAGE(F1, H1)'
+                    }, {
+                        column: 'AccResPredP',
+                        formula: 'J1+SUM(F$1:F1)-SUM(E$1:E1)'
+                    }, {
+                        column: 'AccResPredO',
+                        formula: 'J1+SUM(H$1:H1)-SUM(G$1:G1)'
+                    }, {
+                        column: 'ResPredA',
+                        formula: 'L1-K1'
+                    }, {
+                        column: 'AccResPredA',
+                        formula: 'J1+SUM(O$1:O1)'
                     }]
                 }
             }
@@ -380,8 +415,8 @@ const board = Dashboards.board('container', {
         },
         columnAssignment: {
             Date: 'x',
-            Budget: 'y',
-            Cost: 'y'
+            Budget: 'Budget',
+            Cost: 'Cost'
         },
         chartOptions: Highcharts.merge(commonColumnOptions, {
             title: {
@@ -397,17 +432,35 @@ const board = Dashboards.board('container', {
         },
         columnAssignment: {
             Date: 'x',
-            AccResult: 'y'
+            Result: {
+                y: 'AccResPredA'
+            },
+            Pessimistically: {
+                y: 'AccResPredP'
+            },
+            Optimistically: {
+                y: 'AccResPredO'
+            }
         },
         chartOptions: {
             xAxis: {
+                min: Date.UTC(2023),
                 plotLines: [{
                     value: currentMonth,
                     label: {
                         text: 'current month'
                     }
                 }]
-            }
+            },
+            series: [{
+                name: 'Result'
+            }, {
+                name: 'Pessimistically',
+                className: 'prediction-line'
+            }, {
+                name: 'Optimistically',
+                className: 'prediction-line'
+            }]
         }
     }]
 }, true);
