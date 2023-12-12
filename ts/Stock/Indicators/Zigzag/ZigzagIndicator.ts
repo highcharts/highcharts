@@ -111,9 +111,9 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ZigzagPoint> = void 0 as any;
-    public points: Array<ZigzagPoint> = void 0 as any;
-    public options: ZigzagOptions = void 0 as any;
+    public data!: Array<ZigzagPoint>;
+    public points!: Array<ZigzagPoint>;
+    public options!: ZigzagOptions;
 
     /* *
      *

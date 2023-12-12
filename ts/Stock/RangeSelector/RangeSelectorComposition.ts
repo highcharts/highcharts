@@ -23,10 +23,9 @@ import type Time from '../../Core/Time';
 import type { VerticalAlignValue } from '../../Core/Renderer/AlignObject';
 
 import D from '../../Core/Defaults.js';
-const {
-    defaultOptions,
-    setOptions
-} = D;
+const { defaultOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -36,7 +35,8 @@ const {
     find,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -46,8 +46,6 @@ const {
  * */
 
 const chartDestroyEvents: Array<[Chart, Array<Function>]> = [];
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -153,11 +151,11 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
-        AxisClass.prototype.minFromRange = axisMinFromRange;
-    }
+    if (pushUnique(composed, compose)) {
+        const chartProto = ChartClass.prototype;
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+        AxisClass.prototype.minFromRange = axisMinFromRange;
+
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         addEvent(ChartClass, 'destroy', onChartDestroy);
@@ -165,12 +163,8 @@ function compose(
         addEvent(ChartClass, 'render', onChartRender);
         addEvent(ChartClass, 'update', onChartUpdate);
 
-        const chartProto = ChartClass.prototype;
-
         chartProto.callbacks.push(onChartCallback);
-    }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         extend(
             defaultOptions,
             { rangeSelector: RangeSelectorDefaults.rangeSelector }

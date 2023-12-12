@@ -95,15 +95,15 @@ class Pane {
 
     public axis?: RadialAxis.AxisComposition;
 
-    public background: Array<SVGElement> = void 0 as any;
+    public background!: Array<SVGElement>;
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public chart: PaneChart = void 0 as any;
+    public chart!: PaneChart;
 
     public group?: SVGElement;
 
-    public options: PaneOptions = void 0 as any;
+    public options!: PaneOptions;
 
     public coll = 'pane'; // Member of chart.pane
 

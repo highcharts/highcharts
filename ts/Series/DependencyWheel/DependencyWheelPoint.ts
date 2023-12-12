@@ -48,23 +48,23 @@ class DependencyWheelPoint extends SankeyPoint {
      *
      * */
 
-    public angle: number = void 0 as any;
+    public angle!: number;
 
-    public fromNode: DependencyWheelPoint = void 0 as any;
+    public fromNode!: DependencyWheelPoint;
 
-    public index: number = void 0 as any;
+    public index!: number;
 
-    public linksFrom: Array<DependencyWheelPoint> = void 0 as any;
+    public linksFrom!: Array<DependencyWheelPoint>;
 
-    public linksTo: Array<DependencyWheelPoint> = void 0 as any;
+    public linksTo!: Array<DependencyWheelPoint>;
 
-    public options: DependencyWheelPointOptions = void 0 as any;
+    public options!: DependencyWheelPointOptions;
 
-    public series: DependencyWheelSeries = void 0 as any;
+    public series!: DependencyWheelSeries;
 
-    public shapeArgs: SVGAttributes = void 0 as any;
+    public shapeArgs!: SVGAttributes;
 
-    public toNode: DependencyWheelPoint = void 0 as any;
+    public toNode!: DependencyWheelPoint;
 
     /* *
      *

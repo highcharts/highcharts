@@ -76,15 +76,15 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<VectorPoint> = void 0 as any;
+    public data!: Array<VectorPoint>;
 
     public lengthData?: Array<number>;
 
-    public lengthMax: number = void 0 as any;
+    public lengthMax!: number;
 
-    public options: VectorSeriesOptions = void 0 as any;
+    public options!: VectorSeriesOptions;
 
-    public points: Array<VectorPoint> = void 0 as any;
+    public points!: Array<VectorPoint>;
 
     /* *
      *
