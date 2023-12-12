@@ -1,3 +1,11 @@
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { NavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
@@ -28,6 +36,11 @@ type StandaloneNavigatorOptions = {
     colors: [];
 };
 
+/* *
+ *
+ *  Class
+ *
+ * */
 class StandaloneNavigator {
 
     public eventsToUnbind: Array<Function> = [];
@@ -36,11 +49,30 @@ class StandaloneNavigator {
     public options: StandaloneNavigatorOptions;
     public userOptions: DeepPartial<StandaloneNavigatorOptions>;
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Factory function for standalone navigator.
+     *
+     * @function Highcharts.navigator
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     * The DOM element to render to, or its id.
+     *
+     * @param {StandaloneNavigatorOptions} options
+     * The standalone navigator options with chart-like structure.
+     *
+     * Returns the navigator object.
+     */
     public static navigator(
         renderTo: (string|globalThis.HTMLElement),
-        userOptions: DeepPartial<StandaloneNavigatorOptions>
+        options: DeepPartial<StandaloneNavigatorOptions>
     ): StandaloneNavigator {
-        const nav = new StandaloneNavigator(renderTo, userOptions);
+        const nav = new StandaloneNavigator(renderTo, options);
 
         if (!G.navigators) {
             G.navigators = [nav];
@@ -51,6 +83,12 @@ class StandaloneNavigator {
         return nav;
     }
 
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(
         element: (string | globalThis.HTMLElement),
@@ -70,8 +108,16 @@ class StandaloneNavigator {
         this.initNavigator();
     }
 
+    /**
+     * Binds an axis to the standalone navigator,
+     * allowing the navigator to control the range.
+     *
+     * @param {Axis | Chart} axisOrChart
+     *        The Axis or Chart to bind to the navigator.
+     */
     public bind(axisOrChart: Axis | Chart): void {
         const nav = this;
+        // If the chart is passed, bind the first xAxis
         const axis = (axisOrChart instanceof Chart) ?
             axisOrChart.xAxis[0] :
             axisOrChart;
@@ -84,36 +130,25 @@ class StandaloneNavigator {
 
         this.boundAxes.push(axis);
 
+        // Show axis' series in navigator based on showInNavigator property
         axis.series.forEach((series): void => {
             if (series.options.showInNavigator) {
                 nav.addSeries(series.options);
             }
         });
 
+        // Set extremes to match the navigator's extremes
         axis.setExtremes(min, max);
     }
 
-    public destroy(): void {
-        // Disconnect events
-        this.eventsToUnbind.forEach((f): void => {
-            f();
-        });
-        this.boundAxes.length = 0;
-        this.eventsToUnbind.length = 0;
-        this.navigator.destroy();
-        this.navigator.chart.destroy();
-    }
-
-    public update(
-        newOptions: Partial<StandaloneNavigatorOptions>,
-        redraw?: boolean
-    ):void {
-        this.options = merge(this.options, newOptions);
-
-        this.navigator.chart.update(this.options, redraw);
-    }
-
+    /**
+     * Unbinds an axis from the standalone navigator.
+     *
+     * @param {Chart | Axis | undefined} axisOrChart
+     *        The axis to unbind from the standalone navigator.
+     */
     public unbind(axisOrChart?: Chart | Axis): void {
+        // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
             this.boundAxes.length = 0;
             return;
@@ -126,6 +161,48 @@ class StandaloneNavigator {
         this.boundAxes = this.boundAxes.filter((a): boolean => a !== axis);
     }
 
+
+    /**
+     * Destroys allocated elements.
+     *
+     * @private
+     * @function Highcharts.StandaloneNavigator#destroy
+     */
+    public destroy(): void {
+        // Disconnect events
+        this.eventsToUnbind.forEach((f): void => {
+            f();
+        });
+        this.boundAxes.length = 0;
+        this.eventsToUnbind.length = 0;
+        this.navigator.destroy();
+        this.navigator.chart.destroy();
+    }
+
+    /**
+     * Update standalone navigator
+     *
+     * @private
+     * @function Highcharts.StandaloneNavigator#update
+     *
+     * @param {StandaloneNavigatorOptions} newOptions
+     *        Options to merge in when updating standalone navigator
+     */
+    public update(
+        newOptions: Partial<StandaloneNavigatorOptions>,
+        redraw?: boolean
+    ):void {
+        this.options = merge(this.options, newOptions);
+
+        this.navigator.chart.update(this.options, redraw);
+    }
+
+    /**
+     * Adds a series to the standalone navigator.
+     *
+     * @param {SeriesOptions} seriesOptions
+     *        Options for the series to be added to the navigator.
+     */
     public addSeries(seriesOptions: SeriesOptions): void {
         this.navigator.chart.addSeries(merge(
             seriesOptions,
@@ -135,6 +212,12 @@ class StandaloneNavigator {
         this.navigator.setBaseSeries();
     }
 
+    /**
+     * Initialize the standalone navigator.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#init
+     */
     public initNavigator(): void {
         const nav = this.navigator;
         nav.top = 0;
@@ -166,6 +249,12 @@ class StandaloneNavigator {
         );
     }
 
+    /**
+     * Get the current range of the standalone navigator.
+     *
+     * @return {Axis.ExtremesObject}
+     *         The current range of the standalone navigator.
+     */
     public getRange(): Axis.ExtremesObject {
         const { min, max } = this.navigator.chart.xAxis[0].getExtremes(),
             { userMin, userMax, min: dataMin, max: dataMax } =
@@ -181,6 +270,14 @@ class StandaloneNavigator {
         };
     }
 
+    /**
+     * Set the range of the standalone navigator.
+     *
+     * @param {number | undefined} min
+     *        The new minimum value.
+     * @param {number | undefined} max
+     *        The new maximum value.
+     */
     public setRange(min?: number, max?: number): void {
         fireEvent(
             this.navigator,
@@ -189,6 +286,12 @@ class StandaloneNavigator {
         );
     }
 
+    /**
+     * Get the initial, options based extremes for the standalone navigator.
+     *
+     * @return {{ min: number, max: number }}
+     *          The initial minimum and maximum extremes values.
+     */
     public getInitialExtremes(): { min: number, max: number } {
         const { min, max } = this.options,
             { min: defaultMin, max: defaultMax } =
