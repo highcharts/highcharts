@@ -43,7 +43,6 @@ export interface ColorAxisMarkerOptions {
 export interface ColorAxisOptions extends AxisOptions {
     dataClassColor?: string;
     dataClasses?: Array<ColorAxisDataClassesOptions>;
-    height?: number;
     layout?: string;
     legend?: LegendOptions;
     marker?: ColorAxisMarkerOptions;
@@ -51,7 +50,6 @@ export interface ColorAxisOptions extends AxisOptions {
     minColor?: ColorType;
     showInLegend?: boolean;
     stops?: GradientColor['stops'];
-    width?: number;
 }
 
 /* *
