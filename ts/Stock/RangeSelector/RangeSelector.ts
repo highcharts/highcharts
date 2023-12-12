@@ -527,7 +527,6 @@ class RangeSelector {
         ): void => {
             const range = rangeOptions._range,
                 type = rangeOptions.type,
-                count = rangeOptions.count || 1,
                 button = buttons[i],
                 offsetRange =
                     (rangeOptions._offsetMax as any) -
@@ -552,19 +551,12 @@ class RangeSelector {
                 isSelectedTooGreat = true;
             }
 
-            // Months and years have a variable range so we check the extremes
-            if (
-                (type === 'month' || type === 'year') &&
-                (
-                    actualRange + 36e5 >=
-                    { month: 28, year: 365 }[type] * day * count - offsetRange
-                ) &&
-                (
-                    actualRange - 36e5 <=
-                    { month: 31, year: 366 }[type] * day * count + offsetRange
-                )
-            ) {
-                isSameRange = true;
+            if (type === 'week' || type === 'month') {
+                isSameRange = !!range &&
+                    range >= actualRange * 0.9 && range <= actualRange * 1.1;
+            } else if (type === 'year') {
+                isSameRange = !!range &&
+                    range >= actualRange * 0.99 && range <= actualRange * 1.01;
             } else if (type === 'ytd') {
                 isSameRange = (ytdMax - ytdMin + offsetRange) === actualRange;
                 isYTDButNotSelected = !isSelected;
