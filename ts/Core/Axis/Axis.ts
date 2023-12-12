@@ -657,7 +657,11 @@ class Axis {
         } else if (dateTimeLabelFormat) { // Datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
 
-        } else if (i && numericSymbolDetector >= 1000) {
+        } else if (
+            i &&
+            defined(numericSymbols) &&
+            numericSymbolDetector >= 1000
+        ) {
             // Decide whether we should add a numeric symbol like k (thousands)
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
