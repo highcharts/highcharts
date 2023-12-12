@@ -1893,22 +1893,23 @@ const defaultOptions: DefaultOptions = {
      */
     tooltip: {
         /**
-         * The color of the tooltip border. Note that the border color is only
-         * visible if a [borderWidth](#tooltip.borderWidth) is set. When `borderWidth`
-         * is set to `0`, the border will not be visible, regardless of the `borderColor` setting.
-         * When `borderColor` is `undefined`, the border takes the color of the
-         * corresponding series or point.
+         * The color of the tooltip border. When `undefined`, the border takes
+         * the color of the corresponding series or point.
          *
-         * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
-         * @sample {highcharts} highcharts/tooltip/bordercolor-black/
-         *         Black border
-         * @sample {highstock} stock/tooltip/general/
-         *         Styled tooltip
-         * @sample {highmaps} maps/tooltip/background-border/
-         *         Background and border demo
+         * Note that the [borderWidth](#tooltip.borderWidth) is usually 0 by
+         * default, so the border color may not be visible until a border width
+         * is set.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow
+         *         series by default
+         * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black
+         *         border
+         * @sample {highstock} stock/tooltip/general/ Styled tooltip
+         * @sample {highmaps} maps/tooltip/background-border/ Background and
+         *         border demo
+         *
+         * @type
+         * {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 
