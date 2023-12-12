@@ -12,80 +12,71 @@
         );
     }
 
-    // QUnit.test('Positive (#5280)', function (assert) {
-    //     var chart = Highcharts.chart('container', {
-    //         chart: {
-    //             type: 'area'
-    //         },
-    //         plotOptions: {
-    //             area: {
-    //                 stacking: 'normal',
-    //                 threshold: -10
-    //             }
-    //         },
-    //         series: [
-    //             {
-    //                 data: [1, 1, 0, 1, 1]
-    //             },
-    //             {
-    //                 data: [1, 1, 0, 1, 1]
-    //             }
-    //         ]
-    //     });
+    QUnit.test('Positive (#5280)', function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    threshold: -10
+                }
+            },
+            series: [{
+                data: [1, 1, 0, 1, 1]
+            }, {
+                data: [1, 1, 0, 1, 1]
+            }]
+        });
 
-    //     checkY(chart, assert);
-    // });
+        checkY(chart, assert);
+    });
 
-    // QUnit.test('Negative', function (assert) {
-    //     var chart = Highcharts.chart('container', {
-    //         chart: {
-    //             type: 'area'
-    //         },
-    //         plotOptions: {
-    //             area: {
-    //                 stacking: 'normal',
-    //                 threshold: 10
-    //             }
-    //         },
-    //         series: [
-    //             {
-    //                 data: [-1, -1, 0, -1, -1]
-    //             },
-    //             {
-    //                 data: [-1, -1, 0, -1, -1]
-    //             }
-    //         ]
-    //     });
+    QUnit.test('Negative', function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    threshold: 10
+                }
+            },
+            series: [{
+                data: [-1, -1, 0, -1, -1]
+            }, {
+                data: [-1, -1, 0, -1, -1]
+            }]
+        });
 
-    //     checkY(chart, assert);
-    // });
+        checkY(chart, assert);
+    });
 
-    // QUnit.test('Reversed', function (assert) {
-    //     var chart = Highcharts.chart('container', {
-    //         chart: {
-    //             type: 'area'
-    //         },
-    //         plotOptions: {
-    //             area: {
-    //                 stacking: 'normal',
-    //                 threshold: -10
-    //             }
-    //         },
-    //         yAxis: {
-    //             reversed: true
-    //         },
-    //         series: [
-    //             {
-    //                 data: [1, 1, 0, 1, 1]
-    //             },
-    //             {
-    //                 data: [1, 1, 0, 1, 1]
-    //             }
-    //         ]
-    //     });
+    QUnit.test('Reversed', function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    threshold: -10
+                }
+            },
+            yAxis: {
+                reversed: true
+            },
+            series: [{
+                data: [1, 1, 0, 1, 1]
+            }, {
+                data: [1, 1, 0, 1, 1]
+            }]
+        });
 
-    //     checkY(chart, assert);
-    // });
+        checkY(chart, assert);
+    });
 
     QUnit.test('Un-reversed stacks', function (assert) {
         const chart = Highcharts.chart('container', {
@@ -101,14 +92,11 @@
                 yAxis: {
                     reversedStacks: false
                 },
-                series: [
-                    {
-                        data: [1, 1, 0, 1, 1]
-                    },
-                    {
-                        data: [1, 1, 0, 1, 1]
-                    }
-                ]
+                series: [{
+                    data: [1, 1, 0, 1, 1]
+                }, {
+                    data: [1, 1, 0, 1, 1]
+                }]
             }),
             controller = new TestController(chart);
 
