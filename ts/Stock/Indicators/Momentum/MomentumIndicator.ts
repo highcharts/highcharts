@@ -98,9 +98,9 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<MomentumPoint> = void 0 as any;
-    public options: MomentumOptions = void 0 as any;
-    public points: Array<MomentumPoint> = void 0 as any;
+    public data!: Array<MomentumPoint>;
+    public options!: MomentumOptions;
+    public points!: Array<MomentumPoint>;
 
     /* *
      *

@@ -133,11 +133,11 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ROCPoint> = void 0 as any;
+    public data!: Array<ROCPoint>;
 
-    public options: ROCOptions = void 0 as any;
+    public options!: ROCOptions;
 
-    public points: Array<ROCPoint> = void 0 as any;
+    public points!: Array<ROCPoint>;
 
     /* *
      *

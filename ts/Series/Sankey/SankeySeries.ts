@@ -117,29 +117,29 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    public colDistance: number = void 0 as any;
+    public colDistance!: number;
 
-    public data: Array<SankeyPoint> = void 0 as any;
+    public data!: Array<SankeyPoint>;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
     public mapOptionsToLevel?: (Record<string, SankeySeriesLevelOptions>|null);
 
     public nodeColumns?: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>>;
 
-    public nodeLookup: Record<string, SankeyPoint> = void 0 as any;
+    public nodeLookup!: Record<string, SankeyPoint>;
 
-    public nodePadding: number = void 0 as any;
+    public nodePadding!: number;
 
-    public nodes: Array<SankeyPoint> = void 0 as any;
+    public nodes!: Array<SankeyPoint>;
 
-    public nodeWidth: number = void 0 as any;
+    public nodeWidth!: number;
 
-    public options: SankeySeriesOptions = void 0 as any;
+    public options!: SankeySeriesOptions;
 
-    public points: Array<SankeyPoint> = void 0 as any;
+    public points!: Array<SankeyPoint>;
 
-    public translationFactor: number = void 0 as any;
+    public translationFactor!: number;
 
     /* *
      *

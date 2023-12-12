@@ -92,9 +92,9 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<TrendLinePoint> = void 0 as any;
-    public options: TrendLineOptions = void 0 as any;
-    public points: Array<TrendLinePoint> = void 0 as any;
+    public data!: Array<TrendLinePoint>;
+    public options!: TrendLineOptions;
+    public points!: Array<TrendLinePoint>;
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -174,13 +174,13 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof TrendLinePoint;
 }
 
 extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
-    nameComponents: (false as any)
+    nameComponents: void 0
 });
 
 /* *

@@ -92,8 +92,6 @@ namespace ColorMapComposition {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const pointMembers = {
         dataLabelOnNull: true,
         moveToTopOnHover: true,
@@ -124,9 +122,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (U.pushUnique(composedMembers, PointClass)) {
-            addEvent(PointClass, 'afterSetState', onPointAfterSetState);
-        }
+        addEvent(PointClass, 'afterSetState', onPointAfterSetState);
 
         return SeriesClass as (T&typeof SeriesComposition);
     }

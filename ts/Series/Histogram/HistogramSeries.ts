@@ -116,13 +116,13 @@ class HistogramSeries extends ColumnSeries {
 
     public binWidth?: number;
 
-    public data: Array<HistogramPoint> = void 0 as any;
+    public data!: Array<HistogramPoint>;
 
-    public options: HistogramSeriesOptions = void 0 as any;
+    public options!: HistogramSeriesOptions;
 
-    public points: Array<HistogramPoint> = void 0 as any;
+    public points!: Array<HistogramPoint>;
 
-    public userOptions: HistogramSeriesOptions = void 0 as any;
+    public userOptions!: HistogramSeriesOptions;
 
     /* *
      *

@@ -111,25 +111,25 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
-    public chart: WaterfallSeries.WaterfallChart = void 0 as any;
+    public chart!: WaterfallSeries.WaterfallChart;
 
-    public data: Array<WaterfallPoint> = void 0 as any;
+    public data!: Array<WaterfallPoint>;
 
-    public options: WaterfallSeriesOptions = void 0 as any;
+    public options!: WaterfallSeriesOptions;
 
-    public points: Array<WaterfallPoint> = void 0 as any;
+    public points!: Array<WaterfallPoint>;
 
-    public stackedYNeg: Array<number> = void 0 as any;
+    public stackedYNeg!: Array<number>;
 
-    public stackedYPos: Array<number> = void 0 as any;
+    public stackedYPos!: Array<number>;
 
-    public stackKey: 'waterfall' = void 0 as any;
+    public stackKey!: 'waterfall';
 
-    public xData: Array<number> = void 0 as any;
+    public xData!: Array<number>;
 
-    public yAxis: WaterfallAxis = void 0 as any;
+    public yAxis!: WaterfallAxis;
 
-    public yData: Array<any> = void 0 as any;
+    public yData!: Array<any>;
 
     /* *
      *

@@ -99,9 +99,9 @@ class APOIndicator extends EMAIndicator {
      *
      * */
 
-    public data: Array<APOPoint> = void 0 as any;
-    public options: APOOptions = void 0 as any;
-    public points: Array<APOPoint> = void 0 as any;
+    public data!: Array<APOPoint>;
+    public options!: APOOptions;
+    public points!: Array<APOPoint>;
 
     /* *
      *

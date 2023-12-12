@@ -107,10 +107,10 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
-    public averageIndicator: typeof SMAIndicator = void 0 as any;
-    public data: Array<DisparityIndexPoint> = void 0 as any;
-    public options: DisparityIndexOptions = void 0 as any;
-    public points: Array<DisparityIndexPoint> = void 0 as any;
+    public averageIndicator!: typeof SMAIndicator;
+    public data!: Array<DisparityIndexPoint>;
+    public options!: DisparityIndexOptions;
+    public points!: Array<DisparityIndexPoint>;
 
     /* *
      *

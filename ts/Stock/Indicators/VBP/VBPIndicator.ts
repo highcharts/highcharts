@@ -235,16 +235,16 @@ class VBPIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<VBPPoint> = void 0 as any;
-    public negWidths: Array<number> = void 0 as any;
-    public options: VBPOptions = void 0 as any;
-    public points: Array<VBPPoint> = void 0 as any;
-    public posWidths: Array<number> = void 0 as any;
-    public priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = void 0 as any;
-    public rangeStep: number = void 0 as any;
-    public volumeDataArray: Array<number> = void 0 as any;
-    public zoneStarts: Array<number> = void 0 as any;
-    public zoneLinesSVG?: SVGElement = void 0 as any;
+    public data!: Array<VBPPoint>;
+    public negWidths!: Array<number>;
+    public options!: VBPOptions;
+    public points!: Array<VBPPoint>;
+    public posWidths!: Array<number>;
+    public priceZones!: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
+    public rangeStep!: number;
+    public volumeDataArray!: Array<number>;
+    public zoneStarts!: Array<number>;
+    public zoneLinesSVG?: SVGElement;
 
     /* *
      *
