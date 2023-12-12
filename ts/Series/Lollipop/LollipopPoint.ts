@@ -61,10 +61,10 @@ class LollipopPoint extends Point {
      * */
 
     public connector?: SVGElement;
-    public options: LollipopPointOptions = void 0 as any;
-    public series: LollipopSeries = void 0 as any;
-    public plotX: number = void 0 as any;
-    public pointWidth: number = void 0 as any;
+    public options!: LollipopPointOptions;
+    public series!: LollipopSeries;
+    public plotX!: number;
+    public pointWidth!: number;
 }
 
 /* *

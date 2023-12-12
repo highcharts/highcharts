@@ -66,11 +66,11 @@ class Pyramid3DSeries extends Funnel3DSeries {
      *
      * */
 
-    public data: Array<Pyramid3DPoint> = void 0 as any;
+    public data!: Array<Pyramid3DPoint>;
 
-    public options: Pyramid3DSeriesOptions = void 0 as any;
+    public options!: Pyramid3DSeriesOptions;
 
-    public points: Array<Pyramid3DPoint> = void 0 as any;
+    public points!: Array<Pyramid3DPoint>;
 
 }
 

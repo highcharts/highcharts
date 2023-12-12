@@ -48,6 +48,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
@@ -71,8 +73,6 @@ const {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = {
     grid: function (
@@ -402,7 +402,7 @@ function compose(
     ScatterSeriesClass: typeof ScatterSeries
 ): void {
 
-    if (pushUnique(composedMembers, ScatterSeriesClass)) {
+    if (pushUnique(composed, compose)) {
         const scatterProto = ScatterSeriesClass.prototype;
 
         baseGeneratePoints = scatterProto.generatePoints;
@@ -428,9 +428,7 @@ function compose(
             'destroy',
             scatterProto.destroyClusteredData
         );
-    }
 
-    if (pushUnique(composedMembers, highchartsDefaultOptions)) {
         (highchartsDefaultOptions.plotOptions || {}).series = merge(
             (highchartsDefaultOptions.plotOptions || {}).series,
             MarkerClusterDefaults

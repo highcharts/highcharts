@@ -95,15 +95,15 @@ class PieSeries extends Series {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<PiePoint> = void 0 as any;
+    public data!: Array<PiePoint>;
 
     public endAngleRad?: number;
 
-    public options: PieSeriesOptions = void 0 as any;
+    public options!: PieSeriesOptions;
 
-    public points: Array<PiePoint> = void 0 as any;
+    public points!: Array<PiePoint>;
 
     public startAngleRad?: number;
 

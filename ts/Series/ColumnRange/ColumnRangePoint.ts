@@ -56,9 +56,9 @@ class ColumnRangePoint extends AreaRangePoint {
      *
      * */
 
-    public options: ColumnRangePointOptions = void 0 as any;
+    public options!: ColumnRangePointOptions;
 
-    public series: ColumnRangeSeries = void 0 as any;
+    public series!: ColumnRangeSeries;
 
     /* *
      *

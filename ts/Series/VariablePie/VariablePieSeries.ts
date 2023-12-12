@@ -84,13 +84,13 @@ class VariablePieSeries extends PieSeries {
      *
      * */
 
-    public data: Array<VariablePiePoint> = void 0 as any;
+    public data!: Array<VariablePiePoint>;
 
-    public options: VariablePieSeriesOptions = void 0 as any;
+    public options!: VariablePieSeriesOptions;
 
-    public points: Array<VariablePiePoint> = void 0 as any;
+    public points!: Array<VariablePiePoint>;
 
-    public radii: Array<number> = void 0 as any;
+    public radii!: Array<number>;
 
     /* *
      *

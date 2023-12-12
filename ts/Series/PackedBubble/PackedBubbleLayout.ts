@@ -22,12 +22,15 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
 import GraphLayout from '../GraphLayoutComposition.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -42,14 +45,6 @@ declare module '../../Core/Chart/ChartLike' {
         getSelectedParentNodes(): Array<PackedBubblePoint>;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -109,7 +104,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             const chartProto = ChartClass.prototype;
@@ -127,7 +122,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public enableSimulation?: boolean;
     public index: number = NaN;
     public nodes: Array<PackedBubblePoint> = [];
-    public options: PackedBubbleLayout.Options = void 0 as any;
+    public options!: PackedBubbleLayout.Options;
     public series: Array<PackedBubbleSeries> = [];
 
     /* *

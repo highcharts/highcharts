@@ -188,11 +188,11 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<BBPoint> = void 0 as any;
+    public data!: Array<BBPoint>;
 
-    public options: BBOptions = void 0 as any;
+    public options!: BBOptions;
 
-    public points: Array<BBPoint> = void 0 as any;
+    public points!: Array<BBPoint>;
 
     /* *
      *
