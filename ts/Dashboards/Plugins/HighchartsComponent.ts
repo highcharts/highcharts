@@ -49,7 +49,8 @@ const {
     isString,
     merge,
     splat,
-    uniqueKey
+    uniqueKey,
+    isObject
 } = U;
 
 /* *
@@ -567,6 +568,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
+
         // Heuristically create series from the connector dataTable
         if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
@@ -613,9 +615,19 @@ class HighchartsComponent extends Component {
                     return true;
                 });
 
+            // create empty series for mapping custom props of data
+            Object.keys(columnAssignment).forEach(
+                function (key):void {
+                    if (isObject(columnAssignment[key])) {
+                        seriesNames.push(key);
+                    }
+                }
+            );
+
             // Create the series or get the already added series
             const seriesList = seriesNames.map((seriesName, index): Series => {
                 let i = 0;
+
                 while (i < chart.series.length) {
                     const series = chart.series[i];
                     const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
@@ -623,10 +635,7 @@ class HighchartsComponent extends Component {
                         seriesNames.indexOf(series.name) !== -1;
                     i++;
 
-                    if (
-                        existingSeries &&
-                        seriesFromConnector
-                    ) {
+                    if (existingSeries && seriesFromConnector) {
                         return series;
                     }
 
@@ -648,32 +657,74 @@ class HighchartsComponent extends Component {
                         )
                 );
 
-                return chart.addSeries({
+                const seriesOptions = {
                     name: seriesName,
                     id: `${storeTableID}-series-${index}`,
                     dragDrop: {
                         draggableY: shouldBeDraggable
                     }
-                }, false);
+                };
+
+                const relatedSeries =
+                    chart.series.find(
+                        (series):boolean => series.name === seriesName
+                    );
+
+                if (relatedSeries) {
+                    relatedSeries.update(seriesOptions, false);
+                    return relatedSeries;
+                }
+
+                return chart.addSeries(seriesOptions, false);
             });
 
             // Insert the data
             seriesList.forEach((series): void => {
-                const xKey = Object.keys(xKeyMap)[0];
+                const xKey = Object.keys(xKeyMap)[0],
+                    isSeriesColumnMap =
+                        isObject(columnAssignment[series.name]),
+                    pointColumnMapValues:Array<string> = [];
+
+                if (isSeriesColumnMap) {
+                    const pointColumns =
+                        columnAssignment[series.name] as Record<string, string>;
+
+                    Object.keys(pointColumns).forEach((key):void => {
+                        pointColumnMapValues.push(pointColumns[key]);
+                    });
+                }
+
+                const columnKeys = isSeriesColumnMap ?
+                    [xKey].concat(pointColumnMapValues) : [xKey, series.name];
+
                 const seriesTable = new DataTable({
-                    columns: table.modified.getColumns([xKey, series.name])
+                    columns: table.modified.getColumns(columnKeys)
                 });
 
-                seriesTable.renameColumn(series.name, 'y');
+                if (!isSeriesColumnMap) {
+                    seriesTable.renameColumn(series.name, 'y');
+                }
 
                 if (xKey) {
                     seriesTable.renameColumn(xKey, 'x');
                 }
                 const seriesData = seriesTable.getRowObjects().reduce((
                     arr: (number | {})[],
-                    row
+                    row: Record<string, any>
                 ): (number | {})[] => {
-                    arr.push([row.x, row.y]);
+                    if (isSeriesColumnMap) {
+                        arr.push(
+                            [row.x].concat(
+                                pointColumnMapValues.map(
+                                    function (value: string):number|undefined {
+                                        return row[value];
+                                    }
+                                )
+                            )
+                        );
+                    } else {
+                        arr.push([row.x, row.y]);
+                    }
                     return arr;
                 }, []);
 
@@ -1018,8 +1069,31 @@ namespace HighchartsComponent {
          * }
          * ```
          */
-        columnAssignment?: Record<string, string | null>;
+        columnAssignment?: Record<string, string|Record<string, string>>;
     }
+
+    /**
+     * Names that should be mapped to point values or props. You can
+     * declare which columns will be parameter of the point. It is useful for
+     * series like OHLC, candlestick, columnrange or arearange.
+     *
+     * The seriesName field is mandatory for displaying series (for instance in
+     * the legend) properly.
+     *
+     * ```
+     * Example
+     * columnAssignment: {
+     *      'Dates': 'x',
+     *      'mySeriesName': {
+     *             'open': 'myOpen',
+     *             'high': 'myHigh',
+     *             'low': 'myLow',
+     *             'close': 'myClose'
+     *      }
+     * }
+     * ```
+    */
+
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;
@@ -1032,6 +1106,7 @@ namespace HighchartsComponent {
     export interface ClassJSON extends Component.JSON {
         options: OptionsJSON;
     }
+
 }
 
 /* *

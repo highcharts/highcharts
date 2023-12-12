@@ -81,7 +81,7 @@ Dashboards.board('container', {
 ```
 
 ## Working with data
-You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series.
+You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
 
 Example of working with connector.
@@ -124,6 +124,41 @@ Dashboards.board('container', {
         }
     }]
 });
+```
+
+The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent.HighchartsComponent.Options#columnAssignment) option to map correct values from the connector to reflect them in the series.
+You can declare which columns will be parameter of the point as well. Specifically, it is useful for series like OHLC, candlestick, columnrange or arearange. The `seriesName` field is mandatory for displaying series (for instance in the legend) properly.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment). 
+
+Example of using `columnAssignment`:
+```js
+    columnAssignment: {
+        x: 'x',
+        mySeries: 'value'
+    }
+```
+
+or when you use mapping columns to point
+
+```js
+    columnAssignment: {
+        x: 'x',
+        mySeries: 'value',
+        mySeriesName: {
+            high: 'myHigh',
+            low: 'myLow'
+        }
+    },
+    chartOptions: {
+        series: [{
+            name: 'mySeriesName',
+            type: 'columnrange'
+        }, {
+            name: 'mySeries',
+            type: 'line'
+        }]
+    }
+
 ```
 
 ## API options
