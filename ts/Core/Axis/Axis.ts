@@ -3942,7 +3942,7 @@ class Axis {
 
             }
 
-            // alternate grid color
+            // Alternate grid color
             if (alternateGridColor) {
                 tickPositions.forEach(function (pos: number, i: number): void {
                     to = typeof tickPositions[i + 1] !== 'undefined' ?
@@ -3962,7 +3962,8 @@ class Axis {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
                             alternateBands[pos] = new (H as any).PlotLineOrBand(
-                                axis
+                                axis,
+                                {}
                             );
                         }
                         from = pos + tickmarkOffset; // #949

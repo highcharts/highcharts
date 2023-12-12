@@ -153,7 +153,7 @@ namespace RadialAxis {
             from: number,
             to: number,
             options: PlotBandOptions
-        ): Path;
+        ): SVGPath;
         getPlotLinePath(options: PlotLineOptions): SVGPath;
         getPosition(
             value: number,
@@ -171,11 +171,6 @@ namespace RadialAxis {
 
     export interface Options extends YAxisOptions {
         // Nothing to add yet
-    }
-
-    interface Path extends SVGPath {
-        xBounds?: Array<number>;
-        yBounds?: Array<number>;
     }
 
     export declare class TickComposition extends Tick {
@@ -515,7 +510,7 @@ namespace RadialAxis {
         _lineWidth: number,
         radius?: number,
         innerRadius?: number
-    ): Path {
+    ): SVGPath {
         const center = this.pane.center,
             chart = this.chart,
             left = this.left || 0,
@@ -523,7 +518,7 @@ namespace RadialAxis {
 
         let end,
             r = pick(radius, center[2] / 2 - this.offset),
-            path: Path;
+            path: SVGPath;
 
         if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
@@ -594,7 +589,7 @@ namespace RadialAxis {
         from: number,
         to: number,
         options: PlotBandOptions
-    ): Path {
+    ): SVGPath {
 
         const chart = this.chart,
             radiusToPixels = (
@@ -623,7 +618,7 @@ namespace RadialAxis {
             angle,
             xOnPerimeter,
             open,
-            path: Path,
+            path: SVGPath,
             outerRadius = pick(
                 radiusToPixels(options.outerRadius),
                 fullRadius
