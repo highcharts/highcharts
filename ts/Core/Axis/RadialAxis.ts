@@ -33,7 +33,10 @@ import type { YAxisOptions } from './AxisOptions';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -44,6 +47,7 @@ const {
     isObject,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     wrap
 } = U;
@@ -149,7 +153,7 @@ namespace RadialAxis {
             from: number,
             to: number,
             options: PlotBandOptions
-        ): Path;
+        ): SVGPath;
         getPlotLinePath(options: PlotLineOptions): SVGPath;
         getPosition(
             value: number,
@@ -169,11 +173,6 @@ namespace RadialAxis {
         // Nothing to add yet
     }
 
-    interface Path extends SVGPath {
-        xBounds?: Array<number>;
-        yBounds?: Array<number>;
-    }
-
     export declare class TickComposition extends Tick {
         axis: RadialAxis.AxisComposition;
     }
@@ -183,8 +182,6 @@ namespace RadialAxis {
      *  Constants
      *
      * */
-
-    const composedMembers: Array<unknown> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -357,7 +354,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -383,9 +380,7 @@ namespace RadialAxis {
                 'initialAxisTranslation',
                 onAxisInitialAxisTranslation
             );
-        }
 
-        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',
@@ -515,7 +510,7 @@ namespace RadialAxis {
         _lineWidth: number,
         radius?: number,
         innerRadius?: number
-    ): Path {
+    ): SVGPath {
         const center = this.pane.center,
             chart = this.chart,
             left = this.left || 0,
@@ -523,7 +518,7 @@ namespace RadialAxis {
 
         let end,
             r = pick(radius, center[2] / 2 - this.offset),
-            path: Path;
+            path: SVGPath;
 
         if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
@@ -594,7 +589,7 @@ namespace RadialAxis {
         from: number,
         to: number,
         options: PlotBandOptions
-    ): Path {
+    ): SVGPath {
 
         const chart = this.chart,
             radiusToPixels = (
@@ -623,7 +618,7 @@ namespace RadialAxis {
             angle,
             xOnPerimeter,
             open,
-            path: Path,
+            path: SVGPath,
             outerRadius = pick(
                 radiusToPixels(options.outerRadius),
                 fullRadius

@@ -37,12 +37,12 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public beaufort: string = void 0 as any;
-    public beaufortLevel: number = void 0 as any;
-    public direction: number = void 0 as any;
-    public options: WindbarbPointOptions = void 0 as any;
-    public series: WindbarbSeries = void 0 as any;
-    public value: number = void 0 as any;
+    public beaufort!: string;
+    public beaufortLevel!: number;
+    public direction!: number;
+    public options!: WindbarbPointOptions;
+    public series!: WindbarbSeries;
+    public value!: number;
 
     /* *
      *

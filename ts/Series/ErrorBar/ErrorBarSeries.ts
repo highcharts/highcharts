@@ -68,9 +68,9 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
-    public data: Array<ErrorBarPoint> = void 0 as any;
-    public options: ErrorBarSeriesOptions = void 0 as any;
-    public points: Array<ErrorBarPoint> = void 0 as any;
+    public data!: Array<ErrorBarPoint>;
+    public options!: ErrorBarSeriesOptions;
+    public points!: Array<ErrorBarPoint>;
 
     /* *
      *

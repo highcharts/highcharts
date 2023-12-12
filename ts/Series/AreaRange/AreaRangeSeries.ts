@@ -235,12 +235,12 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
-    public data: Array<AreaRangePoint> = void 0 as any;
-    public options: AreaRangeSeriesOptions = void 0 as any;
-    public points: Array<AreaRangePoint> = void 0 as any;
-    public lowerStateMarkerGraphic?: SVGElement = void 0;
+    public data!: Array<AreaRangePoint>;
+    public options!: AreaRangeSeriesOptions;
+    public points!: Array<AreaRangePoint>;
+    public lowerStateMarkerGraphic?: SVGElement;
     public upperStateMarkerGraphic?: SVGElement;
-    public xAxis: Axis|RadialAxis.AxisComposition = void 0 as any;
+    public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
      *

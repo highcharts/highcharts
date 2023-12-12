@@ -121,9 +121,9 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<WindbarbPoint> = void 0 as any;
-    public options: WindbarbSeriesOptions = void 0 as any;
-    public points: Array<WindbarbPoint> = void 0 as any;
+    public data!: Array<WindbarbPoint>;
+    public options!: WindbarbSeriesOptions;
+    public points!: Array<WindbarbPoint>;
 
     /* *
      *

@@ -138,9 +138,9 @@ class LinearRegressionIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionPoint> = void 0 as any;
+    public data!: Array<LinearRegressionPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionPoint>;
 
     /* *
      *

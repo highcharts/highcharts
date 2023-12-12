@@ -30,7 +30,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import FunnelSeriesDefaults from './FunnelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import BorderRadius from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -131,11 +134,11 @@ class FunnelSeries extends PieSeries {
 
     public centerX?: number;
 
-    public data: Array<FunnelPoint> = void 0 as any;
+    public data!: Array<FunnelPoint>;
 
-    public options: FunnelSeriesOptions = void 0 as any;
+    public options!: FunnelSeriesOptions;
 
-    public points: Array<FunnelPoint> = void 0 as any;
+    public points!: Array<FunnelPoint>;
 
     /* *
      *
@@ -682,14 +685,6 @@ namespace FunnelSeries {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -699,7 +694,7 @@ namespace FunnelSeries {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 ChartClass,
                 'afterHideAllOverlappingLabels',

@@ -42,13 +42,13 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      *
      * */
 
-    public open: number = void 0 as any;
+    public open!: number;
 
-    public options: OHLCPointOptions = void 0 as any;
+    public options!: OHLCPointOptions;
 
-    public plotOpen: number = void 0 as any;
+    public plotOpen!: number;
 
-    public series: OHLCSeries = void 0 as any;
+    public series!: OHLCSeries;
 
     /* *
      *

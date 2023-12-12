@@ -31,7 +31,11 @@ import type TooltipOptions from './TooltipOptions';
 import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
-const { doc, isSafari } = H;
+const {
+    composed,
+    doc,
+    isSafari
+} = H;
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -49,6 +53,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     splat,
     syncTimeout
 } = U;
@@ -1887,14 +1892,6 @@ namespace Tooltip {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1906,7 +1903,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 

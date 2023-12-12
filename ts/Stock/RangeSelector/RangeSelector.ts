@@ -169,7 +169,9 @@ class RangeSelector {
      *
      * */
 
-    public buttons: Array<SVGElement> = void 0 as any;
+
+    public buttons!: Array<SVGElement>;
+    public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
@@ -191,7 +193,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: RangeSelectorOptions = void 0 as any;
+    public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
@@ -1826,6 +1828,13 @@ class RangeSelector {
             zoomText
         } = this;
 
+        // If the buttons are already collapsed do nothing.
+        if (this.isCollapsed === true) {
+            return;
+
+        }
+        this.isCollapsed = true;
+
         const userButtonTheme = (
             chart.userOptions.rangeSelector &&
             chart.userOptions.rangeSelector.buttonTheme
@@ -1906,6 +1915,12 @@ class RangeSelector {
 
         this.hideDropdown();
 
+        // If buttons are already not collapsed, do nothing.
+        if (this.isCollapsed === false) {
+            return;
+
+        }
+        this.isCollapsed = false;
         if (zoomText) {
             zoomText.show();
         }

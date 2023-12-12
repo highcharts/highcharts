@@ -34,6 +34,7 @@ const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
+    composed,
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
@@ -53,6 +54,7 @@ const {
     objectEach,
     offset,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -2189,16 +2191,6 @@ namespace Pointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedEvents: Array<Function> = [];
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -2207,7 +2199,8 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (U.pushUnique(composedMembers, ChartClass)) {
+
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch
@@ -2222,18 +2215,6 @@ namespace Pointer {
             });
         }
 
-    }
-
-    /**
-     * @private
-     */
-    export function dissolve(): void {
-
-        for (let i = 0, iEnd = composedEvents.length; i < iEnd; ++i) {
-            composedEvents[i]();
-        }
-
-        composedEvents.length = 0;
     }
 
 }

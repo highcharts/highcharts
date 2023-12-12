@@ -37,6 +37,7 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     win
 } = H;
@@ -55,7 +56,8 @@ const {
     isObject,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -82,14 +84,6 @@ interface NavigationBindingsButtonEventsObject {
     button: HTMLDOMElement;
     events: NavigationBindingsOptions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -429,7 +423,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, AnnotationClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -441,15 +435,11 @@ class NavigationBindings {
             ): void => {
                 selectableAnnotation(annotationType);
             });
-        }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
-        }
 
-        if (U.pushUnique(composedMembers, NavigationBindings)) {
             addEvent(
                 NavigationBindings,
                 'closePopup',
@@ -460,9 +450,7 @@ class NavigationBindings {
                 'deselectButton',
                 onNavigationBindingsDeselectButton
             );
-        }
 
-        if (U.pushUnique(composedMembers, setOptions)) {
             setOptions(NavigationBindingDefaults);
         }
 
@@ -511,7 +499,7 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (NavigationBindingsOptions|null) = void 0 as any;
+    public selectedButton!: (NavigationBindingsOptions|null);
     public stepIndex?: number;
     public steps?: boolean;
 

@@ -26,10 +26,13 @@ import type {
 import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -60,20 +63,9 @@ namespace ForcedMarkersComposition {
 
     /* *
      *
-     *  Compositions
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -83,7 +75,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',
@@ -94,7 +86,6 @@ namespace ForcedMarkersComposition {
                 'render',
                 seriesOnRender
             );
-
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterRender',

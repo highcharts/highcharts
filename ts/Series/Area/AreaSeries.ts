@@ -230,11 +230,11 @@ class AreaSeries extends LineSeries {
 
     public areaPath?: SVGPath;
 
-    public data: Array<AreaPoint> = void 0 as any;
+    public data!: Array<AreaPoint>;
 
-    public options: AreaSeriesOptions = void 0 as any;
+    public options!: AreaSeriesOptions;
 
-    public points: Array<AreaPoint> = void 0 as any;
+    public points!: Array<AreaPoint>;
 
     /* *
      *
