@@ -61,9 +61,9 @@ class PolygonSeries extends ScatterSeries {
      * */
 
     public areaPath?: SVGPath;
-    public data: Array<PolygonPoint> = void 0 as any;
-    public options: PolygonSeriesOptions = void 0 as any;
-    public points: Array<PolygonPoint> = void 0 as any;
+    public data!: Array<PolygonPoint>;
+    public options!: PolygonSeriesOptions;
+    public points!: Array<PolygonPoint>;
 
     /* *
      *

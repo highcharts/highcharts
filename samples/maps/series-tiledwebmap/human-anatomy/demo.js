@@ -3,7 +3,7 @@
         constructor() {
             this.themes = {
                 Standard: {
-                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@db7f32d9be/samples/graphics/human-anatomy-tiles/{zoom}/{x}/{y}.png',
+                    url: 'https://www.highcharts.com/samples/graphics/human-anatomy-tiles/{zoom}/{x}/{y}.png',
                     minZoom: 1,
                     maxZoom: 3
                 }

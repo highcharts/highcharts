@@ -9,6 +9,8 @@ import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -37,14 +39,6 @@ export interface PaneChart extends Chart {
     pane: Array<Pane>;
     getHoverPane(eventArgs: any): (Pane|undefined);
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -83,16 +77,14 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype as PaneChart;
 
         chartProto.collectionsWithUpdate.push('pane');
         chartProto.getHoverPane = chartGetHoverPane;
 
         addEvent(ChartClass, 'afterIsInsidePlot', onChartAfterIsInsiderPlot);
-    }
 
-    if (pushUnique(composedMembers, PointerClass)) {
         addEvent(PointerClass, 'afterGetHoverData', onPointerAfterGetHoverData);
         addEvent(
             PointerClass,

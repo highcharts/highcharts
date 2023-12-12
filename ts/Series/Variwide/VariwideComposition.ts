@@ -24,10 +24,13 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -56,14 +59,6 @@ declare module '../../Core/Axis/TickLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -76,15 +71,13 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, compose)) {
+        const tickProto = TickClass.prototype;
+
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-    }
 
-    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
-
-        const tickProto = TickClass.prototype;
 
         tickProto.postTranslate = tickPostTranslate;
 

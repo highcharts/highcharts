@@ -47,9 +47,9 @@ class BubblePoint extends ScatterPoint {
      *
      * */
 
-    public options: BubblePointOptions = void 0 as any;
+    public options!: BubblePointOptions;
 
-    public series: BubbleSeries = void 0 as any;
+    public series!: BubbleSeries;
 
     /* *
      *

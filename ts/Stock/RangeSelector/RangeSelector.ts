@@ -169,7 +169,9 @@ class RangeSelector {
      *
      * */
 
-    public buttons: Array<SVGElement> = void 0 as any;
+
+    public buttons!: Array<SVGElement>;
+    public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
@@ -191,7 +193,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: RangeSelectorOptions = void 0 as any;
+    public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
@@ -518,7 +520,8 @@ class RangeSelector {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        let selectedExists = isNumber(selected);
+        let selectedExists = isNumber(selected),
+            isSelectedTooGreat = false;
 
         rangeSelector.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
@@ -546,6 +549,10 @@ class RangeSelector {
                 // Disable the All button if we're already showing all
                 isAllButAlreadyShowingAll = false,
                 isSameRange = range === actualRange;
+
+            if (isSelected && isTooGreatRange) {
+                isSelectedTooGreat = true;
+            }
 
             // Months and years have a variable range so we check the extremes
             if (
@@ -581,6 +588,7 @@ class RangeSelector {
             // across the night gap.
             const disable = (
                 !allButtonsEnabled &&
+                !(isSelectedTooGreat && type === 'all') &&
                 (
                     isTooGreatRange ||
                     isTooSmallRange ||
@@ -589,6 +597,7 @@ class RangeSelector {
                 )
             );
             const select = (
+                (isSelectedTooGreat && type === 'all') ||
                 (isSelected && isSameRange) ||
                 (isSameRange && !selectedExists && !isYTDButNotSelected) ||
                 (isSelected && rangeSelector.frozenStates)
@@ -616,6 +625,11 @@ class RangeSelector {
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
                     rangeSelector.setSelected();
+                } else if (
+                    (state === 2 && !defined(selected)) ||
+                    isSelectedTooGreat
+                ) {
+                    rangeSelector.setSelected(i);
                 }
             }
         });
@@ -1814,6 +1828,13 @@ class RangeSelector {
             zoomText
         } = this;
 
+        // If the buttons are already collapsed do nothing.
+        if (this.isCollapsed === true) {
+            return;
+
+        }
+        this.isCollapsed = true;
+
         const userButtonTheme = (
             chart.userOptions.rangeSelector &&
             chart.userOptions.rangeSelector.buttonTheme
@@ -1894,6 +1915,12 @@ class RangeSelector {
 
         this.hideDropdown();
 
+        // If buttons are already not collapsed, do nothing.
+        if (this.isCollapsed === false) {
+            return;
+
+        }
+        this.isCollapsed = false;
         if (zoomText) {
             zoomText.show();
         }

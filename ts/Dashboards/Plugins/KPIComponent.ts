@@ -34,9 +34,8 @@ import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from '../Components/Component.js';
-import Templating from '../../Core/Templating.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
-
+import Templating from '../../Core/Templating.js';
 const {
     format
 } = Templating;
@@ -45,11 +44,10 @@ const {
     createElement,
     css,
     defined,
-    getStyle,
+    diffObjects,
     isArray,
     isNumber,
-    merge,
-    diffObjects
+    merge
 } = U;
 
 /* *
@@ -143,7 +141,12 @@ class KPIComponent extends Component {
                         type: 'input',
                         propertyPath: ['valueFormat']
                     }]
-                )
+                ),
+            linkedValueTo: {
+                enabled: true,
+                seriesIndex: 0,
+                pointIndex: 0
+            }
         }
     );
 
@@ -287,18 +290,6 @@ class KPIComponent extends Component {
             {},
             this.contentElement
         );
-
-        if (this.options.chartOptions) {
-            this.chartContainer = createElement(
-                'div',
-                {
-                    className: `${options.className}-chart-container`
-                },
-                {},
-                this.contentElement
-            );
-        }
-
     }
 
     /* *
@@ -313,6 +304,8 @@ class KPIComponent extends Component {
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
+
+        this.linkValueToChart();
 
         return this;
     }
@@ -335,14 +328,32 @@ class KPIComponent extends Component {
         super.render();
         this.updateElements();
 
-        const charter = KPIComponent.charter;
+        const charter = KPIComponent.charter?.Chart;
 
         if (
             charter &&
             this.options.chartOptions &&
-            !this.chart &&
-            this.chartContainer
+            !this.chart
         ) {
+            if (!this.chartContainer) {
+                this.chartContainer = createElement(
+                    'div',
+                    {
+                        className: `${this.options.className}-chart-container`
+                    }, {
+                        height: '100%'
+                    },
+                    this.contentElement
+                );
+
+                if (!this.cell.container.style.height) {
+                    // If the cell height is specified, clear dimensions to make
+                    // the container to adjust to the chart height.
+                    this.contentElement.style.height = '100%';
+                    super.resize(null, null);
+                }
+            }
+
             this.chart = charter.chart(this.chartContainer, merge(
                 KPIComponent.defaultChartOptions,
                 this.options.chartOptions
@@ -401,7 +412,7 @@ class KPIComponent extends Component {
      * The value that should be displayed in the KPI.
      */
     private getValue(): string|number|undefined {
-        if (this.options.value) {
+        if (defined(this.options.value)) {
             return this.options.value;
         }
 
@@ -426,9 +437,9 @@ class KPIComponent extends Component {
         } = this.options;
 
         if (defined(value)) {
-            let prevValue;
-            if (isNumber(value)) {
-                prevValue = value;
+            let prevValue: number | undefined;
+            if (isNumber(+value)) {
+                prevValue = +value;
             }
 
             if (valueFormatter) {
@@ -440,9 +451,54 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, '' + value);
+            this.linkValueToChart(prevValue);
 
             this.prevValue = prevValue;
         }
+    }
+
+    /**
+     * Handles updating chart point value.
+     *
+     * @internal
+     */
+    public linkValueToChart(
+        value: number|string|undefined = this.getValue()
+    ): void {
+        const chart = this.chart;
+        const linkedValueTo = this.options.linkedValueTo;
+
+        if (
+            !chart || !linkedValueTo.enabled ||
+            !defined(value) || !isNumber(+value)
+        ) {
+            return;
+        }
+
+        value = +value;
+
+        const targetSeries = chart.series[linkedValueTo.seriesIndex ?? 0],
+            targetPoint = targetSeries?.points[linkedValueTo.pointIndex ?? 0];
+
+        if (targetSeries) {
+            if (targetPoint) {
+                targetPoint.update({
+                    y: value
+                });
+                return;
+            }
+
+            targetSeries.addPoint({
+                y: value
+            });
+            return;
+        }
+
+        chart.addSeries({
+            data: [{
+                y: value
+            }]
+        });
     }
 
     /**
@@ -708,6 +764,26 @@ namespace KPIComponent {
          * Callback function to format the text of the value from scratch.
          */
         valueFormatter?: ValueFormatterCallbackFunction;
+        /**
+         * This option allows user to toggle the KPI value connection with the
+         * chart and set the specific point for the connection.
+         *
+         * Linking is enabled by default for the first point of the first
+         * series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+         *
+         * @example
+         * ```js
+         * linkedValueTo: {
+         *     seriesIndex: 1,
+         *     pointIndex: 2
+         * }
+         * ```
+         */
+        linkedValueTo: LinkedValueToOptions;
     }
     /** @internal */
     export interface SubtitleOptions extends TextOptions {
@@ -722,6 +798,34 @@ namespace KPIComponent {
             this: KPIComponent,
             value: (number|string)
         ): string;
+    }
+
+    /**
+     * Options for linking KPI value to the chart point.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+     */
+    export interface LinkedValueToOptions {
+        /**
+         * Enable or disable linking KPI value to a point on the chart.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+        /**
+         * Index of the point that is to receiving the KPI value as its Y.
+         *
+         * @default 0
+         */
+        pointIndex?: number;
+        /**
+         * Index of the series with the point receiving the KPI value.
+         *
+         * @default 0
+         */
+        seriesIndex?: number;
     }
 }
 

@@ -1,7 +1,7 @@
 (async () => {
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c44c51a/samples/data/mini-ohlc.json'
+        'https://www.highcharts.com/samples/data/mini-ohlc.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {

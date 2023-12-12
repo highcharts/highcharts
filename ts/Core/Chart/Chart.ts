@@ -294,70 +294,70 @@ class Chart {
      * */
 
     public _cursor?: (CursorValue|null);
-    public axes: Array<AxisType> = void 0 as any;
-    public axisOffset: Array<number> = void 0 as any;
-    public bounds: Record<string, Record<string, number>> = void 0 as any;
+    public axes!: Array<AxisType>;
+    public axisOffset!: Array<number>;
+    public bounds!: Record<string, Record<string, number>>;
     public callback?: Chart.CallbackFunction;
     public chartBackground?: SVGElement;
-    public chartHeight: number = void 0 as any;
-    public chartWidth: number = void 0 as any;
-    public clipBox: BBoxObject = void 0 as any;
+    public chartHeight!: number;
+    public chartWidth!: number;
+    public clipBox!: BBoxObject;
     public clipOffset?: Array<number>;
     public clipRect?: SVGElement;
-    public colorCounter: number = void 0 as any;
-    public container: globalThis.HTMLElement = void 0 as any;
+    public colorCounter!: number;
+    public container!: globalThis.HTMLElement;
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;
-    public index: number = void 0 as any;
+    public index!: number;
     public isDirtyBox?: boolean;
     public isDirtyLegend?: boolean;
-    public isResizing: number = void 0 as any;
-    public labelCollectors: Array<Chart.LabelCollectorFunction> = void 0 as any;
+    public isResizing!: number;
+    public labelCollectors!: Array<Chart.LabelCollectorFunction>;
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
-    public margin: Array<number> = void 0 as any;
+    public margin!: Array<number>;
     public marginBottom?: number;
-    public numberFormatter: NumberFormatterCallbackFunction = void 0 as any;
+    public numberFormatter!: NumberFormatterCallbackFunction;
     public oldChartHeight?: number;
     public oldChartWidth?: number;
-    public options: Options = void 0 as any;
+    public options!: Options;
     public plotBackground?: SVGElement;
     public plotBGImage?: SVGElement;
     public plotBorder?: SVGElement;
     public plotBorderWidth?: number;
-    public plotBox: BBoxObject = void 0 as any;
-    public plotHeight: number = void 0 as any;
-    public plotLeft: number = void 0 as any;
+    public plotBox!: BBoxObject;
+    public plotHeight!: number;
+    public plotLeft!: number;
     public plotSizeX?: number;
     public plotSizeY?: number;
-    public plotTop: number = void 0 as any;
-    public plotWidth: number = void 0 as any;
-    public pointCount: number = void 0 as any;
-    public pointer: Pointer = void 0 as any;
+    public plotTop!: number;
+    public plotWidth!: number;
+    public pointCount!: number;
+    public pointer!: Pointer;
     public reflowTimeout?: number;
-    public renderer: Chart.Renderer = void 0 as any;
-    public renderTo: globalThis.HTMLElement = void 0 as any;
-    public series: Array<Series> = void 0 as any;
+    public renderer!: Chart.Renderer;
+    public renderTo!: globalThis.HTMLElement;
+    public series!: Array<Series>;
     public seriesGroup?: SVGElement;
     public sharedClips: Record<string, (SVGElement|undefined)> = {};
-    public spacing: Array<number> = void 0 as any;
-    public spacingBox: BBoxObject = void 0 as any;
+    public spacing!: Array<number>;
+    public spacingBox!: BBoxObject;
     public styledMode?: boolean;
     public subtitle?: SVGElement;
-    public symbolCounter: number = void 0 as any;
-    public time: Time = void 0 as any;
+    public symbolCounter!: number;
+    public time!: Time;
     public title?: SVGElement;
-    public titleOffset: Array<number> = void 0 as any;
-    public userOptions: Partial<Options> = void 0 as any;
-    public xAxis: Array<AxisType> = void 0 as any;
-    public yAxis: Array<AxisType> = void 0 as any;
-    public zooming: ChartZoomingOptions = void 0 as any;
+    public titleOffset!: Array<number>;
+    public userOptions!: Partial<Options>;
+    public xAxis!: Array<AxisType>;
+    public yAxis!: Array<AxisType>;
+    public zooming!: ChartZoomingOptions;
 
     /* *
      *
@@ -1071,7 +1071,7 @@ class Chart {
      * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
-        const options = this.options;
+        const options = this.userOptions;
 
         fireEvent(this, 'getAxes');
 
@@ -2377,6 +2377,7 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
+            axisLayoutRuns = chart.options.chart.axisLayoutRuns || 2,
             renderAxes = (axes: Array<Axis>): void => {
                 axes.forEach((axis): void => {
                     if (axis.visible) {
@@ -2385,7 +2386,12 @@ class Chart {
                 });
             };
 
-        let expectedSpace = 0; // Correction for X axis labels
+        let expectedSpace = 0, // Correction for X axis labels
+            // If the plot area size has changed significantly, calculate tick
+            // positions again
+            redoHorizontal = true,
+            redoVertical: boolean|undefined,
+            run = 0;
 
         // Title
         chart.setTitle();
@@ -2400,9 +2406,6 @@ class Chart {
         // Get chart margins
         chart.getMargins(true);
         chart.setChartSize();
-
-        // Record preliminary dimensions for later comparison
-        const tempWidth = chart.plotWidth;
 
         for (const axis of axes) {
             const { options } = axis,
@@ -2445,30 +2448,39 @@ class Chart {
 
         // Use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
-        const tempHeight = chart.plotHeight;
 
-        // Get margins by pre-rendering axes
-        axes.forEach((axis): void => axis.setScale());
-        chart.getAxisMargins();
+        while (
+            (redoHorizontal || redoVertical || axisLayoutRuns > 1) &&
+            run < axisLayoutRuns // #19794
+        ) {
 
-        // If the plot area size has changed significantly, calculate tick
-        // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1,
-            // Height is more sensitive, use lower threshold
-            redoVertical = tempHeight / chart.plotHeight > 1.05;
+            const tempWidth = chart.plotWidth,
+                tempHeight = chart.plotHeight;
 
-        if (redoHorizontal || redoVertical) {
+            for (const axis of axes) {
+                if (run === 0) {
+                    // Get margins by pre-rendering axes
+                    axis.setScale();
 
-            axes.forEach((axis): void => {
-                if (
+                } else if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
                 ) {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
                 }
-            });
-            chart.getMargins(); // Second pass to check for new labels
+            }
+            if (run === 0) {
+                chart.getAxisMargins();
+            } else {
+                // Check again for new, rotated or moved labels
+                chart.getMargins();
+            }
+
+            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
+            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+
+            run++;
         }
 
         // Draw the borders and backgrounds

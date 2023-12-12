@@ -3463,7 +3463,7 @@ const ball = function () {
     getStarData();
 
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/world-countries.topo.json',
+        'https://www.highcharts.com/samples/data/world-countries.topo.json',
         topology => {
 
             // Convert the topoJSON feature into geoJSON

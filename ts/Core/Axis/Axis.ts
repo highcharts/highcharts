@@ -50,6 +50,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
+const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -103,6 +104,8 @@ const getNormalizedTickInterval = (
     ),
     !!axis.tickAmount
 );
+
+extend(defaultOptions, { xAxis, yAxis: merge(xAxis, yAxis) });
 
 /* *
  *
@@ -164,8 +167,6 @@ class Axis {
      *
      * */
 
-    public static readonly defaultOptions = AxisDefaults.defaultXAxisOptions;
-
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
     public static keepProps = [
@@ -200,7 +201,7 @@ class Axis {
 
     public _addedPlotLB?: boolean;
     public allowZoomOutside?: boolean;
-    public alternateBands: Record<string, PlotLineOrBand> = void 0 as any;
+    public alternateBands!: Record<string, PlotLineOrBand>;
     public autoRotation?: Array<number>;
     public axisGroup?: SVGElement;
     public axisLine?: SVGElement;
@@ -208,56 +209,56 @@ class Axis {
     public axisPointRange?: number;
     public axisTitle?: SVGElement;
     public axisTitleMargin?: number;
-    public bottom: number = void 0 as any;
+    public bottom!: number;
     public categories?: Array<string>;
-    public chart: Chart = void 0 as any;
-    public closestPointRange: number = void 0 as any;
-    public coll: AxisCollectionKey = void 0 as any;
+    public chart!: Chart;
+    public closestPointRange!: number;
+    public coll!: AxisCollectionKey;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: number;
     public dataMin?: number;
     public displayBtn?: boolean;
     public eventArgs?: any;
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public expectedSpace: number|undefined;
     public finalTickAmt?: number;
     public forceRedraw?: boolean;
     public gridGroup?: SVGElement;
-    public hasNames: boolean = void 0 as any;
-    public hasVisibleSeries: boolean = void 0 as any;
-    public height: number = void 0 as any;
+    public hasNames!: boolean;
+    public hasVisibleSeries!: boolean;
+    public height!: number;
     public horiz?: boolean;
-    public index: number = void 0 as any;
+    public index!: number;
     public isDirty?: boolean;
-    public isLinked: boolean = void 0 as any;
+    public isLinked!: boolean;
     public isOrdinal?: boolean;
     public isRadial?: boolean;
     public isXAxis?: boolean;
     public isZAxis?: boolean;
     public keepProps?: Array<string>;
     public labelAlign?: AlignValue;
-    public labelEdge: Array<null> = void 0 as any; // @todo
-    public labelFormatter: AxisLabelFormatterCallback = void 0 as any;
+    public labelEdge!: Array<null>; // @todo
+    public labelFormatter!: AxisLabelFormatterCallback;
     public labelGroup?: SVGElement;
     public labelOffset?: number;
     public labelRotation?: number;
-    public left: number = void 0 as any;
-    public len: number = void 0 as any;
+    public left!: number;
+    public len!: number;
     public linkedParent?: Axis;
-    public max?: number = void 0;
+    public max?: number;
     public maxLabelDimensions?: SizeObject;
-    public maxLabelLength: number = void 0 as any;
-    public min?: number = void 0;
-    public minorTickInterval: number = void 0 as any;
-    public minorTicks: Record<string, Tick> = void 0 as any;
-    public minPixelPadding: number = void 0 as any;
+    public maxLabelLength!: number;
+    public min?: number;
+    public minorTickInterval!: number;
+    public minorTicks!: Record<string, Tick>;
+    public minPixelPadding!: number;
     public minPointOffset?: number;
     // When the minRange is undefined, it is not yet evaluated. When it is null,
     // it is deliberately not a number because we have user extremes.
-    public minRange?: (null|number);
-    public names: Array<string> = void 0 as any;
-    public offset: number = void 0 as any;
+    public minRange?: null|number;
+    public names!: Array<string>;
+    public offset!: number;
     public old?: { // @todo create a type
         len: number;
         max?: number;
@@ -267,48 +268,48 @@ class Axis {
         userMin?: number;
     };
     public opposite?: boolean;
-    public options: (AxisOptions|XAxisOptions|YAxisOptions) = void 0 as any;
+    public options!: (AxisOptions|XAxisOptions|YAxisOptions);
     public ordinal?: AxisComposition['ordinal'];
-    public overlap: boolean = void 0 as any;
-    public paddedTicks: Array<number> = void 0 as any;
+    public overlap!: boolean;
+    public paddedTicks!: Array<number>;
     public panningState?: Axis.PanningState;
-    public plotLinesAndBands: Array<PlotLineOrBand> = void 0 as any;
-    public plotLinesAndBandsGroups: Record<string, SVGElement> = void 0 as any;
-    public pointRange: number = void 0 as any;
-    public pointRangePadding: number = void 0 as any;
-    public pos: number = void 0 as any;
-    public positiveValuesOnly: boolean = void 0 as any;
+    public plotLinesAndBands!: Array<PlotLineOrBand>;
+    public plotLinesAndBandsGroups!: Record<string, SVGElement>;
+    public pointRange!: number;
+    public pointRangePadding!: number;
+    public pos!: number;
+    public positiveValuesOnly!: boolean;
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
-    public right: number = void 0 as any;
+    public right!: number;
     public sector?: number;
-    public series: Array<Series> = void 0 as any;
+    public series!: Array<Series>;
     public showAxis?: boolean;
-    public side: number = void 0 as any;
+    public side!: number;
     public single?: boolean;
     public softThreshold?: boolean;
     public staggerLines?: number;
     public staticScale?: number;
     public threshold?: number;
     public thresholdAlignment?: number;
-    public tickAmount: number = void 0 as any;
-    public tickInterval: number = void 0 as any;
-    public tickmarkOffset: number = void 0 as any;
-    public tickPositions: TickPositionsArray = void 0 as any;
-    public tickRotCorr: PositionObject = void 0 as any;
-    public ticks: Record<string, Tick> = void 0 as any;
+    public tickAmount!: number;
+    public tickInterval!: number;
+    public tickmarkOffset!: number;
+    public tickPositions!: TickPositionsArray;
+    public tickRotCorr!: PositionObject;
+    public ticks!: Record<string, Tick>;
     public titleOffset?: number;
-    public top: number = void 0 as any;
-    public transA: number = void 0 as any;
-    public transB: number = void 0 as any;
-    public translationSlope: number = void 0 as any;
+    public top!: number;
+    public transA!: number;
+    public transB!: number;
+    public translationSlope!: number;
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
-    public userOptions: DeepPartial<AxisOptions> = void 0 as any;
-    public visible: boolean = void 0 as any;
-    public width: number = void 0 as any;
-    public zoomEnabled: boolean = void 0 as any;
+    public userOptions!: DeepPartial<AxisOptions>;
+    public visible!: boolean;
+    public width!: number;
+    public zoomEnabled!: boolean;
 
     /* *
      *
@@ -584,23 +585,29 @@ class Axis {
      * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
+        const sideSpecific = this.horiz ?
+            // Top and bottom axis defaults
+            {
+                labels: {
+                    autoRotation: [-45]
+                },
+                margin: 15
+            } :
+            // Left and right axis, title rotated 90 or 270 degrees
+            // respectively
+            {
+                title: {
+                    rotation: 90 * this.side
+                }
+            };
+
         this.options = merge(
-            AxisDefaults.defaultXAxisOptions,
-            (this.coll === 'yAxis') && AxisDefaults.defaultYAxisOptions,
-            [
-                AxisDefaults.defaultTopAxisOptions,
-                AxisDefaults.defaultRightAxisOptions,
-                AxisDefaults.defaultBottomAxisOptions,
-                AxisDefaults.defaultLeftAxisOptions
-            ][this.side],
-            merge(
-                // If set in setOptions (#1053):
-                defaultOptions[this.coll],
-                userOptions
-            )
+            sideSpecific,
+            defaultOptions[this.coll] as AxisOptions,
+            userOptions
         );
 
-        fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
+        fireEvent(this, 'afterSetOptions', { userOptions });
     }
 
     /**
@@ -2963,7 +2970,7 @@ class Axis {
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.75em
-            lineHeight = this.labelMetrics().h * 0.75,
+            lineHeight = this.labelMetrics().h,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -3029,7 +3036,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(lineHeight);
+            newTickInterval = getStep(lineHeight * 0.75);
         }
 
         this.autoRotation = autoRotation;
@@ -3350,7 +3357,7 @@ class Axis {
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: axisTitleOptions.rotation,
+                    rotation: axisTitleOptions.rotation || 0,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');
@@ -3544,8 +3551,7 @@ class Axis {
         }
 
         if (
-            axisTitleOptions &&
-            axisTitleOptions.text &&
+            axisTitleOptions?.text &&
             axisTitleOptions.enabled !== false
         ) {
             axis.addTitle(showAxis);
@@ -3936,7 +3942,7 @@ class Axis {
 
             }
 
-            // alternate grid color
+            // Alternate grid color
             if (alternateGridColor) {
                 tickPositions.forEach(function (pos: number, i: number): void {
                     to = typeof tickPositions[i + 1] !== 'undefined' ?
@@ -3956,7 +3962,8 @@ class Axis {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
                             alternateBands[pos] = new (H as any).PlotLineOrBand(
-                                axis
+                                axis,
+                                {}
                             );
                         }
                         from = pos + tickmarkOffset; // #949

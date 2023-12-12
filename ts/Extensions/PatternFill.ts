@@ -35,6 +35,8 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
+import H from '../Core/Globals.js';
+const { composed } = H;
 import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
@@ -117,8 +119,6 @@ export interface PatternOptionsObject {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 const patterns = createPatterns();
 
 /* *
@@ -135,19 +135,15 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(ChartClass, 'endResize', onChartEndResize);
         addEvent(ChartClass, 'redraw', onChartRedraw);
-    }
 
-    if (pushUnique(composedMembers, PointClass)) {
         extend(PointClass.prototype, {
             calculatePatternDimensions: pointCalculatePatternDimensions
         });
         addEvent(PointClass, 'afterInit', onPointAfterInit);
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'render', onSeriesRender);
         wrap(SeriesClass.prototype, 'getColor', wrapSeriesGetColor);
 
@@ -156,7 +152,6 @@ function compose(
         addEvent(SeriesClass, 'mapZoomComplete', onPatternScaleCorrection);
     }
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
         extend(SVGRendererClass.prototype, {
             addPattern: rendererAddPattern
         });

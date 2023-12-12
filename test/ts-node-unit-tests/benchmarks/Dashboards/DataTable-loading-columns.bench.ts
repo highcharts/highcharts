@@ -2,6 +2,7 @@ import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
 import { generateColumnData } from '../../data-generators';
+import { setupDOM } from '../../test-utils';
 
 
 export const config = {
@@ -21,7 +22,9 @@ export default async function benchmarkTest(
         data
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
-    const hc = require(join(CODE_PATH, '/highcharts.src.js'))();
+    const { win } = setupDOM();
+    const hc = require(join(CODE_PATH, '/highcharts.src.js'))(win);
+    global.window = win;
     require(join(CODE_PATH, '/modules/data-tools.src.js'))(hc);
 
     const { DataTable } = hc;

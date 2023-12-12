@@ -58,7 +58,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  * @name Highcharts.NavigatorComponent
  */
 class NavigatorComponent extends AccessibilityComponent {
-    private announcer: Announcer = void 0 as any;
+    private announcer!: Announcer;
     private minHandleProxy?: HTMLInputElement;
     private maxHandleProxy?: HTMLInputElement;
     private updateNavigatorThrottleTimer?: number;

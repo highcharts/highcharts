@@ -22,8 +22,7 @@
  *
  * */
 
-
-import type { default as H } from 'highcharts/es-modules/Core/Globals';
+import type * as H from 'highcharts';
 
 
 /* *
@@ -31,36 +30,32 @@ import type { default as H } from 'highcharts/es-modules/Core/Globals';
  *  Declarations
  *
  * */
+export namespace Axis {
+    export interface ExtremesObject {
+        dataMax: number;
+        dataMin: number;
+        max: number;
+        min: number;
+        userMax?: number;
+        userMin?: number;
+    }
+}
 
+export type Axis = H.Axis;
 
-export type { default as Axis } from 'highcharts/es-modules/Core/Axis/Axis';
+export type AxisOptions = H.AxisOptions;
 
-export type { default as AxisOptions } from 'highcharts/es-modules/Core/Axis/AxisOptions';
-
-export type { default as Chart } from 'highcharts/es-modules/Core/Chart/Chart';
-
-export type { default as Globals } from 'highcharts/es-modules/Core/Globals';
+export type Chart = H.Chart;
 
 export type Highcharts = typeof H;
 
-export type { default as Options } from 'highcharts/es-modules/Core/Options';
+export type Options = H.Options;
 
-export type {
-    default as OrdinalAxis
-} from 'highcharts/es-modules/Core/Axis/OrdinalAxis';
+export type Point = H.Point;
 
-export type { default as Pane } from 'highcharts/es-modules/Extensions/Pane/Pane';
+export type Series = H.Series;
 
-export type { default as Point } from 'highcharts/es-modules/Core/Series/Point';
-
-export type {
-    default as PolarComposition
-} from 'highcharts/es-modules/Series/PolarComposition';
-
-export type { default as Series } from 'highcharts/es-modules/Core/Series/Series';
-
-export type { default as SeriesOptions } from 'highcharts/es-modules/Core/Series/SeriesOptions';
-
+export type SeriesOptions = H.SeriesOptions;
 
 /* *
  *

@@ -62,7 +62,7 @@ QUnit.test('Data grouping anchor for points in the middle of the data set.', fun
     );
     assert.ok(
         chart.xAxis[0].max >=
-            chart.series[2].points[chart.series[2].points.length - 1].x,
+        chart.series[2].points[chart.series[2].points.length - 1].x,
         `When the last anchor set, the extremes should be changed
         and the last point should be visible.`
     );
@@ -292,7 +292,7 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[chart.series[0].points.length - 1].x,
         11.7 * hour,
-        `When the smoothed enabled, the last point 
+        `When the smoothed enabled, the last point
         should be placed where the last group point is.`
     );
     assert.strictEqual(
@@ -301,4 +301,185 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
         `When navigator anchors options are not declared,
         the point from the main series should match the navigator series.`
     );
+});
+QUnit.test('Data grouping anchor for single point in the dataset', function (assert) {
+    const data = [
+        1,
+        2
+    ];
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                height: 800,
+                type: 'column'
+            },
+            yAxis: [{
+                height: '33.33%',
+                offset: 0,
+                title: {
+                    text: 'Anchor start- default'
+                }
+            }, {
+                height: '33.33%',
+                top: '33.33%',
+                offset: 0,
+                title: {
+                    text: 'Anchor middle'
+                }
+            }, {
+                height: '33.33%',
+                top: '66.66%',
+                offset: 0,
+                title: {
+                    text: 'Anchor end'
+                }
+            }],
+            tooltip: {
+                split: false
+            },
+            plotOptions: {
+                series: {
+                    pointInterval: 3600 * 1000,
+                    dataGrouping: {
+                        approximation: 'average',
+                        enabled: true,
+                        forced: true,
+                        units: [
+                            ['hour', [2]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                data,
+                yAxis: 0
+
+            }, {
+                data,
+                yAxis: 1,
+                dataGrouping: {
+                    anchor: 'middle'
+                }
+            }, {
+                data,
+                yAxis: 2,
+                dataGrouping: {
+                    anchor: 'end'
+                }
+            }]
+        }),
+        hour = 3600 * 1000;
+    assert.strictEqual(
+        chart.series[0].points[0].x,
+        0,
+        'anchor: `start` -> beginning of the group'
+    );
+    assert.strictEqual(
+        chart.series[1].points[0].x,
+        hour,
+        'anchor: `middle` -> middle of the group'
+    );
+    assert.strictEqual(
+        chart.series[2].points[0].x,
+        hour * 2,
+        'anchor: `end` -> end of the group'
+    );
+});
+
+QUnit.test('DataGrouping unequal series length', function (assert) {
+    const data = [
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        {
+            y: 4,
+            // To make lastAnchor: lastPoint visible
+            x: 3600 * 1000 * 10 + 4250000
+        }
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            height: 500
+        },
+        xAxis: {
+            tickInterval: 3600 * 1000,
+            ordinal: false
+        },
+        yAxis: [{
+            height: '50%',
+            offset: 0
+        }, {
+            height: '50%',
+            top: '50%',
+            offset: 0
+
+        }],
+        plotOptions: {
+            series: {
+
+                pointInterval: 3600 * 1000,
+                dataGrouping: {
+                    approximation: 'average',
+                    enabled: true,
+                    forced: true,
+                    units: [
+                        ['hour', [2]]
+                    ]
+                }
+            }
+        },
+        series: [{
+            yAxis: 0,
+            data: data,
+            dataGrouping: {
+                anchor: 'middle'
+            }
+        }, {
+            yAxis: 1,
+            data: data.slice(0, -2),
+            dataGrouping: {
+                anchor: 'middle'
+            }
+        }]
+    });
+    assert.equal(
+        chart.series[0].points.at(-2).x,
+        chart.series[1].points.at(-1).x,
+        `last point of series 1 and second to last point in series 2 should be
+            in the same position`
+    );
+
+    chart.tooltip.refresh(chart.series[0].points.at(0));
+    let content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
+    assert.equal(
+        content,
+        'Thursday,  1 Jan, 00:00-01:59',
+        `Tooltip\'s content should show correct group range for the point with
+        anchor: middle`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            lastAnchor: 'lastPoint',
+            firstAnchor: 'firstPoint'
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points.at(-1));
+    content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
+    assert.equal(
+        content,
+        'Thursday,  1 Jan, 10:00-11:59',
+        `Tooltip's content should show correct group range of the last point
+        when lastAnchor is set to 'lastPoint'`
+    );
+
 });

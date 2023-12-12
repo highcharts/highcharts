@@ -26,6 +26,8 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -54,14 +56,6 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
         absoluteBox?: BBoxObject;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -229,7 +223,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.hideOverlappingLabels = chartHideOverlappingLabels;
@@ -263,7 +257,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 
             // Make sure the label is completely hidden to avoid catching clicks
             // (#4362)
-            if (label.alignAttr && label.placed) { // data labels
+            if (label.alignAttr && label.placed) { // Data labels
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
@@ -278,14 +272,13 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label.alignAttr.opacity = newOpacity;
                 label[label.isOld ? 'animate' : 'attr'](
-                    label.alignAttr,
-                    null as any,
+                    { opacity: newOpacity },
+                    void 0,
                     complete
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
-            } else { // other labels, tick labels
+            } else { // Other labels, tick labels
                 label.attr({
                     opacity: newOpacity
                 });

@@ -87,9 +87,9 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public removed?: boolean;
 
-    public options: PackedBubblePointOptions = void 0 as any;
+    public options!: PackedBubblePointOptions;
 
-    public series: PackedBubbleSeries = void 0 as any;
+    public series!: PackedBubbleSeries;
 
     public seriesIndex?: number;
 

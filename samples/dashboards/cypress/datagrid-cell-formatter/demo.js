@@ -5,6 +5,7 @@ const columns = {
     product: ['Apples']
 };
 
+// eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataTable({ columns }),
     columns: {

@@ -1,4 +1,5 @@
-// Define custom series type for displaying low/med/high values using boxplot as a base
+// Define custom series type for displaying low/med/high values using boxplot
+// as a base
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
@@ -6,8 +7,8 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
             'Low <b>{point.low}</b> - Median <b>{point.median}</b> - High <b>{point.high}</b><br/>'
     }
 }, {
-    // Change point shape to a line with three crossing lines for low/median/high
-    // Stroke width is hardcoded to 1 for simplicity
+    // Change point shape to a line with three crossing lines for
+    // low/median/high. Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
         const series = this;
         this.points.forEach(function (point) {

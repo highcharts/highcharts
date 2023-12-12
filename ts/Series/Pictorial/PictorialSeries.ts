@@ -118,13 +118,13 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    public paths: Array<PictorialPathOptions> = void 0 as any;
+    public paths!: Array<PictorialPathOptions>;
 
-    public data: Array<PictorialPoint> = void 0 as any;
+    public data!: Array<PictorialPoint>;
 
-    public options: PictorialSeriesOptions = void 0 as any;
+    public options!: PictorialSeriesOptions;
 
-    public points: Array<PictorialPoint> = void 0 as any;
+    public points!: Array<PictorialPoint>;
 
     /* *
      *
@@ -643,7 +643,9 @@ export default PictorialSeries;
  */
 
 /**
- * The paths include options describing the point image.
+ * The paths include options describing the series image. For further details on
+ * preparing the SVG image, please refer to the [pictorial
+ * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
  *
  * @declare   Highcharts.SeriesPictorialPathsOptionsObject
  * @type      {Array<*>}
@@ -651,7 +653,7 @@ export default PictorialSeries;
  * @sample    {highcharts} highcharts/demo/pictorial/
  *            Pictorial chart
  *
- * @since 11.0.0
+ * @since     11.0.0
  * @product   highcharts
  * @apioption series.pictorial.paths
  */
