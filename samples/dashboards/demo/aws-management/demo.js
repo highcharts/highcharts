@@ -322,7 +322,7 @@ const board = Dashboards.board('container', {
         type: 'HTML',
         title: 'Instance type:',
         elements: [{
-            tagName: 'h2',
+            tagName: 'p',
             textContent: 't3.xlarge'
         }]
     }, {
@@ -330,7 +330,7 @@ const board = Dashboards.board('container', {
         type: 'HTML',
         title: 'Zone:',
         elements: [{
-            tagName: 'h2',
+            tagName: 'p',
             textContent: 'eu-west-2b'
         }]
     }, {
@@ -338,7 +338,7 @@ const board = Dashboards.board('container', {
         type: 'HTML',
         title: 'AMI:',
         elements: [{
-            tagName: 'h2',
+            tagName: 'p',
             textContent: 'ami-0123456'
         }]
     }, {
@@ -346,7 +346,7 @@ const board = Dashboards.board('container', {
         type: 'HTML',
         title: 'OS:',
         elements: [{
-            tagName: 'h2',
+            tagName: 'p',
             textContent: 'Amazon Linux'
         }]
     }, {
@@ -355,6 +355,9 @@ const board = Dashboards.board('container', {
         type: 'Highcharts',
         chartOptions: {
             xAxis: {
+                title: {
+                    text: 'Disk categories'
+                },
                 categories: ['system files', 'media', 'documents', 'downloads'],
                 accessibility: {
                     description: 'Disk categories'
@@ -368,12 +371,23 @@ const board = Dashboards.board('container', {
                     description: 'Gigabytes'
                 }
             },
+            legend: {
+                enabled: false
+            },
             series: [{
                 type: 'bar',
                 data: [1, 2, 3, 1]
             }],
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                }
+            },
             accessibility: {
-                description: 'The chart is displaying space on disk'
+                description: 'The chart is displaying space on disk',
+                point: {
+                    descriptionFormat: 'Gb'
+                }
             }
         }
     }, {
@@ -393,24 +407,28 @@ const board = Dashboards.board('container', {
             },
             series: [{
                 type: 'spline',
+                name: 'Average',
                 data: [10, 20, 30, 10, 30, 10, 30]
-            }]
-        },
-        xAxis: {
-            accessibility: {
-                description: 'Days'
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Percents'
+            }],
+            xAxis: {
+                accessibility: {
+                    description: 'Days'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Percents'
+                },
+                accessibility: {
+                    description: 'Percents'
+                }
             },
             accessibility: {
-                description: 'Percents'
+                description: 'The chart is displaying CPU usage',
+                point: {
+                    descriptionFormat: 'percents'
+                }
             }
-        },
-        accessibility: {
-            description: 'The chart is displaying CPU usage'
         }
     }, {
         cell: 'cpu',
@@ -441,6 +459,7 @@ const board = Dashboards.board('container', {
                 }
             },
             series: [{
+                name: 'CPU utilization',
                 data: [{
                     y: 10,
                     colorIndex: '100' // workaround for live KPI
@@ -451,6 +470,19 @@ const board = Dashboards.board('container', {
             xAxis: {
                 accessibility: {
                     description: 'Days'
+                }
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'CPU usage. Highcharts interactive chart.'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' %'
+            },
+            accessibility: {
+                point: {
+                    descriptionFormat: '%'
                 }
             }
         }
@@ -483,13 +515,27 @@ const board = Dashboards.board('container', {
                 }
             },
             series: [{
+                name: 'Memory usage',
                 data: [{
                     y: 54,
                     colorIndex: '100' // workaround for live KPI
                 }],
                 innerRadius: '80%',
                 radius: '100%'
-            }]
+            }],
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Memory usage. Highcharts interactive chart.'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' MB'
+            },
+            accessibility: {
+                point: {
+                    descriptionFormat: 'MB'
+                }
+            }
         }
     }, {
         cell: 'health',
@@ -520,10 +566,24 @@ const board = Dashboards.board('container', {
                 }
             },
             series: [{
+                name: 'Disk usage',
                 data: [53],
                 innerRadius: '80%',
                 radius: '100%'
-            }]
+            }],
+            tooltip: {
+                valueSuffix: ' Gb'
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                }
+            },
+            accessibility: {
+                point: {
+                    descriptionFormat: 'Gb'
+                }
+            }
         }
     }, {
         cell: 'network-opt',
@@ -561,9 +621,16 @@ const board = Dashboards.board('container', {
                     description: 'Bytes'
                 }
             },
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix: ' bytes'
+            },
             accessibility: {
                 description: `The chart is displaying amount of in and out
-                network operations`
+                    network operations`,
+                point: {
+                    descriptionFormat: 'bytes'
+                }
             }
         }
     }, {
@@ -583,16 +650,20 @@ const board = Dashboards.board('container', {
                 }
             },
             series: [{
-                name: 'Read operation',
+                name: 'Read',
                 data: [10, 20, 30, 10, 30, 10, 30]
             }, {
-                name: 'Write operation',
+                name: 'Write',
                 data: [50, 30, 10, 20, 30, 40, 50]
             }],
             xAxis: {
                 accessibility: {
                     description: 'Days'
                 }
+            },
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix: ' operations'
             },
             yAxis: {
                 title: {
@@ -604,7 +675,10 @@ const board = Dashboards.board('container', {
             },
             accessibility: {
                 description: `The chart is displaying amount of in and out
-                operations on disk`
+                    operations on disk`,
+                point: {
+                    descriptionFormat: 'operations'
+                }
             }
         }
     }, {

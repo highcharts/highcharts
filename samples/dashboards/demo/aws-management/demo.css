@@ -35,30 +35,29 @@ body {
   text-align: left;
 }
 
-#instance-details .highcharts-dashboards-component-content h2 {
-    padding-left: 60px;
+#instance-details .highcharts-dashboards-component-content p {
+    padding: 10px 0 10px 60px;
+    background-size: 32px 32px;
+    font-size: 1em;
+    font-weight: 600;
 }
 
 /* https://awsicons.dev/ */
 
-#instance-details #instance .highcharts-dashboards-component-content h2 {
+#instance-details #instance .highcharts-dashboards-component-content p {
     background:url('data:image/svg+xml,<svg class="w-6 h-6" height="40" width="40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="Arch_Amazon-EC2_32_svg__a"><stop stop-color="%23C8511B" offset="0%"></stop><stop stop-color="%23F90" offset="100%"></stop></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M0 0h40v40H0z" fill="url(%23Arch_Amazon-EC2_32_svg__a)"></path><path d="M26.052 27L26 13.948 13 14v13.052L26.052 27zM27 14h2v1h-2v2h2v1h-2v2h2v1h-2v2h2v1h-2v2h2v1h-2v.052a.95.95 0 01-.948.948H26v2h-1v-2h-2v2h-1v-2h-2v2h-1v-2h-2v2h-1v-2h-2v2h-1v-2h-.052a.95.95 0 01-.948-.948V27h-2v-1h2v-2h-2v-1h2v-2h-2v-1h2v-2h-2v-1h2v-2h-2v-1h2v-.052a.95.95 0 01.948-.948H13v-2h1v2h2v-2h1v2h2v-2h1v2h2v-2h1v2h2v-2h1v2h.052a.95.95 0 01.948.948V14zm-6 19H7V19h2v-1H7.062C6.477 18 6 18.477 6 19.062v13.876C6 33.523 6.477 34 7.062 34h13.877c.585 0 1.061-.477 1.061-1.062V31h-1v2zM34 7.062v13.876c0 .585-.476 1.062-1.061 1.062H30v-1h3V7H19v3h-1V7.062C18 6.477 18.477 6 19.062 6h13.877C33.524 6 34 6.477 34 7.062z" fill="%23FFF"></path></g></svg>') 10px 50% no-repeat;
-    background-size: 32px 32px; 
 }
 
-#instance-details #zone .highcharts-dashboards-component-content h2 {
+#instance-details #zone .highcharts-dashboards-component-content p {
     background:url('data:image/svg+xml,<svg class="w-6 h-6" height="40" width="40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="Arch_AWS-Local-Zones_32_svg__a"><stop stop-color="%23C8511B" offset="0%"></stop><stop stop-color="%23F90" offset="100%"></stop></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M0 0h40v40H0z" fill="url(%23Arch_AWS-Local-Zones_32_svg__a)"></path><path d="M20.5 17.614c-.61 0-1.105-.483-1.105-1.078 0-.593.496-1.077 1.106-1.077.61 0 1.105.484 1.105 1.077 0 .595-.496 1.078-1.105 1.078zM29.58 7.439l-.754-.66-7.326 7.947a2.143 2.143 0 00-.998-.255c-1.168 0-2.12.927-2.12 2.065 0 1.14.952 2.065 2.12 2.065 1.167 0 2.117-.926 2.117-2.065 0-.426-.133-.823-.362-1.153l7.323-7.944zm-13.752 7.53a4.801 4.801 0 00-.203 1.367c0 1.672.858 3.218 2.297 4.134l.554-.827c-1.152-.733-1.838-1.97-1.838-3.307 0-.106.012-.21.02-.313a.78.78 0 01-.048-.205l-.782-.85zm8.751.85a.761.761 0 01-.047.204c.008.103.021.208.021.313 0 1.337-.688 2.574-1.838 3.307l.553.827c1.439-.916 2.298-2.462 2.298-4.134 0-.464-.072-.924-.203-1.367l-.784.85zm-1.166-6.125a7.647 7.647 0 00-2.907-.563c-4.194 0-7.597 3.318-7.597 7.407 0 2.509 1.287 4.83 3.444 6.203l.547-.83c-1.864-1.185-2.978-3.2-2.978-5.373 0-3.545 2.948-6.42 6.584-6.42a6.5 6.5 0 012.177.366l.73-.79zm3.757 3.308a7.232 7.232 0 01.932 3.536c0 2.509-1.296 4.83-3.454 6.203l-.547-.83c1.865-1.195 2.988-3.2 2.988-5.373 0-.948-.223-1.896-.648-2.745l.73-.79zm-2.198-5.007c-1.244-.593-2.653-.938-4.173-1.007h-.616c-5.552.266-9.41 4.197-9.157 9.353.263 5.313 7.687 14.31 9.48 16.395 1.782-2.084 9.207-11.092 9.47-16.395.091-1.798-.345-3.526-1.256-5.008l.547-.602.192-.119c1.105 1.7 1.631 3.694 1.53 5.778-.314 6.34-9.703 16.988-10.109 17.442a.49.49 0 01-.374.168.497.497 0 01-.385-.168c-.405-.454-9.795-11.101-10.107-17.442C9.738 10.662 14.003 6.296 20.15 6h.669c1.792.089 3.414.504 4.851 1.244l-.699.751z" fill="%23FFF"></path></g></svg>') 10px 50% no-repeat;
-    background-size: 32px 32px; 
 }
 
-#instance-details #ami .highcharts-dashboards-component-content h2 {
+#instance-details #ami .highcharts-dashboards-component-content p {
     background:url('data:image/svg+xml,<svg class="w-6 h-6" height="40" width="40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="Arch_AWS-Database-Migration_32_svg__a"><stop stop-color="%232E27AD" offset="0%"></stop><stop stop-color="%23527FFF" offset="100%"></stop></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M0 0h40v40H0z" fill="url(%23Arch_AWS-Database-Migration_32_svg__a)"></path><path d="M22.024 33h1v-2.997h-1V33zm-5.019 0h1v-2.997h-1V33zM26 32.001h1v-2.996h-1V32zm-13 0h1v-2.996h-1V32zm7.018-14.96c-3.717 0-6.018-.958-6.018-1.847v-3.548c1.173.885 3.304 1.418 6.018 1.418 2.604 0 4.782-.583 5.982-1.49v3.62c0 .908-2.238 1.847-5.982 1.847zm0 5.019c-3.547 0-6.018-1.084-6.018-2.057V16.8c1.34.892 3.805 1.24 6.018 1.24 2.725 0 4.825-.462 5.982-1.25v3.213c0 .973-2.456 2.057-5.982 2.057zm0 5.006c-3.491 0-6.018-1.503-6.018-2.516v-2.9c1.294.928 3.664 1.408 6.018 1.408 2.635 0 4.793-.547 5.982-1.416v2.908c0 1-2.386 2.516-5.982 2.516zm0-19.067c3.695 0 5.982.989 5.982 1.905 0 .903-2.276 2.161-5.982 2.161-3.43 0-6.018-.929-6.018-2.161 0-.778 2.143-1.905 6.018-1.905zm0-.999C16.638 7 13 7.909 13 9.904V24.55c0 1.873 3.279 3.515 7.018 3.515 3.719 0 6.982-1.642 6.982-3.515V9.904C27 7.898 23.493 7 20.018 7z" fill="%23FFF"></path></g></svg>') 10px 50% no-repeat;
-    background-size: 32px 32px; 
 }
 
-#instance-details #os .highcharts-dashboards-component-content h2 {
+#instance-details #os .highcharts-dashboards-component-content p {
     background:url('data:image/svg+xml,<svg class="w-6 h-6" height="40" width="40" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="Arch_AWS-Apache-MXNet_32_svg__a"><stop stop-color="%23055F4E" offset="0%"></stop><stop stop-color="%2356C0A7" offset="100%"></stop></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M0 0h40v40H0z" fill="url(%23Arch_AWS-Apache-MXNet_32_svg__a)"></path><path d="M26.484 24.702v-7.824l-6.017 3.401v7.935l6.017-3.512zm-13 0l5.983 3.51v-7.934l-5.983-3.398v7.822zm.51-8.683l5.974 3.393 6.001-3.393-6.001-3.412-5.974 3.412zm13.242 9.402l-7.017 4.096a.504.504 0 01-.505-.001l-6.983-4.096a.5.5 0 01-.247-.431V16.02c0-.179.097-.345.252-.434l6.983-3.988a.5.5 0 01.495-.001l7.017 3.99a.501.501 0 01.253.433v8.969a.502.502 0 01-.248.432zM20 8.001c4.037 0 7.803 2.155 10.077 5.768l.845-.534C28.465 9.331 24.382 7 20 7c-4.385 0-8.468 2.33-10.923 6.236l.845.533C12.194 10.156 15.961 8 20 8zm12 12.491c-.136 5.578-4.174 10.425-9.6 11.527l.199.981C28.478 31.807 32.852 26.557 33 20.517l-1-.025zM17.599 32.02L17.4 33C11.521 31.807 7.147 26.557 7 20.517l1-.025c.135 5.578 4.173 10.425 9.599 11.527z" fill="%23FFF"></path></g></svg>') 10px 50% no-repeat;
-    background-size: 32px 32px; 
 }
 
 #instances-table .highcharts-datagrid-container {
