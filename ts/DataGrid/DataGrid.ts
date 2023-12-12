@@ -732,8 +732,7 @@ class DataGrid {
 
         if (
             clickEvent &&
-            target &&
-            target.classList.contains(Globals.classNames.cell)
+            target?.classList.contains(Globals.classNames.cell)
         ) {
             clickEvent.call(
                 target.parentElement as HTMLElement,

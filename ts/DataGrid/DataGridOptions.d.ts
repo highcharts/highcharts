@@ -179,7 +179,21 @@ export interface CellValue {
  * Contains events for row
  */
 export interface DataGridEvents {
-    row?: Record<string, Function>
+    row?: DataGridRowEvents
+}
+
+/**
+ * Declare events for row
+ */
+export interface DataGridRowEvents {
+    click?: DataGridClickCallbackFunction
+}
+
+/**
+ * Click callback function
+ */
+export interface DataGridClickCallbackFunction {
+    (this: HTMLElement, event: MouseEvent): void;
 }
 
 /* *
