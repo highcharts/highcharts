@@ -42,7 +42,6 @@ import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
 const {
     addEvent,
-    attr,
     defined,
     erase,
     extend,
