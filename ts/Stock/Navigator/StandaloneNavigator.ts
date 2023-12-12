@@ -1,3 +1,13 @@
+/* *
+ *
+ *  (c) 2010-2023 Mateusz Bernacik
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -41,6 +51,19 @@ type StandaloneNavigatorOptions = {
  *  Class
  *
  * */
+
+/**
+ * The StandaloneNavigator class.
+ *
+ * @class
+ * @name Highcharts.StandaloneNavigator
+ *
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+ * The DOM element to render to, or its id.
+ *
+ * @param {DeepPartial<StandaloneNavigatorOptions>} userOptions
+ * The standalone navigator options with chart-like structure.
+ */
 class StandaloneNavigator {
 
     public eventsToUnbind: Array<Function> = [];
@@ -164,9 +187,6 @@ class StandaloneNavigator {
 
     /**
      * Destroys allocated elements.
-     *
-     * @private
-     * @function Highcharts.StandaloneNavigator#destroy
      */
     public destroy(): void {
         // Disconnect events
@@ -180,18 +200,19 @@ class StandaloneNavigator {
     }
 
     /**
-     * Update standalone navigator
+     * Updates the standalone navigator's options with new user options.
      *
-     * @private
-     * @function Highcharts.StandaloneNavigator#update
+     * @param  {Partial<StandaloneNavigatorOptions>} newOptions
+     *         Updates the standalone navigator's options with new user options.
      *
-     * @param {StandaloneNavigatorOptions} newOptions
-     *        Options to merge in when updating standalone navigator
+     * @param  {boolean | undefined} redraw
+     *         Whether to redraw the standalone navigator. By default, if not
+     *         specified, the standalone navigator will be redrawn.
      */
     public update(
         newOptions: Partial<StandaloneNavigatorOptions>,
         redraw?: boolean
-    ):void {
+    ): void {
         this.options = merge(this.options, newOptions);
 
         this.navigator.chart.update(this.options, redraw);
@@ -199,6 +220,8 @@ class StandaloneNavigator {
 
     /**
      * Adds a series to the standalone navigator.
+     *
+     * @private
      *
      * @param {SeriesOptions} seriesOptions
      *        Options for the series to be added to the navigator.
@@ -216,11 +239,10 @@ class StandaloneNavigator {
      * Initialize the standalone navigator.
      *
      * @private
-     * @function Highcharts.RangeSelector#init
      */
     public initNavigator(): void {
         const nav = this.navigator;
-        nav.top = 0;
+        nav.top = 1;
         nav.xAxis.setScale();
         nav.yAxis.setScale();
         nav.xAxis.render();
@@ -275,6 +297,7 @@ class StandaloneNavigator {
      *
      * @param {number | undefined} min
      *        The new minimum value.
+     *
      * @param {number | undefined} max
      *        The new maximum value.
      */
@@ -290,7 +313,7 @@ class StandaloneNavigator {
      * Get the initial, options based extremes for the standalone navigator.
      *
      * @return {{ min: number, max: number }}
-     *          The initial minimum and maximum extremes values.
+     *         The initial minimum and maximum extremes values.
      */
     public getInitialExtremes(): { min: number, max: number } {
         const { min, max } = this.options,
