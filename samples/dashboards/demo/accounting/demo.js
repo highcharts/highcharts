@@ -1,4 +1,6 @@
 const currentMonth = Date.UTC(2023, 9);
+const revTarget = 89;
+const costTarget = 72;
 const data = [
     ['Date', 'Budget', 'Cost', 'Revenue', 'CostPredP', 'RevPredP', 'CostPredO', 'RevPredO'],
     [Date.UTC(2019, 0), 7000000, 6200000, 8200000, null, null, null, null],
@@ -465,6 +467,44 @@ const board = Dashboards.board('container', {
     }]
 }, true);
 
+board.then(res => {
+    const table = res.dataPool.connectors.data.table.modified.columns;
+
+    const revKPI = res.mountedComponents[0].component;
+    const revForecast = res.mountedComponents[1].component;
+    const costKPI = res.mountedComponents[2].component;
+    const costForecast = res.mountedComponents[3].component;
+    const resKPI = res.mountedComponents[4].component;
+    const resForescast = res.mountedComponents[5].component;
+
+    const firstRow = table.Date.findIndex(date => date === Date.UTC(2023));
+    const lastRow = table.Date.findIndex(date => date === currentMonth);
+
+    let revYTD = 0,
+        costYTD = 0;
+
+    for (let i = firstRow; i <= lastRow; i++) {
+        revYTD += table.Revenue[i] / 1e6;
+        costYTD += table.Cost[i] / 1e6;
+    }
+
+    revKPI.chart.series[0].setData([revYTD]);
+    revKPI.chart.subtitle.update({
+        text: `${Math.round(revYTD / revTarget * 100)}% of target`
+    });
+
+    costKPI.chart.series[0].setData([costYTD]);
+    costKPI.chart.subtitle.update({
+        text: `${Math.round(costYTD / costTarget * 100)}% of target`
+    });
+
+    resKPI.chart.series[0].setData([Math.round((revYTD - costYTD) * 10) / 10]);
+    resKPI.chart.subtitle.update({
+        text: `${Math.round(
+            (revYTD - costYTD) / (revTarget - costTarget) * 100
+        )}% of target`
+    });
+});
 
 /**
  * Popup
