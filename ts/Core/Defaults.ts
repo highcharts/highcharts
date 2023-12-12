@@ -1572,6 +1572,10 @@ const defaultOptions: DefaultOptions = {
          * The pixel height of the symbol for series types that use a rectangle
          * in the legend. Defaults to the font size of legend items.
          *
+         * Note: This option is a default source of color axis height, if
+         * [colorAxis.height](https://api.highcharts.com/highcharts/colorAxis.height)
+         * option is not set.
+         *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a vertical color
          * axis, the height defaults to 200.
@@ -1608,6 +1612,10 @@ const defaultOptions: DefaultOptions = {
         /**
          * The pixel width of the legend item symbol. When the `squareSymbol`
          * option is set, this defaults to the `symbolHeight`, otherwise 16.
+         *
+         * Note: This option is a default source of color axis width, if
+         * [colorAxis.width](https://api.highcharts.com/highcharts/colorAxis.width)
+         * option is not set.
          *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a horizontal color
