@@ -659,7 +659,7 @@ class Axis {
 
         } else if (
             i &&
-            defined(numericSymbols) &&
+            numericSymbols &&
             numericSymbolDetector >= 1000
         ) {
             // Decide whether we should add a numeric symbol like k (thousands)
