@@ -111,7 +111,6 @@
                     events: {
                         click() {
                             coveredSeriesClicked = true;
-                            console.log(1);
                         }
                     }
                 }
