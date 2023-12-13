@@ -53,18 +53,6 @@ const {
     doc,
     win
 } = H;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: SeriesClass,
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        gantt: GanttSeries,
-        map: MapSeries,
-        mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries,
-        xrange: XRangeSeries
-    }
-} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -375,9 +363,15 @@ function chartGetDataRows(
                 return categoryHeader;
             }
 
-            if (!(item instanceof SeriesClass)) {
-                return (item.options.title && item.options.title.text) ||
-                    (item.dateTime ? categoryDatetimeHeader : categoryHeader);
+            if (!(item as Series).bindAxes) {
+                return (
+                    (item as Axis).options.title &&
+                    (item as Axis).options.title.text
+                ) || (
+                    (item as Axis).dateTime ?
+                        categoryDatetimeHeader :
+                        categoryHeader
+                );
             }
 
             if (multiLevelHeaders) {
@@ -385,7 +379,7 @@ function chartGetDataRows(
                     columnTitle: (keyLength as any) > 1 ?
                         (key as any) :
                         item.name,
-                    topLevelColumnTitle: item.name
+                    topLevelColumnTitle: (item as Series).name
                 };
             }
 
@@ -1115,7 +1109,8 @@ function chartViewData(
  * @private
  */
 function compose(
-    ChartClass: typeof Chart
+    ChartClass: typeof Chart,
+    SeriesClass: typeof Series
 ): void {
 
     if (pushUnique(composed, compose)) {
@@ -1179,6 +1174,15 @@ function compose(
 
         setOptions(ExportDataDefaults);
 
+        const {
+            arearange: AreaRangeSeries,
+            gantt: GanttSeries,
+            map: MapSeries,
+            mapbubble: MapBubbleSeries,
+            treemap: TreemapSeries,
+            xrange: XRangeSeries
+        } = SeriesClass.types;
+
         if (AreaRangeSeries) {
             AreaRangeSeries.prototype.keyToAxis = {
                 low: 'y',
@@ -1194,16 +1198,6 @@ function compose(
             };
         }
 
-        XRangeSeries.prototype.keyToAxis = {
-            x2: 'x'
-        };
-
-        if (XRangeSeries) {
-            XRangeSeries.prototype.keyToAxis = {
-                x2: 'x'
-            };
-        }
-
         if (MapSeries) {
             MapSeries.prototype.exportKey = 'name';
         }
@@ -1214,6 +1208,12 @@ function compose(
 
         if (TreemapSeries) {
             TreemapSeries.prototype.exportKey = 'name';
+        }
+
+        if (XRangeSeries) {
+            XRangeSeries.prototype.keyToAxis = {
+                x2: 'x'
+            };
         }
     }
 
