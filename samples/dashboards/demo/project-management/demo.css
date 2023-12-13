@@ -19,7 +19,6 @@
     :root {
         /* Colors for data series and points */
         --highcharts-color-0: #93cbae;
-        --highcharts-color-0-variant: #badfcc;
         --highcharts-color-5: #c4c4c4;
 
         /* Extra colors */
@@ -63,11 +62,7 @@
     fill: transparent;
 }
 
-#dashboard-chart-1 .highcharts-point.highcharts-color-0 {
-    fill: var(--highcharts-color-5);
-    stroke: var(--highcharts-color-5);
-}
-
+#dashboard-chart-1 .highcharts-point.highcharts-color-0,
 #dashboard-chart-2 .highcharts-color-0 {
     fill: var(--highcharts-color-5);
     stroke: var(--highcharts-color-5);
