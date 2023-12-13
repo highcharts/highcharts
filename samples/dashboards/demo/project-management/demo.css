@@ -33,6 +33,7 @@
 .highcharts-dashboards-component-title {
     font-size: 1.2em;
     text-align: left;
+    margin: 1em;
 }
 
 .dashboard-header .dashboard-title,
@@ -52,11 +53,6 @@
     font-size: 1.4em;
 }
 
-#dashboard-chart-1 .highcharts-point.highcharts-color-0 {
-    fill: var(--highcharts-color-5);
-    stroke: var(--highcharts-color-5);
-}
-
 #dashboard-kpi-3 .highcharts-dashboards-component .highcharts-point.highcharts-color-0 {
     fill: var(--highcharts-neutral-color-100);
 }
@@ -70,13 +66,23 @@
     fill: transparent;
 }
 
+#dashboard-chart-1 .highcharts-point.highcharts-color-0 {
+    fill: var(--highcharts-color-5);
+    stroke: var(--highcharts-color-5);
+}
+
+#dashboard-chart-2 .highcharts-color-0 {
+    fill: var(--highcharts-color-5);
+    stroke: var(--highcharts-color-5);
+}
+
 #dashboard-chart-2 .highcharts-grid-axis .highcharts-tick,
 #dashboard-chart-2 .highcharts-axis-line {
     stroke-width: 0;
 }
 
 #dashboard-chart-2 .highcharts-data-label text {
-    fill: #000;
+    fill: var(--highcharts-neutral-color-0);
 }
 
 #cumulative .highcharts-color-2 {
@@ -113,7 +119,7 @@
 
 .highcharts-plot-line {
     stroke-width: 3px;
-    stroke: var(--highcharts-neutral-color-100);
+    stroke: #ff0;
 }
 
 .highcharts-plot-line-label {
