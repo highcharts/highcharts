@@ -35,8 +35,8 @@ describe('Crossfilter with affectNavigator option', () => {
                 .trigger('mousemove', { pageX }).trigger('mouseup');
         }
 
-        cy.board().then(board => {
-            const dataTable = board.dataPool.connectors.Economy.table;
+        cy.board().then(async board => {
+            const dataTable = await board.dataPool.getConnectorTable('Economy');
             assert.ok(
                 dataTable.modified.rowCount < dataTable.rowCount,
                 'The modified table should have less rows than the original one.'
