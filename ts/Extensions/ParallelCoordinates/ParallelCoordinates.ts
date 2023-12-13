@@ -24,6 +24,8 @@ import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
@@ -154,14 +156,6 @@ namespace ParallelCoordinates {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -177,18 +171,16 @@ namespace ParallelCoordinates {
         ParallelAxis.compose(AxisClass);
         ParallelSeries.compose(SeriesClass);
 
-        if (pushUnique(composedMembers, ChartClass)) {
-            const ChartCompo = ChartClass as typeof ChartComposition;
-            const addsProto = ChartAdditions.prototype;
-            const chartProto = ChartCompo.prototype;
+        if (pushUnique(composed, compose)) {
+            const ChartCompo = ChartClass as typeof ChartComposition,
+                addsProto = ChartAdditions.prototype,
+                chartProto = ChartCompo.prototype;
 
             chartProto.setParallelInfo = addsProto.setParallelInfo;
 
             addEvent(ChartCompo, 'init', onChartInit);
             addEvent(ChartCompo, 'update', onChartUpdate);
-        }
 
-        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
             merge(
                 true,
                 highchartsDefaultOptions.chart,

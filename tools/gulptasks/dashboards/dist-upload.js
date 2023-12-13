@@ -383,6 +383,13 @@ async function distUpload() {
             '.'
         );
 
+        const dataGridFolder = path.join(
+            buildFolder,
+            '../js-gzip',
+            'datagrid'
+        );
+        const datagridCdnPrefix = 'datagrid';
+
         // Upload versioned paths
         const [major, minor] = release.split('.');
         const versions = [
@@ -402,11 +409,28 @@ async function distUpload() {
                 cdnVersionFolder,
                 HTTP_MAX_AGE.fiveYears
             );
+
+            const datagridCdnVersionFolder = path.join(
+                datagridCdnPrefix,
+                version,
+                '/'
+            );
+
+            // Upload datagrid
+            await uploadFolder(
+                dataGridFolder,
+                targetStorage,
+                bucket,
+                datagridCdnVersionFolder,
+                HTTP_MAX_AGE.fiveYears
+            );
         }
 
         // Upload to path without version
         logLib.warn(`Uploading to ${cdnFolder}...`);
         await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
+
+        await uploadFolder(dataGridFolder, targetStorage, bucket, datagridCdnPrefix);
 
         // Upload zip
         logLib.warn('Uploading to zips/...');

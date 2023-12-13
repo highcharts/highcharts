@@ -2,7 +2,7 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json'
+        'https://www.highcharts.com/samples/data/large-dataset.json'
     ).then(response => response.json());
 
     // Create a timer

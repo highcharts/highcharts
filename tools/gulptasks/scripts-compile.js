@@ -77,8 +77,7 @@ function scriptsCompile(filePaths, config = {}) {
                 // Write compiled file
                 fs.writeFileSync(
                     outputPath,
-                    result.code.replace('@license ', '') +
-                    `//# sourceMappingURL=${path.basename(outputMapPath)}`
+                    result.code.replace('@license ', '')
                 );
 
                 // Write source map

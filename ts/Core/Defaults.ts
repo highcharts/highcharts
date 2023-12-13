@@ -232,7 +232,7 @@ const defaultOptions: DefaultOptions = {
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `null` disables shortening altogether.
+         * `numericSymbols` to `undefined` disables shortening altogether.
          *
          * @sample {highcharts} highcharts/lang/numericsymbols/
          *         Replacing the symbols with text
@@ -1896,16 +1896,20 @@ const defaultOptions: DefaultOptions = {
          * The color of the tooltip border. When `undefined`, the border takes
          * the color of the corresponding series or point.
          *
-         * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
-         * @sample {highcharts} highcharts/tooltip/bordercolor-black/
-         *         Black border
-         * @sample {highstock} stock/tooltip/general/
-         *         Styled tooltip
-         * @sample {highmaps} maps/tooltip/background-border/
-         *         Background and border demo
+         * Note that the [borderWidth](#tooltip.borderWidth) is usually 0 by
+         * default, so the border color may not be visible until a border width
+         * is set.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow
+         *         series by default
+         * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black
+         *         border
+         * @sample {highstock} stock/tooltip/general/ Styled tooltip
+         * @sample {highmaps} maps/tooltip/background-border/ Background and
+         *         border demo
+         *
+         * @type
+         * {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 

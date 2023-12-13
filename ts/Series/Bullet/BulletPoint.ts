@@ -37,8 +37,8 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
      * */
 
     public borderColor: BulletPointOptions['borderColor'];
-    public options: BulletPointOptions = void 0 as any;
-    public series: BulletSeries = void 0 as any;
+    public options!: BulletPointOptions;
+    public series!: BulletSeries;
     public target?: number;
     public targetGraphic?: SVGElement;
 

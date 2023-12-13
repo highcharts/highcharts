@@ -32,6 +32,8 @@ import type {
     TreeGridAxisOptions
 } from './TreeGridOptions';
 
+import H from '../../Globals.js';
+const { composed } = H;
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
@@ -40,6 +42,7 @@ const {
     isObject,
     isNumber,
     pick,
+    pushUnique,
     wrap
 } = U;
 
@@ -64,14 +67,6 @@ export interface TreeGridTick extends Tick {
     options: TreeGridAxisOptions;
     treeGrid: TreeGridTickAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -133,8 +128,9 @@ function renderLabelIcon(
         options = params.options,
         width = options.width || 0,
         height = options.height || 0,
+        padding = options.padding ?? tick.axis.linkedParent ? 0 : 5,
         iconCenter = {
-            x: labelBox.x - (width / 2) - (options.padding || 0),
+            x: labelBox.x - (width / 2) - padding,
             y: labelBox.y - (height / 2)
         },
         rotation = params.collapsed ? 90 : 180,
@@ -213,7 +209,7 @@ function wrapGetLabelPosition(
     if (isTreeGrid) {
         const {
                 width = 0,
-                padding = 0
+                padding = axis.linkedParent ? 0 : 5
             } = (
                 lbOptions && isObject(lbOptions.symbol, true) ?
                     lbOptions.symbol :
@@ -385,26 +381,28 @@ class TreeGridTickAdditions {
         TickClass: typeof Tick
     ): void {
 
-        if (U.pushUnique(composedMembers, TickClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const tickProto = TickClass.prototype;
+
             addEvent(TickClass, 'init', onTickInit);
 
-            wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
-            wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
+            wrap(tickProto, 'getLabelPosition', wrapGetLabelPosition);
+            wrap(tickProto, 'renderLabel', wrapRenderLabel);
 
             // backwards compatibility
-            (TickClass.prototype as any).collapse = function (
+            (tickProto as any).collapse = function (
                 this: TreeGridTick,
                 redraw?: boolean
             ): void {
                 this.treeGrid.collapse(redraw);
             };
-            (TickClass.prototype as any).expand = function (
+            (tickProto as any).expand = function (
                 this: TreeGridTick,
                 redraw?: boolean
             ): void {
                 this.treeGrid.expand(redraw);
             };
-            (TickClass.prototype as any).toggleCollapse = function (
+            (tickProto as any).toggleCollapse = function (
                 this: TreeGridTick,
                 redraw?: boolean
             ): void {

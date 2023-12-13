@@ -157,11 +157,11 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ABandsPoint> = void 0 as any;
+    public data!: Array<ABandsPoint>;
 
-    public options: ABandsOptions = void 0 as any;
+    public options!: ABandsOptions;
 
-    public points: Array<ABandsPoint> = void 0 as any;
+    public points!: Array<ABandsPoint>;
 
     /* *
      *

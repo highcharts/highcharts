@@ -39,12 +39,6 @@ import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import ExportDataDefaults from './ExportDataDefaults.js';
-import H from '../../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
 import D from '../../Core/Defaults.js';
 const {
     getOptions,
@@ -52,6 +46,13 @@ const {
 } = D;
 import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
+import ExportDataDefaults from './ExportDataDefaults.js';
+import H from '../../Core/Globals.js';
+const {
+    composed,
+    doc,
+    win
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: SeriesClass,
@@ -72,7 +73,8 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -138,14 +140,6 @@ interface ExportDataSeries {
     pointArrayMap?: Array<string>;
     index: Number;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -1124,12 +1118,13 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
+        const chartProto = ChartClass.prototype,
+            exportingOptions = getOptions().exporting;
+
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
-
-        const chartProto = ChartClass.prototype;
 
         chartProto.downloadCSV = chartDownloadCSV;
         chartProto.downloadXLS = chartDownloadXLS;
@@ -1140,10 +1135,6 @@ function compose(
         chartProto.hideData = chartHideData;
         chartProto.toggleDataTable = chartToggleDataTable;
         chartProto.viewData = chartViewData;
-    }
-
-    if (U.pushUnique(composedMembers, setOptions)) {
-        const exportingOptions = getOptions().exporting;
 
         // Add "Download CSV" to the exporting menu.
         // @todo consider move to defaults
@@ -1187,39 +1178,39 @@ function compose(
         }
 
         setOptions(ExportDataDefaults);
-    }
 
-    if (AreaRangeSeries && U.pushUnique(composedMembers, AreaRangeSeries)) {
-        AreaRangeSeries.prototype.keyToAxis = {
-            low: 'y',
-            high: 'y'
-        };
-    }
+        if (AreaRangeSeries) {
+            AreaRangeSeries.prototype.keyToAxis = {
+                low: 'y',
+                high: 'y'
+            };
+        }
 
-    if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
-        GanttSeries.prototype.exportKey = 'name';
-        GanttSeries.prototype.keyToAxis = {
-            start: 'x',
-            end: 'x'
-        };
-    }
+        if (GanttSeries) {
+            GanttSeries.prototype.exportKey = 'name';
+            GanttSeries.prototype.keyToAxis = {
+                start: 'x',
+                end: 'x'
+            };
+        }
 
-    if (XRangeSeries && U.pushUnique(composedMembers, XRangeSeries)) {
-        XRangeSeries.prototype.keyToAxis = {
-            x2: 'x'
-        };
-    }
+        if (XRangeSeries) {
+            XRangeSeries.prototype.keyToAxis = {
+                x2: 'x'
+            };
+        }
 
-    if (MapSeries && U.pushUnique(composedMembers, MapSeries)) {
-        MapSeries.prototype.exportKey = 'name';
-    }
+        if (MapSeries) {
+            MapSeries.prototype.exportKey = 'name';
+        }
 
-    if (MapBubbleSeries && U.pushUnique(composedMembers, MapBubbleSeries)) {
-        MapBubbleSeries.prototype.exportKey = 'name';
-    }
+        if (MapBubbleSeries) {
+            MapBubbleSeries.prototype.exportKey = 'name';
+        }
 
-    if (TreemapSeries && U.pushUnique(composedMembers, TreemapSeries)) {
-        TreemapSeries.prototype.exportKey = 'name';
+        if (TreemapSeries) {
+            TreemapSeries.prototype.exportKey = 'name';
+        }
     }
 
 }

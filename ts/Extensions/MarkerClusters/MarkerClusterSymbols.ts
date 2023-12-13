@@ -104,7 +104,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(modifiedMembers, SVGRendererClass)) {
+    if (pushUnique(modifiedMembers, compose)) {
         symbols = SVGRendererClass.prototype.symbols;
 
         symbols.cluster = cluster;

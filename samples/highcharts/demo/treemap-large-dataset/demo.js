@@ -1,7 +1,7 @@
 (async () => {
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json'
+        'https://www.highcharts.com/samples/data/world-mortality.json'
     ).then(response => response.json());
 
     let regionP,

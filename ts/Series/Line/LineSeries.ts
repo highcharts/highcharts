@@ -71,11 +71,11 @@ class LineSeries extends Series {
      *
      * */
 
-    public data: Array<LinePoint> = void 0 as any;
+    public data!: Array<LinePoint>;
 
-    public options: LineSeriesOptions = void 0 as any;
+    public options!: LineSeriesOptions;
 
-    public points: Array<LinePoint> = void 0 as any;
+    public points!: Array<LinePoint>;
 
     /* *
      *

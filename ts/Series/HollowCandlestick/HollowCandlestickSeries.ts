@@ -145,13 +145,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Properties
      *
      * */
-    public data: Array<HollowCandlestickPoint> = void 0 as any;
+    public data!: Array<HollowCandlestickPoint>;
 
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
-    public options: HollowCandlestickSeriesOptions = void 0 as any;
+    public options!: HollowCandlestickSeriesOptions;
 
-    public points: Array<HollowCandlestickPoint> = void 0 as any;
+    public points!: Array<HollowCandlestickPoint>;
 
     /* *
      *

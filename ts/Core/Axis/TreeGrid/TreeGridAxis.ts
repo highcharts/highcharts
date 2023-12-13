@@ -42,6 +42,8 @@ import type {
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -56,6 +58,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -137,14 +140,6 @@ interface TreeGridObject {
     collapsedNodes: Array<GridNode>;
     tree: TreeNode;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -760,19 +755,14 @@ function wrapInit(
                     x: -5,
                     y: -5,
                     height: 10,
-                    width: 10,
-                    padding: 5
+                    width: 10
                 }
             },
             uniqueNames: false
 
         }, userOptions, { // User options
             // Forced options
-            reversed: true,
-            // grid.columns is not supported in treegrid
-            grid: {
-                columns: void 0
-            }
+            reversed: true
         });
     }
 
@@ -801,6 +791,9 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        linkedParent = typeof options.linkedTo === 'number' ?
+            this.chart[axis.coll]?.[options.linkedTo] :
+            void 0,
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -809,15 +802,30 @@ function wrapSetTickInterval(
 
         fireEvent(axis, 'foundExtremes');
 
-        // setAxisTranslation modifies the min and max according to
-        // axis breaks.
+        // `setAxisTranslation` modifies the min and max according to axis
+        // breaks.
         axis.setAxisTranslation();
 
-        axis.tickmarkOffset = 0.5;
         axis.tickInterval = 1;
+        axis.tickmarkOffset = 0.5;
         axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?
             axis.treeGrid.getTickPositions() :
             [];
+
+        if (linkedParent) {
+
+            const linkedParentExtremes = linkedParent.getExtremes();
+            axis.min = pick(
+                linkedParentExtremes.min,
+                linkedParentExtremes.dataMin
+            );
+            axis.max = pick(
+                linkedParentExtremes.max,
+                linkedParentExtremes.dataMax
+            );
+            axis.tickPositions = linkedParent.tickPositions;
+        }
+        axis.linkedParent = linkedParent;
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
     }
@@ -880,12 +888,12 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const axisProps = AxisClass.prototype;
+
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
                 AxisClass.keepProps.push('treeGrid');
             }
-
-            const axisProps = AxisClass.prototype;
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);
@@ -897,9 +905,6 @@ class TreeGridAxisAdditions {
                 getNode: Tree.getNode
             };
 
-        }
-
-        if (U.pushUnique(composedMembers, TickClass)) {
             if (!TickConstructor) {
                 TickConstructor = TickClass;
             }

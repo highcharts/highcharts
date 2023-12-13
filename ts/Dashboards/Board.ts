@@ -216,13 +216,13 @@ class Board implements Serializable<Board, Board.JSON> {
      * dashboard.
      * @internal
      * */
-    public boardWrapper: HTMLElement = void 0 as any;
+    public boardWrapper!: HTMLElement;
 
     /**
      * The main container for the dashboard. Created inside the element
      * specified by user when creating the dashboard.
      * */
-    public container: HTMLElement = void 0 as any;
+    public container!: HTMLElement;
 
     /**
      * The data cursor instance used for interacting with the data.
@@ -554,8 +554,16 @@ class Board implements Serializable<Board, Board.JSON> {
         let layout;
 
         if (board.editMode) {
+            const editModeTools = board.editMode.tools;
+
             board.editMode.hideToolbars(['cell', 'row']);
             board.editMode.hideContextPointer();
+
+            // update expanded context menu container
+            if (editModeTools.contextMenu) {
+                editModeTools.contextMenu
+                    .updatePosition(editModeTools.contextButtonElement);
+            }
         }
 
         for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {

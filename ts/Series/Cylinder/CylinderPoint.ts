@@ -44,9 +44,9 @@ class CylinderPoint extends ColumnPoint {
      *
      * */
 
-    public options: CylinderPointOptions = void 0 as any;
+    public options!: CylinderPointOptions;
 
-    public series: CylinderSeries = void 0 as any;
+    public series!: CylinderSeries;
 
 }
 

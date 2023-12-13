@@ -108,13 +108,13 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<FlagsPoint> = void 0 as any;
+    public data!: Array<FlagsPoint>;
 
     public onSeries?: typeof Series.prototype;
 
-    public options: FlagsSeriesOptions = void 0 as any;
+    public options!: FlagsSeriesOptions;
 
-    public points: Array<FlagsPoint> = void 0 as any;
+    public points!: Array<FlagsPoint>;
 
     /* *
      *

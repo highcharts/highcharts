@@ -76,7 +76,7 @@ abstract class Controllable implements ControlTarget {
     public annotation: Annotation;
     public chart: AnnotationChart;
     public collection: ('labels'|'shapes');
-    public graphic: SVGElement = void 0 as any;
+    public graphic!: SVGElement;
     public index: number;
     public itemType: ('label'|'shape');
     public options: ControllableOptions;

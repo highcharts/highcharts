@@ -298,11 +298,18 @@ namespace Sync {
     export interface OptionsEntry {
 
         /**
+         * Whether the sync should be enabled.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+
+        /**
          * Responsible for communicating to the component group that the action
          * has been triggered on the component.
          *
-         * If `true` the default emitter will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default emitter will be used, if `false`
+         * or `null` it will be disabled
          */
         emitter?: EmitterConfig | null | boolean;
 
@@ -310,8 +317,8 @@ namespace Sync {
          * Responsible for _handling_ incoming action from the synced component
          * group.
          *
-         * If `true` the default handler will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default handler will be used, if `false`
+         * or `null` it will be disabled
          */
         handler?: HandlerConfig | null | boolean;
 

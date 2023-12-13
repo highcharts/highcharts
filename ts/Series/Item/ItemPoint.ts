@@ -45,9 +45,9 @@ class ItemPoint extends PiePoint {
      *
      * */
 
-    public options: ItemPointOptions = void 0 as any;
+    public options!: ItemPointOptions;
 
-    public series: ItemSeries = void 0 as any;
+    public series!: ItemSeries;
 
 }
 

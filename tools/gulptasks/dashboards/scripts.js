@@ -55,6 +55,7 @@ async function dashboardsScripts() {
         fsLib.deleteDirectory('js/Maps/', true);
         fsLib.deleteDirectory('js/Series/', true);
         fsLib.deleteDirectory('js/Stock/', true);
+        fsLib.deleteDirectory('js/masters', true);
 
         // Fix masters
         fs.renameSync('js/masters-dashboards/', 'js/masters/');
