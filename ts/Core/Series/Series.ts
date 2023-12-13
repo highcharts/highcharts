@@ -4235,7 +4235,7 @@ class Series {
         }
 
         // Do the merge, with some forced options
-        options = merge(oldOptions, animation as any, {
+        options = merge(oldOptions, {
             // When oldOptions.index is null it should't be cleared.
             // Otherwise navigator series will have wrong indexes (#10193).
             index: typeof oldOptions.index === 'undefined' ?
@@ -4247,7 +4247,8 @@ class Series {
                 // When updating after addPoint
                 (series.xData as any)[0]
             )
-        }, (!keepPoints && { data: series.options.data }) as any, options);
+        }, (!keepPoints && { data: series.options.data }) as any, options,
+        animation as any);
 
         // Merge does not merge arrays, but replaces them. Since points were
         // updated, `series.options.data` has correct merged options, use it:
