@@ -53,20 +53,11 @@ import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
 const G: AnyRecord = Highcharts;
-// Animation
-G.animate = Animation.animate;
-G.animObject = Animation.animObject;
-G.getDeferredAnimation = Animation.getDeferredAnimation;
-G.setAnimation = Animation.setAnimation;
-G.stop = Animation.stop;
-G.timers = Fx.timers;
 // Classes
 G.AST = AST;
 G.Axis = Axis;
 G.Chart = Chart;
-G.chart = Chart.chart;
 G.Color = Color;
-G.color = Color.parse;
 G.DataLabel = DataLabel;
 G.Fx = Fx;
 G.Legend = Legend;
@@ -85,19 +76,24 @@ G.Templating = Templating;
 G.Tick = Tick;
 G.Time = Time;
 G.Tooltip = Tooltip;
-// Default Options
-G.defaultOptions = Defaults.defaultOptions;
-G.getOptions = Defaults.getOptions;
-G.time = Defaults.defaultTime;
-G.setOptions = Defaults.setOptions;
-// Format Utilities
-G.dateFormat = Templating.dateFormat;
-G.format = Templating.format;
-G.numberFormat = Templating.numberFormat;
 // Utilities
-Utilities.extend(G, Utilities);
+G.animate = Animation.animate;
+G.animObject = Animation.animObject;
+G.chart = Chart.chart;
+G.color = Color.parse;
+G.dateFormat = Templating.dateFormat;
+G.defaultOptions = Defaults.defaultOptions;
 G.distribute = RendererUtilities.distribute;
+G.format = Templating.format;
+G.getDeferredAnimation = Animation.getDeferredAnimation;
+G.getOptions = Defaults.getOptions;
+G.numberFormat = Templating.numberFormat;
 G.seriesType = SeriesRegistry.seriesType;
+G.setAnimation = Animation.setAnimation;
+G.setOptions = Defaults.setOptions;
+G.stop = Animation.stop;
+G.time = Defaults.defaultTime;
+G.timers = Fx.timers;
 // Compositions
 BorderRadius.compose(G.Series, G.SVGElement, G.SVGRenderer);
 ColumnDataLabel.compose(G.Series.types.column);
@@ -115,5 +111,6 @@ Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);
 StackingAxis.compose(G.Axis, G.Chart, G.Series);
 Tooltip.compose(G.Pointer);
+Utilities.extend(G, Utilities);
 // Default Export
 export default G;

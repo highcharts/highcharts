@@ -61,8 +61,19 @@ async function resolveExternals(info) {
         case 'Core/Axis/Color/ColorAxis':
         case 'Series/ColorMapComposition':
             if (
+                masterName !== 'coloraxis' &&
+                masterName !== 'heatmap' &&
                 masterName !== 'map' &&
-                masterName !== 'coloraxis'
+                masterName !== 'sunburst' &&
+                masterName !== 'treemap'
+            ) {
+                return createUMDConfig(name);
+            }
+            break;
+        case 'Core/HttpUtilities':
+            if (
+                masterName !== 'data' &&
+                masterName !== 'exporting'
             ) {
                 return createUMDConfig(name);
             }
