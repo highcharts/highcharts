@@ -296,7 +296,7 @@ class ColorAxis extends Axis implements AxisLike {
     public setAxisSize(): void {
         const axis = this,
             chart = axis.chart,
-            symbol = axis.legendItem && axis.legendItem.symbol,
+            symbol = axis.legendItem?.symbol,
             legendOptions = chart.options.legend || {};
 
         let x,
@@ -316,10 +316,10 @@ class ColorAxis extends Axis implements AxisLike {
             this.pos = this.horiz ? x : y;
         } else {
             const width = this.options.width ?
-                    relativeLength(this.options.width, chart.plotWidth) :
+                    relativeLength(this.options.width, chart.chartWidth) :
                     legendOptions.symbolWidth,
                 height = this.options.height ?
-                    relativeLength(this.options.height, chart.plotHeight) :
+                    relativeLength(this.options.height, chart.chartHeight) :
                     legendOptions.symbolHeight;
             // Fake length for disabled legend to avoid tick issues
             // and such (#5205)
@@ -414,13 +414,13 @@ class ColorAxis extends Axis implements AxisLike {
             horiz = axis.horiz,
             width = pick(
                 this.options.width ?
-                    relativeLength(this.options.width, chart.plotWidth) :
+                    relativeLength(this.options.width, chart.chartWidth) :
                     legendOptions.symbolWidth,
                 horiz ? ColorAxis.defaultLegendLength : 12
             ),
             height = pick(
                 this.options.height ?
-                    relativeLength(this.options.height, chart.plotHeight) :
+                    relativeLength(this.options.height, chart.chartHeight) :
                     legendOptions.symbolHeight,
                 horiz ? 12 : ColorAxis.defaultLegendLength
             ),

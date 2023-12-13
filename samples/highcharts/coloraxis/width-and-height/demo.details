@@ -1,5 +1,5 @@
 ---
- name: Color axis with specified width and height
+ name: Color axis width and height
  authors:
    - Hubert Kozik
  js_wrap: b
