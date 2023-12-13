@@ -284,7 +284,14 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ) {
-        this.getArgs(a, b, c);
+        const args = [...arguments];
+
+        // Remove the optional first argument, renderTo, and set it on this.
+        if (isString(a) || (a as globalThis.HTMLElement).nodeName) {
+            this.renderTo = args.shift();
+        }
+
+        this.init(args[0], args[1]);
     }
 
     /* *
@@ -364,33 +371,6 @@ class Chart {
      *  Functions
      *
      * */
-
-    /**
-     * Handle the arguments passed to the constructor.
-     *
-     * @private
-     * @function Highcharts.Chart#getArgs
-     *
-     * @param {...Array<*>} arguments
-     * All arguments for the constructor.
-     *
-     * @emits Highcharts.Chart#event:init
-     * @emits Highcharts.Chart#event:afterInit
-     */
-    public getArgs(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): void {
-        // Remove the optional first argument, renderTo, and
-        // set it on this.
-        if (isString(a) || (a as any).nodeName) {
-            this.renderTo = a as any;
-            this.init(b as any, c);
-        } else {
-            this.init(a as any, b as any);
-        }
-    }
 
     /**
      * Function setting zoom options after chart init and after chart update.

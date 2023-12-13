@@ -39,8 +39,6 @@ const {
  * */
 
 class HeikinAshiPoint extends CandlestickPoint {
-    // clone inheritence
-    public resolveColor = HLCPoint.prototype.resolveColor;
 }
 
 /* *

@@ -24,6 +24,11 @@ function buildCSS(
     const fsLib = require('../lib/fs');
 
     fsLib.copyAllFiles(
+        'code/datagrid/css',
+        targetFolder
+    );
+
+    fsLib.copyAllFiles(
         sourceFolder,
         targetFolder,
         true,

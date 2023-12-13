@@ -134,19 +134,21 @@ class PiePoint extends Point {
      * Initialize the pie slice.
      * @private
      */
-    public init(): PiePoint {
-        super.init.apply(this, arguments as any);
+    public constructor(
+        series: PieSeries,
+        options: PiePointOptions,
+        x?: number
+    ) {
+        super(series, options, x);
 
-        this.name = pick(this.name, 'Slice');
+        this.name ??= 'Slice';
 
-        // add event listener for select
+        // Add event listener for select
         const toggleSlice = (e: (AnyRecord|Event)): void => {
             this.slice(e.type === 'select');
         };
         addEvent(this, 'select', toggleSlice);
         addEvent(this, 'unselect', toggleSlice);
-
-        return this;
     }
 
     /**
