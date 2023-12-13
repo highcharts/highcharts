@@ -23,9 +23,13 @@ function test_Gantt() {
         },
         xAxis: {
             min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30)
+            max: Date.UTC(2014, 10, 30),
+            dateTimeLabelFormats: {
+                day: {
+                    list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                }
+            }
         },
-
         series: [{
             type: 'gantt',
             name: 'Project 1',
