@@ -36,7 +36,7 @@ export interface LangOptions {
     loading: string;
     months: Array<string>;
     numericSymbolMagnitude?: number;
-    numericSymbols: Array<string>;
+    numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
     shortMonths: Array<string>;

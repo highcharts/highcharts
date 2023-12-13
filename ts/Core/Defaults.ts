@@ -232,7 +232,7 @@ const defaultOptions: DefaultOptions = {
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `null` disables shortening altogether.
+         * `numericSymbols` to `undefined` disables shortening altogether.
          *
          * @sample {highcharts} highcharts/lang/numericsymbols/
          *         Replacing the symbols with text
