@@ -6,12 +6,9 @@
 .highcharts-light {
     /* Colors for data series and points */
     --highcharts-color-0: #69a285;
-    --highcharts-color-0-variant: #335041;
     --highcharts-color-1: #ffbb07;
-    --highcharts-color-1-variant: #745405;
     --highcharts-color-2: #727e8d;
     --highcharts-color-3: #fc6556;
-    --highcharts-color-3-variant: #ad261a;
     --highcharts-color-5: #404040;
 
     /* Extra colors */
@@ -83,38 +80,6 @@
 
 #dashboard-chart-2 .highcharts-data-label text {
     fill: var(--highcharts-neutral-color-0);
-}
-
-#cumulative .highcharts-color-2 {
-    fill: var(--highcharts-color-3);
-    fill-opacity: 1;
-}
-
-#cumulative .highcharts-area-series.highcharts-color-0 .highcharts-graph {
-    stroke: var(--highcharts-color-0-variant);
-}
-
-#cumulative .highcharts-area-series.highcharts-color-0 .highcharts-point {
-    fill: var(--highcharts-color-0-variant);
-    stroke: var(--highcharts-color-0-variant);
-}
-
-#cumulative .highcharts-area-series.highcharts-color-1 .highcharts-graph {
-    stroke: var(--highcharts-color-1-variant);
-}
-
-#cumulative .highcharts-area-series.highcharts-color-1 .highcharts-point {
-    fill: var(--highcharts-color-1-variant);
-    stroke: var(--highcharts-color-1-variant);
-}
-
-#cumulative .highcharts-area-series.highcharts-color-2 .highcharts-graph {
-    stroke: var(--highcharts-color-3-variant);
-}
-
-#cumulative .highcharts-area-series.highcharts-color-2 .highcharts-point {
-    fill: var(--highcharts-color-3-variant);
-    stroke: var(--highcharts-color-3-variant);
 }
 
 .highcharts-plot-line {
