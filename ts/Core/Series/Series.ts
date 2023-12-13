@@ -256,7 +256,7 @@ class Series {
 
     public _hasTracking?: boolean;
 
-    public _i: number = void 0 as any;
+    public _i!: number;
 
     public animationTimeout?: number;
 
@@ -266,7 +266,7 @@ class Series {
 
     public buildingKdTree?: boolean;
 
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
 
     public closestPointRange?: number;
 
@@ -278,7 +278,7 @@ class Series {
 
     public cropped?: boolean;
 
-    public data: Array<Point> = void 0 as any;
+    public data!: Array<Point>;
 
     public dataMax?: number;
 
@@ -298,9 +298,9 @@ class Series {
 
     public group?: SVGElement;
 
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
-    public eventsToUnbind: Array<Function> = void 0 as any;
+    public eventsToUnbind!: Array<Function>;
 
     public halo?: SVGElement;
 
@@ -310,7 +310,7 @@ class Series {
 
     public id?: string;
 
-    public index: number = void 0 as any;
+    public index!: number;
 
     public initialType?: string;
 
@@ -324,9 +324,9 @@ class Series {
 
     public linkedParent?: Series;
 
-    public linkedSeries: Array<Series> = void 0 as any;
+    public linkedSeries!: Array<Series>;
 
-    public options: SeriesOptions = void 0 as any;
+    public options!: SeriesOptions;
 
     public markerGroup?: SVGElement;
 
@@ -336,13 +336,13 @@ class Series {
 
     public pointInterval?: number;
 
-    public points: Array<Point> = void 0 as any;
+    public points!: Array<Point>;
 
     public pointValKey?: string;
 
-    public processedXData: Array<number> = void 0 as any;
+    public processedXData!: Array<number>;
 
-    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
+    public processedYData!: (Array<(number|null)>|Array<Array<(number|null)>>);
 
     public selected?: boolean;
 
@@ -356,21 +356,21 @@ class Series {
 
     public symbolIndex?: number;
 
-    public tooltipOptions: TooltipOptions = void 0 as any;
+    public tooltipOptions!: TooltipOptions;
 
     public tracker?: SVGElement;
 
     public trackerGroups?: Array<string>;
 
-    public userOptions: DeepPartial<SeriesTypeOptions> = void 0 as any;
+    public userOptions!: DeepPartial<SeriesTypeOptions>;
 
-    public xAxis: AxisType = void 0 as any;
+    public xAxis!: AxisType;
 
     public xData?: Array<number>;
 
     public xIncrement?: (number|null);
 
-    public yAxis: AxisType = void 0 as any;
+    public yAxis!: AxisType;
 
     public yData?: (
         Array<(number|null)>|
@@ -379,7 +379,7 @@ class Series {
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
-    public zones: Array<Series.ZoneObject> = void 0 as any;
+    public zones!: Array<Series.ZoneObject>;
 
     /* *
      *
@@ -432,8 +432,17 @@ class Series {
         const options = series.options,
             visible = options.visible !== false;
 
+        /**
+         * All child series that are linked to the current series through the
+         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+         * option.
+         *
+         * @name Highcharts.Series#linkedSeries
+         * @type {Array<Highcharts.Series>}
+         * @readonly
+         */
         series.linkedSeries = [];
-        // bind the axes
+        // Bind the axes
         series.bindAxes();
 
         extend<Series>(series, {
@@ -454,7 +463,7 @@ class Series {
              * @name Highcharts.Series#visible
              * @type {boolean}
              */
-            visible, // true by default
+            visible, // True by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
@@ -462,7 +471,7 @@ class Series {
              * @name Highcharts.Series#selected
              * @type {boolean}
              */
-            selected: options.selected === true // false by default
+            selected: options.selected === true // False by default
         });
 
         registerEventOptions(this, options);

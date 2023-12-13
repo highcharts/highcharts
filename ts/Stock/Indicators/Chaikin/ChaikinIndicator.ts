@@ -112,9 +112,9 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
-    public data: Array<ChaikinPoint> = void 0 as any;
-    public options: ChaikinOptions = void 0 as any;
-    public points: Array<ChaikinPoint> = void 0 as any;
+    public data!: Array<ChaikinPoint>;
+    public options!: ChaikinOptions;
+    public points!: Array<ChaikinPoint>;
 
     /* *
      *

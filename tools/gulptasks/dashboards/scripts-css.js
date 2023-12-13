@@ -6,19 +6,6 @@ const gulp = require('gulp');
 
 /* *
  *
- *  Constants
- *
- * */
-
-const COPY_DIRECTORIES = [
-    'css',
-    'gfx'
-];
-
-const TARGET_DIRECTORY = 'code';
-
-/* *
- *
  *  Tasks
  *
  * */
@@ -30,39 +17,33 @@ const TARGET_DIRECTORY = 'code';
  * Promise to keep
  */
 function dashboardsScriptsCSS() {
-
-    const fslib = require('../lib/fs');
     const log = require('../lib/log');
-    const path = require('path');
+    const { copyCSS } = require('../scripts-css');
+
+    const TARGET_DIRECTORY = 'code';
+
+    const dashboardsConfig = {
+        sources: [
+            'css/dashboards/',
+            'gfx/dashboards-icons/'
+        ],
+        target: TARGET_DIRECTORY + '/dashboards',
+        replacePath: 'dashboards/',
+        exclude: []
+    };
+
+    const datagridConfig = {
+        sources: 'css/datagrid/',
+        target: TARGET_DIRECTORY + '/datagrid',
+        replacePath: 'datagrid/',
+        exclude: []
+    };
 
     return new Promise(resolve => {
         log.message('Copy css and gfx ...');
 
-        const dashboardsCSS = path.join('css', 'dashboards.css');
-        const dashboardsGFX = path.join('gfx', 'dashboards-icons');
-
-        fslib.copyFile(
-            dashboardsCSS,
-            path.join('code', 'dashboards', dashboardsCSS)
-        );
-
-        fslib.copyAllFiles(
-            dashboardsGFX,
-            path.join('code', 'dashboards', dashboardsGFX),
-            true
-        );
-
-        const dataGridCSS = path.join('css', 'datagrid.css');
-
-        fslib.copyFile(
-            dataGridCSS,
-            path.join('code', 'dashboards', dataGridCSS)
-        );
-
-        fslib.copyFile(
-            dataGridCSS,
-            path.join('code', 'datagrid', dataGridCSS)
-        );
+        copyCSS(dashboardsConfig);
+        copyCSS(datagridConfig);
 
         log.success('Done.');
 

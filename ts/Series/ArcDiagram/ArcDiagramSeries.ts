@@ -210,15 +210,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<ArcDiagramPoint> = void 0 as any;
+    public data!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramSeriesOptions = void 0 as any;
+    public options!: ArcDiagramSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
-    public nodes: Array<ArcDiagramPoint> = void 0 as any;
+    public nodes!: Array<ArcDiagramPoint>;
 
-    public points: Array<ArcDiagramPoint> = void 0 as any;
+    public points!: Array<ArcDiagramPoint>;
 
     /* *
      *

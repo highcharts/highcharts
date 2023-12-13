@@ -230,11 +230,11 @@ class AreaSeries extends LineSeries {
 
     public areaPath?: SVGPath;
 
-    public data: Array<AreaPoint> = void 0 as any;
+    public data!: Array<AreaPoint>;
 
-    public options: AreaSeriesOptions = void 0 as any;
+    public options!: AreaSeriesOptions;
 
-    public points: Array<AreaPoint> = void 0 as any;
+    public points!: Array<AreaPoint>;
 
     /* *
      *
@@ -310,6 +310,12 @@ class AreaSeries extends LineSeries {
                     attribs.fill = owner.color || this.color;
                     attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
                 }
+
+                // Allow clicking through the area if sticky tracking is true
+                // (#18744)
+                area.css({
+                    pointerEvents: this.stickyTracking ? 'none' : 'auto'
+                });
             }
 
             area[verb](attribs);

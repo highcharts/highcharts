@@ -71,9 +71,9 @@ class BarSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<BarPoint> = void 0 as any;
-    public options: BarSeriesOptions = void 0 as any;
-    public points: Array<BarPoint> = void 0 as any;
+    public data!: Array<BarPoint>;
+    public options!: BarSeriesOptions;
+    public points!: Array<BarPoint>;
 
 }
 

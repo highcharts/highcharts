@@ -66,9 +66,9 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
-    public P: number = void 0 as any;
-    public pivotLine: string = void 0 as any;
-    public series: PivotPointsIndicator = void 0 as any;
+    public P!: number;
+    public pivotLine!: string;
+    public series!: PivotPointsIndicator;
 
     /* *
      *

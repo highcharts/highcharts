@@ -160,7 +160,7 @@ class Scrollbar {
 
     public calculatedWidth?: number;
 
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
 
     private chartX: number = 0;
 
@@ -170,7 +170,7 @@ class Scrollbar {
 
     private grabbedCenter?: boolean;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
     public hasDragged?: boolean;
 
@@ -178,21 +178,21 @@ class Scrollbar {
 
     private initPositions?: Array<number>;
 
-    public options: ScrollbarOptions = void 0 as any;
+    public options!: ScrollbarOptions;
 
     public rendered?: boolean;
 
-    public renderer: SVGRenderer = void 0 as any;
+    public renderer!: SVGRenderer;
 
-    public scrollbar: SVGElement = void 0 as any;
+    public scrollbar!: SVGElement;
 
     public scrollbarButtons: Array<SVGElement> = [];
 
-    public scrollbarGroup: SVGElement = void 0 as any;
+    public scrollbarGroup!: SVGElement;
 
     public scrollbarLeft: number = 0;
 
-    public scrollbarRifles: SVGElement = void 0 as any;
+    public scrollbarRifles!: SVGElement;
 
     public scrollbarStrokeWidth: number = 1;
 
@@ -202,11 +202,11 @@ class Scrollbar {
 
     public to: number = 0;
 
-    public track: SVGElement = void 0 as any;
+    public track!: SVGElement;
 
     public trackBorderWidth: number = 1;
 
-    public userOptions: DeepPartial<ScrollbarOptions> = void 0 as any;
+    public userOptions!: DeepPartial<ScrollbarOptions>;
 
     public width?: number;
 

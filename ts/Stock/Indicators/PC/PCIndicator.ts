@@ -134,9 +134,9 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PCPoint> = void 0 as any;
-    public options: PCOptions = void 0 as any;
-    public points: Array<PCPoint> = void 0 as any;
+    public data!: Array<PCPoint>;
+    public options!: PCOptions;
+    public points!: Array<PCPoint>;
 
     /* *
      *

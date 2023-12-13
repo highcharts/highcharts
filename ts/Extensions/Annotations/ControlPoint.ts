@@ -97,7 +97,7 @@ class ControlPoint extends EventEmitter {
 
     public chart: AnnotationChart;
 
-    public graphic: SVGElement = void 0 as any;
+    public graphic!: SVGElement;
 
     public index: number;
 

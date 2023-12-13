@@ -40,9 +40,9 @@ class Scatter3DPoint extends ScatterPoint {
      *
      * */
 
-    public options: Scatter3DPointOptions = void 0 as any;
+    public options!: Scatter3DPointOptions;
 
-    public series: Scatter3DSeries = void 0 as any;
+    public series!: Scatter3DSeries;
 
     /* *
      *

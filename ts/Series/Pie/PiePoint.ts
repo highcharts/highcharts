@@ -59,9 +59,9 @@ class PiePoint extends Point {
 
     public half: number = 0;
 
-    public options: PiePointOptions = void 0 as any;
+    public options!: PiePointOptions;
 
-    public series: PieSeries = void 0 as any;
+    public series!: PieSeries;
 
     public sliced?: boolean;
 
