@@ -80,14 +80,14 @@ QUnit.test('Color axis width, height and padding', function (assert) {
 
     assert.close(
         colorAxisBox.width,
-        chart.plotWidth * 0.5,
+        chart.chartWidth * 0.5,
         2,
         'Color axis width in perctange should be set (#17870).'
     );
 
     assert.close(
         colorAxisBox.height,
-        chart.plotHeight * 0.1,
+        chart.chartHeight * 0.1,
         2.5,
         'Color axis height in percentage should be set (#17870).'
     );
