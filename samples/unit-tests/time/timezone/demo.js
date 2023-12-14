@@ -70,6 +70,13 @@ QUnit.test('timezone', function (assert) {
         'From October 27, UTC midnight is 01:00 AM in Oslo'
     );
 
+    // This one should fail gracefully
+    chart.update({
+        time: {
+            timezone: 'Uggabuggaland'
+        }
+    });
+
     // Tear down
     Highcharts.setOptions({
         time: {

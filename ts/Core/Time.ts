@@ -410,14 +410,19 @@ class Time {
         if (options.timezone) {
             return (timestamp: number | Date): number => {
 
-                const [_, hourOffset] = new Intl.DateTimeFormat('en-GB', {
-                    timeZone: options.timezone,
-                    timeZoneName: 'shortOffset'
-                })
-                    .format(timestamp)
-                    .split('GMT');
+                try {
+                    const hourOffset = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: options.timezone,
+                        timeZoneName: 'shortOffset'
+                    })
+                        .format(timestamp)
+                        .split('GMT')[1];
 
-                return -hourOffset * 60 * 60000;
+                    return -hourOffset * 60 * 60000;
+                } catch (e) {
+                    error(34);
+                }
+                return 0;
 
             };
         }
