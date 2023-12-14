@@ -721,19 +721,19 @@ function testPatternfillForChart(assert, chart) {
 
     assert.ok(
         customPattern.hasAttribute('patternTransform'),
-        'custom pattern element doesn\'t have patternTransform attribute'
+        'Custom pattern element should have patternTransform attribute'
     );
     assert.ok(
         customPattern.getAttribute('patternTransform').includes('scale'),
-        'custom pattern; patternTransform attribute should contain scale'
+        'Custom pattern\'s patternTransform attribute should contain a scale transform'
     );
     assert.ok(
         defaultPattern.hasAttribute('patternTransform'),
-        'custom pattern element doesn\'t have patternTransform attribute'
+        'Default pattern element should have patternTransform attribute'
     );
     assert.ok(
         defaultPattern.getAttribute('patternTransform').includes('scale'),
-        'default pattern; patternTransform attribute should contain scale'
+        'Default pattern\'s patternTransform attribute should contain a scale transform'
     );
 }
 
