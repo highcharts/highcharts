@@ -411,7 +411,8 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
-                    const hourOffset = new Intl.DateTimeFormat('en-GB', {
+                    // eslint-disable-next-line new-cap
+                    const hourOffset = Intl.DateTimeFormat('en', {
                         timeZone: options.timezone,
                         timeZoneName: 'shortOffset'
                     })
