@@ -106,7 +106,7 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
-    public canvas?: HTMLCanvasElement;
+    public canvas?: HTMLCanvasElement | OffscreenCanvas;
 
     public colorAxis!: ColorAxis;
 
@@ -126,6 +126,8 @@ class HeatmapSeries extends ScatterSeries {
 
     public isDirtyCanvas: boolean = true;
 
+    public worker?: Worker;
+
     /* *
      *
      *  Functions
@@ -142,18 +144,29 @@ class HeatmapSeries extends ScatterSeries {
             interpolation = seriesOptions.interpolation,
             seriesMarkerOptions = seriesOptions.marker || {};
 
-        if (interpolation) {
+        const useWebWorker = interpolation?.useWebWorker;
+
+        if (interpolation?.enabled) {
             const
                 { image, chart, xAxis, yAxis } = series,
                 { reversed: xRev = false, len: width } = xAxis,
                 { reversed: yRev = false, len: height } = yAxis,
                 dimensions = { width, height };
 
-            if (!image || series.isDirtyData || series.isDirtyCanvas) {
+
+            /**
+             * @private
+             * @param {HTMLCanvasElement|OffscreenCanvas} canvas
+             */
+            function getPixelData(
+                canvas: HTMLCanvasElement | OffscreenCanvas
+            ): {
+                    pixelData: Uint8ClampedArray,
+                    width: number,
+                    height: number
+                } | undefined {
                 const
-                    ctx = getContext(series),
                     {
-                        canvas,
                         options: { colsize = 1, rowsize = 1 },
                         points,
                         points: { length }
@@ -161,9 +174,8 @@ class HeatmapSeries extends ScatterSeries {
                     pointsLen = length - 1,
                     colorAxis = (chart.colorAxis && chart.colorAxis[0]);
 
-                if (canvas && ctx && colorAxis) {
-                    const
-                        { min: xMin, max: xMax } = xAxis.getExtremes(),
+                if (canvas && colorAxis) {
+                    const { min: xMin, max: xMax } = xAxis.getExtremes(),
                         { min: yMin, max: yMax } = yAxis.getExtremes(),
                         xDelta = xMax - xMin,
                         yDelta = yMax - yMin,
@@ -185,7 +197,7 @@ class HeatmapSeries extends ScatterSeries {
                                 (v: number): number => (
                                     Math[rounding as 'floor' | 'ceil'](
                                         (last as number) -
-                                        (scale as number * (v))
+                                            (scale as number * (v))
                                     )
                                 ) :
                                 (v: number): number => (
@@ -203,15 +215,14 @@ class HeatmapSeries extends ScatterSeries {
                         pointInPixels = (x: number, y: number): number => (
                             Math.ceil(
                                 (canvasWidth * transformY(y - yMin)) +
-                                transformX(x - xMin)
+                                        transformX(x - xMin)
                             ) * 4
                         );
 
                     series.buildKDTree();
 
                     for (let i = 0; i < canvasArea; i++) {
-                        const
-                            point = points[
+                        const point = points[
                                 Math.ceil(pixelToPointScale * i)
                             ],
                             { x, y } = point;
@@ -222,29 +233,86 @@ class HeatmapSeries extends ScatterSeries {
                         );
                     }
 
-                    ctx.putImageData(
-                        new ImageData(pixelData, canvasWidth), 0, 0
-                    );
+                    return {
+                        pixelData,
+                        width: canvasWidth,
+                        height: canvasHeight
 
-                    if (image) {
-                        image.attr({
-                            ...dimensions,
-                            href: canvas.toDataURL('image/png', 1)
-                        });
-                    } else {
-                        series.directTouch = false;
+                    };
+                }
+
+                return void 0;
+            }
+
+            if (useWebWorker) {
+                series.canvas = new OffscreenCanvas(width, height);
+                series.worker = new Worker(
+                    'http://127.0.0.1:3030/code/es-modules/interpolation/worker.js'
+                );
+
+                series.worker.addEventListener('message', function (e): void {
+                    const { data } = e;
+
+                    if (data.done && data.blob) {
                         series.image = chart.renderer.image(
-                            canvas.toDataURL('image/png', 1)
+                            URL.createObjectURL(data.blob)
                         )
                             .attr(dimensions)
                             .add(series.group);
                     }
+                });
+
+                const pixelData = getPixelData(series.canvas);
+
+                if (pixelData) {
+                    series.worker.postMessage({
+                        canvas: series.canvas,
+                        pixelData: pixelData.pixelData,
+                        width: pixelData.width,
+                        height: pixelData.height
+                    }, [series.canvas]);
                 }
+            } else if (!image || series.isDirtyData || series.isDirtyCanvas) {
+                const ctx = getContext(series),
+                    { canvas } = series,
+                    colorAxis = (chart.colorAxis && chart.colorAxis[0]);
+
+                if (
+                    canvas &&
+                    canvas instanceof HTMLElement &&
+                    ctx &&
+                    colorAxis
+                ) {
+                    const pixelData = getPixelData(canvas);
+
+                    if (pixelData) {
+                        ctx.putImageData(
+                            new ImageData(
+                                pixelData.pixelData,
+                                pixelData.width
+                            ),
+                            0,
+                            0
+                        );
+
+                        if (image) {
+                            image.attr({
+                                ...dimensions,
+                                href: canvas.toDataURL('image/png', 1)
+                            });
+                        } else {
+                            series.directTouch = false;
+                            series.image = chart.renderer.image(
+                                canvas.toDataURL('image/png', 1)
+                            )
+                                .attr(dimensions)
+                                .add(series.group);
+                        }
+                    }
+
+                }
+
                 series.isDirtyCanvas = false;
-            } else if (
-                image.width !== width || image.height !== height
-            ) {
-                image.attr(dimensions);
             }
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
             Series.prototype.drawPoints.call(series);
@@ -323,7 +391,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
-        // general point range
+        // General point range
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
@@ -645,4 +713,4 @@ export default HeatmapSeries;
  * @type {number|null|undefined}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

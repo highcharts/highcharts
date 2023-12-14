@@ -61,7 +61,10 @@ declare module '../../Core/Series/SeriesOptions' {
 
 export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     colsize?: number;
-    interpolation?: boolean;
+    interpolation?: {
+        enabled?: boolean;
+        useWebWorker?: boolean;
+    };
     marker?: HeatmapPointMarkerOptions;
     nullColor?: ColorType;
     pointPadding?: number;

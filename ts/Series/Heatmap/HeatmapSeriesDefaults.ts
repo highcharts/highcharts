@@ -137,7 +137,10 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
      *   Interpolated heatmap toggle
      *
      */
-    interpolation: false,
+    interpolation: {
+        enabled: false,
+        useWebWorker: false
+    },
 
     /**
      * The color applied to null points. In styled mode, a general CSS class
