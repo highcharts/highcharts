@@ -170,7 +170,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 interface SankeyPoint extends NodesComposition.PointComposition {
-    init(series: SankeySeries, options: SankeyPointOptions): SankeyPoint;
 }
 
 /* *

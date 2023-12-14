@@ -696,18 +696,17 @@ class Point {
      *
      * @emits Highcharts.Point#event:afterInit
      */
-    public init(
+    public constructor(
         series: Series,
         options: (PointOptions|PointShortOptions),
         x?: number
-    ): Point {
-
+    ) {
         this.series = series;
 
         this.applyOptions(options, x);
 
         // Add a unique ID to the point if none is assigned
-        this.id = defined(this.id) ? this.id : uniqueKey();
+        this.id ??= uniqueKey();
 
         this.resolveColor();
 
@@ -715,7 +714,6 @@ class Point {
 
         fireEvent(this, 'afterInit');
 
-        return this;
     }
 
     /**

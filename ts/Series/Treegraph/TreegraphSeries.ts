@@ -226,7 +226,7 @@ class TreegraphSeries extends TreemapSeries {
             if (point.node.parent) {
                 const pointOptions = merge(levelOptions, point.options);
                 if (!point.linkToParent || point.linkToParent.destroyed) {
-                    const link = new series.LinkClass().init(
+                    const link = new series.LinkClass(
                         series,
                         pointOptions,
                         void 0,

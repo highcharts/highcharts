@@ -79,23 +79,22 @@ class LinkPoint extends ColumnPoint {
      *
      * */
 
-    public init(
+    public constructor(
         series: TreegraphSeries,
         options: string | number | PointOptions | (string | number | null)[],
         x?: number,
         point?: TreegraphPoint
-    ): LinkPoint {
-        const link = super.init.apply(this, arguments) as LinkPoint;
+    ) {
+        super(series, options, x);
         this.formatPrefix = 'link';
         this.dataLabelOnNull = true;
 
         if (point) {
-            link.fromNode = point.node.parentNode.point;
-            link.visible = point.visible;
-            link.toNode = point;
-            this.id = link.toNode.id + '-' + link.fromNode.id;
+            this.fromNode = point.node.parentNode.point;
+            this.visible = point.visible;
+            this.toNode = point;
+            this.id = this.toNode.id + '-' + this.fromNode.id;
         }
-        return link;
     }
 
     public update(

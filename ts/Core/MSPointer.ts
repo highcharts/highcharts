@@ -181,9 +181,9 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Options): void {
+    public constructor(chart: Chart, options: Options) {
 
-        super.init(chart, options);
+        super(chart, options);
 
         if (this.hasZoom) { // #4014
             css(chart.container, {
