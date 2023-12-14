@@ -970,7 +970,6 @@ namespace Time {
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;
-        moment?: any;
     }
     export interface TimeFormatCallbackFunction {
         (timestamp: number): string;
@@ -1068,17 +1067,6 @@ export default Time;
  *
  * @return {number}
  * Timezone offset in minutes.
- */
-
-/**
- * Allows to manually load the `moment.js` library from Highcharts options
- * instead of the `window`.
- * In case of loading the library from a `script` tag,
- * this option is not needed, it will be loaded from there by default.
- *
- * @type      {Function}
- * @since     8.2.0
- * @apioption time.moment
  */
 
 ''; // keeps doclets above in JS file
