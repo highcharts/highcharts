@@ -91,6 +91,21 @@ QUnit.test('Color axis width, height and padding', function (assert) {
         2.5,
         'Color axis height in percentage should be set (#17870).'
     );
+
+    chart.update({
+        chart: {
+            width: 200
+        }
+    });
+
+    colorAxisBox = chart.colorAxis[0].gridGroup.getBBox();
+
+    assert.close(
+        colorAxisBox.width,
+        chart.chartWidth * 0.5,
+        2,
+        'Color axis width should be changed after changing chart size.'
+    );
 });
 
 QUnit.test('Color axis padding with long labels (#15551)', function (assert) {
