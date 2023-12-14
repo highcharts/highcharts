@@ -18,7 +18,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type AxisLike from '../AxisLike';
-import type Chart from '../../Chart/Chart.js';
+import Chart from '../../Chart/Chart.js';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
@@ -42,6 +42,7 @@ import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
+    addEvent,
     extend,
     fireEvent,
     isArray,
@@ -307,8 +308,16 @@ class ColorAxis extends Axis implements AxisLike {
         if (symbol) {
             this.left = x = symbol.attr('x') as any;
             this.top = y = symbol.attr('y') as any;
-            this.width = width = symbol.attr('width') as any;
-            this.height = height = symbol.attr('height') as any;
+            this.width = width = relativeLength(
+                this.options.width ? this.options.width :
+                    symbol.attr('width'),
+                chart.chartWidth
+            );
+            this.height = height = relativeLength(
+                this.options.height ? this.options.height :
+                    symbol.attr('height'),
+                chart.chartHeight
+            );
             this.right = chart.chartWidth - x - width;
             this.bottom = chart.chartHeight - y - height;
 
@@ -845,6 +854,18 @@ class ColorAxis extends Axis implements AxisLike {
     }
 
 }
+
+addEvent(ColorAxis, 'afterSetScale', function (): void {
+    if (this.chart.legend.options.enabled) {
+        const symbolBox = this.legendItem?.symbol?.getBBox(),
+            actualLen = this.horiz ? symbolBox?.width : symbolBox?.height;
+        // Fire update if dimensions have changed, but in another place, than by
+        // updating color axis
+        if (actualLen && actualLen !== this.len) {
+            this.update({});
+        }
+    }
+});
 
 /* *
  *
