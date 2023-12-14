@@ -4375,6 +4375,8 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+        // setData isn't called with dataSorting & dataGrouping enabled (#19715)
+        chart.setSeriesData();
 
         // #15383: Fire updatedData if the type has changed to keep linked
         // series such as indicators updated
