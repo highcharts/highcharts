@@ -460,23 +460,28 @@ const defaultOptions: DefaultOptions = {
         getTimezoneOffset: void 0,
 
         /**
-         * Requires [moment.js](https://momentjs.com/). If the timezone option
-         * is specified, it creates a default
-         * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
-         * up the specified timezone in moment.js. If moment.js is not included,
-         * this throws a Highcharts error in the console, but does not crash the
-         * chart.
+         * If the timezone option is specified, it creates a default
+         * [getTimezoneOffset](#time.getTimezoneOffset) function that returns an
+         * time offset for the specified time zone.
+         *
+         * Supported time zone names rely on the browser implementations, as
+         * described in the [mdn docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+         * If the given time zone is not recognized by the browser, Highcharts
+         * provides a warning and falls back to returning a 0 offset,
+         * corresponding to the UCT time zone.
+         *
+         * Until v11.2.0, this option depended on moment.js.
          *
          * @see [getTimezoneOffset](#time.getTimezoneOffset)
          *
-         * @sample {highcharts|highstock} highcharts/time/timezone/
-         *         Europe/Oslo
+         * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
          *
          * @type      {string}
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
         timezone: void 0,
+
         /**
          * The timezone offset in minutes. Positive values are west, negative
          * values are east of UTC, as in the ECMAScript
