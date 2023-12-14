@@ -397,8 +397,7 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
-            getTimezoneOffset = options.getTimezoneOffset,
-            moment = options.moment || (win as any).moment;
+            getTimezoneOffset = options.getTimezoneOffset;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
@@ -409,19 +408,18 @@ class Time {
         }
 
         if (options.timezone) {
-            if (!moment) {
-                // getTimezoneOffset-function stays undefined because it depends
-                // on Moment.js
-                error(25);
+            return (timestamp: number | Date): number => {
 
-            } else {
-                return function (timestamp: (number|Date)): number {
-                    return -moment.tz(
-                        timestamp,
-                        options.timezone
-                    ).utcOffset() * 60000;
-                };
-            }
+                const [_, hourOffset] = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: options.timezone,
+                    timeZoneName: 'shortOffset'
+                })
+                    .format(timestamp)
+                    .split('GMT');
+
+                return -hourOffset * 60 * 60000;
+
+            };
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
