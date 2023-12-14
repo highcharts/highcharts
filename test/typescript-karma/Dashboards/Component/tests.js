@@ -539,7 +539,7 @@ test('DataGrid component with dataTable', async function (assert) {
 test('KPI Component updating', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
-    
+
     const dashboard = await Dashboards.board('container', {
         gui: {
             layouts: [{
@@ -869,4 +869,136 @@ test('Data columnAssignment', async function (assert) {
         'Points are created in implicited series.'
     );
 
+});
+
+test('JSON data with columnNames and columnAssignment.', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const data = [{
+        "InstanceId": "i-0abcdef1234567890",
+        "InstanceType": "t2.micro",
+        "State": "running",
+        "PrivateIpAddress": "10.0.1.101",
+        "PublicIpAddress": "54.123.45.67",
+        "CPUUtilization": 20.5,
+        "MemoryUsage": 512,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 30,
+            "UsedGB": 15,
+            "FreeGB": 15
+          },
+        },
+        "DiskOperations": [{
+          "ReadOps": 1500,
+          "WriteOps": 800
+        }],
+      },
+      {
+        "InstanceId": "i-1a2b3c4d5e6f78901",
+        "InstanceType": "t3.small",
+        "State": "stopped",
+        "PrivateIpAddress": "10.0.1.102",
+        "PublicIpAddress": "",
+        "CPUUtilization": 0,
+        "MemoryUsage": 256,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 20,
+            "UsedGB": 10,
+            "FreeGB": 10
+          }
+        },
+        "DiskOperations": [{
+          "timestamp": 1637037600000,
+          "ReadOps": 500,
+          "WriteOps": 300
+        }],
+      },
+      {
+        "InstanceId": "i-9876543210abcdef0",
+        "InstanceType": "m5.large",
+        "State": "running",
+        "PrivateIpAddress": "10.0.1.103",
+        "PublicIpAddress": "54.321.67.89",
+        "CPUUtilization": 45.2,
+        "MemoryUsage": 2048,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 50,
+            "UsedGB": 25,
+            "FreeGB": 25
+          },
+        },
+        "DiskOperations": [{
+          "timestamp": 1637037600000,
+          "ReadOps": 400,
+          "WriteOps": 100
+        }],
+      }
+    ];
+
+    const dashboard = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+            id: 'micro-element',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                columnNames: {
+                InstanceType: ['InstanceType'],
+                DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
+                ReadOps: ['DiskOperations', 0, 'ReadOps']
+                },
+                data
+            }
+            }]
+        },
+        gui: {
+            layouts: [{
+            rows: [{
+                cells: [{
+                id: 'dashboard-col-1',
+                }]
+            }]
+            }]
+        },
+        components: [{
+            cell: 'dashboard-col-1',
+            connector: {
+            id: 'micro-element'
+            },
+            type: 'Highcharts',
+            chartOptions: {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            }
+            },
+            columnAssignment: {
+            InstanceType: 'x',
+            DiskSpace: 'y',
+            ReadOps: 'y'
+            },
+        }]
+        }, true);
+
+    const mountedComponents = dashboard.mountedComponents;
+
+    assert.deepEqual(
+        mountedComponents[0].component.chart.series[0].yData,
+        [30, 20, 50],
+        'Each server instance should be rendered as a column.'
+    );
+
+    assert.deepEqual(
+        mountedComponents[0].component.chart.series[1].yData,
+        [1500, 500, 400],
+        'Each server instance should be rendered as a column.'
+    );
 });

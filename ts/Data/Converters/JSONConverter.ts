@@ -24,7 +24,7 @@ import type DataEvent from '../DataEvent';
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const { merge, isArray } = U;
+const { merge, isArray, objectEach } = U;
 
 /* *
  *
@@ -83,8 +83,7 @@ class JSONConverter extends DataConverter {
      * */
 
     private columns: Array<DataTable.Column> = [];
-    private headers: Array<string> = [];
-    private dataTypes: Array<Array<string>> = [];
+    private headers: Array<string>|JSONConverter.ColumnNamesOptions = [];
 
     /**
      * Options for the DataConverter.
@@ -140,19 +139,23 @@ class JSONConverter extends DataConverter {
         if (orientation === 'columns') {
             for (let i = 0, iEnd = data.length; i < iEnd; i++) {
                 const item = data[i];
+
                 if (!(item instanceof Array)) {
                     return;
                 }
-                if (firstRowAsNames) {
-                    converter.headers.push(`${item.shift()}`);
-                } else if (columnNames) {
-                    converter.headers.push(columnNames[i]);
-                }
 
-                converter.table.setColumn(
-                    converter.headers[i] || i.toString(),
-                    item
-                );
+                if (converter.headers instanceof Array) {
+                    if (firstRowAsNames) {
+                        converter.headers.push(`${item.shift()}`);
+                    } else if (columnNames && columnNames instanceof Array) {
+                        converter.headers.push(columnNames[i]);
+                    }
+
+                    converter.table.setColumn(
+                        converter.headers[i] || i.toString(),
+                        item
+                    );
+                }
             }
         } else if (orientation === 'rows') {
             if (firstRowAsNames) {
@@ -166,7 +169,8 @@ class JSONConverter extends DataConverter {
                 rowIndex < iEnd;
                 rowIndex++
             ) {
-                const row = data[rowIndex];
+                let row = data[rowIndex];
+
                 if (isArray(row)) {
                     for (
                         let columnIndex = 0, jEnd = row.length;
@@ -179,14 +183,32 @@ class JSONConverter extends DataConverter {
                         converter.columns[columnIndex].push(
                             row[columnIndex]
                         );
-                        this.table.setCell(
-                            converter.headers[columnIndex] ||
-                                rowIndex.toString(),
-                            rowIndex,
-                            row[columnIndex]
-                        );
+                        if (converter.headers instanceof Array) {
+                            this.table.setColumn(
+                                converter.headers[columnIndex] ||
+                                    columnIndex.toString(),
+                                converter.columns[columnIndex]
+                            );
+                        }
                     }
                 } else {
+                    const columnNames = converter.headers;
+
+                    if (columnNames && !(columnNames instanceof Array)) {
+                        const newRow = {} as any;
+
+                        objectEach(
+                            columnNames,
+                            (arrayWithPath: Array<string|number>, name): void => {
+                                newRow[name] = arrayWithPath.reduce(
+                                    (acc: any, key: string|number): any =>
+                                        acc[key], row
+                                );
+                            });
+
+                        row = newRow;
+                    }
+
                     this.table.setRows([row], rowIndex);
                 }
             }
@@ -220,6 +242,22 @@ namespace JSONConverter {
      * */
 
     /**
+     * Options used for parsing JSON data with multiple levels.
+     * The key is the column name (later used as a reference), and the value is
+     * an array of keys that are used to access the data.
+     *
+     * @example
+     * columnNames: {
+     *     InstanceType: ['InstanceType'],
+     *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
+     *     ReadOps: ['DiskOperations', 0, 'ReadOps']
+     * },
+     */
+    export interface ColumnNamesOptions {
+        [key: string]: Array<string|number>;
+    }
+
+    /**
      * Interface for the BeforeParse callback function
      */
     export interface DataBeforeParseCallbackFunction {
@@ -230,7 +268,7 @@ namespace JSONConverter {
      * Options for the JSON parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
-        columnNames?: Array<string>;
+        columnNames?: Array<string>|ColumnNamesOptions;
         data: Data;
         orientation: 'columns'|'rows';
     }

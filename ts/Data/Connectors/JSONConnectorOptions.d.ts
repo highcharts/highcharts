@@ -18,6 +18,7 @@
 * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
+import type JSONConverter from '../Converters/JSONConverter';
 
 
 /* *
@@ -57,9 +58,12 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      */
     orientation?: 'columns'|'rows';
     /**
-     * Order of columns.
+     * If JSON data is column oriented, these options defines keys
+     * for the columns. In rows oriented case this is handled automatically.
+     * In case of complex JSON structure, use the `ColumnNamesOptions` to define
+     * the key and path to the data.
      */
-    columnNames?: Array<string>;
+    columnNames?: Array<string>|JSONConverter.ColumnNamesOptions;
 }
 
 /* *
