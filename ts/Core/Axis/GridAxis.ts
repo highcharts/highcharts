@@ -871,7 +871,8 @@ function onAfterSetOptions(
                 defined(userOptions.linkedTo) &&
 
                 !defined(userOptions.tickPositioner) &&
-                !defined(userOptions.tickInterval)
+                !defined(userOptions.tickInterval) &&
+                !defined(userOptions.units)
             ) {
                 gridAxisOptions.tickPositioner = function (
                     min: number,

@@ -198,13 +198,11 @@ class TimelinePoint extends LinePoint {
         return [];
     }
 
-    public init(): TimelinePoint {
-        const point = super.init.apply(this, arguments) as TimelinePoint;
+    public constructor(series: TimelineSeries, options: TimelinePointOptions) {
+        super(series, options);
 
-        point.name = pick(point.name, 'Event');
-        point.y = 1;
-
-        return point;
+        this.name ??= 'Event';
+        this.y = 1;
     }
 
     public isValid(): boolean {

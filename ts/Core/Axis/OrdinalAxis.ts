@@ -17,7 +17,7 @@
  * */
 
 import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
-import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
@@ -937,7 +937,7 @@ namespace OrdinalAxis {
                     if (
                         series.reserveSpace() &&
                         (
-                            (series as ScatterSeries)
+                            (series as FlagSeries)
                                 .takeOrdinalPosition !== false || hasBreaks
                         )
                     ) {

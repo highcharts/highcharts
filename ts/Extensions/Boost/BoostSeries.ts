@@ -839,7 +839,7 @@ function getPoint(
             series.processedXData ||
             false
         ),
-        point = (new PointClass()).init(
+        point = new PointClass(
             series as BoostSeriesComposition,
             (series.options.data || [])[boostPoint.i],
             xData ? xData[boostPoint.i] : void 0

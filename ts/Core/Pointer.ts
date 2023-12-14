@@ -116,13 +116,6 @@ class Pointer {
      *
      * */
 
-    public constructor(chart: Chart, options: Options) {
-        this.chart = chart;
-        this.hasDragged = false;
-        this.options = options;
-        this.init(chart, options);
-    }
-
     /* *
      *
      *  Properties
@@ -133,7 +126,9 @@ class Pointer {
 
     public chartPosition?: Pointer.ChartPositionObject;
 
-    public hasDragged: false|number;
+    public hasDragged: number = 0;
+
+    public hasPinched?: boolean;
 
     public hasZoom?: boolean;
 
@@ -153,7 +148,7 @@ class Pointer {
 
     public res?: boolean;
 
-    public runChartClick: boolean = false;
+    public runChartClick?: boolean;
 
     public selectionMarker?: SVGElement;
 
@@ -562,8 +557,9 @@ class Pointer {
         // (#877)
         if (chart && isNumber(chart.index)) {
             css(chart.container, { cursor: chart._cursor as any });
-            chart.cancelClick = +this.hasDragged > 10; // #370
-            chart.mouseIsDown = this.hasDragged = false;
+            chart.cancelClick = this.hasDragged > 10; // #370
+            chart.mouseIsDown = false;
+            this.hasDragged = 0;
             this.pinchDown = [];
         }
     }
@@ -973,7 +969,7 @@ class Pointer {
      * The root options object. The pointer uses options from the chart and
      * tooltip structures.
      */
-    public init(chart: Chart, options: Options): void {
+    public constructor(chart: Chart, options: Options) {
 
         // Store references
         this.options = options;

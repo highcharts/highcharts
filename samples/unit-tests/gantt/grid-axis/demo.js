@@ -1862,6 +1862,46 @@ QUnit.test(
             '2019',
             '#15692: Primary axis should show years'
         );
+
+        chart.setSize(800);
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2018, 6, 2),
+                    end: Date.UTC(2019, 6, 1)
+                }]
+            }],
+            xAxis: [{
+                units: [['month', [6]]]
+            }, {
+                units: [['year', null]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.map(tickPosition =>
+                chart.xAxis[0].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Primary axis should show months when xAxis.units set (#16626)'
+        );
+
+        chart.update({
+            xAxis: [{
+                units: [['year', null]]
+            }, {
+                units: [['month', [6]]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[1].tickPositions.map(tickPosition =>
+                chart.xAxis[1].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Secondary axis should show months when xAxis.units set (#16626)'
+        );
     }
 );
 

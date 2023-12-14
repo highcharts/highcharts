@@ -659,7 +659,11 @@ class Axis {
         } else if (dateTimeLabelFormat) { // Datetime axis
             ret = time.dateFormat(dateTimeLabelFormat, value);
 
-        } else if (i && numericSymbolDetector >= 1000) {
+        } else if (
+            i &&
+            numericSymbols &&
+            numericSymbolDetector >= 1000
+        ) {
             // Decide whether we should add a numeric symbol like k (thousands)
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
@@ -3943,7 +3947,7 @@ class Axis {
 
             }
 
-            // alternate grid color
+            // Alternate grid color
             if (alternateGridColor) {
                 tickPositions.forEach(function (pos: number, i: number): void {
                     to = typeof tickPositions[i + 1] !== 'undefined' ?
@@ -3963,7 +3967,8 @@ class Axis {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
                             alternateBands[pos] = new (H as any).PlotLineOrBand(
-                                axis
+                                axis,
+                                {}
                             );
                         }
                         from = pos + tickmarkOffset; // #949

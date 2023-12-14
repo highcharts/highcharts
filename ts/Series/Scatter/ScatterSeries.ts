@@ -157,16 +157,13 @@ class ScatterSeries extends LineSeries {
 
 interface ScatterSeries {
     pointClass: typeof ScatterPoint;
-    takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false // #2342
-
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
 /* *

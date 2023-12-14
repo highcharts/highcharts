@@ -101,15 +101,17 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
-    public init(): OrganizationPoint {
-        super.init.apply(this, arguments);
+    public constructor(
+        series: OrganizationSeries,
+        options: OrganizationPointOptions,
+        x?: number
+    ) {
+        super(series, options, x);
 
         if (!this.isNode) {
             this.dataLabelOnNull = true;
             this.formatPrefix = 'link';
         }
-
-        return this;
     }
 
     /**

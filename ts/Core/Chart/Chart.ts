@@ -283,7 +283,14 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ) {
-        this.getArgs(a, b, c);
+        const args = [...arguments];
+
+        // Remove the optional first argument, renderTo, and set it on this.
+        if (isString(a) || (a as globalThis.HTMLElement).nodeName) {
+            this.renderTo = args.shift();
+        }
+
+        this.init(args[0], args[1]);
     }
 
     /* *
@@ -362,33 +369,6 @@ class Chart {
      *  Functions
      *
      * */
-
-    /**
-     * Handle the arguments passed to the constructor.
-     *
-     * @private
-     * @function Highcharts.Chart#getArgs
-     *
-     * @param {...Array<*>} arguments
-     * All arguments for the constructor.
-     *
-     * @emits Highcharts.Chart#event:init
-     * @emits Highcharts.Chart#event:afterInit
-     */
-    public getArgs(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): void {
-        // Remove the optional first argument, renderTo, and
-        // set it on this.
-        if (isString(a) || (a as any).nodeName) {
-            this.renderTo = a as any;
-            this.init(b as any, c);
-        } else {
-            this.init(a as any, b as any);
-        }
-    }
 
     /**
      * Function setting zoom options after chart init and after chart update.
@@ -2319,26 +2299,39 @@ class Chart {
 
         // Apply new links
         chartSeries.forEach(function (series): void {
-            let linkedTo = series.options.linkedTo;
+            const { linkedTo } = series.options;
 
             if (isString(linkedTo)) {
+                let linkedParent: Series | undefined;
                 if (linkedTo === ':previous') {
-                    linkedTo = chart.series[(series.index as any) - 1] as any;
+                    linkedParent = chart.series[series.index - 1];
                 } else {
-                    linkedTo = chart.get(linkedTo as any) as any;
+                    linkedParent = chart.get(linkedTo) as Series | undefined;
                 }
                 // #3341 avoid mutual linking
-                if (linkedTo && (linkedTo as any).linkedParent !== series) {
-                    (linkedTo as any).linkedSeries.push(series);
-                    series.linkedParent = linkedTo as any;
+                if (
+                    linkedParent &&
+                    linkedParent.linkedParent !== series
+                ) {
+                    linkedParent.linkedSeries.push(series);
+                    /**
+                     * The parent series of the current series, if the current
+                     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+                     * setting.
+                     *
+                     * @name Highcharts.Series#linkedParent
+                     * @type {Highcharts.Series}
+                     * @readonly
+                     */
+                    series.linkedParent = linkedParent;
 
-                    if ((linkedTo as any).enabledDataSorting) {
+                    if (linkedParent.enabledDataSorting) {
                         series.setDataSortingOptions();
                     }
 
                     series.visible = pick(
                         series.options.visible,
-                        (linkedTo as any).options.visible,
+                        linkedParent.options.visible,
                         series.visible
                     ); // #3879
                 }
