@@ -59,6 +59,7 @@
     "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
+    "@webgpu/types": "^0.1.40",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "cloudflare": "^2.9.1",
