@@ -2516,7 +2516,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * What type of legend symbol to render for this series. Can be one of
-     * `lineMarker` or `rectangle`.
+     * `areaMarker`, `lineMarker` or `rectangle`.
      *
      * @validvalue ["areaMarker", "lineMarker", "rectangle"]
      *
