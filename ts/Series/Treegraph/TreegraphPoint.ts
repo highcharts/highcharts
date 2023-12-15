@@ -182,12 +182,10 @@ class TreegraphPoint extends TreemapPoint {
 
     public toggleCollapse(state?: boolean): void {
         const series = this.series;
-        this.collapsed = this.options.collapsed = state ?? !this.collapsed;
 
-        // Update userOptions.data
-        if (series.options.data) {
-            series.options.data[series.data.indexOf(this)] = this.options;
-        }
+        this.update({
+            collapsed: state ?? !this.collapsed
+        }, false, void 0, false);
 
         fireEvent(series, 'toggleCollapse');
         series.redraw();
