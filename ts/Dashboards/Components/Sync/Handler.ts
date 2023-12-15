@@ -23,7 +23,6 @@
  * */
 
 import type ComponentType from '../ComponentType';
-import type SharedState from '../SharedComponentState';
 
 /* *
  *
@@ -46,7 +45,8 @@ class SyncHandler {
     /**
      * Adds a handler to the handler registry.
      *
-     * @param handler The handler to add to the registry.
+     * @param handler
+     * The handler to add to the registry.
      */
     public static register(handler: SyncHandler): void {
         const { id } = handler;
@@ -56,7 +56,8 @@ class SyncHandler {
     /**
      * Gets a handler from handler registry.
      *
-     * @param handlerID The ID of the handler to get.
+     * @param handlerID
+     * The ID of the handler to get.
      */
     public static get(handlerID: string): SyncHandler | undefined {
         return this.registry[handlerID];
@@ -67,11 +68,6 @@ class SyncHandler {
      * @remark Can be any string, but should be unique.
      */
     public id: string;
-
-    /**
-     * @deprecated replaced by {@link Data.DataCursor}.
-     */
-    public presentationStateTrigger?: SharedState.eventTypes;
 
     /**
      * The function to be called when the handler is activated.
@@ -88,21 +84,17 @@ class SyncHandler {
     /**
      * Creates a new handler instance.
      *
-     * @param id an unique ID for the handler.
-     *
-     * @param trigger The id of the presentationState that should trigger
-     * this handler. Should be `undefined` when DataCursor is used.
+     * @param id
+     * An unique ID for the handler.
      *
      * @param func
      * The function to be called when the handler is activated.
      */
     constructor(
         id: string,
-        trigger: SharedState.eventTypes | undefined,
         func: Function
     ) {
         this.id = id;
-        this.presentationStateTrigger = trigger;
         this.func = func;
 
         SyncHandler.register(this);
@@ -112,7 +104,8 @@ class SyncHandler {
      * Calls the activation function on the component and sets the callback to
      * the return function.
      *
-     * @param component The component to register on.
+     * @param component
+     * The component to register on.
      */
     public register(component: ComponentType): void {
         const { func } = this;

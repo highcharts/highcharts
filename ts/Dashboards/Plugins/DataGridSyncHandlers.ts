@@ -98,7 +98,6 @@ const configs: {
     handlers: {
         highlightHandler: [
             'highlightHandler',
-            void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
 
