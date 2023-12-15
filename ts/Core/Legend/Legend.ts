@@ -344,40 +344,45 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const { group, label, line, symbol } = item.legendItem || {};
+        const { area, group, label, line, symbol } = item.legendItem || {};
 
-        if (group) {
-            group[visible ? 'removeClass' : 'addClass'](
-                'highcharts-legend-item-hidden'
-            );
-        }
+        group?.[visible ? 'removeClass' : 'addClass'](
+            'highcharts-legend-item-hidden'
+        );
 
         if (!this.chart.styledMode) {
-            const { itemHiddenStyle } = this,
-                hiddenColor = (itemHiddenStyle as any).color,
-                symbolColor = visible ?
-                    (item.color || hiddenColor) :
-                    hiddenColor,
-                markerOptions = item.options && (item.options as any).marker;
-            let symbolAttr: SVGAttributes = { fill: symbolColor };
-
+            const { itemHiddenStyle = {} } = this,
+                hiddenColor = itemHiddenStyle.color,
+                { fillColor, fillOpacity, lineColor, marker } =
+                    (item as Series).options,
+                colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
+                    if (!visible) {
+                        if (attr.fill) {
+                            attr.fill = hiddenColor;
+                        }
+                        if (attr.stroke) {
+                            attr.stroke = hiddenColor;
+                        }
+                    }
+                    return attr;
+                };
             label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
 
-            line?.attr({ stroke: symbolColor });
+            line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
             if (symbol) {
-
                 // Apply marker options
-                if (markerOptions && symbol.isMarker) { // #585
-                    symbolAttr = (item as any).pointAttribs();
-                    if (!visible) {
-                        // #6769
-                        symbolAttr.stroke = symbolAttr.fill = hiddenColor;
-                    }
-                }
-
-                symbol.attr(symbolAttr);
+                symbol.attr(colorizeHidden(
+                    marker && symbol.isMarker ? // #585
+                        (item as Series).pointAttribs() :
+                        { fill: item.color }
+                ));
             }
+
+            area?.attr(colorizeHidden({
+                fill: fillColor || item.color,
+                'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
+            }));
         }
 
         fireEvent(this, 'afterColorizeItem', { item, visible });
