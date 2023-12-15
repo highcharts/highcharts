@@ -64,6 +64,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     interpolation?: {
         enabled?: boolean;
         useWebWorker?: boolean;
+        shaderCode?: string;
     };
     marker?: HeatmapPointMarkerOptions;
     nullColor?: ColorType;

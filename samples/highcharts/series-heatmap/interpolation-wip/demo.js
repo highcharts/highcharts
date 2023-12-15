@@ -52,7 +52,8 @@ document.getElementById('interpolation-form').addEventListener('submit', functio
     chart.series[0].update({
         interpolation: {
             enabled: formObject.enabled === 'on',
-            useWebWorker: formObject.useWebWorker === 'on'
+            useWebWorker: formObject.useWebWorker === 'on',
+            shaderCode: formObject.shaderCode
         }
     });
 });

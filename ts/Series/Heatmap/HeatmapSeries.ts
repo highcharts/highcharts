@@ -264,12 +264,33 @@ class HeatmapSeries extends ScatterSeries {
 
                 const pixelData = getPixelData(series.canvas);
 
+
+                const code = interpolation.shaderCode || `
+struct Matrix {
+    numbers: array<u32>,
+}
+
+@group(0) @binding(0) var<storage, read> input : Matrix;
+@group(0) @binding(1) var<storage, read_write> resultMatrix : Matrix;
+
+@compute @workgroup_size(8, 8)
+fn main() {
+    var result = u32(0);
+
+    for (var i = 0u; i < u32(arrayLength( &input.numbers )); i = i + 1u) {
+        result = input.numbers[i];
+        resultMatrix.numbers[i] = result;
+    }
+}
+`;
+
                 if (pixelData) {
                     series.worker.postMessage({
                         canvas: series.canvas,
                         pixelData: pixelData.pixelData,
                         width: pixelData.width,
-                        height: pixelData.height
+                        height: pixelData.height,
+                        shaderCode: code
                     }, [series.canvas]);
                 }
             } else if (!image || series.isDirtyData || series.isDirtyCanvas) {

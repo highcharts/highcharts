@@ -12,8 +12,30 @@
             </label>
             <input type="checkbox" name="useWebWorker" id="webworker-toggle" checked>
             <label for="webworker-toggle">
-                Web worker
+                Web worker + WebGPU
             </label>
+            <br />
+            <div class="wrapper">
+                <label for="shadercode">Shader code</label>
+                <textarea name="shaderCode" id="shadercode" cols="80" rows="30">
+struct Matrix {
+    numbers: array<u32>,
+}
+
+@group(0) @binding(0) var<storage, read> input : Matrix;
+@group(0) @binding(1) var<storage, read_write> resultMatrix : Matrix;
+
+@compute @workgroup_size(8, 8)
+fn main() {
+    var result = u32(0);
+
+    for (var i = 0u; i < u32(arrayLength( &input.numbers )); i = i + 1u) {
+        result = input.numbers[i];
+        resultMatrix.numbers[i] = result;
+    }
+}
+                </textarea>
+            </div>
 
             <input type="submit" value="Update" />
         </form>
