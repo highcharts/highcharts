@@ -14,7 +14,7 @@ const chart = Highcharts.chart('container', {
         height: 200
     },
     title: {
-        text: 'Chart'
+        text: 'Export test'
     },
     credits: {
         enabled: false

@@ -148,12 +148,14 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * An object containing additional key value data for the POST form that
-     * sends the SVG to the export server. For example, a `target` can be set to
-     * make sure the generated image is received in another frame, or a custom
-     * `enctype` or `encoding` can be set.
+     * Highcharts v11.2.0 and older. An object containing additional key value
+     * data for the POST form that sends the SVG to the export server. For
+     * example, a `target` can be set to make sure the generated image is
+     * received in another frame, or a custom `enctype` or `encoding` can be
+     * set.
      *
-     * To modify the request, use [fetchOptions](#exporting.fetchOptions)
+     * With Highcharts v11.3.0, the `fetch` API replaced the old HTML form. To
+     * modify the request, now use [fetchOptions](#exporting.fetchOptions)
      * instead.
      *
      * @deprecated
