@@ -970,6 +970,13 @@ function scatterProcessData(
     return true;
 }
 
+const zoomStart = {
+    xMin: 0,
+    xMax: 0,
+    yMin: 0,
+    yMax: 0
+};
+
 /**
  * @private
  * @function Highcharts.Series#renderCanvas
@@ -1021,10 +1028,27 @@ function seriesRenderCanvas(this: Series): void {
     // the series itself. A future improvement of this may be to scale and
     // transform the series canvas.
     if (xAxis.isPanning || yAxis.isPanning) {
-        this.renderTarget?.css({ opacity: 0.2, filter: 'blur(5px)' });
+        /*
+        const scaleX = (zoomStart.xMax - zoomStart.xMin) / (xMax - xMin);
+
+        this.renderTarget
+            ?.attr({
+                scaleX
+            })
+            .css({
+                opacity: 0.7,
+                filter: 'blur(3px)'
+            });
+        */
         return;
     }
-    this.renderTarget?.css({ opacity: 1, filter: '' });
+    /*
+    this.renderTarget
+        ?.attr({ scaleX: 1, scaleY: 1 })
+        .css({ opacity: 1, filter: '' });
+
+    extend(zoomStart, { xMin, xMax });
+    */
 
     // Get or create the renderer
     renderer = createAndAttachRenderer(chart, this);

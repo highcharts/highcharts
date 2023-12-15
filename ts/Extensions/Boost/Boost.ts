@@ -18,6 +18,7 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
 import type Series from '../../Core/Series/Series';
@@ -34,6 +35,7 @@ const {
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     error,
     pushUnique
 } = U;
@@ -62,6 +64,7 @@ const contexts = [
  */
 function compose(
     ChartClass: typeof Chart,
+    AxisClass: typeof Axis,
     SeriesClass: typeof Series,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     ColorClass?: typeof Color
@@ -88,6 +91,34 @@ function compose(
 
     BoostChart.compose(ChartClass, wglMode);
     BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
+
+    addEvent(AxisClass, 'setExtremes', function (e: AnyRecord): void {
+        for (const series of this.series) {
+            let scale = 1,
+                translate = 0,
+                opacity = 1,
+                filter = 'none';
+
+            if (this.isPanning) {
+                scale = e.scale * (series.renderTarget?.scaleX ?? 1);
+                translate = (series.renderTarget?.translateX || 0) - e.move;
+
+                opacity = 0.7;
+                filter = 'blur(3px)';
+            }
+
+            series.renderTarget
+                ?.attr({
+                    [this.horiz ? 'scaleX' : 'scaleY']: scale,
+                    [this.horiz ? 'translateX' : 'translateY']: translate
+                })
+                .css({
+                    transition: '250ms filter, 250ms opacity',
+                    filter,
+                    opacity
+                });
+        }
+    });
 }
 
 /**

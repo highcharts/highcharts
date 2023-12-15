@@ -3702,23 +3702,18 @@ class Chart {
                     options,
                     reversed
                 } = axis,
-                /*
-                _move = ((horiz ? target.x : target.y) || 0) - axis.pos,
-                _scale = ((horiz ? target.width : target.height) || len) / len,
-                // */
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
                 toLength = to[wh] || axis.len,
                 fromLength = from[wh] || axis.len,
-                // If fingers pinched very close on this
-                // axis, treat as pan.
+                // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :
-                    fromLength / toLength,
+                    toLength / fromLength,
                 fromCenter = (from[xy] || 0) + fromLength / 2 - axis.pos,
                 toCenter = (to[xy] ?? axis.pos) +
                     toLength / 2 - axis.pos,
-                move = fromCenter - scale * toCenter,
+                move = fromCenter - toCenter / scale,
                 pointRangeDirection =
                     (reversed && !inverted) ||
                     (!reversed && inverted) ?
@@ -3730,7 +3725,7 @@ class Chart {
                     minPointOffset * pointRangeDirection,
                 newMax =
                     axis.toValue(
-                        minPx + len * scale, true
+                        minPx + len / scale, true
                     ) -
                     (
                         (minPointOffset * pointRangeDirection) ||
@@ -3801,7 +3796,7 @@ class Chart {
                 // pinching or mousewheeling in.
                 allowZoomOutside = axis.allowZoomOutside ||
                     scale === 1 ||
-                    (trigger !== 'zoom' && scale < 1),
+                    (trigger !== 'zoom' && scale > 1),
 
                 // Calculate the floor and the ceiling
                 floor = Math.min(
@@ -3823,14 +3818,14 @@ class Chart {
                 // adjust it.
                 if (newMin < floor) {
                     newMin = floor;
-                    if (scale <= 1) {
+                    if (scale >= 1) {
                         newMax = newMin + range;
                     }
                 }
 
                 if (newMax > ceiling) {
                     newMax = ceiling;
-                    if (scale <= 1) {
+                    if (scale >= 1) {
                         newMin = newMax - range;
                     }
                 }
@@ -3863,7 +3858,7 @@ class Chart {
                             reset ? void 0 : newMax,
                             false,
                             false,
-                            { trigger }
+                            { move, trigger, scale }
                         );
 
                         if (!reset && (newMin > floor || newMax < ceiling)) {

@@ -30,10 +30,10 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'xy',
+            zoomType: 'x',
             panning: {
                 enabled: true,
-                type: 'xy'
+                type: 'x'
             },
             mouseWheel: {
                 enabled: true
