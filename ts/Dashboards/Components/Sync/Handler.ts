@@ -44,7 +44,7 @@ class SyncHandler {
     public static registry: Record<string, SyncHandler> = {};
 
     /**
-     * Adds a handler to the handler regisitry.
+     * Adds a handler to the handler registry.
      *
      * @param handler The handler to add to the registry.
      */
@@ -67,6 +67,7 @@ class SyncHandler {
      * @remark Can be any string, but should be unique.
      */
     public id: string;
+
     /**
      * @deprecated replaced by {@link Data.DataCursor}.
      */
@@ -76,6 +77,7 @@ class SyncHandler {
      * The function to be called when the handler is activated.
      */
     public func: Function;
+
     /**
      * Callback function that is called when the handler is removed.
      * Normally provided as the return value of {@link func}.
@@ -104,32 +106,6 @@ class SyncHandler {
         this.func = func;
 
         SyncHandler.register(this);
-    }
-
-    /**
-     * Attaches the handler to a component and presentationState.
-     *
-     * @deprecated use {@link register}
-     * @param component The component to attach to.
-     */
-    public create(component: ComponentType): void {
-        const { activeGroup } = component;
-        const { func } = this;
-        if (activeGroup && this.presentationStateTrigger) {
-            this.callback = activeGroup
-                .getSharedState()
-                .on(
-                    this.presentationStateTrigger,
-                    function (e): void {
-                        if (
-                            component.id !==
-                            (e.detail ? e.detail.sender : void 0)
-                        ) {
-                            func.call(component, e);
-                        }
-                    }
-                );
-        }
     }
 
     /**
