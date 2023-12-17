@@ -497,7 +497,7 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return super.alignDataLabel(point, dataLabel, labelOptions);
+        return super.alignDataLabel.apply(this, arguments);
     }
 
     /**
