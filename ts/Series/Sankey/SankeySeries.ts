@@ -338,18 +338,27 @@ class SankeySeries extends ColumnSeries {
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = relativeLength(
-            this.options.nodeWidth as any,
-            this.chart.plotSizeX as any
-        );
 
         const series = this,
             chart = this.chart,
             options = this.options,
-            nodeWidth = this.nodeWidth,
-            nodeColumns = this.nodeColumns;
+            nodeColumns = this.nodeColumns,
+            plotSizeX = chart.plotSizeX || 1,
+            nodePaddingLongitudinal = options.nodePaddingLongitudinal || 0;
 
         this.nodePadding = this.getNodePadding();
+
+        let nodeWidth = options.nodeWidth || 0;
+        if (nodeWidth === 'auto') {
+            // Node width auto means they are evenly distributed along the
+            // width of the plot area
+            nodeWidth = (
+                (plotSizeX + nodePaddingLongitudinal) /
+                (this.nodeColumns?.length || 1)
+            ) - nodePaddingLongitudinal;
+        }
+
+        this.nodeWidth = relativeLength(nodeWidth, plotSizeX);
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
@@ -368,7 +377,7 @@ class SankeySeries extends ColumnSeries {
 
         this.colDistance =
             (
-                (chart.plotSizeX as any) - nodeWidth -
+                (chart.plotSizeX as any) - this.nodeWidth -
                 (options.borderWidth as any)
             ) / Math.max(1, nodeColumns.length - 1);
 

@@ -278,21 +278,37 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * The pixel width of each node in a sankey diagram or dependency wheel,
      * or the height in case the chart is inverted.
      *
-     * @private
+     * Can be a number or a percentage string, or `auto`. If `auto`, the nodes
+     * area sized to fill up the plot are in the longitudinal direction,
+     * regardless of the number of levels.
      */
     nodeWidth: 20,
 
     /**
      * The padding between nodes in a sankey diagram or dependency wheel, in
-     * pixels.
+     * pixels. For sankey charts, this applies to the nodes of the same column,
+     * so vertical distance by default, or horizontal distance in an inverted
+     * (vertical) sankey.
      *
      * If the number of nodes is so great that it is possible to lay them
      * out within the plot area with the given `nodePadding`, they will be
      * rendered with a smaller padding as a strategy to avoid overflow.
-     *
-     * @private
      */
     nodePadding: 10,
+
+    /**
+     * The padding between nodes in a sankey diagram in the longitudinal
+     * direction, in pixels. The longitudinal direction means the direction that
+     * the chart flows - in a horizontal chart the padding is horizontal, in an
+     * inverted chart (vertical), the padding is vertical.
+     *
+     * This option applies only when the `nodeWidth` option is `auto`, making
+     * the node width respond to the number of columns.
+     *
+     * @since next
+     * @type {number}
+     */
+    nodePaddingLongitudinal: 30,
 
     showInLegend: false,
 
