@@ -18,7 +18,7 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type AxisLike from '../AxisLike';
-import Chart from '../../Chart/Chart.js';
+import type Chart from '../../Chart/Chart.js';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
