@@ -114,9 +114,10 @@ class JSONConverter extends DataConverter {
         options: JSONConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
-
         const converter = this;
+
         options = merge(converter.options, options);
+
         const {
             beforeParse,
             orientation,
@@ -129,10 +130,16 @@ class JSONConverter extends DataConverter {
             return;
         }
 
+        converter.emit<DataConverter.Event>({
+            type: 'parse',
+            columns: converter.columns,
+            detail: eventDetail,
+            headers: converter.headers
+        });
+
         if (beforeParse) {
             data = beforeParse(data);
         }
-
 
         data = data.slice();
 
@@ -213,6 +220,13 @@ class JSONConverter extends DataConverter {
                 }
             }
         }
+
+        converter.emit<DataConverter.Event>({
+            type: 'afterParse',
+            columns: converter.columns,
+            detail: eventDetail,
+            headers: converter.headers
+        });
     }
 
     /**
