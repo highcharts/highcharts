@@ -179,9 +179,10 @@ Highcharts.chart('container', {
                 pointFormat: '{point.name}'
             },
             marker: {
-                symbol: 'rect',
-                width: '25%'
+                symbol: 'rect'
             },
+            nodeWidth: 'auto',
+            nodeDistance: '50%',
             borderRadius: 10,
             dataLabels: {
                 pointFormat: '{point.name}'

@@ -42,7 +42,7 @@ const {
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
-const { getLevelOptions } = TU;
+const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -343,22 +343,10 @@ class SankeySeries extends ColumnSeries {
             chart = this.chart,
             options = this.options,
             nodeColumns = this.nodeColumns,
-            plotSizeX = chart.plotSizeX || 1,
-            nodePaddingLongitudinal = options.nodePaddingLongitudinal || 0;
+            columnCount = nodeColumns.length;
 
+        this.nodeWidth = getNodeWidth(this, columnCount);
         this.nodePadding = this.getNodePadding();
-
-        let nodeWidth = options.nodeWidth || 0;
-        if (nodeWidth === 'auto') {
-            // Node width auto means they are evenly distributed along the
-            // width of the plot area
-            nodeWidth = (
-                (plotSizeX + nodePaddingLongitudinal) /
-                (this.nodeColumns?.length || 1)
-            ) - nodePaddingLongitudinal;
-        }
-
-        this.nodeWidth = relativeLength(nodeWidth, plotSizeX);
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.

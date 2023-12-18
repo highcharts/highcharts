@@ -43,7 +43,8 @@ Highcharts.chart('container', {
             color: '#359154'
         }],
         colorByPoint: false,
-        nodeWidth: 'auto'
+        nodeWidth: 'auto',
+        nodeDistance: '50%'
     }],
     exporting: {
         allowHTML: true,
