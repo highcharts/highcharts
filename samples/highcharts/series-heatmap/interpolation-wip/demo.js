@@ -8,7 +8,7 @@ const chart = Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'datetime',
+        // type: 'datetime',
         minPadding: 0,
         maxPadding: 0
     },
@@ -23,8 +23,8 @@ const chart = Highcharts.chart('container', {
             [0.5, '#fffbbc'],
             [0.9, '#c4463a']
         ],
-        min: -5,
-        max: 25
+        min: 0,
+        max: 10
     },
 
     tooltip: {
@@ -34,7 +34,9 @@ const chart = Highcharts.chart('container', {
 
     series: [{
         name: 'Temperature',
-        colsize: 24 * 36e5, // one day
+        // colsize: 1 * 24 * 36e5, // one day
+        rowsize: 1000,
+        colsize: 1000,
         data: JSON.parse(document.getElementById('data').innerText),
         interpolation: {
             enabled: true,
@@ -57,3 +59,9 @@ document.getElementById('interpolation-form').addEventListener('submit', functio
         }
     });
 });
+
+const shaderCode = Highcharts.seriesTypes.heatmap
+    .defaultOptions.interpolation.shaderCode;
+
+document.getElementById('shadercode').value = shaderCode.trim()
+    .replace(/^ {4}/gm, '');

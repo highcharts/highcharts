@@ -1,11 +1,14 @@
 self.addEventListener('message', function (e): void {
+    /**
+     *
+     */
     async function doTheWork(): Promise<void> {
-        let offscreenCanvas = e.data.canvas;
+        const offscreenCanvas = e.data.canvas;
 
-        let pixelData = e.data.pixelData;
+        const pixelData = e.data.pixelData;
         const { width, height, shaderCode } = e.data;
 
-        let ctx = offscreenCanvas.getContext('2d');
+        const ctx = offscreenCanvas.getContext('2d');
 
         // Mostly copy-pasted and simplified from https://developer.chrome.com/docs/capabilities/web-apis/gpu-compute
         if ('gpu' in navigator) {
@@ -18,23 +21,38 @@ self.addEventListener('message', function (e): void {
 
             const device = await adapter.requestDevice();
 
+            // Insert metadata as u32s
+            const metadata = new Uint32Array(2);
+            metadata.set([
+                width,
+                height
+            ]);
+
+            const size = pixelData.byteLength + metadata.byteLength;
+
             // Buffer to modify
             const gpuBuffer = device.createBuffer({
                 mappedAtCreation: true,
-                size: pixelData.byteLength,
+                size: size,
                 usage: GPUBufferUsage.STORAGE
             });
 
-            new Uint8ClampedArray(gpuBuffer.getMappedRange()).set(pixelData);
+            const range = gpuBuffer.getMappedRange();
+
+            new Uint32Array(range)
+                .set(metadata);
+
+            new Uint8ClampedArray(range)
+                .set(pixelData, metadata.byteLength);
             gpuBuffer.unmap();
 
             // Buffer to store result
             const resultBuffer = device.createBuffer({
-                size: pixelData.byteLength, // length will be the same
+                size: size, // Length will be the same
                 usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
             });
 
-            // bindings
+            // Bindings
             const bindGroupLayout = device.createBindGroupLayout({
                 entries: [
                     {
@@ -73,13 +91,13 @@ self.addEventListener('message', function (e): void {
                 ]
             });
 
-            // shader
+            // Shader
 
             const shaderModule = device.createShaderModule({
                 code: shaderCode
             });
 
-            // pipeline
+            // Pipeline
             const computePipeline = device.createComputePipeline({
                 layout: device.createPipelineLayout({
                     bindGroupLayouts: [bindGroupLayout]
@@ -90,7 +108,7 @@ self.addEventListener('message', function (e): void {
                 }
             });
 
-            // commands
+            // Commands
             const commandEncoder = device.createCommandEncoder();
 
             const passEncoder = commandEncoder.beginComputePass();
@@ -101,7 +119,7 @@ self.addEventListener('message', function (e): void {
             passEncoder.end();
 
             const gpuReadBuffer = device.createBuffer({
-                size: pixelData.byteLength,
+                size: size,
                 usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
             });
 
@@ -110,16 +128,17 @@ self.addEventListener('message', function (e): void {
                 0,
                 gpuReadBuffer,
                 0,
-                pixelData.byteLength
+                size
             );
 
             const gpuCommands = commandEncoder.finish();
             device.queue.submit([gpuCommands]);
 
             await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-            const copyArrayBuffer = gpuReadBuffer.getMappedRange();
+            const copyArrayBuffer = gpuReadBuffer
+                .getMappedRange(metadata.byteLength);
 
-            let end = performance.now();
+            const end = performance.now();
 
             /* eslint-disable no-console */
             console.log(end - start);
