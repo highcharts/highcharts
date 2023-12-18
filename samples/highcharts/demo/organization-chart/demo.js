@@ -106,7 +106,7 @@ Highcharts.chart('container', {
             color: 'white'
         },
         borderColor: 'white',
-        nodeWidth: 65
+        nodeWidth: 'auto'
     }],
     tooltip: {
         outside: true
