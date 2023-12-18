@@ -1,3 +1,13 @@
+let board = void 0;
+const pollingCheckbox = document.getElementById('enablePolling');
+
+pollingCheckbox.onchange = () => {
+    // need to be tested, when back-end will be ready
+    board.dataPool.setConnectorOptions({
+        enablePolling: true
+    });
+};
+
 const data = [{
     "InstanceId": "i-0abcdef1234567890",
     "InstanceType": "t2.micro",
@@ -110,25 +120,6 @@ const KPIOptions = {
     }
 };
 
-// live generator
-const generateLivePoint = (chart, addPoint) => {
-    const newVal = Math.abs(Math.round((Math.random()) * 100));
-
-    if (addPoint) {
-        chart.series[0].addPoint(newVal, false, true);
-        if (chart.series.length > 1) {
-            chart.series[1].addPoint(
-                newVal + (Math.random() * 10),
-                false,
-                true
-            );
-        }
-        chart.redraw();
-    } else {
-        chart.series[0].points[0].update(newVal);
-    }
-};
-
 Highcharts.setOptions({
     credits: {
         enabled: false
@@ -138,7 +129,7 @@ Highcharts.setOptions({
     }
 });
 
-const board = Dashboards.board('container', {
+board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'instances',
@@ -395,16 +386,6 @@ const board = Dashboards.board('container', {
         title: 'CPU utilization',
         type: 'Highcharts',
         chartOptions: {
-            chart: {
-                events: {
-                    load: function () {
-                        const chart = this;
-                        setInterval(() => {
-                            generateLivePoint(chart, true);
-                        }, 2000);
-                    }
-                }
-            },
             series: [{
                 type: 'spline',
                 name: 'Average',
@@ -435,17 +416,6 @@ const board = Dashboards.board('container', {
         type: 'KPI',
         chartOptions: {
             ...KPIOptions,
-            chart: {
-                ...KPIOptions.chart,
-                events: {
-                    load: function () {
-                        const chart = this;
-                        setInterval(() => {
-                            generateLivePoint(chart);
-                        }, 2000);
-                    }
-                }
-            },
             plotOptions: {
                 series: {
                     className: 'highcharts-live-kpi',
@@ -491,17 +461,6 @@ const board = Dashboards.board('container', {
         type: 'KPI',
         chartOptions: {
             ...KPIOptions,
-            chart: {
-                ...KPIOptions.chart,
-                events: {
-                    load: function () {
-                        const chart = this;
-                        setInterval(() => {
-                            generateLivePoint(chart);
-                        }, 2000);
-                    }
-                }
-            },
             plotOptions: {
                 series: {
                     className: 'highcharts-live-kpi',
@@ -591,15 +550,7 @@ const board = Dashboards.board('container', {
         title: 'Network (bytes)',
         chartOptions: {
             chart: {
-                type: 'spline',
-                events: {
-                    load: function () {
-                        const chart = this;
-                        setInterval(() => {
-                            generateLivePoint(chart, true);
-                        }, 2000);
-                    }
-                }
+                type: 'spline'
             },
             series: [{
                 name: 'Network in',
@@ -639,15 +590,7 @@ const board = Dashboards.board('container', {
         title: 'Disk operations',
         chartOptions: {
             chart: {
-                type: 'column',
-                events: {
-                    load: function () {
-                        const chart = this;
-                        setInterval(() => {
-                            generateLivePoint(chart, true);
-                        }, 2000);
-                    }
-                }
+                type: 'column'
             },
             series: [{
                 name: 'Read',

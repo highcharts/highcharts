@@ -6,6 +6,12 @@
     padding: 0 20px;
 }
 
+.aws-data-controls {
+    background-color: var(--dashboard-bck-gray);
+    border-bottom: 1px solid #a5abb1;
+    padding: 20px 15px;
+}
+
 :root,
 .highcharts-light {
   /* Colors for data series and points */
