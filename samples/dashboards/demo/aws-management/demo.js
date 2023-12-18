@@ -366,9 +366,13 @@ board = Dashboards.board('container', {
                 enabled: false
             },
             series: [{
+                name: 'Used space',
                 type: 'bar',
                 data: [1, 2, 3, 1]
             }],
+            tooltip: {
+                valueSuffix: ' Gb'
+            },
             lang: {
                 accessibility: {
                     chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
@@ -377,7 +381,7 @@ board = Dashboards.board('container', {
             accessibility: {
                 description: 'The chart is displaying space on disk',
                 point: {
-                    descriptionFormat: 'Gb'
+                    valueDescriptionFormat: ' Gb'
                 }
             }
         }
@@ -404,10 +408,13 @@ board = Dashboards.board('container', {
                     description: 'Percents'
                 }
             },
+            tooltip: {
+                valueSuffix: '%'
+            },
             accessibility: {
                 description: 'The chart is displaying CPU usage',
                 point: {
-                    descriptionFormat: 'percents'
+                    valueDescriptionFormat: 'percents'
                 }
             }
         }
@@ -448,11 +455,11 @@ board = Dashboards.board('container', {
                 }
             },
             tooltip: {
-                valueSuffix: ' %'
+                valueSuffix: '%'
             },
             accessibility: {
                 point: {
-                    descriptionFormat: '%'
+                    valueDescriptionFormat: '%'
                 }
             }
         }
@@ -492,7 +499,7 @@ board = Dashboards.board('container', {
             },
             accessibility: {
                 point: {
-                    descriptionFormat: 'MB'
+                    valueDescriptionFormat: 'MB'
                 }
             }
         }
@@ -502,7 +509,11 @@ board = Dashboards.board('container', {
         class: 'health-indicator',
         elements: [{
             tagName: 'div',
-            class: 'health-wrapper highcharts-ok-icon'
+            class: 'health-wrapper highcharts-ok-icon',
+            attributes: {
+                'aria-label': 'Health: OK',
+                role: 'img'
+            }
         }, {
             tagName: 'div',
             class: 'health-title',
@@ -540,7 +551,7 @@ board = Dashboards.board('container', {
             },
             accessibility: {
                 point: {
-                    descriptionFormat: 'Gb'
+                    valueDescriptionFormat: 'Gb'
                 }
             }
         }
@@ -580,7 +591,7 @@ board = Dashboards.board('container', {
                 description: `The chart is displaying amount of in and out
                     network operations`,
                 point: {
-                    descriptionFormat: 'bytes'
+                    valueDescriptionFormat: 'bytes'
                 }
             }
         }
@@ -620,7 +631,7 @@ board = Dashboards.board('container', {
                 description: `The chart is displaying amount of in and out
                     operations on disk`,
                 point: {
-                    descriptionFormat: 'operations'
+                    valueDescriptionFormat: 'operations'
                 }
             }
         }
