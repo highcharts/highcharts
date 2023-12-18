@@ -115,7 +115,10 @@ self.addEventListener('message', function (e): void {
             passEncoder.setPipeline(computePipeline);
             passEncoder.setBindGroup(0, bindGroup);
 
-            passEncoder.dispatchWorkgroups(pixelData.byteLength);
+            passEncoder.dispatchWorkgroups(
+                Math.ceil(width / 8),
+                Math.ceil(height / 8)
+            );
             passEncoder.end();
 
             const gpuReadBuffer = device.createBuffer({

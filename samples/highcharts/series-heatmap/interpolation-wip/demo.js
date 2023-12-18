@@ -63,5 +63,4 @@ document.getElementById('interpolation-form').addEventListener('submit', functio
 const shaderCode = Highcharts.seriesTypes.heatmap
     .defaultOptions.interpolation.shaderCode;
 
-document.getElementById('shadercode').value = shaderCode.trim()
-    .replace(/^ {4}/gm, '');
+document.getElementById('shadercode').value = shaderCode.trim();

@@ -150,7 +150,11 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
 @group(0) @binding(1) var<storage, read_write> resultMatrix : Matrix;
 
 @compute @workgroup_size(8, 8)
-fn main() {
+fn main(@builtin(global_invocation_id) global_id : vec3u) {
+    if (global_id.x >= u32(input.size.x) || global_id.y >= u32(input.size.y)) {
+        return;
+    }
+
     var result = u32(0);
     var vertices: vec2<u32>;
     resultMatrix.size = input.size;
@@ -166,6 +170,7 @@ fn main() {
 
     }
 }
+
 `
     },
 

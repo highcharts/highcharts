@@ -247,7 +247,8 @@ class HeatmapSeries extends ScatterSeries {
             if (useWebWorker) {
                 series.canvas = new OffscreenCanvas(width, height);
                 series.worker = new Worker(
-                    'http://127.0.0.1:3030/code/es-modules/interpolation/worker.js'
+                    // 'http://127.0.0.1:3030/code/es-modules/interpolation/worker.js'
+                    'http://127.0.0.1:3030/code/modules/interpolation.js'
                 );
 
                 series.worker.addEventListener('message', function (e): void {
