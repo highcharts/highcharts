@@ -417,9 +417,15 @@ class Time {
                         timeZoneName: 'shortOffset'
                     })
                         .format(timestamp)
-                        .split('GMT')[1];
+                        .split('GMT')[1]
+                        .replace(':30', '.5');
 
-                    return -hourOffset * 60 * 60000;
+                    // Make sure only valid numbers are returned, otherwise fall
+                    // back to 0. Safety vent for avoiding full crash in future
+                    // cases that we don't yet know about.
+                    if (/^[0-9+\-\.]+$/.test(hourOffset)) {
+                        return -hourOffset * 60 * 60000;
+                    }
                 } catch (e) {
                     error(34);
                 }
