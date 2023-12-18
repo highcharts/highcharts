@@ -165,10 +165,12 @@ class StandaloneNavigator {
     }
 
     /**
-     * Unbinds an axis from the standalone navigator.
+     * Unbinds a single axis or all axes bound to the standalone navigator.
      *
      * @param {Chart | Axis | undefined} axisOrChart
-     *        The axis to unbind from the standalone navigator.
+     *        Passing a Chart object unbinds the first X axis of the chart,
+     *        an Axis object unbinds that specific axis,
+     *        and undefined unbinds all axes bound to the navigator.
      */
     public unbind(axisOrChart?: Chart | Axis): void {
         // If no axis or chart is provided, unbind all bound axes

@@ -17,9 +17,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
 import type Navigator from './Navigator';
-import type Scrollbar from '../Scrollbar/Scrollbar';
 import type Series from '../../Core/Series/Series';
 
 import D from '../../Core/Defaults.js';
@@ -27,8 +25,6 @@ const {
     defaultOptions,
     setOptions
 } = D;
-import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
@@ -37,9 +33,7 @@ const { getRendererType } = RendererRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend,
-    merge,
-    pick
+    extend
 } = U;
 
 /* *
