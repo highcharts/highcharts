@@ -252,7 +252,8 @@ const TreegraphSeriesDefaults = {
         style: {
             textOverflow: 'none'
         }
-    }
+    },
+    nodeDistance: 30
 } as TreegraphSeriesOptions;
 
 /* *

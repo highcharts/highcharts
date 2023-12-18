@@ -297,10 +297,15 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     nodePadding: 10,
 
     /**
-     * The padding between nodes in a sankey diagram in the longitudinal
-     * direction, in pixels. The longitudinal direction means the direction that
-     * the chart flows - in a horizontal chart the padding is horizontal, in an
-     * inverted chart (vertical), the padding is vertical.
+     * The distance between nodes in a sankey diagram in the longitudinal
+     * direction. The longitudinal direction means the direction that the chart
+     * flows - in a horizontal chart the distance is horizontal, in an inverted
+     * chart (vertical), the distance is vertical.
+     *
+     * If a number is given, it denotes pixels. If a percentage string is given,
+     * the distance is a percentage of the rendered node width. A `nodeDistance`
+     * of `100%` will render equal widths for the nodes and the gaps between
+     * them.
      *
      * This option applies only when the `nodeWidth` option is `auto`, making
      * the node width respond to the number of columns.
@@ -308,7 +313,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * @since next
      * @type {number}
      */
-    nodePaddingLongitudinal: 30,
+    nodeDistance: 30,
 
     showInLegend: false,
 
