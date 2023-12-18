@@ -298,7 +298,6 @@ class Chart {
 
     public _cursor?: (CursorValue|null);
     public axes: Array<AxisType> = void 0 as any;
-    public isMock = false;
     public axisOffset: Array<number> = void 0 as any;
     public bounds: Record<string, Record<string, number>> = void 0 as any;
     public callback?: Chart.CallbackFunction;

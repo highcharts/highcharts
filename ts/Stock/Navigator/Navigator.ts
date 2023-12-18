@@ -1124,6 +1124,7 @@ class Navigator {
                 fireEvent(this, 'setRange', {
                     min: Math.min(ext.min, ext.max),
                     max: Math.max(ext.min, ext.max),
+                    redraw: true,
                     animation: navigator.hasDragged ? false : (null as any),
                     options: {
                         trigger: 'navigator',
@@ -2036,15 +2037,19 @@ class Navigator {
                         ) + navigator.navigatorOptions.margin;
                 }
             ),
-            addEvent(Navigator, 'setRange', function (this: Navigator, e: SetRangeEvent) {
-                this.chart.xAxis[0].setExtremes(
-                    e.min,
-                    e.max,
-                    e.redraw,
-                    e.animation,
-                    e.options
-                );
-            })
+            addEvent(
+                Navigator,
+                'setRange',
+                function (this: Navigator, e: SetRangeEvent):void {
+                    this.chart.xAxis[0].setExtremes(
+                        e.min,
+                        e.max,
+                        e.redraw,
+                        e.animation,
+                        e.options
+                    );
+                }
+            )
         );
     }
 

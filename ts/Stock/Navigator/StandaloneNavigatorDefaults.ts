@@ -86,17 +86,4 @@ export default StandaloneNavigatorDefaults;
  *
  * */
 
-/**
- * Maximum range which can be set using the navigator's handles.
- * Opposite of [xAxis.minRange](#xAxis.minRange).
- *
- * @sample {highstock} stock/navigator/maxrange/
- *         Defined max and min range
- *
- * @type      {number}
- * @since     6.0.0
- * @product   highstock gantt
- * @apioption xAxis.maxRange
- */
-
 (''); // keeps doclets above in JS file

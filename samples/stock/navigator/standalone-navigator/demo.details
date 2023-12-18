@@ -1,6 +1,6 @@
 ---
- name: Navigator stickToMax false
+ name: Standalone Navigator
  authors:
-   - Kamil Musialowski
+   - Mateusz Bernacik
  js_wrap: b
 ...
