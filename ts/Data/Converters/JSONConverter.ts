@@ -20,6 +20,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type { BeforeParseCallbackFunction } from '../Connectors/JSONConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -272,13 +273,6 @@ namespace JSONConverter {
     }
 
     /**
-     * Interface for the BeforeParse callback function
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (data: Data): Data;
-    }
-
-    /**
      * Options for the JSON parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -288,11 +282,12 @@ namespace JSONConverter {
     }
 
     export type Data = Array<Array<number|string>|Record<string, number|string>>;
+
     /**
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: DataBeforeParseCallbackFunction;
+        beforeParse?: BeforeParseCallbackFunction;
     }
 
     /**

@@ -32,38 +32,52 @@ import type JSONConverter from '../Converters/JSONConverter';
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
-     * Should first row be treated as names of columns.
-     * @default true
-     */
-    firstRowAsNames?: boolean,
-    /**
-     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
-     */
-    dataUrl?: string;
-    /**
-     * Whether polling should be enabled.
-     */
-    enablePolling?: boolean;
-    /**
-     * Data in JSON format.
-     */
-    data?: Array<Array<number|string>>;
-    /**
-     * Data refresh rate in seconds.
-     */
-    dataRefreshRate?: number;
-    /**
-     * Whether data is in columns or rows.
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
-     */
-    orientation?: 'columns'|'rows';
-    /**
      * If JSON data is column oriented, these options defines keys
      * for the columns. In rows oriented case this is handled automatically.
      * In case of complex JSON structure, use the `ColumnNamesOptions` to define
      * the key and path to the data.
      */
     columnNames?: Array<string>|JSONConverter.ColumnNamesOptions;
+
+    /**
+     * Data in JSON format.
+     */
+    data?: JSONConverter.Data;
+
+    /**
+     * Data refresh rate in seconds.
+     */
+    dataRefreshRate?: number;
+
+    /**
+     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
+     */
+    dataUrl?: string;
+
+    /**
+     * Whether polling should be enabled.
+     */
+    enablePolling?: boolean;
+
+    /**
+     * Should first row be treated as names of columns.
+     * @default true
+     */
+    firstRowAsNames?: boolean;
+
+    /**
+     * Whether data is in columns or rows.
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
+     */
+    orientation?: 'columns'|'rows';
+}
+
+/**
+ * Callback function allowing modification of the data before parsing it.
+ * Must return a valid JSON structure.
+ */
+export interface BeforeParseCallbackFunction {
+    (data: JSONConverter.Data): JSONConverter.Data;
 }
 
 /* *

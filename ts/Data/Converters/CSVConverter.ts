@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type { BeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -614,13 +615,6 @@ namespace CSVConverter {
      * */
 
     /**
-     * Interface for the BeforeParse callback function
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -636,12 +630,12 @@ namespace CSVConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: DataBeforeParseCallbackFunction;
+        beforeParse?: BeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
 
     /**
-     * Avaliable options of the CSVConverter.
+     * Available options of the CSVConverter.
      */
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 
