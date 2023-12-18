@@ -73,7 +73,7 @@ QUnit.test('timezone', function (assert) {
     // This one should fail gracefully
     chart.update({
         time: {
-            timezone: 'Uggabuggaland'
+            timezone: 'SomeUnsupported/TimeZone'
         }
     });
 
