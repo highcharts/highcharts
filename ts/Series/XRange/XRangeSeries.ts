@@ -259,6 +259,14 @@ class XRangeSeries extends ColumnSeries {
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
         point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+
+        if (point.dataLabel && point.shapeArgs && point.shapeArgs.width) {
+            const width = point.shapeArgs.width;
+            point.dataLabel.css({
+                width: `${width}px`
+            });
+        }
+
         super.alignDataLabel.apply(this, arguments);
         point.plotX = oldPlotX;
     }
