@@ -125,26 +125,6 @@ QUnit.test('Data sorting ', function (assert) {
         'Series should be sorted in polar chart.'
     );
 
-    // chart.update(
-    //     {
-    //         _chart: {
-    //             polar: false
-    //         },
-    //         series: {
-    //             dataGrouping: {
-    //                 enabled: true
-    //             }
-    //         }
-    //     },
-    //     true,
-    //     true
-    // );
-
-    // assert.strictEqual(
-    //     series.points[2].x,
-    //     0,
-    //     'series should'
-    // );
 });
 
 QUnit.test('Data sorting with sortKey', function (assert) {
