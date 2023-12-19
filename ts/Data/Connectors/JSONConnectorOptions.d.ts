@@ -99,6 +99,8 @@ export interface ColumnNamesOptions {
 /**
  * Callback function allowing modification of the data before parsing it.
  * Must return a valid JSON structure.
+ *
+ * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
 export interface BeforeParseCallbackFunction {
     (data: JSONConverter.Data): JSONConverter.Data;
