@@ -336,8 +336,8 @@ function getTreeGridFromData(
                 const data = node.data;
 
                 if (isObject(data, true)) {
-                    // Update point
-                    data.y = start + (data.seriesIndex || 0);
+                    // Update point. Allow user-defined y (#14400).
+                    data.y ??= start + (data.seriesIndex || 0);
                     // Remove the property once used
                     delete data.seriesIndex;
                 }
