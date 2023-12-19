@@ -20,7 +20,6 @@
 import type DataConnectorOptions from './DataConnectorOptions';
 import type JSONConverter from '../Converters/JSONConverter';
 
-
 /* *
  *
  *  Declarations
@@ -32,12 +31,18 @@ import type JSONConverter from '../Converters/JSONConverter';
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
-     * If JSON data is column oriented, these options defines keys
-     * for the columns. In rows oriented case this is handled automatically.
+     * If JSON data is row oriented, these options define keys for the columns.
+     * In column oriented case this is handled automatically unless the
+     * `firstRowAsNames` set to false, then the `columnNames` can be used.
+     *
      * In case of complex JSON structure, use the `ColumnNamesOptions` to define
      * the key and path to the data.
+     *
+     * When more flexibility is needed you can use the `beforeParse` callback
+     * function and parse the rows into a valid JSON yourself. Nevertheless, the
+     * parsed JSON is going to be transformed into a valid table structure.
      */
-    columnNames?: Array<string>|JSONConverter.ColumnNamesOptions;
+    columnNames?: Array<string>|ColumnNamesOptions;
 
     /**
      * Data in JSON format.
@@ -67,9 +72,28 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
 
     /**
      * Whether data is in columns or rows.
+     *
+     * @default rows
+     *
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
      */
     orientation?: 'columns'|'rows';
+}
+
+/**
+ * Options used for parsing JSON data with multiple levels.
+ * The key is the column name (later used as a reference), and the value is
+ * an array of keys that are used to access the data.
+ *
+ * @example
+ * columnNames: {
+ *     InstanceType: ['InstanceType'],
+ *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
+ *     ReadOps: ['DiskOperations', 0, 'ReadOps']
+ * },
+ */
+export interface ColumnNamesOptions {
+    [key: string]: Array<string|number>;
 }
 
 /**

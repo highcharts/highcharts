@@ -20,7 +20,10 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type { BeforeParseCallbackFunction } from '../Connectors/JSONConnectorOptions';
+import type {
+    BeforeParseCallbackFunction,
+    ColumnNamesOptions
+} from '../Connectors/JSONConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -51,7 +54,7 @@ class JSONConverter extends DataConverter {
     protected static readonly defaultOptions: JSONConverter.Options = {
         ...DataConverter.defaultOptions,
         data: [],
-        orientation: 'columns'
+        orientation: 'rows'
     };
 
     /* *
@@ -84,7 +87,7 @@ class JSONConverter extends DataConverter {
      * */
 
     private columns: Array<DataTable.Column> = [];
-    private headers: Array<string>|JSONConverter.ColumnNamesOptions = [];
+    private headers: Array<string>|ColumnNamesOptions = [];
 
     /**
      * Options for the DataConverter.
@@ -199,23 +202,20 @@ class JSONConverter extends DataConverter {
                             );
                         }
                     }
-                } else {
+                } else if (converter.headers && !isArray(converter.headers)) {
                     const columnNames = converter.headers;
+                    const newRow = {} as Record<string, string|number>;
 
-                    if (columnNames && !(columnNames instanceof Array)) {
-                        const newRow = {} as any;
+                    objectEach(
+                        columnNames,
+                        (arrayWithPath: Array<string|number>, name): void => {
+                            newRow[name] = arrayWithPath.reduce(
+                                (acc: any, key: string|number): any =>
+                                    acc[key], row
+                            );
+                        });
 
-                        objectEach(
-                            columnNames,
-                            (arrayWithPath: Array<string|number>, name): void => {
-                                newRow[name] = arrayWithPath.reduce(
-                                    (acc: any, key: string|number): any =>
-                                        acc[key], row
-                                );
-                            });
-
-                        row = newRow;
-                    }
+                    row = newRow;
 
                     this.table.setRows([row], rowIndex);
                 }
@@ -255,22 +255,6 @@ namespace JSONConverter {
      *  Declarations
      *
      * */
-
-    /**
-     * Options used for parsing JSON data with multiple levels.
-     * The key is the column name (later used as a reference), and the value is
-     * an array of keys that are used to access the data.
-     *
-     * @example
-     * columnNames: {
-     *     InstanceType: ['InstanceType'],
-     *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
-     *     ReadOps: ['DiskOperations', 0, 'ReadOps']
-     * },
-     */
-    export interface ColumnNamesOptions {
-        [key: string]: Array<string|number>;
-    }
 
     /**
      * Options for the JSON parser that are compatible with ClassJSON

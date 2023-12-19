@@ -949,9 +949,9 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
             options: {
                 firstRowAsNames: false,
                 columnNames: {
-                InstanceType: ['InstanceType'],
-                DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
-                ReadOps: ['DiskOperations', 0, 'ReadOps']
+                    InstanceType: ['InstanceType'],
+                    DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
+                    ReadOps: ['DiskOperations', 0, 'ReadOps']
                 },
                 data
             }
