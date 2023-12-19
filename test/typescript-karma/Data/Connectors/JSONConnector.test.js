@@ -87,3 +87,45 @@ test('JSONConnector from objects', async (assert) => {
         'Should have correct column Names'
     );
 });
+
+test('JSONConnector with beforeParse', async (assert) => {
+    const data = [{
+            id: 1,
+            weight: 88,
+            age: 30
+        }, {
+            id: 2,
+            weight: 58,
+            age: 25
+        }, {
+            id: 3,
+            weight: 78,
+            age: 20
+        }, {
+            id: 4,
+            weight: 98,
+            age: 35
+        }];
+    const connector = new JSONConnector({
+        firstRowAsNames: false,
+        beforeParse: (data) => {
+            data.forEach((row) => {
+                row.age = row.age + 10;
+            });
+            return data;
+        },
+        data
+    });
+    await connector.load();
+
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        data.length ,
+        'Should have the same amount of rows.'
+    );
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        4,
+        'There should be an extra column added.'
+    );
+});
