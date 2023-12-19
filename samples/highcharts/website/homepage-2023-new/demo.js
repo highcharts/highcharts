@@ -2012,7 +2012,7 @@ const dbColi =  {
 };
 
 // dashboard
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@334004f4167100b9ea770b57786ed736e68bcf69/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
 const db = {
     chart: {

@@ -42,11 +42,11 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
     public insetIndex?: number;
 
-    public options: MapPointPointOptions = void 0 as any;
+    public options!: MapPointPointOptions;
 
     public properties?: AnyRecord;
 
-    public series: MapPointSeries = void 0 as any;
+    public series!: MapPointSeries;
 
     /* *
      *

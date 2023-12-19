@@ -160,7 +160,7 @@ class SVGElement implements SVGElementLike {
     // @todo public d?: number;
     // @todo public div?: HTMLDOMElement;
     public doTransform?: boolean;
-    public element: DOMElementType = void 0 as any;
+    public element: DOMElementType;
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
@@ -178,7 +178,7 @@ class SVGElement implements SVGElementLike {
     public placed?: boolean;
     public r?: number;
     public radAttr?: SVGAttributes;
-    public renderer: SVGRenderer = void 0 as any;
+    public renderer: SVGRenderer;
     public rotation?: number;
     public rotationOriginX?: number;
     public rotationOriginY?: number;
@@ -193,7 +193,7 @@ class SVGElement implements SVGElementLike {
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
-    // @todo public textWidth?: number;
+    public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
@@ -1665,10 +1665,10 @@ class SVGElement implements SVGElementLike {
      * @param {string} nodeName
      * The SVG node name.
      */
-    public init(
+    public constructor(
         renderer: SVGRenderer,
         nodeName: string
-    ): void {
+    ) {
 
         /**
          * The primary DOM node. Each `SVGElement` instance wraps a main DOM

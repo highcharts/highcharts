@@ -141,9 +141,9 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PriceEnvelopesPoint> = void 0 as any;
-    public options: PriceEnvelopesOptions = void 0 as any;
-    public points: Array<PriceEnvelopesPoint> = void 0 as any;
+    public data!: Array<PriceEnvelopesPoint>;
+    public options!: PriceEnvelopesOptions;
+    public points!: Array<PriceEnvelopesPoint>;
 
     /* *
      *

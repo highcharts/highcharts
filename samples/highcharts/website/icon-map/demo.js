@@ -23,7 +23,7 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mapLoaded = false;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const maps = {
     chart: {
         animation: {
@@ -584,7 +584,7 @@ const finalMap = function () {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+            'https://www.highcharts.com/samples/data/world-population-density.json'
         ).then(response => response.json());
 
         // Assign id's

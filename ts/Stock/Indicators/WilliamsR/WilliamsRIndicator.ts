@@ -92,9 +92,9 @@ class WilliamsRIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<WilliamsRPoint> = void 0 as any;
-    public options: WilliamsROptions = void 0 as any;
-    public points: Array<WilliamsRPoint> = void 0 as any;
+    public data!: Array<WilliamsRPoint>;
+    public options!: WilliamsROptions;
+    public points!: Array<WilliamsRPoint>;
 
     /* *
      *

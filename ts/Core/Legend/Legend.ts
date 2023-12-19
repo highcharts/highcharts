@@ -40,6 +40,7 @@ import F from '../Templating.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
+    composed,
     marginNames
 } = H;
 import Point from '../Series/Point.js';
@@ -57,6 +58,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     stableSort,
     syncTimeout
@@ -111,17 +113,6 @@ class Legend {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    public constructor(chart: Chart, options: LegendOptions) {
-        this.chart = chart;
-        this.init(chart, options);
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -130,7 +121,7 @@ class Legend {
 
     public baseline?: number;
 
-    public box: SVGElement = void 0 as any;
+    public box!: SVGElement;
 
     public chart: Chart;
 
@@ -138,11 +129,11 @@ class Legend {
 
     public clipRect?: SVGElement;
 
-    public contentGroup: SVGElement = void 0 as any;
+    public contentGroup!: SVGElement;
 
     public currentPage?: number;
 
-    public display: boolean = false;
+    public display?: boolean;
 
     public down?: SVGElement;
 
@@ -152,7 +143,7 @@ class Legend {
 
     public fullHeight?: number;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
     public initialItemY: number = 0;
 
@@ -186,7 +177,7 @@ class Legend {
 
     public offsetWidth: number = 0;
 
-    public options: LegendOptions = void 0 as any;
+    public options!: LegendOptions;
 
     public padding: number = 0;
 
@@ -194,9 +185,9 @@ class Legend {
 
     public pages: Array<number> = [];
 
-    public proximate: boolean = false;
+    public proximate?: boolean;
 
-    public scrollGroup: SVGElement = void 0 as any;
+    public scrollGroup!: SVGElement;
 
     public scrollOffset?: number;
 
@@ -234,7 +225,7 @@ class Legend {
      * @param {Highcharts.LegendOptions} options
      * Legend options.
      */
-    public init(chart: Chart, options: LegendOptions): void {
+    public constructor(chart: Chart, options: LegendOptions) {
         /**
          * Chart of this legend.
          *
@@ -1746,14 +1737,6 @@ namespace Legend {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1761,9 +1744,11 @@ namespace Legend {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

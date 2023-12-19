@@ -33,6 +33,7 @@ PolarAdditions.compose(
     G.Pointer,
     G.Series,
     G.Tick,
+    G.Point,
     SeriesRegistry.seriesTypes.areasplinerange,
     SeriesRegistry.seriesTypes.column,
     SeriesRegistry.seriesTypes.line,

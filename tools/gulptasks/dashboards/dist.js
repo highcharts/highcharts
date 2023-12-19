@@ -59,7 +59,8 @@ async function dist() {
         'dashboards/dist-examples',
         'dashboards/dist-zip',
         'dashboards/dist-productsjs',
-        'dashboards/dist-release'
+        'dashboards/dist-release',
+        'dashboards/dist-verify'
         // 'dashboards/dist-upload'
     ]);
 

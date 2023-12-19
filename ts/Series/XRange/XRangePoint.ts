@@ -103,8 +103,8 @@ class XRangePoint extends ColumnPoint {
      *
      * */
 
-    public options: XRangePointOptions = void 0 as any;
-    public series: XRangeSeries = void 0 as any;
+    public options!: XRangePointOptions;
+    public series!: XRangeSeries;
     public dlBox?: BBoxObjectWithCenter;
 
     /* *
@@ -140,14 +140,12 @@ class XRangePoint extends ColumnPoint {
      *
      * @private
      */
-    public init(): XRangePoint {
-        super.init.apply(this, arguments as any);
+    public constructor(series: XRangeSeries, options: XRangePointOptions) {
+        super(series, options);
 
         if (!this.y) {
             this.y = 0;
         }
-
-        return this;
     }
 
     /**

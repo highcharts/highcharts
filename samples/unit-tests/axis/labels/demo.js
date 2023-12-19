@@ -384,6 +384,74 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         [-45, -45, -45, -45, -45, -45, -45, -45, -45],
         'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
     );
+
+    chart.update({
+        chart: {
+            marginRight: undefined,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        xAxis: {
+            categories: [
+                '00',
+                '06',
+                '07',
+                '08',
+                '09',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16',
+                '17',
+                '18',
+                '19',
+                '20',
+                '21',
+                '22'
+            ],
+            labels: {
+                autoRotation: [-90],
+                style: {
+                    fontSize: '11px'
+                },
+                step: 0
+            }
+        },
+        yAxis: {
+            labels: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            }
+        },
+        series: [
+            {
+                type: 'area',
+                data: [2, 3, 2, 3, 2, 2, 3, 2, 3, 2, 2, 3, 2, 3, 2, 3, 2]
+            }
+        ]
+    }, true, true);
+
+    for (let i = 0; i < 3; i++) {
+        chart.update({
+            chart: {
+                width: 180 + 20 * i
+            }
+        });
+
+        assert.ok(
+            xAxis.tickPositions.filter(
+                pos => xAxis.ticks[pos].label.element.innerHTML
+            ).length,
+            `Labels should not disappear when autoRotation set and
+                label.height > label.width (#19857)`
+        );
+    }
 });
 
 QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {

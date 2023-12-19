@@ -77,7 +77,7 @@ function syncExtremes(e) {
 
 // Get the data. The contents of the data file can be viewed at
 Highcharts.ajax({
-    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/activity.json',
+    url: 'https://www.highcharts.com/samples/data/activity.json',
     dataType: 'text',
     success: function (activity) {
 

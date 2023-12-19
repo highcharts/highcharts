@@ -65,11 +65,11 @@ class ColumnPyramidSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<ColumnPyramidPoint> = void 0 as any;
+    public data!: Array<ColumnPyramidPoint>;
 
-    public options: ColumnPyramidSeriesOptions = void 0 as any;
+    public options!: ColumnPyramidSeriesOptions;
 
-    public points: Array<ColumnPyramidPoint> = void 0 as any;
+    public points!: Array<ColumnPyramidPoint>;
 
     /* *
      *

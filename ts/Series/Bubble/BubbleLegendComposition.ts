@@ -28,20 +28,15 @@ import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     objectEach,
+    pushUnique,
     wrap
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -149,7 +144,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -158,13 +153,9 @@ function compose(
         });
 
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
-    }
 
-    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-    }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 

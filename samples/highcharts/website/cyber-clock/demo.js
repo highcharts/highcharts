@@ -6,7 +6,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/cyber-monday/';
 
 const small = window.matchMedia('(max-width: 300px)').matches;
 
@@ -112,7 +112,7 @@ const gaugeOptions = {
                     plotOptions: {
                         solidgauge: {
                             dataLabels: {
-                                y: -28
+                                y: -24
                             }
                         }
                     }
@@ -242,8 +242,8 @@ function updateCountdown(type) {
     // If the countdown is over, display some text
     if (distance <= 0) {
         // clearInterval(countdownInterval);
-        countDownDate = new Date('2023-12-03T23:00:00Z').getTime();
-        document.getElementById('header').innerHTML = '<span style="font-weight:bold">70% Off </span> Highcharts Dashboards ends in:';
+        countDownDate = new Date('2023-12-04T07:00:00Z').getTime();
+        document.getElementById('header').innerHTML = 'Our <span style="font-weight:bold">Big Deal</span> ends in:';
     }
 
     switch (type) {
@@ -328,18 +328,20 @@ function lightParticles() {
 
 /* gauges */
 
-Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
+let secondsInt, minutesInt, hoursInt, daysInt;
+
+const seconds = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                console.log(chart.chartWidth);
+                document.querySelector('#seconds .time').style.opacity = 0;
 
                 chart.series[1].points[0].update({
                     y: 60 - updateCountdown('seconds')
                 });
-                setInterval(() => {
+                secondsInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
                         y: 60 - updateCountdown('seconds')
@@ -352,7 +354,12 @@ Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#seconds .time').style.opacity = 1;
+                }, 100);
             }
         }
     },
@@ -397,15 +404,17 @@ Highcharts.chart('seconds', Highcharts.merge(gaugeOptions, {
 
         }]
 
-}));
+});
 
-Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
+const minutes = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#minutes .time').style.opacity = 0;
+
+                minutesInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
                         y: 60 - updateCountdown('minutes')
@@ -418,7 +427,12 @@ Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#minutes .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -467,15 +481,17 @@ Highcharts.chart('minutes', Highcharts.merge(gaugeOptions, {
             backgroundColor: 'transparent'
         }
     }]
-}));
+});
 
-Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
+const hours = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#hours .time').style.opacity = 0;
+
+                hoursInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
                         y: 24 - updateCountdown('hours')
@@ -488,7 +504,12 @@ Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#hours .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -533,15 +554,17 @@ Highcharts.chart('hours', Highcharts.merge(gaugeOptions, {
 
     }]
 
-}));
+});
 
-Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
+const days = Highcharts.merge(gaugeOptions, {
     chart: {
         events: {
             load: function () {
                 const chart = this;
 
-                setInterval(() => {
+                document.querySelector('#days .time').style.opacity = 0;
+
+                daysInt = setInterval(() => {
 
                     chart.series[1].points[0].update({
                         y: 20 - updateCountdown('days')
@@ -554,7 +577,12 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
                     }, false);
 
                     chart.redraw();
+
                 }, 1000);
+
+                setTimeout(function () {
+                    document.querySelector('#days .time').style.opacity = 1;
+                }, 100);
 
             }
         }
@@ -563,8 +591,8 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
         max: 20,
-        tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-            14, 15, 16, 17, 18, 19, 20],
+        tickPositions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+            13, 14, 15, 16, 17, 18, 19, 20],
         lineWidth: 0
     },
     series: [{
@@ -597,7 +625,7 @@ Highcharts.chart('days', Highcharts.merge(gaugeOptions, {
 
     }]
 
-}));
+});
 
 
 /* Background animation */
@@ -624,7 +652,7 @@ function lightStreaks(num) {
 }
 
 let streaksInterval = '';
-if (!small) {
+if (!small && !reduced) {
     Highcharts.chart('container', {
         chart: {
             backgroundColor: 'transparent',
@@ -929,10 +957,27 @@ if (!small) {
     });
 }
 
+Highcharts.chart('seconds', seconds);
+Highcharts.chart('minutes', minutes);
+Highcharts.chart('hours', hours);
+Highcharts.chart('days', days);
+
 
 document.getElementById('stop').addEventListener('click', function () {
     clearInterval(streaksInterval);
     this.style.opacity = 0;
+});
+
+addEventListener('resize', function () {
+    clearInterval(secondsInt);
+    clearInterval(minutesInt);
+    clearInterval(hoursInt);
+    clearInterval(daysInt);
+
+    Highcharts.chart('seconds', seconds);
+    Highcharts.chart('minutes', minutes);
+    Highcharts.chart('hours', hours);
+    Highcharts.chart('days', days);
 });
 
 /* html version of countdown */

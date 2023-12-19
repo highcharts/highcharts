@@ -25,7 +25,7 @@ function indicators() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2c6e89641888ae94c988649d96552c06c4e47351/samples/data/aapl-ohlcv.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlcv.json'
         ).then(response => response.json());
 
         // split the data set into ohlc and volume
@@ -405,15 +405,15 @@ function compare() {
             }
         }
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json')
+        await fetch('https://www.highcharts.com/samples/data/msft-c.json')
             .then(response => response.json())
             .then(data => success('msft', data));
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json')
+        await fetch('https://www.highcharts.com/samples/data/aapl-c.json')
             .then(response => response.json())
             .then(data => success('aapl', data));
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json')
+        await fetch('https://www.highcharts.com/samples/data/goog-c.json')
             .then(response => response.json())
             .then(data => success('goog', data));
     })();
@@ -424,7 +424,7 @@ function ao() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlc-ab.json'
         ).then(response => response.json());
 
         Highcharts.stockChart('container', {
@@ -798,7 +798,7 @@ function ab() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlc-ab.json'
         ).then(response => response.json());
 
         Highcharts.stockChart('container', {
@@ -953,7 +953,7 @@ function flags() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+            'https://www.highcharts.com/samples/data/usdeur.json'
         ).then(response => response.json());
 
         const lastDate = data[data.length - 1][0],  // Get year of last data point

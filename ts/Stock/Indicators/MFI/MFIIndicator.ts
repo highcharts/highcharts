@@ -127,9 +127,9 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<MFIPoint> = void 0 as any;
-    public options: MFIOptions = void 0 as any;
-    public points: Array<MFIPoint> = void 0 as any;
+    public data!: Array<MFIPoint>;
+    public options!: MFIOptions;
+    public points!: Array<MFIPoint>;
 
     /* *
      *

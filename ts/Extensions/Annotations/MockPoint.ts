@@ -280,8 +280,8 @@ class MockPoint {
     public isInside?: boolean;
     public negative?: boolean;
     public options: (MockPointOptions|Function);
-    public plotX: number = void 0 as any;
-    public plotY: number = void 0 as any;
+    public plotX!: number;
+    public plotY!: number;
     public series: MockSeries;
     public target: (ControlTarget|null);
     public ttBelow?: boolean;

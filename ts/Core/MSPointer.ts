@@ -23,6 +23,7 @@ import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
     charts,
+    composed,
     doc,
     noop,
     win
@@ -34,6 +35,7 @@ const {
     css,
     objectEach,
     pick,
+    pushUnique,
     removeEvent
 } = U;
 
@@ -179,9 +181,9 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Options): void {
+    public constructor(chart: Chart, options: Options) {
 
-        super.init(chart, options);
+        super(chart, options);
 
         if (this.hasZoom) { // #4014
             css(chart.container, {
@@ -269,14 +271,6 @@ namespace MSPointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -284,9 +278,11 @@ namespace MSPointer {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

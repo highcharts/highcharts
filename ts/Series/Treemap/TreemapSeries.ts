@@ -40,7 +40,10 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapComposition from '../ColorMapComposition.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -66,7 +69,6 @@ const {
     extend,
     fireEvent,
     isArray,
-    isNumber,
     isObject,
     isString,
     merge,
@@ -92,8 +94,6 @@ interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
  * */
 
 const axisMax = 100;
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -184,7 +184,7 @@ class TreemapSeries extends ScatterSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterBindAxes', onSeriesAfterBindAxes);
         }
 
@@ -196,33 +196,33 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
-    public axisRatio: number = void 0 as any;
+    public axisRatio!: number;
 
     public colorValueData?: Array<number>;
 
     public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
-    public data: Array<TreemapPoint> = void 0 as any;
+    public data!: Array<TreemapPoint>;
 
     public drillUpButton?: SVGElement;
 
     public idPreviousRoot?: string;
 
-    public mapOptionsToLevel: Record<string, TreemapSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, TreemapSeriesOptions>;
 
-    public nodeMap: Record<string, TreemapNode> = void 0 as any;
+    public nodeMap!: Record<string, TreemapNode>;
 
-    public nodeList: TreemapNode[] = void 0 as any;
+    public nodeList!: TreemapNode[];
 
-    public options: TreemapSeriesOptions = void 0 as any;
+    public options!: TreemapSeriesOptions;
 
-    public points: Array<TreemapPoint> = void 0 as any;
+    public points!: Array<TreemapPoint>;
 
-    public rootNode: string = void 0 as any;
+    public rootNode!: string;
 
-    public tree: TreemapNode = void 0 as any;
+    public tree!: TreemapNode;
 
-    public level?: number = void 0 as any;
+    public level?: number;
 
     /* *
      *
@@ -422,7 +422,7 @@ class TreemapSeries extends ScatterSeries {
             style &&
             !defined(style.textOverflow) &&
             dataLabel.text &&
-            dataLabel.getBBox().width > dataLabel.text.textWidth
+            dataLabel.getBBox().width > (dataLabel.text.textWidth || 0)
         ) {
             dataLabel.css({
                 textOverflow: 'ellipsis',

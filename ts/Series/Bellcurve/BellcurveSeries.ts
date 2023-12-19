@@ -119,13 +119,13 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<BellcurvePoint> = void 0 as any;
+    public data!: Array<BellcurvePoint>;
 
     public mean?: number;
 
-    public options: BellcurveSeriesOptions = void 0 as any;
+    public options!: BellcurveSeriesOptions;
 
-    public points: Array<BellcurvePoint> = void 0 as any;
+    public points!: Array<BellcurvePoint>;
 
     public standardDeviation?: number;
 

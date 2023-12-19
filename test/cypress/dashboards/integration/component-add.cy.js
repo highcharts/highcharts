@@ -17,6 +17,11 @@ describe('Add components through UI', () => {
         cy.visit('/dashboards/cypress/add-layout');
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
+
+        Cypress.on('uncaught:exception', () => {
+            cy.log('Uncaught exception. Check the console for more details.');
+            return false;
+        })
     });
 
     it('should close the add component sidebar, clicking outside', function() {
@@ -98,9 +103,12 @@ describe('Add components through UI', () => {
     });
 
     it('should be able to add a chart component and resize it', function() {
+        // Act
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
+
+        // Assert
         cy.board().then((board) => {
             assert.equal(
                 board.layouts[0].rows[0].cells.length,

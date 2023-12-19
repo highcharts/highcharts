@@ -155,9 +155,9 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<KeltnerChannelsPoint> = void 0 as any;
-    public options: KeltnerChannelsOptions = void 0 as any;
-    public points: Array<KeltnerChannelsPoint> = void 0 as any;
+    public data!: Array<KeltnerChannelsPoint>;
+    public options!: KeltnerChannelsOptions;
+    public points!: Array<KeltnerChannelsPoint>;
 
     /* *
      *

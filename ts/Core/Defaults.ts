@@ -16,7 +16,7 @@
  *
  * */
 
-import type { Options } from './Options';
+import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
@@ -39,7 +39,7 @@ const { merge } = U;
 
 declare module './GlobalsLike' {
     interface GlobalsLike {
-        defaultOptions: Options;
+        defaultOptions: DefaultOptions;
         time: Time;
     }
 }
@@ -59,7 +59,7 @@ declare module './GlobalsLike' {
  * @optionparent
  * @private
  */
-const defaultOptions: Options = {
+const defaultOptions: DefaultOptions = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -232,7 +232,7 @@ const defaultOptions: Options = {
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `null` disables shortening altogether.
+         * `numericSymbols` to `undefined` disables shortening altogether.
          *
          * @sample {highcharts} highcharts/lang/numericsymbols/
          *         Replacing the symbols with text
@@ -1896,16 +1896,19 @@ const defaultOptions: Options = {
          * The color of the tooltip border. When `undefined`, the border takes
          * the color of the corresponding series or point.
          *
-         * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
-         * @sample {highcharts} highcharts/tooltip/bordercolor-black/
-         *         Black border
-         * @sample {highstock} stock/tooltip/general/
-         *         Styled tooltip
-         * @sample {highmaps} maps/tooltip/background-border/
-         *         Background and border demo
+         * Note that the [borderWidth](#tooltip.borderWidth) is usually 0 by
+         * default, so the border color may not be visible until a border width
+         * is set.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow
+         *         series by default
+         * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black
+         *         border
+         * @sample {highstock} stock/tooltip/general/ Styled tooltip
+         * @sample {highmaps} maps/tooltip/background-border/ Background and
+         *         border demo
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 
@@ -2761,7 +2764,7 @@ const defaultTime = new Time(defaultOptions.time);
  * @return {Highcharts.Options}
  * Default options.
  */
-function getOptions(): Options {
+function getOptions(): DefaultOptions {
     return defaultOptions;
 }
 
@@ -2781,7 +2784,7 @@ function getOptions(): Options {
  * Updated options.
  */
 function setOptions(
-    options: DeepPartial<Options>
+    options: DeepPartial<DefaultOptions>
 ): Options {
 
     // Copy in the default options

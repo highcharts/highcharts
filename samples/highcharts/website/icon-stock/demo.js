@@ -28,7 +28,7 @@
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-    const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+    const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
     // Load the dataset
     const data = await fetch(

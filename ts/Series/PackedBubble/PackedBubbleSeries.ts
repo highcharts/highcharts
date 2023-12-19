@@ -64,11 +64,8 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    syncTimeout
+    pick
 } = U;
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
 
 /* *
  *
@@ -119,15 +116,15 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
-    public chart: PackedBubbleChart = void 0 as any;
+    public chart!: PackedBubbleChart;
 
-    public data: Array<PackedBubblePoint> = void 0 as any;
+    public data!: Array<PackedBubblePoint>;
 
     public hoverPoint?: PackedBubblePoint;
 
-    public layout: PackedBubbleLayout = void 0 as any;
+    public layout!: PackedBubbleLayout;
 
-    public options: PackedBubbleSeriesOptions = void 0 as any;
+    public options!: PackedBubbleSeriesOptions;
 
     public parentNode?: PackedBubblePoint;
 
@@ -139,9 +136,9 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public parentNodeRadius?: number;
 
-    public points: Array<PackedBubblePoint> = void 0 as any;
+    public points!: Array<PackedBubblePoint>;
 
-    public xData: Array<number> = void 0 as any;
+    public xData!: Array<number>;
 
     public deferDataLabels: boolean = true;
 
@@ -407,9 +404,7 @@ class PackedBubbleSeries extends BubbleSeries {
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
-                parentNode = (
-                    new PackedBubblePoint()
-                ).init(
+                parentNode = new PackedBubblePoint(
                     this,
                     {
                         mass: (this.parentNodeRadius as any) / 2,
@@ -430,7 +425,7 @@ class PackedBubbleSeries extends BubbleSeries {
                         isParentNode: true,
                         seriesIndex: this.index
                     } as any
-                ) as any;
+                );
             }
             if (this.parentNode) {
                 (parentNode as any).plotX = this.parentNode.plotX;

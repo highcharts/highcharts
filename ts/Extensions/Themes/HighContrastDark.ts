@@ -22,7 +22,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
 import D from '../../Core/Defaults.js';
@@ -44,7 +44,7 @@ namespace HighContrastDarkTheme {
 
     const textBright = '#F0F0F3';
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: [
             '#67B9EE',
             '#CEEDA5',
