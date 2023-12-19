@@ -162,6 +162,98 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
         undefined,
         'The selected option should remain after redraw (#9209)'
     );
+
+    // #19808
+    chart.update({
+        rangeSelector: {
+            buttons: [
+                {
+                    type: 'week',
+                    count: 1,
+                    text: '1W'
+                },
+                {
+                    type: 'month',
+                    count: 1,
+                    text: '1M'
+                },
+                {
+                    type: 'year',
+                    count: 1,
+                    text: '1Y'
+                }
+            ]
+        },
+        xAxis: {
+            minRange: 5 * 24 * 36e5
+        },
+        series: {
+            dataGrouping: {
+                enabled: false
+            },
+            data: (function () {
+                const dataArrayTmp = [];
+                const startDate = new Date('2015-01-01');
+                for (startDate; startDate <= new Date('2016-02-01'); startDate.setDate(startDate.getDate() + 1)) {
+                    dataArrayTmp.push([startDate.getTime(), 1]);
+                }
+                return dataArrayTmp;
+            }())
+        }
+    });
+    const day = 24 * 36e5,
+        xAxis = chart.xAxis[0],
+        max = xAxis.max,
+        buttons = chart.rangeSelector.buttons,
+        correctStates = [0, 2, 2, 0];
+
+    // Week
+    const weekState = [
+        6.4 * day, // (0) inactive
+        6.5 * day, // (2) active
+        7.5 * day, // (2) active
+        7.6 * day  // (0) inactive
+    ].map(range => {
+        xAxis.setExtremes(max - range, null);
+        return buttons[0].state;
+    });
+    assert.deepEqual(
+        weekState,
+        correctStates,
+        'Week state button should have correct states in various ranges, #19808.'
+    );
+
+    // Month
+    const monthState = [
+        26.9 * day, // (0) inactive
+        27 * day,   // (2) active
+        32 * day,   // (2) active
+        32.1 * day  // (0) inactive
+    ].map(range => {
+        xAxis.setExtremes(max - range, null);
+        return buttons[1].state;
+    });
+    assert.deepEqual(
+        monthState,
+        correctStates,
+        'Month state button should have correct states in various ranges, #19808.'
+    );
+
+    // Month
+    const yearState = [
+        363.5 * day, // (0) inactive
+        364 * day,   // (2) active
+        367 * day,   // (2) active
+        367.5 * day  // (0) inactive
+    ].map(range => {
+        xAxis.setExtremes(max - range, null);
+        return buttons[2].state;
+    });
+    assert.deepEqual(
+        yearState,
+        correctStates,
+        'Year state button should have correct states in various ranges, #19808.'
+    );
 });
 
 QUnit.test('RangeSelector.getYTDExtremes', function (assert) {

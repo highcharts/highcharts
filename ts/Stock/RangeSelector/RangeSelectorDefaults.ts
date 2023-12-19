@@ -79,8 +79,13 @@ const lang: Record<string, string> = {
 /**
  * The range selector is a tool for selecting ranges to display within
  * the chart. It provides buttons to select preconfigured ranges in
- * the chart, like 1 day, 1 week, 1 month etc. It also provides input
- * boxes where min and max dates can be manually input.
+ * the chart, like 1 day, 1 week, 1 month etc., and input boxes where min and
+ * max dates can be manually input.
+ *
+ * To enhance user experience, buttons will be highlighted when the visible
+ * range is between the following values:
+ * Week (6.5/7.5 days), month (27/32 days), year (364/367 days). Other ranges
+ * remain unaffected and use strict values.
  *
  * @product      highstock gantt
  * @optionparent rangeSelector
