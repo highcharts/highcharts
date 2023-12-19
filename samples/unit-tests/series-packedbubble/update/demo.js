@@ -1,5 +1,5 @@
 QUnit.test('Series update', function (assert) {
-    const chart = Highcharts.chart('container', {
+    let chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',
             width: 500,
@@ -69,4 +69,41 @@ QUnit.test('Series update', function (assert) {
             chart.plotTop (#12063).`
         );
     });
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'bar',
+            data: [4, 3, 5, 6, 2, 3]
+        }]
+    });
+
+    chart.series[0].update({
+        type: 'packedbubble'
+    });
+
+    const sharedClipBox =
+        chart.sharedClips[chart.series[0].sharedClipKey].getBBox();
+
+    assert.strictEqual(
+        sharedClipBox.width,
+        chart.plotWidth,
+        `For inverted chart without axes (e.g. created by updating series type
+        from inverted series) clip box width should be the same as chart plot
+        width, #20264.`
+    );
+
+    assert.strictEqual(
+        sharedClipBox.height,
+        chart.plotHeight,
+        `For inverted chart without axes (e.g. created by updating series type
+        from inverted series) clip box height should be the same as chart plot
+        height, #20264.`
+    );
+
+    assert.notEqual(
+        chart.inverted,
+        true,
+        `After updating from bar (inverted) chart to packedbubble (non-inverted)
+        chart.inverted option should be updated (#20264).`
+    );
 });
