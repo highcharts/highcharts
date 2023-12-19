@@ -2394,13 +2394,9 @@ class Series {
             seriesBox.height = yAxis.len;
         }
 
-        // If chart is set to inverted and there are no axes or axes length are
-        // the same as plot sizes clip box shouldn't be inverted (#20264)
-        if (
-            chart.inverted &&
-            (!xAxis || xAxis.len === chart.plotSizeX) &&
-            (!yAxis || yAxis.len === chart.plotSizeY)
-        ) {
+        // If chart is set to inverted and there are no axes, clip box shouldn't
+        // be inverted (#20264)
+        if (chart.inverted && !xAxis && !yAxis) {
             [seriesBox.width, seriesBox.height] =
                 [seriesBox.height, seriesBox.width];
         }

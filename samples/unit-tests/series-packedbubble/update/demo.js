@@ -81,29 +81,30 @@ QUnit.test('Series update', function (assert) {
         type: 'packedbubble'
     });
 
-    const sharedClipBox =
-        chart.sharedClips[chart.series[0].sharedClipKey].getBBox();
-
-    assert.strictEqual(
-        sharedClipBox.width,
-        chart.plotWidth,
-        `For inverted chart without axes (e.g. created by updating series type
-        from inverted series) clip box width should be the same as chart plot
-        width, #20264.`
-    );
-
-    assert.strictEqual(
-        sharedClipBox.height,
-        chart.plotHeight,
-        `For inverted chart without axes (e.g. created by updating series type
-        from inverted series) clip box height should be the same as chart plot
-        height, #20264.`
-    );
-
     assert.notEqual(
         chart.inverted,
         true,
         `After updating from bar (inverted) chart to packedbubble (non-inverted)
         chart.inverted option should be updated (#20264).`
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.strictEqual(
+        chart.sharedClips[chart.series[0].sharedClipKey].attr('width'),
+        chart.plotWidth,
+        `For inverted chart without axes clip box width should be the same as
+        chart plot width, #20264.`
+    );
+
+    assert.strictEqual(
+        chart.sharedClips[chart.series[0].sharedClipKey].attr('height'),
+        chart.plotHeight,
+        `For inverted chart without axes clip box height should be the same as
+        chart plot height, #20264.`
     );
 });
