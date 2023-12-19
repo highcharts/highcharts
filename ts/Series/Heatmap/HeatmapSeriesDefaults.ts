@@ -146,31 +146,39 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     numbers: array<u32>,
 }
 
-@group(0) @binding(0) var<storage, read> input : Matrix;
-@group(0) @binding(1) var<storage, read_write> resultMatrix : Matrix;
+struct Params {
+    block_size: u32
+}
 
-@compute @workgroup_size(8, 8)
-fn main(@builtin(global_invocation_id) global_id : vec3u) {
+@group(0) @binding(0) var<storage, read> input : Matrix;
+@group(0) @binding(1) var<storage, read> params : Params;
+@group(0) @binding(2) var<storage, read_write> resultMatrix : Matrix;
+
+@compute @workgroup_size(64)
+fn main(
+    @builtin(global_invocation_id) global_id : vec3u,
+    @builtin(workgroup_id) workgroup_id: vec3u,
+    @builtin(local_invocation_id) local_id : vec3u,
+) {
     if (global_id.x >= u32(input.size.x) || global_id.y >= u32(input.size.y)) {
         return;
     }
 
-    var result = u32(0);
-    var vertices: vec2<u32>;
+    let block_size = params.block_size;
+    let base_index = (workgroup_id.x * block_size) + (local_id.x * block_size);
+
     resultMatrix.size = input.size;
 
-    for (var i = 0u; i < input.size.y * input.size.x; i = i + 4u) {
-
+    for (var i = u32(base_index); i < base_index + block_size; i = i + 4u) {
         var j = u32(0);
         while(j < 4){
-            result = input.numbers[i + j];
+            let result = input.numbers[i + j];
             resultMatrix.numbers[i + j] = result;
             j++;
         }
 
     }
 }
-
 `
     },
 

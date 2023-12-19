@@ -10,6 +10,8 @@ self.addEventListener('message', function (e): void {
 
         const ctx = offscreenCanvas.getContext('2d');
 
+        const BLOCK_SIZE = 64;
+
         // Mostly copy-pasted and simplified from https://developer.chrome.com/docs/capabilities/web-apis/gpu-compute
         if ('gpu' in navigator) {
             const start = performance.now();
@@ -46,6 +48,20 @@ self.addEventListener('message', function (e): void {
                 .set(pixelData, metadata.byteLength);
             gpuBuffer.unmap();
 
+            // Buffer to pass parameters
+            const paramsBuffer = device.createBuffer({
+                mappedAtCreation: true,
+                size: Uint32Array.BYTES_PER_ELEMENT * 1,
+                usage: GPUBufferUsage.STORAGE
+            });
+
+            const paramsRange = paramsBuffer.getMappedRange();
+            new Uint32Array(paramsRange)
+                .set([
+                    BLOCK_SIZE
+                ]);
+            paramsBuffer.unmap();
+
             // Buffer to store result
             const resultBuffer = device.createBuffer({
                 size: size, // Length will be the same
@@ -66,6 +82,13 @@ self.addEventListener('message', function (e): void {
                         binding: 1,
                         visibility: GPUShaderStage.COMPUTE,
                         buffer: {
+                            type: 'read-only-storage'
+                        }
+                    },
+                    {
+                        binding: 2,
+                        visibility: GPUShaderStage.COMPUTE,
+                        buffer: {
                             type: 'storage'
                         }
                     }
@@ -84,6 +107,12 @@ self.addEventListener('message', function (e): void {
                     },
                     {
                         binding: 1,
+                        resource: {
+                            buffer: paramsBuffer
+                        }
+                    },
+                    {
+                        binding: 2,
                         resource: {
                             buffer: resultBuffer
                         }
@@ -116,7 +145,6 @@ self.addEventListener('message', function (e): void {
             passEncoder.setBindGroup(0, bindGroup);
 
             passEncoder.dispatchWorkgroups(
-                Math.ceil(width / 8),
                 Math.ceil(height / 8)
             );
             passEncoder.end();
