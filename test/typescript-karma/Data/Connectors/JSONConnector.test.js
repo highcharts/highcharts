@@ -3,17 +3,17 @@ import JSONConnector from '/base/code/es-modules/Data/Connectors/JSONConnector.j
 const { test } = QUnit;
 
 const rows = [
-    ['id', 'weight', 'age'],
-    [1, 88, 30],
-    [2, 58, 25],
-    [3, 78, 20]
-],
+        ['id', 'weight', 'age'],
+        [1, 88, 30],
+        [2, 58, 25],
+        [3, 78, 20]
+    ],
     columns = [
         [1, 2, 3, 4],
         [3, 4, 3, 4],
         [3, 4, 3, 4]
     ],
-columnNames = ['id', 'weight', 'age'];
+    columnNames = ['id', 'weight', 'age'];
 
 test('JSONConnector from rows', async (assert) => {
     const connector = new JSONConnector({ data: rows });

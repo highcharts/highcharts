@@ -202,20 +202,23 @@ class JSONConverter extends DataConverter {
                             );
                         }
                     }
-                } else if (converter.headers && !isArray(converter.headers)) {
+                } else {
                     const columnNames = converter.headers;
-                    const newRow = {} as Record<string, string|number>;
 
-                    objectEach(
-                        columnNames,
-                        (arrayWithPath: Array<string|number>, name): void => {
-                            newRow[name] = arrayWithPath.reduce(
-                                (acc: any, key: string|number): any =>
-                                    acc[key], row
-                            );
-                        });
+                    if (columnNames && !(columnNames instanceof Array)) {
+                        const newRow = {} as Record<string, string|number>;
 
-                    row = newRow;
+                        objectEach(
+                            columnNames,
+                            (arrayWithPath: Array<string|number>, name): void => {
+                                newRow[name] = arrayWithPath.reduce(
+                                    (acc: any, key: string|number): any =>
+                                        acc[key], row
+                                );
+                            });
+
+                        row = newRow;
+                    }
 
                     this.table.setRows([row], rowIndex);
                 }
