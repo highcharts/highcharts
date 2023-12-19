@@ -1,2 +1,2 @@
 'use strict';
-import '../../interpolation/worker.ts';
+import '../../interpolation/worker.js';
