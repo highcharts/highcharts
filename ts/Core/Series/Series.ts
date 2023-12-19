@@ -2394,6 +2394,17 @@ class Series {
             seriesBox.height = yAxis.len;
         }
 
+        // If chart is set to inverted and there are no axes or axes length are
+        // the same as plot sizes clip box shouldn't be inverted (#20264)
+        if (
+            chart.inverted &&
+            (!xAxis || xAxis.len === chart.plotSizeX) &&
+            (!yAxis || yAxis.len === chart.plotSizeY)
+        ) {
+            [seriesBox.width, seriesBox.height] =
+                [seriesBox.height, seriesBox.width];
+        }
+
         return seriesBox;
     }
 
@@ -4289,6 +4300,9 @@ class Series {
             series.remove(false, false, false, true);
 
             if (casting) {
+                // #20264: Re-detect a certain chart properties from new series
+                chart.propFromSeries();
+
                 // Modern browsers including IE11
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
