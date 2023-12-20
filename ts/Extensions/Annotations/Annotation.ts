@@ -849,8 +849,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @private
      */
     public setMergedUserOptions(): void {
-        const userOptions = this.userOptions,
-            userOptionsLabels = userOptions.labels,
+        const userOptionsLabels = this.userOptions.labels,
             labels = this.labels;
 
         if (isArray(userOptionsLabels)) {
