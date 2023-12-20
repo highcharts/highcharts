@@ -60,7 +60,9 @@ const {
     fireEvent,
     merge,
     pick,
-    splat
+    splat,
+    isArray,
+    defined
 } = U;
 
 /* *
@@ -842,6 +844,31 @@ class Annotation extends EventEmitter implements ControlTarget {
     }
 
     /**
+     * Extend the userOptions labels point with the labels point options to
+     * get the correct position after transform (#20175).
+     * @private
+     */
+    public setMergedUserOptions(): void {
+        const userOptions = this.userOptions,
+            userOptionsLabels = userOptions.labels,
+            labels = this.labels;
+
+        if (isArray(userOptionsLabels)) {
+            let index = 0;
+
+            for (const element of userOptionsLabels) {
+                const pointOptions = labels[index].points[0].options;
+
+                if (isArray(labels) && defined(pointOptions)) {
+                    (element.point as any) = pointOptions;
+                }
+
+                index++;
+            }
+        }
+    }
+
+    /**
      * Updates an annotation.
      *
      * @function Highcharts.Annotation#update
@@ -854,6 +881,8 @@ class Annotation extends EventEmitter implements ControlTarget {
         userOptions: DeepPartial<AnnotationOptions>,
         redraw? : boolean
     ): void {
+        this.setMergedUserOptions();
+
         const chart = this.chart,
             labelsAndShapes = getLabelsAndShapesOptions(
                 this.userOptions,
