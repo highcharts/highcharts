@@ -30,7 +30,10 @@ import type {
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
@@ -468,10 +471,7 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        const crossfilterOptions = this.options.sync.crossfilter;
-        if (crossfilterOptions === true || (
-            isObject(crossfilterOptions) && crossfilterOptions.enabled
-        )) {
+        if (this.options.sync.crossfilter) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
@@ -517,7 +517,6 @@ class NavigatorComponent extends Component {
      *  Functions
      *
      * */
-
 
     /** @private */
     private adjustNavigator(): void {
@@ -680,9 +679,7 @@ class NavigatorComponent extends Component {
                     Array<[number|string, number|null]>
                 );
 
-            if (crossfilterOptions === true || (
-                isObject(crossfilterOptions) && crossfilterOptions.enabled
-            )) {
+            if (crossfilterOptions) {
 
                 const seriesData: Array<[(number|string), number]> = [],
                     xData: Array<(number|string)> = [],
@@ -694,7 +691,7 @@ class NavigatorComponent extends Component {
 
                 if (
                     crossfilterOptions !== true &&
-                    crossfilterOptions.affectNavigator &&
+                    crossfilterOptions?.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
                     const appliedRanges: RangeModifierRangeOptions[] = [],
@@ -832,25 +829,16 @@ class NavigatorComponent extends Component {
 
         if (options.chartOptions) {
             chart.update(
-                merge(
-                    (
-                        crossfilterOptions === true || (
-                            isObject(crossfilterOptions) &&
-                            crossfilterOptions.enabled
-                        ) ?
-                            {
-                                navigator: {
-                                    xAxis: {
-                                        labels: {
-                                            format: '{value}'
-                                        }
-                                    }
-                                }
-                            } :
-                            {}
-                    ),
-                    options.chartOptions
-                ),
+                merge(crossfilterOptions ? {
+                    navigator: {
+                        xAxis: {
+                            labels: {
+                                format: '{value}'
+                            }
+                        }
+                    }
+                } : {},
+                options.chartOptions),
                 false
             );
         }

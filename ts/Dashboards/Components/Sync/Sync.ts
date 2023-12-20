@@ -353,6 +353,18 @@ namespace Sync {
         affectNavigator?: boolean;
     }
 
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const defaultSyncOptions: Record<string, unknown> = {
+        crossfilter: {
+            affectNavigator: false
+        }
+    };
 }
 /* *
  *

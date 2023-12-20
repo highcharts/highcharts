@@ -51,6 +51,7 @@ const {
     addEvent,
     objectEach,
     isFunction,
+    isObject,
     getStyle,
     relativeLength,
     diffObjects
@@ -435,13 +436,29 @@ abstract class Component {
             handlerName
         ): Sync.OptionsRecord => {
             if (handlerName) {
-                const handler = sync[handlerName],
-                    defaultHandler = defaultHandlers[handlerName];
+                const defaultHandler = defaultHandlers[handlerName];
+                const defaultOptions = Sync.defaultSyncOptions[handlerName];
+                let handler = sync[handlerName];
+
+                /**
+                 * If the handler is enabled, merge the default options with
+                 * the options from the component.
+                 */
+                if (handler === true || (
+                    isObject(handler) && handler.enabled
+                )) {
+                    sync[handlerName] = merge(
+                        defaultOptions || {},
+                        { enabled: true },
+                        handler !== true ? handler : {}
+                    );
+                } else {
+                    sync[handlerName] = false;
+                }
+                handler = sync[handlerName];
 
                 if (defaultHandler) {
-                    if (handler === true) {
-                        carry[handlerName] = defaultHandler;
-                    } else if (handler && handler.enabled) {
+                    if (isObject(handler) && handler.enabled) {
                         const keys: (keyof Sync.OptionsEntry)[] = [
                             'emitter', 'handler'
                         ];
