@@ -404,9 +404,7 @@ class PackedBubbleSeries extends BubbleSeries {
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
-                parentNode = (
-                    new PackedBubblePoint()
-                ).init(
+                parentNode = new PackedBubblePoint(
                     this,
                     {
                         mass: (this.parentNodeRadius as any) / 2,
@@ -427,7 +425,7 @@ class PackedBubbleSeries extends BubbleSeries {
                         isParentNode: true,
                         seriesIndex: this.index
                     } as any
-                ) as any;
+                );
             }
             if (this.parentNode) {
                 (parentNode as any).plotX = this.parentNode.plotX;

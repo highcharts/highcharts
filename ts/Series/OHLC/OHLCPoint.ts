@@ -92,7 +92,9 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      */
     public resolveColor(): void {
         super.resolveColor();
-        this.resolveUpColor();
+        if (!this.series.is('heikinashi')) {
+            this.resolveUpColor();
+        }
     }
 
     /**

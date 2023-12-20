@@ -294,6 +294,13 @@ QUnit.test('Series.update', function (assert) {
         'Arced path'
     );
     assert.strictEqual(chart.series[0].points[8].sliced, true, 'Sliced slice');
+
+    // Animation #20183
+    chart.series[0].update({
+        animation: true
+    });
+
+    assert.strictEqual(chart.series[0].options.animation, false, 'Series animation on update should always be false even if set from options');
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {

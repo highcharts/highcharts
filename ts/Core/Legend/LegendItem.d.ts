@@ -28,6 +28,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  * */
 
 export interface LegendItemObject {
+    area?: SVGElement;
     group?: SVGElement;
     label?: (ColorAxis.LegendItemObject|SVGElement);
     labelHeight?: number;
