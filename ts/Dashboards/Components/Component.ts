@@ -25,23 +25,23 @@
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
-import type {
-    ComponentType,
-    ComponentTypeRegistry
-} from './ComponentType';
+import type { ComponentTypeRegistry } from './ComponentType';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 
 import CallbackRegistry from '../CallbackRegistry.js';
+import ComponentGroup from './ComponentGroup.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Sync from './Sync/Sync.js';
+
 import Globals from '../Globals.js';
 const { classNamePrefix } = Globals;
+
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -61,10 +61,9 @@ const {
     getMargins,
     getPaddings
 } = CU;
-import ComponentGroup from './ComponentGroup.js';
+
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
-import Sync from './Sync/Sync.js';
 
 /* *
  *
@@ -431,41 +430,38 @@ abstract class Component {
         ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
-        const syncHandlers = Object.keys(sync).reduce(
-            (
-                carry: Sync.OptionsRecord,
-                handlerName
-            ): Sync.OptionsRecord => {
-                if (handlerName) {
-                    const handler = sync[handlerName],
-                        defaultHandler = defaultHandlers[handlerName];
+        const syncHandlers = Object.keys(sync).reduce((
+            carry: Sync.OptionsRecord,
+            handlerName
+        ): Sync.OptionsRecord => {
+            if (handlerName) {
+                const handler = sync[handlerName],
+                    defaultHandler = defaultHandlers[handlerName];
 
-                    if (defaultHandler) {
-                        if (handler === true) {
-                            carry[handlerName] = defaultHandler;
-                        } else if (handler && handler.enabled) {
-                            const keys: (keyof Sync.OptionsEntry)[] = [
-                                'emitter', 'handler'
-                            ];
+                if (defaultHandler) {
+                    if (handler === true) {
+                        carry[handlerName] = defaultHandler;
+                    } else if (handler && handler.enabled) {
+                        const keys: (keyof Sync.OptionsEntry)[] = [
+                            'emitter', 'handler'
+                        ];
 
-                            carry[handlerName] = {};
-                            for (const key of keys) {
-                                if (
-                                    handler[key] === true ||
-                                    handler[key] === void 0
-                                ) {
-                                    carry[handlerName][key] =
-                                        defaultHandler[key] as any;
-                                }
+                        carry[handlerName] = {};
+                        for (const key of keys) {
+                            if (
+                                handler[key] === true ||
+                                handler[key] === void 0
+                            ) {
+                                carry[handlerName][key] =
+                                    defaultHandler[key] as any;
                             }
                         }
                     }
                 }
+            }
 
-                return carry;
-            },
-            {}
-        );
+            return carry;
+        }, {});
 
         this.sync ? this.sync.syncConfig = syncHandlers : void 0;
         this.syncHandlers = syncHandlers;
@@ -1327,7 +1323,6 @@ namespace Component {
      * @internal
      *  */
     export interface ComponentOptionsJSON extends JSON.Object {
-        // connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
         className?: string;
         cell?: string;
@@ -1335,7 +1330,6 @@ namespace Component {
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
         parentCell?: Cell.JSON;
-        // store?: DataStore.ClassJSON; // store id
         parentElement?: string; // ID?
         style?: {};
         sync?: SyncOptions&JSON.Object;

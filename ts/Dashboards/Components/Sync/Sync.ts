@@ -270,12 +270,6 @@ namespace Sync {
      *
      * */
 
-    export type EventType = (
-        | 'extremes'
-        | 'visibility'
-        | 'highlight'
-    );
-
     /** @internal */
     export type EmitterConfig = (
         | [SyncEmitter['id'], SyncEmitter['func']]
