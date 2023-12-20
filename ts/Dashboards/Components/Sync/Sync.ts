@@ -325,6 +325,40 @@ namespace Sync {
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
 
+    /** @internal */
+    export type RawOptionsRecord = (
+        Record<(
+            SyncEmitter['id']|SyncHandler['id']
+        ), undefined|boolean|OptionsEntry>
+    );
+
+    /**
+     * The crossfilter sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     affectNavigator: true
+     * }
+     * ```
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
 }
 /* *
  *

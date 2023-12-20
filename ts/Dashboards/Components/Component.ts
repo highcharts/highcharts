@@ -431,42 +431,41 @@ abstract class Component {
         ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
-        const syncHandlers = (Object.keys(sync) as Component.SyncType[])
-            .reduce(
-                (
-                    carry: Sync.OptionsRecord,
-                    handlerName
-                ): Sync.OptionsRecord => {
-                    if (handlerName) {
-                        const handler = sync[handlerName],
-                            defaultHandler = defaultHandlers[handlerName];
+        const syncHandlers = Object.keys(sync).reduce(
+            (
+                carry: Sync.OptionsRecord,
+                handlerName
+            ): Sync.OptionsRecord => {
+                if (handlerName) {
+                    const handler = sync[handlerName],
+                        defaultHandler = defaultHandlers[handlerName];
 
-                        if (defaultHandler) {
-                            if (handler === true) {
-                                carry[handlerName] = defaultHandler;
-                            } else if (handler && handler.enabled) {
-                                const keys: (keyof Sync.OptionsEntry)[] = [
-                                    'emitter', 'handler'
-                                ];
+                    if (defaultHandler) {
+                        if (handler === true) {
+                            carry[handlerName] = defaultHandler;
+                        } else if (handler && handler.enabled) {
+                            const keys: (keyof Sync.OptionsEntry)[] = [
+                                'emitter', 'handler'
+                            ];
 
-                                carry[handlerName] = {};
-                                for (const key of keys) {
-                                    if (
-                                        handler[key] === true ||
-                                        handler[key] === void 0
-                                    ) {
-                                        carry[handlerName][key] =
-                                            defaultHandler[key] as any;
-                                    }
+                            carry[handlerName] = {};
+                            for (const key of keys) {
+                                if (
+                                    handler[key] === true ||
+                                    handler[key] === void 0
+                                ) {
+                                    carry[handlerName][key] =
+                                        defaultHandler[key] as any;
                                 }
                             }
                         }
                     }
+                }
 
-                    return carry;
-                },
-                {}
-            );
+                return carry;
+            },
+            {}
+        );
 
         this.sync ? this.sync.syncConfig = syncHandlers : void 0;
         this.syncHandlers = syncHandlers;
@@ -1184,7 +1183,7 @@ namespace Component {
      * }
      * ```
      */
-    export interface SyncOptions {
+    export interface SyncOptions extends Sync.RawOptionsRecord {
         /**
          * Crossfilter sync is available for Navigator components. Modifies data
          * by selecting only those rows that meet common ranges.
@@ -1201,7 +1200,7 @@ namespace Component {
          *
          * @default false
          */
-        crossfilter?: boolean|CrossfilterSyncOptions;
+        crossfilter?: boolean|Sync.CrossfilterSyncOptions;
         /**
          * Extremes sync is available for Highcharts, KPI, DataGrid and
          * Navigator components. Sets a common range of displayed data. For the
@@ -1238,36 +1237,6 @@ namespace Component {
          */
         visibility?: boolean|Sync.OptionsEntry;
     }
-
-    /**
-     * The crossfilter sync options.
-     *
-     * Example:
-     * ```
-     * {
-     *     enabled: true,
-     *     affectNavigator: true
-     * }
-     * ```
-     */
-    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
-        /**
-         * Whether this navigator component's content should be affected by
-         * other navigators with crossfilter enabled.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
-         *
-         * @default false
-         */
-        affectNavigator?: boolean;
-    }
-
-    /** @internal */
-    export type SyncType = keyof SyncOptions;
 
     export interface ComponentOptions {
 
