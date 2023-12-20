@@ -15,23 +15,10 @@ const berry = {
     symbol: 'circle'
 };
 
-const snowData = [];
-
-function getSnow() {
-    for (let ii = 0; ii < 41; ++ii) {
-        const random1 = randomNum(0, 20);
-        const random2 = randomNum(0, 20);
-        snowData.push({ x: random1, y: random2 });
-    }
-
-    return snowData;
-}
-
-getSnow();
-
 Highcharts.chart('container', {
     chart: {
         backgroundColor: '#047857',
+        height: '100%',
         margin: [0, 10, 100, 10],
         animation: {
             duration: 2000,
@@ -40,8 +27,6 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 const chart = this;
-
-                console.log(chart.chartWidth);
 
                 const flakeSet1 = document.querySelectorAll('.highcharts-series-12 .highcharts-point');
 
