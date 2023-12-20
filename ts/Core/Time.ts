@@ -28,6 +28,7 @@ const {
     defined,
     error,
     extend,
+    isNumber,
     isObject,
     merge,
     objectEach,
@@ -411,20 +412,20 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
-                    // eslint-disable-next-line new-cap
-                    const hourOffset = Intl.DateTimeFormat('en', {
-                        timeZone: options.timezone,
-                        timeZoneName: 'shortOffset'
-                    })
-                        .format(timestamp)
-                        .split('GMT')[1]
-                        .replace(':30', '.5');
+                    const [date, gmt, hours, colon, minutes = 0] =
+                        // eslint-disable-next-line new-cap
+                        Intl.DateTimeFormat('en', {
+                            timeZone: options.timezone,
+                            timeZoneName: 'shortOffset'
+                        })
+                            .format(timestamp)
+                            .split(/(GMT|:)/)
+                            .map(Number),
+                        offset = -(hours + minutes / 60) * 60 * 60000;
 
-                    // Make sure only valid numbers are returned, otherwise fall
-                    // back to 0. Safety vent for avoiding full crash in future
-                    // cases that we don't yet know about.
-                    if (/^[0-9+\-\.]+$/.test(hourOffset)) {
-                        return -hourOffset * 60 * 60000;
+                    // Possible future NaNs stop here
+                    if (isNumber(offset)) {
+                        return offset;
                     }
                 } catch (e) {
                     error(34);
