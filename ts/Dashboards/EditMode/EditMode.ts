@@ -25,7 +25,6 @@ import type Row from '../Layout/Row';
 import type Board from '../Board';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
-import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
@@ -37,7 +36,7 @@ import Resizer from '../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
 import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
-
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -77,18 +76,31 @@ class EditMode {
         this.options = merge(
             // Default options.
             {
+                confirmationPopup: {
+                    close: {
+                        icon: this.iconsURLPrefix + 'close.svg'
+                    }
+                },
+                contextMenu: {
+                    icon: this.iconsURLPrefix + 'menu.svg'
+                },
                 dragDrop: {
                     enabled: true
                 },
+                enabled: true,
                 resize: {
                     enabled: true
                 },
                 settings: {
                     enabled: true
                 },
-                enabled: true,
-                contextMenu: {
-                    icon: this.iconsURLPrefix + 'menu.svg'
+                toolbars: {
+                    cell: {
+                        enabled: true
+                    },
+                    row: {
+                        enabled: true
+                    }
                 },
                 tools: {
                     addComponentBtn: {
@@ -102,19 +114,6 @@ class EditMode {
                             medium: this.iconsURLPrefix + 'tablet.svg',
                             large: this.iconsURLPrefix + 'computer.svg'
                         }
-                    }
-                },
-                confirmationPopup: {
-                    close: {
-                        icon: this.iconsURLPrefix + 'close.svg'
-                    }
-                },
-                toolbars: {
-                    cell: {
-                        enabled: true
-                    },
-                    row: {
-                        enabled: true
                     }
                 }
             },

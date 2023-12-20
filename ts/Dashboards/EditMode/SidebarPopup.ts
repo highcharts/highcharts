@@ -48,7 +48,7 @@ const {
  * */
 
 /**
- * Class which creates the sidebar and handles its behaviour.
+ * Class which creates the sidebar and handles its behavior.
  */
 class SidebarPopup extends BaseForm {
 
@@ -245,6 +245,7 @@ class SidebarPopup extends BaseForm {
      * Instance of EditMode.
      */
     public editMode: EditMode;
+
     /**
      * Whether the sidebar is visible.
      */
@@ -263,11 +264,11 @@ class SidebarPopup extends BaseForm {
      *
      * @param context
      * The cell or row which is the context of the sidebar.
+     *
      * @returns
      * Whether the sidebar should be on the right side of the screen.
      */
     private detectRightSidebar(context: Cell | Row): boolean {
-
         const editMode = this.editMode;
         const layoutWrapper = editMode.board.layoutsWrapper;
 
@@ -284,6 +285,7 @@ class SidebarPopup extends BaseForm {
     private removeClassNames(): void {
         const classNames = EditGlobals.classNames,
             classList = this.container.classList;
+
         classList.remove(classNames.editSidebarShow);
         classList.remove(classNames.editSidebarRightShow);
     }
