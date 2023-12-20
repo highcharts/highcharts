@@ -93,21 +93,25 @@ function compose(
     BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
 
     addEvent(AxisClass, 'setExtremes', function (e: AnyRecord): void {
-        for (const series of this.series) {
+        for (const { renderTarget } of this.series) {
             let scale = 1,
                 translate = 0,
                 opacity = 1,
                 filter = 'none';
 
             if (this.isPanning) {
-                scale = e.scale * (series.renderTarget?.scaleX ?? 1);
-                translate = (series.renderTarget?.translateX || 0) - e.move;
+                const lastScale = renderTarget?.scaleX ?? 1;
+                scale = e.scale * lastScale;
+                translate = (renderTarget?.translateX || 0) -
+                    scale * e.move +
+                    lastScale * this.pos -
+                    scale * this.pos;
 
                 opacity = 0.7;
                 filter = 'blur(3px)';
             }
 
-            series.renderTarget
+            renderTarget
                 ?.attr({
                     [this.horiz ? 'scaleX' : 'scaleY']: scale,
                     [this.horiz ? 'translateX' : 'translateY']: translate
