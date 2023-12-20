@@ -6,8 +6,8 @@ body,
 }
 
 #container {
-    width: 300px;
-    height: 300px;
+    max-width: 600px;
+    max-height: 600px;
 }
 
 .highcharts-series-12 .highcharts-point {
@@ -67,11 +67,6 @@ body,
 }
 
 @media screen  and (min-width: 400px) {
-    #container {
-        width: 400px;
-        height: 400px;
-    }
-
     #title {
         top: -40px;
         left: -170px;
@@ -84,11 +79,6 @@ body,
 }
 
 @media screen  and (min-width: 500px) {
-    #container {
-        width: 500px;
-        height: 500px;
-    }
-
     #title {
         top: -40px;
         left: -200px;
@@ -101,11 +91,6 @@ body,
 }
 
 @media screen  and (min-width: 600px) {
-    #container {
-        width: 600px;
-        height: 600px;
-    }
-
     #title {
         top: -40px;
         left: -260px;
