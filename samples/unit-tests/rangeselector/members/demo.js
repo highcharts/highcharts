@@ -239,7 +239,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
         'Month state button should have correct states in various ranges, #19808.'
     );
 
-    // Month
+    // Year
     const yearState = [
         363.5 * day, // (0) inactive
         364 * day,   // (2) active
