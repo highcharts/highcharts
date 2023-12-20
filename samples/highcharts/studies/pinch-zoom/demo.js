@@ -28,18 +28,21 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
             // .slice(0, 10)
         );
 
+    // const data = new Array(500000).fill(1).map(Math.random)
+
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'x',
+            zoomType: 'xy',
             panning: {
                 enabled: true,
-                type: 'x'
+                type: 'y'
             },
             mouseWheel: {
                 enabled: true
             },
             panKey: 'shift',
-            type: 'line'
+            type: 'line',
+            backgroundColor: '#eeeeff'
         },
         title: {
             text: 'USD to EUR exchange rate over time',

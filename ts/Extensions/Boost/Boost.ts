@@ -94,18 +94,22 @@ function compose(
 
     addEvent(AxisClass, 'setExtremes', function (e: AnyRecord): void {
         for (const { renderTarget } of this.series) {
+            const { horiz, pos } = this,
+                scaleKey = horiz ? 'scaleX' : 'scaleY',
+                translateKey = horiz ? 'translateX' : 'translateY',
+                lastScale = renderTarget?.[scaleKey] ?? 1;
+
             let scale = 1,
                 translate = 0,
                 opacity = 1,
                 filter = 'none';
 
             if (this.isPanning) {
-                const lastScale = renderTarget?.scaleX ?? 1;
                 scale = e.scale * lastScale;
-                translate = (renderTarget?.translateX || 0) -
+                translate = (renderTarget?.[translateKey] || 0) -
                     scale * e.move +
-                    lastScale * this.pos -
-                    scale * this.pos;
+                    lastScale * pos -
+                    scale * pos;
 
                 opacity = 0.7;
                 filter = 'blur(3px)';
@@ -113,8 +117,8 @@ function compose(
 
             renderTarget
                 ?.attr({
-                    [this.horiz ? 'scaleX' : 'scaleY']: scale,
-                    [this.horiz ? 'translateX' : 'translateY']: translate
+                    [scaleKey]: scale,
+                    [translateKey]: translate
                 })
                 .css({
                     transition: '250ms filter, 250ms opacity',
