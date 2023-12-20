@@ -16,6 +16,8 @@
  *
  * */
 
+import type { Options } from '../../Core/Options';
+
 /* *
  *
  *  Constants
@@ -30,16 +32,12 @@
  * @product      highstock gantt
  * @optionparent navigator
  */
-const StandaloneNavigatorDefaults = {
-    height: 50,
+const standaloneNavigatorDefaults: DeepPartial<Options> = {
     tooltip: {
         enabled: false
     },
     navigator: {
         enabled: true
-    },
-    scrollbar: {
-        enabled: false
     },
     legend: {
         enabled: false
@@ -52,11 +50,13 @@ const StandaloneNavigatorDefaults = {
         visible: false
     },
     title: {
-        text: null
+        text: ''
+    },
+    scrollbar: {
+        enabled: true
     },
     chart: {
-        spacing: [0, 0, 0, 0],
-        margin: [0, 0, 0, 0]
+        margin: [0, 5, 0, 5]
     },
     plotOptions: {
         series: {
@@ -78,7 +78,7 @@ const StandaloneNavigatorDefaults = {
  *
  * */
 
-export default StandaloneNavigatorDefaults;
+export default standaloneNavigatorDefaults;
 
 /* *
  *

@@ -1,11 +1,9 @@
 const nav = Highcharts.navigator('container', {
-    navigator: {
-        series: [{
-            data: Array.from(
-                { length: 45 }, (_, x) => Math.floor(Math.sin(x / 10) * 20)
-            )
-        }]
-    }
+    series: [{
+        data: Array.from(
+            { length: 45 }, (_, x) => Math.floor(Math.sin(x / 10) * 20)
+        )
+    }]
 });
 
 

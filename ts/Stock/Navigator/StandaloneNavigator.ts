@@ -16,14 +16,15 @@
  *
  * */
 
-import type { NavigatorOptions } from './NavigatorOptions';
+import type { BaseNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator from './Navigator.js';
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
-import StandaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
+import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
 const {
     merge,
     addEvent,
@@ -37,14 +38,7 @@ declare module '../../Core/GlobalsLike.d.ts' {
     }
 }
 
-type StandaloneNavigatorOptions = {
-    navigator: NavigatorOptions;
-    width: number;
-    height: number;
-    min: number;
-    max: number;
-    colors: [];
-};
+interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
 
 /* *
  *
@@ -69,7 +63,7 @@ class StandaloneNavigator {
     public eventsToUnbind: Array<Function> = [];
     public navigator: Navigator;
     public boundAxes: Array<Axis> = [];
-    public options: StandaloneNavigatorOptions;
+    public options: Partial<Options>;
     public userOptions: DeepPartial<StandaloneNavigatorOptions>;
 
     /* *
@@ -93,7 +87,7 @@ class StandaloneNavigator {
      */
     public static navigator(
         renderTo: (string|globalThis.HTMLElement),
-        options: DeepPartial<StandaloneNavigatorOptions>
+        options: StandaloneNavigatorOptions
     ): StandaloneNavigator {
         const nav = new StandaloneNavigator(renderTo, options);
 
@@ -115,14 +109,14 @@ class StandaloneNavigator {
 
     constructor(
         element: (string | globalThis.HTMLElement),
-        userOptions: DeepPartial<StandaloneNavigatorOptions>
+        userOptions: StandaloneNavigatorOptions
     ) {
         this.userOptions = userOptions;
         this.options = merge(
             (G as any).getOptions(),
-            StandaloneNavigatorDefaults,
-            userOptions
-        ) as StandaloneNavigatorOptions;
+            standaloneNavigatorDefaults,
+            { navigator: userOptions }
+        );
 
         const chart = new Chart(element, this.options);
 
@@ -318,13 +312,11 @@ class StandaloneNavigator {
      *         The initial minimum and maximum extremes values.
      */
     public getInitialExtremes(): { min: number, max: number } {
-        const { min, max } = this.options,
-            { min: defaultMin, max: defaultMax } =
-                this.navigator.xAxis.getExtremes();
+        const { min, max } = this.navigator.xAxis.getExtremes();
 
         return {
-            min: min || defaultMin,
-            max: max || defaultMax
+            min: min,
+            max: max
         };
     }
 }
