@@ -1025,31 +1025,12 @@ function seriesRenderCanvas(this: Series): void {
 
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
-    // perform fast enough. Instead, let the axes redraw, and temporarily dim
-    // the series itself. A future improvement of this may be to scale and
-    // transform the series canvas.
+    // perform fast enough. Instead, let the axes redraw, but not the series.
+    // The series is scale-translated in an event handler for an approximate
+    // preview.
     if (xAxis.isPanning || yAxis.isPanning) {
-        /*
-        const scaleX = (zoomStart.xMax - zoomStart.xMin) / (xMax - xMin);
-
-        this.renderTarget
-            ?.attr({
-                scaleX
-            })
-            .css({
-                opacity: 0.7,
-                filter: 'blur(3px)'
-            });
-        */
         return;
     }
-    /*
-    this.renderTarget
-        ?.attr({ scaleX: 1, scaleY: 1 })
-        .css({ opacity: 1, filter: '' });
-
-    extend(zoomStart, { xMin, xMax });
-    */
 
     // Get or create the renderer
     renderer = createAndAttachRenderer(chart, this);
@@ -1410,11 +1391,17 @@ function wrapSeriesGetExtremes(
     this: Series,
     proceed: Function
 ): DataExtremesObject {
-    if (
-        this.boosted &&
-        hasExtremes(this)
-    ) {
-        return {};
+
+    if (this.boosted) {
+        if (hasExtremes(this)) {
+            return {};
+        }
+        if (this.xAxis.isPanning || this.yAxis.isPanning) {
+            // Do not re-compute the extremes during panning, because looping
+            // the data is expensive. The `this` contains the `dataMin` and
+            // `dataMax` to use.
+            return this;
+        }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
 }

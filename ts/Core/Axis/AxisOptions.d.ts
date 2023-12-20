@@ -223,8 +223,10 @@ export interface AxisSetExtremesEventObject {
     DOMEvent?: any;
     max?: number;
     min?: number;
+    move?: number;
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;
+    scale?: number;
     target: SVGElement;
     trigger?: string;
     triggerOp?: string;
