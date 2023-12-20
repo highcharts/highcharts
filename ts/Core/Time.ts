@@ -401,11 +401,9 @@ class Time {
             getTimezoneOffset = options.getTimezoneOffset;
 
         if (!this.useUTC) {
-            return function (timestamp: (number|Date)): number {
-                return new Date(
-                    timestamp.toString()
-                ).getTimezoneOffset() * 60000;
-            };
+            return (timestamp: (number|Date)): number => new Date(
+                timestamp.toString()
+            ).getTimezoneOffset() * 60000;
         }
 
         if (options.timezone) {
@@ -437,15 +435,12 @@ class Time {
 
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && getTimezoneOffset) {
-            return function (timestamp: (number|Date)): number {
-                return getTimezoneOffset(timestamp.valueOf()) * 60000;
-            };
+            return (timestamp: (number|Date)): number =>
+                getTimezoneOffset(timestamp.valueOf()) * 60000;
         }
 
         // Last, use the `timezoneOffset` option if set
-        return function (): number {
-            return (time.timezoneOffset || 0) * 60000;
-        };
+        return (): number => (time.timezoneOffset || 0) * 60000;
     }
 
     /**
