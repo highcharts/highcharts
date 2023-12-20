@@ -260,7 +260,7 @@ class XRangeSeries extends ColumnSeries {
         const oldPlotX = point.plotX;
         point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
 
-        if (point.dataLabel && point.shapeArgs && point.shapeArgs.width) {
+        if (point.dataLabel && point.shapeArgs?.width) {
             point.dataLabel.css({
                 width: `${point.shapeArgs.width}px`
             });
