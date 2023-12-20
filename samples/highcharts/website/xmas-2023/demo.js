@@ -41,6 +41,8 @@ Highcharts.chart('container', {
             load: function () {
                 const chart = this;
 
+                console.log(chart.chartWidth);
+
                 const flakeSet1 = document.querySelectorAll('.highcharts-series-12 .highcharts-point');
 
                 const flakeSet2 = document.querySelectorAll('.highcharts-series-13 .highcharts-point');
@@ -187,26 +189,18 @@ Highcharts.chart('container', {
     },
     title: {
         useHTML: true,
-        text: 'Wishing You A<br><span style="color:#DC2626;">Berry Bright</span> Holiday',
+        text: '<div id="title">Wishing You A<br><span>Berry Bright</span> Holiday</div>',
         align: 'center',
         x: 0,
-        y: 70,
-        style: {
-            color: '#033427',
-            fontSize: '3.4em'
-        }
+        y: 70
     },
     subtitle: {
         useHTML: true,
-        text: '<div style="text-align:center">From your friends at<br><img src="https://wp-assets.highcharts.com/svg/highcharts-logo.png" style="width:300px"></div>',
+        text: '<div id="subtitle">From your friends at<br><img src="https://wp-assets.highcharts.com/svg/highcharts-logo.png"></div>',
         align: 'center',
         verticalAlign: 'bottom',
         x: 0,
-        y: 0,
-        style: {
-            color: '#065F46',
-            fontSize: '1.2em'
-        }
+        y: 0
     },
     tooltip: {
         backgroundColor: '#059669',
@@ -236,6 +230,7 @@ Highcharts.chart('container', {
             color: '#C8C7D1',
             linecap: 'square',
             lineWidth: 6,
+            zIndex: 20,
             marker: {
                 enabled: false,
                 radius: 4
@@ -248,6 +243,7 @@ Highcharts.chart('container', {
         areasplinerange: {
             lineWidth: 0,
             color: '#fff',
+            zIndex: 21,
             backgroundColor: {
                 linearGradient: {
                     x1: 0,
@@ -268,6 +264,7 @@ Highcharts.chart('container', {
         },
         scatter: {
             color: 'white',
+            zIndex: 22,
             xAxis: 1,
             yAxis: 1,
             marker: {
@@ -330,7 +327,6 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         visible: false
     }],
-
     series: [
         // 0
         {
@@ -844,6 +840,7 @@ Highcharts.chart('container', {
             color: '#f5f5f5',
             fillOpacity: 1,
             yAxis: 2,
+            zIndex: 1,
             marker: {
                 enabled: false
             },
