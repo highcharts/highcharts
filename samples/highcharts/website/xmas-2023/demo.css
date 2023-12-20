@@ -1,12 +1,13 @@
 body,
 #demo-content {
     margin: 0;
+    font-size: 16px;
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif !important;
 }
 
 #container {
-    width: 600px;
-    height: 600px;
+    width: 300px;
+    height: 300px;
 }
 
 .highcharts-series-12 .highcharts-point {
@@ -34,6 +35,7 @@ body,
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif !important;
     opacity: 0;
     transition: opacity 2s;
+    color: #033427;
 }
 
 .highcharts-subtitle {
@@ -41,4 +43,76 @@ body,
     font-weight: 200;
     opacity: 0;
     transition: opacity 2s;
+    color: #065f46;
+}
+
+#title {
+    position: absolute;
+    top: -50px;
+    left: -130px;
+    font-size: 1.4em;
+}
+
+#title span {
+    color: #dc2626;
+}
+
+#subtitle {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#subtitle img {
+    width: 80%;
+}
+
+@media screen  and (min-width: 400px) {
+    #container {
+        width: 400px;
+        height: 400px;
+    }
+
+    #title {
+        top: -40px;
+        left: -170px;
+        font-size: 1.8em;
+    }
+
+    #subtitle {
+        font-size: 1.4em;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    #container {
+        width: 500px;
+        height: 500px;
+    }
+
+    #title {
+        top: -40px;
+        left: -200px;
+        font-size: 2.2em;
+    }
+
+    #subtitle {
+        font-size: 1.8em;
+    }
+}
+
+@media screen  and (min-width: 600px) {
+    #container {
+        width: 600px;
+        height: 600px;
+    }
+
+    #title {
+        top: -40px;
+        left: -260px;
+        font-size: 2.8em;
+    }
+
+    #subtitle {
+        font-size: 1.6em;
+    }
 }
