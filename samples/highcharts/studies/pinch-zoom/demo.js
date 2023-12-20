@@ -42,7 +42,8 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
             },
             panKey: 'shift',
             type: 'line',
-            backgroundColor: '#eeeeff'
+            backgroundColor: '#eeeeff',
+            plotBackgroundColor: '#ffffff'
         },
         title: {
             text: 'USD to EUR exchange rate over time',

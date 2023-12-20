@@ -460,8 +460,9 @@ function createAndAttachRenderer(
                 // it will cover the most common use case of one or more
                 // successive boosted or non-boosted series (#9819).
                 zIndex: series.options.zIndex
-            })
-            .clip(boost.clipRect);
+            });
+
+        targetGroup?.clip(boost.clipRect);
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
