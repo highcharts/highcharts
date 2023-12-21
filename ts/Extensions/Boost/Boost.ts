@@ -19,6 +19,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
 import type Series from '../../Core/Series/Series';
@@ -92,7 +93,9 @@ function compose(
     BoostChart.compose(ChartClass, wglMode);
     BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
 
-    addEvent(AxisClass, 'setExtremes', function (e: AnyRecord): void {
+    addEvent(AxisClass, 'setExtremes', function (
+        e: AxisSetExtremesEventObject
+    ): void {
         for (const { renderTarget } of this.series) {
             const { horiz, pos } = this,
                 scaleKey = horiz ? 'scaleX' : 'scaleY',
@@ -105,9 +108,9 @@ function compose(
                 filter = 'none';
 
             if (this.isPanning) {
-                scale = e.scale * lastScale;
+                scale = (e.scale ?? 1) * lastScale;
                 translate = (renderTarget?.[translateKey] || 0) -
-                    scale * e.move +
+                    scale * (e.move || 0) +
                     lastScale * pos -
                     scale * pos;
 
