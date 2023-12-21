@@ -460,12 +460,9 @@ const defaultOptions: DefaultOptions = {
         getTimezoneOffset: void 0,
 
         /**
-         * If the timezone option is specified, it creates a default
-         * [getTimezoneOffset](#time.getTimezoneOffset) function that returns an
-         * time offset for the specified time zone.
-         *
-         * Supported time zone names rely on the browser implementations, as
-         * described in the [mdn docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+         * A named time zone. Supported time zone names rely on the browser
+         * implementations, as described in the [mdn
+         * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
          * If the given time zone is not recognized by the browser, Highcharts
          * provides a warning and falls back to returning a 0 offset,
          * corresponding to the UCT time zone.
