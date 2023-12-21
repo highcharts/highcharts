@@ -31,15 +31,17 @@ import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type Row from '../Layout/Row';
 import type Sync from '../Components/Sync/Sync';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataModifier from '../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import U from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -862,7 +864,9 @@ class NavigatorComponent extends Component {
         }
     }
 
+    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
 
+    }
 }
 
 

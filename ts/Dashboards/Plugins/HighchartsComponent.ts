@@ -33,6 +33,8 @@ import type {
     SeriesOptions
 } from './HighchartsTypes';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
+import type Row from '../Layout/Row';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -41,7 +43,6 @@ import DataTable from '../../Data/DataTable.js';
 import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     createElement,
@@ -900,6 +901,37 @@ class HighchartsComponent extends Component {
 
         return this;
     }
+
+    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
+        if (sidebar && dropContext) {
+            const connectorsIds =
+                sidebar.editMode.board.dataPool.getConnectorIds();
+
+            let options: Partial<HighchartsComponent.Options> = {
+                cell: '',
+                type: 'Highcharts',
+                chartOptions: {
+                    chart: {
+                        animation: false,
+                        type: 'column',
+                        zooming: {}
+                    }
+                }
+            };
+
+            if (connectorsIds.length) {
+                options = {
+                    ...options,
+                    connector: {
+                        id: connectorsIds[0]
+                    }
+                };
+            }
+
+            return sidebar.onDropNewComponent(dropContext, options);
+        }
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *

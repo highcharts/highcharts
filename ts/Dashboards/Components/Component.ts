@@ -26,15 +26,14 @@ import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
-    ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -387,6 +386,18 @@ abstract class Component {
      * @internal
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
+
+
+    /**
+     * When the component is dropped on the dashboard from the sidebar.
+     *
+     * @param sidebar
+     * The sidebar popup.
+     *
+     * @param dropContext
+     * The drop context, cell or row.
+     */
+    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {}
 
     /* *
      *

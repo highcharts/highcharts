@@ -20,10 +20,7 @@
  * */
 import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
-import type DataGridComponent from '../Plugins/DataGridComponent';
 import type EditMode from './EditMode';
-import type HighchartsComponent from '../Plugins/HighchartsComponent';
-import type KPIComponent from '../Plugins/KPIComponent';
 import type Row from '../Layout/Row';
 
 import AccordionMenu from './AccordionMenu.js';
@@ -34,11 +31,11 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     createElement,
-    merge
+    merge,
+    objectEach
 } = U;
 
 /* *
@@ -52,28 +49,51 @@ const {
  */
 class SidebarPopup extends BaseForm {
 
-    public static components: Array<SidebarPopup.AddComponentDetails> = [
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    /**
+     * Constructor of the SidebarPopup class.
+     *
+     * @param parentDiv
+     * Element to which the sidebar will be appended.
+     *
+     * @param iconsURL
+     * URL to the icons.
+     *
+     * @param editMode
+     * Instance of EditMode.
+     */
+    constructor(
+        parentDiv: HTMLElement,
+        iconsURL: string,
+        editMode: EditMode
+    ) {
+        super(parentDiv, iconsURL);
+
+        this.editMode = editMode;
+
+        this.componentsList = this.getComponentsList();
+
+        this.accordionMenu = new AccordionMenu(
+            this.iconsURL,
+            this.hide.bind(this)
+        );
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public accordionMenu: AccordionMenu;
+
+    public componentsList: Array<SidebarPopup.AddComponentDetails> = [
         {
-            text: 'HTML',
-            onDrop:
-                function (
-                    sidebar: SidebarPopup,
-                    dropContext: Cell|Row
-                ): void|Cell {
-                    if (sidebar && dropContext) {
-                        return sidebar.onDropNewComponent(dropContext, {
-                            cell: '',
-                            type: 'HTML',
-                            elements: [{
-                                tagName: 'img',
-                                attributes: {
-                                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                                }
-                            }]
-                        });
-                    }
-                }
-        }, {
             text: 'layout',
             onDrop: function (
                 sidebar: SidebarPopup,
@@ -121,125 +141,8 @@ class SidebarPopup extends BaseForm {
                 });
 
             }
-
-        }, {
-            text: 'chart',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell | void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-
-                    let options: Partial<HighchartsComponent.Options> = {
-                        cell: '',
-                        type: 'Highcharts',
-                        chartOptions: {
-                            chart: {
-                                animation: false,
-                                type: 'column',
-                                zooming: {}
-                            }
-                        }
-                    };
-
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
-                    }
-
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
-            }
-        }, {
-            text: 'datagrid',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-                    let options: Partial<DataGridComponent.ComponentOptions> = {
-                        cell: '',
-                        type: 'DataGrid'
-                    };
-
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
-                    }
-
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
-            }
-        }, {
-            text: 'KPI',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-                    let options: Partial<KPIComponent.ComponentOptions> = {
-                        cell: '',
-                        type: 'KPI'
-                    };
-
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
-                    }
-
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
-            }
         }
     ];
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-
-    /**
-     * Constructor of the SidebarPopup class.
-     *
-     * @param parentDiv
-     * Element to which the sidebar will be appended.
-     * @param iconsURL
-     * URL to the icons.
-     * @param editMode
-     * Instance of EditMode.
-     */
-    constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
-        super(parentDiv, iconsURL);
-        this.editMode = editMode;
-        this.accordionMenu = new AccordionMenu(
-            this.iconsURL,
-            this.hide.bind(this)
-        );
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
 
     /**
      * Instance of EditMode.
@@ -250,8 +153,6 @@ class SidebarPopup extends BaseForm {
      * Whether the sidebar is visible.
      */
     public isVisible = false;
-
-    public accordionMenu: AccordionMenu;
 
     /* *
      *
@@ -376,7 +277,7 @@ class SidebarPopup extends BaseForm {
 
     public renderAddComponentsList(): void {
         const sidebar = this;
-        const components = SidebarPopup.components;
+        const components = this.componentsList;
         let gridElement;
 
         const gridWrapper = createElement('div', {
@@ -528,6 +429,23 @@ class SidebarPopup extends BaseForm {
             icon.textContent = title;
         }
     }
+
+    private getComponentsList(): Array<SidebarPopup.AddComponentDetails> {
+        const sidebar = this,
+            board = sidebar.editMode.board,
+            componentTypes = board.componentTypes,
+            componentList: Array<SidebarPopup.AddComponentDetails> = [];
+
+        objectEach(componentTypes, (componentType): void => {
+            componentList.push({
+                text: componentType.name,
+                onDrop: componentType.prototype.onDrop
+            });
+        });
+
+        return componentList;
+    }
+
     /**
      * Function to create and add the close button to the sidebar.
      *

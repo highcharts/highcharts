@@ -25,6 +25,8 @@ import type DataTable from '../../Data/DataTable';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
+import type Row from '../Layout/Row';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -32,7 +34,6 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-
 const {
     diffObjects,
     merge,
@@ -473,6 +474,28 @@ class DataGridComponent extends Component {
             filteredTable.deleteColumns(columnsToDelete);
 
             return filteredTable;
+        }
+    }
+
+    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
+        if (sidebar && dropContext) {
+            const connectorsIds =
+                sidebar.editMode.board.dataPool.getConnectorIds();
+            let options: Partial<DataGridComponent.ComponentOptions> = {
+                cell: '',
+                type: 'DataGrid'
+            };
+
+            if (connectorsIds.length) {
+                options = {
+                    ...options,
+                    connector: {
+                        id: connectorsIds[0]
+                    }
+                };
+            }
+
+            return sidebar.onDropNewComponent(dropContext, options);
         }
     }
 
