@@ -394,6 +394,7 @@ class HighchartsComponent extends Component {
         super(cell, options);
         this.options = options as HighchartsComponent.Options;
 
+
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'Highcharts';
 
@@ -405,6 +406,7 @@ class HighchartsComponent extends Component {
             true
         );
 
+        this.fixSyncOptions();
         this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
@@ -512,7 +514,7 @@ class HighchartsComponent extends Component {
     /**
      * Internal method for handling option updates.
      *
-     * @private
+     * @internal
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -1125,7 +1127,7 @@ namespace HighchartsComponent {
          *
          * @default false
          */
-        highlight?: boolean|Sync.OptionsEntry;
+        highlight?: boolean|Sync.HighlightSyncOptions;
         /**
          * Visibility sync is available for Highcharts and DataGrid components.
          * Synchronizes the visibility of data from a hidden/shown series.

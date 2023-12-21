@@ -327,7 +327,7 @@ namespace Sync {
     );
 
     /**
-     * The crossfilter sync options.
+     * Crossfilter sync options.
      *
      * Example:
      * ```
@@ -353,6 +353,46 @@ namespace Sync {
         affectNavigator?: boolean;
     }
 
+    /**
+     * Highlight sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *  enabled: true,
+     *  showTooltip: false,
+     *  showMarker: false,
+     *  showCrosshair: false
+     * }
+     * ```
+     */
+    export interface HighlightSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether the tooltip should be synced. When hovering over a point in
+         * other component in the same group, in this component the tooltip
+         * should be also shown.
+         *
+         * @default true
+         */
+        showTooltip?: boolean;
+        /**
+         * Whether the marker should be synced. When hovering over a point in
+         * other component in the same group, in this component the marker
+         * should be also highlighted.
+         *
+         * @default true
+         */
+        showMarker?: boolean;
+        /**
+         * Whether the crosshair should be synced. When hovering over a point in
+         * other component in the same group, in this component the crosshair
+         * should be also shown.
+         *
+         * @default true
+         */
+        showCrosshair?: boolean;
+    }
+
 
     /* *
      *
@@ -363,6 +403,11 @@ namespace Sync {
     export const defaultSyncOptions: Record<string, unknown> = {
         crossfilter: {
             affectNavigator: false
+        },
+        highlight: {
+            showTooltip: true,
+            showMarker: true,
+            showCrosshair: true
         }
     };
 }

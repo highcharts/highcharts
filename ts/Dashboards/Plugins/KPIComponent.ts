@@ -268,6 +268,7 @@ class KPIComponent extends Component {
         super(cell, options);
 
         this.options = options as KPIComponent.ComponentOptions;
+        this.fixSyncOptions();
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(

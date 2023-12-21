@@ -456,6 +456,7 @@ class NavigatorComponent extends Component {
         super(cell, options);
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
+        this.fixSyncOptions();
 
         const charter = (
             NavigatorComponent.charter.Chart ||

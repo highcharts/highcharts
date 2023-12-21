@@ -365,7 +365,10 @@ abstract class Component {
             true
         );
 
+        this.fixSyncOptions();
+
         this.filterAndAssignSyncOptions();
+
         this.setupEventListeners();
         this.attachCellListeneres();
 
@@ -437,25 +440,7 @@ abstract class Component {
         ): Sync.OptionsRecord => {
             if (handlerName) {
                 const defaultHandler = defaultHandlers[handlerName];
-                const defaultOptions = Sync.defaultSyncOptions[handlerName];
-                let handler = sync[handlerName];
-
-                /**
-                 * If the handler is enabled, merge the default options with
-                 * the options from the component.
-                 */
-                if (handler === true || (
-                    isObject(handler) && handler.enabled
-                )) {
-                    sync[handlerName] = merge(
-                        defaultOptions || {},
-                        { enabled: true },
-                        handler !== true ? handler : {}
-                    );
-                } else {
-                    sync[handlerName] = false;
-                }
-                handler = sync[handlerName];
+                const handler = sync[handlerName];
 
                 if (defaultHandler) {
                     if (isObject(handler) && handler.enabled) {
@@ -818,6 +803,7 @@ abstract class Component {
 
         // Update options
         fireEvent(this, 'update', eventObject);
+        this.fixSyncOptions();
 
         this.options = merge(this.options, newOptions);
 
@@ -838,6 +824,35 @@ abstract class Component {
             this.render();
         }
 
+    }
+
+    /**
+     * Fixes the sync options to be in the correct format.
+     *
+     * @internal
+     */
+    protected fixSyncOptions(): void {
+        const sync = this.options.sync || {};
+        Object.keys(sync).forEach((handlerName): void => {
+            const handler = sync[handlerName];
+            const defaultOptions = Sync.defaultSyncOptions[handlerName];
+
+            /**
+             * If the handler is enabled, merge the default options with
+             * the options from the component.
+             */
+            if (handler === true || (
+                isObject(handler) && handler.enabled
+            )) {
+                sync[handlerName] = merge(
+                    defaultOptions || {},
+                    { enabled: true },
+                    handler !== true ? handler : {}
+                );
+            } else {
+                sync[handlerName] = false;
+            }
+        });
     }
 
     /**

@@ -213,6 +213,7 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
+        this.fixSyncOptions();
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers
@@ -656,7 +657,7 @@ namespace DataGridComponent {
          *
          * @default false
          */
-        highlight?: boolean|Sync.OptionsEntry;
+        highlight?: boolean|Sync.HighlightSyncOptions;
         /**
          * Visibility sync is available for Highcharts and DataGrid components.
          * Synchronizes the visibility of data from a hidden/shown series.
