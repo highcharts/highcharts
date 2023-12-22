@@ -30,11 +30,12 @@ import type DataCursor from '../../Data/DataCursor';
 import type Sync from '../Components/Sync/Sync';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type DataTable from '../../Data/DataTable';
+import type Point from '../../Core/Series/Point';
+import type HighchartsComponent from './HighchartsComponent';
 
 import ComponentType from '../Components/ComponentType';
-import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
-const { addEvent } = U;
+const { addEvent, isObject } = U;
 
 
 /**
@@ -424,8 +425,15 @@ const configs: {
         highlightHandler:
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
+                const highlightOptions = this.options.sync.highlight;
 
-                const handleCursor = (e: DataCursor.Event): void => {
+                if (!isObject(highlightOptions)) {
+                    return;
+                }
+
+                const getHoveredPoint = (
+                    e: DataCursor.Event
+                ): Point | undefined => {
                     const table = this.connector && this.connector.table;
 
                     if (!table) {
@@ -437,7 +445,9 @@ const configs: {
                     const modifier = table.getModifier();
 
                     if (modifier && modifier.options.type === 'Range') {
-                        offset = getModifiedTableOffset(table, modifier.options as RangeModifierOptions);
+                        offset = getModifiedTableOffset(
+                            table, modifier.options as RangeModifierOptions
+                        );
                     }
 
                     if (chart && chart.series.length) {
@@ -449,7 +459,9 @@ const configs: {
                             // tooltips when charts have multiple series
                             if (chart.series.length > 1 && cursor.column) {
                                 const relatedSeries = chart.series.filter(
-                                    (series): boolean => series.name === cursor.column
+                                    (series): boolean => (
+                                        series.name === cursor.column
+                                    )
                                 );
 
                                 if (relatedSeries.length > 0) {
@@ -458,34 +470,71 @@ const configs: {
                             }
 
                             if (series?.visible && cursor.row !== void 0) {
-                                const point = series.points[cursor.row - offset],
-                                    useSharedTooltip = chart.tooltip?.shared;
-
-                                if (point) {
-                                    const hoverPoint = chart.hoverPoint,
-                                        hoverSeries = hoverPoint?.series ||
-                                            chart.hoverSeries,
-                                        points = chart.pointer.getHoverData(
-                                            point,
-                                            hoverSeries,
-                                            chart.series,
-                                            true,
-                                            true
-                                        );
-
-                                    chart.tooltip && chart.tooltip.refresh(
-                                        useSharedTooltip ?
-                                            points.hoverPoints : point
-                                    );
-                                }
+                                return series.points[cursor.row - offset];
                             }
                         }
                     }
                 };
 
-                const handleCursorOut = (): void => {
-                    if (chart && chart.series.length) {
-                        chart.tooltip && chart.tooltip.hide();
+                const handleCursor = (e: DataCursor.Event): void => {
+                    const point = getHoveredPoint(e);
+
+                    if (!chart || !point ||
+                        // Abort if the affected chart is the same as the one
+                        // that is currently affected manually.
+                        point === chart.hoverPoint
+                    ) {
+                        return;
+                    }
+
+                    if (
+                        chart.tooltip &&
+                        highlightOptions.showTooltip
+                    ) {
+                        const useSharedTooltip = chart.tooltip?.shared;
+                        const hoverPoint = chart.hoverPoint;
+                        const hoverSeries = hoverPoint?.series ||
+                            chart.hoverSeries;
+                        const points = chart.pointer.getHoverData(
+                            point,
+                            hoverSeries,
+                            chart.series,
+                            true,
+                            true
+                        );
+
+                        chart.tooltip && chart.tooltip.refresh(
+                            useSharedTooltip ?
+                                points.hoverPoints : point
+                        );
+                    }
+
+                    if (highlightOptions.showMarker) {
+                        point.setState('hover');
+                    }
+                };
+
+                const handleCursorOut = (e: DataCursor.Event): void => {
+                    if (!chart || !chart.series.length) {
+                        return;
+                    }
+
+                    const point = getHoveredPoint(e);
+
+                    // Abort if the affected chart is the same as the one
+                    // that is currently affected manually.
+                    if (point === chart.hoverPoint) {
+                        return;
+                    }
+
+                    if (chart.tooltip && highlightOptions.showTooltip) {
+                        chart.tooltip.hide();
+                    }
+
+                    if (highlightOptions.showMarker) {
+                        if (point) {
+                            point.setState();
+                        }
                     }
                 };
 
