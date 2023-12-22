@@ -434,7 +434,7 @@ class SidebarPopup extends BaseForm {
         const sidebar = this,
             board = sidebar.editMode.board,
             componentTypes = board.componentTypes,
-            componentList: Array<SidebarPopup.AddComponentDetails> = [];
+            componentList = this.componentsList;
 
         objectEach(componentTypes, (componentType): void => {
             componentList.push({
