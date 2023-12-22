@@ -68,7 +68,6 @@ export interface DataPoolConnectorOptions
     /**
      * The options of the given connector type.
      * @example
-     * ```TS
      * dataPool: {
      *      connectors: [{
      *      id: 'my-csv-connector',
