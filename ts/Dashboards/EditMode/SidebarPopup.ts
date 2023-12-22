@@ -464,15 +464,19 @@ class SidebarPopup extends BaseForm {
         components: Array<string>
     ): Array<SidebarPopup.AddComponentDetails> {
         const sidebar = this,
-            componentTypes = sidebar.editMode.board.componentTypes,
+            editMode = sidebar.editMode,
+            componentTypes = editMode.board.componentTypes,
             componentList: Array<SidebarPopup.AddComponentDetails> = [];
 
         components.forEach((componentName: string): void => {
-            const component = componentTypes[componentName as keyof typeof componentTypes];
+            const component = componentTypes[
+                componentName as keyof typeof componentTypes
+            ];
 
             if (component) {
                 componentList.push({
-                    text: component.name,
+                    text: editMode.lang?.sidebar[componentName] ||
+                        component.name,
                     onDrop: component.prototype.onDrop
                 });
             } else if (componentName === 'layout') {
