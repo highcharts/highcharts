@@ -512,6 +512,11 @@ const configs: {
                     if (highlightOptions.showMarker) {
                         point.setState('hover');
                     }
+
+                    if (highlightOptions.showCrosshair) {
+                        point.series.xAxis?.drawCrosshair(void 0, point);
+                        point.series.yAxis?.drawCrosshair(void 0, point);
+                    }
                 };
 
                 const handleCursorOut = (e: DataCursor.Event): void => {
@@ -523,7 +528,7 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (point === chart.hoverPoint) {
+                    if (!point || point === chart.hoverPoint) {
                         return;
                     }
 
@@ -532,9 +537,12 @@ const configs: {
                     }
 
                     if (highlightOptions.showMarker) {
-                        if (point) {
-                            point.setState();
-                        }
+                        point.setState();
+                    }
+
+                    if (highlightOptions.showCrosshair) {
+                        point.series.xAxis?.drawCrosshair();
+                        point.series.yAxis?.drawCrosshair();
                     }
                 };
 

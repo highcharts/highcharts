@@ -377,8 +377,8 @@ namespace Sync {
         showTooltip?: boolean;
         /**
          * Whether the marker should be synced. When hovering over a point in
-         * other component in the same group, in this component the marker
-         * should be also highlighted.
+         * other component in the same group, the 'hover' state is enabled at
+         * the corresponding point in this component.
          *
          * @default true
          */
@@ -387,6 +387,8 @@ namespace Sync {
          * Whether the crosshair should be synced. When hovering over a point in
          * other component in the same group, in this component the crosshair
          * should be also shown.
+         *
+         * Works only for axes that have crosshair enabled.
          *
          * @default true
          */
