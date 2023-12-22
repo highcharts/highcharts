@@ -29,6 +29,17 @@ class YouTubeComponent extends Component {
 
         return this;
     }
+
+    onDrop(sidebar, dropContext) {
+        super.onDrop.call(this, sidebar, dropContext);
+        if (sidebar && dropContext) {
+            return sidebar.onDropNewComponent(dropContext, {
+                cell: '',
+                type: 'YouTube',
+                videoId: '115hdz9NsrY'
+            });
+        }
+    }
 }
 
 ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
@@ -38,6 +49,11 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true
+        },
+        toolbars: {
+            sidebar: {
+                components: ['YouTube', 'HTML', 'Highcharts']
+            }
         }
     },
     gui: {

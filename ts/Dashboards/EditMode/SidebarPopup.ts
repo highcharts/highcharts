@@ -99,7 +99,7 @@ class SidebarPopup extends BaseForm {
             });
 
         }
-    }
+    };
 
     /* *
      *
@@ -133,7 +133,9 @@ class SidebarPopup extends BaseForm {
             editMode.options.toolbars?.sidebar || {}
         );
 
-        this.componentsList = this.getComponentsList(this.options.components || []);
+        this.componentsList = this.getComponentsList(
+            this.options.components || []
+        );
 
         this.accordionMenu = new AccordionMenu(
             this.iconsURL,
@@ -162,7 +164,7 @@ class SidebarPopup extends BaseForm {
      */
     public options: SidebarPopup.Options = {
         components: ['HTML', 'layout', 'Highcharts', 'DataGrid', 'KPI']
-    }
+    };
 
     /**
      * Whether the sidebar is visible.
@@ -458,7 +460,9 @@ class SidebarPopup extends BaseForm {
      * @param components
      * List of components that can be added to the board.
      */
-    private getComponentsList(components: Array<string>): Array<SidebarPopup.AddComponentDetails> {
+    private getComponentsList(
+        components: Array<string>
+    ): Array<SidebarPopup.AddComponentDetails> {
         const sidebar = this,
             componentTypes = sidebar.editMode.board.componentTypes,
             componentList: Array<SidebarPopup.AddComponentDetails> = [];

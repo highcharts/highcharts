@@ -100,7 +100,7 @@ class EditMode {
                     },
                     row: {
                         enabled: true
-                    },
+                    }
                 },
                 tools: {
                     addComponentBtn: {
