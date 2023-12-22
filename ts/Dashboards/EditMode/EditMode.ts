@@ -100,7 +100,7 @@ class EditMode {
                     },
                     row: {
                         enabled: true
-                    }
+                    },
                 },
                 tools: {
                     addComponentBtn: {
@@ -116,7 +116,7 @@ class EditMode {
                         }
                     }
                 }
-            },
+            } as EditMode.Options,
             options || {});
 
         this.board = board;

@@ -21,6 +21,7 @@
         "../../../ts/Dashboards/EditMode/Toolbar/CellEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/RowEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/SidebarEditToolbar.ts",
+        "../../../ts/Dashboards/EditMode/SidebarPopup.ts",
         "../../../ts/Dashboards/Globals.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
         "../../../ts/Dashboards/Layout/Layout.ts",

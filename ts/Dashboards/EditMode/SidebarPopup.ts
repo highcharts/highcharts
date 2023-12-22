@@ -46,8 +46,60 @@ const {
 
 /**
  * Class which creates the sidebar and handles its behavior.
+ *
+ * @internal
  */
 class SidebarPopup extends BaseForm {
+
+    public static readonly addLayout = {
+        text: 'layout',
+        onDrop: function (
+            sidebar: SidebarPopup,
+            dropContext: Cell|Row
+        ): Cell|void {
+
+            if (!dropContext) {
+                return;
+            }
+
+            const row = (
+                    dropContext.getType() === 'cell' ?
+                        (dropContext as Cell).row :
+                        (dropContext as Row)
+                ),
+                board = row.layout.board,
+                newLayoutName = GUIElement.createElementId('layout'),
+                cellName = GUIElement.createElementId('cell'),
+                layout = new Layout(board, {
+                    id: newLayoutName,
+                    copyId: '',
+                    parentContainerId: board.container.id,
+                    rows: [{
+                        cells: [{
+                            id: cellName
+                        }]
+                    }],
+                    style: {}
+                });
+
+            if (layout) {
+                board.layouts.push(layout);
+            }
+
+            Bindings.addComponent({
+                type: 'HTML',
+                cell: cellName,
+                elements: [
+                    {
+                        tagName: 'div',
+                        style: { 'text-align': 'center' },
+                        textContent: 'Placeholder text'
+                    }
+                ]
+            });
+
+        }
+    }
 
     /* *
      *
@@ -76,7 +128,12 @@ class SidebarPopup extends BaseForm {
 
         this.editMode = editMode;
 
-        this.componentsList = this.getComponentsList();
+        this.options = merge(
+            this.options,
+            editMode.options.toolbars?.sidebar || {}
+        );
+
+        this.componentsList = this.getComponentsList(this.options.components || []);
 
         this.accordionMenu = new AccordionMenu(
             this.iconsURL,
@@ -90,59 +147,10 @@ class SidebarPopup extends BaseForm {
      *
      * */
 
+    /**
+     * Reference to the AccordionMenu.
+     */
     public accordionMenu: AccordionMenu;
-
-    public componentsList: Array<SidebarPopup.AddComponentDetails> = [
-        {
-            text: 'layout',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell|void {
-
-                if (!dropContext) {
-                    return;
-                }
-
-                const row = (
-                        dropContext.getType() === 'cell' ?
-                            (dropContext as Cell).row :
-                            (dropContext as Row)
-                    ),
-                    board = row.layout.board,
-                    newLayoutName = GUIElement.createElementId('layout'),
-                    cellName = GUIElement.createElementId('cell'),
-                    layout = new Layout(board, {
-                        id: newLayoutName,
-                        copyId: '',
-                        parentContainerId: board.container.id,
-                        rows: [{
-                            cells: [{
-                                id: cellName
-                            }]
-                        }],
-                        style: {}
-                    });
-
-                if (layout) {
-                    board.layouts.push(layout);
-                }
-
-                Bindings.addComponent({
-                    type: 'HTML',
-                    cell: cellName,
-                    elements: [
-                        {
-                            tagName: 'div',
-                            style: { 'text-align': 'center' },
-                            textContent: 'Placeholder text'
-                        }
-                    ]
-                });
-
-            }
-        }
-    ];
 
     /**
      * Instance of EditMode.
@@ -150,9 +158,21 @@ class SidebarPopup extends BaseForm {
     public editMode: EditMode;
 
     /**
+     * Options used in the sidebar.
+     */
+    public options: SidebarPopup.Options = {
+        components: ['HTML', 'layout', 'Highcharts', 'DataGrid', 'KPI']
+    }
+
+    /**
      * Whether the sidebar is visible.
      */
     public isVisible = false;
+
+    /**
+     * List of components that can be added to the board.
+     */
+    private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
 
     /* *
      *
@@ -430,17 +450,30 @@ class SidebarPopup extends BaseForm {
         }
     }
 
-    private getComponentsList(): Array<SidebarPopup.AddComponentDetails> {
+    /**
+     * Based on the provided components list, it returns the list of components
+     * with its names and functions that are called when the component is
+     * dropped.
+     *
+     * @param components
+     * List of components that can be added to the board.
+     */
+    private getComponentsList(components: Array<string>): Array<SidebarPopup.AddComponentDetails> {
         const sidebar = this,
-            board = sidebar.editMode.board,
-            componentTypes = board.componentTypes,
-            componentList = this.componentsList;
+            componentTypes = sidebar.editMode.board.componentTypes,
+            componentList: Array<SidebarPopup.AddComponentDetails> = [];
 
-        objectEach(componentTypes, (componentType): void => {
-            componentList.push({
-                text: componentType.name,
-                onDrop: componentType.prototype.onDrop
-            });
+        components.forEach((componentName: string): void => {
+            const component = componentTypes[componentName as keyof typeof componentTypes];
+
+            if (component) {
+                componentList.push({
+                    text: component.name,
+                    onDrop: component.prototype.onDrop
+                });
+            } else if (componentName === 'layout') {
+                componentList.push(SidebarPopup.addLayout);
+            }
         });
 
         return componentList;
@@ -495,10 +528,17 @@ class SidebarPopup extends BaseForm {
  * */
 namespace SidebarPopup {
 
+    /**
+     * Options used to configure the sidebar.
+     */
     export interface Options {
-
+        components?: Array<string>;
     }
 
+    /**
+     * Contains the name of the component and the function that is called when
+     * the component is dropped.
+     */
     export interface AddComponentDetails {
         text: string;
         onDrop: Function;
