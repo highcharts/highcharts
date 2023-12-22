@@ -14,12 +14,26 @@
             <label for="webworker-toggle">
                 Web worker + WebGPU
             </label>
+            <input type="checkbox" name="renderPass" id="renderpass-toggle">
+            <label for="renderpass-toggle">
+                Do render pass in WebGPU
+            </label>
             <br />
             <div class="wrapper">
-                <label for="shadercode">Shader code</label>
+                <label for="shadercode">Compute shader code</label>
                 <textarea name="shaderCode" id="shadercode" cols="80" rows="30">
                 </textarea>
             </div>
+
+            <!-- <details> -->
+            <!--     <summary>Advanced</summary> -->
+            <!--     <div class="wrapper"> -->
+            <!--         <label for="renderShaderCode">Render Shader code</label> -->
+            <!--         <textarea name="renderShaderCode" id="renderShaderCode" cols="80" rows="30"> -->
+            <!--         </textarea> -->
+            <!--     </div> -->
+            <!-- </details> -->
+            <!-- <br /> -->
 
             <input type="submit" value="Update" />
         </form>

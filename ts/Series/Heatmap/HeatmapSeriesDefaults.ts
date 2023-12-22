@@ -140,6 +140,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     interpolation: {
         enabled: false,
         useWebWorker: false,
+        renderPass: false,
         shaderCode:
 `struct Matrix {
     size: vec2<u32>, // x and y dimensons

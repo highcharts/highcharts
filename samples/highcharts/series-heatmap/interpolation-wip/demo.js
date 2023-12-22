@@ -55,7 +55,8 @@ document.getElementById('interpolation-form').addEventListener('submit', functio
         interpolation: {
             enabled: formObject.enabled === 'on',
             useWebWorker: formObject.useWebWorker === 'on',
-            shaderCode: formObject.shaderCode
+            shaderCode: formObject.shaderCode,
+            renderPass: formObject.renderPass
         }
     });
 });

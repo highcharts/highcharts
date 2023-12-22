@@ -268,10 +268,10 @@ class HeatmapSeries extends ScatterSeries {
                 if (pixelData) {
                     series.worker.postMessage({
                         canvas: series.canvas,
+                        options: interpolation,
                         pixelData: pixelData.pixelData,
                         width: pixelData.width,
-                        height: pixelData.height,
-                        shaderCode: interpolation.shaderCode
+                        height: pixelData.height
                     }, [series.canvas]);
                 }
             } else if (!image || series.isDirtyData || series.isDirtyCanvas) {

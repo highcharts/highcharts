@@ -130,5 +130,8 @@
       "stylelint"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
+  }
 }
