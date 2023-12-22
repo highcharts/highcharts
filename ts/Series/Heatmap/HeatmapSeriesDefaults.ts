@@ -151,11 +151,16 @@ struct Params {
     block_size: u32
 }
 
+// Bit shift create RGBA color
+fn RGBA(r: u32, g: u32, b: u32, a: u32) -> u32 {
+    return (r << 24) | (g << 16) | (b << 8) | a;
+}
+
 @group(0) @binding(0) var<storage, read> input : Matrix;
 @group(0) @binding(1) var<storage, read> params : Params;
 @group(0) @binding(2) var<storage, read_write> resultMatrix : Matrix;
 
-@compute @workgroup_size(64)
+@compute @workgroup_size(4)
 fn main(
     @builtin(global_invocation_id) global_id : vec3u,
     @builtin(workgroup_id) workgroup_id: vec3u,
@@ -165,19 +170,38 @@ fn main(
         return;
     }
 
-    let block_size = params.block_size;
-    let base_index = (workgroup_id.x * block_size) + (local_id.x * block_size);
+    // array of colors corresponding to the workgroup_id
 
+    // Treating block_size as the numbers of rows to process
+    let block_size = params.block_size;
+
+    // The width of the array
+    // Since we are currently loading an u8 array as u32, it kind of works out
+    let arr_width = input.size.x;
+
+    // The base index of the current row
+    let base_index = workgroup_id.x * arr_width;
+
+    // Set the size of the result matrix
+    // not really used anywhere, but it's nice to have
     resultMatrix.size = input.size;
 
-    for (var i = u32(base_index); i < base_index + block_size; i = i + 4u) {
-        var j = u32(0);
-        while(j < 4){
+    let last_row_index = (block_size + base_index) * arr_width;
+
+    // iterate over the each row in the image
+    for (var i = u32(base_index); i < last_row_index ; i+= arr_width) {
+
+        // iterate over each column in the row
+        for (var j = u32(0); j < arr_width; j++) {
+            // Paint every fourth row red for demonstration purposes
+            if ( i != 0u && i % 4u == 0u) {
+                resultMatrix.numbers[i + j] = RGBA(225u, 60u, 0u, 255u);
+                continue;
+            }
+
             let result = input.numbers[i + j];
             resultMatrix.numbers[i + j] = result;
-            j++;
         }
-
     }
 }
 `

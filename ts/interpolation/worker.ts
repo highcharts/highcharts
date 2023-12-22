@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix';
-const BLOCK_SIZE = 64;
+const BLOCK_SIZE = 4;
 
 /**
  *
@@ -8,7 +8,7 @@ function postProcess(
     device: GPUDevice,
     source: ImageBitmap,
     ctx: GPUCanvasContext
-): Promise<void> {
+): void {
     const renderStart = performance.now();
 
     const renderBuffer = device.createBuffer({
@@ -385,8 +385,16 @@ async function computePass(
     passEncoder.setPipeline(computePipeline);
     passEncoder.setBindGroup(0, bindGroup);
 
+    const workgroupSize = Math.ceil(height / BLOCK_SIZE);
+    const numberOfWorkgroups = workgroupSize / BLOCK_SIZE;
+    console.log(
+        'Dispatching',
+        Math.ceil(numberOfWorkgroups),
+        'workgroups'
+    ) ;
+
     passEncoder.dispatchWorkgroups(
-        Math.ceil(height / 64)
+        numberOfWorkgroups
     );
     passEncoder.end();
 
@@ -466,7 +474,7 @@ self.addEventListener('message', function (e): void {
                     )
                 );
 
-                await postProcess(device, source, ctx);
+                postProcess(device, source, ctx);
                 const blob = await offscreenCanvas.convertToBlob();
 
                 self.postMessage({ done: true, blob });
