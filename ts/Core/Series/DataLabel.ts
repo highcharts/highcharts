@@ -41,10 +41,12 @@ import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
 const {
+    clamp,
     defined,
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isString,
     merge,
     objectEach,
@@ -333,40 +335,32 @@ namespace DataLabel {
                 height: bBox.height
             });
 
+            setStartPos(alignTo); // data sorting
+            dataLabel.align(options, void 0, alignTo, false);
+            alignAttr = dataLabel.alignAttr;
+
+            const correctedPosition = merge(alignAttr);
+
             // Allow a hook for changing alignment in the last moment, then do
             // the alignment
             if (rotation) {
-                justify = false; // Not supported for rotated text
+                justify = false;
                 rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
-                alignAttr = {
-                    x: (
-                        alignTo.x +
-                        (options.x || 0) +
-                        alignTo.width / 2 +
-                        rotCorr.x
-                    ),
-                    y: (
-                        alignTo.y +
-                        (options.y || 0) +
-                        ({ top: 0, middle: 0.5, bottom: 1 } as any)[
-                            options.verticalAlign as any
-                        ] *
-                        alignTo.height
-                    )
-                };
+                alignAttr.x = alignAttr.x + rotCorr.x;
+                // alignAttr.y += ({ top: 1, middle: 1, bottom: 0 } as any)[
+                //     options.verticalAlign as any
+                // ] * bBox.height;
 
                 bBoxCorrection = [
-                    bBox.x - Number(dataLabel.attr('x')),
-                    bBox.y - Number(dataLabel.attr('y'))
+                    bBox.x - +(dataLabel.attr('x')),
+                    bBox.y - +(dataLabel.attr('y'))
                 ];
-                setStartPos(alignAttr); // data sorting
-                dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
 
-            } else {
-                setStartPos(alignTo); // data sorting
-                dataLabel.align(options, void 0, alignTo);
-                alignAttr = dataLabel.alignAttr;
+                correctedPosition.x = alignAttr.x + (bBox.width / 2);
             }
+
+            dataLabel[dataLabel.placed ? 'animate' : 'attr'](correctedPosition);
+            dataLabel.placed = true;
 
             // Handle justify or crop
             if (justify && alignTo.height >= 0) { // #8830
