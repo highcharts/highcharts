@@ -209,9 +209,16 @@ class StandaloneNavigator {
         newOptions: Partial<StandaloneNavigatorOptions>,
         redraw?: boolean
     ): void {
-        this.options = merge(this.options, newOptions);
+        this.options = merge(this.options, { navigator: newOptions });
 
         this.navigator.chart.update(this.options, redraw);
+    }
+
+    /**
+     * Redraws the standalone navigator.
+     */
+    public redraw(): void {
+        this.navigator.chart.redraw();
     }
 
     /**
