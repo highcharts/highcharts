@@ -268,7 +268,7 @@ class HTMLComponent extends Component {
                     src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
                 }
             }]
-        }
+        };
     }
 
     /**

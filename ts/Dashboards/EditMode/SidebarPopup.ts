@@ -475,8 +475,12 @@ class SidebarPopup extends BaseForm {
                 componentList.push({
                     text: editMode.lang?.sidebar[componentName] ||
                         component.name,
-                    onDrop: function (sidebar: SidebarPopup, dropContext: Cell|Row): Cell|void {
-                        const options = component.prototype.getOptionsOnDrop(sidebar);
+                    onDrop: function (
+                        sidebar: SidebarPopup,
+                        dropContext: Cell|Row
+                    ): Cell|void {
+                        const options =
+                            component.prototype.getOptionsOnDrop(sidebar);
 
                         if (options) {
                             return sidebar.onDropNewComponent(
