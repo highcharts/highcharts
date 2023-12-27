@@ -92,7 +92,6 @@ class SidebarPopup extends BaseForm {
                 elements: [
                     {
                         tagName: 'div',
-                        style: { 'text-align': 'center' },
                         textContent: 'Placeholder text'
                     }
                 ]
