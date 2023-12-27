@@ -474,30 +474,30 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width) {
-                if (
-                    width === 'auto' &&
-                    cell.container.style.flex !== '1 1 0%'
-                ) {
-                    cell.container.style.flex = '1 1 0%';
-                } else {
-                    const cellWidth = cell.convertWidthToValue(width);
+            // if (width) {
+            //     if (
+            //         width === 'auto' &&
+            //         cell.container.style.flex !== '1 1 0%'
+            //     ) {
+            //         cell.container.style.flex = '1 1 0%';
+            //     } else {
+            //         const cellWidth = cell.convertWidthToValue(width);
 
-                    if (
-                        cellWidth &&
-                        cell.container.style.flex !== '0 0 ' + cellWidth
-                    ) {
-                        cell.container.style.flex = '0 0 ' + cellWidth;
-                    }
+            //         if (
+            //             cellWidth &&
+            //             cell.container.style.flex !== '0 0 ' + cellWidth
+            //         ) {
+            //             cell.container.style.flex = '0 0 ' + cellWidth;
+            //         }
 
-                    cell.options.width = cellWidth;
-                }
-            }
+            //         cell.options.width = cellWidth;
+            //     }
+            // }
 
-            if (height) {
-                cell.options.height = cell.container.style.height =
-                    height + 'px';
-            }
+            // if (height) {
+            //     cell.options.height = cell.container.style.height =
+            //         height + 'px';
+            // }
 
             if (editMode) {
                 editMode.hideContextPointer();
