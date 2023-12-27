@@ -362,6 +362,18 @@ class RangeSelector {
             this.dropdown.selectedIndex = i + 1;
         }
 
+        const resetFixedRange = (): void => {
+            // If rangeSelector.selected is larger than actual range, reset
+            // chart fixed range (#20327)
+            const xAxis = chart.xAxis[0];
+            if (xAxis.dataMax && xAxis.dataMin && rangeOptions._range) {
+                const dataRange = xAxis.dataMax - xAxis.dataMin;
+                if (rangeOptions._range > dataRange) {
+                    chart.fixedRange = void 0;
+                }
+            }
+        };
+
         // Update the chart
         if (!baseAxis) {
             // Axis not yet instanciated. Temporarily set min and range
@@ -372,6 +384,7 @@ class RangeSelector {
             minSetting = baseXAxisOptions.min;
             baseXAxisOptions.min = rangeMin;
             addEvent(chart, 'load', function resetMinAndRange(): void {
+                resetFixedRange();
                 baseXAxisOptions.range = rangeSetting;
                 baseXAxisOptions.min = minSetting;
             });
@@ -387,6 +400,7 @@ class RangeSelector {
                     rangeSelectorButton: rangeOptions
                 }
             );
+            resetFixedRange();
         }
 
         fireEvent(this, 'afterBtnClick');

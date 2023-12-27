@@ -187,4 +187,11 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
 
     chart.rangeSelector.clickButton(1);
     assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');
+
+    chart.rangeSelector.clickButton(2);
+    assert.strictEqual(
+        chart.fixedRange,
+        undefined,
+        'chart.fixedRange should be undefined if the clicked button is outside data range, #20327'
+    );
 });
