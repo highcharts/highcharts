@@ -425,11 +425,6 @@ const configs: {
         highlightHandler:
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
-                const highlightOptions = this.options.sync.highlight;
-
-                if (!isObject(highlightOptions)) {
-                    return;
-                }
 
                 const getHoveredPoint = (
                     e: DataCursor.Event
@@ -476,6 +471,11 @@ const configs: {
                 };
 
                 const handleCursor = (e: DataCursor.Event): void => {
+                    const highlightOptions = this.options.sync.highlight;
+                    if (!isObject(highlightOptions)) {
+                        return;
+                    }
+
                     const point = getHoveredPoint(e);
 
                     if (!chart || !point ||
@@ -519,7 +519,11 @@ const configs: {
                 };
 
                 const handleCursorOut = (e: DataCursor.Event): void => {
-                    if (!chart || !chart.series.length) {
+                    const highlightOptions = this.options.sync.highlight;
+                    if (
+                        !chart || !chart.series.length ||
+                        !isObject(highlightOptions)
+                    ) {
                         return;
                     }
 
@@ -587,7 +591,6 @@ const configs: {
                     // connector change
                     if (cursor) {
                         const table = this.connector && this.connector.table;
-
                         if (table) {
                             cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                             cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -599,7 +602,6 @@ const configs: {
 
                 const unregisterCursorListeners = (): void => {
                     const table = this.connector && this.connector.table;
-
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
                         board.dataCursor.removeListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -609,10 +611,8 @@ const configs: {
                 };
 
                 if (board) {
+                    unregisterCursorListeners();
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             },
         extremesHandler:
