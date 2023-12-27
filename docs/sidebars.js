@@ -49,7 +49,8 @@ module.exports = {
             'stock/range-selector',
             'stock/axis-resizer',
             'stock/technical-indicator-series',
-            'stock/custom-technical-indicators'
+            'stock/custom-technical-indicators',
+            'stock/standalone-navigator'
         ],
         'Maps': [
             'maps/getting-started',
