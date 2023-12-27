@@ -34,7 +34,6 @@ import type {
 } from './HighchartsTypes';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../EditMode/SidebarPopup';
-import type Row from '../Layout/Row';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -902,34 +901,32 @@ class HighchartsComponent extends Component {
         return this;
     }
 
-    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
-        if (sidebar && dropContext) {
-            const connectorsIds =
-                sidebar.editMode.board.dataPool.getConnectorIds();
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<HighchartsComponent.Options> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
 
-            let options: Partial<HighchartsComponent.Options> = {
-                cell: '',
-                type: 'Highcharts',
-                chartOptions: {
-                    chart: {
-                        animation: false,
-                        type: 'column',
-                        zooming: {}
-                    }
+        let options: Partial<HighchartsComponent.Options> = {
+            cell: '',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    animation: false,
+                    type: 'column',
+                    zooming: {}
+                }
+            }
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
                 }
             };
-
-            if (connectorsIds.length) {
-                options = {
-                    ...options,
-                    connector: {
-                        id: connectorsIds[0]
-                    }
-                };
-            }
-
-            return sidebar.onDropNewComponent(dropContext, options);
         }
+
+        return options;
     }
 
     /**

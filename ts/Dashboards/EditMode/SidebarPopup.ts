@@ -34,8 +34,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
-    merge,
-    objectEach
+    merge
 } = U;
 
 /* *
@@ -476,7 +475,16 @@ class SidebarPopup extends BaseForm {
                 componentList.push({
                     text: editMode.lang?.sidebar[componentName] ||
                         component.name,
-                    onDrop: component.prototype.onDrop
+                    onDrop: function (sidebar: SidebarPopup, dropContext: Cell|Row): Cell|void {
+                        const options = component.prototype.getOptionsOnDrop(sidebar);
+
+                        if (options) {
+                            return sidebar.onDropNewComponent(
+                                dropContext,
+                                options
+                            );
+                        }
+                    }
                 });
             } else if (componentName === 'layout') {
                 componentList.push(SidebarPopup.addLayout);

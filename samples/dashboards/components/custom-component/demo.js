@@ -30,15 +30,13 @@ class YouTubeComponent extends Component {
         return this;
     }
 
-    onDrop(sidebar, dropContext) {
-        super.onDrop.call(this, sidebar, dropContext);
-        if (sidebar && dropContext) {
-            return sidebar.onDropNewComponent(dropContext, {
-                cell: '',
-                type: 'YouTube',
-                videoId: '115hdz9NsrY'
-            });
-        }
+    getOptionsOnDrop(sidebar) {
+        super.getOptionsOnDrop.call(this, sidebar);
+        return {
+            cell: '',
+            type: 'YouTube',
+            videoId: '115hdz9NsrY'
+        };
     }
 }
 

@@ -57,15 +57,13 @@ class YouTubeComponent extends Component {
         return this;
     }
 
-    onDrop(sidebar, dropContext) {
-        super.onDrop.call(this, sidebar, dropContext);
-        if (sidebar && dropContext) {
-            return sidebar.onDropNewComponent(dropContext, {
-                cell: '',
-                type: 'YouTube',
-                videoId: '115hdz9NsrY'
-            });
-        }
+    getOptionsOnDrop(sidebar) {
+        super.getOptionsOnDrop.call(this, sidebar);
+        return {
+            cell: '',
+            type: 'YouTube',
+            videoId: '115hdz9NsrY'
+        };
     }
 }
 
@@ -95,7 +93,7 @@ Dashboards.board({
 
 ### Adding custom component to the sidebar
 To add the custom component to the sidebar, you need to add the two things:
-1. Define the `onDrop` method for the custom component, which will be called when the component is dropped on the dashboard.
+1. Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
 2. For the `editMode` `sidebar` define the list of the components that will be available in the sidebar.
 Use the exact name which was used to register the component in the `ComponentRegistry`.
 ```js

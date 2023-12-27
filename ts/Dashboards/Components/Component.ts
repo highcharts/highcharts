@@ -26,6 +26,7 @@ import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
+    ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
 import type JSON from '../JSON';
@@ -389,15 +390,14 @@ abstract class Component {
 
 
     /**
-     * When the component is dropped on the dashboard from the sidebar.
+     * Returns the component's options when it is dropped from the sidebar.
      *
      * @param sidebar
      * The sidebar popup.
-     *
-     * @param dropContext
-     * The drop context, cell or row.
      */
-    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {}
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<ComponentType['options']> {
+        return {};
+    }
 
     /* *
      *
@@ -1314,9 +1314,9 @@ namespace Component {
         /**
          * Set of options that are available for editing through sidebar.
          */
-        editableOptions: Array<EditableOptions.Options>;
+        editableOptions?: Array<EditableOptions.Options>;
         /** @internal */
-        editableOptionsBindings: EditableOptions.OptionsBindings;
+        editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
         presentationModifier?: DataModifier;
         /**
@@ -1337,7 +1337,7 @@ namespace Component {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
          */
-        sync: SyncOptions;
+        sync?: SyncOptions;
         /**
          * Connector options
          */

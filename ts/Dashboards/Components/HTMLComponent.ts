@@ -23,8 +23,6 @@
  * */
 
 import type Cell from '../Layout/Cell.js';
-import type Row from '../Layout/Row.js';
-import type SidebarPopup from '../EditMode/SidebarPopup.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
@@ -260,18 +258,16 @@ class HTMLComponent extends Component {
         this.emit({ type: 'afterUpdate' });
     }
 
-    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
-        if (sidebar && dropContext) {
-            return sidebar.onDropNewComponent(dropContext, {
-                cell: '',
-                type: 'HTML',
-                elements: [{
-                    tagName: 'img',
-                    attributes: {
-                        src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                    }
-                }]
-            });
+    public getOptionsOnDrop(): Partial<HTMLComponent.HTMLComponentOptions> {
+        return {
+            cell: '',
+            type: 'HTML',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+                }
+            }]
         }
     }
 

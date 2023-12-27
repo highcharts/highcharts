@@ -26,7 +26,6 @@ import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../EditMode/SidebarPopup';
-import type Row from '../Layout/Row';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -477,26 +476,24 @@ class DataGridComponent extends Component {
         }
     }
 
-    public onDrop(sidebar: SidebarPopup, dropContext: Cell|Row): void|Cell {
-        if (sidebar && dropContext) {
-            const connectorsIds =
-                sidebar.editMode.board.dataPool.getConnectorIds();
-            let options: Partial<DataGridComponent.ComponentOptions> = {
-                cell: '',
-                type: 'DataGrid'
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<DataGridComponent.ComponentOptions> = {
+            cell: '',
+            type: 'DataGrid'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
             };
-
-            if (connectorsIds.length) {
-                options = {
-                    ...options,
-                    connector: {
-                        id: connectorsIds[0]
-                    }
-                };
-            }
-
-            return sidebar.onDropNewComponent(dropContext, options);
         }
+
+        return options;
     }
 
     /** @private */
