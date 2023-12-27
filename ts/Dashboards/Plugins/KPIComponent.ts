@@ -26,7 +26,7 @@ import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
-    Options,
+    Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
 import type TextOptions from '../Components/TextOptions';
@@ -159,7 +159,7 @@ class KPIComponent extends Component {
     /**
      * Default options of the KPI component.
      */
-    public static defaultChartOptions: Types.DeepPartial<Options> = {
+    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
         chart: {
             type: 'spline',
             styledMode: true,
@@ -174,13 +174,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<Options['xAxis']>,
+        } as Types.DeepPartial<ChartOptions['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<Options['yAxis']>,
+        } as Types.DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },
@@ -354,10 +354,13 @@ class KPIComponent extends Component {
                 }
             }
 
-            this.chart = charter.chart(this.chartContainer, merge(
-                KPIComponent.defaultChartOptions,
-                this.options.chartOptions
-            ));
+            this.chart = charter.chart(
+                this.chartContainer,
+                merge(
+                    KPIComponent.defaultChartOptions,
+                    this.options.chartOptions
+                ) as Partial<ChartOptions>
+            );
         } else if (
             this.chart &&
             !this.options.chartOptions &&
@@ -715,7 +718,7 @@ namespace KPIComponent {
          *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
-        chartOptions?: Options;
+        chartOptions?: ChartOptions;
         style?: CSSObject;
         /**
          * The threshold declares the value when color is applied
@@ -826,18 +829,6 @@ namespace KPIComponent {
          * @default 0
          */
         seriesIndex?: number;
-    }
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        KPI: typeof KPIComponent;
     }
 }
 

@@ -73,8 +73,10 @@ If you connect this component to the data connector, the content of the componen
 You can read more about the DataGrid Component [here](https://www.highcharts.com/docs/dashboards/datagrid-component).
 
 ### KPI Component
-Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
-You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
+Another type of component type that allows you to visualize key performance indicators is KPIComponent. It is a simple component that displays a title and a value but it also can display the value on the chart to better visualize the data and the limit of the value.
+You can define the threshold to change the style of the component when one value exceeds it and some other useful features to better show what is important to you.
+
+This component type is bundled with the Highcharts plugin and you need to connect the Highcharts with the dashboard plugin to use it (similarly to the Highcharts component).
 
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi)
 

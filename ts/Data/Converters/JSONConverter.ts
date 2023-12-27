@@ -28,7 +28,7 @@ import type {
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const { merge, isArray, objectEach } = U;
+const { error, isArray, merge, objectEach } = U;
 
 /* *
  *
@@ -166,6 +166,11 @@ class JSONConverter extends DataConverter {
                         converter.headers[i] || i.toString(),
                         item
                     );
+                } else {
+                    error(
+                        'JSONConverter: Invalid `columnNames` option.',
+                        false
+                    );
                 }
             }
         } else if (orientation === 'rows') {
@@ -199,6 +204,11 @@ class JSONConverter extends DataConverter {
                                 converter.headers[columnIndex] ||
                                     columnIndex.toString(),
                                 converter.columns[columnIndex]
+                            );
+                        } else {
+                            error(
+                                'JSONConverter: Invalid `columnNames` option.',
+                                false
                             );
                         }
                     }

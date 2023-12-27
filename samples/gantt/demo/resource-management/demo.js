@@ -120,7 +120,8 @@ Highcharts.ganttChart('container', {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    fontWeight: 'normal'
+                    fontWeight: 'normal',
+                    textOverflow: 'ellipsis'
                 }
             }
         }

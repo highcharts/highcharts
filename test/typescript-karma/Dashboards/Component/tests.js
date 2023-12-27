@@ -969,21 +969,21 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
         components: [{
             cell: 'dashboard-col-1',
             connector: {
-            id: 'micro-element'
+                id: 'micro-element'
             },
             type: 'Highcharts',
             chartOptions: {
-            chart: {
-                type: 'column'
-            },
-            xAxis: {
-                type: 'category'
-            }
+                chart: {
+                    type: 'column'
+                },
+                xAxis: {
+                    type: 'category'
+                }
             },
             columnAssignment: {
-            InstanceType: 'x',
-            DiskSpace: 'y',
-            ReadOps: 'y'
+                InstanceType: 'x',
+                DiskSpace: 'y',
+                ReadOps: 'y'
             },
         }]
         }, true);
