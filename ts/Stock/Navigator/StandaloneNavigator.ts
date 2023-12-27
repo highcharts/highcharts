@@ -47,7 +47,9 @@ interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
  * */
 
 /**
- * The StandaloneNavigator class.
+ * The StandaloneNavigator class. The StandaloneNavigator class allows for
+ * creating a standalone navigator component that synchronizes the extremes
+ * across multiple bound charts.
  *
  * @class
  * @name Highcharts.StandaloneNavigator
@@ -56,7 +58,7 @@ interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
  * The DOM element to render to, or its id.
  *
  * @param {DeepPartial<StandaloneNavigatorOptions>} userOptions
- * The standalone navigator options with chart-like structure.
+ * The standalone navigator options.
  */
 class StandaloneNavigator {
 
@@ -127,7 +129,9 @@ class StandaloneNavigator {
 
     /**
      * Binds an axis to the standalone navigator,
-     * allowing the navigator to control the range.
+     * allowing the navigator to control the axis' range.
+     *
+     * @function Highcharts.StandaloneNavigator#bind
      *
      * @param {Axis | Chart} axisOrChart
      *        The Axis or Chart to bind to the navigator.
@@ -159,7 +163,9 @@ class StandaloneNavigator {
     }
 
     /**
-     * Unbinds a single axis or all axes bound to the standalone navigator.
+     * Unbinds a single axis or all bound axes from the standalone navigator.
+     *
+     * @function Highcharts.StandaloneNavigator#unbind
      *
      * @param {Chart | Axis | undefined} axisOrChart
      *        Passing a Chart object unbinds the first X axis of the chart,
@@ -182,7 +188,9 @@ class StandaloneNavigator {
 
 
     /**
-     * Destroys allocated elements.
+     * Destroys allocated standalone navigator elements.
+     *
+     * @function Highcharts.StandaloneNavigator#destroy
      */
     public destroy(): void {
         // Disconnect events
@@ -196,7 +204,10 @@ class StandaloneNavigator {
     }
 
     /**
-     * Updates the standalone navigator's options with new user options.
+     * Updates the standalone navigator's options with a new set of user
+     * options.
+     *
+     * @function Highcharts.StandaloneNavigator#update
      *
      * @param  {Partial<StandaloneNavigatorOptions>} newOptions
      *         Updates the standalone navigator's options with new user options.
@@ -206,7 +217,7 @@ class StandaloneNavigator {
      *         specified, the standalone navigator will be redrawn.
      */
     public update(
-        newOptions: Partial<StandaloneNavigatorOptions>,
+        newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
         this.options = merge(this.options, { navigator: newOptions });
@@ -216,6 +227,8 @@ class StandaloneNavigator {
 
     /**
      * Redraws the standalone navigator.
+     *
+     * @function Highcharts.StandaloneNavigator#redraw
      */
     public redraw(): void {
         this.navigator.chart.redraw();
@@ -277,6 +290,8 @@ class StandaloneNavigator {
     /**
      * Get the current range of the standalone navigator.
      *
+     * @function Highcharts.StandaloneNavigator#getRange
+     *
      * @return {Axis.ExtremesObject}
      *         The current range of the standalone navigator.
      */
@@ -298,11 +313,15 @@ class StandaloneNavigator {
     /**
      * Set the range of the standalone navigator.
      *
+     * @function Highcharts.StandaloneNavigator#setRange
+     *
      * @param {number | undefined} min
      *        The new minimum value.
      *
      * @param {number | undefined} max
      *        The new maximum value.
+     *
+     * @emits Highcharts.StandaloneNavigator#event:setRange
      */
     public setRange(min?: number, max?: number): void {
         fireEvent(
@@ -314,6 +333,8 @@ class StandaloneNavigator {
 
     /**
      * Get the initial, options based extremes for the standalone navigator.
+     *
+     * @private
      *
      * @return {{ min: number, max: number }}
      *         The initial minimum and maximum extremes values.
