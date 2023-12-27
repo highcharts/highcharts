@@ -449,7 +449,6 @@ const configs: {
                             table, modifier.options as RangeModifierOptions
                         );
                     }
-
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
@@ -528,7 +527,7 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (!point || point === chart.hoverPoint) {
+                    if (point && point === chart.hoverPoint) {
                         return;
                     }
 
@@ -537,12 +536,47 @@ const configs: {
                     }
 
                     if (highlightOptions.showMarker) {
-                        point.setState();
+                        if (point) {
+                            point.setState();
+                        } else {
+
+                            // If the 'row' parameter is missing in the event
+                            // object, the unhovered point cannot be identified.
+
+                            const series = chart.series;
+                            const seriesLength = series.length;
+
+                            for (let i = 0; i < seriesLength; i++) {
+                                const points = chart.series[i].points;
+                                const pointsLength = points.length;
+
+                                for (let j = 0; j < pointsLength; j++) {
+                                    points[j].setState();
+                                }
+                            }
+                        }
                     }
 
                     if (highlightOptions.showCrosshair) {
-                        point.series.xAxis?.drawCrosshair();
-                        point.series.yAxis?.drawCrosshair();
+                        if (point) {
+                            point.series.xAxis?.drawCrosshair();
+                            point.series.yAxis?.drawCrosshair();
+                        } else {
+
+                            // If the 'row' parameter is missing in the event
+                            // object, the unhovered point cannot be identified.
+
+                            const xAxes = chart.xAxis;
+                            const yAxes = chart.yAxis;
+
+                            for (let i = 0, l = xAxes.length; i < l; i++) {
+                                xAxes[i].drawCrosshair();
+                            }
+
+                            for (let i = 0, l = yAxes.length; i < l; i++) {
+                                yAxes[i].drawCrosshair();
+                            }
+                        }
                     }
                 };
 

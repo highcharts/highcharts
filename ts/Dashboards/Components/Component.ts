@@ -803,9 +803,9 @@ abstract class Component {
 
         // Update options
         fireEvent(this, 'update', eventObject);
-        this.fixSyncOptions();
 
         this.options = merge(this.options, newOptions);
+        this.fixSyncOptions();
 
         if (
             this.options.connector?.id &&
@@ -818,6 +818,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
+        this.fixSyncOptions();
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
