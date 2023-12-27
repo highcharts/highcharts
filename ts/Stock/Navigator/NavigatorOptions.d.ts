@@ -89,6 +89,8 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
     top?: number;
 }
 
+export interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
+
 /* *
  *
  *  Default Export

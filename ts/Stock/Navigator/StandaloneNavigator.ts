@@ -16,7 +16,7 @@
  *
  * */
 
-import type { BaseNavigatorOptions } from './NavigatorOptions';
+import type { StandaloneNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
@@ -38,8 +38,6 @@ declare module '../../Core/GlobalsLike.d.ts' {
     }
 }
 
-interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
-
 /* *
  *
  *  Class
@@ -57,7 +55,7 @@ interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
  * @param {string|Highcharts.HTMLDOMElement} [renderTo]
  * The DOM element to render to, or its id.
  *
- * @param {DeepPartial<StandaloneNavigatorOptions>} userOptions
+ * @param {StandaloneNavigatorOptions} userOptions
  * The standalone navigator options.
  */
 class StandaloneNavigator {
@@ -66,7 +64,7 @@ class StandaloneNavigator {
     public navigator: Navigator;
     public boundAxes: Array<Axis> = [];
     public options: Partial<Options>;
-    public userOptions: DeepPartial<StandaloneNavigatorOptions>;
+    public userOptions: StandaloneNavigatorOptions;
 
     /* *
      *
@@ -209,7 +207,7 @@ class StandaloneNavigator {
      *
      * @function Highcharts.StandaloneNavigator#update
      *
-     * @param  {Partial<StandaloneNavigatorOptions>} newOptions
+     * @param  {StandaloneNavigatorOptions} newOptions
      *         Updates the standalone navigator's options with new user options.
      *
      * @param  {boolean | undefined} redraw
@@ -292,7 +290,7 @@ class StandaloneNavigator {
      *
      * @function Highcharts.StandaloneNavigator#getRange
      *
-     * @return {Axis.ExtremesObject}
+     * @return {Highcharts.ExtremesObject}
      *         The current range of the standalone navigator.
      */
     public getRange(): Axis.ExtremesObject {
@@ -350,3 +348,18 @@ class StandaloneNavigator {
 }
 
 export default StandaloneNavigator;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Standalone Navigator options.
+ *
+ * @interface Highcharts.StandaloneNavigatorOptions
+ *//**
+ */
+
+''; // detach doclets above

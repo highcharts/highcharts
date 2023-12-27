@@ -10,9 +10,9 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
 import StandaloneNavigator from '../../Stock/Navigator/StandaloneNavigator.js';
-import Highcharts from '../../Core/Globals.js';
 import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js';
 
 const G: AnyRecord = Highcharts;
