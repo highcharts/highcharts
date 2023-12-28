@@ -55,18 +55,38 @@ const board = Dashboards.board('container', {
  * Custom code
  **/
 
-document.querySelectorAll('.option').forEach(checkbox => {
+const enabledCbx = document.querySelector('#enabled');
+const optionsCbx = document.querySelectorAll('.option');
+
+enabledCbx.addEventListener('change', () => {
+    const { checked } = enabledCbx;
+    const options = {};
+
+    optionsCbx.forEach(checkbox => {
+        checkbox.disabled = !checked;
+        options[checkbox.id] = checkbox.checked;
+    });
+
+    board.mountedComponents[1].component.update({
+        sync: {
+            highlight: {
+                enabled: checked,
+                ...options
+            }
+        }
+    });
+});
+
+optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
         const { checked, id } = checkbox;
-        const chartComponent = board.mountedComponents[1].component;
 
-        chartComponent.update({
+        board.mountedComponents[1].component.update({
             sync: {
                 highlight: {
                     [id]: checked
                 }
             }
         });
-        console.log(chartComponent.options.sync.highlight);
     });
 });
