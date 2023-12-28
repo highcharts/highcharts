@@ -159,9 +159,6 @@ class Cell extends GUIElement {
             )
         });
 
-        // Set cell width respecting responsive options.
-        this.reflow();
-
         // Mount component from JSON.
         if (this.options.mountedComponentJSON) {
             this.mountComponentFromJSON(
@@ -431,32 +428,6 @@ class Cell extends GUIElement {
         return levels;
     }
 
-    public reflow(
-        dashContainerSize?: string
-    ): void {
-        const cell = this,
-            cntSize = dashContainerSize ||
-                cell.row.layout.board.getLayoutContainerSize(),
-            respoOptions = cell.options.responsive,
-            optWidth = cell.options.width;
-
-        if (cell.container) {
-            let width = '';
-
-            if (
-                respoOptions &&
-                respoOptions[cntSize] &&
-                respoOptions[cntSize].width
-            ) {
-                width = cell.convertWidthToValue(respoOptions[cntSize].width);
-            } else if (optWidth) {
-                width = cell.convertWidthToValue(optWidth);
-            }
-
-            cell.setSize(width || 'auto');
-        }
-    }
-
     /**
      * Set cell size.
      *
@@ -474,30 +445,30 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            // if (width) {
-            //     if (
-            //         width === 'auto' &&
-            //         cell.container.style.flex !== '1 1 0%'
-            //     ) {
-            //         cell.container.style.flex = '1 1 0%';
-            //     } else {
-            //         const cellWidth = cell.convertWidthToValue(width);
+            if (width) {
+                if (
+                    width === 'auto' &&
+                    cell.container.style.flex !== '1 1 0%'
+                ) {
+                    cell.container.style.flex = '1 1 0%';
+                } else {
+                    const cellWidth = cell.convertWidthToValue(width);
 
-            //         if (
-            //             cellWidth &&
-            //             cell.container.style.flex !== '0 0 ' + cellWidth
-            //         ) {
-            //             cell.container.style.flex = '0 0 ' + cellWidth;
-            //         }
+                    if (
+                        cellWidth &&
+                        cell.container.style.flex !== '0 0 ' + cellWidth
+                    ) {
+                        cell.container.style.flex = '0 0 ' + cellWidth;
+                    }
 
-            //         cell.options.width = cellWidth;
-            //     }
-            // }
+                    cell.options.width = cellWidth;
+                }
+            }
 
-            // if (height) {
-            //     cell.options.height = cell.container.style.height =
-            //         height + 'px';
-            // }
+            if (height) {
+                cell.options.height = cell.container.style.height =
+                    height + 'px';
+            }
 
             if (editMode) {
                 editMode.hideContextPointer();

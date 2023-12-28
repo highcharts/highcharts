@@ -579,7 +579,6 @@ class Board implements Serializable<Board, Board.JSON> {
 
             for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
                 cell = row.cells[k];
-                cell.reflow(cntSize);
                 if (cell.nestedLayout) {
                     this.reflowLayout(cell.nestedLayout, cntSize);
                 }

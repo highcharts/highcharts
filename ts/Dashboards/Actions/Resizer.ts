@@ -300,11 +300,7 @@ class Resizer {
             for (let i = 0, iEnd = rowLevelCells.length; i < iEnd; ++i) {
                 cell = rowLevelCells[i];
                 cellContainer = cell.container;
-                optionsWidth = pick(
-                    ((cell.options.responsive || {})[currentRwdMode] || {})
-                        .width,
-                    cell.options.width
-                );
+                optionsWidth = cell.options.width;
 
                 // Do not convert width on the current cell and next siblings.
                 if (cell === currentCell) {
@@ -316,7 +312,7 @@ class Resizer {
                     (!optionsWidth || optionsWidth === 'auto')
                 ) {
                     cellContainer.style.flex =
-                        '0 0 ' + cellContainer.offsetWidth + 'px';
+                        '0 0 ' + Math.abs(cellContainer.offsetWidth) + 'px';
                     this.tempSiblingsWidth.push(cell);
                 }
             }
@@ -475,7 +471,7 @@ class Resizer {
                         parentRowWidth) *
                         100 +
                     '%';
-
+console.log('newWidth', newWidth);
                 currentCell.setSize(newWidth);
                 currentCell.updateSize(newWidth, currentRwdMode);
                 this.startX = e.clientX;
