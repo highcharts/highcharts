@@ -33,30 +33,15 @@ import type { Options } from '../../Core/Options';
  * @optionparent navigator
  */
 const standaloneNavigatorDefaults: DeepPartial<Options> = {
-    tooltip: {
-        enabled: false
-    },
-    navigator: {
-        enabled: true
+    chart: {
+        height: 70,
+        margin: [0, 5, 0, 5]
     },
     legend: {
         enabled: false
     },
-    yAxis: {
-        height: 0,
-        visible: false
-    },
-    xAxis: {
-        visible: false
-    },
-    title: {
-        text: ''
-    },
-    scrollbar: {
+    navigator: {
         enabled: true
-    },
-    chart: {
-        margin: [0, 5, 0, 5]
     },
     plotOptions: {
         series: {
@@ -69,6 +54,22 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
                 enabled: false
             }
         }
+    },
+    scrollbar: {
+        enabled: true
+    },
+    title: {
+        text: ''
+    },
+    tooltip: {
+        enabled: false
+    },
+    xAxis: {
+        visible: false
+    },
+    yAxis: {
+        height: 0,
+        visible: false
     }
 };
 
