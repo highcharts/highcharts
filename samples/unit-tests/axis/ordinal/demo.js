@@ -1201,3 +1201,39 @@ QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
     );
 
 });
+
+
+QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
+    const data = [{
+        type: 'line',
+        data: [
+            [0, 95.82],
+            [3, 95.84],
+            [6, 95.75],
+            [7, 95.48],
+            [11, 95.6],
+            [12, 95.37],
+            [13, 95.16],
+            [15, 95.15],
+            [18, 94.9],
+            [21, 95.04],
+            [22, 95.38]
+        ],
+        showInNavigator: true
+    }, {
+        type: 'scatter',
+        data: [
+            [3, 95],
+            [11, 95]
+        ],
+        showInNavigator: false
+    }];
+
+    const chart = Highcharts.stockChart('container', {
+        series: data
+    });
+
+    chart.update({ series: data.reverse() });
+
+    assert.ok(true, 'there should be no error');
+});
