@@ -129,6 +129,9 @@ class StandaloneNavigator {
      * Binds an axis to the standalone navigator,
      * allowing the navigator to control the axis' range.
      *
+     * @sample stock/standalone-navigator/bind/
+     *         Bind chart with a button
+     *
      * @function Highcharts.StandaloneNavigator#bind
      *
      * @param {Axis | Chart} axisOrChart
@@ -162,6 +165,9 @@ class StandaloneNavigator {
 
     /**
      * Unbinds a single axis or all bound axes from the standalone navigator.
+     *
+     * @sample stock/standalone-navigator/unbind/
+     *         Unbind chart with a button
      *
      * @function Highcharts.StandaloneNavigator#unbind
      *
@@ -288,6 +294,9 @@ class StandaloneNavigator {
     /**
      * Get the current range of the standalone navigator.
      *
+     * @sample stock/standalone-navigator/getrange/
+     *         Report standalone navigator range by click on a button
+     *
      * @function Highcharts.StandaloneNavigator#getRange
      *
      * @return {Highcharts.ExtremesObject}
@@ -310,6 +319,9 @@ class StandaloneNavigator {
 
     /**
      * Set the range of the standalone navigator.
+     *
+     * @sample stock/standalone-navigator/setrange/
+     *         Set range from a button
      *
      * @function Highcharts.StandaloneNavigator#setRange
      *
