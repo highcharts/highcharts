@@ -3,17 +3,17 @@ import JSONConnector from '/base/code/es-modules/Data/Connectors/JSONConnector.j
 const { test } = QUnit;
 
 const rows = [
-    ['id', 'weight', 'age'],
-    [1, 88, 30],
-    [2, 58, 25],
-    [3, 78, 20]
-],
+        ['id', 'weight', 'age'],
+        [1, 88, 30],
+        [2, 58, 25],
+        [3, 78, 20]
+    ],
     columns = [
         [1, 2, 3, 4],
         [3, 4, 3, 4],
         [3, 4, 3, 4]
     ],
-columnNames = ['id', 'weight', 'age'];
+    columnNames = ['id', 'weight', 'age'];
 
 test('JSONConnector from rows', async (assert) => {
     const connector = new JSONConnector({ data: rows });
@@ -85,5 +85,47 @@ test('JSONConnector from objects', async (assert) => {
         connector.table.getColumnNames(),
         columnNames,
         'Should have correct column Names'
+    );
+});
+
+test('JSONConnector with beforeParse', async (assert) => {
+    const data = [{
+            id: 1,
+            weight: 88,
+            age: 30
+        }, {
+            id: 2,
+            weight: 58,
+            age: 25
+        }, {
+            id: 3,
+            weight: 78,
+            age: 20
+        }, {
+            id: 4,
+            weight: 98,
+            age: 35
+        }];
+    const connector = new JSONConnector({
+        firstRowAsNames: false,
+        beforeParse: (data) => {
+            data.forEach((row) => {
+                row.age = row.age + 10;
+            });
+            return data;
+        },
+        data
+    });
+    await connector.load();
+
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        data.length ,
+        'Should have the same amount of rows.'
+    );
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        4,
+        'There should be an extra column added.'
     );
 });

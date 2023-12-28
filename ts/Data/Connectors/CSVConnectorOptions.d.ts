@@ -54,6 +54,14 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
     firstRowAsNames?: boolean;
 }
 
+/**
+ * Callback function allowing modification of the data before parsing it.
+ * Must return a valid CSV structure.
+ */
+export interface BeforeParseCallbackFunction {
+    (csv: string): string;
+}
+
 /* *
  *
  *  Default Export
