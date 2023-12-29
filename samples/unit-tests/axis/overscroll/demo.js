@@ -192,4 +192,52 @@
             );
         }
     );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for overscroll in px',
+        function (assert) {
+            const options = getOptions(),
+                overscrollPixelValue = 300;
+
+            options.rangeSelector.selected = null;
+            options.xAxis.overscroll = options.navigator.xAxis.overscroll = 0;
+
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
+                xAxisRange = xAxis.max - xAxis.min;
+
+            xAxis.update({
+                overscroll: overscrollPixelValue + 'px'
+            });
+
+            assert.strictEqual(
+                xAxis.max - xAxis.min,
+                xAxisRange + (overscrollPixelValue / xAxis.width) * xAxisRange,
+                'Correct range with overscroll set in px '
+            );
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for overscroll in %',
+        function (assert) {
+            const options = getOptions(),
+                overscrollPercentageValue = 50;
+
+            options.rangeSelector.selected = null;
+            options.xAxis.overscroll = options.navigator.xAxis.overscroll = 0;
+
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
+                xAxisRange = xAxis.max - xAxis.min;
+
+            xAxis.update({
+                overscroll: overscrollPercentageValue + '%'
+            });
+
+            assert.strictEqual(
+                xAxis.max - xAxis.min,
+                xAxisRange +  overscrollPercentageValue / 100 * xAxisRange,
+                'Correct range with overscroll set in % '
+            );
+        }
+    );
 });

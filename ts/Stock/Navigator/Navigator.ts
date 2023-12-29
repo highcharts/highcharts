@@ -1852,7 +1852,9 @@ class Navigator {
             range = baseMax - baseMin,
             stickToMin = (navigator as any).stickToMin,
             stickToMax = (navigator as any).stickToMax,
-            overscroll = pick(baseXAxis.options.overscroll, 0),
+            overscroll = pick(baseXAxis.ordinal?.convertOverscroll(
+                baseXAxis.options.overscroll
+            ), 0),
             navigatorSeries =
                 (navigator as any).series && (navigator as any).series[0],
             hasSetExtremes = !!baseXAxis.setExtremes,

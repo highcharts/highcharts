@@ -163,6 +163,8 @@ namespace OrdinalAxis {
                 onAxisFoundExtremes
             );
             addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
+            // addEvent(AxisClass as (T&typeof Composition),
+            //     'afterSetScale', onAxisFoundExtremes);
             addEvent(
                 AxisClass,
                 'initialAxisTranslation',
@@ -529,11 +531,15 @@ namespace OrdinalAxis {
                 axis.eventArgs && axis.eventArgs.trigger !== 'navigator'
             )
         ) {
-            (axis.max as any) += (axis.options.overscroll as any);
+            const overscroll = axis.ordinal.convertOverscroll(
+                axis.options.overscroll
+            );
+
+            (axis.max as any) += overscroll;
 
             // Live data and buttons require translation for the min:
             if (!axis.isInternal && defined(axis.userMin)) {
-                (axis.min as any) += (axis.options.overscroll as any);
+                (axis.min as any) += overscroll;
             }
         }
     }
@@ -575,7 +581,9 @@ namespace OrdinalAxis {
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,
             xAxis = chart.xAxis[0] as OrdinalAxis.Composition,
-            overscroll = xAxis.options.overscroll,
+            overscroll = xAxis.ordinal.convertOverscroll(
+                xAxis.options.overscroll
+            ),
             chartX = (e as any).originalEvent.chartX,
             panning = chart.options.chart.panning;
         let runBase = false;
@@ -679,8 +687,7 @@ namespace OrdinalAxis {
                 // Apply it if it is within the available data range
                 if (
                     trimmedRange.min >= Math.min(extremes.dataMin, min) &&
-                    trimmedRange.max <= Math.max(dataMax, max) +
-                        (overscroll as any)
+                    trimmedRange.max <= Math.max(dataMax, max) + overscroll
                 ) {
                     xAxis.setExtremes(
                         trimmedRange.min,
@@ -1041,7 +1048,9 @@ namespace OrdinalAxis {
                     } else if (len === 1) {
                         // We have just one point, closest distance is unknown.
                         // Assume then it is last point and overscrolled range:
-                        overscrollPointsRange = axis.options.overscroll;
+                        overscrollPointsRange = axis.ordinal.convertOverscroll(
+                            axis.options.overscroll
+                        );
                         ordinalPositions = [
                             ordinalPositions[0],
                             ordinalPositions[0] + overscrollPointsRange
@@ -1168,7 +1177,9 @@ namespace OrdinalAxis {
                 key = grouping ?
                     grouping.count + (grouping.unitName as any) :
                     'raw',
-                overscroll = axis.options.overscroll,
+                overscroll = axis.ordinal.convertOverscroll(
+                    axis.options.overscroll
+                ),
                 extremes = axis.getExtremes();
             let fakeAxis: Composition,
                 fakeSeries: Series = void 0 as any,
@@ -1428,7 +1439,9 @@ namespace OrdinalAxis {
         public getOverscrollPositions(): Array<number> {
             const ordinal = this,
                 axis = ordinal.axis,
-                extraRange = axis.options.overscroll,
+                extraRange = ordinal.convertOverscroll(
+                    axis.options.overscroll
+                ),
                 distance = ordinal.overscrollPointsRange,
                 positions = [];
 
@@ -1481,6 +1494,42 @@ namespace OrdinalAxis {
             return ret;
         }
 
+        /**
+         * If overscroll is pixel or pecentage value, convert it to axis range.
+         *
+         * @private
+         * @function Highcharts.Axis#convertOverscroll
+         * @param {number | string} overscroll
+         * Overscroll value in axis range, pixels or percentage value.
+         * @return {number}
+         * Overscroll value in axis range.
+         */
+        public convertOverscroll(overscroll : number | string | undefined)
+            : number {
+            const ordinal = this,
+                axis = ordinal.axis,
+                overscrollValue = parseInt(overscroll as any, 10);
+
+            if (/%$/.test(overscroll as any)) {
+                // If overscroll is percentage
+                return ((axis.max as any) - (axis.min as any)) *
+                    overscrollValue / 100;
+            }
+
+            if (/px/.test(overscroll as any)) {
+                // If overscroll is pixels
+                return ((axis.max as any) - (axis.min as any)) *
+                    overscrollValue / axis.width;
+            }
+
+            if (isNaN(overscrollValue)) {
+                // If overscroll is a string but not pixels or percentage,
+                // return 0 as no overscroll
+                return 0;
+            }
+
+            return overscrollValue;
+        }
     }
 
 }

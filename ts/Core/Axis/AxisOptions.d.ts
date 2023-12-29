@@ -166,7 +166,7 @@ export interface AxisOptions {
     offsets?: [number, number, number, number];
     opposite?: boolean;
     ordinal?: boolean;
-    overscroll?: number;
+    overscroll?: number | string;
     pane?: number;
     panningEnabled: boolean;
     range?: number;
