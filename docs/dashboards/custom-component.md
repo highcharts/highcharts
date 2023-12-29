@@ -56,6 +56,15 @@ class YouTubeComponent extends Component {
 
         return this;
     }
+
+    getOptionsOnDrop(sidebar) {
+        super.getOptionsOnDrop.call(this, sidebar);
+        return {
+            cell: '',
+            type: 'YouTube',
+            videoId: '115hdz9NsrY'
+        };
+    }
 }
 
 ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
@@ -82,6 +91,24 @@ Dashboards.board({
 });
 ```
 
+### Adding custom component to the sidebar
+To add the custom component to the sidebar, you need to add the two things:
+1. Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
+2. For the `editMode` `sidebar` define the list of the components that will be available in the sidebar.
+Use the exact name which was used to register the component in the `ComponentRegistry`.
+```js
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true
+        },
+        toolbars: {
+            sidebar: {
+                components: ['YouTube', 'HTML', 'Highcharts']
+            }
+        }
+    },
+```
 ---
 ## Custom HTML Component
 The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
