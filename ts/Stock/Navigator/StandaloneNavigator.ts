@@ -295,7 +295,7 @@ class StandaloneNavigator {
      * Get the current range of the standalone navigator.
      *
      * @sample stock/standalone-navigator/getrange/
-     *         Report standalone navigator range by click on a button
+     *         Report the standalone navigator's range by clicking on a button
      *
      * @function Highcharts.StandaloneNavigator#getRange
      *
