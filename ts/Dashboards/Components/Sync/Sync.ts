@@ -359,14 +359,22 @@ namespace Sync {
      * Example:
      * ```
      * {
-     *  enabled: true,
-     *  showTooltip: false,
-     *  showMarker: false,
-     *  showCrosshair: false
+     *     enabled: true,
+     *     highlightPoint: true,
+     *     showTooltip: false,
+     *     showCrosshair: true
      * }
      * ```
      */
     export interface HighlightSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether the marker should be synced. When hovering over a point in
+         * other component in the same group, the 'hover' state is enabled at
+         * the corresponding point in this component.
+         *
+         * @default true
+         */
+        highlightPoint?: boolean;
         /**
          * Whether the tooltip should be synced. When hovering over a point in
          * other component in the same group, in this component the tooltip
@@ -375,14 +383,6 @@ namespace Sync {
          * @default true
          */
         showTooltip?: boolean;
-        /**
-         * Whether the marker should be synced. When hovering over a point in
-         * other component in the same group, the 'hover' state is enabled at
-         * the corresponding point in this component.
-         *
-         * @default true
-         */
-        showMarker?: boolean;
         /**
          * Whether the crosshair should be synced. When hovering over a point in
          * other component in the same group, in this component the crosshair
@@ -407,8 +407,8 @@ namespace Sync {
             affectNavigator: false
         },
         highlight: {
+            highlightPoint: true,
             showTooltip: true,
-            showMarker: true,
             showCrosshair: true
         }
     };

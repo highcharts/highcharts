@@ -7,7 +7,7 @@ describe("Highlight sync options", () => {
         cy.boardRendered();
 
         cy.get('#showTooltip').click();
-        cy.get('#showMarker').click();
+        cy.get('#highlightPoint').click();
         cy.get('#showCrosshair').click();
 
         cy.get('.highcharts-datagrid-cell').eq(0).trigger('mouseover');
@@ -24,7 +24,7 @@ describe("Highlight sync options", () => {
             );
 
             assert.notOk(
-                chart.xAxis[0].cross && chart.yAxis[0].cross.opacity === 1,
+                chart.yAxis[0].cross?.opacity === 1,
                 'When hovering over DataGrid, chart should not have crosshair.'
             )
         });
@@ -43,8 +43,8 @@ describe("Highlight sync options", () => {
         });
     });
 
-    it('Highlight showMarker option is enabled', () => {
-        cy.get('#showMarker').click();
+    it('Highlight highlightPoint option is enabled', () => {
+        cy.get('#highlightPoint').click();
 
         cy.get('.highcharts-datagrid-cell').eq(4).trigger('mouseover');
 
@@ -63,14 +63,14 @@ describe("Highlight sync options", () => {
 
         cy.chart().then(chart => {
             assert.ok(
-                chart.xAxis[0].cross && chart.yAxis[0].cross.opacity === 1,
+                chart.yAxis[0].cross?.opacity === 1,
                 'When hovering over DataGrid, chart should have crosshair.'
             )
         });
     });
 
     it('Highlight sync is disabled', () => {
-        cy.get('#enabled').click();
+        cy.get('#cbx-enabled').click();
 
         cy.get('.highcharts-datagrid-cell').eq(8).trigger('mouseover');
 

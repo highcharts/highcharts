@@ -456,7 +456,7 @@ class NavigatorComponent extends Component {
         super(cell, options);
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
-        this.fixSyncOptions();
+        this.standardizeSyncOptions();
 
         const charter = (
             NavigatorComponent.charter.Chart ||
@@ -680,7 +680,7 @@ class NavigatorComponent extends Component {
                     Array<[number|string, number|null]>
                 );
 
-            if (crossfilterOptions) {
+            if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
 
                 const seriesData: Array<[(number|string), number]> = [],
                     xData: Array<(number|string)> = [],
@@ -691,8 +691,7 @@ class NavigatorComponent extends Component {
                     min: number|undefined = void 0;
 
                 if (
-                    crossfilterOptions !== true &&
-                    crossfilterOptions?.affectNavigator &&
+                    crossfilterOptions.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
                     const appliedRanges: RangeModifierRangeOptions[] = [],
@@ -830,15 +829,16 @@ class NavigatorComponent extends Component {
 
         if (options.chartOptions) {
             chart.update(
-                merge(crossfilterOptions ? {
-                    navigator: {
-                        xAxis: {
-                            labels: {
-                                format: '{value}'
+                merge(isObject(crossfilterOptions) &&
+                    crossfilterOptions.enabled ? {
+                        navigator: {
+                            xAxis: {
+                                labels: {
+                                    format: '{value}'
+                                }
                             }
                         }
-                    }
-                } : {},
+                    } : {},
                 options.chartOptions),
                 false
             );

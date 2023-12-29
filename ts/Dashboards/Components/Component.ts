@@ -365,8 +365,7 @@ abstract class Component {
             true
         );
 
-        this.fixSyncOptions();
-
+        this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
 
         this.setupEventListeners();
@@ -805,7 +804,6 @@ abstract class Component {
         fireEvent(this, 'update', eventObject);
 
         this.options = merge(this.options, newOptions);
-        this.fixSyncOptions();
 
         if (
             this.options.connector?.id &&
@@ -818,7 +816,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        this.fixSyncOptions();
+        this.standardizeSyncOptions();
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
@@ -828,31 +826,21 @@ abstract class Component {
     }
 
     /**
-     * Fixes the sync options to be in the correct format.
+     * Standardizes the sync options to be always an object.
      *
      * @internal
      */
-    protected fixSyncOptions(): void {
+    protected standardizeSyncOptions(): void {
         const sync = this.options.sync || {};
         Object.keys(sync).forEach((handlerName): void => {
             const handler = sync[handlerName];
             const defaultOptions = Sync.defaultSyncOptions[handlerName];
 
-            /**
-             * If the handler is enabled, merge the default options with
-             * the options from the component.
-             */
-            if (handler === true || (
-                isObject(handler) && handler.enabled
-            )) {
-                sync[handlerName] = merge(
-                    defaultOptions || {},
-                    { enabled: true },
-                    handler !== true ? handler : {}
-                );
-            } else {
-                sync[handlerName] = false;
-            }
+            sync[handlerName] = merge(
+                defaultOptions || {},
+                { enabled: isObject(handler) ? handler.enabled : handler },
+                isObject(handler) ? handler : {}
+            );
         });
     }
 

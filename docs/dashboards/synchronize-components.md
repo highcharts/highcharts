@@ -98,8 +98,8 @@ Highlight sync can have additional options:
 sync: {
     highlight: {
         enabled: true,
+        highlightPoint: true,
         showTooltip: false,
-        showMarker: true,
         showCrosshair: true
     }
 }

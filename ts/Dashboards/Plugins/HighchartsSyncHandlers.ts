@@ -472,7 +472,9 @@ const configs: {
 
                 const handleCursor = (e: DataCursor.Event): void => {
                     const highlightOptions = this.options.sync.highlight;
-                    if (!isObject(highlightOptions)) {
+                    if (
+                        !isObject(highlightOptions) || !highlightOptions.enabled
+                    ) {
                         return;
                     }
 
@@ -508,7 +510,7 @@ const configs: {
                         );
                     }
 
-                    if (highlightOptions.showMarker) {
+                    if (highlightOptions.highlightPoint) {
                         point.setState('hover');
                     }
 
@@ -522,7 +524,8 @@ const configs: {
                     const highlightOptions = this.options.sync.highlight;
                     if (
                         !chart || !chart.series.length ||
-                        !isObject(highlightOptions)
+                        !isObject(highlightOptions) ||
+                        !highlightOptions.enabled
                     ) {
                         return;
                     }
@@ -539,7 +542,7 @@ const configs: {
                         chart.tooltip.hide();
                     }
 
-                    if (highlightOptions.showMarker) {
+                    if (highlightOptions.highlightPoint) {
                         if (point) {
                             point.setState();
                         } else {

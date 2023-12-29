@@ -213,7 +213,7 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
-        this.fixSyncOptions();
+        this.standardizeSyncOptions();
         this.sync = new DataGridComponent.Sync(
             this,
             this.syncHandlers

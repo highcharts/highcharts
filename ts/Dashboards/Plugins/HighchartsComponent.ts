@@ -406,7 +406,7 @@ class HighchartsComponent extends Component {
             true
         );
 
-        this.fixSyncOptions();
+        this.standardizeSyncOptions();
         this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,

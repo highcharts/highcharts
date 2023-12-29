@@ -1,7 +1,7 @@
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            id: 'VegeTable',
+            id: 'vegetables',
             type: 'CSV',
             options: {
                 csv: document.querySelector('#csv').innerHTML
@@ -23,7 +23,7 @@ const board = Dashboards.board('container', {
         type: 'DataGrid',
         cell: 'datagrid',
         connector: {
-            id: 'VegeTable'
+            id: 'vegetables'
         },
         sync: {
             highlight: true
@@ -32,7 +32,7 @@ const board = Dashboards.board('container', {
         type: 'Highcharts',
         cell: 'chart',
         connector: {
-            id: 'VegeTable'
+            id: 'vegetables'
         },
         sync: {
             highlight: {
@@ -40,6 +40,9 @@ const board = Dashboards.board('container', {
             }
         },
         chartOptions: {
+            title: {
+                text: 'Example chart'
+            },
             xAxis: {
                 crosshair: true
             },
@@ -55,36 +58,25 @@ const board = Dashboards.board('container', {
  * Custom code
  **/
 
-const enabledCbx = document.querySelector('#enabled');
 const optionsCbx = document.querySelectorAll('.option');
-
-enabledCbx.addEventListener('change', () => {
-    const { checked } = enabledCbx;
-    const options = {};
-
-    optionsCbx.forEach(checkbox => {
-        checkbox.disabled = !checked;
-        options[checkbox.id] = checkbox.checked;
-    });
-
-    board.mountedComponents[1].component.update({
-        sync: {
-            highlight: {
-                enabled: checked,
-                ...options
-            }
-        }
-    });
-});
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-        const { checked, id } = checkbox;
+        const value = checkbox.dataset.value;
+        const { checked } = checkbox;
+
+        if (value === 'enabled') {
+            optionsCbx.forEach(cbx => {
+                if (cbx.dataset.value !== 'enabled') {
+                    cbx.disabled = !checked;
+                }
+            });
+        }
 
         board.mountedComponents[1].component.update({
             sync: {
                 highlight: {
-                    [id]: checked
+                    [value]: checked
                 }
             }
         });
