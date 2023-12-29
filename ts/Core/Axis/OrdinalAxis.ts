@@ -163,8 +163,6 @@ namespace OrdinalAxis {
                 onAxisFoundExtremes
             );
             addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
-            // addEvent(AxisClass as (T&typeof Composition),
-            //     'afterSetScale', onAxisFoundExtremes);
             addEvent(
                 AxisClass,
                 'initialAxisTranslation',
