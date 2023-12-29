@@ -11,12 +11,11 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import Navigator from '../../Stock/Navigator/Navigator.js';
 import StandaloneNavigator from '../../Stock/Navigator/StandaloneNavigator.js';
 import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js';
 
 const G: AnyRecord = Highcharts;
-G.Navigator = StandaloneNavigator;
-NavigatorComposition.compose(G.Axis, Navigator, G.Series);
+G.StandaloneNavigator = StandaloneNavigator;
+NavigatorComposition.compose(G.Axis, G.Series);
 
 G.navigator = StandaloneNavigator.navigator;

@@ -17,7 +17,6 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type Navigator from './Navigator';
 import type Series from '../../Core/Series/Series';
 
 import D from '../../Core/Defaults.js';
@@ -81,7 +80,6 @@ const composedMembers: Array<unknown> = [];
  */
 function compose(
     AxisClass: typeof Axis,
-    NavigatorClass: typeof Navigator,
     SeriesClass: typeof Series
 ): void {
     NavigatorAxisAdditions.compose(AxisClass);
