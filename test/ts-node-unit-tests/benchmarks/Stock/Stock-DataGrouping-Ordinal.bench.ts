@@ -1,10 +1,6 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
-import { performance } from 'node:perf_hooks';
-import { join } from 'node:path';
 import { generateOHLC } from '../../data-generators';
-import { setupDOM } from '../../test-utils';
-
-
+import { runHCTest } from '../../pupeteer';
 export const config = {
     sizes: [1000, 10_000, 100_000, 1_000_000]
 };
@@ -24,32 +20,25 @@ export default async function benchmarkTest(
         data
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
-  const { win, el } = setupDOM();
-  const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
-
-  performance.mark('Start');
-  hc.stockChart(el, {
-    chart: {
-        height: 400,
-        width: 800
-    },
-    accessibility: {
-      enabled: false
-    },
-    plotOptions: {
-        series: {
-            animation: false,
-            dataLabels: {
-                defer: false
+    return await runHCTest({
+        chart: {
+            height: 400,
+            width: 800
+        },
+        accessibility: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                animation: false,
+                dataLabels: {
+                    defer: false
+                }
             }
-        }
-    },
-    series: [{
-      data: data,
-      type: 'candlestick',
-    }]
-  });
-  performance.mark('End');
-
-  return performance.measure('Start to Now', 'Start', 'End').duration;
+        },
+        series: [{
+            data: data,
+            type: 'candlestick',
+        }]
+    });
 }

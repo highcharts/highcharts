@@ -15,3 +15,27 @@ export async function runTest<T>(
 
     return result;
 }
+
+export async function runHCTest(config: any) {
+const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+</head>
+<body>
+<div id="container"></div>
+</body>
+</html>
+`;
+
+    const result = await runTest(html,
+        (config) => {
+        performance.mark('start') 
+        Highcharts.stockChart('container', config);
+            performance.mark('end')
+            return performance.measure('start to end', 'start', 'end').duration;
+    }, config);
+
+    return result;
+}

@@ -1,13 +1,9 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { generateOHLC } from '../../data-generators';
-import { runTest } from '../../pupeteer';
-
-declare const Highcharts: any;
-
+import { runHCTest } from '../../pupeteer';
 
 export const config = {
-    // sizes: [1000, 10_000, 100_000, 1_000_000]
-    sizes: [10]
+    sizes: [1000, 10_000, 100_000, 1_000_000]
 };
 
 export function before(size: number) {
@@ -25,21 +21,7 @@ export default async function benchmarkTest(
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
 
-    const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-</head>
-<body>
-<div id="container"></div>
-</body>
-</html>
-`;
-
-    const result = await runTest(html, (data) => {
-        performance.mark('start') 
-        Highcharts.stockChart('container', {
+        let result = await runHCTest({
 
             chart: {
                 height: 400,
@@ -67,9 +49,6 @@ export default async function benchmarkTest(
                 }
             }]
         });
-            performance.mark('end')
-            return performance.measure('start to end', 'start', 'end').duration;
-    }, data);
 
     return result;
 }
