@@ -67,70 +67,70 @@ const instances = [{
         }
     },
     Details: [{
-        timestamp: 1640995200000, // JavaScript timestamp for '2022-01-01T00:00:00Z'
+        timestamp: 1640995200000,
         readOpt: 150,
         writeOpt: 80,
         networkIn: 200,
         networkOut: 180,
         cpuUtilization: 30.5
     }, {
-        timestamp: 1640998800000, // JavaScript timestamp for '2022-01-01T01:00:00Z'
+        timestamp: 1640998800000,
         readOpt: 120,
         writeOpt: 90,
         networkIn: 180,
         networkOut: 160,
         cpuUtilization: 35.2
     }, {
-        timestamp: 1641002400000, // JavaScript timestamp for '2022-01-01T02:00:00Z'
+        timestamp: 1641002400000,
         readOpt: 180,
         writeOpt: 75,
         networkIn: 220,
         networkOut: 200,
         cpuUtilization: 28.8
     }, {
-        timestamp: 1641006000000, // JavaScript timestamp for '2022-01-01T03:00:00Z'
+        timestamp: 1641006000000,
         readOpt: 130,
         writeOpt: 85,
         networkIn: 190,
         networkOut: 170,
         cpuUtilization: 32.1
     }, {
-        timestamp: 1641009600000, // JavaScript timestamp for '2022-01-01T04:00:00Z'
+        timestamp: 1641009600000,
         readOpt: 160,
         writeOpt: 70,
         networkIn: 210,
         networkOut: 190,
         cpuUtilization: 27.3
     }, {
-        timestamp: 1641013200000, // JavaScript timestamp for '2022-01-01T05:00:00Z'
+        timestamp: 1641013200000,
         readOpt: 140,
         writeOpt: 95,
         networkIn: 200,
         networkOut: 180,
         cpuUtilization: 31.7
     }, {
-        timestamp: 1641016800000, // JavaScript timestamp for '2022-01-01T06:00:00Z'
+        timestamp: 1641016800000,
         readOpt: 170,
         writeOpt: 78,
         networkIn: 230,
         networkOut: 210,
         cpuUtilization: 29.4
     }, {
-        timestamp: 1641020400000, // JavaScript timestamp for '2022-01-01T07:00:00Z'
+        timestamp: 1641020400000,
         readOpt: 110,
         writeOpt: 88,
         networkIn: 170,
         networkOut: 150,
         cpuUtilization: 34.2
     }, {
-        timestamp: 1641024000000, // JavaScript timestamp for '2022-01-01T08:00:00Z'
+        timestamp: 1641024000000,
         readOpt: 155,
         writeOpt: 72,
         networkIn: 205,
         networkOut: 185,
         cpuUtilization: 26.8
     }, {
-        timestamp: 1641027600000, // JavaScript timestamp for '2022-01-01T09:00:00Z'
+        timestamp: 1641027600000,
         readOpt: 125,
         writeOpt: 82,
         networkIn: 185,
@@ -161,70 +161,70 @@ const instances = [{
         }
     },
     Details: [{
-        timestamp: 1640995200000, // JavaScript timestamp for '2023-01-01T00:00:00Z'
+        timestamp: 1640995200000,
         readOpt: 15,
         writeOpt: 80,
         networkIn: 200,
         networkOut: 180,
         cpuUtilization: 30.5
     }, {
-        timestamp: 1640998800000, // JavaScript timestamp for '2023-01-01T01:00:00Z'
+        timestamp: 1640998800000,
         readOpt: 12,
         writeOpt: 90,
         networkIn: 180,
         networkOut: 160,
         cpuUtilization: 35.2
     }, {
-        timestamp: 1641002400000, // JavaScript timestamp for '2023-01-01T02:00:00Z'
+        timestamp: 1641002400000,
         readOpt: 180,
         writeOpt: 5,
         networkIn: 120,
         networkOut: 100,
         cpuUtilization: 28.8
     }, {
-        timestamp: 1641006000000, // JavaScript timestamp for '2023-01-01T03:00:00Z'
+        timestamp: 1641006000000,
         readOpt: 130,
         writeOpt: 85,
         networkIn: 190,
         networkOut: 170,
         cpuUtilization: 32.1
     }, {
-        timestamp: 1641009600000, // JavaScript timestamp for '2023-01-01T04:00:00Z'
+        timestamp: 1641009600000,
         readOpt: 160,
         writeOpt: 70,
         networkIn: 210,
         networkOut: 190,
         cpuUtilization: 27.3
     }, {
-        timestamp: 1641013200000, // JavaScript timestamp for '2023-01-01T05:00:00Z'
+        timestamp: 1641013200000,
         readOpt: 140,
         writeOpt: 95,
         networkIn: 20,
         networkOut: 18,
         cpuUtilization: 31.7
     }, {
-        timestamp: 1641016800000, // JavaScript timestamp for '2023-01-01T06:00:00Z'
+        timestamp: 1641016800000,
         readOpt: 170,
         writeOpt: 78,
         networkIn: 23,
         networkOut: 21,
         cpuUtilization: 29.4
     }, {
-        timestamp: 1641020400000, // JavaScript timestamp for '2023-01-01T07:00:00Z'
+        timestamp: 1641020400000,
         readOpt: 11,
         writeOpt: 8,
         networkIn: 170,
         networkOut: 150,
         cpuUtilization: 34.2
     }, {
-        timestamp: 1641024000000, // JavaScript timestamp for '2023-01-01T08:00:00Z'
+        timestamp: 1641024000000,
         readOpt: 155,
         writeOpt: 72,
         networkIn: 205,
         networkOut: 185,
         cpuUtilization: 26.8
     }, {
-        timestamp: 1641027600000, // JavaScript timestamp for '2023-01-01T09:00:00Z'
+        timestamp: 1641027600000,
         readOpt: 125,
         writeOpt: 82,
         networkIn: 125,
@@ -255,70 +255,70 @@ const instances = [{
         }
     },
     Details: [{
-        timestamp: 1672531200000, // JavaScript timestamp for '2023-01-01T00:00:00Z'
+        timestamp: 1672531200000,
         readOpt: 180,
         writeOpt: 70,
         networkIn: 220,
         networkOut: 200,
         cpuUtilization: 25.5
     }, {
-        timestamp: 1672534800000, // JavaScript timestamp for '2023-01-01T01:00:00Z'
+        timestamp: 1672534800000,
         readOpt: 130,
         writeOpt: 85,
         networkIn: 190,
         networkOut: 170,
         cpuUtilization: 30.2
     }, {
-        timestamp: 1672538400000, // JavaScript timestamp for '2023-01-01T02:00:00Z'
+        timestamp: 1672538400000,
         readOpt: 16,
         writeOpt: 5,
         networkIn: 205,
         networkOut: 80,
         cpuUtilization: 28.8
     }, {
-        timestamp: 1672542000000, // JavaScript timestamp for '2023-01-01T03:00:00Z'
+        timestamp: 1672542000000,
         readOpt: 120,
         writeOpt: 95,
         networkIn: 180,
         networkOut: 160,
         cpuUtilization: 35.1
     }, {
-        timestamp: 1672545600000, // JavaScript timestamp for '2023-01-01T04:00:00Z'
+        timestamp: 1672545600000,
         readOpt: 14,
         writeOpt: 6,
         networkIn: 10,
         networkOut: 90,
         cpuUtilization: 27.3
     }, {
-        timestamp: 1672549200000, // JavaScript timestamp for '2023-01-01T05:00:00Z'
+        timestamp: 1672549200000,
         readOpt: 210,
         writeOpt: 185,
         networkIn: 70,
         networkOut: 150,
         cpuUtilization: 31.7
     }, {
-        timestamp: 1672552800000, // JavaScript timestamp for '2023-01-01T06:00:00Z'
+        timestamp: 1672552800000,
         readOpt: 150,
         writeOpt: 78,
         networkIn: 10,
         networkOut: 196,
         cpuUtilization: 29.4
     }, {
-        timestamp: 1672556400000, // JavaScript timestamp for '2023-01-01T07:00:00Z'
+        timestamp: 1672556400000,
         readOpt: 100,
         writeOpt: 92,
         networkIn: 10,
         networkOut: 143,
         cpuUtilization: 33.2
     }, {
-        timestamp: 1672560000000, // JavaScript timestamp for '2023-01-01T08:00:00Z'
+        timestamp: 1672560000000,
         readOpt: 145,
         writeOpt: 68,
         networkIn: 200,
         networkOut: 180,
         cpuUtilization: 26.8
     }, {
-        timestamp: 1672563600000, // JavaScript timestamp for '2023-01-01T09:00:00Z'
+        timestamp: 1672563600000,
         readOpt: 125,
         writeOpt: 80,
         networkIn: 185,
@@ -543,6 +543,8 @@ const setupDashboard = instance => {
             type: 'HTML',
             title: 'Instance type:',
             elements: [{
+                tagName: 'span'
+            }, {
                 tagName: 'p',
                 textContent: instance.InstanceType
             }]
@@ -551,6 +553,8 @@ const setupDashboard = instance => {
             type: 'HTML',
             title: 'Zone:',
             elements: [{
+                tagName: 'span'
+            }, {
                 tagName: 'p',
                 textContent: instance.Zone
             }]
@@ -559,6 +563,8 @@ const setupDashboard = instance => {
             type: 'HTML',
             title: 'AMI:',
             elements: [{
+                tagName: 'span'
+            }, {
                 tagName: 'p',
                 textContent: instance.AMI
             }]
@@ -567,6 +573,8 @@ const setupDashboard = instance => {
             type: 'HTML',
             title: 'OS:',
             elements: [{
+                tagName: 'span'
+            }, {
                 tagName: 'p',
                 textContent: instance.OS
             }]
