@@ -101,6 +101,7 @@
     "plugin-error": "^2.0.1",
     "pngjs": "^6.0.0",
     "pretty": "^2.0.0",
+    "puppeteer": "^21.6.1",
     "qunit": "^2.19.4",
     "request": "^2.88.2",
     "semver": "^7.3.8",

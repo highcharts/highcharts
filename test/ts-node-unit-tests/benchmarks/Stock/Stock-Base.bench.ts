@@ -1,10 +1,8 @@
 
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
-import { performance } from 'node:perf_hooks';
-import { join } from 'node:path';
 import { generateOHLC } from '../../data-generators';
-import { setupDOM } from '../../test-utils';
-
+import { runTest } from '../../pupeteer';
+declare const Highcharts: any;
 
 export const config = {
     sizes: [1000, 10_000, 100_000, 1_000_000]
@@ -25,38 +23,50 @@ export default async function benchmarkTest(
         data
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
-  const { win, el } = setupDOM();
-  const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+</head>
+<body>
+<div id="container"></div>
+</body>
+</html>
+`;
 
-  performance.mark('Start');
-  hc.stockChart(el, {
-    chart: {
-        height: 400,
-        width: 800
-    },
-    accessibility: {
-      enabled: false
-    },
-    plotOptions: {
-        series: {
-            animation: false,
-            dataLabels: {
-                defer: false
-            }
-        }
-    },
-    xAxis: {
-        ordinal: false
-    },
-    series: [{
-      data: data,
-      type: 'candlestick',
-      dataGrouping: {
-        enabled: false
-      }
-    }]
-  });
-  performance.mark('End');
+    const result = await runTest(html, (data) => {
+        performance.mark('start') 
+        Highcharts.stockChart('container', {
+            chart: {
+                height: 400,
+                width: 800
+            },
+            accessibility: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    dataLabels: {
+                        defer: false
+                    }
+                }
+            },
+            xAxis: {
+                ordinal: false
+            },
+            series: [{
+                data: data,
+                type: 'candlestick',
+                dataGrouping: {
+                    enabled: false
+                }
+            }]
+        });
+        performance.mark('end')
+        return performance.measure('start to end', 'start', 'end').duration;
+    }, data);
 
-  return performance.measure('Start to Now', 'Start', 'End').duration;
+    return result;
 }
