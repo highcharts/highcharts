@@ -30,11 +30,12 @@ import type DataCursor from '../../Data/DataCursor';
 import type Sync from '../Components/Sync/Sync';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type DataTable from '../../Data/DataTable';
+import type Point from '../../Core/Series/Point';
+import type HighchartsComponent from './HighchartsComponent';
 
 import ComponentType from '../Components/ComponentType';
-import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
-const { addEvent } = U;
+const { addEvent, isObject } = U;
 
 
 /**
@@ -425,7 +426,9 @@ const configs: {
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
 
-                const handleCursor = (e: DataCursor.Event): void => {
+                const getHoveredPoint = (
+                    e: DataCursor.Event
+                ): Point | undefined => {
                     const table = this.connector && this.connector.table;
 
                     if (!table) {
@@ -437,9 +440,10 @@ const configs: {
                     const modifier = table.getModifier();
 
                     if (modifier && modifier.options.type === 'Range') {
-                        offset = getModifiedTableOffset(table, modifier.options as RangeModifierOptions);
+                        offset = getModifiedTableOffset(
+                            table, modifier.options as RangeModifierOptions
+                        );
                     }
-
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
@@ -449,7 +453,9 @@ const configs: {
                             // tooltips when charts have multiple series
                             if (chart.series.length > 1 && cursor.column) {
                                 const relatedSeries = chart.series.filter(
-                                    (series): boolean => series.name === cursor.column
+                                    (series): boolean => (
+                                        series.name === cursor.column
+                                    )
                                 );
 
                                 if (relatedSeries.length > 0) {
@@ -458,34 +464,126 @@ const configs: {
                             }
 
                             if (series?.visible && cursor.row !== void 0) {
-                                const point = series.points[cursor.row - offset],
-                                    useSharedTooltip = chart.tooltip?.shared;
-
-                                if (point) {
-                                    const hoverPoint = chart.hoverPoint,
-                                        hoverSeries = hoverPoint?.series ||
-                                            chart.hoverSeries,
-                                        points = chart.pointer.getHoverData(
-                                            point,
-                                            hoverSeries,
-                                            chart.series,
-                                            true,
-                                            true
-                                        );
-
-                                    chart.tooltip && chart.tooltip.refresh(
-                                        useSharedTooltip ?
-                                            points.hoverPoints : point
-                                    );
-                                }
+                                return series.points[cursor.row - offset];
                             }
                         }
                     }
                 };
 
-                const handleCursorOut = (): void => {
-                    if (chart && chart.series.length) {
-                        chart.tooltip && chart.tooltip.hide();
+                const handleCursor = (e: DataCursor.Event): void => {
+                    const highlightOptions = this.options.sync.highlight;
+                    if (
+                        !isObject(highlightOptions) || !highlightOptions.enabled
+                    ) {
+                        return;
+                    }
+
+                    const point = getHoveredPoint(e);
+
+                    if (!chart || !point ||
+                        // Abort if the affected chart is the same as the one
+                        // that is currently affected manually.
+                        point === chart.hoverPoint
+                    ) {
+                        return;
+                    }
+
+                    if (
+                        chart.tooltip &&
+                        highlightOptions.showTooltip
+                    ) {
+                        const useSharedTooltip = chart.tooltip?.shared;
+                        const hoverPoint = chart.hoverPoint;
+                        const hoverSeries = hoverPoint?.series ||
+                            chart.hoverSeries;
+                        const points = chart.pointer.getHoverData(
+                            point,
+                            hoverSeries,
+                            chart.series,
+                            true,
+                            true
+                        );
+
+                        chart.tooltip && chart.tooltip.refresh(
+                            useSharedTooltip ?
+                                points.hoverPoints : point
+                        );
+                    }
+
+                    if (highlightOptions.highlightPoint) {
+                        point.setState('hover');
+                    }
+
+                    if (highlightOptions.showCrosshair) {
+                        point.series.xAxis?.drawCrosshair(void 0, point);
+                        point.series.yAxis?.drawCrosshair(void 0, point);
+                    }
+                };
+
+                const handleCursorOut = (e: DataCursor.Event): void => {
+                    const highlightOptions = this.options.sync.highlight;
+                    if (
+                        !chart || !chart.series.length ||
+                        !isObject(highlightOptions) ||
+                        !highlightOptions.enabled
+                    ) {
+                        return;
+                    }
+
+                    const point = getHoveredPoint(e);
+
+                    // Abort if the affected chart is the same as the one
+                    // that is currently affected manually.
+                    if (point && point === chart.hoverPoint) {
+                        return;
+                    }
+
+                    if (chart.tooltip && highlightOptions.showTooltip) {
+                        chart.tooltip.hide();
+                    }
+
+                    if (highlightOptions.highlightPoint) {
+                        if (point) {
+                            point.setState();
+                        } else {
+
+                            // If the 'row' parameter is missing in the event
+                            // object, the unhovered point cannot be identified.
+
+                            const series = chart.series;
+                            const seriesLength = series.length;
+
+                            for (let i = 0; i < seriesLength; i++) {
+                                const points = chart.series[i].points;
+                                const pointsLength = points.length;
+
+                                for (let j = 0; j < pointsLength; j++) {
+                                    points[j].setState();
+                                }
+                            }
+                        }
+                    }
+
+                    if (highlightOptions.showCrosshair) {
+                        if (point) {
+                            point.series.xAxis?.drawCrosshair();
+                            point.series.yAxis?.drawCrosshair();
+                        } else {
+
+                            // If the 'row' parameter is missing in the event
+                            // object, the unhovered point cannot be identified.
+
+                            const xAxes = chart.xAxis;
+                            const yAxes = chart.yAxis;
+
+                            for (let i = 0, l = xAxes.length; i < l; i++) {
+                                xAxes[i].drawCrosshair();
+                            }
+
+                            for (let i = 0, l = yAxes.length; i < l; i++) {
+                                yAxes[i].drawCrosshair();
+                            }
+                        }
                     }
                 };
 
@@ -496,7 +594,6 @@ const configs: {
                     // connector change
                     if (cursor) {
                         const table = this.connector && this.connector.table;
-
                         if (table) {
                             cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                             cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -508,7 +605,6 @@ const configs: {
 
                 const unregisterCursorListeners = (): void => {
                     const table = this.connector && this.connector.table;
-
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
                         board.dataCursor.removeListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -518,10 +614,8 @@ const configs: {
                 };
 
                 if (board) {
+                    unregisterCursorListeners();
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             },
         extremesHandler:

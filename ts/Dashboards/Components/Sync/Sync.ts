@@ -270,12 +270,6 @@ namespace Sync {
      *
      * */
 
-    export type EventType = (
-        | 'extremes'
-        | 'visibility'
-        | 'highlight'
-    );
-
     /** @internal */
     export type EmitterConfig = (
         | [SyncEmitter['id'], SyncEmitter['func']]
@@ -325,6 +319,99 @@ namespace Sync {
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
 
+    /** @internal */
+    export type RawOptionsRecord = (
+        Record<(
+            SyncEmitter['id']|SyncHandler['id']
+        ), undefined|boolean|OptionsEntry>
+    );
+
+    /**
+     * Crossfilter sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     affectNavigator: true
+     * }
+     * ```
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
+    /**
+     * Highlight sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     highlightPoint: true,
+     *     showTooltip: false,
+     *     showCrosshair: true
+     * }
+     * ```
+     */
+    export interface HighlightSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether the marker should be synced. When hovering over a point in
+         * other component in the same group, the 'hover' state is enabled at
+         * the corresponding point in this component.
+         *
+         * @default true
+         */
+        highlightPoint?: boolean;
+        /**
+         * Whether the tooltip should be synced. When hovering over a point in
+         * other component in the same group, in this component the tooltip
+         * should be also shown.
+         *
+         * @default true
+         */
+        showTooltip?: boolean;
+        /**
+         * Whether the crosshair should be synced. When hovering over a point in
+         * other component in the same group, in this component the crosshair
+         * should be also shown.
+         *
+         * Works only for axes that have crosshair enabled.
+         *
+         * @default true
+         */
+        showCrosshair?: boolean;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const defaultSyncOptions: Record<string, unknown> = {
+        crossfilter: {
+            affectNavigator: false
+        },
+        highlight: {
+            highlightPoint: true,
+            showTooltip: true,
+            showCrosshair: true
+        }
+    };
 }
 /* *
  *

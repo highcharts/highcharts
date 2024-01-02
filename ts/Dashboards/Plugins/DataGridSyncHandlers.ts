@@ -154,10 +154,8 @@ const configs: {
                 };
 
                 if (board) {
+                    unregisterCursorListeners();
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             }
         ],

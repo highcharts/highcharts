@@ -29,6 +29,7 @@ import type {
     Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type Sync from '../Components/Sync/Sync';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
@@ -267,6 +268,7 @@ class KPIComponent extends Component {
         super(cell, options);
 
         this.options = options as KPIComponent.ComponentOptions;
+        this.standardizeSyncOptions();
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(
@@ -787,7 +789,47 @@ namespace KPIComponent {
          * ```
          */
         linkedValueTo: LinkedValueToOptions;
+        /**
+         * Defines which elements should be synced.
+         * ```
+         * Example:
+         * {
+         *     extremes: true
+         * }
+         * ```
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         */
+        sync: SyncOptions;
     }
+
+    /**
+     * Sync options available for the KPI component.
+     *
+     * Example:
+     * ```
+     * {
+     *     extremes: true
+     * }
+     * ```
+     */
+    export interface SyncOptions extends Sync.RawOptionsRecord {
+        /**
+         * Extremes sync is available for Highcharts, KPI, DataGrid and
+         * Navigator components. Sets a common range of displayed data. For the
+         * KPI Component sets the last value.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * @default false
+         */
+        extremes?: boolean|Sync.OptionsEntry;
+    }
+
     /** @internal */
     export interface SubtitleOptions extends TextOptions {
         type?: SubtitleType;
