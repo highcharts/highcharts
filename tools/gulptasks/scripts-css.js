@@ -28,6 +28,23 @@ const highchartsConfig = {
     ]
 };
 
+const dashboardsConfig = {
+    sources: [
+        'css/dashboards/',
+        'gfx/dashboards-icons/'
+    ],
+    target: TARGET_DIRECTORY + '/dashboards',
+    replacePath: 'dashboards/',
+    exclude: []
+};
+
+const datagridConfig = {
+    sources: 'css/datagrid/',
+    target: TARGET_DIRECTORY + '/datagrid',
+    replacePath: 'datagrid/',
+    exclude: []
+};
+
 function handleConfig(config) {
     const defaultConfig = {
         sources: [], // Directories to copy over
@@ -76,25 +93,38 @@ function copyCSS(config) {
 /**
  * Creates CSS files
  *
+ * @param  {object} argv
+ *         Command line arguments
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function scriptCSS(argv) {
     const log = require('./lib/log');
 
     return new Promise(resolve => {
-        log.message('Generating css ...');
+        log.message(`Generating css for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
-        copyCSS(highchartsConfig);
+        if (argv.dashboards) {
+            copyCSS(dashboardsConfig);
+            copyCSS(datagridConfig);
+        } else {
+            copyCSS(highchartsConfig);
+        }
 
-        log.success('Copied CSS');
+        log.success(`Copied ${argv.dashboards ? 'dashboards' : 'highcharts'} CSS`);
 
         resolve();
     });
 }
 
-gulp.task('scripts-css', task);
+scriptCSS.description = 'Creates CSS files for given product';
+scriptCSS.flags = {
+    '--dashboards': 'Creates CSS files for dashboards'
+};
+
+gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));
 
 module.exports = {
-    copyCSS
+    scriptCSS
 };

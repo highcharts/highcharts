@@ -96,11 +96,11 @@ async function dashboardsScripts() {
     }
 }
 
-require('./scripts-css');
+const { scriptCSS } = require('../scripts-css');
 require('./scripts-dts');
 
 gulp.task('dashboards/scripts', gulp.series(
     dashboardsScripts,
-    'dashboards/scripts-css',
+    () => scriptCSS({ dashboards: true }),
     'dashboards/scripts-dts'
 ));
