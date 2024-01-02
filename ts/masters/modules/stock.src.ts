@@ -30,9 +30,10 @@ G.Navigator = G.Navigator || Navigator;
 G.OrdinalAxis = G.OrdinalAxis || OrdinalAxis;
 G.RangeSelector = G.RangeSelector || RangeSelector;
 G.Scrollbar = G.Scrollbar || Scrollbar;
-G.StockChart = G.StockChart || StockChart;
 // Functions
 G.stockChart = G.stockChart || StockChart.stockChart;
+G.StockChart = G.StockChart || G.stockChart;
+G.extend(G.StockChart, StockChart);
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);
