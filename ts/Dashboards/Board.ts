@@ -548,10 +548,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * layouts and its cells.
      */
     public reflow(): void {
-        const board = this,
-            cntSize = board.getLayoutContainerSize();
-
-        let layout;
+        const board = this;
 
         if (board.editMode) {
             const editModeTools = board.editMode.tools;
@@ -563,25 +560,6 @@ class Board implements Serializable<Board, Board.JSON> {
             if (editModeTools.contextMenu) {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
-            }
-        }
-
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            this.reflowLayout(board.layouts[i], cntSize);
-        }
-    }
-
-    public reflowLayout(layout: Layout, cntSize: string): void {
-        let row, cell;
-
-        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-            row = layout.rows[j];
-
-            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                cell = row.cells[k];
-                if (cell.nestedLayout) {
-                    this.reflowLayout(cell.nestedLayout, cntSize);
-                }
             }
         }
     }

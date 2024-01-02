@@ -691,6 +691,8 @@ namespace Cell {
          * Try it:
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
+         *
+         * @deprecated
          **/
         responsive?: Record<string, CellResponsiveOptions>;
     }
