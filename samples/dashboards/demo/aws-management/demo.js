@@ -640,6 +640,9 @@ const setupDashboard = instance => {
                 timestamp: 'x',
                 cpuUtilization: 'y'
             },
+            sync: {
+                highlight: true
+            },
             chartOptions: {
                 series: [{
                     type: 'spline',
@@ -830,6 +833,9 @@ const setupDashboard = instance => {
                 networkIn: 'y',
                 networkOut: 'y'
             },
+            sync: {
+                highlight: true
+            },
             chartOptions: {
                 chart: {
                     type: 'spline'
@@ -872,6 +878,9 @@ const setupDashboard = instance => {
                 timestamp: 'x',
                 writeOpt: 'y',
                 readOpt: 'y'
+            },
+            sync: {
+                highlight: true
             },
             chartOptions: {
                 chart: {
