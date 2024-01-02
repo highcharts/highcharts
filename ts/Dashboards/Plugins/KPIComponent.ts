@@ -29,6 +29,7 @@ import type {
     Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type Sync from '../Components/Sync/Sync';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
@@ -634,6 +635,26 @@ class KPIComponent extends Component {
         return '';
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<KPIComponent.ComponentOptions> = {
+            cell: '',
+            type: 'KPI'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *
@@ -802,7 +823,7 @@ namespace KPIComponent {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
          *
          */
-        sync: SyncOptions;
+        sync?: SyncOptions;
     }
 
     /**

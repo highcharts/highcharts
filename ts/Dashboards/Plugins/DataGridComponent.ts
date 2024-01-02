@@ -25,6 +25,7 @@ import type DataTable from '../../Data/DataTable';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
@@ -33,7 +34,6 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-
 const {
     diffObjects,
     merge,
@@ -478,6 +478,26 @@ class DataGridComponent extends Component {
         }
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<DataGridComponent.ComponentOptions> = {
+            cell: '',
+            type: 'DataGrid'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /** @private */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
@@ -601,7 +621,7 @@ namespace DataGridComponent {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
          *
          */
-        sync: SyncOptions;
+        sync?: SyncOptions;
 
         /** @private */
         tableAxisMap?: Record<string, string | null>;

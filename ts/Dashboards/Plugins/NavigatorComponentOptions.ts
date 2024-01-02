@@ -89,7 +89,7 @@ export interface NavigatorComponentOptions extends Component.ComponentOptions {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      */
-    sync: NavigatorComponent.SyncOptions;
+    sync?: NavigatorComponent.SyncOptions;
 
     type: 'Navigator';
 

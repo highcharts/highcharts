@@ -6,9 +6,9 @@ describe("Highlight sync options", () => {
     it('All highlight sync options are disabled', () => {
         cy.boardRendered();
 
-        cy.get('#showTooltip').click();
-        cy.get('#highlightPoint').click();
-        cy.get('#showCrosshair').click();
+        cy.get('#cbx-showTooltip').click();
+        cy.get('#cbx-highlightPoint').click();
+        cy.get('#cbx-showCrosshair').click();
 
         cy.get('.highcharts-datagrid-cell').eq(0).trigger('mouseover');
 
@@ -31,7 +31,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Highlight showTooltip option is enabled', () => {
-        cy.get('#showTooltip').click();
+        cy.get('#cbx-showTooltip').click();
 
         cy.get('.highcharts-datagrid-cell').eq(2).trigger('mouseover');
 
@@ -44,7 +44,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Highlight highlightPoint option is enabled', () => {
-        cy.get('#highlightPoint').click();
+        cy.get('#cbx-highlightPoint').click();
 
         cy.get('.highcharts-datagrid-cell').eq(4).trigger('mouseover');
 
@@ -57,7 +57,7 @@ describe("Highlight sync options", () => {
     });
 
     it('Highlight showCrosshair option is enabled', () => {
-        cy.get('#showCrosshair').click();
+        cy.get('#cbx-showCrosshair').click();
 
         cy.get('.highcharts-datagrid-cell').eq(6).trigger('mouseover');
 

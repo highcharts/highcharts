@@ -471,7 +471,7 @@ const configs: {
                 };
 
                 const handleCursor = (e: DataCursor.Event): void => {
-                    const highlightOptions = this.options.sync.highlight;
+                    const highlightOptions = this.options.sync?.highlight;
                     if (
                         !isObject(highlightOptions) || !highlightOptions.enabled
                     ) {
@@ -521,7 +521,7 @@ const configs: {
                 };
 
                 const handleCursorOut = (e: DataCursor.Event): void => {
-                    const highlightOptions = this.options.sync.highlight;
+                    const highlightOptions = this.options.sync?.highlight;
                     if (
                         !chart || !chart.series.length ||
                         !isObject(highlightOptions) ||
