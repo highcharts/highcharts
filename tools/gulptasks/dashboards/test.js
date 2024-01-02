@@ -13,12 +13,11 @@ const gulp = require('gulp');
  * */
 
 
-require('./test-dts.js');
-
+const { lintDTS } = require('../lint-dts');
 
 gulp.task('dashboards/test', gulp.series(
     'dashboards/scripts',
     'dashboards/test-lint',
     'dashboards/test-karma',
-    'dashboards/test-dts'
+    () => lintDTS({ dashboards: true })
 ));

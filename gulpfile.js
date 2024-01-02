@@ -40,7 +40,6 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/scripts-dts',
     'dashboards/scripts-watch',
     'dashboards/test',
-    'dashboards/test-dts',
     'dashboards/test-karma',
     'dashboards/test-lint',
     'default',
