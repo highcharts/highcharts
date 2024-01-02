@@ -57,6 +57,8 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
 
     pointPadding: 0.1,
 
+    legendSymbol: 'rectangle',
+
     /**
      * Color of the start markers in a dumbbell graph. This option takes
      * priority over the series color. To avoid this, set `lowColor` to

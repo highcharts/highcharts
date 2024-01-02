@@ -461,17 +461,23 @@ class MapSeries extends ScatterSeries {
 
                 transformGroup
                     .attr({ animator: 0 })
-                    .animate({ animator: 1 }, animOptions, function (): void {
-                        if (
-                            typeof renderer.globalAnimation !== 'boolean' &&
-                            renderer.globalAnimation.complete
-                        ) {
-                            // fire complete only from this place
-                            renderer.globalAnimation.complete({
-                                applyDrilldown: true
-                            });
-                        }
-                    });
+                    .animate(
+                        { animator: 1 },
+                        animOptions,
+                        function (this: MapSeries): void {
+                            if (
+                                typeof renderer.globalAnimation !== 'boolean' &&
+                                renderer.globalAnimation.complete
+                            ) {
+                                // fire complete only from this place
+                                renderer.globalAnimation.complete({
+                                    applyDrilldown: true
+                                });
+                            }
+
+                            fireEvent(this, 'mapZoomComplete');
+                        }.bind(this)
+                    );
 
             // When dragging or first rendering, animation is off
             } else {

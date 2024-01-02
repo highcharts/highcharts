@@ -8,7 +8,6 @@ import Board from "./es-modules/Dashboards/Board";
 import Globals from "./es-modules/Dashboards/Globals";
 
 import "./es-modules/Dashboards/Components/HTMLComponent";
-import "./es-modules/Dashboards/Components/KPIComponent";
 import "./es-modules/Data/Connectors/CSVConnector";
 import "./es-modules/Data/Connectors/JSONConnector";
 import "./es-modules/Data/Connectors/GoogleSheetsConnector";
@@ -29,8 +28,6 @@ export * as DataCursor from "./es-modules/Data/DataCursor";
 export * as DataModifier from "./es-modules/Data/Modifiers/DataModifier";
 export * as DataPool from "./es-modules/Data/DataPool";
 export * as DataTable from "./es-modules/Data/DataTable";
-
-export * as DataGrid from "./es-modules/DataGrid/DataGrid";
 
 export const board: typeof Board.board;
 export const boards: typeof Globals.boards;

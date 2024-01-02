@@ -50,7 +50,7 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series.
+The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent.HighchartsComponent.Options#columnAssignment) option to map correct values from the connector to reflect them in the series.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
 
 You can find more information about HighchartsComponent [here](https://www.highcharts.com/docs/dashboards/highcharts-component);
@@ -73,8 +73,10 @@ If you connect this component to the data connector, the content of the componen
 You can read more about the DataGrid Component [here](https://www.highcharts.com/docs/dashboards/datagrid-component).
 
 ### KPI Component
-Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
-You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
+Another type of component type that allows you to visualize key performance indicators is KPIComponent. It is a simple component that displays a title and a value but it also can display the value on the chart to better visualize the data and the limit of the value.
+You can define the threshold to change the style of the component when one value exceeds it and some other useful features to better show what is important to you.
+
+This component type is bundled with the Highcharts plugin and you need to connect the Highcharts with the dashboard plugin to use it (similarly to the Highcharts component).
 
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi)
 

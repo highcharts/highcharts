@@ -192,13 +192,6 @@ namespace JSONConnector {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Parse the data before passing it to the JSON parser.
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (data: JSONConverter.Data): JSONConverter.Data;
-    }
-
-    /**
      * The event object that is provided on errors within JSONConnector.
      */
     export interface ErrorEvent extends DataConnector.ErrorEvent {

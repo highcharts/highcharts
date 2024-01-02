@@ -1,5 +1,5 @@
 //@ts-check
-import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
 import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
@@ -539,13 +539,13 @@ test('DataGrid component with dataTable', async function (assert) {
 test('KPI Component updating', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
-    
+
     const dashboard = await Dashboards.board('container', {
         gui: {
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'dashboard-cell-1',
+                        id: 'dashboard-cell-1'
                     }]
                 }]
             }]
@@ -571,4 +571,434 @@ test('KPI Component updating', async function (assert) {
     });
 
     assert.ok(kpi.chart, 'KPI Component should have a chart after update.');
+});
+
+test('Data columnAssignment', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const dashboard = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                id: 'EUR-USD',
+                type: 'JSON',
+                options: {
+                data: [
+                    ['Day', 'EUR', 'Rate'],
+                    [1691971200000, 11, 1.0930],
+                    [1692057600000, 23, 1.0926],
+                    [1692144000000, 15, 1.0916]
+                ]
+                }
+            }, {
+                id: 'micro-element',
+                type: 'JSON',
+                options: {
+                firstRowAsNames: false,
+                columnNames: ['x', 'myOpen', 'myHigh', 'myLow', 'myClose', 'mySeries1', 'mySeries2'],
+                data: [
+                    [1699434920314, 6, 5, 4, 1, 6, 9],
+                    [1699494920314, 2, 6, 2, 5, 7, 9],
+                    [1699534920314, 1, 9, 5, 3, 8, 8]
+                ]
+                }
+            }]
+        },
+        gui: {
+            layouts: [{
+                id: 'layout-1',
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-0'
+                    }, {
+                        id: 'dashboard-col-1'
+                    }, {
+                        id: 'dashboard-col-2'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'dashboard-col-3'
+                    }, {
+                        id: 'dashboard-col-4'
+                    }, {
+                        id: 'dashboard-col-5'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            cell: 'dashboard-col-0',
+            type: 'Highcharts',
+            connector: {
+                id: 'EUR-USD'
+            },
+            columnAssignment: {
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
+            }
+        }, {
+            cell: 'dashboard-col-1',
+            type: 'Highcharts',
+            connector: {
+                id: 'EUR-USD'
+            },
+            columnAssignment: {
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
+            },
+            chartOptions: {
+                yAxis: [{}, {
+                    opposite: true
+                }],
+                series: [{
+                    name: 'EUR'
+                }, {
+                    name: 'Rate',
+                    yAxis: 1
+                }]
+            }
+        }, {
+            cell: 'dashboard-col-2',
+            type: 'Highcharts',
+            connector: {
+                id: 'EUR-USD'
+            },
+            columnAssignment: {
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
+            },
+            chartOptions: {
+                yAxis: [{}, {
+                    opposite: true
+                }],
+                series: [{
+                    name: 'EUR',
+                    yAxis: 1
+                }]
+            }
+        }, {
+            cell: 'dashboard-col-3',
+            type: 'Highcharts',
+            connector: {
+                id: 'micro-element'
+            },
+            columnAssignment: {
+                'x': 'x',
+                'mySeries1': 'value',
+                'mySeries2': 'value',
+                'mySeriesName': {
+                    'open': 'myOpen',
+                    'high': 'myHigh',
+                    'low': 'myLow',
+                    'close': 'myClose'
+                }
+            },
+            chartOptions: {
+                series: [{
+                    name: 'mySeries1',
+                    type: 'spline'
+                }, {
+                    name: 'mySeries2',
+                    type: 'line'
+                }, {
+                    name: 'mySeriesName',
+                    type: 'ohlc'
+                }]
+            }
+        }, {
+            cell: 'dashboard-col-4',
+            type: 'Highcharts',
+            connector: {
+                id: 'micro-element'
+            },
+            columnAssignment: {
+                'x': 'x',
+                'mySeries1': 'value',
+                'mySeries2': 'value',
+                'mySeriesName': {
+                    'open': 'myOpen',
+                    'high': 'myHigh',
+                    'low': 'myLow',
+                    'close': 'myClose'
+                }
+            },
+            chartOptions: {
+                series: [{
+                    name: 'mySeries1',
+                    type: 'spline'
+                }, {
+                    name: 'mySeries2',
+                    type: 'line'
+                }, {
+                    name: 'mySeriesName',
+                    type: 'candlestick'
+                }]
+            }
+        }, {
+            cell: 'dashboard-col-5',
+            type: 'Highcharts',
+            connector: {
+                id: 'EUR-USD'
+            },
+            columnAssignment: {
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y'
+            },
+            chartOptions: {
+                yAxis: [{
+                    title: {
+                        text: 'EUR / USD'
+                    }
+                }, {
+                    title: {
+                        text: 'Rate'
+                    },
+                    opposite: true
+                }],
+                series: [{
+                    name: 'Rate',
+                    type: 'column'
+                }, {
+                    name: 'fake trend',
+                    data: [
+                        [1691971200000, 22],
+                        [1692316800000, 22]
+                    ]
+                }]
+            }
+        }]
+    }, true);
+
+    const mountedComponents = dashboard.mountedComponents;
+
+    // basic column assignment
+    assert.ok(
+        mountedComponents[0].component.chart.series.length === 2,
+        'Columns parsed to series.'
+    );
+
+    // columnAssigment merged with the same series options array
+    assert.ok(
+        mountedComponents[1].component.chart.series.length === 2,
+        'Columns parsed to series.'
+    );
+
+    assert.ok(
+        mountedComponents[1].component.chart.series[0].yAxis.index === 0,
+        'First series is assigned to basic yAxis.'
+    );
+
+    assert.ok(
+        mountedComponents[1].component.chart.series[1].yAxis.index === 1,
+        'First series is assigned to opposite yAxis.'
+    );
+
+    // columnAssigment merged with shorter series options array
+    assert.ok(
+        mountedComponents[2].component.chart.series.length === 2,
+        'Columns parsed to series.'
+    );
+
+    assert.ok(
+        mountedComponents[2].component.chart.series[0].yAxis.index === 1,
+        'First series is assigned to basic yAxis.'
+    );
+
+    assert.ok(
+        mountedComponents[2].component.chart.series[1].yAxis.index === 0,
+        'First series is assigned to opposite yAxis.'
+    );
+
+    // columnAssigment and seriesColumnMap (mapping columns into point props)
+    // OHLC
+    assert.ok(
+        mountedComponents[3].component.chart.series.length === 3,
+        'Columns parsed to series.'
+    );
+
+    assert.ok(
+        mountedComponents[3].component.chart.series[2].type === 'ohlc',
+        'OHLC series is initialized.'
+    );
+
+    assert.ok(
+        mountedComponents[3].component.chart.series[2].points.length > 0,
+        'OHLC points are created.'
+    );
+
+    assert.ok(
+        mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
+        'OHLC point is an array of open/low/high/close'
+    );
+
+    // Candlestick
+    assert.ok(
+        mountedComponents[4].component.chart.series.length === 3,
+        'Columns parsed to series.'
+    );
+
+    assert.ok(
+        mountedComponents[4].component.chart.series[2].type === 'candlestick',
+        'Candlestick series is initialized.'
+    );
+
+    assert.ok(
+        mountedComponents[4].component.chart.series[2].points.length > 0,
+        'Candlestick points are created.'
+    );
+
+    // columnAssigment, series options array and extra series with data
+    assert.ok(
+        mountedComponents[5].component.chart.series.length === 3,
+        'Columns parsed to series.'
+    );
+
+    assert.ok(
+        mountedComponents[5].component.chart.series[1].name === 'fake trend',
+        'Implicited series is created.'
+    );
+
+    assert.ok(
+        mountedComponents[5].component.chart.series[2].points.length > 0,
+        'Points are created in implicited series.'
+    );
+
+});
+
+test('JSON data with columnNames and columnAssignment.', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const data = [{
+        "InstanceId": "i-0abcdef1234567890",
+        "InstanceType": "t2.micro",
+        "State": "running",
+        "PrivateIpAddress": "10.0.1.101",
+        "PublicIpAddress": "54.123.45.67",
+        "CPUUtilization": 20.5,
+        "MemoryUsage": 512,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 30,
+            "UsedGB": 15,
+            "FreeGB": 15
+          },
+        },
+        "DiskOperations": [{
+          "ReadOps": 1500,
+          "WriteOps": 800
+        }],
+      },
+      {
+        "InstanceId": "i-1a2b3c4d5e6f78901",
+        "InstanceType": "t3.small",
+        "State": "stopped",
+        "PrivateIpAddress": "10.0.1.102",
+        "PublicIpAddress": "",
+        "CPUUtilization": 0,
+        "MemoryUsage": 256,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 20,
+            "UsedGB": 10,
+            "FreeGB": 10
+          }
+        },
+        "DiskOperations": [{
+          "timestamp": 1637037600000,
+          "ReadOps": 500,
+          "WriteOps": 300
+        }],
+      },
+      {
+        "InstanceId": "i-9876543210abcdef0",
+        "InstanceType": "m5.large",
+        "State": "running",
+        "PrivateIpAddress": "10.0.1.103",
+        "PublicIpAddress": "54.321.67.89",
+        "CPUUtilization": 45.2,
+        "MemoryUsage": 2048,
+        "DiskSpace": {
+          "RootDisk": {
+            "SizeGB": 50,
+            "UsedGB": 25,
+            "FreeGB": 25
+          },
+        },
+        "DiskOperations": [{
+          "timestamp": 1637037600000,
+          "ReadOps": 400,
+          "WriteOps": 100
+        }],
+      }
+    ];
+
+    const dashboard = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+            id: 'micro-element',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                columnNames: {
+                    InstanceType: ['InstanceType'],
+                    DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
+                    ReadOps: ['DiskOperations', 0, 'ReadOps']
+                },
+                data
+            }
+            }]
+        },
+        gui: {
+            layouts: [{
+            rows: [{
+                cells: [{
+                id: 'dashboard-col-1',
+                }]
+            }]
+            }]
+        },
+        components: [{
+            cell: 'dashboard-col-1',
+            connector: {
+                id: 'micro-element'
+            },
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    type: 'column'
+                },
+                xAxis: {
+                    type: 'category'
+                }
+            },
+            columnAssignment: {
+                InstanceType: 'x',
+                DiskSpace: 'y',
+                ReadOps: 'y'
+            },
+        }]
+        }, true);
+
+    const mountedComponents = dashboard.mountedComponents;
+
+    assert.deepEqual(
+        mountedComponents[0].component.chart.series[0].yData,
+        [30, 20, 50],
+        'Each server instance should be rendered as a column.'
+    );
+
+    assert.deepEqual(
+        mountedComponents[0].component.chart.series[1].yData,
+        [1500, 500, 400],
+        'Each server instance should be rendered as a column.'
+    );
 });
