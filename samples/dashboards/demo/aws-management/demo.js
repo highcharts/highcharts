@@ -942,7 +942,7 @@ const setupDashboard = instance => {
                 id: 'instances'
             },
             events: {
-                mount: function() {
+                mount: function () {
                     setTimeout(() => {
                         const currentRow = document.querySelector('[data-original-data="' + instance.InstanceId + '"]').parentNode;
                         currentRow.classList.add('current');
