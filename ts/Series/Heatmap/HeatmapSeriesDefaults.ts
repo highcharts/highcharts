@@ -193,13 +193,18 @@ fn main(
 
         // iterate over each column in the row
         for (var j = u32(0); j < arr_width; j++) {
-            // Paint every fourth row red for demonstration purposes
-            if ( i != 0u && i % 4u == 0u) {
-                resultMatrix.numbers[i + j] = RGBA(225u, 60u, 0u, 255u);
-                continue;
+            var result = input.numbers[i + j];
+
+            if( result == 0u ) {
+                result = RGBA(225u, 255u, 0u, 255u);
+                // continue;
             }
 
-            let result = input.numbers[i + j];
+            // Paint every fourth row red for demonstration purposes
+            if ( i != 0u && i % 4u == 0u) {
+                result = RGBA(225u, 60u, 0u, 255u);
+            }
+
             resultMatrix.numbers[i + j] = result;
         }
     }

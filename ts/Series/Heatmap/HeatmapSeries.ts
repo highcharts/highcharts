@@ -261,6 +261,12 @@ class HeatmapSeries extends ScatterSeries {
                             .attr(dimensions)
                             .add(series.group);
                     }
+
+
+                    series.isDirtyCanvas = false
+                    series.directTouch = false;
+
+                    series.redraw();
                 });
 
                 const pixelData = getPixelData(series.canvas);
