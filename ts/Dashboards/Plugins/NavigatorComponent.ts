@@ -463,6 +463,7 @@ class NavigatorComponent extends Component {
             NavigatorComponent.charter.Chart ||
             Globals.win.Highcharts
         );
+        const crossfilterOptions = this.options.sync?.crossfilter;
 
         this.chartContainer = Globals.win.document.createElement('div');
         this.chart = charter
@@ -473,7 +474,7 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        if (this.options.sync?.crossfilter) {
+        if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
