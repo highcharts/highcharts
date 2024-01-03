@@ -1,6 +1,10 @@
+// eslint-disable-next-line no-underscore-dangle
+const U = Highcharts._modules['Core/Utilities.js'];
+
 const currentMonth = Date.UTC(2023, 9);
-const revTarget = 89;
-const costTarget = 72;
+const revTarget = 105;
+const costTarget = 89;
+
 const data = [
     ['Date', 'Budget', 'Cost', 'Revenue', 'CostPredP', 'RevPredP', 'CostPredO', 'RevPredO'],
     [Date.UTC(2019, 0), 7000000, 6200000, 8200000, null, null, null, null],
@@ -169,28 +173,28 @@ const board = Dashboards.board('container', {
                 dataModifier: {
                     type: 'Math',
                     columnFormulas: [{
-                        column: 'Result',
+                        column: 'Result', // I
                         formula: 'D1-C1'
                     }, {
-                        column: 'AccResult',
+                        column: 'AccResult', // J
                         formula: 'SUM(I$1:I1)'
                     }, {
-                        column: 'CostPredA',
+                        column: 'CostPredA', // K
                         formula: 'AVERAGE(E1,G1)'
                     }, {
-                        column: 'RevPredA',
+                        column: 'RevPredA', // L
                         formula: 'AVERAGE(F1, H1)'
                     }, {
-                        column: 'AccResPredP',
+                        column: 'AccResPredP', // M
                         formula: 'J1+SUM(F$1:F1)-SUM(E$1:E1)'
                     }, {
-                        column: 'AccResPredO',
+                        column: 'AccResPredO', // N
                         formula: 'J1+SUM(H$1:H1)-SUM(G$1:G1)'
                     }, {
-                        column: 'ResPredA',
+                        column: 'ResPredA', // O
                         formula: 'L1-K1'
                     }, {
-                        column: 'AccResPredA',
+                        column: 'AccResPredA', // P
                         formula: 'J1+SUM(O$1:O1)'
                     }]
                 }
@@ -267,13 +271,9 @@ const board = Dashboards.board('container', {
     components: [{
         cell: 'rev-chart-kpi',
         type: 'KPI',
-        value: 76.3,
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
                 text: 'Revenue (YTD)'
-            },
-            subtitle: {
-                text: '89% of target'
             },
             yAxis: {
                 max: 96,
@@ -296,27 +296,19 @@ const board = Dashboards.board('container', {
                     className: 'high-band'
                 }]
             },
-            series: [{
-                data: [76.3]
-            }]
+            series: [{}]
         })
     }, {
         cell: 'rev-forecast-kpi',
         type: 'KPI',
-        title: 'Forecast is MNOK 89,7',
-        value: 90,
         valueFormat: '{value}%',
         subtitle: 'of target'
     }, {
         cell: 'cost-chart-kpi',
         type: 'KPI',
-        value: 61.3,
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
                 text: 'Cost (YTD)'
-            },
-            subtitle: {
-                text: '84% of target'
             },
             yAxis: {
                 max: 75,
@@ -339,27 +331,19 @@ const board = Dashboards.board('container', {
                     className: 'warn-band'
                 }]
             },
-            series: [{
-                data: [61.3]
-            }]
+            series: [{}]
         })
     }, {
         cell: 'cost-forecast-kpi',
         type: 'KPI',
-        title: 'Forecast is MNOK 74,5',
-        value: 92,
         valueFormat: '{value}%',
         subtitle: 'of target'
     }, {
         cell: 'res-chart-kpi',
         type: 'KPI',
-        value: 14.9,
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
                 text: 'Result (YTD)'
-            },
-            subtitle: {
-                text: '78% of target'
             },
             yAxis: {
                 max: 21,
@@ -382,15 +366,11 @@ const board = Dashboards.board('container', {
                     className: 'high-band'
                 }]
             },
-            series: [{
-                data: [14.9]
-            }]
+            series: [{}]
         })
     }, {
         cell: 'res-forecast-kpi',
         type: 'KPI',
-        title: 'Forecast is MNOK 15,3',
-        value: 78,
         valueFormat: '{value}%',
         subtitle: 'of target'
     }, {
@@ -477,15 +457,22 @@ board.then(res => {
     const resKPI = res.mountedComponents[4].component;
     const resForescast = res.mountedComponents[5].component;
 
-    const firstRow = table.Date.findIndex(date => date === Date.UTC(2023));
-    const lastRow = table.Date.findIndex(date => date === currentMonth);
+    const firstRowID = table.Date.findIndex(d => d === Date.UTC(2023));
+    const lastRowID = table.Date.findIndex(d => d === currentMonth);
+    const forecastRowID = table.Date.findIndex(d => d === Date.UTC(2023, 11));
 
     let revYTD = 0,
         costYTD = 0;
-
-    for (let i = firstRow; i <= lastRow; i++) {
+    for (let i = firstRowID; i <= lastRowID; i++) {
         revYTD += table.Revenue[i] / 1e6;
         costYTD += table.Cost[i] / 1e6;
+    }
+
+    let revYearlyForecast = revYTD,
+        costYearlyForecast = costYTD;
+    for (let i = lastRowID + 1; i <= forecastRowID; i++) {
+        revYearlyForecast += table.RevPredA[i] / 1e6;
+        costYearlyForecast += table.CostPredA[i] / 1e6;
     }
 
     revKPI.chart.series[0].setData([revYTD]);
@@ -503,6 +490,25 @@ board.then(res => {
         text: `${Math.round(
             (revYTD - costYTD) / (revTarget - costTarget) * 100
         )}% of target`
+    });
+
+    revForecast.update({
+        title: `Forecast is MNOK ${revYearlyForecast.toFixed(2)}`,
+        value: Math.round(revYearlyForecast / revTarget * 100)
+    });
+
+    costForecast.update({
+        title: `Forecast is MNOK ${costYearlyForecast.toFixed(2)}`,
+        value: Math.round(costYearlyForecast / costTarget * 100)
+    });
+
+    resForescast.update({
+        title: `Forecast is MNOK ${(
+            revYearlyForecast - costYearlyForecast
+        ).toFixed(2)}`,
+        value: Math.round((
+            revYearlyForecast - costYearlyForecast
+        ) / (revTarget - costTarget) * 100)
     });
 });
 
@@ -533,9 +539,16 @@ async function togglePopup(open) {
 
     popup.children[0].children['datagrid-container'].innerHTML = '';
 
+    const formatNumbers = function () {
+        return U.isNumber(this.value) ? (
+            this.value / 1e6
+        ).toFixed(2) + ' MNOK' : '-';
+    };
+
     // eslint-disable-next-line no-new
     new DataGrid.DataGrid('datagrid-container', {
         dataTable: (await board).dataPool.connectors.data.table,
+        editable: false,
         columns: {
             Date: {
                 cellFormatter: function () {
@@ -545,6 +558,55 @@ async function togglePopup(open) {
                             .substring(0, 10)
                     ) : '?';
                 }
+            },
+            Budget: {
+                show: true,
+                cellFormatter: formatNumbers
+            },
+            Cost: {
+                show: true,
+                cellFormatter: formatNumbers
+            },
+            Revenue: {
+                show: true,
+                cellFormatter: formatNumbers
+            },
+            Result: {
+                show: true,
+                cellFormatter: formatNumbers
+            },
+            CostPredP: {
+                show: false
+            },
+            RevPredP: {
+                show: false
+            },
+            CostPredO: {
+                show: false
+            },
+            RevPredO: {
+                show: false
+            },
+            AccResult: {
+                show: false
+            },
+            CostPredA: {
+                show: false
+            },
+            RevPredA: {
+                show: false
+            },
+            AccResPredP: {
+                show: false
+            },
+            AccResPredO: {
+                show: false
+            },
+            ResPredA: {
+                show: false
+            },
+            AccResPredA: {
+                show: false
             }
         }
     });
