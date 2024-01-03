@@ -21,14 +21,11 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
-import H from '../Globals.js';
-const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     getMagnitude,
     normalizeTickInterval,
-    pushUnique,
     timeUnits
 } = U;
 
@@ -106,7 +103,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (!AxisClass.keepProps.includes('dateTime')) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

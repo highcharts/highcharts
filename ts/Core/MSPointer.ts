@@ -282,7 +282,7 @@ namespace MSPointer {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Core.MSPointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

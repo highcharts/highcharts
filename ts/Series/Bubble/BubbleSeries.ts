@@ -469,7 +469,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
         }
 

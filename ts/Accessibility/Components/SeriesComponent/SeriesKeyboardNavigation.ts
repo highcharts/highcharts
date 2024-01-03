@@ -897,12 +897,11 @@ namespace SeriesKeyboardNavigation {
         PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!chartProto.highlightAdjacentPoint) {
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical

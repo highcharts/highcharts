@@ -24,13 +24,10 @@ import type Time from '../Core/Time';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -91,10 +88,9 @@ namespace A11yI18nComposition {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.langFormat) {
             chartProto.langFormat = langFormat;
         }
 

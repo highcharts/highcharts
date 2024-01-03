@@ -144,7 +144,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Series.BubbleLegend')) {
         setOptions({
             // Set default bubble legend options
             legend: {

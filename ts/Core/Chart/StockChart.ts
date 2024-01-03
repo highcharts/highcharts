@@ -41,8 +41,6 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
-import H from '../Globals.js';
-const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
@@ -59,7 +57,6 @@ const {
     isString,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -393,15 +390,16 @@ namespace StockChart {
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
+        if (!seriesProto.forceCropping) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
 
-            SeriesClass.prototype.forceCropping = seriesForceCropping;
+            seriesProto.forceCropping = seriesForceCropping;
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
 
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;

@@ -645,9 +645,9 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        const chartProto = ChartClass.prototype as ChartComposition;
 
+        if (!chartProto.exportChart) {
             chartProto.afterPrint = afterPrint;
             chartProto.exportChart = exportChart;
             chartProto.inlineStyles = inlineStyles;

@@ -44,16 +44,13 @@ import DraggableChart from './DraggableChart.js';
 const { initDragDrop } = DraggableChart;
 import DragDropDefaults from './DragDropDefaults.js';
 import DragDropProps from './DragDropProps.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -212,10 +209,11 @@ function compose(
 ): void {
     DraggableChart.compose(ChartClass);
 
-    if (pushUnique(composed, compose)) {
+    const seriesProto = SeriesClass.prototype;
+
+    if (!seriesProto.dragDropProps) {
         const PointClass = SeriesClass.prototype.pointClass,
             seriesTypes = SeriesClass.types,
-            seriesProto = SeriesClass.prototype,
             pointProto = PointClass.prototype;
 
         pointProto.getDropValues = pointGetDropValues;

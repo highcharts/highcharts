@@ -64,10 +64,10 @@ namespace MultipleLinesComposition {
     }
 
     /* *
-    *
-    *  Constants
-    *
-    * */
+     *
+     *  Constants
+     *
+     * */
 
     /**
      * Additional lines DOCS names. Elements of linesApiNames array should
@@ -112,10 +112,10 @@ namespace MultipleLinesComposition {
     const pointValKey = 'top';
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Composition useful for all indicators that have more than one line.

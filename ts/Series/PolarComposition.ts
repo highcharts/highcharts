@@ -1471,7 +1471,7 @@ class PolarAdditions {
         Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Polar')) {
             const chartProto = ChartClass.prototype,
                 pointProto = PointClass.prototype,
                 pointerProto = PointerClass.prototype,

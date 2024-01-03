@@ -30,10 +30,7 @@ import Axis3DDefaults from './Axis3DDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const {
-    composed,
-    deg2rad
-} = H;
+const { deg2rad } = H;
 import Math3D from '../Math3D.js';
 const {
     perspective,
@@ -46,7 +43,6 @@ const {
     addEvent,
     merge,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -438,7 +434,7 @@ class Axis3DAdditions {
 
         Tick3D.compose(TickClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('axis3D')) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');

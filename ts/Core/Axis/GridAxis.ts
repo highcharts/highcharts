@@ -35,10 +35,7 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const {
-    composed,
-    dateFormats
-} = H;
+const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -50,7 +47,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     timeUnits,
     wrap
 } = U;
@@ -206,7 +202,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (pushUnique(composed, compose)) {
+    if (!AxisClass.keepProps.includes('grid')) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;

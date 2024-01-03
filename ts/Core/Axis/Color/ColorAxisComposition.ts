@@ -29,15 +29,12 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import H from '../../Globals.js';
-const { composed } = H;
 import U from '../../Utilities.js';
 const {
     addEvent,
     extend,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -118,13 +115,12 @@ namespace ColorAxisComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype,
+            fxProto = FxClass.prototype,
+            seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
+        if (!chartProto.collectionsWithUpdate.includes('colorAxis')) {
             ColorAxisConstructor = ColorAxisClass;
-
-            const chartProto = ChartClass.prototype,
-                fxProto = FxClass.prototype,
-                seriesProto = SeriesClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
             chartProto.collectionsWithInit.colorAxis = [

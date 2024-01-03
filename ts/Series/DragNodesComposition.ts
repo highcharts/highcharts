@@ -96,7 +96,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'DragNodes')) {
         addEvent(ChartClass, 'load', onChartLoad);
     }
 

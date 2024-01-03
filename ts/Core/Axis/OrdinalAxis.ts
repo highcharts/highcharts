@@ -24,7 +24,6 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { composed } = H;
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -35,7 +34,6 @@ const {
     defined,
     error,
     pick,
-    pushUnique,
     timeUnits
 } = U;
 
@@ -145,10 +143,9 @@ namespace OrdinalAxis {
         SeriesClass: typeof Series,
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
+        const axisProto = AxisClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
-            const axisProto = AxisClass.prototype as Composition;
-
+        if (!axisProto.ordinal2lin) {
             axisProto.getTimeTicks = getTimeTicks;
             axisProto.index2val = index2val;
             axisProto.lin2val = lin2val;

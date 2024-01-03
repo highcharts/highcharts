@@ -74,7 +74,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'OnSeries')) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;

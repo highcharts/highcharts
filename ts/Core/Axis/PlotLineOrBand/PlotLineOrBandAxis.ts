@@ -22,14 +22,11 @@ import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
-import H from '../../Globals.js';
-const { composed } = H;
 import U from '../../Utilities.js';
 const {
     erase,
     extend,
-    isNumber,
-    pushUnique
+    isNumber
 } = U;
 
 /* *
@@ -203,22 +200,20 @@ namespace PlotLineOrBandAxis {
         PlotLineOrBandType: typeof PlotLineOrBand,
         AxisClass: T
     ): (T&typeof Composition) {
+        const axisProto = AxisClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
+        if (!axisProto.addPlotBand) {
             PlotLineOrBandClass = PlotLineOrBandType;
 
-            extend(
-                AxisClass.prototype as Composition,
-                {
-                    addPlotBand,
-                    addPlotLine,
-                    addPlotBandOrLine,
-                    getPlotBandPath,
-                    removePlotBand,
-                    removePlotLine,
-                    removePlotBandOrLine
-                }
-            );
+            extend(axisProto, {
+                addPlotBand,
+                addPlotLine,
+                addPlotBandOrLine,
+                getPlotBandPath,
+                removePlotBand,
+                removePlotLine,
+                removePlotBandOrLine
+            });
         }
 
         return AxisClass as (T&typeof Composition);

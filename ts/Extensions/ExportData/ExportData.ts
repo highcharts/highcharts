@@ -49,7 +49,6 @@ const { downloadURL } = DownloadURL;
 import ExportDataDefaults from './ExportDataDefaults.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
@@ -61,8 +60,7 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -1112,10 +1110,10 @@ function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype,
-            exportingOptions = getOptions().exporting;
+    if (!chartProto.getCSV) {
+        const exportingOptions = getOptions().exporting;
 
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);

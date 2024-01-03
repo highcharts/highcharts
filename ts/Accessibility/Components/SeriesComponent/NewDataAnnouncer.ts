@@ -429,7 +429,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'A11y.NDA')) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',

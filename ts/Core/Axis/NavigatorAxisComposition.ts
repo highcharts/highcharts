@@ -20,18 +20,14 @@ import type Axis from './Axis.js';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const {
-    composed,
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -150,7 +146,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('navigatorAxis')) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

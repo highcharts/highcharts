@@ -28,7 +28,6 @@ import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
@@ -36,8 +35,7 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 import EventProvider from './Utils/EventProvider.js';
@@ -581,9 +579,9 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        const chartProto = ChartClass.prototype as ChartComposition;
 
+        if (!chartProto.dismissPopupContent) {
             chartProto.dismissPopupContent = chartDismissPopupContent;
 
             addEvent(doc, 'keydown', documentOnKeydown);

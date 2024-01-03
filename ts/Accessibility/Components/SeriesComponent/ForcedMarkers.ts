@@ -75,7 +75,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'A11y.FM')) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',

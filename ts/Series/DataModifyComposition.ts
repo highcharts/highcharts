@@ -159,23 +159,26 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
+        const axisProto = AxisClass.prototype as AxisComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const axisProto = AxisClass.prototype as AxisComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!seriesProto.setCompare) {
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
+        }
 
+        if (!axisProto.setCompare) {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
+        }
 
+        if (!pointProto.tooltipFormatter) {
             pointProto.tooltipFormatter = tooltipFormatter;
         }
 

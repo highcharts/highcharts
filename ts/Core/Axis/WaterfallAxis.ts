@@ -100,7 +100,7 @@ namespace WaterfallAxis {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Axis.Waterfall')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);

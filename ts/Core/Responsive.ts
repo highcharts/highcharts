@@ -19,8 +19,6 @@
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
 
-import H from './Globals.js';
-const { composed } = H;
 import U from './Utilities.js';
 const {
     diffObjects,
@@ -28,7 +26,6 @@ const {
     find,
     merge,
     pick,
-    pushUnique,
     uniqueKey
 } = U;
 
@@ -122,15 +119,13 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
-            extend(
-                ChartClass.prototype as Composition,
-                {
-                    matchResponsiveRule,
-                    setResponsive
-                }
-            );
+        if (!chartProto.matchResponsiveRule) {
+            extend(chartProto, {
+                matchResponsiveRule,
+                setResponsive
+            });
         }
 
         return ChartClass as (T&typeof Composition);
