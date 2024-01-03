@@ -98,7 +98,6 @@ const configs: {
     handlers: {
         highlightHandler: [
             'highlightHandler',
-            void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
 
@@ -155,10 +154,8 @@ const configs: {
                 };
 
                 if (board) {
+                    unregisterCursorListeners();
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             }
         ],

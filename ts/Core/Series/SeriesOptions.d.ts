@@ -88,7 +88,7 @@ export type SeriesFindNearestPointByValue = ('x'|'xy');
 
 export type SeriesLinecapValue = ('butt'|'round'|'square');
 
-export type LegendSymbolType = ('lineMarker' | 'rectangle');
+export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /**
  * Helper interface for series types to add options to all series options.

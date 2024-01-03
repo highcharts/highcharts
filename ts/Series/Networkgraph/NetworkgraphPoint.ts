@@ -199,12 +199,12 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
      * `series.draggable` is enabled.
      * @private
      */
-    public init(
+    public constructor(
         series: NetworkgraphSeries,
         options: (NetworkgraphPointOptions|PointShortOptions),
         x?: number
-    ): NetworkgraphPoint {
-        super.init(series, options, x);
+    ) {
+        super(series, options, x);
 
         if (
             this.series.options.draggable &&
@@ -219,8 +219,6 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
                 );
             });
         }
-
-        return this;
     }
 
     /**

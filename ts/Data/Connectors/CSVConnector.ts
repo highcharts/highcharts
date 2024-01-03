@@ -200,13 +200,6 @@ namespace CSVConnector {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * @todo move this to the dataparser?
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-
-    /**
      * The event object that is provided on errors within CSVConnector.
      */
     export interface ErrorEvent extends DataConnector.ErrorEvent {

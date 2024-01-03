@@ -65,7 +65,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public dataLabelOnNull?: boolean;
 
-    public degree: number = NaN;
+    public degree!: number;
 
     public dispX?: number;
 
@@ -75,7 +75,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public isParentNode?: boolean;
 
-    public mass: number = NaN;
+    public mass!: number;
 
     public neighbours?: number;
 
@@ -83,7 +83,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public prevY?: number;
 
-    public radius: number = NaN;
+    public radius!: number;
 
     public removed?: boolean;
 
@@ -93,7 +93,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public seriesIndex?: number;
 
-    public value: (number|null) = null;
+    public value?: (number|null);
 
     /* *
      *
@@ -163,7 +163,6 @@ interface PackedBubblePoint extends NetworkgraphPoint {
     linksFrom: Array<NetworkgraphPoint>;
     linksTo: Array<NetworkgraphPoint>;
     toNode: NetworkgraphPoint;
-    init: NetworkgraphPoint['init'];
     isValid: NetworkgraphPoint['isValid'];
     remove: BubblePointType['remove'];
 }

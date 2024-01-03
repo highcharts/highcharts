@@ -91,6 +91,25 @@ Dashboards.board('container', {
 });
 ```
 
+### Highlight sync options
+
+Highlight sync can have additional options:
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        highlightPoint: true,
+        showTooltip: false,
+        showCrosshair: true
+    }
+}
+```
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+
+
+
 ## Components sync compatibility
 
 |Component's type|highlight|extremes|visibility|crossfilter

@@ -225,6 +225,12 @@ class Board implements Serializable<Board, Board.JSON> {
     public container!: HTMLElement;
 
     /**
+     * All types of components available in the dashboard.
+     * @internal
+     */
+    public componentTypes = ComponentRegistry.types;
+
+    /**
      * The data cursor instance used for interacting with the data.
      * @internal
      * */
@@ -862,11 +868,6 @@ namespace Board {
             large: 1200
         }
     };
-
-    /**
-     * @internal
-     */
-    export const componentTypes = ComponentRegistry.types;
 
     /* *
      *
