@@ -1496,28 +1496,40 @@ namespace OrdinalAxis {
          * If overscroll is pixel or pecentage value, convert it to axis range.
          *
          * @private
-         * @function Highcharts.Axis#convertOverscroll
          * @param {number | string} overscroll
          * Overscroll value in axis range, pixels or percentage value.
          * @return {number}
          * Overscroll value in axis range.
          */
-        public convertOverscroll(overscroll : number | string | undefined)
-            : number {
+        public convertOverscroll(overscroll : number | string = 0) : number {
             const ordinal = this,
                 axis = ordinal.axis,
                 overscrollValue = parseInt(overscroll as any, 10);
 
+            if (!defined(axis.max) || !defined(axis.min)) {
+                return 0;
+            }
+
             if (/%$/.test(overscroll as any)) {
                 // If overscroll is percentage
-                return ((axis.max as any) - (axis.min as any)) *
+                return (axis.max - axis.min) *
                     overscrollValue / 100;
             }
 
             if (/px/.test(overscroll as any)) {
                 // If overscroll is pixels
-                return ((axis.max as any) - (axis.min as any)) *
-                    overscrollValue / axis.width;
+
+                // overscroll is limited to 90% of the axis width
+                // to prevent division by zero
+                const limitedOverscrollValue = Math.min(
+                        overscrollValue,
+                        axis.width * 0.9
+                    ),
+                    axisRange = axis.max - axis.min,
+                    rangeWithOverscroll = (axisRange * axis.width) /
+                        (axis.width - limitedOverscrollValue);
+
+                return rangeWithOverscroll - axisRange;
             }
 
             if (isNaN(overscrollValue)) {

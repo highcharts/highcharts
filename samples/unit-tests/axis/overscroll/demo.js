@@ -211,8 +211,18 @@
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
-                xAxisRange + (overscrollPixelValue / xAxis.width) * xAxisRange,
-                'Correct range with overscroll set in px '
+                xAxisRange * xAxis.width / (xAxis.width - overscrollPixelValue),
+                'Correct range with overscroll set in px'
+            );
+
+            xAxis.update({
+                overscroll: xAxis.width + 'px'
+            });
+
+            assert.strictEqual(
+                xAxis.max - xAxis.min,
+                xAxisRange * xAxis.width / (xAxis.width - 0.9 * xAxis.width),
+                'Correct range with overscroll set in px equal to xAxis width'
             );
         }
     );
@@ -235,7 +245,7 @@
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
-                xAxisRange +  overscrollPercentageValue / 100 * xAxisRange,
+                xAxisRange + overscrollPercentageValue / 100 * xAxisRange,
                 'Correct range with overscroll set in % '
             );
         }
