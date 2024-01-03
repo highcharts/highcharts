@@ -455,7 +455,7 @@ board.then(res => {
     const costKPI = res.mountedComponents[2].component;
     const costForecast = res.mountedComponents[3].component;
     const resKPI = res.mountedComponents[4].component;
-    const resForescast = res.mountedComponents[5].component;
+    const resForecast = res.mountedComponents[5].component;
 
     const firstRowID = table.Date.findIndex(d => d === Date.UTC(2023));
     const lastRowID = table.Date.findIndex(d => d === currentMonth);
@@ -502,7 +502,7 @@ board.then(res => {
         value: Math.round(costYearlyForecast / costTarget * 100)
     });
 
-    resForescast.update({
+    resForecast.update({
         title: `Forecast is MNOK ${(
             revYearlyForecast - costYearlyForecast
         ).toFixed(2)}`,
