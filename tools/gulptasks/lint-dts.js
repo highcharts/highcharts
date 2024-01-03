@@ -37,7 +37,7 @@ function lintDTS(argv) {
 
     return new Promise((resolve, reject) => {
 
-        logLib.message(`Linting TypeScript declarations for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
+        logLib.message(`Linting TypeScript declarations (.d.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
         let promiseChain = Promise.resolve();
 

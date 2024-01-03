@@ -41,7 +41,6 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/scripts-watch',
     'dashboards/test',
     'dashboards/test-karma',
-    'dashboards/test-lint',
     'default',
     'dist',
     'dist-clean',
