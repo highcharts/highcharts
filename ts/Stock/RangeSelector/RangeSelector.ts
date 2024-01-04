@@ -366,10 +366,14 @@ class RangeSelector {
             // If rangeSelector.selected is larger than actual range, reset
             // chart fixed range (#20327)
             const xAxis = chart.xAxis[0];
-            if (xAxis.dataMax && xAxis.dataMin && rangeOptions._range) {
+            if (
+                defined(xAxis.dataMax) &&
+                defined(xAxis.dataMin) &&
+                rangeOptions._range
+            ) {
                 const dataRange = xAxis.dataMax - xAxis.dataMin;
                 if (rangeOptions._range > dataRange) {
-                    chart.fixedRange = void 0;
+                    chart.fixedRange = dataRange;
                 }
             }
         };
