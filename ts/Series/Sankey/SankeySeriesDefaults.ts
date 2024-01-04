@@ -275,12 +275,18 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     nodeAlignment: 'center',
 
     /**
-     * The pixel width of each node in a sankey diagram or dependency wheel,
-     * or the height in case the chart is inverted.
+     * The pixel width of each node in a sankey diagram or dependency wheel, or
+     * the height in case the chart is inverted.
      *
      * Can be a number or a percentage string, or `auto`. If `auto`, the nodes
-     * area sized to fill up the plot are in the longitudinal direction,
+     * are sized to fill up the plot area in the longitudinal direction,
      * regardless of the number of levels.
+     *
+     * @see    [sankey.nodeDistance](#nodeDistance)
+     * @sample highcharts/series-sankey/node-distance
+     *         Node width is auto and combined with node distance
+     *
+     * @type {number|string}
      */
     nodeWidth: 20,
 
@@ -311,7 +317,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * the node width respond to the number of columns.
      *
      * @since next
-     * @type {number}
+     * @sample highcharts/series-sankey/node-distance
+     *         Node distance of 100% means equal to node width
+     * @type   {number|string}
      */
     nodeDistance: 30,
 
