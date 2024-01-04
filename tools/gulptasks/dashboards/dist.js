@@ -37,9 +37,7 @@ Options:
 
 
 async function dist() {
-
     const argv = require('yargs').argv;
-    const gulpLib = require('../lib/gulp');
     const logLib = require('../lib/log');
 
     if (argv.helpme) {
@@ -52,31 +50,30 @@ async function dist() {
         throw new Error('No `--release x.x.x` provided.');
     }
 
-    await gulpLib.requires([], [
+    logLib.warn('Don\'t forget `npx gulp dashboards/dist-upload`.');
+
+}
+
+require('./dist-build.js');
+require('./dist-examples.js');
+require('./dist-productsjs.js');
+require('./dist-release.js');
+require('./dist-upload.js');
+require('./dist-zip.js');
+require('./scripts.js');
+const scriptsCompile = require('../scripts-compile');
+
+gulp.task(
+    'dashboards/dist',
+    gulp.series(
+        () => dist(),
         'dashboards/scripts',
-        'dashboards/dist-minify',
+        () => scriptsCompile(void 0, require('./_config.json')),
         'dashboards/dist-build',
         'dashboards/dist-examples',
         'dashboards/dist-zip',
         'dashboards/dist-productsjs',
         'dashboards/dist-release',
         'dashboards/dist-verify'
-        // 'dashboards/dist-upload'
-    ]);
-
-    logLib.warn('Don\'t forget `npx gulp dashboards/dist-upload`.');
-
-}
-
-
-require('./dist-build.js');
-require('./dist-examples.js');
-require('./dist-minify.js');
-require('./dist-productsjs.js');
-require('./dist-release.js');
-require('./dist-upload.js');
-require('./dist-zip.js');
-require('./scripts.js');
-
-
-gulp.task('dashboards/dist', dist);
+    )
+);
