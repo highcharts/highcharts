@@ -354,7 +354,7 @@ const configs: {
     },
     handlers: {
         seriesVisibilityHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): Function | void {
                 const component = this;
                 const { board } = this;
 
@@ -417,13 +417,11 @@ const configs: {
 
                 if (board) {
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
+                    return unregisterCursorListeners;
                 }
             },
         highlightHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): Function | void {
                 const { chart, board } = this;
 
                 const getHoveredPoint = (
@@ -542,7 +540,10 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (!point?.isInside || point === chart.hoverPoint) {
+                    if (
+                        point && !point.isInside ||
+                        point && point === chart.hoverPoint
+                    ) {
                         return;
                     }
 
@@ -633,8 +634,8 @@ const configs: {
                 };
 
                 if (board) {
-                    unregisterCursorListeners();
                     registerCursorListeners();
+                    return unregisterCursorListeners;
                 }
             },
         extremesHandler:
