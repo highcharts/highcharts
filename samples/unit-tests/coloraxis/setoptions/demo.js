@@ -1,6 +1,7 @@
 QUnit.test(
     'yAxis theme settings affected color axis (#5569)',
     function (assert) {
+        const yAxis = Highcharts.merge(Highcharts.defaultOptions.yAxis);
         Highcharts.theme = {
             yAxis: {
                 alternateGridColor: '#ff0',
@@ -46,6 +47,6 @@ QUnit.test(
         );
 
         // Undo
-        delete Highcharts.defaultOptions.yAxis;
+        Highcharts.defaultOptions.yAxis = yAxis;
     }
 );

@@ -84,7 +84,7 @@ interface DataOptions {
     beforeParse?: DataBeforeParseCallbackFunction;
     columns?: Array<Array<DataValueType>>;
     columnsURL?: string;
-    columnTypes?: Array<string>;
+    columnTypes?: Array<'string'|'number'|'float'|'date'>;
     complete?: DataCompleteCallbackFunction;
     csv?: string;
     csvURL?: string;
@@ -660,14 +660,18 @@ class Data {
                     return;
                 }
 
-                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
-                    token = parseFloat(token) as any;
-                    pushType('number');
-                } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                } else {
-                    pushType('string');
+                if (!options.columnTypes) {
+                    if (
+                        !isNaN(parseFloat(token)) && isFinite(token as any)
+                    ) {
+                        token = parseFloat(token) as any;
+                        pushType('number');
+                    } else if (!isNaN(Date.parse(token))) {
+                        token = token.replace(/\//g, '-');
+                        pushType('date');
+                    } else {
+                        pushType('string');
+                    }
                 }
 
                 if (columns.length < column + 1) {
@@ -1486,11 +1490,14 @@ class Data {
             chartOptions = this.chartOptions,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
-            forceCategory = isXColumn && ((
-                chartOptions &&
-                chartOptions.xAxis &&
-                splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string'),
+            forceCategory = (
+                isXColumn &&
+                (
+                    chartOptions &&
+                    chartOptions.xAxis &&
+                    splat(chartOptions.xAxis)[0].type === 'category'
+                )
+            ) || columnType === 'string',
             columnHasName = defined(column.name);
 
         let row = column.length,
@@ -2448,6 +2455,23 @@ export default Data;
  * @type      {Array<Array<Highcharts.DataValueType>>}
  * @since     4.0
  * @apioption data.columns
+ */
+
+/**
+ * An array option that specifies the data type for each column in the series
+ * loaded within the data module.
+ *
+ * Possible values: `"string"`, `"number"`, `"float"`, `"date"`.
+ *
+ * @sample {highcharts|highstock} highcharts/data/column-types/
+ *         X-axis categories based on CSV data
+ * @sample {highmaps} highcharts/data/column-types-map/
+ *         Map chart created with fips from CSV
+ *
+ * @type      {Array<'string'|'number'|'float'|'date'>}
+ * @since     @next
+ * @validvalue ["string", "number", "float", "date"]
+ * @apioption data.columnTypes
  */
 
 /**

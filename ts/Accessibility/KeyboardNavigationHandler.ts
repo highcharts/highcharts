@@ -96,8 +96,6 @@ class KeyboardNavigationHandler {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.
      *

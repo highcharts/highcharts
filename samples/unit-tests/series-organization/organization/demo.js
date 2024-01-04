@@ -89,10 +89,11 @@ QUnit.test('Organization data', assert => {
 
     let nodeBox = chart.series[0].nodes[0].graphic.getBBox();
 
-    assert.strictEqual(
+    assert.close(
         nodeBox.y,
         (chart.plotHeight / 2) -
             (nodeBox.height / 2),
+        0.00001, // Safari
         `After specifing the node height in non inverted chart, that node
         should be aligned to the center of the chart (#19946).`
     );

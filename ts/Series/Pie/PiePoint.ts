@@ -59,9 +59,9 @@ class PiePoint extends Point {
 
     public half: number = 0;
 
-    public options: PiePointOptions = void 0 as any;
+    public options!: PiePointOptions;
 
-    public series: PieSeries = void 0 as any;
+    public series!: PieSeries;
 
     public sliced?: boolean;
 
@@ -134,19 +134,21 @@ class PiePoint extends Point {
      * Initialize the pie slice.
      * @private
      */
-    public init(): PiePoint {
-        super.init.apply(this, arguments as any);
+    public constructor(
+        series: PieSeries,
+        options: PiePointOptions,
+        x?: number
+    ) {
+        super(series, options, x);
 
-        this.name = pick(this.name, 'Slice');
+        this.name ??= 'Slice';
 
-        // add event listener for select
+        // Add event listener for select
         const toggleSlice = (e: (AnyRecord|Event)): void => {
             this.slice(e.type === 'select');
         };
         addEvent(this, 'select', toggleSlice);
         addEvent(this, 'unselect', toggleSlice);
-
-        return this;
     }
 
     /**
@@ -174,51 +176,13 @@ class PiePoint extends Point {
      */
     public setVisible(
         vis: boolean,
-        redraw?: boolean
+        redraw: boolean = true
     ): void {
-        const series = this.series,
-            chart = series.chart,
-            ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-
-        redraw = pick(redraw, ignoreHiddenPoint);
-
         if (vis !== this.visible) {
-
             // If called without an argument, toggle visibility
-            this.visible = this.options.visible = vis =
-                typeof vis === 'undefined' ? !this.visible : vis;
-            // update userOptions.data
-            (series.options.data as any)[series.data.indexOf(this)] =
-                this.options;
-
-            // Show and hide associated elements. This is performed
-            // regardless of redraw or not, because chart.redraw only
-            // handles full series.
-            ['graphic', 'dataLabel', 'connector'].forEach(
-                (key: string): void => {
-                    if ((this as any)[key]) {
-                        (this as any)[key][vis ? 'show' : 'hide'](vis);
-                    }
-                }
-            );
-
-            if (this.legendItem) {
-                chart.legend.colorizeItem(this, vis);
-            }
-
-            // #4170, hide halo after hiding point
-            if (!vis && this.state === 'hover') {
-                this.setState('');
-            }
-
-            // Handle ignore hidden slices
-            if (ignoreHiddenPoint) {
-                series.isDirty = true;
-            }
-
-            if (redraw) {
-                chart.redraw();
-            }
+            this.update({
+                visible: vis ?? !this.visible
+            }, redraw, void 0, false);
         }
     }
 

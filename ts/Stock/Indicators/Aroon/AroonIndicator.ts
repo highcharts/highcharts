@@ -153,11 +153,11 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AroonPoint> = void 0 as any;
+    public data!: Array<AroonPoint>;
 
-    public options: AroonOptions = void 0 as any;
+    public options!: AroonOptions;
 
-    public points: Array<AroonPoint> = void 0 as any;
+    public points!: Array<AroonPoint>;
 
     /* *
      *
@@ -228,7 +228,7 @@ class AroonIndicator extends SMAIndicator {
 
 interface AroonIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointArrayMap: Array<keyof AroonPoint>;
     pointValKey: string;
     pointClass: typeof AroonPoint;

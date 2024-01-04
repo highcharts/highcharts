@@ -49,9 +49,9 @@ class FlagsPoint extends ColumnPoint {
 
     public anchorX?: number;
 
-    public options: FlagsPointOptions = void 0 as any;
+    public options!: FlagsPointOptions;
 
-    public series: FlagsSeries = void 0 as any;
+    public series!: FlagsSeries;
 
     public fillColor?: ColorType;
 

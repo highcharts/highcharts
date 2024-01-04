@@ -6,7 +6,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 100;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-200 - latin */
@@ -15,7 +15,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 200;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-300 - latin */
@@ -24,7 +24,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 300;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-regular - latin */
@@ -33,7 +33,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 400;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-500 - latin */
@@ -42,7 +42,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 500;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-600 - latin */
@@ -51,7 +51,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 600;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2");
 }
 
 /* ibm-plex-sans-700 - latin */
@@ -60,22 +60,115 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 700;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@c954a915b117ed0a80dbb48a08d9ade98da49bee/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2");
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2");
 }
 
 body,
 #demo-content {
-    background-color: #fff;
+    /* stylelint-disable max-line-length */
+    background: var(--diamond, linear-gradient(to bottom right, #474554 5%, #1f1e24 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 5%, #1f1e24 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 5%, #1f1e24 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 5%, #1f1e24 50%) top right / 50% 50% no-repeat);
+    /* stylelint-enable */
+    background-color: transparent;
+    margin: 0;
+
+    /* background-color: black;
+    color: white; */
+}
+
+form {
+    margin-top: 800px;
+}
+
+#promo {
+    position: relative;
+}
+
+#sale {
+    position: absolute;
+    z-index: 1000;
+    left: -70px;
+    top: -82px;
+    width: 148px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#sale img {
+    width: auto;
+    margin-left: 0;
+    margin-top: 0;
+    color: white;
+}
+
+#sale #discount {
+    margin-bottom: 10px;
+}
+
+#sale #logo-type {
+    margin-bottom: 12px;
+}
+
+#sale #icon {
+    display: none;
+}
+
+#sale p {
+    font-size: 20px;
+    margin: -10px 0 0;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
+#sale #dash-button {
+    background-color: #047857;
+    padding: 4px 8px;
+    color: white;
+    border-radius: 4px;
+    margin: 4px 20px;
+    width: auto;
+    display: block;
+    justify-self: center;
+}
+
+#sale #dash-button a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.6rem;
+    padding-top: 4px;
+    display: block;
+}
+
+#sale #date {
+    font-size: 11px;
+    text-transform: uppercase;
+    margin: 30px 0 0;
+    color: #fff;
+    width: 100%;
+    font-weight: bold;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+}
+
+#sale span {
+    display: none;
+}
+
+#sale #terms.labels span.text,
+#sale #terms.labels a {
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    color: #fff;
+    font-weight: 300;
+    font-size: 0.65rem;
+    opacity: 1;
 }
 
 #venn {
     width: 100%;
     max-height: 800px;
-
-    /* padding: 0 0 32px; */
-    /* stylelint-disable max-line-length */
-    background: linear-gradient(to bottom right, #474554 25%, #1f1e24 41%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 25%, #1f1e24 41%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 25%, #1f1e24 41%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 25%, #1f1e24 41%) top right / 50% 50% no-repeat;
-    /* stylelint-enable */
+    position: absolute;
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     text-align: center;
 }
@@ -135,18 +228,44 @@ body,
     color: #f0f0f0;
 }
 
-.tip .tip-box {
+.tip .tip-box,
+#tip {
     fill: #46465c;
     stroke: transparent;
     color: #f0f0f0;
+    max-width: 200px;
+    width: 200px;
+}
+
+#tip {
+    background-color: #46465c;
+    border-radius: 4px;
+    border: 1px solid #acabba;
+    padding: 12px;
+    font-size: 0.8rem;
+    line-height: 1rem;
+    position: absolute;
+    left: -90px;
+    top: 90px;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 100;
     max-width: 300px;
     width: 300px;
+}
+
+#tip a {
+    color: #f0f0f0;
+}
+
+#tip a:hover {
+    color: #ccc;
 }
 
 .highcharts-tooltip-box {
     stroke-width: 1px;
     fill: #46465c;
-    stroke: #46465c;
+    stroke: #acabba;
     fill-opacity: 1;
 }
 
@@ -192,6 +311,7 @@ body,
 
 .labels span.text:hover {
     font-weight: 600;
+    cursor: pointer;
 }
 
 .labels img {
@@ -219,7 +339,7 @@ body,
     width: 30px;
     height: 44px;
     margin-top: 65px;
-    margin-left: 0;
+    margin-left: -10px;
 }
 
 #customize img {
@@ -283,16 +403,12 @@ body,
     stroke: transparent;
 }
 
-.highcharts-pane {
-    fill-opacity: 0.8;
-}
-
 .highcharts-series-inactive {
     opacity: 1 !important;
 }
 
 .highcharts-venn-series .highcharts-point {
-    fill-opacity: 0.8;
+    fill-opacity: 1;
     stroke-opacity: 0;
 }
 
@@ -342,6 +458,13 @@ body,
     opacity: 1;
 }
 
+#venn.sale .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(6) {
+    fill: url(#ffflux-gradient);
+    fill: black;
+    opacity: 1;
+    fill-opacity: 1;
+}
+
 .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(7) {
     fill: #8f98dd;
     opacity: 1;
@@ -352,8 +475,23 @@ body,
     opacity: 1;
 }
 
+#venn.sale .highcharts-series-group .highcharts-venn-series path.highcharts-point:nth-of-type(8) {
+    fill: url(#ffflux-gradient);
+    fill: black;
+    fill: #1b2129;
+    opacity: 1;
+    fill-opacity: 1;
+}
+
 .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
     fill: url(#ffflux-gradient);
+    fill-opacity: 1;
+}
+
+#venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(9) {
+    fill: url(#ffflux-gradient);
+    fill: red;
+    fill: url(#g964);
     fill-opacity: 1;
 }
 
@@ -367,89 +505,216 @@ body,
     visibility: hidden;
 }
 
-@media screen  and (min-width: 550px) {
-    .highcharts-container {
-        height: 580px;
-    }
-
-    #bigdeal img {
-        width: 239px;
-        height: 146px;
-        margin-left: -10px;
-    }
-
-    #curve img {
-        width: 60px;
-        height: 50px;
-    }
-
-    #money img {
-        width: 50px;
-        height: 45px;
-    }
-
-    #dataviz img {
-        width: 40px;
-        height: 54px;
-        margin-top: 35px;
-        margin-left: -10px;
-    }
-
-    #customize img {
-        width: 47px;
-        height: 40px;
-    }
-
-    #products span {
-        color: #fff;
-    }
-
-    #products img {
-        width: 45px;
-        height: 45px;
-        margin-top: 50px;
-    }
-
-    #collection img {
-        width: 198px;
-        height: 41px;
-    }
-
-    #creativity img {
-        width: 37px;
-        height: 50px;
-    }
-
-    #frameworks img {
-        width: 42px;
-        height: 50px;
-        margin-left: unset;
-    }
+#venn.sale .highcharts-series-group .highcharts-venn-series .highcharts-point:nth-of-type(11) {
+    opacity: 1;
+    visibility: visible;
+    fill: url(#ffflux-gradient);
+    fill: #1b2129;
 }
 
-@media screen  and (min-width: 768px) {
-    .venntip img {
-        max-width: 42px;
-        max-height: 42px;
-        padding: 4px;
+@media screen  and (min-width: 550px) {
+    #sale {
+        position: absolute;
+        z-index: 1000;
+        left: -84px;
+        top: -140px;
+        width: 168px;
     }
 
-    .highcharts-container {
-        height: 800px;
+    #sale img {
+        width: auto;
+        margin-left: 0;
+        margin-top: 10px;
     }
 
-    .labels span.text {
-        opacity: 1;
+    #sale #icon {
+        display: block;
+        margin-top: -20px;
     }
 
-    .labels img {
-        margin-top: 0;
+    #sale #logo-type {
+        margin-top: -20px;
     }
 
-    #bigdeal img {
-        width: 239px;
-        height: 146px;
-        margin-left: -16px;
-        margin-top: 12px;
+    #sale span {
+        display: none;
+    }
+
+    #sale #date {
+        font-size: 12px;
+        margin: 10px 0 0;
+    }
+
+    #sale #dash-button {
+        padding: 6px 8px;
+        margin: 10px 12px;
+        width: auto;
+    }
+
+    #sale #dash-button a {
+        font-size: 0.8rem;
+        padding-top: 4px;
+    }
+
+    #sale p {
+        font-size: 28px;
+        margin: -10px 0 0;
+        color: #fff;
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    }
+
+    @media screen  and (min-width: 550px) {
+        #tip {
+            left: -60px;
+            top: 170px;
+        }
+
+        .highcharts-container {
+            height: 580px;
+        }
+
+        #bigdeal img {
+            width: 239px;
+            height: 146px;
+            margin-left: -10px;
+        }
+
+        #curve img {
+            width: 60px;
+            height: 50px;
+        }
+
+        #money img {
+            width: 50px;
+            height: 45px;
+        }
+
+        #dataviz img {
+            width: 40px;
+            height: 54px;
+            margin-top: 40px;
+            margin-left: -10px;
+        }
+
+        #customize img {
+            width: 47px;
+            height: 40px;
+        }
+
+        #products span {
+            color: #fff;
+        }
+
+        #products img {
+            width: 45px;
+            height: 45px;
+            margin-top: 50px;
+        }
+
+        #collection img {
+            width: 198px;
+            height: 41px;
+        }
+
+        #creativity img {
+            width: 37px;
+            height: 50px;
+        }
+
+        #frameworks img {
+            width: 42px;
+            height: 50px;
+            margin-left: unset;
+        }
+    }
+
+    @media screen  and (min-width: 768px) {
+        #tip {
+            left: -40px;
+            top: 220px;
+        }
+
+        #sale {
+            position: absolute;
+            z-index: 1000;
+            left: -122px;
+            top: -172px;
+            width: 248px;
+        }
+
+        #sale #dash-button {
+            padding: 8px 12px;
+            margin: 10px 35px;
+            width: auto;
+        }
+
+        #sale #dash-button a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding-top: 4px;
+            display: block;
+        }
+
+        #sale img {
+            width: auto;
+            margin-left: 0;
+            margin-top: -10px;
+            justify-self: center;
+        }
+
+        #sale #logo-type {
+            margin-top: -20px;
+            margin-bottom: 10px;
+        }
+
+        #sale p {
+            font-size: 35px;
+        }
+
+        #sale span {
+            display: block;
+        }
+
+        #sale #date {
+            font-size: 14px;
+            margin: -18px 0 0;
+        }
+
+        #venn {
+            margin-top: -80px;
+        }
+
+        .venntip img {
+            max-width: 42px;
+            max-height: 42px;
+            padding: 4px;
+        }
+
+        .highcharts-container {
+            height: 800px;
+        }
+
+        .labels span.text {
+            opacity: 1;
+        }
+
+        .labels img {
+            margin-top: 0;
+        }
+
+        #bigdeal img {
+            width: 239px;
+            height: 146px;
+            margin-left: -16px;
+            margin-top: 12px;
+        }
+
+        #dataviz img {
+            margin-top: 20px;
+        }
     }
 }

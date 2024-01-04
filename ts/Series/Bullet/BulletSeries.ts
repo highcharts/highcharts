@@ -66,13 +66,13 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<BulletPoint> = void 0 as any;
+    public data!: Array<BulletPoint>;
 
-    public options: BulletSeriesOptions = void 0 as any;
+    public options!: BulletSeriesOptions;
 
-    public points: Array<BulletPoint> = void 0 as any;
+    public points!: Array<BulletPoint>;
 
-    public targetData: Array<number> = void 0 as any;
+    public targetData!: Array<number>;
 
     /* *
      *

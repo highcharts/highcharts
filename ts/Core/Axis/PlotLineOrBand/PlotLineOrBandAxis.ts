@@ -22,11 +22,14 @@ import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
+import H from '../../Globals.js';
+const { composed } = H;
 import U from '../../Utilities.js';
 const {
     erase,
     extend,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -83,14 +86,6 @@ namespace PlotLineOrBandAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -116,7 +111,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band.
+     * The added plot band, or `undefined` if the options are not valid.
      */
     function addPlotBand(
         this: Composition,
@@ -192,7 +187,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line.
+     * The added plot line, or `undefined` if the options are not valid.
      */
     function addPlotLine(
         this: Composition,
@@ -209,11 +204,9 @@ namespace PlotLineOrBandAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (!PlotLineOrBandClass) {
+        if (pushUnique(composed, compose)) {
             PlotLineOrBandClass = PlotLineOrBandType;
-        }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
             extend(
                 AxisClass.prototype as Composition,
                 {
@@ -318,7 +311,7 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-                (result as any).isFlat = isFlat;
+                result.isFlat = isFlat;
             }
 
         }

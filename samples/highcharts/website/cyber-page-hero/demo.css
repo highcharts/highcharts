@@ -4,7 +4,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 100;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-200 - latin */
@@ -13,7 +13,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 200;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-300 - latin */
@@ -22,7 +22,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 300;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-regular - latin */
@@ -31,7 +31,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 400;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-500 - latin */
@@ -40,7 +40,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 500;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-600 - latin */
@@ -49,7 +49,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 600;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* ibm-plex-sans-700 - latin */
@@ -58,7 +58,7 @@
     font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 700;
-    src: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@e6ac32f5e1364993a9ae3322bebb9598ac147d02/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 * {
@@ -87,6 +87,9 @@ body,
 }
 
 body {
+    /* stylelint-disable max-line-length */
+    background: var(--diamond, linear-gradient(to bottom right, #474554 5%, #1f1e24 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #474554 5%, #1f1e24 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #474554 5%, #1f1e24 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #474554 5%, #1f1e24 50%) top right / 50% 50% no-repeat);
+    /* stylelint-enable */
     background-color: transparent;
     height: 100%;
 
@@ -251,7 +254,12 @@ body {
     z-index: 1000;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.8rem;
-    visibility: hidden;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
 }
 
 @media screen  and (min-width: 360px) {

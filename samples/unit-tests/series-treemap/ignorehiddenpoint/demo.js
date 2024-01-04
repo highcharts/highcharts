@@ -66,9 +66,9 @@ QUnit.test('ignoreHiddenPoint: false.', function (assert) {
     );
     point.setVisible(false);
     assert.strictEqual(
-        !!point.graphic.element,
-        true,
-        'Point hidden. Point graphic should still be drawn.'
+        typeof point.graphic,
+        'undefined',
+        'Point hidden. Point graphic should be removed.'
     );
     point.setVisible(true);
     assert.strictEqual(

@@ -106,17 +106,17 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
-    public canvas?: HTMLCanvasElement = void 0 as any;
+    public canvas?: HTMLCanvasElement;
 
-    public colorAxis: ColorAxis = void 0 as any;
+    public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D = void 0 as any;
+    public context?: CanvasRenderingContext2D;
 
-    public data: Array<HeatmapPoint> = void 0 as any;
+    public data!: Array<HeatmapPoint>;
 
-    public options: HeatmapSeriesOptions = void 0 as any;
+    public options!: HeatmapSeriesOptions;
 
-    public points: Array<HeatmapPoint> = void 0 as any;
+    public points!: Array<HeatmapPoint>;
 
     public valueData?: Array<number>;
 

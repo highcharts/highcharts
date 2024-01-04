@@ -58,9 +58,9 @@ class TimelinePoint extends LinePoint {
 
     public label?: string;
 
-    public options: TimelinePointOptions = void 0 as any;
+    public options!: TimelinePointOptions;
 
-    public series: TimelineSeries = void 0 as any;
+    public series!: TimelineSeries;
 
     public userDLOptions?: TimelineDataLabelOptions;
 
@@ -198,13 +198,11 @@ class TimelinePoint extends LinePoint {
         return [];
     }
 
-    public init(): TimelinePoint {
-        const point = super.init.apply(this, arguments) as TimelinePoint;
+    public constructor(series: TimelineSeries, options: TimelinePointOptions) {
+        super(series, options);
 
-        point.name = pick(point.name, 'Event');
-        point.y = 1;
-
-        return point;
+        this.name ??= 'Event';
+        this.y = 1;
     }
 
     public isValid(): boolean {

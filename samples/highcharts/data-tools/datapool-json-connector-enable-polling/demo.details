@@ -1,0 +1,7 @@
+---
+ name: DataPool json connector
+ authors:
+   - Karol Kolodziej
+ js_wrap: b
+ skipTest: true
+...

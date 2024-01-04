@@ -26,22 +26,17 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 import Point from '../../Core/Series/Point';
 const {
     addEvent,
     extend,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
 
 /* *
  *
@@ -62,7 +57,7 @@ function compose(
 
     if (
         TooltipClass &&
-        U.pushUnique(composedMembers, TooltipClass)
+        pushUnique(composed, compose)
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }

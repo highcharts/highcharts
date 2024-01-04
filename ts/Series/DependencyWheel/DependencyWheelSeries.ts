@@ -70,15 +70,15 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<DependencyWheelPoint> = void 0 as any;
+    public data!: Array<DependencyWheelPoint>;
 
-    public options: DependencyWheelSeriesOptions = void 0 as any;
+    public options!: DependencyWheelSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
-    public nodes: Array<DependencyWheelPoint> = void 0 as any;
+    public nodes!: Array<DependencyWheelPoint>;
 
-    public points: Array<DependencyWheelPoint> = void 0 as any;
+    public points!: Array<DependencyWheelPoint>;
 
     /* *
      *

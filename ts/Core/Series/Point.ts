@@ -114,6 +114,33 @@ class Point {
      *
      * */
 
+    public category!: (number|string);
+    public color?: ColorType;
+    public colorIndex?: number;
+    public dataLabels?: Array<SVGElement|SVGLabel>;
+    public destroyed?: boolean;
+    public formatPrefix: string = 'point';
+    public graphic?: SVGElement;
+    public graphics?: Array<SVGElement|undefined>;
+    public id!: string;
+    public isNew?: boolean;
+    public isNull?: boolean;
+    public marker?: PointMarkerOptions;
+    public name!: string;
+    public nonZonedColor?: ColorType;
+    public options!: PointOptions;
+    public percentage?: number;
+    public selected?: boolean;
+    public series!: Series;
+    public shapeArgs?: SVGAttributes;
+    public shapeType?: string;
+    public startXPos?: number;
+    public state?: StatesOptionsKey;
+    public total?: number;
+    public visible: boolean = true;
+    public x!: number;
+    public y?: (number|null);
+
     /**
      * For categorized axes this property holds the category name for the
      * point. For other axes it holds the X value.
@@ -121,29 +148,6 @@ class Point {
      * @name Highcharts.Point#category
      * @type {number|string}
      */
-    public category: (number|string) = void 0 as any;
-
-    public color?: ColorType;
-
-    public colorIndex?: number;
-
-    public dataLabels?: Array<SVGElement|SVGLabel>;
-
-    public destroyed = false;
-
-    public formatPrefix: string = 'point';
-
-    public graphic?: SVGElement;
-
-    public graphics?: Array<SVGElement|undefined>;
-
-    public id: string = void 0 as any;
-
-    public isNew?: boolean;
-
-    public isNull: boolean = false;
-
-    public marker?: PointMarkerOptions;
 
     /**
      * The name of the point. The name can be given as the first position of the
@@ -168,9 +172,6 @@ class Point {
      * @name Highcharts.Point#name
      * @type {string}
      */
-    public name: string = void 0 as any;
-
-    public nonZonedColor?: ColorType;
 
     /**
      * The point's options as applied in the initial configuration, or
@@ -188,7 +189,6 @@ class Point {
      * @name Highcharts.Point#options
      * @type {Highcharts.PointOptionsObject}
      */
-    public options: PointOptions = void 0 as any;
 
     /**
      * The percentage for points in a stacked series, pies or gauges.
@@ -196,9 +196,6 @@ class Point {
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
      */
-    public percentage?: number = void 0;
-
-    public selected?: boolean = false;
 
     /**
      * The series object associated with the point.
@@ -206,7 +203,6 @@ class Point {
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-    public series: Series = void 0 as any;
 
     /**
      * The attributes of the rendered SVG shape like in `column` or `pie`
@@ -216,13 +212,6 @@ class Point {
      * @name Highcharts.Point#shapeArgs
      * @type {Readonly<Highcharts.SVGAttributes>|undefined}
      */
-    public shapeArgs?: SVGAttributes = void 0;
-
-    public shapeType?: string;
-
-    public startXPos?: number;
-
-    public state?: StatesOptionsKey;
 
     /**
      * The total of values in either a stack for stacked series, or a pie in a
@@ -231,7 +220,6 @@ class Point {
      * @name Highcharts.Point#total
      * @type {number|undefined}
      */
-    public total?: number = void 0;
 
     /**
      * For certain series types, like pie charts, where individual points can
@@ -241,11 +229,6 @@ class Point {
      * @type {boolean}
      * @default true
      */
-    public visible: boolean = true;
-
-    public x: number = void 0 as any;
-
-    public y?: (number|null);
 
     /* *
      *
@@ -713,18 +696,17 @@ class Point {
      *
      * @emits Highcharts.Point#event:afterInit
      */
-    public init(
+    public constructor(
         series: Series,
         options: (PointOptions|PointShortOptions),
         x?: number
-    ): Point {
-
+    ) {
         this.series = series;
 
         this.applyOptions(options, x);
 
         // Add a unique ID to the point if none is assigned
-        this.id = defined(this.id) ? this.id : uniqueKey();
+        this.id ??= uniqueKey();
 
         this.resolveColor();
 
@@ -732,7 +714,6 @@ class Point {
 
         fireEvent(this, 'afterInit');
 
-        return this;
     }
 
     /**

@@ -41,10 +41,10 @@ class DumbbellPoint extends AreaRangePoint {
      *
      * */
 
-    public series: DumbbellSeries = void 0 as any;
-    public options: DumbbellPointOptions = void 0 as any;
+    public series!: DumbbellSeries;
+    public options!: DumbbellPointOptions;
     public connector?: SVGElement;
-    public pointWidth: number = void 0 as any;
+    public pointWidth!: number;
 
     /* *
      *

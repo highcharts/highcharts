@@ -464,23 +464,23 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<SunburstPoint> = void 0 as any;
+    public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel: Record<string, SunburstSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
 
-    public nodeMap: Record<string, SunburstNode> = void 0 as any;
+    public nodeMap!: Record<string, SunburstNode>;
 
-    public options: SunburstSeriesOptions = void 0 as any;
+    public options!: SunburstSeriesOptions;
 
-    public points: Array<SunburstPoint> = void 0 as any;
+    public points!: Array<SunburstPoint>;
 
-    public shapeRoot?: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeRoot?: SunburstNode.NodeValuesObject;
 
-    public startAndEndRadians: CU.RadianAngles = void 0 as any;
+    public startAndEndRadians!: CU.RadianAngles;
 
-    public tree: SunburstNode = void 0 as any;
+    public tree!: SunburstNode;
 
     /* *
      *
@@ -497,7 +497,7 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return super.alignDataLabel(point, dataLabel, labelOptions);
+        return super.alignDataLabel.apply(this, arguments);
     }
 
     /**
@@ -929,12 +929,12 @@ class SunburstSeries extends TreemapSeries {
         series.mapOptionsToLevel = mapOptionsToLevel;
 
         // #10669 - verify if all nodes have unique ids
-        for (const child of series.data) {
-            if (nodeIds[child.id]) {
+        for (const point of series.points) {
+            if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
             // map
-            nodeIds[child.id] = true;
+            nodeIds[point.id] = true;
         }
 
         // reset object

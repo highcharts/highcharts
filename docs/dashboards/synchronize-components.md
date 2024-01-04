@@ -10,15 +10,32 @@ and highlighting specific data.
 To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling).
 
 The events, that can be synchronized between components are:
-* [visibility](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
-* [extremes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
-* [highlight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
-* [crossfilter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter/) (Can be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
+* [visibility](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#visibility)
+* [extremes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#extremes)
+* [highlight](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#highlight)
+* [crossfilter](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#crossfilter) (Can be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
 
 ### Sync declaration
-```
+
+```js
 sync: {
-  highlight: true
+    crossfilter: true
+}
+```
+
+The above is a shortened way that in which you cannot set additional options if
+a given type of synchronization provides them. Only those enabled by default are
+set.
+
+If you would like to enable, for example, the `affectNavigator` option for the
+crossfilter sync, you must use a declaration like this:
+
+```js
+sync: {
+    crossfilter: {
+        enabled: true,
+        affectNavigator: true
+    }
 }
 ```
 

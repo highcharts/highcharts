@@ -33,6 +33,20 @@ There are some additional modules that you might want to include in your webpage
 ../highcharts.js
 ```
 
+If you are using npm, you can import the modules as follows:
+```js
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src';
+import HighchartsPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin';
+```
+
+Then you can use the `HighchartsPlugin` to connect the Highcharts component with the Dashboards.  
+It works similarly for other plugins, e.g. for the DataGrid.
+```js
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+```
+
 ### Get started
 
 Now you are ready to use Dashboards. Check out [Your first Dashboard](https://highcharts.com/docs/dashboards/your-first-dashboard) to get started.

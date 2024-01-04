@@ -39,6 +39,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -90,14 +92,6 @@ declare module '../../Core/Series/SeriesOptions' {
         drilldown?: string;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -338,39 +332,15 @@ function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
-    const {
-            column: ColumnSeriesClass,
-            map: MapSeriesClass,
-            pie: PieSeriesClass
-        } = seriesTypes,
-        PointClass = SeriesClass.prototype.pointClass;
 
-    if (ColumnSeriesClass && pushUnique(composedMembers, ColumnSeriesClass)) {
-        const columnProto = ColumnSeriesClass.prototype;
-
-        columnProto.animateDrilldown = columnAnimateDrilldown;
-        columnProto.animateDrillupFrom = columnAnimateDrillupFrom;
-        columnProto.animateDrillupTo = columnAnimateDrillupTo;
-    }
-
-    if (MapSeriesClass && pushUnique(composedMembers, MapSeriesClass)) {
-        const mapProto = MapSeriesClass.prototype;
-
-        mapProto.animateDrilldown = mapAnimateDrilldown;
-        mapProto.animateDrillupFrom = mapAnimateDrillupFrom;
-        mapProto.animateDrillupTo = mapAnimateDrillupTo;
-    }
-
-    if (PieSeriesClass && pushUnique(composedMembers, PieSeriesClass)) {
-        const pieProto = PieSeriesClass.prototype;
-
-        pieProto.animateDrilldown = pieAnimateDrilldown;
-        pieProto.animateDrillupFrom = columnAnimateDrillupFrom;
-        pieProto.animateDrillupTo = columnAnimateDrillupTo;
-    }
-
-    if (pushUnique(composedMembers, PointClass)) {
-        const pointProto = PointClass.prototype;
+    if (pushUnique(composed, compose)) {
+        const PointClass = SeriesClass.prototype.pointClass,
+            pointProto = PointClass.prototype,
+            {
+                column: ColumnSeriesClass,
+                map: MapSeriesClass,
+                pie: PieSeriesClass
+            } = seriesTypes;
 
         addEvent(PointClass, 'afterInit', onPointAfterInit);
         addEvent(PointClass, 'afterSetState', onPointAfterSetState);
@@ -378,15 +348,37 @@ function compose(
 
         pointProto.doDrilldown = pointDoDrilldown;
         pointProto.runDrilldown = pointRunDrilldown;
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(
             SeriesClass,
             'afterDrawDataLabels',
             onSeriesAfterDrawDataLabels
         );
         addEvent(SeriesClass, 'afterDrawTracker', onSeriesAfterDrawTracker);
+
+        if (ColumnSeriesClass) {
+            const columnProto = ColumnSeriesClass.prototype;
+
+            columnProto.animateDrilldown = columnAnimateDrilldown;
+            columnProto.animateDrillupFrom = columnAnimateDrillupFrom;
+            columnProto.animateDrillupTo = columnAnimateDrillupTo;
+        }
+
+        if (MapSeriesClass) {
+            const mapProto = MapSeriesClass.prototype;
+
+            mapProto.animateDrilldown = mapAnimateDrilldown;
+            mapProto.animateDrillupFrom = mapAnimateDrillupFrom;
+            mapProto.animateDrillupTo = mapAnimateDrillupTo;
+        }
+
+        if (PieSeriesClass) {
+            const pieProto = PieSeriesClass.prototype;
+
+            pieProto.animateDrilldown = pieAnimateDrilldown;
+            pieProto.animateDrillupFrom = columnAnimateDrillupFrom;
+            pieProto.animateDrillupTo = columnAnimateDrillupTo;
+        }
     }
 
 }

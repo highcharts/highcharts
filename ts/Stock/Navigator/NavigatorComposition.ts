@@ -25,6 +25,10 @@ const {
     defaultOptions,
     setOptions
 } = D;
+import H from '../../Core/Globals.js';
+const {
+    composed
+} = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
@@ -33,7 +37,8 @@ const { getRendererType } = RendererRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend
+    extend,
+    pushUnique
 } = U;
 
 /* *
@@ -54,14 +59,6 @@ declare module '../../Core/Series/SeriesLike' {
         navigatorSeries?: Series;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -86,15 +83,15 @@ function compose(
 ): void {
     NavigatorAxisAdditions.compose(AxisClass);
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composed, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
-    if (U.pushUnique(composedMembers, getRendererType)) {
+    if (pushUnique(composed, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
     }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
+    if (pushUnique(composed, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 

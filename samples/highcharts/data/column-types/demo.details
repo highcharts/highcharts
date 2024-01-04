@@ -1,0 +1,6 @@
+---
+ name: Data module column types demo
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

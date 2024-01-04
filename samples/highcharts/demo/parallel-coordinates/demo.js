@@ -1,7 +1,7 @@
 (async () => {
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/marathon.json'
+        'https://www.highcharts.com/samples/data/marathon.json'
     ).then(response => response.json());
 
 

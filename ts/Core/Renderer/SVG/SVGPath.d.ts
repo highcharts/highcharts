@@ -15,7 +15,9 @@
  * */
 
 export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
-    // nothing here yet
+    isFlat?: boolean;
+    xBounds?: Array<number>;
+    yBounds?: Array<number>
 }
 
 /* *

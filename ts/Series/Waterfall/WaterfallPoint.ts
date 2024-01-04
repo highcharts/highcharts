@@ -47,9 +47,9 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     public minPointLengthOffset?: number;
 
-    public options: WaterfallPointOptions = void 0 as any;
+    public options!: WaterfallPointOptions;
 
-    public series: WaterfallSeries = void 0 as any;
+    public series!: WaterfallSeries;
 
     /* *
      *

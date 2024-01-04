@@ -41,6 +41,16 @@ class Sync {
      * Constructor
      *
      * */
+
+    /**
+     * Creates an instance of the sync class.
+     *
+     * @param component
+     * The component to which the emitters and handlers are attached.
+     *
+     * @param syncHandlers
+     * The emitters and handlers to use for each event.
+     */
     constructor(
         component: ComponentType,
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
@@ -57,10 +67,12 @@ class Sync {
      *  Properties
      *
      * */
+
     /**
      * Array of listeners that should be removed when the sync is stopped.
      */
     private listeners: Array<Function>;
+
     /**
      * Default handlers for the sync class. This property is extended by
      * different Components, where default syncs are added. Allows overwriting
@@ -72,6 +84,7 @@ class Sync {
      * Registry for the sync handlers used within the component.
      */
     private registeredSyncHandlers: Record<SyncHandler['id'], SyncHandler>;
+
     /**
      * Registry for the sync emitters used within the component.
      */
@@ -93,16 +106,6 @@ class Sync {
      */
     public isSyncing: boolean;
 
-    /**
-     * Creates an instance of the sync class.
-     *
-     * @param component
-     * The component to which the emitters and handlers are attached.
-     *
-     * @param syncHandlers
-     * The emitters and handlers to use for each event.
-     */
-
     /* *
      *
      *  Functions
@@ -110,8 +113,9 @@ class Sync {
      * */
     /**
      * Add new emitter to the registered emitters.
+     *
      * @param emitter
-     The emitter to register.
+     * The emitter to register.
      */
     public registerSyncEmitter(emitter: SyncEmitter): void {
         const { id } = emitter;
@@ -130,6 +134,7 @@ class Sync {
     public isRegisteredEmitter(id: string): boolean {
         return Boolean(this.registeredSyncEmitters[id]);
     }
+
     /**
      * Register new handler to the registered handlers.
      *
@@ -176,24 +181,16 @@ class Sync {
                             .handler as Sync.HandlerConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
+                // Create a tuple if the handler is a function.
                 if (typeof handlerConfig === 'function') {
-                    handlerConfig = [id, void 0, handlerConfig];
+                    handlerConfig = [id, handlerConfig];
                 }
 
                 const handler = new SyncHandler(...handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
 
-                    // TODO: workaround for now
-                    // we should only use register in the future
-                    if (handlerConfig[1] !== void 0) {
-                        handler.create(component);
-                    } else {
-                        handler.register(component);
-                    }
-
+                    handler.register(component);
                 }
             }
 
@@ -289,7 +286,6 @@ namespace Sync {
     export type HandlerConfig = (
         [
             SyncHandler['id'],
-            SyncHandler['presentationStateTrigger'],
             SyncHandler['func']
         ] |
         SyncHandler['func']
@@ -298,11 +294,18 @@ namespace Sync {
     export interface OptionsEntry {
 
         /**
+         * Whether the sync should be enabled.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+
+        /**
          * Responsible for communicating to the component group that the action
          * has been triggered on the component.
          *
-         * If `true` the default emitter will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default emitter will be used, if `false`
+         * or `null` it will be disabled
          */
         emitter?: EmitterConfig | null | boolean;
 
@@ -310,8 +313,8 @@ namespace Sync {
          * Responsible for _handling_ incoming action from the synced component
          * group.
          *
-         * If `true` the default handler will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default handler will be used, if `false`
+         * or `null` it will be disabled
          */
         handler?: HandlerConfig | null | boolean;
 

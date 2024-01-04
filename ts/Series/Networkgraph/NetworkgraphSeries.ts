@@ -120,13 +120,13 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
-    public data: Array<NetworkgraphPoint> = void 0 as any;
+    public data!: Array<NetworkgraphPoint>;
 
-    public nodes: Array<NetworkgraphPoint> = void 0 as any;
+    public nodes!: Array<NetworkgraphPoint>;
 
-    public options: NetworkgraphSeriesOptions = void 0 as any;
+    public options!: NetworkgraphSeriesOptions;
 
-    public points: Array<NetworkgraphPoint> = void 0 as any;
+    public points!: Array<NetworkgraphPoint>;
 
     public deferDataLabels: boolean = true;
 

@@ -114,7 +114,7 @@ function animObject(
  */
 function getDeferredAnimation(
     chart: Chart,
-    animation: (false|Partial<AnimationOptions>),
+    animation: (boolean|Partial<AnimationOptions>|undefined),
     series?: Series
 ): Partial<AnimationOptions> {
     const labelAnimation = animObject(animation),
@@ -125,7 +125,7 @@ function getDeferredAnimation(
     s.forEach((series): void => {
         const seriesAnim = animObject(series.options.animation);
 
-        defer = animation && defined(animation.defer) ?
+        defer = isObject(animation) && defined(animation.defer) ?
             labelAnimation.defer :
             Math.max(
                 defer,

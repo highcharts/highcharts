@@ -136,8 +136,8 @@ class Navigator {
      *
      * */
 
-    public baseSeries: Array<Series> = void 0 as any;
-    public chart: Chart = void 0 as any;
+    public baseSeries!: Array<Series>;
+    public chart!: Chart;
     public dragOffset?: number;
     public eventsToUnbind?: Array<Function>;
     public fixedExtreme?: (null|number);
@@ -145,40 +145,40 @@ class Navigator {
     public grabbedCenter?: number;
     public grabbedLeft?: boolean;
     public grabbedRight?: boolean;
-    public handles: Array<SVGElement> = void 0 as any;
+    public handles!: Array<SVGElement>;
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
-    public height: number = void 0 as any;
-    public left: number = void 0 as any;
+    public height!: number;
+    public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public navigatorEnabled: boolean = void 0 as any;
-    public navigatorGroup: SVGElement = void 0 as any;
-    public navigatorOptions: NavigatorOptions = void 0 as any;
-    public navigatorSeries: Series = void 0 as any;
-    public navigatorSize: number = void 0 as any;
-    public opposite: boolean = void 0 as any;
+    public navigatorEnabled!: boolean;
+    public navigatorGroup!: SVGElement;
+    public navigatorOptions!: NavigatorOptions;
+    public navigatorSeries!: Series;
+    public navigatorSize!: number;
+    public opposite!: boolean;
     public otherHandlePos?: number;
-    public outline: SVGElement = void 0 as any;
-    public range: number = void 0 as any;
-    public rendered: boolean = void 0 as any;
+    public outline!: SVGElement;
+    public range!: number;
+    public rendered!: boolean;
     public reversedExtremes?: boolean;
     public scrollbar?: Scrollbar;
     public scrollbarEnabled?: boolean;
     public scrollbarHeight = 0;
-    public scrollButtonSize: number = void 0 as any;
+    public scrollButtonSize!: number;
     public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
-    public shades: Array<SVGElement> = void 0 as any;
-    public size: number = void 0 as any;
+    public shades!: Array<SVGElement>;
+    public size!: number;
     public stickToMax?: boolean;
     public stickToMin?: boolean;
-    public top: number = void 0 as any;
+    public top!: number;
     public unbindRedraw?: Function;
-    public xAxis: NavigatorAxisComposition = void 0 as any;
-    public yAxis: NavigatorAxisComposition = void 0 as any;
-    public zoomedMax: number = void 0 as any;
-    public zoomedMin: number = void 0 as any;
+    public xAxis!: NavigatorAxisComposition;
+    public yAxis!: NavigatorAxisComposition;
+    public zoomedMax!: number;
+    public zoomedMin!: number;
 
     /* *
      *

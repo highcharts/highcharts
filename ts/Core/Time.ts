@@ -28,6 +28,7 @@ const {
     defined,
     error,
     extend,
+    isNumber,
     isObject,
     merge,
     objectEach,
@@ -397,44 +398,49 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
-            getTimezoneOffset = options.getTimezoneOffset,
-            moment = options.moment || (win as any).moment;
+            getTimezoneOffset = options.getTimezoneOffset;
 
         if (!this.useUTC) {
-            return function (timestamp: (number|Date)): number {
-                return new Date(
-                    timestamp.toString()
-                ).getTimezoneOffset() * 60000;
-            };
+            return (timestamp: (number|Date)): number => new Date(
+                timestamp.toString()
+            ).getTimezoneOffset() * 60000;
         }
 
         if (options.timezone) {
-            if (!moment) {
-                // getTimezoneOffset-function stays undefined because it depends
-                // on Moment.js
-                error(25);
+            return (timestamp: number | Date): number => {
 
-            } else {
-                return function (timestamp: (number|Date)): number {
-                    return -moment.tz(
-                        timestamp,
-                        options.timezone
-                    ).utcOffset() * 60000;
-                };
-            }
+                try {
+                    const [date, gmt, hours, colon, minutes = 0] =
+                        // eslint-disable-next-line new-cap
+                        Intl.DateTimeFormat('en', {
+                            timeZone: options.timezone,
+                            timeZoneName: 'shortOffset'
+                        })
+                            .format(timestamp)
+                            .split(/(GMT|:)/)
+                            .map(Number),
+                        offset = -(hours + minutes / 60) * 60 * 60000;
+
+                    // Possible future NaNs stop here
+                    if (isNumber(offset)) {
+                        return offset;
+                    }
+                } catch (e) {
+                    error(34);
+                }
+                return 0;
+
+            };
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && getTimezoneOffset) {
-            return function (timestamp: (number|Date)): number {
-                return getTimezoneOffset(timestamp.valueOf()) * 60000;
-            };
+            return (timestamp: (number|Date)): number =>
+                getTimezoneOffset(timestamp.valueOf()) * 60000;
         }
 
         // Last, use the `timezoneOffset` option if set
-        return function (): number {
-            return (time.timezoneOffset || 0) * 60000;
-        };
+        return (): number => (time.timezoneOffset || 0) * 60000;
     }
 
     /**
@@ -972,7 +978,6 @@ namespace Time {
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;
-        moment?: any;
     }
     export interface TimeFormatCallbackFunction {
         (timestamp: number): string;
@@ -1070,17 +1075,6 @@ export default Time;
  *
  * @return {number}
  * Timezone offset in minutes.
- */
-
-/**
- * Allows to manually load the `moment.js` library from Highcharts options
- * instead of the `window`.
- * In case of loading the library from a `script` tag,
- * this option is not needed, it will be loaded from there by default.
- *
- * @type      {Function}
- * @since     8.2.0
- * @apioption time.moment
  */
 
 ''; // keeps doclets above in JS file
