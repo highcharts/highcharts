@@ -31,7 +31,9 @@ The “Large”, “Medium”, and “Small” buttons change the width of the d
 
 The `Add Component` button allows the user to add a new component. When clicked, a sidebar appears, which lets you choose the type of component you want to add and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
 
-The sidebar lists the component types provided by the Dashboards API. Please note that [custom, user-defined components](https://www.highcharts.com/docs/dashboards/custom-component) will not be located there.
+The sidebar lists the component types provided by the Dashboards API but only the ones whose modules are loaded. If other types are needed, add the extra modules. The order and the components on the list can be changed by setting the `components` array in the `editMode` option - [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_EditMode_EditMode.EditMode.Toolbars#sidebar).
+
+In order to add other custom components to the list, please follow the [custom component guide](https://www.highcharts.com/docs/dashboards/custom-component).
 
 ![edit-mode-sidebar.png](edit-mode-sidebar.png)
 

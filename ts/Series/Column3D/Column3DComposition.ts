@@ -206,6 +206,11 @@ function columnSeriesTranslate3dShapes(
                 point2dPos.y = point.clientX || 0;
             }
 
+            // Crosshair positions
+            point.axisXpos = point2dPos.x;
+            point.axisYpos = point2dPos.y;
+            point.axisZpos = point2dPos.z;
+
             // Calculate and store point's position in 3D,
             // using perspective method.
             point.plot3d = perspective([point2dPos], chart, true, false)[0];

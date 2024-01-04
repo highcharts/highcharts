@@ -36,8 +36,6 @@ import type DataTableOptions from '../DataTableOptions';
  * Option of the DataConnector.
  */
 export interface DataConnectorOptions {
-
-
     /**
      * Options for the modifier that shall be applied to the table to create a
      * modified version. This modified version is available via the

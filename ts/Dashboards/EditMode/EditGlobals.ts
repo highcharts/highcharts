@@ -150,7 +150,14 @@ const EditGlobals: EditGlobals = {
         small: 'Small',
         style: 'Styles',
         title: 'Title',
-        viewFullscreen: 'View in full screen'
+        viewFullscreen: 'View in full screen',
+        sidebar: {
+            HTML: 'HTML',
+            layout: 'Layout',
+            Highcharts: 'Highcharts',
+            DataGrid: 'DataGrid',
+            KPI: 'KPI'
+        }
     }
 };
 
@@ -345,6 +352,10 @@ namespace EditGlobals {
          */
         settings: string;
         /**
+         * Options for the sidebar and its components.
+         */
+        sidebar:SidebarLangOptions
+        /**
          * @default 'Small'
          */
         small: string;
@@ -361,6 +372,30 @@ namespace EditGlobals {
          */
         viewFullscreen: string;
         [key: string]: any;
+    }
+
+    export interface SidebarLangOptions {
+        [key: string]: string;
+        /**
+         * @default 'HTML'
+         */
+        HTML: string;
+        /**
+         * @default 'Layout'
+         */
+        layout: string;
+        /**
+         * @default 'Highcharts'
+         */
+        Highcharts: string;
+        /**
+         * @default 'DataGrid'
+         */
+        DataGrid: string;
+        /**
+         * @default 'KPI'
+         */
+        KPI: string;
     }
 
     export interface LangAccessibilityOptions {

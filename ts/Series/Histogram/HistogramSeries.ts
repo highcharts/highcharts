@@ -35,8 +35,7 @@ const {
     correctFloat,
     extend,
     isNumber,
-    merge,
-    objectEach
+    merge
 } = U;
 
 /* ************************************************************************** *
@@ -217,7 +216,7 @@ class HistogramSeries extends ColumnSeries {
             data.push({
                 x: Number(key),
                 y: bins[key],
-                x2: correctFloat(Number(x) + binWidth)
+                x2: correctFloat(Number(key) + binWidth)
             });
         }
 
