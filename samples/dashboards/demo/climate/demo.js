@@ -402,7 +402,7 @@ async function setupBoard() {
                             },
                             select: {
                                 lineWidthPlus: 4,
-                                radiusPlus: 0
+                                radiusPlus: 2
                             }
                         },
                         symbol: 'mapmarker'
@@ -684,14 +684,20 @@ async function setupBoard() {
         });
     }
 
-    // Load initial city
-    await setupCity(board, activeCity, activeColumn, activeScale);
+    // Load cities
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
+        await setupCity(board, cityRows[i].city, activeColumn, activeScale);
+    }
+
+    // Initialize active city
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
-    // Load additional cities
-    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
-        if (cityRows[i].city !== activeCity) {
-            await setupCity(board, cityRows[i].city, activeColumn, activeScale);
+    // Select active city on map
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+    for (let idx = 0; idx < worldMap.data.length; idx++) {
+        if (worldMap.data[idx].name === activeCity) {
+            await worldMap.data[idx].select();
+            break;
         }
     }
 }
@@ -762,6 +768,7 @@ async function updateBoard(board, city, column, scale, newData) {
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const cityTable = await dataPool.getConnectorTable(city);
+    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
 
     const [
         timeRangeSelector,
@@ -807,24 +814,20 @@ async function updateBoard(board, city, column, scale, newData) {
     const rangeTable = selectionTable.modified;
     const rangeEnd = rangeTable.getRowCount() - 1;
 
-    // City geographical properties
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-
     // Update world map
     const mapPoints = worldMap.chart.series[1].data;
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
-        const city1 = mapPoints[i].name;
-        const elevation = citiesTable.getCellAsNumber(
-            'elevation',
-            citiesTable.getRowIndexBy('city', city1));
+        const cityName = mapPoints[i].name;
+        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
 
-        const pointTable = await dataPool.getConnectorTable(city1);
+        const pointTable = await dataPool.getConnectorTable(cityName);
+
         mapPoints[i].update({
             custom: {
-                elevation: elevation,
+                elevation: cityInfo.elevation,
                 yScale: scale
             },
             y: pointTable.modified.getCellAsNumber(
