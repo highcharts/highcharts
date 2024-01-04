@@ -62,6 +62,7 @@ require('./dist-upload.js');
 require('./dist-zip.js');
 require('./scripts.js');
 const scriptsCompile = require('../scripts-compile');
+const { distVerify } = require('../dist-verify.js');
 
 gulp.task(
     'dashboards/dist',
@@ -74,6 +75,6 @@ gulp.task(
         'dashboards/dist-zip',
         'dashboards/dist-productsjs',
         'dashboards/dist-release',
-        'dashboards/dist-verify'
+        () => distVerify({ dashboards: true })
     )
 );
