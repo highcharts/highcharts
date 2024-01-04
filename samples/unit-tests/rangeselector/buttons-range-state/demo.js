@@ -191,7 +191,7 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
     chart.rangeSelector.clickButton(2);
     assert.strictEqual(
         chart.fixedRange,
-        undefined,
-        'chart.fixedRange should be undefined if the clicked button is outside data range, #20327'
+        chart.xAxis[0].dataMax - chart.xAxis[0].dataMin,
+        'chart.fixedRange should be equal to maximum range if the clicked button is outside data range, #20327'
     );
 });
