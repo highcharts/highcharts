@@ -444,6 +444,7 @@ const configs: {
                             table, modifier.options as RangeModifierOptions
                         );
                     }
+
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
@@ -464,7 +465,8 @@ const configs: {
                             }
 
                             if (series?.visible && cursor.row !== void 0) {
-                                return series.points[cursor.row - offset];
+                                const point = series.data[cursor.row - offset];
+                                return point.graphic ? point : void 0;
                             }
                         }
                     }
@@ -480,7 +482,7 @@ const configs: {
 
                     const point = getHoveredPoint(e);
 
-                    if (!chart || !point ||
+                    if (!chart || !point?.isInside ||
                         // Abort if the affected chart is the same as the one
                         // that is currently affected manually.
                         point === chart.hoverPoint
@@ -510,7 +512,13 @@ const configs: {
                         );
                     }
 
-                    if (highlightOptions.highlightPoint) {
+                    if (highlightOptions.highlightPoint && (
+                        // If the tooltip is shared, the hover state is
+                        // already set on the point.
+                        !chart.tooltip?.shared &&
+                        highlightOptions.showTooltip ||
+                        !highlightOptions.showTooltip
+                    )) {
                         point.setState('hover');
                     }
 
@@ -534,33 +542,44 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (point && point === chart.hoverPoint) {
+                    if (!point?.isInside || point === chart.hoverPoint) {
                         return;
                     }
 
+                    let unhovered = false;
+                    const unhoverAllPoints = (): void => {
+                        // If the 'row' parameter is missing in the event
+                        // object, the unhovered point cannot be identified.
+
+                        const series = chart.series;
+                        const seriesLength = series.length;
+
+                        for (let i = 0; i < seriesLength; i++) {
+                            const points = chart.series[i].points;
+                            const pointsLength = points.length;
+
+                            for (let j = 0; j < pointsLength; j++) {
+                                points[j].setState();
+                            }
+                        }
+                    };
+
                     if (chart.tooltip && highlightOptions.showTooltip) {
                         chart.tooltip.hide();
+
+                        // Shared tooltip refresh always hovers points, so it's
+                        // important to unhover all points on cursor out.
+                        if (chart.tooltip.shared) {
+                            unhoverAllPoints();
+                            unhovered = true;
+                        }
                     }
 
-                    if (highlightOptions.highlightPoint) {
+                    if (highlightOptions.highlightPoint && !unhovered) {
                         if (point) {
                             point.setState();
                         } else {
-
-                            // If the 'row' parameter is missing in the event
-                            // object, the unhovered point cannot be identified.
-
-                            const series = chart.series;
-                            const seriesLength = series.length;
-
-                            for (let i = 0; i < seriesLength; i++) {
-                                const points = chart.series[i].points;
-                                const pointsLength = points.length;
-
-                                for (let j = 0; j < pointsLength; j++) {
-                                    points[j].setState();
-                                }
-                            }
+                            unhoverAllPoints();
                         }
                     }
 
