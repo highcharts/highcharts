@@ -212,10 +212,9 @@ class ControllablePath extends Controllable {
         ChartClass: typeof Chart,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const svgRendererProto = SVGRendererClass.prototype;
 
-        if (pushUnique(composed, this.compose)) {
-            const svgRendererProto = SVGRendererClass.prototype;
-
+        if (!svgRendererProto.addMarker) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
 
             svgRendererProto.addMarker = svgRendererAddMarker;

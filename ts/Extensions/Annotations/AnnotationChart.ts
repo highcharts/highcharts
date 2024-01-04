@@ -27,8 +27,6 @@ import type Pointer from '../../Core/Pointer';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -36,7 +34,6 @@ const {
     find,
     fireEvent,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -393,10 +390,10 @@ namespace AnnotationChart {
         ChartClass: typeof Chart,
         PointerClass: typeof Pointer
     ): void {
+        const chartProto = ChartClass.prototype as AnnotationChart;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as AnnotationChart,
-                pointerProto = PointerClass.prototype;
+        if (!chartProto.addAnnotation) {
+            const pointerProto = PointerClass.prototype;
 
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
 

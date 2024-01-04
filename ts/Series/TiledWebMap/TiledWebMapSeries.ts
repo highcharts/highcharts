@@ -155,7 +155,7 @@ class TiledWebMapSeries extends MapSeries {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'TiledWebMapSeries')) {
             addEvent(ChartClass, 'beforeMapViewInit', onChartBeforeMapViewInit);
         }
     }

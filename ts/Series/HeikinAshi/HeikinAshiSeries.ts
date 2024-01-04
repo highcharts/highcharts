@@ -144,7 +144,7 @@ class HeikinAshiSeries extends CandlestickSeries {
     ): void {
         CandlestickSeries.compose(SeriesClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HeikinAshi')) {
             addEvent(AxisClass, 'postProcessData', onAxisPostProcessData);
 
             addEvent(

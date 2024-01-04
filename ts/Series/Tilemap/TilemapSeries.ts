@@ -156,7 +156,7 @@ class TilemapSeries extends HeatmapSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'TilemapSeries')) {
             addEvent(
                 AxisClass,
                 'afterSetAxisTranslation',

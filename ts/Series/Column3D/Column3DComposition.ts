@@ -236,7 +236,7 @@ function compose(
     StackItemClass: typeof StackItem
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Column3D')) {
         const seriesProto = SeriesClass.prototype,
             stackItemProto = StackItemClass.prototype,
             {

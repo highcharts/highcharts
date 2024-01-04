@@ -165,7 +165,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'PieDataLabel')) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;

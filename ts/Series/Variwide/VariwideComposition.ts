@@ -71,7 +71,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Variwide')) {
         const tickProto = TickClass.prototype;
 
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);

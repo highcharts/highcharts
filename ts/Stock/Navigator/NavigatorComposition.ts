@@ -99,7 +99,7 @@ function compose(
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Navigator')) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
