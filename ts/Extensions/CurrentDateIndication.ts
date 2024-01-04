@@ -158,7 +158,7 @@ function compose(
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'CurrentDateIndication')) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
 
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);

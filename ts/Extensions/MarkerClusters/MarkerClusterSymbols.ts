@@ -24,9 +24,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import U from '../../Core/Utilities.js';
-const { pushUnique } = U;
-
 /* *
  *
  *  Declarations
@@ -103,13 +100,9 @@ function cluster(
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    symbols = SVGRendererClass.prototype.symbols;
 
-    if (pushUnique(modifiedMembers, compose)) {
-        symbols = SVGRendererClass.prototype.symbols;
-
-        symbols.cluster = cluster;
-    }
-
+    symbols.cluster = cluster;
 }
 
 /* *

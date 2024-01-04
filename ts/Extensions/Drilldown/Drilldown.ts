@@ -49,10 +49,7 @@ const { animObject } = A;
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
-const {
-    composed,
-    noop
-} = H;
+const { noop } = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
 import DrilldownSeries from './DrilldownSeries.js';
 import U from '../../Core/Utilities.js';
@@ -65,7 +62,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     removeEvent,
     syncTimeout
 } = U;
@@ -1013,12 +1009,13 @@ namespace Drilldown {
     ): void {
         DrilldownSeries.compose(SeriesClass, seriesTypes);
 
-        if (pushUnique(composed, compose)) {
-            const DrilldownChart = ChartClass as typeof ChartComposition,
-                SVGElementClass = SVGRendererClass.prototype.Element,
+        const DrilldownChart = ChartClass as typeof ChartComposition,
+            chartProto = DrilldownChart.prototype;
+
+        if (!chartProto.drillUp) {
+            const SVGElementClass = SVGRendererClass.prototype.Element,
                 addonProto = ChartAdditions.prototype,
                 axisProto = AxisClass.prototype,
-                chartProto = DrilldownChart.prototype,
                 elementProto = SVGElementClass.prototype,
                 tickProto = TickClass.prototype;
 

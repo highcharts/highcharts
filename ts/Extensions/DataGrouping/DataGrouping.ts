@@ -57,7 +57,7 @@ function compose(
 
     if (
         TooltipClass &&
-        pushUnique(composed, compose)
+        pushUnique(composed, 'DataGrouping')
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }

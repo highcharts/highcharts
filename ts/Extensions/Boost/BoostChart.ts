@@ -76,7 +76,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && pushUnique(composed, compose)) {
+    if (wglMode && pushUnique(composed, 'Boost.Chart')) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 

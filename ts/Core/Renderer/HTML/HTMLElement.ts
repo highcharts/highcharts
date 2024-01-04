@@ -25,15 +25,12 @@ import type {
 import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
-import H from '../../Globals.js';
-const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
     css,
     defined,
     extend,
-    pushUnique,
     pInt
 } = U;
 
@@ -106,19 +103,16 @@ class HTMLElement extends SVGElement {
     public static compose<T extends typeof SVGElement>(
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
+        const htmlElementProto = HTMLElement.prototype,
+            svgElementProto = SVGElementClass.prototype;
 
-        if (pushUnique(composed, this.compose)) {
-            const htmlElementProto = HTMLElement.prototype,
-                svgElementProto = SVGElementClass.prototype;
-
-            svgElementProto.getSpanCorrection = htmlElementProto
-                .getSpanCorrection;
-            svgElementProto.htmlCss = htmlElementProto.htmlCss;
-            svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto
-                .htmlUpdateTransform;
-            svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
-        }
+        svgElementProto.getSpanCorrection = htmlElementProto
+            .getSpanCorrection;
+        svgElementProto.htmlCss = htmlElementProto.htmlCss;
+        svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
+        svgElementProto.htmlUpdateTransform = htmlElementProto
+            .htmlUpdateTransform;
+        svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
 
         return SVGElementClass as (T&typeof HTMLElement);
     }

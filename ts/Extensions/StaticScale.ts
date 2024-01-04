@@ -20,15 +20,12 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -63,10 +60,9 @@ function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.adjustHeight) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
 
         chartProto.adjustHeight = chartAdjustHeight;

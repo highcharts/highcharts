@@ -362,7 +362,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'SeriesLabel')) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(ChartClass, 'load', onChartRedraw);
         addEvent(ChartClass, 'redraw', onChartRedraw);

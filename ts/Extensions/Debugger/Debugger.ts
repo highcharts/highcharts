@@ -89,7 +89,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Debugger')) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
         addEvent(H, 'displayError', onHighchartsDisplayError);

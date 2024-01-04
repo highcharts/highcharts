@@ -27,16 +27,12 @@ import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    pushUnique
-} = U;
+const { error } = U;
 
 /* *
  *
@@ -77,7 +73,7 @@ function compose(
         }
     }
 
-    if (ColorClass && pushUnique(composed, compose)) {
+    if (ColorClass && !ColorClass.names.lightgoldenrodyellow) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap

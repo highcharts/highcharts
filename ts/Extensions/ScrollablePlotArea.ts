@@ -41,8 +41,6 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
 const {
@@ -51,8 +49,7 @@ const {
     defined,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -379,8 +376,9 @@ function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+    if (!chartProto.setUpScrolling) {
         addEvent(AxisClass, 'afterInit', onAxisAfterInit);
 
         extend(ChartClass.prototype, {

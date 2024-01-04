@@ -30,14 +30,11 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     defined,
     error,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -167,10 +164,9 @@ namespace ConnectionComposition {
         PathfinderClass: typeof Pathfinder,
         PointClass: typeof Point
     ): void {
+        const pointProto = PointClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const pointProto = PointClass.prototype;
-
+        if (!pointProto.getPathfinderAnchorPoint) {
             // Initialize Pathfinder for charts
             ChartClass.prototype.callbacks.push(function (
                 chart: Chart

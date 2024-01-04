@@ -21,8 +21,6 @@ import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
 import AST from './AST.js';
-import H from '../../Globals.js';
-const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -30,8 +28,7 @@ const {
     attr,
     createElement,
     extend,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -66,13 +63,10 @@ class HTMLRenderer extends SVGRenderer {
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
+        const htmlRendererProto = HTMLRenderer.prototype,
+            svgRendererProto = SVGRendererClass.prototype;
 
-        if (pushUnique(composed, this.compose)) {
-            const htmlRendererProto = HTMLRenderer.prototype,
-                svgRendererProto = SVGRendererClass.prototype;
-
-            svgRendererProto.html = htmlRendererProto.html;
-        }
+        svgRendererProto.html = htmlRendererProto.html;
 
         return SVGRendererClass as (T&typeof HTMLRenderer);
     }

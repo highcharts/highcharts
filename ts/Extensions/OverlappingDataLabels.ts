@@ -26,16 +26,13 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
     isNumber,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -222,10 +219,9 @@ function chartHideOverlappingLabels(
 function compose(
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.hideOverlappingLabels) {
         chartProto.hideOverlappingLabels = chartHideOverlappingLabels;
 
         addEvent(ChartClass, 'render', onChartRender);
