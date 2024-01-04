@@ -762,6 +762,7 @@ async function updateBoard(board, city, column, scale, newData) {
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const cityTable = await dataPool.getConnectorTable(city);
+
     const [
         timeRangeSelector,
         worldMap,
@@ -806,15 +807,24 @@ async function updateBoard(board, city, column, scale, newData) {
     const rangeTable = selectionTable.modified;
     const rangeEnd = rangeTable.getRowCount() - 1;
 
+    // City geographical properties
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+
     // Update world map
     const mapPoints = worldMap.chart.series[1].data;
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
+        // Get elevation of city
+        const city1 = mapPoints[i].name;
+        const elevation = citiesTable.getCellAsNumber(
+            'elevation',
+            citiesTable.getRowIndexBy('city', city1));
 
+        const pointTable = await dataPool.getConnectorTable(city1);
         mapPoints[i].update({
             custom: {
+                elevation: elevation,
                 yScale: scale
             },
             y: pointTable.modified.getCellAsNumber(
@@ -839,7 +849,6 @@ async function updateBoard(board, city, column, scale, newData) {
 
     // Update KPIs
     if (newData) {
-        const citiesTable = await dataPool.getConnectorTable('Cities');
         await kpiData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
