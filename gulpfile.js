@@ -30,7 +30,6 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/dist',
     'dashboards/dist-build',
     'dashboards/dist-examples',
-    'dashboards/dist-minify',
     'dashboards/dist-productsjs',
     'dashboards/dist-release',
     'dashboards/dist-upload',
