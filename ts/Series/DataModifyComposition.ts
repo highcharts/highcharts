@@ -176,9 +176,7 @@ namespace DataModifyComposition {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
-        }
 
-        if (!pointProto.tooltipFormatter) {
             pointProto.tooltipFormatter = tooltipFormatter;
         }
 
