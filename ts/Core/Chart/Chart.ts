@@ -284,7 +284,10 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ) {
-        const args = [...arguments];
+        const args = [
+            // ES5 builds fail unless we cast it to an Array
+            ...arguments as unknown as Array<any>
+        ];
 
         // Remove the optional first argument, renderTo, and set it on this.
         if (isString(a) || (a as globalThis.HTMLElement).nodeName) {
