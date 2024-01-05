@@ -135,6 +135,7 @@ namespace SeriesRegistry {
         );
 
         // Create the class
+        delete seriesTypes[type];
         registerSeriesType(type, extendClass(
             seriesTypes[parent] as any || function (): void {},
             seriesProto
