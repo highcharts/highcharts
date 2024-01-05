@@ -108,7 +108,10 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
             }
         },
         inside: true,
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        style: {
+            whiteSpace: 'nowrap'
+        }
     },
 
     tooltip: {

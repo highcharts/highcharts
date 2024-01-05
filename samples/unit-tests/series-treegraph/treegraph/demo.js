@@ -184,5 +184,21 @@ QUnit.test('Treegraph series',
             point2.collapsed && point3.collapsed,
             'Multiple nodes should collapse simultaneously (#19552).'
         );
+
+        const exportedSVG = chart.getSVGForExport(),
+            selector = '#container .highcharts-series-1' +
+                ' .highcharts-level-group-3 path',
+            inChartPos = +document.querySelectorAll(selector)[0]
+                .getAttribute('x');
+
+        // Replace the chart with its exported image
+        chart.destroy();
+        document.getElementById('container').innerHTML = exportedSVG;
+
+        assert.strictEqual(
+            inChartPos,
+            +document.querySelectorAll(selector)[0].getAttribute('x'),
+            'Dynamically collapsed point should exported as such (#20006).'
+        );
     }
 );

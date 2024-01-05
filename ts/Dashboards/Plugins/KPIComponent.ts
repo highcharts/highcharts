@@ -26,9 +26,10 @@ import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
-    Options,
+    Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
@@ -159,7 +160,7 @@ class KPIComponent extends Component {
     /**
      * Default options of the KPI component.
      */
-    public static defaultChartOptions: Types.DeepPartial<Options> = {
+    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
         chart: {
             type: 'spline',
             styledMode: true,
@@ -174,13 +175,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<Options['xAxis']>,
+        } as Types.DeepPartial<ChartOptions['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<Options['yAxis']>,
+        } as Types.DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },
@@ -354,10 +355,13 @@ class KPIComponent extends Component {
                 }
             }
 
-            this.chart = charter.chart(this.chartContainer, merge(
-                KPIComponent.defaultChartOptions,
-                this.options.chartOptions
-            ));
+            this.chart = charter.chart(
+                this.chartContainer,
+                merge(
+                    KPIComponent.defaultChartOptions,
+                    this.options.chartOptions
+                ) as Partial<ChartOptions>
+            );
         } else if (
             this.chart &&
             !this.options.chartOptions &&
@@ -629,6 +633,26 @@ class KPIComponent extends Component {
         return '';
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<KPIComponent.ComponentOptions> = {
+            cell: '',
+            type: 'KPI'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *
@@ -715,7 +739,7 @@ namespace KPIComponent {
          *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
-        chartOptions?: Options;
+        chartOptions?: ChartOptions;
         style?: CSSObject;
         /**
          * The threshold declares the value when color is applied
@@ -826,18 +850,6 @@ namespace KPIComponent {
          * @default 0
          */
         seriesIndex?: number;
-    }
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        KPI: typeof KPIComponent;
     }
 }
 

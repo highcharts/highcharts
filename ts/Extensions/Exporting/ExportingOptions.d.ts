@@ -21,7 +21,6 @@ import type {
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type Exporting from '../../Extensions/Exporting/Exporting';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type Options from '../../Core/Options';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
@@ -47,7 +46,7 @@ export interface ExportingOptions {
     error?: Exporting.ErrorCallbackFunction;
     fallbackToExportServer?: boolean;
     filename?: string;
-    formAttributes?: HTMLAttributes;
+    fetchOptions?: RequestInit;
     libURL?: string;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     pdfFont?: PdfFontOptions;

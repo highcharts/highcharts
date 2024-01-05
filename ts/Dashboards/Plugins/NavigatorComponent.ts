@@ -32,14 +32,15 @@ import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataModifier from '../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import U from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -468,7 +469,7 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        const crossfilterOptions = this.options.sync.crossfilter;
+        const crossfilterOptions = this.options.sync?.crossfilter;
         if (crossfilterOptions === true || (
             isObject(crossfilterOptions) && crossfilterOptions.enabled
         )) {
@@ -672,7 +673,7 @@ class NavigatorComponent extends Component {
                 options = this.options,
                 column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [],
-                crossfilterOptions = options.sync.crossfilter;
+                crossfilterOptions = options.sync?.crossfilter;
 
             let values: DataTable.Column = [],
                 data: (
@@ -822,7 +823,7 @@ class NavigatorComponent extends Component {
         shouldRerender: boolean = true
     ): Promise<void> {
         const chart = this.chart,
-            crossfilterOptions = this.options.sync.crossfilter;
+            crossfilterOptions = this.options.sync?.crossfilter;
 
         await super.update(options, false);
 
@@ -862,7 +863,9 @@ class NavigatorComponent extends Component {
         }
     }
 
-
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<NavigatorComponentOptions> {
+        return {};
+    }
 }
 
 

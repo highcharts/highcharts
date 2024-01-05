@@ -913,6 +913,8 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
+        series.processedXData ??= xData;
+        series.processedYData ??= yData;
         return true;
     }
 
