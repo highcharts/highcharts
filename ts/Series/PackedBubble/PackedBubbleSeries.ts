@@ -122,6 +122,8 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public hoverPoint?: PackedBubblePoint;
 
+    public invertible = false;
+
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
