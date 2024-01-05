@@ -75,6 +75,10 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
         rangeSelector: {
             selected: 2
         },
+
+        boost: {
+            // seriesThreshold: 1
+        },
         plotOptions: {
             series: {
                 boostThreshold: 1

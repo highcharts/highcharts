@@ -1434,7 +1434,16 @@ function wrapSeriesProcessData(
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
-            // extra check for zoomed scatter data
+            // Do nothing until the panning stops
+            if (
+                series.boosted && (
+                    series.xAxis?.isPanning || series.yAxis?.isPanning
+                )
+            ) {
+                return;
+            }
+
+            // Extra check for zoomed scatter data
             if (series.is('scatter') && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);
             } else {
