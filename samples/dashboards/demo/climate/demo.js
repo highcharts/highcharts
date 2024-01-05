@@ -684,12 +684,8 @@ async function setupBoard() {
         });
     }
 
-    // Load cities
-    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
-        await setupCity(board, cityRows[i].city, activeColumn, activeScale);
-    }
-
-    // Initialize active city
+    // Load initial city
+    await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
     // Select active city on the map
@@ -700,13 +696,20 @@ async function setupBoard() {
             break;
         }
     }
+
+    // Load additional cities
+    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
+        if (cityRows[i].city !== activeCity) {
+            await setupCity(board, cityRows[i].city, activeColumn, activeScale);
+        }
+    }
 }
 
 async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityTable = await dataPool.getConnectorTable(city);
-    const time = board.mountedComponents[0].component.chart.axes[0].min;
+    const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -741,6 +744,11 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
+    const pointValue = cityTable.modified.getCellAsNumber(
+        column,
+        cityTable.modified.getRowIndexBy('time', latestTime)
+    );
+
     // Add city to world map
     worldMap.addPoint({
         custom: {
@@ -750,10 +758,7 @@ async function setupCity(board, city, column, scale) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        y: cityTable.modified.getCellAsNumber(
-            column,
-            cityTable.getRowIndexBy('time', time)
-        ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+        y: pointValue || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
 }
 
