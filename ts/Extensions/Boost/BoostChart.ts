@@ -272,8 +272,8 @@ function onChartCallback(
         chart.boosted = false;
 
         // Clear the canvas
-        if (chart.boost.clear) {
-            chart.boost.clear();
+        if (!chart.axes.some((axis): boolean|undefined => axis.isPanning)) {
+            chart.boost.clear?.();
         }
 
         if (
