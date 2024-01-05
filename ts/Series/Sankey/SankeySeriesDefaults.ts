@@ -287,6 +287,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * @see    [sankey.nodeDistance](#nodeDistance)
      * @sample highcharts/series-sankey/node-distance
      *         Sankey with auto node width combined with node distance
+     * @sample highcharts/series-organization/node-distance
+     *         Organization chart with node distance of 50%
      *
      * @type {number|string}
      */
@@ -320,7 +322,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *
      * @since next
      * @sample highcharts/series-sankey/node-distance
-     *         Node distance of 100% means equal to node width
+     *         Sankey with dnode distance of 100% means equal to node width
+     * @sample highcharts/series-organization/node-distance
+     *         Organization chart with node distance of 50%
      * @type   {number|string}
      */
     nodeDistance: 30,
