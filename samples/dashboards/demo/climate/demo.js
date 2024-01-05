@@ -692,11 +692,11 @@ async function setupBoard() {
     // Initialize active city
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
-    // Select active city on map
+    // Select active city on the map
     const worldMap = board.mountedComponents[1].component.chart.series[1];
     for (let idx = 0; idx < worldMap.data.length; idx++) {
         if (worldMap.data[idx].name === activeCity) {
-            await worldMap.data[idx].select();
+            worldMap.data[idx].select();
             break;
         }
     }
