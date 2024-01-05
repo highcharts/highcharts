@@ -464,7 +464,7 @@ const configs: {
 
                             if (series?.visible && cursor.row !== void 0) {
                                 const point = series.data[cursor.row - offset];
-                                return point.graphic ? point : void 0;
+                                return point?.graphic ? point : void 0;
                             }
                         }
                     }
