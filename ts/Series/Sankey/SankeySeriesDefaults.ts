@@ -278,13 +278,15 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * The pixel width of each node in a sankey diagram or dependency wheel, or
      * the height in case the chart is inverted.
      *
-     * Can be a number or a percentage string, or `auto`. If `auto`, the nodes
-     * are sized to fill up the plot area in the longitudinal direction,
+     * Can be a number or a percentage string.
+     *
+     * Sankey series also support setting it to `auto`. With this setting, the
+     * nodes are sized to fill up the plot area in the longitudinal direction,
      * regardless of the number of levels.
      *
      * @see    [sankey.nodeDistance](#nodeDistance)
      * @sample highcharts/series-sankey/node-distance
-     *         Node width is auto and combined with node distance
+     *         Sankey with auto node width combined with node distance
      *
      * @type {number|string}
      */
@@ -296,9 +298,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * so vertical distance by default, or horizontal distance in an inverted
      * (vertical) sankey.
      *
-     * If the number of nodes is so great that it is possible to lay them
-     * out within the plot area with the given `nodePadding`, they will be
-     * rendered with a smaller padding as a strategy to avoid overflow.
+     * If the number of nodes is so great that it is impossible to lay them out
+     * within the plot area with the given `nodePadding`, they will be rendered
+     * with a smaller padding as a strategy to avoid overflow.
      */
     nodePadding: 10,
 
