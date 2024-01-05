@@ -185,7 +185,10 @@ Highcharts.chart('container', {
             nodeDistance: '50%',
             borderRadius: 10,
             dataLabels: {
-                pointFormat: '{point.name}'
+                pointFormat: '{point.name}',
+                style: {
+                    whiteSpace: 'nowrap'
+                }
             },
             levels: [
                 {
