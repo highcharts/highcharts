@@ -101,6 +101,8 @@ class PieSeries extends Series {
 
     public endAngleRad?: number;
 
+    public invertible = false;
+
     public options!: PieSeriesOptions;
 
     public points!: Array<PiePoint>;
