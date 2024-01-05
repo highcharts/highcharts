@@ -5,7 +5,7 @@
  *
  * Timeline series
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2024 Highsoft AS
  * Author: Daniel Studencki
  *
  * License: www.highcharts.com/license
