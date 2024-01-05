@@ -216,19 +216,19 @@ class DataPool implements DataEvent.Emitter {
      *
      * @private
      *
-     * @param {string} id
+     * @param {string} connectorId
      * Name of the connector.
      *
      * @return {DataPoolConnectorOptions|undefined}
      * Returns the options of the connector, or `undefined` if not found.
      */
     protected getConnectorOptions(
-        id: string
+        connectorId: string
     ): (DataPoolConnectorOptions|undefined) {
         const connectors = this.options.connectors;
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].id === id) {
+            if (connectors[i].id === connectorId) {
                 return connectors[i];
             }
         }
@@ -254,6 +254,22 @@ class DataPool implements DataEvent.Emitter {
             .then((connector): DataTable => connector.table);
     }
 
+
+    /**
+     * Tests whether the connector has never been requested.
+     *
+     * @param {string} connectorId
+     * Name of the connector.
+     *
+     * @return {boolean}
+     * Returns `true`, if the connector has never been requested, otherwise
+     * `false`.
+     */
+    public isNewConnector(
+        connectorId: string
+    ): boolean {
+        return !this.connectors[connectorId];
+    }
 
     /**
      * Creates and loads the connector.
@@ -332,7 +348,8 @@ class DataPool implements DataEvent.Emitter {
     public setConnectorOptions(
         options: DataPoolConnectorOptions
     ): void {
-        const connectors = this.options.connectors;
+        const connectors = this.options.connectors,
+            instances = this.connectors;
 
         this.emit<DataPool.Event>({
             type: 'setConnectorOptions',
@@ -344,6 +361,11 @@ class DataPool implements DataEvent.Emitter {
                 connectors.splice(i, 1);
                 break;
             }
+        }
+
+        if (instances[options.id]) {
+            instances[options.id].stopPolling();
+            delete instances[options.id];
         }
 
         connectors.push(options);
