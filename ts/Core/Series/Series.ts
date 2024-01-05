@@ -2395,8 +2395,8 @@ class Series {
             height = yAxis.len;
         }
 
-        // If the chart is inverted and the series is not invertible, the clip
-        // box shouldn't be inverted (#20264)
+        // If the chart is inverted and the series is not invertible, the chart
+        // clip box should be inverted, but not the series clip box (#20264)
         if (chart.inverted && !this.invertible) {
             [width, height] = [height, width];
         }
