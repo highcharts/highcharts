@@ -19,8 +19,6 @@
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import Point from '../Core/Series/Point.js';
 const {
     tooltipFormatter: pointTooltipFormatter
@@ -36,8 +34,7 @@ const {
     isArray,
     isNumber,
     isString,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *

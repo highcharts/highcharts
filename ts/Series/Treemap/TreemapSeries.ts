@@ -1553,9 +1553,7 @@ declare module '../../Core/Series/SeriesType' {
         treemap: typeof TreemapSeries;
     }
 }
-if (!SeriesRegistry.seriesTypes.treemap) {
-    SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
-}
+SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 
 /* *
  *

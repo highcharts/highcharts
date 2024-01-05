@@ -66,7 +66,7 @@ namespace SeriesRegistry {
     export function registerSeriesType(
         seriesType: string,
         SeriesClass: typeof Series
-    ): void {
+    ): boolean {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
             seriesOptions = SeriesClass.defaultOptions,
             seriesProto = SeriesClass.prototype;
@@ -77,11 +77,17 @@ namespace SeriesRegistry {
             seriesProto.pointClass = Point;
         }
 
+        if (seriesTypes[seriesType]) {
+            return false;
+        }
+
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
         }
 
         seriesTypes[seriesType] = SeriesClass;
+
+        return true;
     }
 
     /**
