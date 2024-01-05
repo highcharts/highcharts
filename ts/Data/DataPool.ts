@@ -92,7 +92,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Internal dictionary with the connectors and their names.
+     * Internal dictionary with the connectors and their IDs.
      * @private
      */
     protected readonly connectors: Record<string, DataConnector>;
@@ -140,44 +140,44 @@ class DataPool implements DataEvent.Emitter {
      *
      * @function Data.DataPool#getConnector
      *
-     * @param {string} name
-     * Name of the connector.
+     * @param {string} connectorId
+     * ID of the connector.
      *
      * @return {Promise<Data.DataConnector>}
      * Returns the connector.
      */
     public getConnector(
-        name: string
+        connectorId: string
     ): Promise<DataConnector> {
-        const connector = this.connectors[name];
+        const connector = this.connectors[connectorId];
 
         // already loaded
         if (connector) {
             return Promise.resolve(connector);
         }
 
-        let waitingList = this.waiting[name];
+        let waitingList = this.waiting[connectorId];
 
         // start loading
         if (!waitingList) {
-            waitingList = this.waiting[name] = [];
+            waitingList = this.waiting[connectorId] = [];
 
-            const connectorOptions = this.getConnectorOptions(name);
+            const connectorOptions = this.getConnectorOptions(connectorId);
 
             if (!connectorOptions) {
-                throw new Error(`Connector not found. (${name})`);
+                throw new Error(`Connector not found. (${connectorId})`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this
                 .loadConnector(connectorOptions)
                 .then((connector): void => {
-                    delete this.waiting[name];
+                    delete this.waiting[connectorId];
                     for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
                         waitingList[i][0](connector);
                     }
                 })['catch']((error): void => {
-                    delete this.waiting[name];
+                    delete this.waiting[connectorId];
                     for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
                         waitingList[i][1](error);
                     }
@@ -192,7 +192,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Returns the names of all connectors.
+     * Returns the IDs of all connectors.
      *
      * @private
      *
@@ -217,7 +217,7 @@ class DataPool implements DataEvent.Emitter {
      * @private
      *
      * @param {string} connectorId
-     * Name of the connector.
+     * ID of the connector.
      *
      * @return {DataPoolConnectorOptions|undefined}
      * Returns the options of the connector, or `undefined` if not found.
@@ -241,7 +241,7 @@ class DataPool implements DataEvent.Emitter {
      * @function Data.DataPool#getConnectorTable
      *
      * @param {string} connectorId
-     * Name of the connector.
+     * ID of the connector.
      *
      * @return {Promise<Data.DataTable>}
      * Returns the connector table.
@@ -340,7 +340,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Sets connector options with a specific name.
+     * Sets connector options under the specified `options.id`.
      *
      * @param {Data.DataPoolConnectorOptions} options
      * Connector options to set.
