@@ -149,7 +149,8 @@
     background-color: var(--highcharts-neutral-color-10);
 }
 
-.highcharts-tab-item {
+.highcharts-popup > button.highcharts-tab-item {
+    margin: 0;
     background-color: var(--highcharts-neutral-color-3);
     cursor: pointer;
     display: block;
@@ -159,7 +160,7 @@
     line-height: 40px;
 }
 
-.highcharts-tab-item.highcharts-tab-item-active {
+button.highcharts-tab-item.highcharts-tab-item-active {
     background-color: var(--highcharts-neutral-color-10);
 }
 
@@ -176,7 +177,8 @@
     display: block;
 }
 
-.highcharts-popup-close {
+.highcharts-popup > .highcharts-popup-close {
+    margin: 0;
     background-repeat: no-repeat;
     background-position: 50% 50%;
     width: 40px;
@@ -210,7 +212,7 @@
     margin-left: 0;
 }
 
-.highcharts-tab-disabled {
+button.highcharts-tab-item.highcharts-tab-disabled {
     color: var(--highcharts-neutral-color-20);
 }
 

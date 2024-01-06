@@ -81,7 +81,7 @@ function addMenuItem(
 
     // tab 1
     const menuItem = createElement(
-        'span',
+        'button',
         {
             className
         },
