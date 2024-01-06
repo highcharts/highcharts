@@ -569,7 +569,7 @@ async function setupBoard() {
                     },
                     TNC: {
                         headerFormat: 'Average Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
@@ -577,7 +577,7 @@ async function setupBoard() {
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
@@ -638,7 +638,24 @@ async function setupBoard() {
                 },
                 tooltip: {
                     enabled: true,
-                    stickOnContact: true
+                    stickOnContact: true,
+                    formatter: function () {
+                        const point = this.point;
+                        const name = this.series.name;
+
+                        // Date
+                        let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
+
+                        if (name === 'RR1') {
+                            // Rainy days
+                            str += 'Days with rain: ' + point.y;
+                        } else {
+                            // Temperature (names TXC, TNC, TXF, TNF)
+                            const tempStr = (name[1] === 'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
+                            str += tempStr + '˚' + name[2];
+                        }
+                        return str;
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
@@ -684,7 +701,7 @@ async function setupBoard() {
         });
     }
 
-    // Load initial city
+    // Load active city
     await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
@@ -781,7 +798,9 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        selectionGrid
+        kpiRain,
+        selectionGrid,
+        cityChart
     ] = board.mountedComponents.map(c => c.component);
 
     column = (column[0] === 'T' ? column + scale : column);
