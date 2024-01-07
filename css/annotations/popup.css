@@ -24,7 +24,8 @@
     margin-top: 0;
 }
 
-.highcharts-popup.highcharts-annotation-toolbar > span {
+.highcharts-popup.highcharts-annotation-toolbar > p {
+    margin: 0;
     display: block;
     float: left;
     padding: 12px;

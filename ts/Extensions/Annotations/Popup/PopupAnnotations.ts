@@ -154,14 +154,24 @@ function addToolbar(
     }
 
     // create label
-    createElement('span', void 0, void 0, popupDiv).appendChild(
-        doc.createTextNode(pick(
-            // Advanced annotations:
-            lang[options.langKey as any] || options.langKey,
-            // Basic shapes:
-            options.shapes && options.shapes[0].type,
-            ''
-        ))
+    createElement(
+        'p',
+        {
+            className: 'highcharts-annotation-label',
+            'aria-label': pick(lang.annotationName, 'annotation type')
+        },
+        void 0,
+        popupDiv
+    ).appendChild(
+        doc.createTextNode(
+            pick(
+                // Advanced annotations:
+                lang[options.langKey as any] || options.langKey,
+                // Basic shapes:
+                options.shapes && options.shapes[0].type,
+                ''
+            )
+        )
     );
 
     // add buttons
