@@ -154,15 +154,16 @@ function addToolbar(
     }
 
     // create label
-    createElement(
+    let label = createElement(
         'p',
         {
-            className: 'highcharts-annotation-label',
-            'aria-label': pick(lang.annotationName, 'annotation type')
+            className: 'highcharts-annotation-label'
         },
         void 0,
         popupDiv
-    ).appendChild(
+    );
+    label.setAttribute('aria-label', 'Annotation type');
+    label.appendChild(
         doc.createTextNode(
             pick(
                 // Advanced annotations:
