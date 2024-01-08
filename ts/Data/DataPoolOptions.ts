@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -68,7 +68,6 @@ export interface DataPoolConnectorOptions
     /**
      * The options of the given connector type.
      * @example
-     * ```TS
      * dataPool: {
      *      connectors: [{
      *      id: 'my-csv-connector',

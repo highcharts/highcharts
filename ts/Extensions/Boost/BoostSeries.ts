@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -912,6 +912,8 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
+        series.processedXData ??= xData;
+        series.processedYData ??= yData;
         return true;
     }
 
