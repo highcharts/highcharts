@@ -51,8 +51,7 @@ const {
     isNumber,
     merge,
     pick,
-    objectEach,
-    relativeLength
+    objectEach
 } = U;
 
 /* *
@@ -203,7 +202,11 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#init
      */
-    public init(chart: Chart, options: ColumnSeriesOptions): void {
+    public init(
+        chart: Chart,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        options: ColumnSeriesOptions
+    ): void {
         super.init.apply(this, arguments as any);
 
         const series = this;
@@ -335,8 +338,7 @@ class ColumnSeries extends Series {
         w: number,
         h: number
     ): BBoxObject {
-        const chart = this.chart,
-            borderWidth = this.borderWidth,
+        const borderWidth = this.borderWidth,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
         let right,
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
@@ -517,8 +519,7 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                ),
-                stackBox = point.stackBox;
+                );
             let up,
                 barY = Math.min(plotY, yBottom),
                 barH = Math.max(plotY, yBottom) - barY,

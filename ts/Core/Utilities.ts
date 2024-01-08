@@ -1975,9 +1975,6 @@ function fireEvent<T>(
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
-    let e,
-        i;
-
     eventArguments = eventArguments || {};
 
     if (doc.createEvent &&
@@ -1990,7 +1987,7 @@ function fireEvent<T>(
             )
         )
     ) {
-        e = doc.createEvent('Events');
+        const e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
         eventArguments = extend(e, eventArguments);

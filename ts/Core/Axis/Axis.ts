@@ -629,6 +629,7 @@ class Axis {
      */
     public defaultLabelFormatter(
         this: AxisLabelFormatterContextObject,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ctx?: AxisLabelFormatterContextObject
     ): string {
         const axis = this.axis,

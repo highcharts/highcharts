@@ -37,9 +37,7 @@ const {
     extend,
     fireEvent,
     merge,
-    pick,
-    relativeLength,
-    splat
+    pick
 } = U;
 
 /* *

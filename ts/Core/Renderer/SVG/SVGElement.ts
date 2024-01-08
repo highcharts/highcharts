@@ -42,18 +42,15 @@ const {
     animObject,
     stop
 } = A;
-import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    noop,
     svg,
     SVG_NS,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,

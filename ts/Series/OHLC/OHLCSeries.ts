@@ -126,6 +126,7 @@ class OHLCSeries extends HLCSeries {
 
     public static compose(
         SeriesClass: typeof Series,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ..._args: Array<never>
     ): void {
 

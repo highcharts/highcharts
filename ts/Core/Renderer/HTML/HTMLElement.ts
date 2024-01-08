@@ -43,13 +43,6 @@ const {
  *
  * */
 
-type TransformKeyType = (
-    '-ms-transform'|
-    '-webkit-transform'|
-    'MozTransform'|
-    '-o-transform'
-);
-
 declare module '../SVG/SVGElementLike' {
     interface SVGElementLike {
         /** @requires Core/Renderer/HTML/HTMLElement */

@@ -110,8 +110,10 @@ class TimelineSeries extends LineSeries {
     public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGLabel,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         _options: TimelineDataLabelOptions,
         _alignTo: BBoxObject
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): void {
         const series = this,
             isInverted = series.chart.inverted,

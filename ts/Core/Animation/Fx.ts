@@ -411,6 +411,7 @@ class Fx {
          */
         function append(
             arr: SVGPath,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             other: SVGPath
         ): void {
             while (arr.length < fullLength) {

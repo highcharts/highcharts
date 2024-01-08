@@ -690,6 +690,7 @@ namespace RangeSelectorComponent {
      */
     export function compose(
         ChartClass: typeof Chart,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         RangeSelectorClass: typeof RangeSelector
     ): void {
 

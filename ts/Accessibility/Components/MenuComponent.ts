@@ -499,6 +499,7 @@ namespace MenuComponent {
      * @private
      */
     export function compose(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ChartClass: typeof Chart
     ): void {
 
