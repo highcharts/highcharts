@@ -94,16 +94,7 @@ namespace ForcedMarkersComposition {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'renderCanvas',
-                function (): void {
-                    if (this.boosted && this.a11yMarkersForced) {
-                        merge(true, this.options, {
-                            marker: {
-                                enabled: false
-                            }
-                        });
-                        delete this.a11yMarkersForced;
-                    }
-                }
+                seriesOnRenderCanvas
             );
         }
 
@@ -333,6 +324,21 @@ namespace ForcedMarkersComposition {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Reset markers if series is boosted and had forced markers.
+     * @private
+     */
+    function seriesOnRenderCanvas(this: SeriesComposition): void {
+        if (this.boosted && this.a11yMarkersForced) {
+            merge(true, this.options, {
+                marker: {
+                    enabled: false
+                }
+            });
+            delete this.a11yMarkersForced;
         }
     }
 
