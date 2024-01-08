@@ -42,6 +42,15 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
         'X-axis should be outside the scrollable plot area (#8862)'
     );
 
+    const scrollLeft = chart.scrollingContainer.scrollLeft;
+    chart.setSize(chart.chartWidth + 10);
+    assert.close(
+        chart.scrollingContainer.scrollLeft,
+        scrollLeft,
+        11,
+        'Scrolling position should be retained after resize'
+    );
+
     /*
     No longer applicable as of zone refactoring
     chart.series[0].update({
@@ -69,7 +78,8 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
-                minHeight: 400
+                minHeight: 400,
+                scrollPositionY: 1
             },
             height: 300
         },
