@@ -29,6 +29,9 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         height: 70,
         margin: [0, 5, 0, 5]
     },
+    exporting: {
+        enabled: false
+    },
     legend: {
         enabled: false
     },
