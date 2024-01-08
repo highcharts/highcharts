@@ -818,7 +818,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            // type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
