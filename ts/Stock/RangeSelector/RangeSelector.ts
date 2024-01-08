@@ -250,9 +250,6 @@ class RangeSelector {
             return;
         }
 
-        // Set the fixed range before range is altered
-        chart.fixedRange = range;
-
         rangeSelector.setSelected(i);
 
         // Apply dataGrouping associated to button
@@ -362,22 +359,6 @@ class RangeSelector {
             this.dropdown.selectedIndex = i + 1;
         }
 
-        const resetFixedRange = (): void => {
-            // If rangeSelector.selected is larger than actual range, reset
-            // chart fixed range (#20327)
-            const xAxis = chart.xAxis[0];
-            if (
-                defined(xAxis.dataMax) &&
-                defined(xAxis.dataMin) &&
-                rangeOptions._range
-            ) {
-                const dataRange = xAxis.dataMax - xAxis.dataMin;
-                if (rangeOptions._range > dataRange) {
-                    chart.fixedRange = dataRange;
-                }
-            }
-        };
-
         // Update the chart
         if (!baseAxis) {
             // Axis not yet instanciated. Temporarily set min and range
@@ -388,7 +369,7 @@ class RangeSelector {
             minSetting = baseXAxisOptions.min;
             baseXAxisOptions.min = rangeMin;
             addEvent(chart, 'load', function resetMinAndRange(): void {
-                resetFixedRange();
+                chart.setFixedRange(rangeOptions._range);
                 baseXAxisOptions.range = rangeSetting;
                 baseXAxisOptions.min = minSetting;
             });
@@ -404,7 +385,7 @@ class RangeSelector {
                     rangeSelectorButton: rangeOptions
                 }
             );
-            resetFixedRange();
+            chart.setFixedRange(rangeOptions._range);
         }
 
         fireEvent(this, 'afterBtnClick');

@@ -320,6 +320,7 @@ class Chart {
     public credits?: SVGElement;
     public caption?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
+    public fixedRange?: number;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;
@@ -689,6 +690,28 @@ class Chart {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Sets the chart.fixedRange to the specified value. If the value is larger
+     * than actual range, sets it to the maximum possible range. (#20327)
+     *
+     * @private
+     * @function Highcharts.Chart#setFixedRange
+     * @param {number|undefined} range
+     */
+
+    public setFixedRange(range: number | undefined): void {
+        const xAxis = this.xAxis[0];
+        if (
+            defined(xAxis.dataMax) &&
+            defined(xAxis.dataMin) &&
+            range
+        ) {
+            this.fixedRange = Math.min(range, xAxis.dataMax - xAxis.dataMin);
+        } else {
+            this.fixedRange = range;
         }
     }
 
