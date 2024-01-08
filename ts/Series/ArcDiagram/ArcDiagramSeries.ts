@@ -190,8 +190,7 @@ class ArcDiagramSeries extends SankeySeries {
                      */
                     startOffset: '25%'
                 }
-            },
-            verticalAlign: 'top'
+            }
         },
         /**
          * @extends   plotOptions.series.marker
