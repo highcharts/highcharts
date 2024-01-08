@@ -78,6 +78,36 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
 
+  nightly_tests_test:
+    name: Unit-tests interference
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm i
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: latest-esr
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Setup Display
+        run: |
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+      - name: Run Tests (Firefox)
+        run: |
+          export DISPLAY=:99
+          npx gulp test --browsercount 1 ---browsers Firefox --force --single-run
+
+
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:

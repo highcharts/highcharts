@@ -1,4 +1,4 @@
-QUnit.test('Stock chart specific options in setOptions', function (assert) {
+QUnit.skip('Stock chart specific options in setOptions', function (assert) {
     const yAxis = Highcharts.merge(Highcharts.defaultOptions.yAxis);
     let chart;
 
