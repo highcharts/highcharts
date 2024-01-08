@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Mateusz Bernacik
+ *  (c) 2010-2024 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *

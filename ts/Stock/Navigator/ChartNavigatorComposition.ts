@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -83,7 +83,10 @@ let NavigatorConstructor: typeof Navigator;
 /**
  * @private
  */
-function compose(ChartClass: typeof Chart, NavigatorClass: typeof Navigator): void {
+function compose(
+    ChartClass: typeof Chart,
+    NavigatorClass: typeof Navigator
+): void {
 
     if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;

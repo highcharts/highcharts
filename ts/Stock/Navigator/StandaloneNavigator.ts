@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Mateusz Bernacik
+ *  (c) 2010-2024 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -119,6 +119,11 @@ class StandaloneNavigator {
         );
 
         const chart = new Chart(element, this.options);
+
+        chart.options = merge(
+            chart.options,
+            { navigator: { enabled: true }, scrollbar: { enabled: true } }
+        );
 
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;

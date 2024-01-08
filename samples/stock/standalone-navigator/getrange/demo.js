@@ -36,7 +36,5 @@
                 zIndex: 8
             })
             .add();
-
-        // e.target.disabled = true;
     });
 })();

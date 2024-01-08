@@ -919,7 +919,6 @@ class Navigator {
                         min: Math.min(ext.min, ext.max),
                         max: Math.max(ext.min, ext.max),
                         redraw: true,
-                        animation: null as any, // auto animation
                         options: {
                             trigger: 'navigator'
                         }

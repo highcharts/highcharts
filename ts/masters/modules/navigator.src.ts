@@ -5,7 +5,7 @@
  *
  * Standalone navigator module
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Mateusz Bernacik
  *
  * License: www.highcharts.com/license
  */

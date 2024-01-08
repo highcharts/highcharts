@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Mateusz Bernacik
+ *  (c) 2010-2024 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -33,7 +33,7 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         enabled: false
     },
     navigator: {
-        enabled: true
+        enabled: false
     },
     plotOptions: {
         series: {
@@ -48,7 +48,7 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         }
     },
     scrollbar: {
-        enabled: true
+        enabled: false
     },
     title: {
         text: ''
