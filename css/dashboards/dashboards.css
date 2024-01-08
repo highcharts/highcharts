@@ -271,8 +271,7 @@
 }
 
 .highcharts-dashboards-component-kpi {
-    min-height: 150px;
-    text-align: center;
+    display: none;
 }
 
 .highcharts-dashboards-component-kpi-value {
