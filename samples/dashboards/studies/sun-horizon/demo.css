@@ -1,0 +1,12 @@
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+h1#title {
+    padding-top: 10px;
+    margin: 0;
+    text-align: center;
+}
+
+pre#data {
+    display: none;
+}
