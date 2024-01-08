@@ -98,7 +98,7 @@ const configs: {
     handlers: {
         highlightHandler: [
             'highlightHandler',
-            function (this: DataGridComponent): Function | void {
+            function (this: DataGridComponent): (() => void) | void {
                 const { board } = this;
 
                 const handlCursor = (e: DataCursor.Event): void => {
@@ -159,7 +159,9 @@ const configs: {
                 }
             }
         ],
-        extremesHandler: function (this: DataGridComponent): Function | void {
+        extremesHandler: function (
+            this: DataGridComponent
+        ): (() => void) | void {
             const { board } = this;
 
             const handleChangeExtremes = (e: DataCursor.Event): void => {
@@ -207,7 +209,9 @@ const configs: {
                 return unregisterCursorListeners;
             }
         },
-        visibilityHandler: function (this: DataGridComponent): Function | void {
+        visibilityHandler: function (
+            this: DataGridComponent
+        ): (() => void) | void {
             const component = this,
                 { board } = component;
 

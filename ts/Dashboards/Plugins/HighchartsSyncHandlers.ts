@@ -354,7 +354,7 @@ const configs: {
     },
     handlers: {
         seriesVisibilityHandler:
-            function (this: HighchartsComponent): Function | void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const component = this;
                 const { board } = this;
 
@@ -421,7 +421,7 @@ const configs: {
                 }
             },
         highlightHandler:
-            function (this: HighchartsComponent): Function | void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const { chart, board } = this;
 
                 const getHoveredPoint = (
