@@ -32,12 +32,12 @@
 :root,
 .highcharts-light {
     --highcharts-color-0: #4689eb;
-    --highcharts-color-1: #e6e6e6;
+    --highcharts-color-1: #afafaf;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --highcharts-color-1: #4c4c4c;
+        --highcharts-color-1: #707070;
     }
 }
 
@@ -85,14 +85,15 @@
 
 /* Custom */
 
-.unit {
-    font-size: 11px;
-}
-
 .prediction-line {
     fill: #debd5b;
     stroke: #debd5b;
-    stroke-dasharray: 1px 4px;
+    stroke-dasharray: 1px 6px;
+}
+
+.year-plotline {
+    stroke-dasharray: 5px 3px;
+    stroke: #a0a0a080;
 }
 
 /* Popup */

@@ -81,6 +81,8 @@ const data = [
     [Date.UTC(2024, 11), null, null, null, 81e5, 84e5, 75e5, 93e5]
 ];
 
+const currentYear = new Date(currentMonth).getFullYear();
+
 const commonGaugeOptions = {
     chart: {
         height: 150,
@@ -104,7 +106,8 @@ const commonGaugeOptions = {
         min: 0,
         minorTickInterval: null,
         labels: {
-            distance: 12
+            distance: 12,
+            allowOverlap: true
         }
     },
     tooltip: {
@@ -138,10 +141,13 @@ const commonColumnOptions = {
             }
         }
     },
+    credits: {
+        enabled: false
+    },
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2023),
-        max: Date.UTC(2023, 11)
+        min: Date.UTC(currentYear),
+        max: Date.UTC(currentYear, 11)
     },
     yAxis: {
         tickInterval: 2e6
@@ -276,23 +282,23 @@ const board = Dashboards.board('container', {
                 text: 'Revenue (YTD)'
             },
             yAxis: {
-                max: 96,
-                tickPositions: [59, 72, 83, 96],
+                max: 102,
+                tickPositions: [73, 83, 92, 102],
                 plotBands: [{
                     from: 0,
-                    to: 59,
+                    to: 73,
                     className: 'null-band'
                 }, {
-                    from: 59,
-                    to: 72,
+                    from: 73,
+                    to: 83,
                     className: 'warn-band'
                 }, {
-                    from: 72,
-                    to: 83,
+                    from: 83,
+                    to: 92,
                     className: 'opt-band'
                 }, {
-                    from: 83,
-                    to: 96,
+                    from: 92,
+                    to: 102,
                     className: 'high-band'
                 }]
             },
@@ -310,23 +316,23 @@ const board = Dashboards.board('container', {
                 text: 'Cost (YTD)'
             },
             yAxis: {
-                max: 75,
-                tickPositions: [50, 59, 67, 75],
+                max: 86,
+                tickPositions: [61, 70, 78, 86],
                 plotBands: [{
                     from: 0,
-                    to: 50,
+                    to: 61,
                     className: 'null-band'
                 }, {
-                    from: 50,
-                    to: 59,
+                    from: 61,
+                    to: 70,
                     className: 'warn-band'
                 }, {
-                    from: 59,
-                    to: 67,
+                    from: 70,
+                    to: 78,
                     className: 'opt-band'
                 }, {
-                    from: 67,
-                    to: 75,
+                    from: 78,
+                    to: 86,
                     className: 'warn-band'
                 }]
             },
@@ -345,17 +351,17 @@ const board = Dashboards.board('container', {
             },
             yAxis: {
                 max: 21,
-                tickPositions: [9, 13, 16, 21],
+                tickPositions: [6, 10, 16, 21],
                 plotBands: [{
                     from: 0,
-                    to: 9,
+                    to: 6,
                     className: 'null-band'
                 }, {
-                    from: 9,
-                    to: 13,
+                    from: 6,
+                    to: 10,
                     className: 'warn-band'
                 }, {
-                    from: 13,
+                    from: 10,
                     to: 16,
                     className: 'opt-band'
                 }, {
@@ -432,13 +438,22 @@ const board = Dashboards.board('container', {
         },
         chartOptions: {
             xAxis: {
-                min: Date.UTC(2023),
+                min: Date.UTC(currentYear),
                 plotLines: [{
                     value: currentMonth,
                     label: {
                         text: 'current month'
                     }
+                }, {
+                    value: Date.UTC(currentYear, 0),
+                    className: 'year-plotline'
+                }, {
+                    value: Date.UTC(currentYear, 11),
+                    className: 'year-plotline'
                 }]
+            },
+            credits: {
+                enabled: false
             },
             series: [{
                 name: 'Result'
@@ -463,9 +478,10 @@ board.then(res => {
     const resKPI = res.mountedComponents[4].component;
     const resForecast = res.mountedComponents[5].component;
 
-    const firstRowID = table.Date.findIndex(d => d === Date.UTC(2023));
+    const firstRowID = table.Date.findIndex(d => d === Date.UTC(currentYear));
     const lastRowID = table.Date.findIndex(d => d === currentMonth);
-    const forecastRowID = table.Date.findIndex(d => d === Date.UTC(2023, 11));
+    const forecastRowID =
+        table.Date.findIndex(d => d === Date.UTC(currentYear, 11));
 
     let revYTD = 0,
         costYTD = 0;
@@ -499,17 +515,19 @@ board.then(res => {
     });
 
     revForecast.update({
-        title: `Annual forecast is $${revYearlyForecast.toFixed(2)}M`,
+        title: `Forecast for ${currentYear} is $${revYearlyForecast
+            .toFixed(2)}M`,
         value: Math.round(revYearlyForecast / revTarget * 100)
     });
 
     costForecast.update({
-        title: `Annual forecast is $${costYearlyForecast.toFixed(2)}M`,
+        title: `Forecast for ${currentYear} is $${costYearlyForecast
+            .toFixed(2)}M`,
         value: Math.round(costYearlyForecast / costTarget * 100)
     });
 
     resForecast.update({
-        title: `Annual forecast is $${(
+        title: `Forecast for ${currentYear} is $${(
             revYearlyForecast - costYearlyForecast
         ).toFixed(2)}M`,
         value: Math.round((
