@@ -71,37 +71,6 @@ Dashboards.board('container', {
                             }]
                         }]
                     }
-                }, {
-                    id: 'dashboard-col-0',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '35%'
-                        }
-                    }
-                }, {
-                    id: 'dashboard-col-1',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '35%'
-                        }
-                    }
-                }]
-            }, {
-                cells: [{
-                    id: 'dashboard-col-2',
-                    height: 323
                 }]
             }]
         }]
