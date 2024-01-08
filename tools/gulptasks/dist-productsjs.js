@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 const Path = require('path');
 
 /* *
@@ -21,42 +21,50 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
 
 /**
  * Creates a products.js file with version numbers for each product.
+ *
+ * @param  {object} options
+ *         Options in case of dashboards.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function distProductsJS() {
-
+async function distProductsJS(options) {
     const fetch = require('node-fetch').default;
     const fs = require('fs');
     const LogLib = require('./lib/log');
+    const { dashboards, release } = options;
 
-    LogLib.message('Generating', TARGET_FILE + '...');
+    LogLib.message(`Creating ${TARGET_FILE} for ${dashboards ? 'dashboards' : 'highcharts'} ...`);
 
     const prefix = 'var products = ';
     const products = await fetch('https://code.highcharts.com/products.js')
         .then(response => response.text())
         .then(content => JSON.parse(content.substring(prefix.length)));
 
-    const buildProperties = require('../../build-properties.json');
-    const packageJson = require('../../package.json');
+    if (dashboards) {
+        const now = new Date();
 
-    const date = (
-        buildProperties.date ||
-        ''
-    );
+        products['Highcharts Dashboards'] = {
+            date: [
+                now.getFullYear(),
+                (now.getMonth() + 1).toString().padStart('0', 2),
+                now.getDate().toString().padStart('0', 2)
+            ].join('-'),
+            nr: release
+        };
+    } else {
+        const buildProperties = require('../../build-properties.json');
+        const packageJson = require('../../package.json');
+        const date = buildProperties.date || '';
+        const nr = (buildProperties.version || packageJson.version || '').split('-')[0];
 
-    const nr = (
-        buildProperties.version ||
-        packageJson.version ||
-        ''
-    ).split('-')[0];
-
-    products.Highcharts =
+        products.Highcharts =
         products['Highcharts Stock'] =
         products['Highcharts Maps'] =
         products['Highcharts Gantt'] = (
             { date, nr }
         );
+    }
 
     await fs.promises.writeFile(
         TARGET_FILE,
@@ -66,4 +74,8 @@ async function distProductsJS() {
     LogLib.success('Created', TARGET_FILE);
 }
 
-Gulp.task('dist-productsjs', distProductsJS);
+gulp.task('dist-productsjs', distProductsJS);
+
+module.exports = {
+    distProductsJS
+};
