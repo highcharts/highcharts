@@ -13,6 +13,13 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
+const tempRange = {
+    minC: -10,
+    maxC: 50,
+    minF: 14,
+    maxF: 122
+};
+
 setupBoard();
 
 const KPIChartOptions = {
@@ -332,8 +339,8 @@ async function setupBoard() {
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
-                    max: 50,
-                    min: 0,
+                    max: tempRange.maxC,
+                    min: tempRange.minC,
                     stops: colorStopsTemperature
                 },
                 legend: {
@@ -464,8 +471,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -494,8 +501,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -573,6 +580,7 @@ async function setupBoard() {
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     },
                     TXC: {
@@ -581,6 +589,7 @@ async function setupBoard() {
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     }
                 }
@@ -781,8 +790,8 @@ async function setupCity(board, city, column, scale) {
 
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
@@ -798,7 +807,8 @@ async function updateBoard(board, city, column, scale, newData) {
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        kpiRain,
+        // eslint-disable-next-line no-unused-vars
+        kpiRain, // No need to update this chart
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
@@ -874,8 +884,8 @@ async function updateBoard(board, city, column, scale, newData) {
         columnName: 'TX' + scale
     });
 
-    // Update KPIs
     if (newData) {
+        // Update KPIs
         await kpiData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
@@ -914,6 +924,25 @@ async function updateBoard(board, city, column, scale, newData) {
                 }
             },
             columnAssignment: sharedColumnAssignment
+        });
+
+        // Update city chart
+        const options = cityChart.chartOptions;
+        options.title.text = 'Temperature and rain in ' + city;
+        options.colorAxis.min = colorMin;
+        options.colorAxis.max = colorMax;
+        options.colorAxis.colorStops = colorStops;
+
+        await cityChart.update({
+            columnAssignment: {
+                time: 'x',
+                RR1: 'y',
+                TNC: showCelsius ? 'y' : null,
+                TNF: !showCelsius ? 'y' : null,
+                TXC: showCelsius ? 'y' : null,
+                TXF: !showCelsius ? 'y' : null
+            },
+            chartOptions: options
         });
     }
 }
