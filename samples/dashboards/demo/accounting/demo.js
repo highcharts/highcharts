@@ -122,7 +122,7 @@ const commonGaugeOptions = {
             },
             dataLabels: {
                 useHTML: true,
-                format: '<div><span class="unit">MNOK</span> {y}</div>'
+                format: '${y}M'
             }
         }
     }
@@ -301,8 +301,7 @@ const board = Dashboards.board('container', {
     }, {
         cell: 'rev-forecast-kpi',
         type: 'KPI',
-        valueFormat: '{value}%',
-        subtitle: 'of target'
+        valueFormat: '{value}%'
     }, {
         cell: 'cost-chart-kpi',
         type: 'KPI',
@@ -336,8 +335,7 @@ const board = Dashboards.board('container', {
     }, {
         cell: 'cost-forecast-kpi',
         type: 'KPI',
-        valueFormat: '{value}%',
-        subtitle: 'of target'
+        valueFormat: '{value}%'
     }, {
         cell: 'res-chart-kpi',
         type: 'KPI',
@@ -371,8 +369,7 @@ const board = Dashboards.board('container', {
     }, {
         cell: 'res-forecast-kpi',
         type: 'KPI',
-        valueFormat: '{value}%',
-        subtitle: 'of target'
+        valueFormat: '{value}%'
     }, {
         cell: 'rev-chart',
         type: 'Highcharts',
@@ -486,35 +483,35 @@ board.then(res => {
 
     revKPI.chart.series[0].setData([revYTD]);
     revKPI.chart.subtitle.update({
-        text: `${Math.round(revYTD / revTarget * 100)}% of target`
+        text: `${Math.round(revYTD / revTarget * 100)}% of annual target`
     });
 
     costKPI.chart.series[0].setData([costYTD]);
     costKPI.chart.subtitle.update({
-        text: `${Math.round(costYTD / costTarget * 100)}% of target`
+        text: `${Math.round(costYTD / costTarget * 100)}% of annual target`
     });
 
     resKPI.chart.series[0].setData([Math.round((revYTD - costYTD) * 10) / 10]);
     resKPI.chart.subtitle.update({
         text: `${Math.round(
             (revYTD - costYTD) / (revTarget - costTarget) * 100
-        )}% of target`
+        )}% of annual target`
     });
 
     revForecast.update({
-        title: `Forecast is MNOK ${revYearlyForecast.toFixed(2)}`,
+        title: `Annual forecast is $${revYearlyForecast.toFixed(2)}M`,
         value: Math.round(revYearlyForecast / revTarget * 100)
     });
 
     costForecast.update({
-        title: `Forecast is MNOK ${costYearlyForecast.toFixed(2)}`,
+        title: `Annual forecast is $${costYearlyForecast.toFixed(2)}M`,
         value: Math.round(costYearlyForecast / costTarget * 100)
     });
 
     resForecast.update({
-        title: `Forecast is MNOK ${(
+        title: `Annual forecast is $${(
             revYearlyForecast - costYearlyForecast
-        ).toFixed(2)}`,
+        ).toFixed(2)}M`,
         value: Math.round((
             revYearlyForecast - costYearlyForecast
         ) / (revTarget - costTarget) * 100)
@@ -549,9 +546,9 @@ async function togglePopup(open) {
     popup.children[0].children['datagrid-container'].innerHTML = '';
 
     const formatNumbers = function () {
-        return U.isNumber(this.value) ? (
+        return U.isNumber(this.value) ? `$${(
             this.value / 1e6
-        ).toFixed(2) + ' MNOK' : '-';
+        ).toFixed(2)}M` : '-';
     };
 
     // eslint-disable-next-line no-new
