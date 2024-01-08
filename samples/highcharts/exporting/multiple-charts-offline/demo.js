@@ -19,7 +19,7 @@ Highcharts.getSVG = function (charts, options, callback) {
             // Offset the position of this chart in the final SVG
             let svg = svgres.replace(
                 '<svg',
-                '<g transform="translate(0,' + top + ')" '
+                `<g transform="translate(0,${top})" `
             );
             svg = svg.replace('</svg>', '</g>');
             top += svgHeight;
@@ -28,9 +28,13 @@ Highcharts.getSVG = function (charts, options, callback) {
         },
         exportChart = function (i) {
             if (i === charts.length) {
-                return callback('<svg height="' + top + '" width="' + width +
-                  '" version="1.1" xmlns="http://www.w3.org/2000/svg">' +
-                  svgArr.join('') + '</svg>');
+                return callback(
+                    `<svg version="1.1" width="${width}" height="${top}"
+                            viewBox="0 0 ${width} ${top}"
+                            xmlns="http://www.w3.org/2000/svg">
+                        ${svgArr.join('')}
+                    </svg>`
+                );
             }
             charts[i].getSVGForLocalExport(options, {}, function () {
                 console.log('Failed to get SVG');
