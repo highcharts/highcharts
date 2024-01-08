@@ -464,7 +464,9 @@ const configs: {
 
                             if (series?.visible && cursor.row !== void 0) {
                                 const point = series.data[cursor.row - offset];
-                                return point?.graphic ? point : void 0;
+                                if (point?.graphic) {
+                                    return point;
+                                }
                             }
                         }
                     }
@@ -488,11 +490,10 @@ const configs: {
                         return;
                     }
 
-                    if (
-                        chart.tooltip &&
-                        highlightOptions.showTooltip
-                    ) {
-                        const useSharedTooltip = chart.tooltip?.shared;
+                    const tooltip = chart.tooltip;
+
+                    if (tooltip && highlightOptions.showTooltip) {
+                        const useSharedTooltip = tooltip.shared;
                         const hoverPoint = chart.hoverPoint;
                         const hoverSeries = hoverPoint?.series ||
                             chart.hoverSeries;
@@ -504,17 +505,15 @@ const configs: {
                             true
                         );
 
-                        chart.tooltip && chart.tooltip.refresh(
-                            useSharedTooltip ?
-                                points.hoverPoints : point
+                        tooltip.refresh(
+                            useSharedTooltip ? points.hoverPoints : point
                         );
                     }
 
                     if (highlightOptions.highlightPoint && (
                         // If the tooltip is shared, the hover state is
                         // already set on the point.
-                        !chart.tooltip?.shared &&
-                        highlightOptions.showTooltip ||
+                        (!tooltip?.shared && highlightOptions.showTooltip) ||
                         !highlightOptions.showTooltip
                     )) {
                         point.setState('hover');
@@ -540,10 +539,10 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (
-                        point && !point.isInside ||
-                        point && point === chart.hoverPoint
-                    ) {
+                    if (point && (
+                        !point.isInside ||
+                        point === chart.hoverPoint
+                    )) {
                         return;
                     }
 
@@ -565,12 +564,13 @@ const configs: {
                         }
                     };
 
-                    if (chart.tooltip && highlightOptions.showTooltip) {
-                        chart.tooltip.hide();
+                    const tooltip = chart.tooltip;
+                    if (tooltip && highlightOptions.showTooltip) {
+                        tooltip.hide();
 
                         // Shared tooltip refresh always hovers points, so it's
                         // important to unhover all points on cursor out.
-                        if (chart.tooltip.shared) {
+                        if (tooltip.shared) {
                             unhoverAllPoints();
                             unhovered = true;
                         }
