@@ -1121,6 +1121,8 @@ function seriesRenderCanvas(this: Series): void {
     // Do not start building while drawing
     this.buildKDTree = noop;
 
+    fireEvent(this, 'renderCanvas');
+
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
         renderer.pushSeries(this);

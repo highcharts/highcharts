@@ -91,6 +91,20 @@ namespace ForcedMarkersComposition {
                 'afterRender',
                 seriesOnAfterRender
             );
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'renderCanvas',
+                function (): void {
+                    if (this.boosted && this.a11yMarkersForced) {
+                        merge(true, this.options, {
+                            marker: {
+                                enabled: false
+                            }
+                        });
+                        delete this.a11yMarkersForced;
+                    }
+                }
+            );
         }
 
     }
