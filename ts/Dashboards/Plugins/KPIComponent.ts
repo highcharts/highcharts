@@ -303,9 +303,6 @@ class KPIComponent extends Component {
     public async load(): Promise<this> {
         await super.load();
 
-        this.contentElement.style.display = 'flex';
-        this.contentElement.style.flexDirection = 'column';
-
         this.linkValueToChart();
 
         return this;
