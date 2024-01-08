@@ -429,7 +429,7 @@ namespace DataLabel {
         // Show or hide based on the final aligned position
         if (!visible && (!enabledDataSorting || justify)) {
             dataLabel.hide();
-            dataLabel.placed = false; // don't animate back in
+            dataLabel.placed = false; // Don't animate back in
         } else {
             dataLabel.show();
             dataLabel.placed = true; // Flag for overlapping logic

@@ -97,7 +97,8 @@ function chartHideOverlappingLabels(
      */
     function getAbsoluteBox(label: SVGElement): (BBoxObject|undefined) {
         if (label && (!label.alignAttr || label.placed)) {
-            const pos = label.alignAttr || {
+            const padding = label.box ? 0 : (label.padding || 0),
+                pos = label.alignAttr || {
                     x: label.attr('x'),
                     y: label.attr('y')
                 },
@@ -107,10 +108,10 @@ function chartHideOverlappingLabels(
             label.height = bBox.height;
 
             return {
-                x: pos.x + (label.parentGroup?.translateX || 0),
-                y: pos.y + (label.parentGroup?.translateY || 0),
-                width: (label.width || 0),
-                height: (label.height || 0)
+                x: pos.x + (label.parentGroup?.translateX || 0) + padding,
+                y: pos.y + (label.parentGroup?.translateY || 0) + padding,
+                width: (label.width || 0) - 2 * padding,
+                height: (label.height || 0) - 2 * padding
             };
         }
     }
