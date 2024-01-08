@@ -825,7 +825,7 @@ class SunburstSeries extends TreemapSeries {
 
             child.shapeArgs = merge(values, {
                 plotX: center.x,
-                plotY: center.y + 4 * Math.abs(Math.cos(angle))
+                plotY: center.y
             });
             child.values = merge(values, {
                 val: val
