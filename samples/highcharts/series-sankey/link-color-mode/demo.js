@@ -35,7 +35,8 @@ Highcharts.chart('container', {
                     [0, 'black'],
                     [1, 'pink']
                 ]
-            }
+            },
+            height: 40000
         }
         ]
     }]

@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -807,6 +807,14 @@ export default SankeySeries;
  * @name Highcharts.SankeyNodeObject#column
  * @type {number}
  * @since 6.0.5
+ *//**
+ * The height of the node.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-sankey/height|Highcharts-Demo:}
+ *
+ * @name Highcharts.SankeyNodeObject#height
+ * @type {number}
+ * @since 11.2.0
  *//**
  * The id of the auto-generated node, refering to the `from` or `to` setting of
  * the link.
