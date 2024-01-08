@@ -379,6 +379,9 @@ const board = Dashboards.board('container', {
         connector: {
             id: 'data'
         },
+        sync: {
+            highlight: true
+        },
         columnAssignment: {
             Date: 'x',
             Budget: 'y',
@@ -394,6 +397,9 @@ const board = Dashboards.board('container', {
         type: 'Highcharts',
         connector: {
             id: 'data'
+        },
+        sync: {
+            highlight: true
         },
         columnAssignment: {
             Date: 'x',
@@ -411,6 +417,9 @@ const board = Dashboards.board('container', {
         chartConstructor: 'stockChart',
         connector: {
             id: 'data'
+        },
+        sync: {
+            highlight: true
         },
         columnAssignment: {
             Date: 'x',
