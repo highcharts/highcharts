@@ -1861,7 +1861,7 @@ class Chart {
         // Handle the isResizing counter
         chart.isResizing += 1;
 
-        // set the animation for the current process
+        // Set the animation for the current process
         setAnimation(animation, chart);
         const globalAnimation = renderer.globalAnimation;
 
@@ -1875,46 +1875,61 @@ class Chart {
         }
         chart.getChartSize();
 
-        // Resize the container with the global animation applied if enabled
-        // (#2503)
-        if (!chart.styledMode) {
-            (globalAnimation ? animate : css)(chart.container, {
-                width: chart.chartWidth + 'px',
-                height: chart.chartHeight + 'px'
-            }, globalAnimation);
-        }
+        const {
+            chartWidth,
+            chartHeight,
+            scrollablePixelsX = 0,
+            scrollablePixelsY = 0
+        } = chart;
 
-        chart.setChartSize(true);
-        renderer.setSize(chart.chartWidth, chart.chartHeight, globalAnimation);
+        // Avoid expensive redrawing if the computed size didn't change
+        if (
+            chart.isDirtyBox ||
+            chartWidth !== chart.oldChartWidth ||
+            chartHeight !== chart.oldChartHeight
+        ) {
 
-        // handle axes
-        chart.axes.forEach(function (axis): void {
-            axis.isDirty = true;
-            axis.setScale();
-        });
-
-        chart.isDirtyLegend = true; // force legend redraw
-        chart.isDirtyBox = true; // force redraw of plot and chart border
-
-        chart.layOutTitles(); // #2857
-        chart.getMargins();
-
-        chart.redraw(globalAnimation);
-
-
-        chart.oldChartHeight = null as any;
-        fireEvent(chart, 'resize');
-
-        // Fire endResize and set isResizing back. If animation is disabled,
-        // fire without delay, but in a new thread to avoid triggering the
-        // resize observer (#19027).
-        setTimeout((): void => {
-            if (chart) {
-                fireEvent(chart, 'endResize', void 0, (): void => {
-                    chart.isResizing -= 1;
-                });
+            // Resize the container with the global animation applied if enabled
+            // (#2503)
+            if (!chart.styledMode) {
+                (globalAnimation ? animate : css)(chart.container, {
+                    width: `${chartWidth + scrollablePixelsX}px`,
+                    height: `${chartHeight + scrollablePixelsY}px`
+                }, globalAnimation);
             }
-        }, animObject(globalAnimation).duration);
+
+            chart.setChartSize(true);
+            renderer.setSize(chartWidth, chartHeight, globalAnimation);
+
+            // Handle axes
+            chart.axes.forEach(function (axis): void {
+                axis.isDirty = true;
+                axis.setScale();
+            });
+
+            chart.isDirtyLegend = true; // Force legend redraw
+            chart.isDirtyBox = true; // Force redraw of plot and chart border
+
+            chart.layOutTitles(); // #2857
+            chart.getMargins();
+
+            chart.redraw(globalAnimation);
+
+
+            chart.oldChartHeight = void 0;
+            fireEvent(chart, 'resize');
+
+            // Fire endResize and set isResizing back. If animation is disabled,
+            // fire without delay, but in a new thread to avoid triggering the
+            // resize observer (#19027).
+            setTimeout((): void => {
+                if (chart) {
+                    fireEvent(chart, 'endResize', void 0, (): void => {
+                        chart.isResizing -= 1;
+                    });
+                }
+            }, animObject(globalAnimation).duration);
+        }
     }
 
     /**
@@ -2034,6 +2049,7 @@ class Chart {
             });
             renderer.alignElements();
         }
+
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
     }
@@ -3222,9 +3238,8 @@ class Chart {
                 if (
                     chart.propsRequireReflow.indexOf(key) !== -1
                 ) {
-                    if (isResponsiveOptions) {
-                        chart.isDirtyBox = true;
-                    } else {
+                    chart.isDirtyBox = true;
+                    if (!isResponsiveOptions) {
                         runSetSize = true;
                     }
                 }
