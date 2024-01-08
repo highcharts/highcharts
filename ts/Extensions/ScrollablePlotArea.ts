@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -48,6 +48,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    css,
     defined,
     extend,
     merge,
@@ -95,15 +96,29 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 function chartApplyFixed(
     this: Chart
 ): void {
-    const firstTime = !this.fixedDiv,
-        chartOptions = this.options.chart as any,
-        scrollableOptions = chartOptions.scrollablePlotArea,
+    const {
+            axisOffset,
+            chartWidth,
+            chartHeight,
+            container,
+            plotHeight,
+            plotLeft,
+            plotTop,
+            plotWidth,
+            scrollablePixelsX = 0,
+            scrollablePixelsY = 0,
+            scrollingContainer
+        } = this,
+        firstTime = !this.fixedDiv,
+        chartOptions = this.options.chart,
+        scrollableOptions = (chartOptions as any).scrollablePlotArea,
+        { scrollPositionX, scrollPositionY } = scrollableOptions,
         Renderer = RendererRegistry.getRendererType();
 
-    let fixedRenderer;
+    let { fixedRenderer } = this;
 
     // First render
-    if (firstTime) {
+    if (!fixedRenderer) {
         this.fixedDiv = createElement(
             'div',
             {
@@ -113,33 +128,29 @@ function chartApplyFixed(
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (
-                    chartOptions.style && chartOptions.style.zIndex || 0
-                ) + 2,
+                zIndex: (chartOptions.style?.zIndex || 0) + 2,
                 top: 0
             },
-            null as any,
+            void 0,
             true
         );
-        if (this.scrollingContainer) {
-            this.scrollingContainer.parentNode.insertBefore(
-                this.fixedDiv,
-                this.scrollingContainer
-            );
-        }
-        this.renderTo.style.overflow = 'visible';
+        scrollingContainer?.parentNode.insertBefore(
+            this.fixedDiv,
+            scrollingContainer
+        );
+        css(this.renderTo, { overflow: 'visible' });
 
         this.fixedRenderer = fixedRenderer = new Renderer(
             this.fixedDiv,
-            this.chartWidth,
-            this.chartHeight,
-            this.options.chart.style
+            chartWidth,
+            chartHeight,
+            chartOptions.style
         );
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: this.options.chart.backgroundColor || '#fff',
+                fill: chartOptions.backgroundColor || '#fff',
                 'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             })
@@ -153,10 +164,7 @@ function chartApplyFixed(
     } else {
 
         // Set the size of the fixed renderer to the visible width
-        (this.fixedRenderer as any).setSize(
-            this.chartWidth,
-            this.chartHeight
-        );
+        fixedRenderer.setSize(chartWidth, chartHeight);
     }
 
     if (this.scrollableDirty || firstTime) {
@@ -165,81 +173,83 @@ function chartApplyFixed(
     }
 
     // Increase the size of the scrollable renderer and background
-    const scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0),
-        scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
-    stop(this.container as any);
-    this.container.style.width = scrollableWidth + 'px';
-    this.container.style.height = scrollableHeight + 'px';
+    const scrollableWidth = chartWidth + scrollablePixelsX,
+        scrollableHeight = chartHeight + scrollablePixelsY;
+    stop(this.container);
+    css(container, {
+        width: `${scrollableWidth}px`,
+        height: `${scrollableHeight}px`
+    });
     this.renderer.boxWrapper.attr({
         width: scrollableWidth,
         height: scrollableHeight,
         viewBox: [0, 0, scrollableWidth, scrollableHeight].join(' ')
     });
-    (this.chartBackground as any).attr({
+    this.chartBackground?.attr({
         width: scrollableWidth,
         height: scrollableHeight
     });
 
-    (this.scrollingContainer as any).style.height = this.chartHeight + 'px';
+    if (scrollingContainer) {
+        css(scrollingContainer, {
+            width: `${this.chartWidth}px`,
+            height: `${this.chartHeight}px`
+        });
 
-    // Set scroll position
-    if (firstTime) {
+        // Set scroll position
+        if (firstTime) {
 
-        if (scrollableOptions.scrollPositionX) {
-            (this.scrollingContainer as any).scrollLeft =
-                (this.scrollablePixelsX as any) *
-                scrollableOptions.scrollPositionX;
-        }
-        if (scrollableOptions.scrollPositionY) {
-            (this.scrollingContainer as any).scrollTop =
-                (this.scrollablePixelsY as any) *
-                scrollableOptions.scrollPositionY;
+            if (scrollPositionX) {
+                scrollingContainer.scrollLeft =
+                    scrollablePixelsX * scrollPositionX;
+            }
+            if (scrollPositionY) {
+                scrollingContainer.scrollTop =
+                    scrollablePixelsY * scrollPositionY;
+            }
         }
     }
 
     // Mask behind the left and right side
-    const axisOffset = this.axisOffset,
-        maskTop = this.plotTop - axisOffset[0] - 1,
-        maskLeft = this.plotLeft - axisOffset[3] - 1,
-        maskBottom = this.plotTop + this.plotHeight + axisOffset[2] + 1,
-        maskRight = this.plotLeft + this.plotWidth + axisOffset[1] + 1,
-        maskPlotRight = this.plotLeft + this.plotWidth -
-            (this.scrollablePixelsX || 0),
-        maskPlotBottom = this.plotTop + this.plotHeight -
-            (this.scrollablePixelsY || 0);
+    const maskTop = plotTop - axisOffset[0] - 1,
+        maskLeft = plotLeft - axisOffset[3] - 1,
+        maskBottom = plotTop + plotHeight + axisOffset[2] + 1,
+        maskRight = plotLeft + plotWidth + axisOffset[1] + 1,
+        maskPlotRight = plotLeft + plotWidth - scrollablePixelsX,
+        maskPlotBottom = plotTop + plotHeight - scrollablePixelsY;
 
     let d: SVGPath;
 
 
-    if (this.scrollablePixelsX) {
+    if (scrollablePixelsX) {
         d = [
             // Left side
             ['M', 0, maskTop],
-            ['L', this.plotLeft - 1, maskTop],
-            ['L', this.plotLeft - 1, maskBottom],
+            ['L', plotLeft - 1, maskTop],
+            ['L', plotLeft - 1, maskBottom],
             ['L', 0, maskBottom],
             ['Z'],
 
             // Right side
             ['M', maskPlotRight, maskTop],
-            ['L', this.chartWidth, maskTop],
-            ['L', this.chartWidth, maskBottom],
+            ['L', chartWidth, maskTop],
+            ['L', chartWidth, maskBottom],
             ['L', maskPlotRight, maskBottom],
             ['Z']
         ];
-    } else if (this.scrollablePixelsY) {
+    } else if (scrollablePixelsY) {
         d = [
             // Top side
             ['M', maskLeft, 0],
-            ['L', maskLeft, this.plotTop - 1],
-            ['L', maskRight, this.plotTop - 1],
+            ['L', maskLeft, plotTop - 1],
+            ['L', maskRight, plotTop - 1],
             ['L', maskRight, 0],
             ['Z'],
 
             // Bottom side
             ['M', maskLeft, maskPlotBottom],
-            ['L', maskLeft, this.chartHeight],
-            ['L', maskRight, this.chartHeight],
+            ['L', maskLeft, chartHeight],
+            ['L', maskRight, chartHeight],
             ['L', maskRight, maskPlotBottom],
             ['Z']
         ];
@@ -248,7 +258,7 @@ function chartApplyFixed(
     }
 
     if (this.redrawTrigger !== 'adjustHeight') {
-        (this.scrollableMask as any).attr({ d });
+        this.scrollableMask?.attr({ d });
     }
 }
 

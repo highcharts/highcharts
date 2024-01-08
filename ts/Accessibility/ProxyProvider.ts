@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -146,7 +146,7 @@ class ProxyProvider {
     /**
      * Create a group that will contain proxy elements. The group order is
      * automatically updated according to the last group order keys.
-     * 
+     *
      * Returns the added group.
      */
     public addGroup(
@@ -421,7 +421,7 @@ class ProxyProvider {
 
         // If exporting, don't add these containers to the DOM.
         if (chart.renderer.forExport) {
-            return; 
+            return;
         }
 
         const rendererSVGEl = chart.renderer.box;

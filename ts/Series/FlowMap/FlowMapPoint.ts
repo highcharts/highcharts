@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
