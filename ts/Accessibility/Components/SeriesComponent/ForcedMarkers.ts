@@ -316,7 +316,7 @@ namespace ForcedMarkersComposition {
     function unforceSeriesMarkerOptions(series: SeriesComposition): void {
         const resetMarkerOptions = series.resetA11yMarkerOptions;
         if (resetMarkerOptions) {
-            const originalOpactiy = resetMarkerOptions.states &&
+            const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
 
@@ -329,7 +329,7 @@ namespace ForcedMarkersComposition {
                 marker: {
                     enabled: resetMarkerOptions.enabled,
                     states: {
-                        normal: { opacity: originalOpactiy }
+                        normal: { opacity: originalOpacity }
                     }
                 }
             });
