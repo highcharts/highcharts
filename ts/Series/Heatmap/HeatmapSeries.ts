@@ -247,8 +247,7 @@ class HeatmapSeries extends ScatterSeries {
             if (useWebWorker) {
                 series.canvas = new OffscreenCanvas(width, height);
                 series.worker = new Worker(
-                    // 'http://127.0.0.1:3030/code/es-modules/interpolation/worker.js'
-                    'http://127.0.0.1:3030/code/modules/interpolation.js'
+                    '/code/modules/interpolation.js'
                 );
 
                 series.worker.addEventListener('message', function (e): void {
@@ -262,11 +261,8 @@ class HeatmapSeries extends ScatterSeries {
                             .add(series.group);
                     }
 
-
-                    series.isDirtyCanvas = false
+                    series.isDirtyCanvas = false;
                     series.directTouch = false;
-
-                    series.redraw();
                 });
 
                 const pixelData = getPixelData(series.canvas);

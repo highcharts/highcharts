@@ -1,256 +1,4 @@
-import { mat4 } from 'gl-matrix';
 const BLOCK_SIZE = 4;
-
-/**
- *
- */
-function postProcess(
-    device: GPUDevice,
-    source: ImageBitmap,
-    ctx: GPUCanvasContext
-): void {
-    const renderStart = performance.now();
-
-    const renderBuffer = device.createBuffer({
-        size: 64 * 3,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-    });
-
-    const renderViewDescriptor: GPUTextureViewDescriptor = {
-        format: 'rgba8unorm',
-        dimension: '2d',
-        aspect: 'all',
-        baseMipLevel: 0,
-        mipLevelCount: 1,
-        baseArrayLayer: 0,
-        arrayLayerCount: 1
-    };
-
-    const texture = device.createTexture({
-        size: {
-            width: source.width,
-            height: source.height
-        },
-        format: 'rgba8unorm',
-        usage: GPUTextureUsage.COPY_DST |
-            GPUTextureUsage.TEXTURE_BINDING |
-            GPUTextureUsage.RENDER_ATTACHMENT
-    });
-
-    device.queue.copyExternalImageToTexture(
-        { source },
-        { texture },
-        { width: source.width, height: source.height }
-    );
-
-    const textureView = texture.createView(renderViewDescriptor);
-
-    const samplerDescriptor: GPUSamplerDescriptor = {
-        addressModeU: 'repeat',
-        addressModeV: 'repeat',
-        addressModeW: 'repeat',
-        // MagFilter: 'linear',
-        // minFilter: 'nearest',
-        mipmapFilter: 'nearest',
-        lodMinClamp: 0
-        // LodMaxClamp: 0,
-        // compare: 'never'
-    };
-
-    const sampler = device.createSampler(samplerDescriptor);
-
-    const renderBindGroupLayout = device.createBindGroupLayout({
-        entries: [
-            {
-                binding: 0,
-                visibility: GPUShaderStage.VERTEX,
-                buffer: {}
-            },
-            {
-                binding: 1,
-                visibility: GPUShaderStage.FRAGMENT,
-                texture: {}
-            },
-            {
-                binding: 2,
-                visibility: GPUShaderStage.FRAGMENT,
-                sampler: {}
-            }
-        ]
-    });
-
-    const renderBindGroup = device.createBindGroup({
-        layout: renderBindGroupLayout,
-        entries: [
-            {
-                binding: 0,
-                resource: {
-                    buffer: renderBuffer
-                }
-            },
-            {
-                binding: 1,
-                resource: textureView
-            },
-            {
-                binding: 2,
-                resource: sampler
-            }
-        ]
-    });
-
-    // X y z u v
-    // triangle
-    const vertices: Float32Array = new Float32Array(
-        [
-            0.0, 0.0, 0.5, 0.5, 0.0,
-            0.0, -0.5, -0.5, 0.0, 1.0,
-            0.0, 0.5, -0.5, 1.0, 1.0
-        ]
-    );
-
-    const usage: GPUBufferUsageFlags = GPUBufferUsage.VERTEX |
-        GPUBufferUsage.COPY_DST;
-    // VERTEX: the buffer can be used as a vertex buffer
-    // COPY_DST: data can be copied to the buffer
-
-    const descriptor: GPUBufferDescriptor = {
-        size: vertices.byteLength,
-        usage: usage,
-        mappedAtCreation: true
-    };
-
-    const vertexBuffer = device.createBuffer(descriptor);
-
-    // Buffer has been created, now load in the vertices
-    new Float32Array(vertexBuffer.getMappedRange()).set(vertices);
-    vertexBuffer.unmap();
-
-    const bufferLayout: GPUVertexBufferLayout = {
-        arrayStride: 20,
-        attributes: [
-            {
-                shaderLocation: 0,
-                format: 'float32x3',
-                offset: 0
-            },
-            {
-                shaderLocation: 1,
-                format: 'float32x2',
-                offset: 12
-            }
-        ]
-    };
-
-
-    const renderPipelineLayout = device.createPipelineLayout({
-        bindGroupLayouts: [renderBindGroupLayout]
-    });
-
-
-    const renderModule = device.createShaderModule({
-        code: `struct TransformData {
-            model: mat4x4<f32>,
-            view: mat4x4<f32>,
-            projection: mat4x4<f32>,
-        };
-        @binding(0) @group(0) var<uniform> transformUBO: TransformData;
-        @binding(1) @group(0) var myTexture: texture_2d<f32>;
-        @binding(2) @group(0) var mySampler: sampler;
-
-        struct Fragment {
-            @builtin(position) Position : vec4<f32>,
-            @location(0) TexCoord : vec2<f32>
-        };
-
-        @vertex
-        fn vs_main(@location(0) vertexPostion: vec3<f32>, @location(1) vertexTexCoord: vec2<f32>) -> Fragment {
-
-            var output : Fragment;
-            output.Position = transformUBO.projection * transformUBO.view * transformUBO.model * vec4<f32>(vertexPostion, 1.0);
-            output.TexCoord = vertexTexCoord;
-
-            return output;
-        }
-
-        @fragment
-        fn fs_main(@location(0) TexCoord : vec2<f32>) -> @location(0) vec4<f32> {
-            return textureSample(myTexture, mySampler, TexCoord);
-        }
-
-        `
-    });
-
-    const renderPipeline = device.createRenderPipeline({
-        vertex: {
-            module: renderModule,
-            entryPoint: 'vs_main',
-            buffers: [
-                bufferLayout
-            ]
-        },
-        fragment: {
-            module: renderModule,
-            entryPoint: 'fs_main',
-            targets: [{
-                format: 'bgra8unorm'
-            }]
-        },
-        primitive: {
-            topology: 'triangle-list'
-        },
-        layout: renderPipelineLayout
-    });
-
-    const renderCommandEncoder = device.createCommandEncoder();
-
-    const renderPass = renderCommandEncoder.beginRenderPass({
-        colorAttachments: [{
-            view: ctx.getCurrentTexture().createView(),
-            // Christmassy green
-            clearValue: { r: 0.0, g: 0.5, b: 0.0, a: 0.5 },
-            loadOp: 'clear',
-            storeOp: 'store'
-        }]
-    });
-
-    const t = 0.0;
-
-    // Make transforms
-    const projection = mat4.create();
-    mat4.perspective(
-        projection,
-        Math.PI / 8,
-        source.width / source.height,
-        1,
-        100
-    );
-
-    const view = mat4.create();
-    mat4.lookAt(view, [-2, 0, 2], [0, 0, 0], [0, 0, 1]);
-
-    const model = mat4.create();
-    mat4.rotate(model, model, t, [0, 0, 0]);
-
-    device.queue.writeBuffer(renderBuffer, 0, new Float32Array(model));
-    device.queue.writeBuffer(renderBuffer, 64, new Float32Array(view));
-    device.queue.writeBuffer(renderBuffer, 128, new Float32Array(projection));
-
-    renderPass.setPipeline(renderPipeline);
-    renderPass.setBindGroup(0, renderBindGroup);
-    renderPass.setVertexBuffer(0, vertexBuffer);
-
-    renderPass.draw(3, 1, 0, 0);
-    renderPass.end();
-
-    device.queue.submit([renderCommandEncoder.finish()]);
-
-    const renderEnd = performance.now();
-
-    /* eslint-disable no-console */
-    console.log('render pass took:', renderEnd - renderStart, 'ms');
-    /* eslint-enable no-console */
-}
 
 // Modified from https://developer.chrome.com/docs/capabilities/web-apis/gpu-compute
 /**
@@ -264,15 +12,20 @@ async function computePass(
     shaderCode: string
 ): Promise<ArrayBuffer> {
     const start = performance.now();
+    const size = pixelData.byteLength;
 
-    // Insert metadata as u32s
-    const metadata = new Uint32Array(2);
-    metadata.set([
+    const metadata = new Uint32Array([
         width,
-        height
+        height,
+        1 // write to debug
     ]);
 
-    const size = pixelData.byteLength + metadata.byteLength;
+    const uniformBuffer = device.createBuffer({
+        size: metadata.byteLength,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    device.queue.writeBuffer(uniformBuffer, 0, metadata);
 
     // Buffer to modify
     const gpuBuffer = device.createBuffer({
@@ -281,28 +34,9 @@ async function computePass(
         usage: GPUBufferUsage.STORAGE
     });
 
-    const range = gpuBuffer.getMappedRange();
-
-    new Uint32Array(range)
-        .set(metadata);
-
-    new Uint8ClampedArray(range)
-        .set(pixelData, metadata.byteLength);
+    new Uint8ClampedArray(gpuBuffer.getMappedRange())
+        .set(pixelData);
     gpuBuffer.unmap();
-
-    // Buffer to pass parameters
-    const paramsBuffer = device.createBuffer({
-        mappedAtCreation: true,
-        size: Uint32Array.BYTES_PER_ELEMENT * 1,
-        usage: GPUBufferUsage.STORAGE
-    });
-
-    const paramsRange = paramsBuffer.getMappedRange();
-    new Uint32Array(paramsRange)
-        .set([
-            BLOCK_SIZE
-        ]);
-    paramsBuffer.unmap();
 
     // Buffer to store result
     const resultBuffer = device.createBuffer({
@@ -310,31 +44,71 @@ async function computePass(
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
     });
 
+    const minBuffer = device.createBuffer({
+        size: size, // Length will be the same
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+    });
+
+    const debugBufferSize = 12 * 4;
+
+    const debugBuffer = device.createBuffer({
+        size: debugBufferSize,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+    });
+
+    // Shader
+    const chunkWidth = BLOCK_SIZE;
+    const chunkHeight = BLOCK_SIZE;
+
+    const shaderModule = device.createShaderModule({
+        code: `
+        const chunk_width = ${chunkWidth};
+        const chunk_height = ${chunkHeight};
+
+        ${shaderCode}
+`
+    });
+
+
     // Bindings
+    // Can't get auto binding to work for some reason
     const bindGroupLayout = device.createBindGroupLayout({
         entries: [
             {
                 binding: 0,
                 visibility: GPUShaderStage.COMPUTE,
                 buffer: {
-                    type: 'read-only-storage'
+                    type: 'storage'
                 }
             },
             {
                 binding: 1,
                 visibility: GPUShaderStage.COMPUTE,
                 buffer: {
-                    type: 'read-only-storage'
+                    type: 'storage'
                 }
             },
             {
                 binding: 2,
                 visibility: GPUShaderStage.COMPUTE,
                 buffer: {
+                    type: 'uniform'
+                }
+            },
+            {
+                binding: 3,
+                visibility: GPUShaderStage.COMPUTE,
+                buffer: {
+                    type: 'storage'
+                }
+            },
+            {
+                binding: 4,
+                visibility: GPUShaderStage.COMPUTE,
+                buffer: {
                     type: 'storage'
                 }
             }
-
         ]
     });
 
@@ -344,28 +118,36 @@ async function computePass(
             {
                 binding: 0,
                 resource: {
-                    buffer: gpuBuffer
+                    buffer: resultBuffer
                 }
             },
             {
                 binding: 1,
                 resource: {
-                    buffer: paramsBuffer
+                    buffer: minBuffer
                 }
             },
             {
                 binding: 2,
                 resource: {
-                    buffer: resultBuffer
+                    buffer: uniformBuffer
+                }
+            },
+            {
+                binding: 3,
+                resource: {
+                    buffer: gpuBuffer
+                }
+            },
+            {
+                binding: 4,
+                resource: {
+                    buffer: debugBuffer
                 }
             }
         ]
     });
 
-    // Shader
-    const shaderModule = device.createShaderModule({
-        code: shaderCode
-    });
 
     // Pipeline
     const computePipeline = device.createComputePipeline({
@@ -378,6 +160,7 @@ async function computePass(
         }
     });
 
+
     // Commands
     const commandEncoder = device.createCommandEncoder();
 
@@ -385,21 +168,20 @@ async function computePass(
     passEncoder.setPipeline(computePipeline);
     passEncoder.setBindGroup(0, bindGroup);
 
-    const workgroupSize = Math.ceil(height / BLOCK_SIZE);
-    const numberOfWorkgroups = workgroupSize / BLOCK_SIZE;
-    console.log(
-        'Dispatching',
-        Math.ceil(numberOfWorkgroups),
-        'workgroups'
-    ) ;
-
     passEncoder.dispatchWorkgroups(
-        numberOfWorkgroups
+        Math.ceil(width / chunkWidth),
+        Math.ceil(height / chunkHeight)
     );
+
     passEncoder.end();
 
     const gpuReadBuffer = device.createBuffer({
         size: size,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+    });
+
+    const debugReadBuffer = device.createBuffer({
+        size: debugBufferSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
     });
 
@@ -411,20 +193,35 @@ async function computePass(
         size
     );
 
+    commandEncoder.copyBufferToBuffer(
+        debugBuffer,
+        0,
+        debugReadBuffer,
+        0,
+        debugBufferSize
+    );
+
     const gpuCommands = commandEncoder.finish();
     device.queue.submit([gpuCommands]);
 
-    await gpuReadBuffer.mapAsync(GPUMapMode.READ);
-    const copyArrayBuffer = gpuReadBuffer
-        .getMappedRange(metadata.byteLength);
+    const results = [];
+
+    for (const buffer of [debugReadBuffer, gpuReadBuffer]) {
+        await buffer.mapAsync(GPUMapMode.READ);
+        const copyArrayBuffer = buffer.getMappedRange();
+
+        results.push(copyArrayBuffer);
+    }
 
     const end = performance.now();
 
+    const [debug, copyArrayBuffer] = results;
     /* eslint-disable no-console */
     console.log('Compute pass done in', end - start, 'ms');
-    console.log(copyArrayBuffer);
+    console.log('Debug', debug);
 
     /* eslint-enable no-console */
+
 
     return copyArrayBuffer;
 }
@@ -439,7 +236,7 @@ self.addEventListener('message', function (e): void {
         const pixelData = e.data.pixelData;
         const { width, height, options } = e.data;
 
-        const { shaderCode, renderPass } = options;
+        const { shaderCode } = options;
         const ctx = offscreenCanvas.getContext('webgpu') as GPUCanvasContext;
 
         if ('gpu' in navigator) {
@@ -465,27 +262,13 @@ self.addEventListener('message', function (e): void {
                 shaderCode
             );
 
-            if (renderPass) {
-                const source = await createImageBitmap(
-                    new ImageData(
-                        new Uint8ClampedArray(copyArrayBuffer),
-                        width,
-                        height
-                    )
-                );
-
-                postProcess(device, source, ctx);
-                const blob = await offscreenCanvas.convertToBlob();
-
-                self.postMessage({ done: true, blob });
-                return;
-            }
-
             // Bit of a workaround,
             // could be avoided if we don't set the context to webgpu earlier
             const tempCanvas = new OffscreenCanvas(width, height);
             const tempCtx = tempCanvas.getContext('2d');
             if (tempCtx) {
+                tempCtx.imageSmoothingEnabled = false;
+
                 const tempImageData = tempCtx.createImageData(width, height);
                 tempImageData.data.set(new Uint8ClampedArray(copyArrayBuffer));
 

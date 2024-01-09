@@ -45,6 +45,8 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
+let redrawInterval = 0;
+
 document.getElementById('interpolation-form').addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(this);
@@ -59,6 +61,15 @@ document.getElementById('interpolation-form').addEventListener('submit', functio
             renderPass: formObject.renderPass
         }
     });
+
+    if (formObject.redrawToggle === 'on') {
+        redrawInterval = setInterval(() => {
+            chart.series[0].redraw();
+        }, 500);
+    } else {
+        clearInterval(redrawInterval);
+    }
+
 });
 
 const shaderCode = Highcharts.seriesTypes.heatmap

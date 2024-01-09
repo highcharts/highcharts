@@ -142,13 +142,17 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
         useWebWorker: false,
         renderPass: false,
         shaderCode:
-`struct Matrix {
-    size: vec2<u32>, // x and y dimensons
-    numbers: array<u32>,
-}
+`
+const chunk_size = chunk_width * chunk_height;
 
+struct VectorArrayList {
+   length: atomic<u32>,
+   vectors: array<array<vec3u, chunk_size>> // x,y = positions, z = pixel value
+}
 struct Params {
-    block_size: u32
+   width: u32,
+   height: u32,
+   debug: u32
 }
 
 // Bit shift create RGBA color
@@ -156,58 +160,108 @@ fn RGBA(r: u32, g: u32, b: u32, a: u32) -> u32 {
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-@group(0) @binding(0) var<storage, read> input : Matrix;
-@group(0) @binding(1) var<storage, read> params : Params;
-@group(0) @binding(2) var<storage, read_write> resultMatrix : Matrix;
+// Bit shift to create color vector from u32
+fn colorVector(color: u32) -> vec3f {
+    let r = (color >> 24) & 0xff;
+    let b = (color >> 16) & 0xff;
+    let g = (color >> 8) & 0xff;
 
-@compute @workgroup_size(4)
+    return vec3f(
+        f32(r) / 255.0,
+        f32(g) / 255.0,
+        f32(b) / 255.0
+    );
+}
+
+// Modified from https://webgpufundamentals.org/webgpu/lessons/webgpu-compute-shaders-histogram.html
+const kSRGBLuminanceFactors = vec3f(0.2126, 0.7152, 0.0722);
+fn srgbLuminance(color: u32) -> f32 {
+
+    let color_vector = colorVector(color);
+
+    return saturate(dot(color_vector, kSRGBLuminanceFactors));
+}
+
+@group(0) @binding(0) var<storage, read_write> resultArrayList : array<u32>;
+@group(0) @binding(1) var<storage, read_write> belowMinMatrix : VectorArrayList;
+@group(0) @binding(2) var<uniform> params: Params;
+@group(0) @binding(3) var<storage, read_write> pixelData : array<u32>;
+@group(0) @binding(4) var<storage, read_write> debugData : array<u32>;
+
+var<workgroup> vectors: array<vec3u, chunk_size>;
+var<workgroup> vectors_length: atomic<u32>;
+
+// TODO: these should maybe be atomic
+var<workgroup> local_min: u32;
+var<workgroup> local_max: u32;
+
+@compute @workgroup_size(chunk_height, chunk_width)
 fn main(
     @builtin(global_invocation_id) global_id : vec3u,
     @builtin(workgroup_id) workgroup_id: vec3u,
     @builtin(local_invocation_id) local_id : vec3u,
+    @builtin(local_invocation_index) local_index : u32,
 ) {
-    if (global_id.x >= u32(input.size.x) || global_id.y >= u32(input.size.y)) {
-        return;
+    if (local_min == 0u) {
+        local_min = RGBA(255u, 255u, 255u, 255u);
     }
 
-    // array of colors corresponding to the workgroup_id
+    if (local_max == 0u) {
+        local_max = RGBA(1u, 0u, 0u, 0u);
+    }
 
-    // Treating block_size as the numbers of rows to process
-    let block_size = params.block_size;
+    let position = global_id.xy;
+    let size = vec2u(params.width, params.height);
+    let index = global_id.y * size.x + global_id.x;
 
-    // The width of the array
-    // Since we are currently loading an u8 array as u32, it kind of works out
-    let arr_width = input.size.x;
+    // Make sure we are working within the bounds of the image
+    if (all(position < size)) {
+        // the index in the result array
+        let pixel = pixelData[index];
 
-    // The base index of the current row
-    let base_index = workgroup_id.x * arr_width;
-
-    // Set the size of the result matrix
-    // not really used anywhere, but it's nice to have
-    resultMatrix.size = input.size;
-
-    let last_row_index = (block_size + base_index) * arr_width;
-
-    // iterate over the each row in the image
-    for (var i = u32(base_index); i < last_row_index ; i+= arr_width) {
-
-        // iterate over each column in the row
-        for (var j = u32(0); j < arr_width; j++) {
-            var result = input.numbers[i + j];
-
-            if( result == 0u ) {
-                result = RGBA(225u, 255u, 0u, 255u);
-                // continue;
-            }
-
-            // Paint every fourth row red for demonstration purposes
-            if ( i != 0u && i % 4u == 0u) {
-                result = RGBA(225u, 60u, 0u, 255u);
-            }
-
-            resultMatrix.numbers[i + j] = result;
+        if (pixel == 0u) {
+            let vector_index = atomicAdd(&vectors_length, 1u);
+            vectors[vector_index] = vec3u(position, 0u);
         }
+
+        if (pixel != 0u) {
+            let min_luminance = srgbLuminance(local_min);
+            let max_luminance = srgbLuminance(local_max);
+
+            let luminance = srgbLuminance(pixel);
+
+            if (luminance < min_luminance) {
+                local_min = pixel;
+            }
+
+            if (luminance > max_luminance) {
+                local_max = pixel;
+            }
+        }
+
+        resultArrayList[index] = pixel;
+
     }
+
+    workgroupBarrier();
+
+    // Fill in colors for pixels that are below the minimum
+    // TODO: should this be done in a separate shader?
+    let current_vector_length = atomicLoad(&vectors_length);
+
+    for (var i = local_index; i < current_vector_length; i+= chunk_size) {
+        let vector = vectors[i];
+        let index = vector.y * size.x + vector.x;
+
+        resultArrayList[index] = local_max;
+    }
+
+    atomicAdd(&belowMinMatrix.length, current_vector_length);
+
+    if (params.debug == 1u) {
+        debugData[workgroup_id.x] = current_vector_length;
+    }
+
 }
 `
     },
