@@ -140,7 +140,6 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     interpolation: {
         enabled: false,
         useWebWorker: false,
-        renderPass: false,
         shaderCode:
 `
 const chunk_size = chunk_width * chunk_height;
