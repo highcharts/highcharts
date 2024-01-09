@@ -87,7 +87,7 @@ const commonGaugeOptions = {
     chart: {
         height: 150,
         type: 'gauge',
-        className: 'gauge'
+        className: 'highcharts-gauge-chart'
     },
     subtitle: {
         floating: true,
@@ -133,7 +133,6 @@ const commonGaugeOptions = {
 
 const commonColumnOptions = {
     chart: {
-        className: 'column',
         type: 'column',
         events: {
             click: () => {
@@ -301,8 +300,7 @@ const board = Dashboards.board('container', {
                     to: 102,
                     className: 'high-band'
                 }]
-            },
-            series: [{}]
+            }
         })
     }, {
         cell: 'rev-forecast-kpi',
@@ -335,8 +333,7 @@ const board = Dashboards.board('container', {
                     to: 86,
                     className: 'warn-band'
                 }]
-            },
-            series: [{}]
+            }
         })
     }, {
         cell: 'cost-forecast-kpi',
@@ -369,8 +366,7 @@ const board = Dashboards.board('container', {
                     to: 21,
                     className: 'high-band'
                 }]
-            },
-            series: [{}]
+            }
         })
     }, {
         cell: 'res-forecast-kpi',
@@ -390,11 +386,12 @@ const board = Dashboards.board('container', {
             Budget: 'y',
             Revenue: 'y'
         },
-        chartOptions: Highcharts.merge(commonColumnOptions, {
+        chartOptions: {
+            ...commonColumnOptions,
             title: {
                 text: 'Revenue'
             }
-        })
+        }
     }, {
         cell: 'cost-chart',
         type: 'Highcharts',
@@ -409,11 +406,12 @@ const board = Dashboards.board('container', {
             Budget: 'Budget',
             Cost: 'Cost'
         },
-        chartOptions: Highcharts.merge(commonColumnOptions, {
+        chartOptions: {
+            ...commonColumnOptions,
             title: {
                 text: 'Cost'
             }
-        })
+        }
     }, {
         cell: 'stock-cell',
         type: 'Highcharts',
@@ -497,17 +495,19 @@ board.then(res => {
         costYearlyForecast += table.CostPredA[i] / 1e6;
     }
 
-    revKPI.chart.series[0].setData([revYTD]);
+    revKPI.chart.addSeries({ data: [revYTD] });
     revKPI.chart.subtitle.update({
         text: `${Math.round(revYTD / revTarget * 100)}% of annual target`
     });
 
-    costKPI.chart.series[0].setData([costYTD]);
+    costKPI.chart.addSeries({ data: [costYTD] });
     costKPI.chart.subtitle.update({
         text: `${Math.round(costYTD / costTarget * 100)}% of annual target`
     });
 
-    resKPI.chart.series[0].setData([Math.round((revYTD - costYTD) * 10) / 10]);
+    resKPI.chart.addSeries({
+        data: [Math.round((revYTD - costYTD) * 10) / 10]
+    });
     resKPI.chart.subtitle.update({
         text: `${Math.round(
             (revYTD - costYTD) / (revTarget - costTarget) * 100

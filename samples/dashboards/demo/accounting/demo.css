@@ -41,11 +41,11 @@
     }
 }
 
-.gauge .highcharts-grid-line {
+.highcharts-gauge-chart .highcharts-grid-line {
     stroke-width: 0;
 }
 
-.gauge .highcharts-title {
+.highcharts-gauge-chart .highcharts-title {
     font-size: 0.8rem;
 }
 
