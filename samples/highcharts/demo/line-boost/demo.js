@@ -44,11 +44,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts drawing ' + n + ' points'
+        text: 'Highcharts drawing ' + n + ' points',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Using the Boost module'
+        text: 'Using the Boost module',
+        align: 'left'
     },
 
     accessibility: {
