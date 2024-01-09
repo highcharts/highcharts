@@ -275,6 +275,7 @@ function chartMoveFixedElements(
         fixedSelectors = [
             '.highcharts-breadcrumbs-group',
             '.highcharts-contextbutton',
+            '.highcharts-caption',
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-legend-checkbox',
