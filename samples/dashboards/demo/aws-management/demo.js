@@ -1,13 +1,7 @@
 let board = void 0;
+let instances = void 0;
+let currentInstanceId = void 0;
 const pollingCheckbox = document.getElementById('enablePolling');
-
-pollingCheckbox.onchange = () => {
-    // need to be tested, when back-end will be ready
-    board.dataPool.setConnectorOptions({
-        enablePolling: true
-    });
-};
-
 const KPIOptions = {
     chart: {
         height: 165,
@@ -34,6 +28,45 @@ const KPIOptions = {
         typeDescription: 'The gauge chart with 1 data point.'
     }
 };
+const chartConnectorOptions = {
+    firstRowAsNames: false,
+    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
+    beforeParse: function (data) {
+        console.log('data', data);
+        const currentInstance = data.find(
+            instance => instance.InstanceId === currentInstanceId
+        ) || data;
+
+        return currentInstance.Details.map(
+            el => Object.values(el)
+        );
+    }
+};
+
+const instancesDetailsConnectorOptions = {
+    firstRowAsNames: false,
+    orientantion: 'columns',
+    columnNames: ['CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+    beforeParse: function (data) {
+        const currentInstance = data.find(
+            instance => instance.InstanceId === currentInstanceId
+        ) || data;
+        const diskSpace = currentInstance.DiskSpace.RootDisk;
+        return [
+            [
+                data.CPUUtilization,
+                data.MemoryUsage,
+                diskSpace.SizeGB,
+                diskSpace.UsedGB,
+                diskSpace.FreeGB,
+                diskSpace.MediaGB,
+                diskSpace.RootGB,
+                diskSpace.Documents,
+                diskSpace.Downloads
+            ]
+        ];
+    }
+};
 
 Highcharts.setOptions({
     credits: {
@@ -44,327 +77,70 @@ Highcharts.setOptions({
     }
 });
 
-const instances = [{
-    InstanceId: 'i-0abcdef1234567890',
-    InstanceType: 't2.micro',
-    Zone: 'eu-west-2b',
-    AMI: 'ami-0123456',
-    OS: 'Amazon Linux',
-    State: 'running',
-    PrivateIpAddress: '10.0.1.101',
-    PublicIpAddress: '54.123.45.67',
-    CPUUtilization: 5,
-    MemoryUsage: 512,
-    DiskSpace: {
-        RootDisk: {
-            SizeGB: 30,
-            UsedGB: 15,
-            FreeGB: 15,
-            MediaGB: 5,
-            RootGB: 10,
-            Documents: 10,
-            Downloads: 5
-        }
-    },
-    Details: [{
-        timestamp: 1640995200000,
-        readOpt: 150,
-        writeOpt: 80,
-        networkIn: 200,
-        networkOut: 180,
-        cpuUtilization: 30.5
-    }, {
-        timestamp: 1640998800000,
-        readOpt: 120,
-        writeOpt: 90,
-        networkIn: 180,
-        networkOut: 160,
-        cpuUtilization: 35.2
-    }, {
-        timestamp: 1641002400000,
-        readOpt: 180,
-        writeOpt: 75,
-        networkIn: 220,
-        networkOut: 200,
-        cpuUtilization: 28.8
-    }, {
-        timestamp: 1641006000000,
-        readOpt: 130,
-        writeOpt: 85,
-        networkIn: 190,
-        networkOut: 170,
-        cpuUtilization: 32.1
-    }, {
-        timestamp: 1641009600000,
-        readOpt: 160,
-        writeOpt: 70,
-        networkIn: 210,
-        networkOut: 190,
-        cpuUtilization: 27.3
-    }, {
-        timestamp: 1641013200000,
-        readOpt: 140,
-        writeOpt: 95,
-        networkIn: 200,
-        networkOut: 180,
-        cpuUtilization: 31.7
-    }, {
-        timestamp: 1641016800000,
-        readOpt: 170,
-        writeOpt: 78,
-        networkIn: 230,
-        networkOut: 210,
-        cpuUtilization: 29.4
-    }, {
-        timestamp: 1641020400000,
-        readOpt: 110,
-        writeOpt: 88,
-        networkIn: 170,
-        networkOut: 150,
-        cpuUtilization: 34.2
-    }, {
-        timestamp: 1641024000000,
-        readOpt: 155,
-        writeOpt: 72,
-        networkIn: 205,
-        networkOut: 185,
-        cpuUtilization: 26.8
-    }, {
-        timestamp: 1641027600000,
-        readOpt: 125,
-        writeOpt: 82,
-        networkIn: 185,
-        networkOut: 165,
-        cpuUtilization: 5.0
-    }],
-    HealthIndicator: 'OK'
-}, {
-    InstanceId: 'i-1a2b3c4d5e6f78901',
-    InstanceType: 't3.small',
-    Zone: 'eu-centra-1a',
-    AMI: 'ami-043918s',
-    OS: 'Amazon Windows',
-    State: 'running',
-    PrivateIpAddress: '10.0.1.102',
-    PublicIpAddress: '354.123.45.67',
-    CPUUtilization: 65,
-    MemoryUsage: 256,
-    DiskSpace: {
-        RootDisk: {
-            SizeGB: 20,
-            UsedGB: 10,
-            FreeGB: 10,
-            MediaGB: 5,
-            RootGB: 10,
-            Documents: 2,
-            Downloads: 3
-        }
-    },
-    Details: [{
-        timestamp: 1640995200000,
-        readOpt: 15,
-        writeOpt: 80,
-        networkIn: 200,
-        networkOut: 180,
-        cpuUtilization: 30.5
-    }, {
-        timestamp: 1640998800000,
-        readOpt: 12,
-        writeOpt: 90,
-        networkIn: 180,
-        networkOut: 160,
-        cpuUtilization: 35.2
-    }, {
-        timestamp: 1641002400000,
-        readOpt: 180,
-        writeOpt: 5,
-        networkIn: 120,
-        networkOut: 100,
-        cpuUtilization: 28.8
-    }, {
-        timestamp: 1641006000000,
-        readOpt: 130,
-        writeOpt: 85,
-        networkIn: 190,
-        networkOut: 170,
-        cpuUtilization: 32.1
-    }, {
-        timestamp: 1641009600000,
-        readOpt: 160,
-        writeOpt: 70,
-        networkIn: 210,
-        networkOut: 190,
-        cpuUtilization: 27.3
-    }, {
-        timestamp: 1641013200000,
-        readOpt: 140,
-        writeOpt: 95,
-        networkIn: 20,
-        networkOut: 18,
-        cpuUtilization: 31.7
-    }, {
-        timestamp: 1641016800000,
-        readOpt: 170,
-        writeOpt: 78,
-        networkIn: 23,
-        networkOut: 21,
-        cpuUtilization: 29.4
-    }, {
-        timestamp: 1641020400000,
-        readOpt: 11,
-        writeOpt: 8,
-        networkIn: 170,
-        networkOut: 150,
-        cpuUtilization: 34.2
-    }, {
-        timestamp: 1641024000000,
-        readOpt: 155,
-        writeOpt: 72,
-        networkIn: 205,
-        networkOut: 185,
-        cpuUtilization: 26.8
-    }, {
-        timestamp: 1641027600000,
-        readOpt: 125,
-        writeOpt: 82,
-        networkIn: 125,
-        networkOut: 15,
-        cpuUtilization: 65
-    }],
-    HealthIndicator: 'Warning'
-}, {
-    InstanceId: 'i-9876543210abcdef0',
-    InstanceType: 'm5.large',
-    Zone: 'eu-east-1c',
-    AMI: 'ami-030129s',
-    OS: 'Amazon Ubuntu',
-    State: 'stopped',
-    PrivateIpAddress: '10.0.1.103',
-    PublicIpAddress: '54.321.67.89',
-    CPUUtilization: 95,
-    MemoryUsage: 2048,
-    DiskSpace: {
-        RootDisk: {
-            SizeGB: 50,
-            UsedGB: 15,
-            FreeGB: 35,
-            MediaGB: 15,
-            RootGB: 20,
-            Documents: 5,
-            Downloads: 10
-        }
-    },
-    Details: [{
-        timestamp: 1672531200000,
-        readOpt: 180,
-        writeOpt: 70,
-        networkIn: 220,
-        networkOut: 200,
-        cpuUtilization: 25.5
-    }, {
-        timestamp: 1672534800000,
-        readOpt: 130,
-        writeOpt: 85,
-        networkIn: 190,
-        networkOut: 170,
-        cpuUtilization: 30.2
-    }, {
-        timestamp: 1672538400000,
-        readOpt: 16,
-        writeOpt: 5,
-        networkIn: 205,
-        networkOut: 80,
-        cpuUtilization: 28.8
-    }, {
-        timestamp: 1672542000000,
-        readOpt: 120,
-        writeOpt: 95,
-        networkIn: 180,
-        networkOut: 160,
-        cpuUtilization: 35.1
-    }, {
-        timestamp: 1672545600000,
-        readOpt: 14,
-        writeOpt: 6,
-        networkIn: 10,
-        networkOut: 90,
-        cpuUtilization: 27.3
-    }, {
-        timestamp: 1672549200000,
-        readOpt: 210,
-        writeOpt: 185,
-        networkIn: 70,
-        networkOut: 150,
-        cpuUtilization: 31.7
-    }, {
-        timestamp: 1672552800000,
-        readOpt: 150,
-        writeOpt: 78,
-        networkIn: 10,
-        networkOut: 196,
-        cpuUtilization: 29.4
-    }, {
-        timestamp: 1672556400000,
-        readOpt: 100,
-        writeOpt: 92,
-        networkIn: 10,
-        networkOut: 143,
-        cpuUtilization: 33.2
-    }, {
-        timestamp: 1672560000000,
-        readOpt: 145,
-        writeOpt: 68,
-        networkIn: 200,
-        networkOut: 180,
-        cpuUtilization: 26.8
-    }, {
-        timestamp: 1672563600000,
-        readOpt: 125,
-        writeOpt: 80,
-        networkIn: 185,
-        networkOut: 16,
-        cpuUtilization: 100
-    }],
-    HealthIndicator: 'Critical'
-}];
+pollingCheckbox.onchange = async e => {
 
-const setupDashboard = instance => {
+    // charts data
+    board.dataPool.setConnectorOptions({
+        id: 'charts',
+        type: 'JSON',
+        options: {
+            ...chartConnectorOptions,
+            enablePolling: e.target.checked,
+            dataRefreshRate: 2,
+            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json'
+        }
+    });
+
+    // KPI instances data
+    board.dataPool.setConnectorOptions({
+        id: 'instanceDetails',
+        type: 'JSON',
+        options: {
+            ...instancesDetailsConnectorOptions,
+            enablePolling: e.target.checked,
+            dataRefreshRate: 2,
+            dataUrl: 'https://demo-live-data.highcharts.com/instances.json'
+        }
+    });
+
+    const chartConnector = await board.dataPool.getConnector('charts');
+    const instanceDetailsConnector = await board.dataPool.getConnector('instanceDetails');
+
+    // update connector and rerender component
+    board.mountedComponents.forEach(mComp => {
+        const connectorId = mComp.component.options?.connector?.id;
+        if (connectorId) {
+            console.log(connectorId);
+            mComp.component.setConnector(
+                connectorId === 'charts' ? chartConnector : instanceDetailsConnector
+            );
+            mComp.component.render();
+        }
+    });
+};
+
+const setupDashboard = instanceId => {
+    const instance = instances.find(
+        instance => instance.InstanceId === instanceId
+    ) || instances[0];
+
+    // for polling option
+    currentInstanceId = instance.InstanceId;
+
     board = Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'instanceDetails',
                 type: 'JSON',
                 options: {
-                    firstRowAsNames: false,
-                    orientantion: 'columns',
-                    columnNames: ['CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
-                    beforeParse: function (data) {
-                        const diskSpace = data.DiskSpace.RootDisk;
-                        return [
-                            [
-                                data.CPUUtilization,
-                                data.MemoryUsage,
-                                diskSpace.SizeGB,
-                                diskSpace.UsedGB,
-                                diskSpace.FreeGB,
-                                diskSpace.MediaGB,
-                                diskSpace.RootGB,
-                                diskSpace.Documents,
-                                diskSpace.Downloads
-                            ]
-                        ];
-                    },
+                    ...instancesDetailsConnectorOptions,
                     data: instance
                 }
             }, {
                 id: 'charts',
                 type: 'JSON',
                 options: {
-                    firstRowAsNames: false,
-                    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
-                    beforeParse: function () {
-                        return instance.Details.map(el => Object.values(el));
-                    },
+                    ...chartConnectorOptions,
                     data: instance
                 }
             }, {
@@ -644,8 +420,10 @@ const setupDashboard = instance => {
                 highlight: true
             },
             chartOptions: {
+                chart: {
+                    type: 'spline'
+                },
                 series: [{
-                    type: 'spline',
                     name: 'cpuUtilization'
                 }],
                 xAxis: {
@@ -904,6 +682,11 @@ const setupDashboard = instance => {
                         description: 'Operations'
                     }
                 },
+                plotOptions: {
+                    series: {
+                        pointRange: 3600 * 1000
+                    }
+                },
                 accessibility: {
                     description: `The chart is displaying amount of in and out
                                 operations on disk`,
@@ -940,9 +723,8 @@ const setupDashboard = instance => {
                         click: function (e) {
                             board.destroy();
                             setupDashboard(
-                                instances.find(instance => instance.InstanceId === e.target.parentNode.childNodes[0].innerText) || instances[0]
+                                e.target.parentNode.childNodes[0].innerText
                             );
-
                         }
                     }
                 }
@@ -953,7 +735,8 @@ const setupDashboard = instance => {
             events: {
                 mount: function () {
                     setTimeout(() => {
-                        const currentRow = document.querySelector('[data-original-data="' + instance.InstanceId + '"]').parentNode;
+                        const currentRow =
+                            document.querySelector('[data-original-data="' + instance.InstanceId + '"]').parentNode;
                         currentRow.classList.add('current');
                     }, 1);
                 }
@@ -963,4 +746,11 @@ const setupDashboard = instance => {
 };
 
 // Init
-setupDashboard(instances[0]);
+(async () => {
+    // load init list of intances
+    instances = await fetch(
+        'https://demo-live-data.highcharts.com/instances.json'
+    ).then(response => response.json());
+
+    setupDashboard();
+})();

@@ -825,12 +825,12 @@ abstract class Component {
         this.options = merge(this.options, newOptions);
 
         if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
+            this.options.connector?.id //&&
+            // this.connectorId !== this.options.connector.id
         ) {
             const connector = await this.board.dataPool
                 .getConnector(this.options.connector.id);
-
+console.log('component', connector);
             this.setConnector(connector);
         }
 
@@ -838,6 +838,7 @@ abstract class Component {
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
+            await this.initConnector();
             this.render();
         }
 
