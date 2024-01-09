@@ -34,7 +34,10 @@
                 joinBy: ['iso-a2', 'code'],
                 dataLabels: {
                     enabled: true,
-                    color: '#FFFFFF',
+                    // color: '#FFFFFF',
+                    backgroundColor: 'contrast',
+                    borderRadius: 3,
+                    padding: 3,
                     style: {
                         fontWeight: 'bold'
                     },

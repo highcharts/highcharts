@@ -1484,8 +1484,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     },
 
     /**
-     * Options for the series data labels, appearing next to each data
-     * point.
+     * Options for the series data labels, appearing next to each data point.
      *
      * Since v6.2.0, multiple data labels can be applied to each single
      * point by defining them as an array of configs.
@@ -1576,11 +1575,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The background color or gradient for the data label. Setting it to
-         * `auto` will use the point's color.
+         * The background color or gradient for the data label. In addition to
+         * regular colors, there are two special setting for this option:
+         * - `auto` will set the background color the point's color.
+         * - `contrast` will set it to a contrast against the text color, with
+         *   an opacity allowing to see the underlying content. The contrast is
+         *   great enough to ensure readability for the text according to
+         *   accessibility standards.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Contrast background color in stacked column
+         * @sample {highcharts} highcharts/series-pie/datalabels-background-contrast/
+         *         Contrast background color in pie
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
@@ -1612,7 +1620,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Data labels box options
          *
          * @type      {number}
-         * @default   0
+         * @default   3
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderRadius
          */
@@ -1927,7 +1935,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * text outline doesn't work well, in which cases it can be disabled
          * by setting it to `"none"`. When `useHTML` is true, the
          * `textOutline` will not be picked up. In this, case, the same
-         * effect can be acheived through the `text-shadow` CSS property.
+         * effect can be acheived through the `text-shadow` CSS property. As a
+         * complementary or alternative to the `textOutline`, a
+         * `dataLabels.backgroundColor` can be used. It provides a more calm
+         * impression and ensures readable text label, at the cost of a risk of
+         * overshadowing the underlying chart elements.
          *
          * For some series types, where each point has an extent, like for
          * example tree maps, the data label may overflow the point. There
@@ -1942,6 +1954,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Long labels truncated with an ellipsis in a pie
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Default text outline and contrast background color
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels
          *
