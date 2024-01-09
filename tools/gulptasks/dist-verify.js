@@ -32,13 +32,7 @@ const DASHBOARDS_PATHS = [
  *         Promise to keep
  */
 async function distVerify(argv) {
-    let pathsToVerify;
-
-    if (argv.dashboards) {
-        pathsToVerify = DASHBOARDS_PATHS;
-    } else {
-        pathsToVerify = HIGHCHARTS_PATHS;
-    }
+    const pathsToVerify = argv.dashboards ? DASHBOARDS_PATHS : HIGHCHARTS_PATHS;
 
     for (const path of pathsToVerify) {
         const distPath = join(DIST_DIR, path);
