@@ -29,6 +29,7 @@ import type {
     Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
@@ -630,6 +631,26 @@ class KPIComponent extends Component {
             return thresholdColors[0];
         }
         return '';
+    }
+
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<KPIComponent.ComponentOptions> = {
+            cell: '',
+            type: 'KPI'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
     }
 
     /**

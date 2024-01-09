@@ -32,9 +32,9 @@ import type {
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -388,6 +388,17 @@ abstract class Component {
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
 
+
+    /**
+     * Returns the component's options when it is dropped from the sidebar.
+     *
+     * @param sidebar
+     * The sidebar popup.
+     */
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<ComponentType['options']> {
+        return {};
+    }
+
     /* *
      *
      *  Functions
@@ -401,15 +412,19 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
+        const connectorId = this.options.connector?.id,
+            dataPool = this.board.dataPool;
 
         if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
+            connectorId &&
+            (
+                this.connectorId !== connectorId ||
+                dataPool.isNewConnector(connectorId)
+            )
         ) {
             this.cell.setLoadingState();
 
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+            const connector = await dataPool.getConnector(connectorId);
 
             this.setConnector(connector);
         }
@@ -1303,9 +1318,9 @@ namespace Component {
         /**
          * Set of options that are available for editing through sidebar.
          */
-        editableOptions: Array<EditableOptions.Options>;
+        editableOptions?: Array<EditableOptions.Options>;
         /** @internal */
-        editableOptionsBindings: EditableOptions.OptionsBindings;
+        editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
         presentationModifier?: DataModifier;
         /**
@@ -1326,7 +1341,7 @@ namespace Component {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
          */
-        sync: SyncOptions;
+        sync?: SyncOptions;
         /**
          * Connector options
          */

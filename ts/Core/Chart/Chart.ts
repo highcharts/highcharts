@@ -284,7 +284,10 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ) {
-        const args = [...arguments];
+        const args = [
+            // ES5 builds fail unless we cast it to an Array
+            ...arguments as unknown as Array<any>
+        ];
 
         // Remove the optional first argument, renderTo, and set it on this.
         if (isString(a) || (a as globalThis.HTMLElement).nodeName) {
@@ -604,9 +607,9 @@ class Chart {
      * Internal function to set data for all series with enabled sorting.
      *
      * @private
-     * @function Highcharts.Chart#setSeriesData
+     * @function Highcharts.Chart#setSortedData
      */
-    public setSeriesData(): void {
+    public setSortedData(): void {
         this.getSeriesOrderByLinks().forEach(function (series): void {
             // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
@@ -2691,7 +2694,7 @@ class Chart {
         );
 
         chart.linkSeries();
-        chart.setSeriesData();
+        chart.setSortedData();
 
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
