@@ -83,13 +83,18 @@
     fill: var(--highcharts-neutral-color-60);
 }
 
-/* Custom */
+.highcharts-column-chart .highcharts-point {
+    cursor: pointer;
+}
 
-.prediction-line {
+.highcharts-stock-chart .highcharts-color-1,
+.highcharts-stock-chart .highcharts-color-2 {
     fill: #debd5b;
     stroke: #debd5b;
     stroke-dasharray: 1px 6px;
 }
+
+/* Custom */
 
 .year-plotline {
     stroke-dasharray: 5px 3px;

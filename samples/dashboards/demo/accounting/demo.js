@@ -134,11 +134,7 @@ const commonGaugeOptions = {
 const commonColumnOptions = {
     chart: {
         type: 'column',
-        events: {
-            click: () => {
-                togglePopup(true);
-            }
-        }
+        className: 'highcharts-column-chart'
     },
     credits: {
         enabled: false
@@ -435,6 +431,9 @@ const board = Dashboards.board('container', {
             }
         },
         chartOptions: {
+            chart: {
+                className: 'highcharts-stock-chart'
+            },
             xAxis: {
                 min: Date.UTC(currentYear),
                 plotLines: [{
@@ -456,11 +455,9 @@ const board = Dashboards.board('container', {
             series: [{
                 name: 'Result'
             }, {
-                name: 'Pessimistically',
-                className: 'prediction-line'
+                name: 'Pessimistically'
             }, {
-                name: 'Optimistically',
-                className: 'prediction-line'
+                name: 'Optimistically'
             }]
         }
     }]
