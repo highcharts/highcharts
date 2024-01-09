@@ -52,11 +52,12 @@ function lintDTS(argv) {
 
         let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
 
-        if (argv.dashboards) {
-            directories = directories.filter(folder => folder.includes('dashboards'));
-        } else {
-            directories = directories.filter(folder => !folder.includes('dashboards'));
-        }
+        directories = directories.filter(folder => {
+            if (argv.dashboards) {
+                return folder.includes('dashboards');
+            }
+            return !folder.includes('dashboards');
+        });
 
         directories.forEach(folder => {
             promiseChain = promiseChain.then(

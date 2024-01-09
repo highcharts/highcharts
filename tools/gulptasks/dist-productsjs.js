@@ -42,14 +42,8 @@ async function distProductsJS(options) {
         .then(content => JSON.parse(content.substring(prefix.length)));
 
     if (dashboards) {
-        const now = new Date();
-
         products['Highcharts Dashboards'] = {
-            date: [
-                now.getFullYear(),
-                (now.getMonth() + 1).toString().padStart('0', 2),
-                now.getDate().toString().padStart('0', 2)
-            ].join('-'),
+            date: new Date().toISOString().split('T')[0],
             nr: release
         };
     } else {
