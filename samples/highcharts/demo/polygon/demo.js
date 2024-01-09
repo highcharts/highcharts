@@ -17,7 +17,7 @@ Highcharts.chart('container', {
         },
         startOnTick: true,
         endOnTick: true,
-        showLastLabel: true
+        tickPixelInterval: 50
     },
     yAxis: {
         title: {
