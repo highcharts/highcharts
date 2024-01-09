@@ -10,6 +10,8 @@
 
 'use strict';
 
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
 /* *
  *
  *  Imports
@@ -126,7 +128,6 @@ class OHLCSeries extends HLCSeries {
 
     public static compose(
         SeriesClass: typeof Series,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ..._args: Array<never>
     ): void {
 
