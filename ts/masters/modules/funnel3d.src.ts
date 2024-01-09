@@ -7,7 +7,7 @@
  *
  * Highcharts funnel module
  *
- * (c) 2010-2021 Kacper Madej
+ * (c) 2010-2024 Kacper Madej
  *
  * License: www.highcharts.com/license
  */

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Paweł Dalek
+ *  (c) 2010-2024 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *

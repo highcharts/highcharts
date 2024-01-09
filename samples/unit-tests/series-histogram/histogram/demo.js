@@ -473,6 +473,12 @@ QUnit.test('Histogram', function (assert) {
         'Bins frequencies are calculated correctly'
     );
 
+    assert.deepEqual(
+        histogram.data.map(point => point.x2),
+        [32, 42, 52, 62, 72, 82, 91],
+        'Bins x2 value is calculated properly (#20340)'
+    );
+
     histogram.update({
         binWidth: 5
     });

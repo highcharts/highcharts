@@ -1573,6 +1573,7 @@ export default GridAxis;
  * Set border color for the label grid lines.
  *
  * @type      {Highcharts.ColorString}
+ * @default   #e6e6e6
  * @apioption xAxis.grid.borderColor
  */
 

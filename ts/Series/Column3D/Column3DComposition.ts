@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -205,6 +205,11 @@ function columnSeriesTranslate3dShapes(
                 point2dPos.x = shapeArgs.height;
                 point2dPos.y = point.clientX || 0;
             }
+
+            // Crosshair positions
+            point.axisXpos = point2dPos.x;
+            point.axisYpos = point2dPos.y;
+            point.axisZpos = point2dPos.z;
 
             // Calculate and store point's position in 3D,
             // using perspective method.

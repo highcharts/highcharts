@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -251,9 +251,11 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 
         if (label.oldOpacity !== newOpacity) {
 
-            // Make sure the label is completely hidden to avoid catching clicks
-            // (#4362)
-            if (label.alignAttr && label.placed) { // Data labels
+            // Toggle data labels
+            if (label.hasClass('highcharts-data-label')) {
+
+                // Make sure the label is completely hidden to avoid catching
+                // clicks (#4362)
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
@@ -274,7 +276,9 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                     complete
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
-            } else { // Other labels, tick labels
+
+            // Toggle other labels, tick labels
+            } else {
                 label.attr({
                     opacity: newOpacity
                 });

@@ -5,7 +5,7 @@
  *
  * Data grouping module
  *
- * (c) 2010-2021 Torstein Hønsi
+ * (c) 2010-2024 Torstein Hønsi
  *
  * License: www.highcharts.com/license
  */

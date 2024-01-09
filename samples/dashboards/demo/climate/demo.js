@@ -13,6 +13,13 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
+const tempRange = {
+    minC: -10,
+    maxC: 50,
+    minF: 14,
+    maxF: 122
+};
+
 setupBoard();
 
 const KPIChartOptions = {
@@ -332,8 +339,8 @@ async function setupBoard() {
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
-                    max: 50,
-                    min: 0,
+                    max: tempRange.maxC,
+                    min: tempRange.minC,
                     stops: colorStopsTemperature
                 },
                 legend: {
@@ -402,7 +409,7 @@ async function setupBoard() {
                             },
                             select: {
                                 lineWidthPlus: 4,
-                                radiusPlus: 0
+                                radiusPlus: 2
                             }
                         },
                         symbol: 'mapmarker'
@@ -464,8 +471,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -494,8 +501,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -569,18 +576,20 @@ async function setupBoard() {
                     },
                     TNC: {
                         headerFormat: 'Average Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     }
                 }
@@ -638,7 +647,24 @@ async function setupBoard() {
                 },
                 tooltip: {
                     enabled: true,
-                    stickOnContact: true
+                    stickOnContact: true,
+                    formatter: function () {
+                        const point = this.point;
+                        const name = this.series.name;
+
+                        // Date
+                        let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
+
+                        if (name === 'RR1') {
+                            // Rainy days
+                            str += 'Days with rain: ' + point.y;
+                        } else {
+                            // Temperature (names TXC, TNC, TXF, TNF)
+                            const tempStr = (name[1] === 'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
+                            str += tempStr + '˚' + name[2];
+                        }
+                        return str;
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
@@ -684,9 +710,18 @@ async function setupBoard() {
         });
     }
 
-    // Load initial city
+    // Load active city
     await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
+
+    // Select active city on the map
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+    for (let idx = 0; idx < worldMap.data.length; idx++) {
+        if (worldMap.data[idx].name === activeCity) {
+            worldMap.data[idx].select();
+            break;
+        }
+    }
 
     // Load additional cities
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
@@ -700,7 +735,7 @@ async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityTable = await dataPool.getConnectorTable(city);
-    const time = board.mountedComponents[0].component.chart.axes[0].min;
+    const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -735,6 +770,11 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
+    const pointValue = cityTable.modified.getCellAsNumber(
+        column,
+        cityTable.modified.getRowIndexBy('time', latestTime)
+    );
+
     // Add city to world map
     worldMap.addPoint({
         custom: {
@@ -744,17 +784,14 @@ async function setupCity(board, city, column, scale) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        y: cityTable.modified.getCellAsNumber(
-            column,
-            cityTable.getRowIndexBy('time', time)
-        ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+        y: pointValue || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
 }
 
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
@@ -762,13 +799,18 @@ async function updateBoard(board, city, column, scale, newData) {
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const cityTable = await dataPool.getConnectorTable(city);
+    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+
     const [
         timeRangeSelector,
         worldMap,
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        selectionGrid
+        // eslint-disable-next-line no-unused-vars
+        kpiRain, // No need to update this chart
+        selectionGrid,
+        cityChart
     ] = board.mountedComponents.map(c => c.component);
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -776,7 +818,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            // type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
@@ -811,10 +852,15 @@ async function updateBoard(board, city, column, scale, newData) {
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
+        // Get elevation of city
+        const cityName = mapPoints[i].name;
+        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+
+        const pointTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({
             custom: {
+                elevation: cityInfo.elevation,
                 yScale: scale
             },
             y: pointTable.modified.getCellAsNumber(
@@ -837,9 +883,8 @@ async function updateBoard(board, city, column, scale, newData) {
         columnName: 'TX' + scale
     });
 
-    // Update KPIs
     if (newData) {
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        // Update KPIs
         await kpiData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
@@ -878,6 +923,25 @@ async function updateBoard(board, city, column, scale, newData) {
                 }
             },
             columnAssignment: sharedColumnAssignment
+        });
+
+        // Update city chart
+        const options = cityChart.chartOptions;
+        options.title.text = 'Temperature and rain in ' + city;
+        options.colorAxis.min = colorMin;
+        options.colorAxis.max = colorMax;
+        options.colorAxis.colorStops = colorStops;
+
+        await cityChart.update({
+            columnAssignment: {
+                time: 'x',
+                RR1: 'y',
+                TNC: showCelsius ? 'y' : null,
+                TNF: !showCelsius ? 'y' : null,
+                TXC: showCelsius ? 'y' : null,
+                TXF: !showCelsius ? 'y' : null
+            },
+            chartOptions: options
         });
     }
 }
