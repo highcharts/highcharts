@@ -1,0 +1,10 @@
+---
+name: 'Dual axes, line and column'
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Combinations
+...
