@@ -98,7 +98,7 @@ const configs: {
     handlers: {
         highlightHandler: [
             'highlightHandler',
-            function (this: DataGridComponent): void {
+            function (this: DataGridComponent): (() => void) | void {
                 const { board } = this;
 
                 const handlCursor = (e: DataCursor.Event): void => {
@@ -154,12 +154,14 @@ const configs: {
                 };
 
                 if (board) {
-                    unregisterCursorListeners();
                     registerCursorListeners();
+                    return unregisterCursorListeners;
                 }
             }
         ],
-        extremesHandler: function (this: DataGridComponent): void {
+        extremesHandler: function (
+            this: DataGridComponent
+        ): (() => void) | void {
             const { board } = this;
 
             const handleChangeExtremes = (e: DataCursor.Event): void => {
@@ -204,12 +206,12 @@ const configs: {
 
             if (board) {
                 registerCursorListeners();
-
-                this.on('setConnector', (): void => unregisterCursorListeners());
-                this.on('afterSetConnector', (): void => registerCursorListeners());
+                return unregisterCursorListeners;
             }
         },
-        visibilityHandler: function (this: DataGridComponent): void {
+        visibilityHandler: function (
+            this: DataGridComponent
+        ): (() => void) | void {
             const component = this,
                 { board } = component;
 
@@ -261,9 +263,7 @@ const configs: {
 
             if (board) {
                 registerCursorListeners();
-
-                this.on('setConnector', (): void => unregisterCursorListeners());
-                this.on('afterSetConnector', (): void => registerCursorListeners());
+                return unregisterCursorListeners;
             }
 
         }

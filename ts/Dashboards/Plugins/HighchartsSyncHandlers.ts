@@ -354,7 +354,7 @@ const configs: {
     },
     handlers: {
         seriesVisibilityHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const component = this;
                 const { board } = this;
 
@@ -417,13 +417,11 @@ const configs: {
 
                 if (board) {
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
+                    return unregisterCursorListeners;
                 }
             },
         highlightHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const { chart, board } = this;
 
                 const getHoveredPoint = (
@@ -444,6 +442,7 @@ const configs: {
                             table, modifier.options as RangeModifierOptions
                         );
                     }
+
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
@@ -464,7 +463,10 @@ const configs: {
                             }
 
                             if (series?.visible && cursor.row !== void 0) {
-                                return series.points[cursor.row - offset];
+                                const point = series.data[cursor.row - offset];
+                                if (point?.graphic) {
+                                    return point;
+                                }
                             }
                         }
                     }
@@ -480,7 +482,7 @@ const configs: {
 
                     const point = getHoveredPoint(e);
 
-                    if (!chart || !point ||
+                    if (!chart || !point?.isInside ||
                         // Abort if the affected chart is the same as the one
                         // that is currently affected manually.
                         point === chart.hoverPoint
@@ -488,11 +490,10 @@ const configs: {
                         return;
                     }
 
-                    if (
-                        chart.tooltip &&
-                        highlightOptions.showTooltip
-                    ) {
-                        const useSharedTooltip = chart.tooltip?.shared;
+                    const tooltip = chart.tooltip;
+
+                    if (tooltip && highlightOptions.showTooltip) {
+                        const useSharedTooltip = tooltip.shared;
                         const hoverPoint = chart.hoverPoint;
                         const hoverSeries = hoverPoint?.series ||
                             chart.hoverSeries;
@@ -504,13 +505,17 @@ const configs: {
                             true
                         );
 
-                        chart.tooltip && chart.tooltip.refresh(
-                            useSharedTooltip ?
-                                points.hoverPoints : point
+                        tooltip.refresh(
+                            useSharedTooltip ? points.hoverPoints : point
                         );
                     }
 
-                    if (highlightOptions.highlightPoint) {
+                    if (highlightOptions.highlightPoint && (
+                        // If the tooltip is shared, the hover state is
+                        // already set on the point.
+                        (!tooltip?.shared && highlightOptions.showTooltip) ||
+                        !highlightOptions.showTooltip
+                    )) {
                         point.setState('hover');
                     }
 
@@ -534,33 +539,48 @@ const configs: {
 
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
-                    if (point && point === chart.hoverPoint) {
+                    if (point && (
+                        !point.isInside ||
+                        point === chart.hoverPoint
+                    )) {
                         return;
                     }
 
-                    if (chart.tooltip && highlightOptions.showTooltip) {
-                        chart.tooltip.hide();
+                    let unhovered = false;
+                    const unhoverAllPoints = (): void => {
+                        // If the 'row' parameter is missing in the event
+                        // object, the unhovered point cannot be identified.
+
+                        const series = chart.series;
+                        const seriesLength = series.length;
+
+                        for (let i = 0; i < seriesLength; i++) {
+                            const points = chart.series[i].points;
+                            const pointsLength = points.length;
+
+                            for (let j = 0; j < pointsLength; j++) {
+                                points[j].setState();
+                            }
+                        }
+                    };
+
+                    const tooltip = chart.tooltip;
+                    if (tooltip && highlightOptions.showTooltip) {
+                        tooltip.hide();
+
+                        // Shared tooltip refresh always hovers points, so it's
+                        // important to unhover all points on cursor out.
+                        if (tooltip.shared) {
+                            unhoverAllPoints();
+                            unhovered = true;
+                        }
                     }
 
-                    if (highlightOptions.highlightPoint) {
+                    if (highlightOptions.highlightPoint && !unhovered) {
                         if (point) {
                             point.setState();
                         } else {
-
-                            // If the 'row' parameter is missing in the event
-                            // object, the unhovered point cannot be identified.
-
-                            const series = chart.series;
-                            const seriesLength = series.length;
-
-                            for (let i = 0; i < seriesLength; i++) {
-                                const points = chart.series[i].points;
-                                const pointsLength = points.length;
-
-                                for (let j = 0; j < pointsLength; j++) {
-                                    points[j].setState();
-                                }
-                            }
+                            unhoverAllPoints();
                         }
                     }
 
@@ -614,8 +634,8 @@ const configs: {
                 };
 
                 if (board) {
-                    unregisterCursorListeners();
                     registerCursorListeners();
+                    return unregisterCursorListeners;
                 }
             },
         extremesHandler:
