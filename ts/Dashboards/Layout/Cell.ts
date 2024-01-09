@@ -25,6 +25,7 @@
 import type Component from '../Components/Component.js';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';

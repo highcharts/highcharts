@@ -367,10 +367,8 @@ function renderSelectElement(
         selectOption
     );
 
-    let icon: HTMLElement|undefined;
-
     if (option.iconURL) {
-        icon = createElement(
+        createElement(
             'img',
             {
                 src: iconURL

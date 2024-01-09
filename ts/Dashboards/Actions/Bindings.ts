@@ -183,6 +183,7 @@ namespace Bindings {
     /** @internal */
     export function componentFromJSON(
         json: Component.JSON,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         cellContainer: (HTMLElement|undefined) // @todo
     ): (Component|undefined) {
         let componentClass = ComponentRegistry.types[

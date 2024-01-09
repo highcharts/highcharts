@@ -17,6 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Layout from './Layout.js';
 import type Serializable from '../Serializable';
@@ -371,8 +372,6 @@ class Row extends GUIElement {
     public setSize(
         height?: number | string
     ): void {
-        const cells = this.cells;
-
         Row.setContainerHeight(
             this.container as HTMLDOMElement,
             height
