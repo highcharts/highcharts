@@ -328,7 +328,7 @@ namespace ForcedMarkersComposition {
     }
 
     /**
-     * Reset markers if series is boosted and had forced markers.
+     * Reset markers if series is boosted and had forced markers (#17320).
      * @private
      */
     function seriesOnRenderCanvas(this: SeriesComposition): void {
