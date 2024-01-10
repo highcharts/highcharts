@@ -11,6 +11,7 @@ const gulp = require('gulp');
  * */
 
 const productBundles = [
+    'custom',
     'highcharts',
     'highcharts-gantt',
     'highmaps',
@@ -86,12 +87,18 @@ function jsDocESMDTS() {
  */
 function jsDocDTS() {
 
+    const argv = require('yargs').argv;
     const gulpLib = require('./lib/gulp');
     const highchartsDeclarationsGenerator = require(
         '@highcharts/highcharts-declarations-generator'
     );
 
     return new Promise((resolve, reject) => {
+
+        if (argv.custom) {
+            highchartsDeclarationsGenerator.config
+                .mainModule = 'code/custom';
+        }
 
         gulpLib
             .requires([], ['jsdoc-namespace', 'jsdoc-options'])
