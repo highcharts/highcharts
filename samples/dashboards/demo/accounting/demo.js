@@ -75,6 +75,17 @@ const commonColumnOptions = {
         name: 'Budget',
         colorIndex: 1
     }],
+    tooltip: {
+        formatter: function () {
+            const { x, y, colorIndex: color, series } = this;
+            const date = Highcharts.dateFormat('%B %Y', x);
+
+            return `<span style="font-size: 10px">${date}</span><br>
+                <span class="highcharts-color-${color}">&#9679;</span>&nbsp;
+                ${series.name}: $${(y / 1e6).toFixed(2)}M
+            `;
+        }
+    },
     plotOptions: {
         column: {
             point: {
@@ -342,6 +353,9 @@ const board = Dashboards.board('container', {
         sync: {
             highlight: true
         },
+        tooltip: {
+            useHTML: true
+        },
         columnAssignment: {
             Date: 'x',
             Result: {
@@ -359,7 +373,6 @@ const board = Dashboards.board('container', {
                 className: 'highcharts-stock-chart'
             },
             xAxis: {
-                min: Date.UTC(currentYear),
                 plotLines: [{
                     value: currentMonth,
                     label: {
@@ -373,11 +386,67 @@ const board = Dashboards.board('container', {
                     className: 'year-plotline'
                 }]
             },
+            rangeSelector: {
+                buttons: [{
+                    type: 'month',
+                    count: 6,
+                    text: '6m',
+                    title: 'View 6 months'
+                }, {
+                    type: 'year',
+                    count: 1,
+                    text: '1y',
+                    title: 'View 1 year'
+                }, {
+                    type: 'year',
+                    count: 3,
+                    text: '3y',
+                    title: 'View 3 years'
+                }, {
+                    type: 'ytd',
+                    text: 'YTD',
+                    title: 'View year to date'
+                }, {
+                    type: 'all',
+                    text: 'All',
+                    title: 'View all'
+                }],
+                selected: 2
+            },
+            tooltip: {
+                formatter: function () {
+                    const { x, points } = this;
+                    const format = v => '$' + (v / 1e6).toFixed(2) + 'M';
+                    const color = (s, color) => `
+                        <span class="highcharts-color-${color}">${s}</span>
+                    `;
+                    const date = Highcharts.dateFormat('%B %Y', x);
+
+                    if (x <= currentMonth) {
+                        return `<span style="font-size: 10px">${date}</span><br>
+                            ${color('&#9679;', 0)}&nbsp;
+                            Result: ${color(format(points[0].y), 0)}
+                        `;
+                    }
+
+                    return `<span style="font-size: 10px">
+                            Forecast for ${date}
+                        </span><br>
+                        ${color('&#10138;', 2)}&nbsp;
+                        Optimistically: ${color(format(points[2].y), 2)}<br>
+                        ${color('&#9679;', 0)}&nbsp;
+                        Average: ${color(format(points[0].y), 0)}<br>
+                        ${color('&#10136;', 1)}&nbsp;
+                        Pessimistically: ${color(format(points[1].y), 1)}
+                    `;
+                }
+            },
             credits: {
                 enabled: false
             },
             series: [{
-                name: 'Result'
+                name: 'Result',
+                zIndex: 2
             }, {
                 name: 'Pessimistically'
             }, {
