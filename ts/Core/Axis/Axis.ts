@@ -3934,10 +3934,20 @@ class Axis {
                 tickPositions.forEach(function (pos: number, i: number): void {
                     axis.renderTick(pos, i, slideInTicks);
                 });
+
                 // In a categorized axis, the tick marks are displayed
                 // between labels. So we need to add a tick mark and
                 // grid line at the left edge of the X axis.
-                if (tickmarkOffset && (axis.min === 0 || axis.single)) {
+                if (
+                    !axis.series.find( // #20166
+                        (series): string | number | false | undefined => (
+                            series.is('column') &&
+                            series.options.pointPlacement
+                        )
+                    ) &&
+                    tickmarkOffset &&
+                    (axis.min === 0 || axis.single)
+                ) {
                     if (!ticks[-1]) {
                         ticks[-1] = new Tick(axis, -1, null as any, true);
                     }
