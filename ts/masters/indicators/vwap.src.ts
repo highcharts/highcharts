@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2021 Paweł Dalek
+ * (c) 2010-2024 Paweł Dalek
  *
  * License: www.highcharts.com/license
  */

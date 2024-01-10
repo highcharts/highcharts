@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson
+ *  (c) 2010-2024 Askel Eirik Johansson
  *
  *  License: www.highcharts.com/license
  *

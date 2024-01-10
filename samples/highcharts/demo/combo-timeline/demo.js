@@ -1,6 +1,7 @@
 /**
- * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highcharts Stock.
- * It also shows custom graphics drawn in the chart area on chart load.
+ * This is an advanced demo of setting up Highcharts with the flags feature
+ * borrowed from Highcharts Stock. It also shows custom graphics drawn in the
+ * chart area on chart load.
  */
 
 /**
@@ -298,6 +299,10 @@ const options = {
     chart: {
         events: {
             load: onChartLoad
+        },
+        scrollablePlotArea: {
+            minWidth: 700,
+            scrollPositionX: 1
         }
     },
     xAxis: {

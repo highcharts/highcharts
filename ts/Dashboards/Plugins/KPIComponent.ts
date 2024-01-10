@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -302,9 +302,6 @@ class KPIComponent extends Component {
     /** @internal */
     public async load(): Promise<this> {
         await super.load();
-
-        this.contentElement.style.display = 'flex';
-        this.contentElement.style.flexDirection = 'column';
 
         this.linkValueToChart();
 
