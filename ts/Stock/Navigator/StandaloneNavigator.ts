@@ -63,7 +63,7 @@ class StandaloneNavigator {
     public eventsToUnbind: Array<Function> = [];
     public navigator: Navigator;
     public boundAxes: Array<Axis> = [];
-    public options: Partial<Options>;
+    public chartOptions: Partial<Options>;
     public userOptions: StandaloneNavigatorOptions;
 
     /* *
@@ -112,18 +112,23 @@ class StandaloneNavigator {
         userOptions: StandaloneNavigatorOptions
     ) {
         this.userOptions = userOptions;
-        this.options = merge(
+        this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
             { navigator: userOptions }
         );
 
-        const chart = new Chart(element, this.options);
+        const chart = new Chart(element, this.chartOptions);
 
         chart.options = merge(
             chart.options,
             { navigator: { enabled: true }, scrollbar: { enabled: true } }
         );
+
+        if (this.chartOptions.navigator && this.chartOptions.scrollbar) {
+            this.chartOptions.navigator.enabled = true;
+            this.chartOptions.scrollbar.enabled = true;
+        }
 
         this.navigator = new Navigator(chart);
         chart.navigator = this.navigator;
@@ -229,9 +234,9 @@ class StandaloneNavigator {
         newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
-        this.options = merge(this.options, { navigator: newOptions });
+        this.chartOptions = merge(this.chartOptions, { navigator: newOptions });
 
-        this.navigator.chart.update(this.options, redraw);
+        this.navigator.chart.update(this.chartOptions, redraw);
     }
 
     /**
@@ -279,6 +284,10 @@ class StandaloneNavigator {
         });
 
         const { min, max } = this.getInitialExtremes();
+
+        nav.chart.xAxis[0].userMin = min;
+        nav.chart.xAxis[0].userMax = max;
+
         nav.render(min, max);
 
         this.eventsToUnbind.push(
