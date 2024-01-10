@@ -1,5 +1,5 @@
 ---
-name: AWS Management
+name: Cloud monitoring dashboard
 authors:
   - Sebastian Bochan
 js_wrap: b
