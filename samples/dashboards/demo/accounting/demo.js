@@ -516,23 +516,24 @@ board.then(res => {
         costYearlyForecast += table.CostPredA[i] / 1e6;
     }
 
-    revKPI.chart.addSeries({ data: [revYTD] });
     revKPI.chart.subtitle.update({
         text: `${Math.round(revYTD / revTarget * 100)}% of annual target`
-    });
+    }, false);
+    revKPI.chart.addSeries({ data: [revYTD] });
 
-    costKPI.chart.addSeries({ data: [costYTD] });
     costKPI.chart.subtitle.update({
         text: `${Math.round(costYTD / costTarget * 100)}% of annual target`
-    });
+    }, false);
+    costKPI.chart.addSeries({ data: [costYTD] });
 
-    resKPI.chart.addSeries({
-        data: [Math.round((revYTD - costYTD) * 10) / 10]
-    });
+
     resKPI.chart.subtitle.update({
         text: `${Math.round(
             (revYTD - costYTD) / (revTarget - costTarget) * 100
         )}% of annual target`
+    }, false);
+    resKPI.chart.addSeries({
+        data: [Math.round((revYTD - costYTD) * 10) / 10]
     });
 
     revForecast.update({
