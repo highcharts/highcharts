@@ -221,6 +221,9 @@ class StandaloneNavigator {
      * Updates the standalone navigator's options with a new set of user
      * options.
      *
+     * @sample stock/standalone-navigator/update/
+     *         Bind chart with a button
+     *
      * @function Highcharts.StandaloneNavigator#update
      *
      * @param  {StandaloneNavigatorOptions} newOptions
