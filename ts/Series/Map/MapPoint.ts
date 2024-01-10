@@ -139,7 +139,9 @@ class MapPoint extends ScatterPoint {
                 // Copy over properties; #20231 prioritize point.name
                 extend(point, {
                     ...mapPoint,
-                    name: point.name || mapPoint.name
+                    name: typeof point.name !== 'undefined' ?
+                        point.name :
+                        mapPoint.name
                 });
             } else if (series.pointArrayMap.indexOf('value') !== -1) {
                 point.value = point.value || null;
