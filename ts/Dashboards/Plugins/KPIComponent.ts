@@ -775,7 +775,7 @@ namespace KPIComponent {
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
          *
-         * Some of the chart options are already set, you can find it in {@link KPIComponent.defaultChartOptions}
+         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
          *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
