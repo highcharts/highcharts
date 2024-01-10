@@ -101,6 +101,10 @@
     stroke: #a0a0a080;
 }
 
+#csv {
+    display: none;
+}
+
 /* Popup */
 
 #popup {
