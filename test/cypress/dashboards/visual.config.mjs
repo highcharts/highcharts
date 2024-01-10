@@ -3,16 +3,34 @@ import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin.js'
 
 import defaultConfig from '../../../cypress.config.mjs';
 
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+
+import { readdir, writeFile, stat } from 'node:fs/promises';
 
 const screenshotsFolder = resolve('../../../','cypress/snapshots/actual');
 
 console.log(screenshotsFolder)
 
+async function walkDir(dir, fileList = []) {
+    const files = await readdir(dir);
+
+    for (const file of files) {
+        const fileStat = await stat(join(dir, file));
+
+        if (fileStat.isDirectory()) {
+            fileList = await walkDir(join(dir, file), fileList);
+        } else {
+            fileList.push(join(file));
+        }
+    }
+
+    return fileList;
+}
+
 export default defineConfig({
     ...defaultConfig,
     screenshotsFolder,
-    trashAssetsBeforeRuns: true,
+    trashAssetsBeforeRuns: false,
     env: {
         ALWAYS_GENERATE_DIFF: false,
         ALLOW_VISUAL_REGRESSION_TO_FAIL: true,
@@ -24,6 +42,47 @@ export default defineConfig({
         ...defaultConfig.e2e,
         setupNodeEvents(on, config) {
             getCompareSnapshotsPlugin(on, config);
+
+            if(config.env.type === 'actual') {
+                on('after:run', async (results) => {
+                    // create json of files in the diff directoryA
+                    const commonPath = ['test', 'cypress', 'dashboards',  'visual'];
+
+                    const diffDir = join(config.env.SNAPSHOT_DIFF_DIRECTORY, ...commonPath);
+
+                    // TODO: try to figure out why these files are saved to this bonkers place
+                    const baseFiles = await walkDir(join(resolve('../../../','test/cypress/dashboards/cypress/snapshots/base'), ...commonPath));
+
+                    const diffFiles = await walkDir(diffDir);
+
+                    console.log(diffFiles);
+                    console.log(baseFiles);
+
+
+                    const diffFilesData = [];
+                    for (const file of diffFiles){
+                        const baseFileName = file.replace('diff', 'base');
+                        const actualFileName = file.replace('diff', 'actual');
+
+                        if (baseFiles.includes(baseFileName)) {
+
+                            diffFilesData.push({
+                                base: baseFileName,
+                                diff: file,
+                                actual: actualFileName
+                            });
+
+                        }
+
+                    }
+
+                    const diffJson = JSON.stringify(diffFilesData, null, 2);
+
+                    await writeFile(join('../../../', 'tmp', 'dashboards-visual-results.json'), diffJson);
+
+                    console.log(diffJson)
+                });
+            }
         },
         specPattern: 'test/cypress/dashboards/visual/**/*.cy.{js,jsx,ts,tsx}',
         video: false
