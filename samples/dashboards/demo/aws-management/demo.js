@@ -110,10 +110,11 @@ pollingCheckbox.onchange = async e => {
     board.mountedComponents.forEach(mComp => {
         const connectorId = mComp.component.options?.connector?.id;
         if (connectorId) {
-            console.log(connectorId);
-            mComp.component.setConnector(
-                connectorId === 'charts' ? chartConnector : instanceDetailsConnector
-            );
+            if (connectorId === 'charts') {
+                mComp.component.setConnector(chartConnector);
+            } else if (connectorId === 'instanceDetails') {
+                mComp.component.setConnector(instanceDetailsConnector);
+            }
             mComp.component.render();
         }
     });
