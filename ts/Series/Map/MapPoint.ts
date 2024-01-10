@@ -137,11 +137,10 @@ class MapPoint extends ScatterPoint {
 
             if (mapPoint) {
                 // Copy over properties; #20231 prioritize point.name
-                extend(
-                    point, {
-                        ...mapPoint,
-                        name: point.name || mapPoint.name
-                    });
+                extend(point, {
+                    ...mapPoint,
+                    name: point.name || mapPoint.name
+                });
             } else if (series.pointArrayMap.indexOf('value') !== -1) {
                 point.value = point.value || null;
             }
