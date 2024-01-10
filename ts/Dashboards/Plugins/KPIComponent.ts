@@ -113,6 +113,7 @@ class KPIComponent extends Component {
 
     /** @internal */
     public static charter?: H;
+
     /**
      * Default options of the KPI component.
      */
@@ -159,6 +160,46 @@ class KPIComponent extends Component {
 
     /**
      * Default options of the KPI component.
+     *
+     * @default {
+        chart: {
+            type: 'spline',
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: void 0
+        },
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false,
+            title: {
+                text: null
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            outside: true
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
+                }
+            }
+        }
+    }
      */
     public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
         chart: {
@@ -733,6 +774,8 @@ namespace KPIComponent {
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
+         *
+         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
          *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
