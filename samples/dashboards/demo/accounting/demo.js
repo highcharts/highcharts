@@ -56,6 +56,11 @@ const commonGaugeOptions = {
 };
 
 const commonColumnOptions = {
+    accessibility: {
+        point: {
+            valuePrefix: '$'
+        }
+    },
     chart: {
         type: 'column',
         className: 'highcharts-column-chart'
@@ -211,6 +216,11 @@ const board = Dashboards.board('container', {
             title: {
                 text: 'Revenue (YTD)'
             },
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: 'YTD revenue is {value} million $.'
+                }
+            },
             yAxis: {
                 max: 102,
                 tickPositions: [73, 83, 92, 102],
@@ -244,6 +254,11 @@ const board = Dashboards.board('container', {
             title: {
                 text: 'Cost (YTD)'
             },
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: 'YTD cost is {value} million $.'
+                }
+            },
             yAxis: {
                 max: 86,
                 tickPositions: [61, 70, 78, 86],
@@ -276,6 +291,11 @@ const board = Dashboards.board('container', {
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
                 text: 'Result (YTD)'
+            },
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: 'YTD result is {value} million $.'
+                }
             },
             yAxis: {
                 max: 21,
@@ -371,6 +391,17 @@ const board = Dashboards.board('container', {
         chartOptions: {
             chart: {
                 className: 'highcharts-stock-chart'
+            },
+            title: {
+                text: 'Accumulated Result with Forecast'
+            },
+            subtitle: {
+                text: 'From January 2019 to December 2024'
+            },
+            accessibility: {
+                point: {
+                    valuePrefix: '$'
+                }
             },
             xAxis: {
                 plotLines: [{
