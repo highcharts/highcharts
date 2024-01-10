@@ -32,13 +32,13 @@ const chartConnectorOptions = {
     firstRowAsNames: false,
     columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
     beforeParse: function (data) {
-        console.log('data', data);
+        console.log('123data', data);
         const currentInstance = data.find(
             instance => instance.InstanceId === currentInstanceId
         ) || data;
 
         return currentInstance.Details.map(
-            el => Object.values(el)
+            el => el
         );
     }
 };
@@ -46,7 +46,7 @@ const chartConnectorOptions = {
 const instancesDetailsConnectorOptions = {
     firstRowAsNames: false,
     orientantion: 'columns',
-    columnNames: ['CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+    columnNames: ['index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
     beforeParse: function (data) {
         const currentInstance = data.find(
             instance => instance.InstanceId === currentInstanceId
@@ -54,8 +54,9 @@ const instancesDetailsConnectorOptions = {
         const diskSpace = currentInstance.DiskSpace.RootDisk;
         return [
             [
-                data.CPUUtilization,
-                data.MemoryUsage,
+                0, // display one record on chart KPI / disk
+                currentInstance.CPUUtilization,
+                currentInstance.MemoryUsage,
                 diskSpace.SizeGB,
                 diskSpace.UsedGB,
                 diskSpace.FreeGB,
@@ -363,6 +364,7 @@ const setupDashboard = instanceId => {
                 id: 'instanceDetails'
             },
             columnAssignment: {
+                index: 'x',
                 MediaGB: 'y',
                 RootGB: 'y',
                 Documents: 'y',
@@ -683,11 +685,11 @@ const setupDashboard = instanceId => {
                         description: 'Operations'
                     }
                 },
-                plotOptions: {
-                    series: {
-                        pointRange: 3600 * 1000
-                    }
-                },
+                // plotOptions: {
+                //     series: {
+                //         pointRange: 3600 * 1000
+                //     }
+                // },
                 accessibility: {
                     description: `The chart is displaying amount of in and out
                                 operations on disk`,
