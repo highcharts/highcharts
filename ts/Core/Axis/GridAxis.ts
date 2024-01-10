@@ -1451,7 +1451,7 @@ class GridAxisAdditions {
             options = axis.options,
             extraBorderLine = renderer.path(path)
                 .addClass('highcharts-axis-line')
-                .add(axis.axisBorder);
+                .add(axis.axisGroup);
 
         if (!renderer.styledMode) {
             extraBorderLine.attr({
