@@ -172,7 +172,7 @@ const exporting: ExportingOptions = {
      * for more information
      *
      * @type {Object}
-     * @since next
+     * @since 11.3.0
      * @apioption exporting.fetchOptions
      */
 
