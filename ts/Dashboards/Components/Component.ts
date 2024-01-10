@@ -417,15 +417,19 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
+        const connectorId = this.options.connector?.id,
+            dataPool = this.board.dataPool;
 
         if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
+            connectorId &&
+            (
+                this.connectorId !== connectorId ||
+                dataPool.isNewConnector(connectorId)
+            )
         ) {
             this.cell.setLoadingState();
 
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+            const connector = await dataPool.getConnector(connectorId);
 
             this.setConnector(connector);
         }
