@@ -25,10 +25,7 @@
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
-import type {
-    ComponentType,
-    ComponentTypeRegistry
-} from './ComponentType';
+import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -37,11 +34,15 @@ import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
+import ComponentGroup from './ComponentGroup.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Sync from './Sync/Sync.js';
+
 import Globals from '../Globals.js';
 const { classNamePrefix } = Globals;
+
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -51,6 +52,7 @@ const {
     addEvent,
     objectEach,
     isFunction,
+    isObject,
     getStyle,
     relativeLength,
     diffObjects
@@ -61,10 +63,9 @@ const {
     getMargins,
     getPaddings
 } = CU;
-import ComponentGroup from './ComponentGroup.js';
+
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
-import Sync from './Sync/Sync.js';
 
 /* *
  *
@@ -365,7 +366,9 @@ abstract class Component {
             true
         );
 
+        this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
+
         this.setupEventListeners();
         this.attachCellListeneres();
 
@@ -395,7 +398,9 @@ abstract class Component {
      * @param sidebar
      * The sidebar popup.
      */
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<ComponentType['options']> {
+    public getOptionsOnDrop(
+        sidebar: SidebarPopup
+    ): Partial<ComponentType['options']> {
         return {};
     }
 
@@ -446,42 +451,36 @@ abstract class Component {
         ).syncHandlers
     ): void {
         const sync = this.options.sync || {};
-        const syncHandlers = (Object.keys(sync) as Component.SyncType[])
-            .reduce(
-                (
-                    carry: Sync.OptionsRecord,
-                    handlerName
-                ): Sync.OptionsRecord => {
-                    if (handlerName) {
-                        const handler = sync[handlerName],
-                            defaultHandler = defaultHandlers[handlerName];
+        const syncHandlers = Object.keys(sync).reduce((
+            carry: Sync.OptionsRecord,
+            handlerName
+        ): Sync.OptionsRecord => {
+            if (handlerName) {
+                const defaultHandler = defaultHandlers[handlerName];
+                const handler = sync[handlerName];
 
-                        if (defaultHandler) {
-                            if (handler === true) {
-                                carry[handlerName] = defaultHandler;
-                            } else if (handler && handler.enabled) {
-                                const keys: (keyof Sync.OptionsEntry)[] = [
-                                    'emitter', 'handler'
-                                ];
+                if (defaultHandler) {
+                    if (isObject(handler) && handler.enabled) {
+                        const keys: (keyof Sync.OptionsEntry)[] = [
+                            'emitter', 'handler'
+                        ];
 
-                                carry[handlerName] = {};
-                                for (const key of keys) {
-                                    if (
-                                        handler[key] === true ||
-                                        handler[key] === void 0
-                                    ) {
-                                        carry[handlerName][key] =
-                                            defaultHandler[key] as any;
-                                    }
-                                }
+                        carry[handlerName] = {};
+                        for (const key of keys) {
+                            if (
+                                handler[key] === true ||
+                                handler[key] === void 0
+                            ) {
+                                carry[handlerName][key] =
+                                    defaultHandler[key] as any;
                             }
                         }
                     }
+                }
+            }
 
-                    return carry;
-                },
-                {}
-            );
+            return carry;
+        }, {});
 
         this.sync ? this.sync.syncConfig = syncHandlers : void 0;
         this.syncHandlers = syncHandlers;
@@ -835,12 +834,32 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
+        this.standardizeSyncOptions();
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
         }
 
+    }
+
+    /**
+     * Standardizes the sync options to be always an object.
+     *
+     * @internal
+     */
+    protected standardizeSyncOptions(): void {
+        const sync = this.options.sync || {};
+        Object.keys(sync).forEach((handlerName): void => {
+            const handler = sync[handlerName];
+            const defaultOptions = Sync.defaultSyncOptions[handlerName];
+
+            sync[handlerName] = merge(
+                defaultOptions || {},
+                { enabled: isObject(handler) ? handler.enabled : handler },
+                isObject(handler) ? handler : {}
+            );
+        });
     }
 
     /**
@@ -1048,7 +1067,6 @@ abstract class Component {
 
         const json: Component.JSON = {
             $class: this.options.type,
-            // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
                 parentElement: this.parentElement.id,
@@ -1130,7 +1148,6 @@ namespace Component {
     * */
     /** @internal */
     export interface JSON extends Serializable.JSON<string> {
-        // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -1187,103 +1204,6 @@ namespace Component {
             detail?: Globals.AnyRecord;
         } & EventRecord;
 
-    /**
-     * The sync can be an object configuration containing: `highlight`,
-     * `visibility` or `extremes`. For the Navigator Component `crossfilter`
-     * sync can be used.
-     *
-     * Example:
-     * ```
-     * {
-     *     highlight: true
-     * }
-     * ```
-     */
-    export interface SyncOptions {
-        /**
-         * Crossfilter sync is available for Navigator components. Modifies data
-         * by selecting only those rows that meet common ranges.
-         *
-         * Alternatively to the boolean value, it can accept an object
-         * containing additional options for operating this type of
-         * synchronization.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Crossfilter with affectNavigators enabled }
-         *
-         * @default false
-         */
-        crossfilter?: boolean|CrossfilterSyncOptions;
-        /**
-         * Extremes sync is available for Highcharts, KPI, DataGrid and
-         * Navigator components. Sets a common range of displayed data. For the
-         * KPI Component sets the last value.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * @default false
-         */
-        extremes?: boolean|Sync.OptionsEntry;
-        /**
-         * Highlight sync is available for Highcharts and DataGrid components.
-         * It allows to highlight hovered corresponding rows in the table and
-         * chart points.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * @default false
-         */
-        highlight?: boolean|Sync.OptionsEntry;
-        /**
-         * Visibility sync is available for Highcharts and DataGrid components.
-         * Synchronizes the visibility of data from a hidden/shown series.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * @default false
-         */
-        visibility?: boolean|Sync.OptionsEntry;
-    }
-
-    /**
-     * The crossfilter sync options.
-     *
-     * Example:
-     * ```
-     * {
-     *     enabled: true,
-     *     affectNavigator: true
-     * }
-     * ```
-     */
-    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
-        /**
-         * Whether this navigator component's content should be affected by
-         * other navigators with crossfilter enabled.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
-         *
-         * @default false
-         */
-        affectNavigator?: boolean;
-    }
-
-    /** @internal */
-    export type SyncType = keyof SyncOptions;
-
     export interface ComponentOptions {
 
         /**
@@ -1323,25 +1243,8 @@ namespace Component {
         editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
         presentationModifier?: DataModifier;
-        /**
-         * Defines which elements should be synced.
-         * ```
-         * Example:
-         * {
-         *     highlight: true
-         * }
-         * ```
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
-         */
-        sync?: SyncOptions;
+        /** @internal */
+        sync?: Sync.RawOptionsRecord;
         /**
          * Connector options
          */
@@ -1373,7 +1276,6 @@ namespace Component {
      * @internal
      *  */
     export interface ComponentOptionsJSON extends JSON.Object {
-        // connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
         className?: string;
         cell?: string;
@@ -1381,10 +1283,9 @@ namespace Component {
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
         parentCell?: Cell.JSON;
-        // store?: DataStore.ClassJSON; // store id
         parentElement?: string; // ID?
         style?: {};
-        sync?: SyncOptions&JSON.Object;
+        sync?: Sync.RawOptionsRecord&JSON.Object;
         title?: string;
         type: keyof ComponentTypeRegistry;
     }
