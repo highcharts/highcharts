@@ -88,7 +88,7 @@ interface SetRangeEvent {
     max: number;
     redraw: boolean;
     animation?: boolean;
-    options: {
+    eventArguments: {
         trigger: 'navigator' | 'scrollbar';
         triggerOp: string;
         DOMEvent: any;
@@ -919,7 +919,7 @@ class Navigator {
                         min: Math.min(ext.min, ext.max),
                         max: Math.max(ext.min, ext.max),
                         redraw: true,
-                        options: {
+                        eventArguments: {
                             trigger: 'navigator'
                         }
 
@@ -1125,7 +1125,7 @@ class Navigator {
                     max: Math.max(ext.min, ext.max),
                     redraw: true,
                     animation: navigator.hasDragged ? false : (null as any),
-                    options: {
+                    eventArguments: {
                         trigger: 'navigator',
                         triggerOp: 'navigator-drag',
                         DOMEvent: DOMEvent // #1838
@@ -2045,7 +2045,7 @@ class Navigator {
                         e.max,
                         e.redraw,
                         e.animation,
-                        e.options
+                        e.eventArguments
                     );
                 }
             )

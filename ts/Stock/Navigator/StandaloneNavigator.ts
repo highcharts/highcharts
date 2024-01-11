@@ -171,6 +171,9 @@ class StandaloneNavigator {
 
         // Set extremes to match the navigator's extremes
         axis.setExtremes(min, max);
+
+        // Unbind the axis before it's destroyed
+        addEvent(axis, 'destroy', (): void => this.unbind(axis));
     }
 
     /**
