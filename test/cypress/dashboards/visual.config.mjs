@@ -62,11 +62,6 @@ export default defineConfig({
                         .catch(() => []);
 
                     if (diffFiles.length){
-
-                        console.log(diffFiles);
-                        console.log(baseFiles);
-
-
                         const diffFilesData = [];
                         for (const file of diffFiles){
                             const baseFileName = file.replace('diff', 'base');
