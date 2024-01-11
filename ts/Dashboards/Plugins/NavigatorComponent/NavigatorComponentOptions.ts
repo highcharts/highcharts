@@ -21,9 +21,9 @@
  * */
 
 
-import type Component from '../Components/Component';
+import type Component from '../../Components/Component';
+import type { Options as HighchartsOptions } from '../HighchartsTypes';
 import type NavigatorComponent from './NavigatorComponent';
-import type { Options as HighchartsOptions } from './HighchartsTypes';
 
 
 /* *
@@ -91,8 +91,10 @@ export interface Options extends Component.Options {
      */
     sync?: NavigatorComponent.SyncOptions;
 
+    /**
+     * Default type of the navigator.
+     */
     type: 'Navigator';
-
 }
 
 
