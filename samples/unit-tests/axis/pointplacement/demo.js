@@ -40,6 +40,11 @@ QUnit.test('Axis pointPlacement', assert => {
         'No padded ticks'
     );
 
+    assert.strictEqual(
+        axis.ticks[-1], null,
+        'No tick at -1 when pointPlacement is set for cartesian series'
+    );
+
     controller.pan([200, 60], [400, 60]);
 
     const rangeBefore = axis.max - axis.min;
