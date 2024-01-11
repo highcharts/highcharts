@@ -20,7 +20,7 @@ import type { StandaloneNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
-import Navigator from './Navigator.js';
+import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
@@ -173,7 +173,11 @@ class StandaloneNavigator {
         axis.setExtremes(min, max);
 
         // Unbind the axis before it's destroyed
-        addEvent(axis, 'destroy', (): void => this.unbind(axis));
+        addEvent(axis, 'destroy', (e: AnyRecord): void => {
+            if (!e.keepEvents) {
+                this.unbind(axis);
+            }
+        });
     }
 
     /**
@@ -298,13 +302,13 @@ class StandaloneNavigator {
 
         this.eventsToUnbind.push(
             addEvent(
-                this.navigator.chart.xAxis[0],
-                'setExtremes',
-                (e): void => {
-                    const { min, max } = e as { min: number, max: number };
+                this.navigator,
+                'setRange',
+                (e: SetRangeEvent): void => {
+                    const { min, max } = e;
 
                     this.boundAxes.forEach((axis): void => {
-                        axis.setExtremes(min, max);
+                        axis.setExtremes(min, max, e.redraw, e.animation);
                     });
                 }
             )

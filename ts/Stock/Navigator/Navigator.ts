@@ -83,7 +83,7 @@ function numExt(
     }
 }
 
-interface SetRangeEvent {
+export interface SetRangeEvent {
     min: number;
     max: number;
     redraw: boolean;
