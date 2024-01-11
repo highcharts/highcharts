@@ -89,7 +89,6 @@ export default defineConfig({
                         await mkdir(tmpDir, { recursive: true });
                         await writeFile(join(tmpDir, 'dashboards-visual-results.json'), diffJson);
 
-                        console.table(diffJson);
                         console.error(
                             '::warning file=tmp/dashboards-visual-results.json,line=1,col=1::',
                             'There are visual regression differences, see tmp/dashboards-visual-results.json for details'

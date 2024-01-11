@@ -105,7 +105,7 @@ jobs:
 
             const jsonFile = await readFile('./tmp/dashboards-visual-results.json')
               .catch(() => null);
-            const commentTitle = 'Dashboard visual diffs -';
+            const commentTitle = 'Dashboard visual diffs';
 
             // Only exists if there are diffs
             if (jsonFile) {
@@ -119,7 +119,7 @@ jobs:
                 commentTitle,
                 'Visual differences found in: ' +
                  tests +
-                 `\n\n See artifact file in [job summary](https://github.com/highcharts/highcharts/actions/runs/${context.runId}) for screenshots`
+                 `\n\n See artifacts in [the run summary](https://github.com/highcharts/highcharts/actions/runs/${context.runId}) for screenshots`
                 );
             } else {
               await createOrUpdateComment(
