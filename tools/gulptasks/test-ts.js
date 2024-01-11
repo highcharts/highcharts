@@ -53,6 +53,7 @@ const PRODUCTS_TO_TEST = ['Core', 'Dashboards'];
 async function testTS() {
     const argv = yargs(process.argv).argv;
     const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
+    const gulpLib = require('./lib/gulp');
     const log = require('./lib/log');
     const { shouldRun, saveRun } = require('./lib/test');
 
@@ -91,7 +92,7 @@ async function testTS() {
     }
 
     // Conditionally build required code
-    await gulp.series('dashboards/scripts', 'scripts')();
+    await gulpLib.run('scripts', 'dashboards/scripts');
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
