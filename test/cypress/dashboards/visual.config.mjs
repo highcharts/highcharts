@@ -55,32 +55,36 @@ export default defineConfig({
 
                     const diffFiles = await walkDir(diffDir);
 
-                    console.log(diffFiles);
-                    console.log(baseFiles);
+                    if (diffFiles.length){
+
+                        console.log(diffFiles);
+                        console.log(baseFiles);
 
 
-                    const diffFilesData = [];
-                    for (const file of diffFiles){
-                        const baseFileName = file.replace('diff', 'base');
-                        const actualFileName = file.replace('diff', 'actual');
+                        const diffFilesData = [];
+                        for (const file of diffFiles){
+                            const baseFileName = file.replace('diff', 'base');
+                            const actualFileName = file.replace('diff', 'actual');
 
-                        if (baseFiles.includes(baseFileName)) {
+                            if (baseFiles.includes(baseFileName)) {
 
-                            diffFilesData.push({
-                                base: baseFileName,
-                                diff: file,
-                                actual: actualFileName
-                            });
+                                diffFilesData.push({
+                                    base: baseFileName,
+                                    diff: file,
+                                    actual: actualFileName
+                                });
 
+                            }
                         }
 
+                        const diffJson = JSON.stringify(diffFilesData, null, 2);
+
+                        await writeFile(join(resolve('../../../', 'tmp'), 'dashboards-visual-results.json'), diffJson);
+
+                        console.log(diffJson);
+
+                        console.error('There are visual regression differences, see tmp/dashboards-visual-results.json for details');
                     }
-
-                    const diffJson = JSON.stringify(diffFilesData, null, 2);
-
-                    await writeFile(join('../../../', 'tmp', 'dashboards-visual-results.json'), diffJson);
-
-                    console.log(diffJson)
                 });
             }
         },
