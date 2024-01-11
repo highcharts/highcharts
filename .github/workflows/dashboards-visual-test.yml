@@ -96,7 +96,7 @@ jobs:
           install: false
 
       - name: Comment on PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
@@ -118,7 +118,7 @@ jobs:
                 commentTitle,
                 'Visual differences found in: ' +
                  tests +
-                 '\n See artifact file in job summary for screenshots'
+                 `\n\n See artifact file in [job summary](https://github.com/highcharts/highcharts/actions/runs/${context.runId}) for screenshots`
                 );
             } else {
               await createOrUpdateComment(
@@ -136,6 +136,8 @@ jobs:
         with:
           name: post-tests
           path: |
+            tmp/dashboards-visual-results.json
             cypress/screenshots
             cypress/snapshots
+            test/cypress/dashboards/cypress/snapshots/base
 
