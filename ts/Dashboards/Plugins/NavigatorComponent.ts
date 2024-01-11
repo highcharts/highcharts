@@ -197,7 +197,7 @@ function extremesEmitter(
 /** @internal */
 function extremesReceiver(
     this: Component
-): void {
+): (() => void) | void {
     const component = this as NavigatorComponent,
         dataCursor = component.board.dataCursor;
 
@@ -299,10 +299,10 @@ function extremesReceiver(
         }
     };
 
-    registerCursorListeners();
-
-    component.on('setConnector', (): void => unregisterCursorListeners());
-    component.on('afterSetConnector', (): void => registerCursorListeners());
+    if (this.board) {
+        registerCursorListeners();
+        return unregisterCursorListeners;
+    }
 }
 
 

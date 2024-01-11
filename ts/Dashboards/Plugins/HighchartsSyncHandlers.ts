@@ -353,7 +353,7 @@ const configs: {
     },
     handlers: {
         seriesVisibilityHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const component = this;
                 const { board } = this;
 
@@ -416,13 +416,11 @@ const configs: {
 
                 if (board) {
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
+                    return unregisterCursorListeners;
                 }
             },
         highlightHandler:
-            function (this: HighchartsComponent): void {
+            function (this: HighchartsComponent): (() => void) | void {
                 const { chart, board } = this;
 
                 const handleCursor = (e: DataCursor.Event): void => {
@@ -519,22 +517,20 @@ const configs: {
 
                 if (board) {
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void => unregisterCursorListeners());
-                    this.on('afterSetConnector', (): void => registerCursorListeners());
+                    return unregisterCursorListeners;
                 }
             },
         extremesHandler:
-            function (this: HighchartsComponent): Function | void {
+            function (this: HighchartsComponent): (() => void) | void {
 
                 const { chart, board } = this;
 
                 if (chart && board && chart.zooming?.type) {
                     const dimensions = chart.zooming.type.split('')
                         .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
+                    const unregisterCallbacks: (() => void)[] = [];
 
                     dimensions.forEach((dimension): void => {
-                        const callbacks: Function[] = [];
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
                             const { cursor, event } = e;
 
@@ -605,7 +601,7 @@ const configs: {
 
                                 cursor.addListener(table.id, 'chart.zoomOut', handleChartZoomOut);
 
-                                callbacks.push(
+                                unregisterCallbacks.push(
                                     (): void => {
                                         cursor.removeListener(table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
                                         cursor.removeListener(table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
@@ -615,21 +611,17 @@ const configs: {
                             }
                         };
 
-                        const unregisterCursorListeners = (): void => {
-                            callbacks.forEach((callback): void => callback());
-                        };
-
                         if (board) {
                             addCursorListeners();
-
-                            this.on('setConnector', (): void => unregisterCursorListeners());
-                            this.on('afterSetConnector', (): void => addCursorListeners());
                         }
                     });
 
+                    return function (): void {
+                        unregisterCallbacks.forEach((callback): void => {
+                            callback();
+                        });
+                    };
                 }
-
-
             }
     }
 };
