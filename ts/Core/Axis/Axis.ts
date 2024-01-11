@@ -3941,7 +3941,7 @@ class Axis {
                 if (
                     !axis.series.find( // #20166
                         (series): string | number | false | undefined => (
-                            series.is('column') &&
+                            series.xAxis &&
                             series.options.pointPlacement
                         )
                     ) &&
