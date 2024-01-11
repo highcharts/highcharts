@@ -103,7 +103,8 @@ jobs:
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
             const { readFileSync } = require('node:fs')
 
-            const jsonFile = readFileSync('./tmp/dashboards-visual-results.json');
+            const jsonFile = readFileSync('./tmp/dashboards-visual-results.json')
+              .catch(() => null);
             const commentTitle = 'Dashboard visual diffs -';
 
             // Only exists if there are diffs
