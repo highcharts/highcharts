@@ -1,30 +1,16 @@
 /* eslint-disable jsdoc/require-description */
-const MathModifier = Dashboards.DataModifier.types.Math;
 
 // Forecast data
 const configMet = {
-    cities: [
-        {
+    cities: {
+        london: {
             name: 'London',
             url: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=51.50853&lon=-0.12574&altitude=25'
         }
-    ],
-    fnProcess: processMetData
+    },
+    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?'
 };
 
-// Alternative source: Past week
-const configOpenMeteo = {
-    cities: [
-        {
-            name: 'London',
-            url: 'https://api.open-meteo.com/v1/forecast?' +
-                'latitude=51.5085&longitude=-0.1257&hourly=temperature_2m&past_days=7'
-        }
-    ],
-    fnProcess: processMetData
-};
-
-// Launch the application
 setupBoard();
 
 const colorStopsDays = [
@@ -92,19 +78,15 @@ const KPIChartOptions = {
 };
 
 async function setupBoard() {
-    let activeCity = 'New York',
-        activeColumn = 'TNC',
-        activeTimeRange = [ // default to a year
-            Date.UTC(2009, 11, 25, 0, 0, 1),
-            Date.UTC(2010, 11, 25)
-        ];
+    let activeCity = 'New York';
+    const activeColumn = 'temperature';
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'Range Selection',
-                type: 'CSV', // JSON
+                type: 'CSV',
                 options: {
                     dataModifier: {
                         type: 'Range'
@@ -112,43 +94,40 @@ async function setupBoard() {
                 }
             }, {
                 id: 'Cities',
-                type: 'CSV', // JSON
+                type: 'CSV',
                 options: {
                     csvURL: (
-                        // Replace with JSON
                         'https://www.highcharts.com/samples/data/climate-cities-limited.csv'
                     )
                 }
-            }]
-        },
-        editMode: {
-            enabled: true,
-            contextMenu: {
-                enabled: true,
-                icon: (
-                    'https://code.highcharts.com/dashboards/gfx/dashboards-icons/menu.svg'
-                ),
-                items: [
-                    'editMode',
-                    {
-                        id: 'fahrenheit',
-                        type: 'toggle',
-                        text: 'Fahrenheit',
-                        events: {
-                            click: function () {
-                                // Change temperature scale.
-                                activeColumn = 'TNC';
-                                updateBoard(
-                                    board,
-                                    activeCity,
-                                    activeColumn,
-                                    true
-                                );
-                            }
+            }, {
+                type: 'JSON',
+                id: 'Weather',
+                options: {
+                    firstRowAsNames: false,
+                    dataUrl: configMet.cities.london.url,
+                    beforeParse: data => {
+                        const retData = [];
+
+                        const obsData = data.properties.timeseries;
+                        // const time = data.properties.meta.updated_at;
+                        // console.log('api.met.no - updated at: ' + time);
+
+                        // Create object for application specific format
+                        for (let i = 0; i < 24; i++) {
+                            const item = obsData[i];
+                            const pred = item.data.instant.details;
+                            retData.push({
+                                time: item.time,
+                                temperature: pred.air_temperature,
+                                pressure: pred.air_pressure_at_sea_level,
+                                humidity: pred.relative_humidity
+                            });
                         }
+                        return retData;
                     }
-                ]
-            }
+                }
+            }]
         },
         gui: {
             layouts: [{
@@ -287,34 +266,11 @@ async function setupBoard() {
                 series: [{
                     name: 'Timeline',
                     data: [
-                        [Date.UTC(1951, 0, 5), 0],
-                        [Date.UTC(2010, 11, 25), 0]
+                        [Date.UTC(2024, 0, 0), 0],
+                        [Date.UTC(2024, 1, 0), 0]
                     ]
                 }],
                 xAxis: {
-                    min: activeTimeRange[0],
-                    max: activeTimeRange[1],
-                    minRange: 30 * 24 * 3600 * 1000, // 30 days
-                    maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
-                    events: {
-                        afterSetExtremes: async function (e) {
-                            const min = Math.round(e.min);
-                            const max = Math.round(e.max);
-
-                            if (
-                                activeTimeRange[0] !== min ||
-                                activeTimeRange[1] !== max
-                            ) {
-                                activeTimeRange = [min, max];
-                                await updateBoard(
-                                    board,
-                                    activeCity,
-                                    activeColumn,
-                                    false
-                                );
-                            }
-                        }
-                    },
                     accessibility: {
                         description: 'Years'
                     }
@@ -330,8 +286,7 @@ async function setupBoard() {
                     }
                 },
                 accessibility: {
-                    description: `The chart is displaying range of dates from
-                    1951-01-01 to 2010-10-25.`,
+                    description: 'The chart is displaying range of dates from now and the next 5 days',
                     typeDescription: 'Navigator that selects a range of dates.',
                     point: {
                         descriptionFormatter: function (point) {
@@ -435,7 +390,7 @@ async function setupBoard() {
                         headerFormat: '',
                         pointFormat: (
                             '<b>{point.name}</b><br>' +
-                            'Elevation: {point.custom.elevation}m<br>' +
+                            'Elevation: {point.custom.elevation} m<br>' +
                             '{point.y:.1f}˚{point.custom.yScale}'
                         )
                     }
@@ -467,15 +422,15 @@ async function setupBoard() {
             type: 'KPI',
             title: activeCity,
             value: 10,
-            valueFormat: '{value:.0f}m',
+            valueFormat: '{value:.0f} m',
             subtitle: 'Elevation'
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
             connector: {
-                id: 'Range Selection'
+                id: 'Weather'
             },
-            columnName: 'TNC',
+            columnName: 'temperature',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -503,9 +458,9 @@ async function setupBoard() {
             cell: 'kpi-pressure',
             type: 'KPI',
             connector: {
-                id: 'Range Selection'
+                id: 'Weather'
             },
-            columnName: 'FD',
+            columnName: 'pressure',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -517,8 +472,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'hPa'
                     },
-                    max: tempRange.maxC,
-                    min: tempRange.minC
+                    max: 1100,
+                    min: 800
                 }
             },
             states: {
@@ -533,9 +488,9 @@ async function setupBoard() {
             cell: 'kpi-humidity',
             type: 'KPI',
             connector: {
-                id: 'Range Selection'
+                id: 'Weather'
             },
-            columnName: 'ID',
+            columnName: 'humidity',
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
@@ -547,7 +502,7 @@ async function setupBoard() {
                     accessibility: {
                         description: '%'
                     },
-                    max: 10,
+                    max: 100,
                     min: 0
                 }
             },
@@ -563,7 +518,7 @@ async function setupBoard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             connector: {
-                id: 'Range Selection'
+                id: 'Weather'
             },
             sync: {
                 highlight: true
@@ -573,43 +528,29 @@ async function setupBoard() {
                 editable: false,
                 columns: {
                     time: {
-                        show: false
+                        headerFormat: 'Time ISO'
                     },
-                    FD: {
-                        headerFormat: 'Humidity'
+                    humidity: {
+                        headerFormat: 'Humidity %'
                     },
-                    ID: {
-                        headerFormat: 'Pressure'
+                    pressure: {
+                        headerFormat: 'Pressure hPa'
                     },
-                    TNC: {
+                    temperature: {
                         headerFormat: 'Temperature °C',
                         cellFormat: '{value:.1f}'
-                    },
-                    TNX: {
-                        show: false
-                    },
-                    TN: {
-                        show: false
-                    },
-                    TX: {
-                        show: false
-                    },
-                    RR1: {
-                        show: false
                     }
-
                 }
-            },
-            editable: true
+            }
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
             connector: {
-                id: 'Range Selection'
+                id: 'Weather'
             },
             columnAssignment: {
                 time: 'x',
-                TNC: 'value'
+                temperature: 'y'
             },
             sync: {
                 highlight: true
@@ -657,10 +598,10 @@ async function setupBoard() {
                         // Date
                         let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
 
-                        if (name === 'TNC') {
-                            // Temperature (names TXC, TNC, TXF, TNF)
-                            const tempStr = (name[1] === 'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
-                            str += tempStr + '˚' + name[2];
+                        if (name === 'temperature') {
+                            // Temperature
+                            const tempStr = Highcharts.numberFormat(point.y, 1);
+                            str += tempStr + '˚C ' + point.x;
                         } else {
                             // TBD
                             str += 'xxx: ' + point.y;
@@ -670,11 +611,13 @@ async function setupBoard() {
                 },
                 xAxis: {
                     type: 'datetime',
-                    dateTimeLabelFormats: {
-                        month: '%e. %b'
-                    },
-                    accessibility: {
-                        description: 'Years'
+                    labels: {
+                        formatter: function () {
+                            return Highcharts.dateFormat('%Y-%m-%d', this.value);
+                        },
+                        accessibility: {
+                            description: 'Hours'
+                        }
                     }
                 },
                 yAxis: {
@@ -735,27 +678,11 @@ async function setupBoard() {
 
 async function setupCity(board, city, column) {
     const dataPool = board.dataPool;
+    const forecastTable = await dataPool.getConnectorTable('Weather'); // JSON  weather
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityTable = await dataPool.getConnectorTable(city);
-    const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
+    const latestTime = board.mountedComponents[0].component.chart.axes[0].min;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
-
-    // Extend city table
-    await cityTable.setModifier(new MathModifier({
-        modifier: 'Math',
-        columnFormulas: [{
-            column: column,
-            formula: 'E1-273.15' // E1 is the TN column with Kelvin values
-        }]
-    }));
-    cityTable.modified.setColumn(
-        'Date',
-        (cityTable.getColumn('time') || []).map(
-            timestamp => new Date(timestamp)
-                .toISOString()
-                .substring(0, 10)
-        )
-    );
 
     const cityInfo = citiesTable.getRowObject(
         citiesTable.getRowIndexBy('city', city)
@@ -784,9 +711,11 @@ async function updateBoard(board, city, column, newData) {
     const colorMin = tempRange.minC;
     const colorMax = tempRange.maxC;
     const colorStops = colorStopsTemperature;
+
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
-    const cityTable = await dataPool.getConnectorTable(city);
+    const cityTable = await dataPool.getConnectorTable(city); // City weather
     const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+    const forecastTable = await dataPool.getConnectorTable('Weather'); // JSON  weather
 
     const [
         timeRangeSelector,
@@ -860,18 +789,20 @@ async function updateBoard(board, city, column, newData) {
             stops: colorStops
         }
     });
+
+    // Update KPI (TBD: check is this can be pre-configured)
     kpiTemperature.update({
-        columnName: 'TNC'
+        value: forecastTable.columns.temperature[0]
     });
     kpiPressure.update({
-        columnName: 'FD'
+        value: forecastTable.columns.pressure[0]
     });
     kpiHumidity.update({
-        columnName: 'ID'
+        value: forecastTable.columns.humidity[0]
     });
 
     if (newData) {
-        // Update KPIs
+        // Update geo KPI
         await kpiGeoData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
@@ -883,14 +814,14 @@ async function updateBoard(board, city, column, newData) {
         // Update data grid and city chart
         const sharedColumnAssignment = {
             time: 'x',
-            TNC: 'y'
+            temperature: 'y'
         };
 
         // Update city grid selection
         await selectionGrid.update({
             dataGridOptions: {
                 columns: {
-                    TNC: {
+                    temperature: {
                         show: true
                     }
                 }
@@ -906,41 +837,8 @@ async function updateBoard(board, city, column, newData) {
         options.colorAxis.colorStops = colorStops;
 
         await cityChart.update({
-            columnAssignment: {
-                time: 'x',
-                TNC: 'y'
-            },
+            // columnAssignment: sharedColumnAssignment,
             chartOptions: options
         });
     }
-}
-
-//
-// Test section, to be removed.
-//
-function processMetData(json) {
-    const time = json.properties.meta.updated_at;
-    const obsData = json.properties.timeseries;
-
-    console.log('api.met.no - updated at: ' + time);
-    obsData.forEach(item => {
-        console.log(item.time + ':' + item.data.instant.details.air_temperature);
-    });
-}
-
-function processOpenMeteoData(json) {
-    var time = 0;
-    console.log('api.met.no - updated at: ' + time);
-}
-
-// On DOM ready...
-getMetData(configMet);
-
-async function getMetData(cfg) {
-    const data = await fetch(
-        cfg.cities[0].url
-    ).then(response => response.json());
-
-    // Process the received data
-    cfg.fnProcess(data);
 }
