@@ -51,9 +51,15 @@ export default defineConfig({
                     const diffDir = join(config.env.SNAPSHOT_DIFF_DIRECTORY, ...commonPath);
 
                     // TODO: try to figure out why these files are saved to this bonkers place
-                    const baseFiles = await walkDir(join(resolve('../../../','test/cypress/dashboards/cypress/snapshots/base'), ...commonPath));
+                    const baseFiles = await walkDir(
+                        join(
+                            resolve('../../../','test/cypress/dashboards/cypress/snapshots/base'),
+                            ...commonPath
+                        )
+                    ).catch(() => []);
 
-                    const diffFiles = await walkDir(diffDir);
+                    const diffFiles = await walkDir(diffDir)
+                        .catch(() => []);
 
                     if (diffFiles.length){
 
