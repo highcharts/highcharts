@@ -51,7 +51,7 @@ const parseUpgradeNotes = p => {
 const loadPulls = async (
     since,
     branches = 'master',
-    isDashboards
+    isDashboards = false
 ) => {
     let page = 1;
     let pulls = [];
@@ -77,19 +77,21 @@ const loadPulls = async (
             dashboardsTags.data[dashboardsTags.data.length - 1].object.sha;
     }
 
-    const commit = await octokit.repos.getCommit({
-        owner: 'highcharts',
-        repo: 'highcharts',
-        ref: since || lastTagSha
-    }).catch(error);
+    const ref = since || lastTagSha,
+        commit = await octokit.repos.getCommit({
+            owner: 'highcharts',
+            repo: 'highcharts',
+            ref
+        }).catch(error);
 
     console.log(
-        'Generating log after latest tag'.green,
+        `Generating log since tag: ${ref}`.green,
         commit.headers['last-modified']
     );
     const after = Date.parse(commit.headers['last-modified']);
 
     const branchesArr = branches.split(',');
+    let emptyPageCount = 0;
     while (page < 20) {
         const pageData = [];
         for (const base of branchesArr) {
@@ -119,7 +121,12 @@ const loadPulls = async (
 
         console.log(`Loaded pulls page ${page} (${pageData.length} items)`.green);
 
+        // After 3 consecutive empty pages, it's safe to assume that we have
+        // loaded all relevant PRs.
         if (pageData.length === 0) {
+            emptyPageCount++;
+        }
+        if (emptyPageCount >= 3) {
             break;
         }
 

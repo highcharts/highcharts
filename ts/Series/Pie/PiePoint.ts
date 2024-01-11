@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -176,51 +176,13 @@ class PiePoint extends Point {
      */
     public setVisible(
         vis: boolean,
-        redraw?: boolean
+        redraw: boolean = true
     ): void {
-        const series = this.series,
-            chart = series.chart,
-            ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-
-        redraw = pick(redraw, ignoreHiddenPoint);
-
         if (vis !== this.visible) {
-
             // If called without an argument, toggle visibility
-            this.visible = this.options.visible = vis =
-                typeof vis === 'undefined' ? !this.visible : vis;
-            // update userOptions.data
-            (series.options.data as any)[series.data.indexOf(this)] =
-                this.options;
-
-            // Show and hide associated elements. This is performed
-            // regardless of redraw or not, because chart.redraw only
-            // handles full series.
-            ['graphic', 'dataLabel', 'connector'].forEach(
-                (key: string): void => {
-                    if ((this as any)[key]) {
-                        (this as any)[key][vis ? 'show' : 'hide'](vis);
-                    }
-                }
-            );
-
-            if (this.legendItem) {
-                chart.legend.colorizeItem(this, vis);
-            }
-
-            // #4170, hide halo after hiding point
-            if (!vis && this.state === 'hover') {
-                this.setState('');
-            }
-
-            // Handle ignore hidden slices
-            if (ignoreHiddenPoint) {
-                series.isDirty = true;
-            }
-
-            if (redraw) {
-                chart.redraw();
-            }
+            this.update({
+                visible: vis ?? !this.visible
+            }, redraw, void 0, false);
         }
     }
 

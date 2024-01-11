@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -52,6 +52,14 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      * @default true
      */
     firstRowAsNames?: boolean;
+}
+
+/**
+ * Callback function allowing modification of the data before parsing it.
+ * Must return a valid CSV structure.
+ */
+export interface BeforeParseCallbackFunction {
+    (csv: string): string;
 }
 
 /* *

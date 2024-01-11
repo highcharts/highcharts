@@ -230,6 +230,37 @@ QUnit.test('Funnel path', function (assert) {
         6,
         'The last point should have 6 rounded corners, scope: point (#18839)'
     );
+
+    series.update({
+        data: [
+            ['A', 4],
+            ['B', 1],
+            ['C', 1],
+            ['D', 1],
+            ['E', 1]
+        ]
+    });
+
+    assert.ok(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'Z').length,
+        'The fourth point path is properly closed (#20319)'
+    );
+
+    assert.strictEqual(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The fourth point should have 4 rounded corners, scope: point (#20319)'
+    );
+
+    series.update({
+        borderRadius: 5
+    });
+
+    assert.strictEqual(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        0,
+        'The fourth point should not have rounded corners (#20319)'
+    );
 });
 
 QUnit.test('Funnel dataLabels', function (assert) {

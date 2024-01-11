@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,7 @@ import type DataTable from '../../Data/DataTable';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -32,7 +33,6 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-
 const {
     diffObjects,
     merge,
@@ -474,6 +474,26 @@ class DataGridComponent extends Component {
 
             return filteredTable;
         }
+    }
+
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.ComponentOptions> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<DataGridComponent.ComponentOptions> = {
+            cell: '',
+            type: 'DataGrid'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
     }
 
     /** @private */

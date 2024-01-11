@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,7 +27,6 @@ import type Cell from '../Layout/Cell.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-
 const {
     merge,
     diffObjects
@@ -257,6 +256,19 @@ class HTMLComponent extends Component {
     public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
         await super.update(options);
         this.emit({ type: 'afterUpdate' });
+    }
+
+    public getOptionsOnDrop(): Partial<HTMLComponent.HTMLComponentOptions> {
+        return {
+            cell: '',
+            type: 'HTML',
+            elements: [{
+                tagName: 'img',
+                attributes: {
+                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+                }
+            }]
+        };
     }
 
     /**

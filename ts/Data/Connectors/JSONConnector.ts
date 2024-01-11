@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -190,13 +190,6 @@ namespace JSONConnector {
      * Event objects fired from JSONConnector events.
      */
     export type Event = (ErrorEvent|LoadEvent);
-
-    /**
-     * Parse the data before passing it to the JSON parser.
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (data: JSONConverter.Data): JSONConverter.Data;
-    }
 
     /**
      * The event object that is provided on errors within JSONConnector.

@@ -1451,7 +1451,7 @@ class GridAxisAdditions {
             options = axis.options,
             extraBorderLine = renderer.path(path)
                 .addClass('highcharts-axis-line')
-                .add(axis.axisBorder);
+                .add(axis.axisGroup);
 
         if (!renderer.styledMode) {
             extraBorderLine.attr({
@@ -1577,6 +1577,7 @@ export default GridAxis;
  * Set border color for the label grid lines.
  *
  * @type      {Highcharts.ColorString}
+ * @default   #e6e6e6
  * @apioption xAxis.grid.borderColor
  */
 

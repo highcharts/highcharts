@@ -283,7 +283,8 @@ Highcharts.chart('container', {
                 textOutline: 'none',
                 fontWeight: 'normal',
                 fontSize: '1rem'
-            }
+            },
+            y: 4
         }, {
             enabled: true,
             align: 'left',
