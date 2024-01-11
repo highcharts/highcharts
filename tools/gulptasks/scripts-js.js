@@ -71,7 +71,7 @@ async function scriptsJS() {
 
         const log = await processLib.exec(
             'npx webpack -c tools/webpacks/highcharts.webpack.mjs',
-            { silent: 2 }
+            { silent: 2, timeout: 60000 }
         );
 
         await fs.writeFile('webpack.log', log);
