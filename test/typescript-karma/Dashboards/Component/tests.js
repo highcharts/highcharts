@@ -311,7 +311,7 @@ test('component resizing', function (assert) {
             height: component.element.style.height
         },
         {
-            width: '200px',
+            width: '',
             height: ''
         },
         'Should be able to update just the width'
@@ -325,7 +325,7 @@ test('component resizing', function (assert) {
             height: component.element.style.height
         },
         {
-            width: '200px',
+            width: '',
             height: '300px'
         },
         'Should be able to update just the height. Width should stay the same.'
@@ -439,7 +439,7 @@ test('HighchartsComponent resizing', function (assert) {
             height: component.element.style.height
         },
         {
-            width: '200px',
+            width: '',
             height: ''
         },
         'Should be able to update just the width'
