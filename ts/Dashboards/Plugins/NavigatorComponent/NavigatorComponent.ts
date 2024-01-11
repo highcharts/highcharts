@@ -26,21 +26,21 @@ import type {
     Chart,
     Highcharts as H,
     Options as HighchartsOptions
-} from './HighchartsTypes';
-import type Cell from '../Layout/Cell';
-import type DataCursor from '../../Data/DataCursor';
+} from '../HighchartsTypes';
+import type Cell from '../../Layout/Cell';
+import type DataCursor from '../../../Data/DataCursor';
 import type { Options } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
-import type Sync from '../Components/Sync/Sync';
-import type SidebarPopup from '../EditMode/SidebarPopup';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
+import type Sync from '../../Components/Sync/Sync';
+import type SidebarPopup from '../../EditMode/SidebarPopup';
 
-import Component from '../Components/Component.js';
-import DataModifier from '../../Data/Modifiers/DataModifier.js';
+import Component from '../../Components/Component.js';
+import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
-import Globals from '../Globals.js';
+import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import DataTable from '../../Data/DataTable.js';
-import U from '../../Core/Utilities.js';
+import DataTable from '../../../Data/DataTable.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     defined,
@@ -58,7 +58,6 @@ const {
  *
  * */
 
-
 const navigatorComponentSync = {
     crossfilter: {
         emitter: crossfilterEmitter
@@ -75,7 +74,6 @@ const navigatorComponentSync = {
  *  Functions
  *
  * */
-
 
 /** @internal */
 function crossfilterEmitter(
@@ -382,17 +380,14 @@ function unsetRangeOptions(
  */
 class NavigatorComponent extends Component {
 
-
     /* *
      *
      *  Static Properties
      *
      * */
 
-
     /** @private */
     public static charter: H;
-
 
     /**
      * Default options of the Navigator component.
@@ -408,7 +403,6 @@ class NavigatorComponent extends Component {
      *  Static Functions
      *
      * */
-
 
     /**
      * Creates component from JSON.
@@ -493,18 +487,15 @@ class NavigatorComponent extends Component {
      */
     public chart: Chart;
 
-
     /**
      * HTML element where the navigator is created.
      */
     public chartContainer: HTMLElement;
 
-
     /**
      * Options for the navigator component
      */
     public options: Options;
-
 
     /**
      * Reference to the sync system that allow to sync i.e tooltips.

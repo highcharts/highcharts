@@ -21,8 +21,8 @@
  * */
 
 
-import type Component from '../Components/Component';
-import type { Options as HighchartsOptions } from './HighchartsTypes';
+import type Component from '../../Components/Component';
+import type { Options as HighchartsOptions } from '../HighchartsTypes';
 
 
 /* *
@@ -73,8 +73,10 @@ export interface Options extends Component.Options {
      */
     columnAssignments?: Record<string, string | null>;
 
+    /**
+     * Default type of the navigator.
+     */
     type: 'Navigator';
-
 }
 
 

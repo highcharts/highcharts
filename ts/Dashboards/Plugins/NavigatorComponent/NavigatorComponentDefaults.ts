@@ -21,10 +21,10 @@
  * */
 
 
-import type Globals from '../Globals';
+import type Globals from '../../Globals';
 import type Options from './NavigatorComponentOptions';
 
-import Component from '../Components/Component.js';
+import Component from '../../Components/Component.js';
 
 
 /* *
@@ -33,9 +33,7 @@ import Component from '../Components/Component.js';
  *
  * */
 
-
-const NavigatorComponentDefaults:
-Globals.DeepPartial<Options> = {
+const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
     type: 'Navigator',
     chartOptions: {
         chart: {
