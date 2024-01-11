@@ -34,8 +34,8 @@ export default defineConfig({
     env: {
         ALWAYS_GENERATE_DIFF: false,
         ALLOW_VISUAL_REGRESSION_TO_FAIL: true,
-        SNAPSHOT_DIFF_DIRECTORY	: resolve('../../../','cypress/snapshots/diff'),
-        SNAPSHOT_BASE: resolve('../../../','cypress/snapshots/base'),
+        SNAPSHOT_DIFF_DIRECTORY: resolve('../../../','cypress/snapshots/diff'),
+        SNAPSHOT_BASE_DIRECTORY: resolve('../../../','cypress/snapshots/base'),
         type: 'base'
     },
     e2e: {
@@ -45,15 +45,13 @@ export default defineConfig({
 
             if(config.env.type === 'actual') {
                 on('after:run', async (results) => {
-                    // create json of files in the diff directoryA
+                    // create json of files in the diff directory
                     const commonPath = ['test', 'cypress', 'dashboards',  'visual'];
-
                     const diffDir = join(config.env.SNAPSHOT_DIFF_DIRECTORY, ...commonPath);
 
-                    // TODO: try to figure out why these files are saved to this bonkers place
                     const baseFiles = await walkDir(
                         join(
-                            resolve('../../../','test/cypress/dashboards/cypress/snapshots/base'),
+                            config.env.SNAPSHOT_BASE_DIRECTORY,
                             ...commonPath
                         )
                     ).catch(() => []);
@@ -61,20 +59,28 @@ export default defineConfig({
                     const diffFiles = await walkDir(diffDir)
                         .catch(() => []);
 
-                    if (diffFiles.length){
+                    if (diffFiles.length) {
                         const diffFilesData = [];
                         for (const file of diffFiles){
-                            const baseFileName = file.replace('diff', 'base');
-                            const actualFileName = file.replace('diff', 'actual');
-
-                            if (baseFiles.includes(baseFileName)) {
-
+                            if (baseFiles.includes(file)) {
                                 diffFilesData.push({
-                                    base: baseFileName,
-                                    diff: file,
-                                    actual: actualFileName
+                                    base: join(
+                                        config.env.SNAPSHOT_BASE_DIRECTORY,
+                                        ...commonPath,
+                                        file
+                                    ),
+                                    diff: join(
+                                        config.env.SNAPSHOT_DIFF_DIRECTORY,
+                                        ...commonPath,
+                                        file
+                                    ),
+                                    actual: join(
+                                        // https://github.com/cypress-visual-regression/cypress-visual-regression/issues/133
+                                        config.env.SNAPSHOT_DIFF_DIRECTORY.replace('diff', 'actual'),
+                                        ...commonPath,
+                                        file
+                                    )
                                 });
-
                             }
                         }
 
