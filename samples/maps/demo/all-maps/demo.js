@@ -2,178 +2,108 @@
  * This is a complicated demo of Highcharts Maps, not intended to get you up to
  * speed quickly, but to show off some basic maps and features in one single
  * place. For the basic demo, check out
- * https://www.highcharts.com/maps/demo/geojson instead.
+ * https://www.highcharts.com/demo/maps/tooltip instead.
  *
- * @todo
- * - Remove jQuery where not necessary
  */
 
+// Get all HTML elements
+const datalist = document.getElementById('maps'),
+    input = document.getElementById('map-datalist-input'),
+    prevMapButton = document.getElementById('prev-map-btn'),
+    nextMapButton = document.getElementById('next-map-btn'),
+    dataLabelsCheckbox = document.getElementById('datalabels-checkbox'),
+    mapNameHeader = document.getElementById('map-name-header'),
+    cleanDemoButton = document.getElementById('clean-demo-btn'),
+    svgLink = document.getElementById('svg-link'),
+    geojsonLink = document.getElementById('geojson-link'),
+    topojsonLink = document.getElementById('topojson-link'),
+    javascriptLink = document.getElementById('javascript-link');
+
 // Base path to maps
-const baseMapPath = 'https://code.highcharts.com/mapdata/';
+const baseMapPath = 'https://code.highcharts.com/mapdata/',
+    options = [], // Options elements
+    allMaps = {};
 
-let showDataLabels = false, // Switch for data labels enabled/disabled
-    mapCount = 0,
-    mapOptions = '';
-
-// Populate dropdown menus and turn into jQuery UI widgets
-$.each(Highcharts.mapDataIndex, (mapGroup, maps) => {
+// Populate dropdown options
+for (const [mapGroup, maps] of Object.entries(Highcharts.mapDataIndex)) {
     if (mapGroup !== 'version') {
-        mapOptions += `<option class="option-header">${mapGroup}</option>`;
-        $.each(maps, (desc, path) => {
-            mapOptions += `<option value="${path}">${desc}</option>`;
-            mapCount += 1;
-        });
+        Highcharts.merge(true, allMaps, maps);
     }
-});
-const searchText = `Search ${mapCount} maps`;
-mapOptions =
-    `<option value="custom/world.js">${searchText}</option>${mapOptions}`;
-$('#mapDropdown').append(mapOptions).combobox();
+}
 
-// Change map when item selected in dropdown
-$('#mapDropdown').on('change', async function () {
-    const $selectedItem = $('option:selected', this),
-        mapDesc = $selectedItem.text(),
-        mapKey = this.value.slice(0, -3),
-        svgPath = baseMapPath + mapKey + '.svg',
-        geojsonPath = baseMapPath + mapKey + '.geo.json',
-        topojsonPath = baseMapPath + mapKey + '.topo.json',
-        javascriptPath = baseMapPath + this.value,
-        isHeader = $selectedItem.hasClass('option-header');
+for (const [desc, path] of Object.entries(allMaps)) {
+    const option = document.createElement('option');
+    option.value = desc; // Display name
+    option.dataset.value = path; // Desired value
+    options.push(option);
+}
 
-    // Dim or highlight search box
-    if (mapDesc === searchText || isHeader) {
-        $('.custom-combobox-input').removeClass('valid');
-        location.hash = '';
-    } else {
-        $('.custom-combobox-input').addClass('valid');
-        location.hash = mapKey;
-    }
+datalist.append(...options);
 
-    if (isHeader) {
-        return false;
-    }
+const searchText = `Search ${Object.keys(options).length} maps`;
+input.placeholder = searchText;
 
-    // Show loading
-    if (Highcharts.charts[0]) {
-        Highcharts.charts[0].showLoading(
-            '<i class="fa fa-spinner fa-spin fa-2x"></i>'
-        );
-    }
-
-    // Load the map
-    let filesize = '';
-    const mapData = await fetch(topojsonPath)
-        .then(response => {
-            const size = response.headers.get('content-length');
-            if (size) {
-                filesize = Math.round(size / 1024) + ' kB';
-            }
-
-            return response.json();
-        })
-        .catch(e => console.log('Error', e));
-
-    if (!mapData) {
-        if (Highcharts.charts[0]) {
-            Highcharts.charts[0].showLoading(
-                '<i class="fa fa-frown"></i> Map not found'
-            );
+// Helper functions
+function setAttributes(el, attrs) {
+    for (const key in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, key)) {
+            el.setAttribute(key, attrs[key]);
         }
-        return;
     }
+}
 
-    // Update info box download links
-    $('#download').html(
-        '<small>' + filesize + '</small> <br><br>' +
-        '<a class="button" target="_blank" href="https://jsfiddle.net/gh/get/jquery/1.11.0/' +
-            'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
-            'View clean demo</a>' +
-            '<div class="or-view-as">... or view as ' +
-            '<a target="_blank" href="' + svgPath + '">SVG</a>, ' +
-            '<a target="_blank" href="' + geojsonPath + '">GeoJSON</a>, ' +
-            '<a target="_blank" href="' + topojsonPath + '">TopoJSON</a>, ' +
-            '<a target="_blank" href="' + javascriptPath + '">JavaScript</a>.</div>'
-    );
+function fillInfo(mapName, mapKey) {
+    const paths = [{
+        type: 'svg',
+        elem: svgLink,
+        path: `${baseMapPath}${mapKey}.svg`
+    }, {
+        type: 'geojson',
+        elem: geojsonLink,
+        path: `${baseMapPath}${mapKey}.geo.json`
+    }, {
+        type: 'topojson',
+        elem: topojsonLink,
+        path: `${baseMapPath}${mapKey}.topo.json`
+    }, {
+        type: 'javascript',
+        elem: javascriptLink,
+        path: `${baseMapPath}${allMaps[this.value]}`
+    }];
 
-    // Generate non-random data for the map
+    paths.forEach(({
+        elem,
+        path
+    }) => {
+        setAttributes(elem, {
+            href: path
+        });
+    });
+
+    setAttributes(cleanDemoButton, {
+        href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
+    });
+
+    mapNameHeader.innerHTML = mapName;
+}
+
+// Initial creation of the chart
+(async () => {
+    const initialMapName = 'World, Miller projection, medium resolution',
+        initialMapKey = 'custom/world',
+        mapData = await fetch(`https://code.highcharts.com/mapdata/${initialMapKey}.topo.json`)
+            .then(response => response.json())
+            .catch(e => console.log('Error', e));
+
+    fillInfo(initialMapName, initialMapKey);
+
     const data = mapData.objects.default.geometries.map((g, value) => ({
         key: g.properties['hc-key'],
         value
     }));
 
-    // Show arrows the first time a real map is shown
-    if (mapDesc !== searchText) {
-        $('.selector .prev-next').show();
-        $('#side-box').show();
-    }
-
-    // Is there a layer above this?
-    const match = mapKey
-        .match(/^(countries\/[a-z]{2}\/[a-z]{2})-[a-z0-9]+-all$/);
-    let parent;
-    if (/^countries\/[a-z]{2}\/[a-z]{2}-all$/.test(mapKey)) { // country
-        parent = {
-            desc: 'World',
-            key: 'custom/world'
-        };
-    } else if (match) { // admin1
-        parent = {
-            desc: $('option[value="' + match[1] + '-all.js"]').text(),
-            key: match[1] + '-all'
-        };
-    }
-    $('#up').html('');
-    if (parent) {
-        $('#up').append(
-            $('<a><i class="fa fa-angle-up"></i> ' + parent.desc + '</a>')
-                .attr({
-                    title: parent.key
-                })
-                .on('click', function () {
-                    $('#mapDropdown').val(parent.key + '.js').trigger('change');
-                })
-        );
-    }
-
-    // Data labels formatter. Use shorthand codes for world and US
-    const formatter = function () {
-        return (
-            mapKey === 'custom/world' ||
-            mapKey === 'countries/us/us-all'
-        ) ?
-            (this.point.properties && this.point.properties['hc-a2']) :
-            this.point.name;
-    };
-
-    // On point click, look for a detailed map to drill into
-    const onPointClick = function () {
-        const key = this.key;
-        $('#mapDropdown option').each(function () {
-            if (this.value === `countries/${key.substr(0, 2)}/${key}-all.js`) {
-                $('#mapDropdown').val(this.value).trigger('change');
-            }
-        });
-    };
-
-    const fitToGeometry = (mapKey === 'custom/world') ? {
-        type: 'MultiPoint',
-        coordinates: [
-            // Alaska west
-            [-164, 54],
-            // Greenland north
-            [-35, 84],
-            // New Zealand east
-            [179, -38],
-            // Chile south
-            [-68, -55]
-        ]
-    } : undefined;
-
-    // Instantiate chart
     console.time('map');
-    Highcharts.mapChart('container', {
-
+    const chart = Highcharts.mapChart('container', {
         chart: {
             map: mapData
         },
@@ -198,7 +128,19 @@ $('#mapDropdown').on('change', async function () {
         },
 
         mapView: {
-            fitToGeometry
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
+            }
         },
 
         colorAxis: {
@@ -225,8 +167,10 @@ $('#mapDropdown').on('change', async function () {
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
             dataLabels: {
-                enabled: showDataLabels,
-                formatter,
+                enabled: false,
+                formatter: function () {
+                    return this.point.properties && this.point.properties['hc-a2'];
+                },
                 style: {
                     fontWeight: 100,
                     fontSize: '10px',
@@ -235,7 +179,7 @@ $('#mapDropdown').on('change', async function () {
             },
             point: {
                 events: {
-                    click: onPointClick
+                // click: onPointClick
                 }
             }
         }, {
@@ -247,9 +191,10 @@ $('#mapDropdown').on('change', async function () {
             data: Highcharts.geojson(mapData, 'mapline'),
             /*
             data: [{
-                geometry: mapData.objects.default['hc-recommended-mapview'].insets[0].geoBounds
+                geometry: mapData.objects.default['hc-recommended-mapview']
+                    .insets[0].geoBounds
             }],
-            // */
+            */
             nullColor: '#333333',
             showInLegend: false,
             enableMouseTracking: false
@@ -257,33 +202,123 @@ $('#mapDropdown').on('change', async function () {
     });
     console.timeEnd('map');
 
-    showDataLabels = $('#chkDataLabels').prop('checked');
-});
+    async function updateChart(mapName) {
+        const mapKey = allMaps[mapName].slice(0, -3);
 
-// Toggle data labels - Note: Reloads map with new random data
-$('#chkDataLabels').on('change', function () {
-    showDataLabels = $('#chkDataLabels').prop('checked');
-    $('#mapDropdown').trigger('change');
-});
+        // Show loading
+        if (Highcharts.charts[0]) {
+            Highcharts.charts[0].showLoading(
+                '<i class="fa fa-spinner fa-spin fa-2x"></i>'
+            );
+        }
 
-// Switch to previous map on button click
-$('#btn-prev-map').on('click', function () {
-    $('#mapDropdown option:selected')
-        .prev('option')
-        .prop('selected', true)
-        .trigger('change');
-});
+        fillInfo(mapName, mapKey);
 
-// Switch to next map on button click
-$('#btn-next-map').on('click', function () {
-    $('#mapDropdown option:selected')
-        .next('option')
-        .prop('selected', true)
-        .trigger('change');
-});
+        const mapData = await fetch(`${baseMapPath}${mapKey}.topo.json`)
+            .then(response => response.json())
+            .catch(e => console.log('Error', e));
 
-// Trigger change event to load map on startup
-if (location.hash) {
-    $('#mapDropdown').val(location.hash.substr(1) + '.js');
-}
-$('#mapDropdown').trigger('change');
+        if (!mapData) {
+            if (Highcharts.charts[0]) {
+                Highcharts.charts[0].showLoading(
+                    '<i class="fa fa-frown"></i> Map not found'
+                );
+            }
+            return;
+        }
+
+        const fitToGeometry = (mapKey === 'custom/world') ? {
+            type: 'MultiPoint',
+            coordinates: [
+                // Alaska west
+                [-164, 54],
+                // Greenland north
+                [-35, 84],
+                // New Zealand east
+                [179, -38],
+                // Chile south
+                [-68, -55]
+            ]
+        } : undefined;
+
+        // Data labels formatter. Use shorthand codes for world and US
+        const formatter = function () {
+            return (
+                mapKey === 'custom/world' ||
+                mapKey === 'countries/us/us-all'
+            ) ?
+                (this.point.properties && this.point.properties['hc-a2']) :
+                this.point.name;
+        };
+
+        const data = mapData.objects.default.geometries.map((g, value) => ({
+            key: g.properties['hc-key'],
+            value
+        }));
+        chart.update({
+            mapView: {
+                fitToGeometry
+            }
+        }, false);
+        chart.series[0].update({
+            mapData,
+            data,
+            dataLabels: {
+                formatter
+            }
+        }, false);
+        chart.series[1].update({
+            data: Highcharts.geojson(mapData, 'mapline')
+            /*
+            data: [{
+                geometry: mapData.objects.default['hc-recommended-mapview']
+                    .insets[0].geoBounds
+            }],
+            */
+        });
+        chart.hideLoading();
+    }
+
+    // Change map on input change
+    input.addEventListener('input', async function () {
+        if (allMaps[this.value]) {
+            Array.from(document.getElementsByClassName('prev-next')).forEach(el => {
+                el.style.opacity = 1;
+            });
+            updateChart(this.value);
+        }
+    });
+
+    // Toggle data labels
+    dataLabelsCheckbox.addEventListener('click', function () {
+        chart.series[0].update({
+            dataLabels: {
+                enabled: this.checked
+            }
+        });
+    });
+
+    // Switch to previous map on button click
+    prevMapButton.addEventListener('click', function () {
+        const desiredIndex = Object.keys(allMaps).indexOf(input.value) - 1,
+            [mapName] = Object.entries(allMaps)[
+                desiredIndex < 0 ?
+                    Object.keys(allMaps).length - 1 :
+                    desiredIndex
+            ];
+        updateChart(mapName);
+        input.value = mapName;
+    });
+
+    // Switch to next map on button click
+    nextMapButton.addEventListener('click', function () {
+        const desiredIndex = Object.keys(allMaps).indexOf(input.value) + 1,
+            [mapName] = Object.entries(allMaps)[
+                desiredIndex > Object.keys(allMaps).length - 1 ?
+                    0 :
+                    desiredIndex
+            ];
+        updateChart(mapName);
+        input.value = mapName;
+    });
+})();
