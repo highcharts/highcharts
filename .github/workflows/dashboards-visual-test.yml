@@ -101,9 +101,9 @@ jobs:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
-            const { readFileSync } = require('node:fs')
+            const { readFile } = require('node:fs/promises')
 
-            const jsonFile = readFileSync('./tmp/dashboards-visual-results.json')
+            const jsonFile = await readFile('./tmp/dashboards-visual-results.json')
               .catch(() => null);
             const commentTitle = 'Dashboard visual diffs -';
 
