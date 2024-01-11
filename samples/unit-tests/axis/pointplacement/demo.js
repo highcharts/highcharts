@@ -41,7 +41,7 @@ QUnit.test('Axis pointPlacement', assert => {
     );
 
     assert.strictEqual(
-        axis.ticks[-1], null,
+        axis.ticks[-1], undefined,
         'No tick at -1 when pointPlacement is set for cartesian series'
     );
 
