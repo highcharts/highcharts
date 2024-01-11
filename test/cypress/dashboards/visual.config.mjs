@@ -79,9 +79,9 @@ export default defineConfig({
 
                         const diffJson = JSON.stringify(diffFilesData, null, 2);
 
-                        const tmpDir = join(resolve('../../../', 'tmp');
+                        const tmpDir = resolve('../../../', 'tmp');
                         await mkdir(tmpDir, { recursive: true });
-                        await writeFile(tmpDir, 'dashboards-visual-results.json'), diffJson);
+                        await writeFile(join(tmpDir, 'dashboards-visual-results.json'), diffJson);
 
                         console.table(diffJson);
                         console.error('There are visual regression differences, see tmp/dashboards-visual-results.json for details');
