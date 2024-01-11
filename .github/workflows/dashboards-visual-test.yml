@@ -104,6 +104,7 @@ jobs:
             const { readFileSync } = require('node:fs')
 
             const jsonFile = readFileSync('./tmp/dashboards-visual-results.json');
+            const commentTitle = 'Dashboard visual diffs -';
 
             // Only exists if there are diffs
             if (jsonFile) {
@@ -114,10 +115,18 @@ jobs:
               await createOrUpdateComment(
                 github,
                 context,
+                commentTitle,
                 'Visual differences found in: ' +
                  tests +
-                 '. See artifact file in job summary for screenshots'
+                 '\n See artifact file in job summary for screenshots'
                 );
+            } else {
+              await createOrUpdateComment(
+                github,
+                context,
+                commentTitle,
+                'No differences found'
+              );
             }
 
 
