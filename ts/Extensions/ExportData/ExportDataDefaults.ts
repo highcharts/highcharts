@@ -212,7 +212,7 @@ const exporting: ExportingOptions = {
      *
      * The message can be altered by changing [](#lang.exporting.exportInProgress)
      *
-     * @since next
+     * @since 11.3.0
      * @requires modules/export-data
      */
     showExportInProgress: true
@@ -280,7 +280,7 @@ const lang: LangOptions = {
     /**
      * Text to show when export is in progress.
      *
-     * @since next
+     * @since 11.3.0
      * @requires modules/export-data
      */
     exportInProgress: 'Exporting...'

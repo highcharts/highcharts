@@ -58,6 +58,9 @@ npm install highcharts
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
+Also, be aware that we prepared the component so it was minimalist.  
+To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Plugins_KPIComponent.KPIComponent-1#defaultChartOptions).
+
 3. Define chart options for the KPI.
 For the full set of available chart options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
