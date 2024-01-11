@@ -5,7 +5,7 @@ import defaultConfig from '../../../cypress.config.mjs';
 
 import { resolve, join } from 'node:path';
 
-import { readdir, writeFile, stat } from 'node:fs/promises';
+import { readdir, writeFile, stat, mkdir } from 'node:fs/promises';
 
 const screenshotsFolder = resolve('../../../','cypress/snapshots/actual');
 
@@ -79,10 +79,11 @@ export default defineConfig({
 
                         const diffJson = JSON.stringify(diffFilesData, null, 2);
 
-                        await writeFile(join(resolve('../../../', 'tmp'), 'dashboards-visual-results.json'), diffJson);
+                        const tmpDir = join(resolve('../../../', 'tmp');
+                        await mkdir(tmpDir, { recursive: true });
+                        await writeFile(tmpDir, 'dashboards-visual-results.json'), diffJson);
 
-                        console.log(diffJson);
-
+                        console.table(diffJson);
                         console.error('There are visual regression differences, see tmp/dashboards-visual-results.json for details');
                     }
                 });
