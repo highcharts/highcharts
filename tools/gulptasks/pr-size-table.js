@@ -4,7 +4,6 @@ const fs = require('fs');
 const gulp = require('gulp');
 const { sync: gzipSize } = require('gzip-size');
 const scriptsCompile = require('./scripts-compile');
-const dashboardsDistMinify = require('./dashboards/dist-minify');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 const log = require('./lib/log');
 
@@ -61,7 +60,7 @@ function getFileSizes(out) {
 
     return Promise.resolve()
         .then(() => scriptsCompile(files.map(file => join('code', file))))
-        .then(() => dashboardsDistMinify())
+        .then(() => scriptsCompile(void 0, require('./dashboards/_config.json')))
         .then(() => getSizeOfSourceCompiledAndGzip(files))
 
         // Output the result to the console, or a file if filePath is defined
