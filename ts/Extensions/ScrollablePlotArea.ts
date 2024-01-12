@@ -147,10 +147,7 @@ class ScrollablePlotArea {
 
         let scrollablePixelsX: number,
             scrollablePixelsY: number,
-            corrections: (
-                Record<string, Record<string, (number|string)>>|
-                undefined
-            );
+            recalculateHoriz: boolean|undefined;
 
         if (!renderer.forExport) {
 
@@ -169,10 +166,7 @@ class ScrollablePlotArea {
                     plotBox.width = chart.plotWidth += scrollablePixelsX;
                     clipBox[inverted ? 'height' : 'width'] += scrollablePixelsX;
 
-                    corrections = {
-                        // Corrections for right side
-                        1: { name: 'right', value: scrollablePixelsX }
-                    };
+                    recalculateHoriz = true;
                 }
 
             // Currently we can only do either X or Y
@@ -188,41 +182,15 @@ class ScrollablePlotArea {
                     plotBox.height = chart.plotHeight += scrollablePixelsY;
                     clipBox[inverted ? 'width' : 'height'] += scrollablePixelsY;
 
-                    corrections = {
-                        2: { name: 'bottom', value: scrollablePixelsY }
-                    };
+                    recalculateHoriz = false;
                 }
             }
 
-            if (corrections && !e.skipAxes) {
+            if (defined(recalculateHoriz) && !e.skipAxes) {
                 for (const axis of chart.axes) {
-                    // For right and bottom axes, only fix the plot line length
-                    if ((corrections as any)[axis.side]) {
-                        const originalGetPlotLinePath = axis.getPlotLinePath;
-                        // Get the plot lines right in getPlotLinePath,
-                        // temporarily set it to the adjusted plot width.
-                        // eslint-disable-next-line no-loop-func
-                        axis.getPlotLinePath = function (): SVGPath {
-                            const marginName = (corrections as any)[axis.side]
-                                    .name,
-                                correctionValue =
-                                    (corrections as any)[axis.side].value,
-                                // Is axis.right or axis.bottom
-                                margin = (this as any)[marginName];
-                            // Temporarily adjust
-                            (this as any)[marginName] =
-                                margin - correctionValue;
-                            const path = originalGetPlotLinePath.apply(
-                                this,
-                                arguments as any
-                            ) as any;
-                            // Reset
-                            (this as any)[marginName] = margin;
-                            return path;
-                        };
-
-                    } else {
-                        // Apply the corrected plotWidth
+                    // Apply the corrected plot size to the axes of the other
+                    // orientation than the scrolling direction
+                    if (axis.horiz === recalculateHoriz) {
                         axis.setAxisSize();
                         axis.setAxisTranslation();
                     }
