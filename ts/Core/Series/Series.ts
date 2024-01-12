@@ -4300,6 +4300,12 @@ class Series {
                 // #20264: Re-detect a certain chart properties from new series
                 chart.propFromSeries();
 
+                series.invertible = seriesTypes[newType].prototype.invertible;
+
+                if (!series.invertible) {
+                    preserve.splice(preserve.indexOf('invertible'), 1);
+                }
+
                 // Modern browsers including IE11
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
