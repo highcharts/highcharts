@@ -12,54 +12,45 @@ Highcharts.chart('container', {
             color: '#ffa500',
             offset: -50,
             height: 40
-        },
-        {
+        }, {
             id: 'Residential',
             color: '#74ffe7',
             column: 2,
             offset: 20,
             height: 30
-        },
-        {
+        }, {
             id: 'Commercial',
             color: '#8cff74',
             column: 2,
             offset: 50,
             height: 25
-        },
-        {
+        }, {
             id: 'Industrial',
             color: '#ff8da1',
             column: 2,
             offset: 50,
             height: 50
-        },
-        {
+        }, {
             id: 'Transportation',
             color: '#f4c0ff',
             column: 2,
             height: 105
-        },
-        {
+        }, {
             id: 'Rejected Energy',
             color: '#e6e6e6',
             column: 3,
             offset: -10,
             height: 60
-        },
-        {
+        }, {
             id: 'Energy Services',
             color: '#F9E79F',
             column: 3,
             height: 60
-        },
-
-        {
+        }, {
             id: 'Petroleum',
             color: '#989898',
             offset: -1
-        }
-        ],
+        }],
 
         data: [
             ['Petroleum', 'Electricity & Heat', 9.21],
