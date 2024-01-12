@@ -239,6 +239,11 @@ class ColorAxis extends Axis implements AxisLike {
         if (userOptions.dataClasses) {
             axis.initDataClasses(userOptions);
         }
+
+        if (userOptions.title) {
+            merge(axis.options.title, userOptions.title);
+        }
+
         axis.initStops();
 
         // Override original axis properties
@@ -280,7 +285,6 @@ class ColorAxis extends Axis implements AxisLike {
             // Forced options
             {
                 showEmpty: false,
-                title: null,
                 visible: this.chart.options.legend.enabled &&
                     userOptions.visible !== false
             }
@@ -327,6 +331,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public getOffset(): void {
         const axis = this;
+        const renderer = axis.chart.renderer;
         const group = axis.legendItem?.group;
         const sideOffset = axis.chart.axisOffset[axis.side];
 
