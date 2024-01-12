@@ -3788,15 +3788,20 @@ class Chart {
                     axis.getExtremes(),
                     allExtremes || {}
                 ),
+
+                // For boosted chart where data extremes are skipped
+                safeDataMin = dataMin ?? options.min,
+                safeDataMax = dataMax ?? options.max,
+
                 range = newMax - newMin,
                 padRange = axis.categories ? 0 : Math.min(
                     range,
-                    dataMax - dataMin
+                    safeDataMax - safeDataMin
                 ),
-                paddedMin = dataMin - padRange * (
+                paddedMin = safeDataMin - padRange * (
                     defined(options.min) ? 0 : options.minPadding
                 ),
-                paddedMax = dataMax + padRange * (
+                paddedMax = safeDataMax + padRange * (
                     defined(options.max) ? 0 : options.maxPadding
                 ),
 
