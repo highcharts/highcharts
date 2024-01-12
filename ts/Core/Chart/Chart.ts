@@ -3724,6 +3724,12 @@ class Chart {
                         1,
                 minPx = move;
 
+            // Zooming in multiple panes, zoom only in the pane that receives
+            // the input
+            if (!reset && (fromCenter < 0 || fromCenter > axis.len)) {
+                continue;
+            }
+
             let newMin = axis.toValue(minPx, true) +
                     minPointOffset * pointRangeDirection,
                 newMax =
