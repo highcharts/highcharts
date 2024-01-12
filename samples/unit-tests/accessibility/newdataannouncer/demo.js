@@ -12,7 +12,8 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
                 }
             ]
         }),
-        series = chart.series[0];
+        series = chart.series[0],
+        announcerDiv = document.querySelector('.highcharts-announcer-container').querySelectorAll('div')[0];
 
     assert.ok(
         chart.accessibility.components.infoRegions.announcer.announceRegion,
@@ -35,9 +36,6 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
     // Adding point
     series.addPoint(7);
 
-    // Select the div where the announce message appears
-    const announcerDiv = document.querySelector('.highcharts-announcer-container').querySelectorAll('div')[0];
-
     setTimeout(function () {
         assert.ok(
             announcerDiv.innerHTML,
@@ -45,27 +43,28 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
         );
     }, 1);
 
-    assert.strictEqual(
-        announcerDiv.innerHTML,
-        '',
-        'The text in the announceRegion should be removed after a short while'
-    );
-
     // Queued announcement should not be undefined anymore
     assert.notEqual(
         chart.accessibility.components.series
             .newDataAnnouncer.queuedAnnouncement,
         undefined,
-        'There be queued announcement'
+        'There should be queued announcement'
     );
+
 
     setTimeout(function () {
         assert.strictEqual(
             chart.accessibility.components.series
                 .newDataAnnouncer.queuedAnnouncement,
             undefined,
-            'There queued announcement should be removed after a short while'
+            'The queued announcement should be removed after a short while'
+        );
+
+        assert.strictEqual(
+            announcerDiv.innerHTML,
+            '',
+            'The text in the announceRegion should be removed after a short while'
         );
         done();
-    }, 1);
+    }, 3100); // make sure clearAnnouncementTimerRegion is done
 });
