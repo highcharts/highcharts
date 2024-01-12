@@ -425,8 +425,8 @@ function onPointerGetSelectionMarkerAttrs(
         event.preventDefault();
 
         const center = chart.hoverPane.center,
-            mouseDownX = (this.mouseDownX || 0),
-            mouseDownY = (this.mouseDownY || 0),
+            mouseDownX = chart.mouseDownX || 0,
+            mouseDownY = chart.mouseDownY || 0,
             chartY = event.args.chartY,
             chartX = event.args.chartX,
             fullCircle = Math.PI * 2,

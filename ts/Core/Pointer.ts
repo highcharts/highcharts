@@ -138,10 +138,6 @@ class Pointer {
 
     public lastTouches?: Array<PointerEvent>;
 
-    public mouseDownX?: number;
-
-    public mouseDownY?: number;
-
     public options: Options;
 
     public pinchDown?: Array<PointerEvent>;
@@ -276,11 +272,13 @@ class Pointer {
             (e: GetSelectionMarkerAttrsEvent): void => {
                 const {
                         chart,
-                        mouseDownX = 0,
-                        mouseDownY = 0,
                         zoomHor,
                         zoomVert
                     } = this,
+                    {
+                        mouseDownX = 0,
+                        mouseDownY = 0
+                    } = chart,
                     attrs = e.attrs;
 
                 let size;
@@ -318,8 +316,16 @@ class Pointer {
      * @function Highcharts.Pointer#drag
      */
     public drag(e: PointerEvent): void {
-        const { chart, mouseDownX = 0, mouseDownY = 0 } = this,
-            { panning, panKey, selectionMarkerFill } = chart.options.chart,
+        const { chart } = this,
+            {
+                mouseDownX = 0,
+                mouseDownY = 0
+            } = chart,
+            {
+                panning,
+                panKey,
+                selectionMarkerFill
+            } = chart.options.chart,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -426,8 +432,8 @@ class Pointer {
         // Record the start position
         chart.mouseIsDown = e.type;
         chart.cancelClick = false;
-        chart.mouseDownX = this.mouseDownX = e.chartX;
-        chart.mouseDownY = this.mouseDownY = e.chartY;
+        chart.mouseDownX = e.chartX;
+        chart.mouseDownY = e.chartY;
     }
 
     /**
