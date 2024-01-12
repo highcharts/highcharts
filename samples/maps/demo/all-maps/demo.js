@@ -68,7 +68,7 @@ function fillInfo(mapName, mapKey) {
     }, {
         type: 'javascript',
         elem: javascriptLink,
-        path: `${baseMapPath}${allMaps[this.value]}`
+        path: `${baseMapPath}${mapKey}.js`
     }];
 
     paths.forEach(({
@@ -87,6 +87,16 @@ function fillInfo(mapName, mapKey) {
     mapNameHeader.innerHTML = mapName;
 }
 
+function resetDrilldown(chart) {
+    // Reset drilldown functionalities
+    if (chart.breadcrumbs && chart.breadcrumbs.elementList[0]) {
+        chart.breadcrumbs.destroy();
+        delete chart.breadcrumbs;
+        delete chart.drilldown;
+        delete chart.drilldownLevels;
+    }
+}
+
 // Initial creation of the chart
 (async () => {
     const initialMapName = 'World, Miller projection, medium resolution',
@@ -97,15 +107,129 @@ function fillInfo(mapName, mapKey) {
 
     fillInfo(initialMapName, initialMapKey);
 
+    // On point click, look for a detailed map to drill into
+    const drilldown = async function (e) {
+        const map = Object.entries(allMaps).find(map =>
+            map[0].indexOf(e.point.name) === 0);
+        if (!e.seriesOptions && map) {
+            const chart = this,
+                mapName = map[0],
+                mapKey = map[1].slice(0, -3);
+
+            // Handle error, the timeout is cleared on success
+            let fail = setTimeout(() => {
+                if (!Highcharts.maps[mapKey]) {
+                    chart.showLoading('<i class="fa fa-frown"></i> Map not found');
+                    fail = setTimeout(() => {
+                        chart.hideLoading();
+                    }, 1000);
+                }
+            }, 3000);
+
+            // Show the Font Awesome spinner
+            chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>');
+
+            fillInfo(mapName, mapKey);
+            input.value = mapName;
+            prevMapButton.style.opacity = 1;
+            nextMapButton.style.opacity = 1;
+
+            // Load the drilldown map
+            const topology = await fetch(
+                `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
+            ).then(response => response.json());
+
+            const data =
+                topology.objects.default.geometries.map((g, value) => ({
+                    key: g.properties['hc-key'],
+                    drilldown: g.properties['hc-key'],
+                    value
+                }));
+
+            // Apply the recommended map view if any
+            chart.mapView.update(
+                Highcharts.merge({
+                    insets: undefined,
+                    padding: 0,
+                    fitToGeometry: undefined
+                },
+                topology.objects.default['hc-recommended-mapview']
+                )
+            );
+            // Hide loading and add series
+            chart.hideLoading();
+            clearTimeout(fail);
+            chart.addSeriesAsDrilldown(e.point, {
+                mapData: topology,
+                name: e.point.name,
+                data,
+                joinBy: ['hc-key', 'key'],
+                custom: {
+                    mapView: topology.objects.default['hc-recommended-mapview'],
+                    mapName,
+                    mapKey
+                }
+            });
+        }
+    };
+
+    // On drill up, reset to the top-level map view
+    const afterDrillUp = function (e) {
+        const {
+            mapView,
+            mapName,
+            mapKey
+        } = e.seriesOptions.custom;
+        if (mapView && mapName && mapKey) {
+            fillInfo(mapName, mapKey);
+            input.value = mapName;
+
+            e.target.mapView.update(
+                Highcharts.merge({
+                    insets: undefined
+                },
+                e.seriesOptions.custom.mapView
+                ),
+                false
+            );
+        }
+    };
+
     const data = mapData.objects.default.geometries.map((g, value) => ({
-        key: g.properties['hc-key'],
-        value
-    }));
+            key: g.properties['hc-key'],
+            drilldown: g.properties['hc-key'],
+            value
+        })),
+        mapView = Highcharts.merge({
+            projection: {
+                name: 'Miller',
+                rotation: [0]
+            },
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
+            }
+        },
+        mapData.objects.default['hc-recommended-mapview']
+        );
 
     console.time('map');
     const chart = Highcharts.mapChart('container', {
         chart: {
-            map: mapData
+            map: mapData,
+            events: {
+                drilldown,
+                afterDrillUp
+            }
         },
 
         title: {
@@ -127,21 +251,7 @@ function fillInfo(mapName, mapKey) {
             }
         },
 
-        mapView: {
-            fitToGeometry: {
-                type: 'MultiPoint',
-                coordinates: [
-                    // Alaska west
-                    [-164, 54],
-                    // Greenland north
-                    [-35, 84],
-                    // New Zealand east
-                    [179, -38],
-                    // Chile south
-                    [-68, -55]
-                ]
-            }
-        },
+        mapView,
 
         colorAxis: {
             min: 0,
@@ -165,39 +275,18 @@ function fillInfo(mapName, mapKey) {
         series: [{
             data,
             joinBy: ['hc-key', 'key'],
-            name: 'Random data',
+            name: initialMapName,
             dataLabels: {
                 enabled: false,
                 formatter: function () {
                     return this.point.properties && this.point.properties['hc-a2'];
-                },
-                style: {
-                    fontWeight: 100,
-                    fontSize: '10px',
-                    textOutline: 'none'
                 }
             },
-            point: {
-                events: {
-                // click: onPointClick
-                }
+            custom: {
+                mapView,
+                mapName: initialMapName,
+                mapKey: initialMapKey
             }
-        }, {
-            type: 'mapline',
-            name: 'Lines',
-            accessibility: {
-                enabled: false
-            },
-            data: Highcharts.geojson(mapData, 'mapline'),
-            /*
-            data: [{
-                geometry: mapData.objects.default['hc-recommended-mapview']
-                    .insets[0].geoBounds
-            }],
-            */
-            nullColor: '#333333',
-            showInLegend: false,
-            enableMouseTracking: false
         }]
     });
     console.timeEnd('map');
@@ -206,11 +295,7 @@ function fillInfo(mapName, mapKey) {
         const mapKey = allMaps[mapName].slice(0, -3);
 
         // Show loading
-        if (Highcharts.charts[0]) {
-            Highcharts.charts[0].showLoading(
-                '<i class="fa fa-spinner fa-spin fa-2x"></i>'
-            );
-        }
+        chart.showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
 
         fillInfo(mapName, mapKey);
 
@@ -219,27 +304,9 @@ function fillInfo(mapName, mapKey) {
             .catch(e => console.log('Error', e));
 
         if (!mapData) {
-            if (Highcharts.charts[0]) {
-                Highcharts.charts[0].showLoading(
-                    '<i class="fa fa-frown"></i> Map not found'
-                );
-            }
+            chart.showLoading('<i class="fa fa-frown"></i> Map not found');
             return;
         }
-
-        const fitToGeometry = (mapKey === 'custom/world') ? {
-            type: 'MultiPoint',
-            coordinates: [
-                // Alaska west
-                [-164, 54],
-                // Greenland north
-                [-35, 84],
-                // New Zealand east
-                [179, -38],
-                // Chile south
-                [-68, -55]
-            ]
-        } : undefined;
 
         // Data labels formatter. Use shorthand codes for world and US
         const formatter = function () {
@@ -252,29 +319,47 @@ function fillInfo(mapName, mapKey) {
         };
 
         const data = mapData.objects.default.geometries.map((g, value) => ({
-            key: g.properties['hc-key'],
-            value
-        }));
+                key: g.properties['hc-key'],
+                drilldown: g.properties['hc-key'],
+                value
+            })),
+            mapView = Highcharts.merge({
+                projection: {
+                    name: 'Miller',
+                    rotation: [0]
+                },
+                fitToGeometry: mapKey === 'custom/world' ? {
+                    type: 'MultiPoint',
+                    coordinates: [
+                        // Alaska west
+                        [-164, 54],
+                        // Greenland north
+                        [-35, 84],
+                        // New Zealand east
+                        [179, -38],
+                        // Chile south
+                        [-68, -55]
+                    ]
+                } : undefined,
+                insets: undefined
+            },
+            mapData.objects.default['hc-recommended-mapview']
+            );
         chart.update({
-            mapView: {
-                fitToGeometry
-            }
+            mapView
         }, false);
         chart.series[0].update({
             mapData,
             data,
+            name: mapName,
             dataLabels: {
                 formatter
+            },
+            custom: {
+                mapView,
+                mapName,
+                mapKey
             }
-        }, false);
-        chart.series[1].update({
-            data: Highcharts.geojson(mapData, 'mapline')
-            /*
-            data: [{
-                geometry: mapData.objects.default['hc-recommended-mapview']
-                    .insets[0].geoBounds
-            }],
-            */
         });
         chart.hideLoading();
     }
@@ -282,9 +367,9 @@ function fillInfo(mapName, mapKey) {
     // Change map on input change
     input.addEventListener('input', async function () {
         if (allMaps[this.value]) {
-            Array.from(document.getElementsByClassName('prev-next')).forEach(el => {
-                el.style.opacity = 1;
-            });
+            prevMapButton.style.opacity = 1;
+            nextMapButton.style.opacity = 1;
+            resetDrilldown(chart);
             updateChart(this.value);
         }
     });
@@ -306,6 +391,7 @@ function fillInfo(mapName, mapKey) {
                     Object.keys(allMaps).length - 1 :
                     desiredIndex
             ];
+        resetDrilldown(chart);
         updateChart(mapName);
         input.value = mapName;
     });
@@ -318,6 +404,7 @@ function fillInfo(mapName, mapKey) {
                     0 :
                     desiredIndex
             ];
+        resetDrilldown(chart);
         updateChart(mapName);
         input.value = mapName;
     });
