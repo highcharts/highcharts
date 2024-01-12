@@ -306,7 +306,7 @@ class ScrollablePlotArea {
     }
 
     public applyFixed(): void {
-        const { chart, fixedRenderer, scrollingContainer } = this,
+        const { chart, fixedRenderer, isDirty, scrollingContainer } = this,
             {
                 axisOffset,
                 chartWidth,
@@ -321,19 +321,19 @@ class ScrollablePlotArea {
             } = chart,
             chartOptions = chart.options.chart,
             scrollableOptions = chartOptions.scrollablePlotArea || {},
-            { scrollPositionX, scrollPositionY } = scrollableOptions;
+            { scrollPositionX = 0, scrollPositionY = 0 } = scrollableOptions,
+            scrollableWidth = chartWidth + scrollablePixelsX,
+            scrollableHeight = chartHeight + scrollablePixelsY;
 
         // Set the size of the fixed renderer to the visible width
         fixedRenderer.setSize(chartWidth, chartHeight);
 
-        if (this.isDirty ?? true) {
+        if (isDirty ?? true) {
             this.isDirty = false;
             this.moveFixedElements();
         }
 
         // Increase the size of the scrollable renderer and background
-        const scrollableWidth = chartWidth + scrollablePixelsX,
-            scrollableHeight = chartHeight + scrollablePixelsY;
         stop(chart.container);
         css(container, {
             width: `${scrollableWidth}px`,
@@ -354,18 +354,11 @@ class ScrollablePlotArea {
             height: `${chartHeight}px`
         });
 
-        // Set scroll position
-        const firstTime = true;
-        if (firstTime) {
-
-            if (scrollPositionX) {
-                scrollingContainer.scrollLeft =
-                    scrollablePixelsX * scrollPositionX;
-            }
-            if (scrollPositionY) {
-                scrollingContainer.scrollTop =
-                    scrollablePixelsY * scrollPositionY;
-            }
+        // Set scroll position the first time (this.isDirty was undefined at
+        // the top of this function)
+        if (!defined(isDirty)) {
+            scrollingContainer.scrollLeft = scrollablePixelsX * scrollPositionX;
+            scrollingContainer.scrollTop = scrollablePixelsY * scrollPositionY;
         }
 
         // Mask behind the left and right side
