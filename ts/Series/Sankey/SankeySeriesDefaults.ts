@@ -455,7 +455,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *         Sankey diagram with height options
  *
  * @type      {number}
- * @since     11.2.0
+ * @since     11.3.0
  * @apioption series.sankey.nodes.height
  */
 
