@@ -23,7 +23,7 @@
 
 import type Globals from '../Globals';
 import type Sync from '../Components/Sync/Sync';
-import type NavigatorComponentOptions from './NavigatorComponentOptions';
+import type Options from './NavigatorComponentOptions';
 
 import Component from '../Components/Component.js';
 
@@ -36,7 +36,7 @@ import Component from '../Components/Component.js';
 
 
 const NavigatorComponentDefaults:
-Globals.DeepPartial<NavigatorComponentOptions> = {
+Globals.DeepPartial<Options> = {
     type: 'Navigator',
     chartOptions: {
         chart: {

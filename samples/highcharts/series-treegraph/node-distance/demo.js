@@ -169,7 +169,7 @@ const data = [
 
 Highcharts.chart('container', {
     title: {
-        text: 'Treegraph with color variation'
+        text: 'Treegraph with a node distance of 50%'
     },
     series: [
         {
@@ -187,33 +187,9 @@ Highcharts.chart('container', {
             dataLabels: {
                 pointFormat: '{point.name}',
                 style: {
-                    whiteSpace: 'nowrap'
+                    textOutline: 'none'
                 }
-            },
-            levels: [
-                {
-                    level: 1,
-                    levelIsConstant: false
-                },
-                {
-                    level: 2,
-                    colorByPoint: true
-                },
-                {
-                    level: 3,
-                    colorVariation: {
-                        key: 'brightness',
-                        to: -0.5
-                    }
-                },
-                {
-                    level: 4,
-                    colorVariation: {
-                        key: 'brightness',
-                        to: 0.5
-                    }
-                }
-            ]
+            }
         }
     ]
 });
