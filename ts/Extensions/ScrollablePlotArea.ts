@@ -167,7 +167,7 @@ class ScrollablePlotArea {
                     0,
                     minHeight - chart.chartHeight
                 );
-                if (scrollablePixelsY) {
+                if (defined(scrollablePixelsY)) {
                     chart.scrollablePlotBox = merge(chart.plotBox);
                     plotBox.height = chart.plotHeight += scrollablePixelsY;
                     clipBox[inverted ? 'width' : 'height'] += scrollablePixelsY;
