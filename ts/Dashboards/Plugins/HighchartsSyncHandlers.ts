@@ -100,7 +100,13 @@ const configs: {
                 }
 
                 const { chart, board } = this as HighchartsComponent;
-                if (!board) {
+                const highlightOptions = this.options.sync?.highlight;
+
+                if (
+                    !board ||
+                    !isObject(highlightOptions) ||
+                    !highlightOptions.enabled
+                ) {
                     return;
                 }
 
@@ -146,7 +152,8 @@ const configs: {
                                     }
                                 }
                             }
-                        });
+                        }, false);
+                        chart.redraw();
                     });
                 }
 
@@ -161,9 +168,9 @@ const configs: {
                                         mouseOut: void 0
                                     }
                                 }
-                            });
+                            }, false);
                         });
-
+                        chart.redraw();
                     }
                 };
             }
