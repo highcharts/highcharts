@@ -362,8 +362,7 @@ async function setupBoard() {
                                 activeCity = e.point.name;
                                 updateBoard(
                                     board,
-                                    activeCity,
-                                    true
+                                    activeCity
                                 );
                             }
                         },
@@ -663,7 +662,7 @@ async function setupBoard() {
 
     // Load active city
     await setupCity(board, activeCity);
-    await updateBoard(board, activeCity, true);
+    await updateBoard(board, activeCity);
 
     // Select active city on the map
     const worldMap = board.mountedComponents[0].component.chart.series[1];
@@ -710,7 +709,7 @@ async function setupCity(board, city) {
     });
 }
 
-async function updateBoard(board, city, newData) {
+async function updateBoard(board, city) {
     // Debug
     if (!(city in configMet.cities)) {
         return;
@@ -769,47 +768,29 @@ async function updateBoard(board, city, newData) {
         value: forecastTable.columns.humidity[0]
     });
 
-    if (newData) {
-        // Update geo KPI
-        await kpiGeoData.update({
-            title: city,
-            value: citiesTable.getCellAsNumber(
-                'elevation',
-                citiesTable.getRowIndexBy('city', city)
-            ) || '--'
-        });
+    // Update geo KPI
+    await kpiGeoData.update({
+        title: city,
+        value: citiesTable.getCellAsNumber(
+            'elevation',
+            citiesTable.getRowIndexBy('city', city)
+        ) || '--'
+    });
 
-        // Update data grid and city chart
-        const sharedColumnAssignment = {
-            time: 'x',
-            temperature: 'y'
-        };
+    // Update city grid data selection
+    await selectionGrid.update({
+        connector: {
+            id: city
+        }
+    });
 
-        // Update city grid selection
-        await selectionGrid.update({
-            dataGridOptions: {
-                columns: {
-                    temperature: {
-                        show: true
-                    }
-                }
-            },
-            columnAssignment: sharedColumnAssignment
-        });
-
-        // Update city chart
-        const options = cityChart.chartOptions;
-        options.title.text = 'Temperature in ' + city;
-        options.colorAxis.min = colorMin;
-        options.colorAxis.max = colorMax;
-        options.colorAxis.colorStops = colorStops;
-
-        await cityChart.update({
-            columnAssignment: {
-                time: 'x',
-                temperature: 'y'
-            },
-            chartOptions: options
-        });
-    }
+    // Update city chart
+    const options = cityChart.chartOptions;
+    options.title.text = 'Temperature in ' + city;
+    await cityChart.update({
+        connector: {
+            id: city
+        },
+        chartOptions: options
+    });
 }
