@@ -2,47 +2,49 @@
 
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
-const hourOffset = 0; // Display the current observation
+const idxLatest = 0; // Display the current observation
 
 // Index of the weather data in the map chart
 const weatherDataIndex = 1;
 
+// World cities
+const worldCities = {
+    'New York': {
+        lat: 40.71,
+        lon: -74.01,
+        alt: 10
+    },
+    Dublin: {
+        lat: 53.35,
+        lon: -6.26,
+        alt: 8
+    },
+    Sydney: {
+        lat: -33.87,
+        lon: 151.21,
+        alt: 35
+    },
+    'Buenos Aires': {
+        lat: -34.60,
+        lon: -58.38,
+        alt: 10
+    },
+    Tokyo: {
+        lat: 35.69,
+        lon: 139.69,
+        alt: 17
+    },
+    Johannesburg: {
+        lat: -26.20,
+        lon: 28.034,
+        alt: 1767
+    }
+};
+
 // Collection of weather stations
 const weatherStations = {
-    // Data source: TBD
-    cities: {
-        'New York': {
-            lat: 40.71,
-            lon: -74.01,
-            alt: 10
-        },
-        Dublin: {
-            lat: 53.35,
-            lon: -6.26,
-            alt: 8
-        },
-        Sydney: {
-            lat: -33.87,
-            lon: 151.21,
-            alt: 35
-        },
-        'Buenos Aires': {
-            lat: -34.60,
-            lon: -58.38,
-            alt: 10
-        },
-        Tokyo: {
-            lat: 35.69,
-            lon: 139.69,
-            alt: 17
-        },
-        Johannesburg: {
-            lat: -26.20,
-            lon: 28.034,
-            alt: 1767
-        }
-    },
-    // Endpoint for weather forecast
+    cities: worldCities,
+    // Basic URL for weather forecast
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
     // Build the full URL for accessing the data
     buildUrl: function (city) {
@@ -158,14 +160,6 @@ async function setupBoard() {
                             }
                             return ret;
                         }
-                    }
-                }, {
-                    type: 'JSON',
-                    id: activeCity,
-                    options: {
-                        firstRowAsNames: false,
-                        dataUrl: weatherStations.buildUrl(activeCity),
-                        beforeParse: processWeatherData
                     }
                 }
             ]
@@ -420,9 +414,6 @@ async function setupBoard() {
             }, {
                 cell: 'kpi-temperature',
                 type: 'KPI',
-                connector: {
-                    id: activeCity
-                },
                 columnName: 'temperature',
                 chartOptions: {
                     ...KPIChartOptions,
@@ -450,9 +441,6 @@ async function setupBoard() {
             }, {
                 cell: 'kpi-pressure',
                 type: 'KPI',
-                connector: {
-                    id: activeCity
-                },
                 columnName: 'pressure',
                 chartOptions: {
                     ...KPIChartOptions,
@@ -480,9 +468,6 @@ async function setupBoard() {
             }, {
                 cell: 'kpi-humidity',
                 type: 'KPI',
-                connector: {
-                    id: activeCity
-                },
                 columnName: 'humidity',
                 chartOptions: {
                     ...KPIChartOptions,
@@ -510,9 +495,6 @@ async function setupBoard() {
             }, {
                 cell: 'selection-grid',
                 type: 'DataGrid',
-                connector: {
-                    id: activeCity
-                },
                 sync: {
                     highlight: true
                 },
@@ -523,14 +505,16 @@ async function setupBoard() {
                         time: {
                             headerFormat: 'Time (UTC)',
                             cellFormatter: function () {
-                                return Highcharts.dateFormat('%d/%m - %H:%M', this.value);
+                                return Highcharts.dateFormat('%d/%m, %H:%M', this.value);
                             }
                         },
                         humidity: {
-                            headerFormat: 'Humidity (%)'
+                            headerFormat: 'Humidity (%)',
+                            cellFormat: '{value:.1f}'
                         },
                         pressure: {
-                            headerFormat: 'Pressure (hPa)'
+                            headerFormat: 'Pressure (hPa)',
+                            cellFormat: '{value:.1f}'
                         },
                         temperature: {
                             headerFormat: 'Temperature (°C)',
@@ -541,9 +525,6 @@ async function setupBoard() {
             }, {
                 cell: 'city-chart',
                 type: 'Highcharts',
-                connector: {
-                    id: activeCity
-                },
                 columnAssignment: {
                     time: 'x',
                     temperature: 'y'
@@ -656,12 +637,14 @@ async function setupBoard() {
         }
     }
 
+    const worldMap = board.mountedComponents[0]
+        .component.chart.series[weatherDataIndex];
+
     // Load active city
-    await setupCity(board, activeCity);
+    await setupCity(board, citiesTable, worldMap, activeCity);
     await updateBoard(board, activeCity);
 
     // Select active city on the map
-    const worldMap = board.mountedComponents[0].component.chart.series[1];
     for (let idx = 0; idx < worldMap.data.length; idx++) {
         if (worldMap.data[idx].name === activeCity) {
             worldMap.data[idx].select();
@@ -672,18 +655,14 @@ async function setupBoard() {
     // Load additional cities
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         if (cityRows[i].city !== activeCity) {
-            await setupCity(board, cityRows[i].city);
+            await setupCity(board, citiesTable, worldMap, cityRows[i].city);
         }
     }
 }
 
-async function setupCity(board, city) {
+async function setupCity(board, citiesTable, worldMap, city) {
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
     const forecastTable = await dataPool.getConnectorTable(city);
-    const worldMap = board.mountedComponents[0]
-        .component.chart.series[weatherDataIndex];
-
     const cityInfo = citiesTable.getRowObject(
         citiesTable.getRowIndexBy('city', city)
     );
@@ -698,7 +677,7 @@ async function setupCity(board, city) {
         lon: cityInfo.lon,
         name: cityInfo.city,
         // Latest observation
-        y: forecastTable.columns.temperature[hourOffset]
+        y: forecastTable.columns.temperature[idxLatest]
     });
 }
 
@@ -730,7 +709,7 @@ async function updateBoard(board, city) {
             custom: {
                 elevation: cityInfo.elevation
             },
-            y: forecastTable.columns.temperature[hourOffset]
+            y: forecastTable.columns.temperature[idxLatest]
         }, false);
     }
 
@@ -738,13 +717,13 @@ async function updateBoard(board, city) {
     const forecastTable = await dataPool.getConnectorTable(city);
 
     kpiTemperature.update({
-        value: forecastTable.columns.temperature[hourOffset]
+        value: forecastTable.columns.temperature[idxLatest]
     });
     kpiPressure.update({
-        value: forecastTable.columns.pressure[hourOffset]
+        value: forecastTable.columns.pressure[idxLatest]
     });
     kpiHumidity.update({
-        value: forecastTable.columns.humidity[hourOffset]
+        value: forecastTable.columns.humidity[idxLatest]
     });
 
     // Update geo KPI

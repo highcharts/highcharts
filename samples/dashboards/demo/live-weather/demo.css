@@ -392,3 +392,13 @@
     paint-order: stroke;
     stroke-width: 2px;
 }
+
+/* *
+ *
+ *  World Map
+ *
+ * */
+
+div#description {
+    padding: 15px;
+}
