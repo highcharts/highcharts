@@ -43,7 +43,6 @@ import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js'
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
-import PointOptions, { PointShortOptions } from '../../Core/Series/PointOptions';
 const {
     addEvent,
     clamp,
