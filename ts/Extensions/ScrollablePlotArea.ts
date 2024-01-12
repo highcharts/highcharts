@@ -78,12 +78,6 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
-        scrollablePlotBox?: BBoxObject;
-    }
-}
-
 
 /* *
  *
@@ -160,9 +154,7 @@ class ScrollablePlotArea {
                 );
 
                 if (scrollablePixelsX) {
-                    chart.scrollablePlotBox = (
-                        renderer.scrollablePlotBox = merge(chart.plotBox)
-                    );
+                    chart.scrollablePlotBox = merge(chart.plotBox);
                     plotBox.width = chart.plotWidth += scrollablePixelsX;
                     clipBox[inverted ? 'height' : 'width'] += scrollablePixelsX;
 
@@ -175,10 +167,8 @@ class ScrollablePlotArea {
                     0,
                     minHeight - chart.chartHeight
                 );
-                if (defined(scrollablePixelsY)) {
-                    chart.scrollablePlotBox = (
-                        renderer.scrollablePlotBox = merge(chart.plotBox)
-                    );
+                if (scrollablePixelsY) {
+                    chart.scrollablePlotBox = merge(chart.plotBox);
                     plotBox.height = chart.plotHeight += scrollablePixelsY;
                     clipBox[inverted ? 'width' : 'height'] += scrollablePixelsY;
 
