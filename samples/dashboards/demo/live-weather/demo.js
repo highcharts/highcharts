@@ -2,25 +2,67 @@
 
 // Forecast data
 const configMet = {
+    /*
+Buenos Aires,Argentine Republic,10,-34.60,-34.75,-58.38,-58.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-34.6_-58.38.csv
+Dublin,Republic of Ireland,8,53.35,53.25,-6.26,-6.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/53.35_-6.26.csv
+New York,United States of America,10,40.71,40.75,-74.01,-74.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/40.71_-74.01.csv
+Sydney,Commonwealth of Australia,35,-33.87,-33.75,151.21,151.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-33.87_151.21.csv
+Tokyo,Japan,17,35.69,35.75,139.69,139.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/35.69_139.69.csv
+*/
     cities: {
-        london: {
+        'New York': {
             name: 'New York',
-            url: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=51.50853&lon=-0.12574&altitude=25'
+            lat: 40.71,
+            lon: -74.01,
+            alt: 10
         },
-        dublin: {
+        Dublin: {
             name: 'Dublin',
-            url: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=53.35&lon=-6.26&altitude=8'
+            lat: 53.35,
+            lon: -6.26,
+            alt: 8
+        },
+        Sydney: {
+            name: 'Sydney',
+            lat: -33.87,
+            lon: 151.21,
+            alt: 35
+        },
+        'Buenos Aires': {
+            name: 'Buenos Aires',
+            lat: -34.60,
+            lon: -58.38,
+            alt: 10
+        },
+        Tokyo: {
+            name: 'Tokyo',
+            lat: 35.69,
+            lon: 139.69,
+            alt: 17
+        },
+        Johannesburg: {
+            name: 'Johannesburg',
+            lat: -26.20,
+            lon: 28.034,
+            alt: 1767
         }
     },
-    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?'
+    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?',
+    buildUrl: function (id) {
+        if (id in this.cities) {
+            const city = this.cities[id];
+            const ret = this.baseUrl +
+                `lat=${city.lat}&lon=${city.lon}&altitude=${city.alt}`;
+
+            return ret;
+        }
+        return null;
+    }
 };
 
+// Launch application
 setupBoard();
 
-const colorStopsDays = [
-    [0.0, '#C2CAEB'],
-    [1.0, '#162870']
-];
 
 const colorStopsTemperature = [
     [0.0, '#4CAFFE'],
@@ -35,6 +77,7 @@ const tempRange = {
     maxC: 50
 };
 
+// Common options for KPI charts
 const KPIChartOptions = {
     chart: {
         height: 166,
@@ -72,7 +115,7 @@ const KPIChartOptions = {
         },
         max: 10,
         min: 0,
-        stops: colorStopsDays,
+        stops: colorStopsTemperature,
         tickAmount: 2,
         visible: true
     },
@@ -96,13 +139,12 @@ function parseMetData(data) {
             humidity: pred.relative_humidity
         });
     }
-    console.dir(retData);
     return retData;
 }
 
 
 async function setupBoard() {
-    let activeCity = 'New York';
+    let activeCity = 'Tokyo';
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
@@ -118,13 +160,14 @@ async function setupBoard() {
                     }
                 }, {
                     type: 'JSON',
-                    id: 'Weather',
+                    id: activeCity,
                     options: {
                         firstRowAsNames: false,
-                        dataUrl: configMet.cities.london.url,
+                        dataUrl: configMet.buildUrl(activeCity),
                         beforeParse: parseMetData
                     }
-                }]
+                }
+            ]
         },
         gui: {
             layouts: [{
@@ -383,7 +426,7 @@ async function setupBoard() {
                 cell: 'kpi-temperature',
                 type: 'KPI',
                 connector: {
-                    id: 'Weather'
+                    id: activeCity
                 },
                 columnName: 'temperature',
                 chartOptions: {
@@ -413,7 +456,7 @@ async function setupBoard() {
                 cell: 'kpi-pressure',
                 type: 'KPI',
                 connector: {
-                    id: 'Weather'
+                    id: activeCity
                 },
                 columnName: 'pressure',
                 chartOptions: {
@@ -443,7 +486,7 @@ async function setupBoard() {
                 cell: 'kpi-humidity',
                 type: 'KPI',
                 connector: {
-                    id: 'Weather'
+                    id: activeCity
                 },
                 columnName: 'humidity',
                 chartOptions: {
@@ -473,7 +516,7 @@ async function setupBoard() {
                 cell: 'selection-grid',
                 type: 'DataGrid',
                 connector: {
-                    id: 'Weather'
+                    id: activeCity
                 },
                 sync: {
                     highlight: true
@@ -501,7 +544,7 @@ async function setupBoard() {
                 cell: 'city-chart',
                 type: 'Highcharts',
                 connector: {
-                    id: 'Weather'
+                    id: activeCity
                 },
                 columnAssignment: {
                     time: 'x',
@@ -603,15 +646,19 @@ async function setupBoard() {
     // Add city sources
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         const city = cityRows[i].city;
-        dataPool.setConnectorOptions({
-            id: city,
-            type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                dataUrl: configMet.cities.dublin.url,
-                beforeParse: parseMetData
-            }
-        });
+        const url = configMet.buildUrl(city);
+
+        if (url !== null) {
+            dataPool.setConnectorOptions({
+                id: city,
+                type: 'JSON',
+                options: {
+                    firstRowAsNames: false,
+                    dataUrl: url,
+                    beforeParse: parseMetData
+                }
+            });
+        }
     }
 
     // Load active city
@@ -636,9 +683,14 @@ async function setupBoard() {
 }
 
 async function setupCity(board, city) {
+    // Debug
+    if (!(city in configMet.cities)) {
+        return;
+    }
+
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
-    const forecastTable = await dataPool.getConnectorTable('Weather');
+    const forecastTable = await dataPool.getConnectorTable(city);
     const worldMap = board.mountedComponents[0].component.chart.series[1];
 
     const cityInfo = citiesTable.getRowObject(
@@ -659,12 +711,15 @@ async function setupCity(board, city) {
 }
 
 async function updateBoard(board, city, newData) {
+    // Debug
+    if (!(city in configMet.cities)) {
+        return;
+    }
     const dataPool = board.dataPool;
     const colorMin = tempRange.minC;
     const colorMax = tempRange.maxC;
     const colorStops = colorStopsTemperature;
     const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
-    const forecastTable = await dataPool.getConnectorTable(city);
 
     const [
         worldMap,
@@ -683,6 +738,7 @@ async function updateBoard(board, city, newData) {
         // Get elevation of city
         const cityName = mapPoints[i].name;
         const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+        const forecastTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({
             custom: {
@@ -700,7 +756,9 @@ async function updateBoard(board, city, newData) {
         }
     });
 
-    // Update KPI (TBD: check is chart can be pre-configured to use the first value in the series)
+    // Update KPI
+    const forecastTable = await dataPool.getConnectorTable(city);
+
     kpiTemperature.update({
         value: forecastTable.columns.temperature[0]
     });
@@ -747,6 +805,10 @@ async function updateBoard(board, city, newData) {
         options.colorAxis.colorStops = colorStops;
 
         await cityChart.update({
+            columnAssignment: {
+                time: 'x',
+                temperature: 'y'
+            },
             chartOptions: options
         });
     }
