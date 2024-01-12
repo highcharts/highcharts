@@ -32,7 +32,7 @@ import type { Options as HighchartsOptions } from './HighchartsTypes';
  * */
 
 
-export interface NavigatorComponentOptions extends Component.ComponentOptions {
+export interface Options extends Component.Options {
 
     /**
      * Additional chart options used to render the navigator. Here you can
@@ -57,7 +57,7 @@ export interface NavigatorComponentOptions extends Component.ComponentOptions {
 
     /**
      * Column assignments have impact on navigator and range. Only the first
-     * assignment is used and usually matches agains the `y` values.
+     * assignment is used and usually matches against the `y` values.
      *
      * If crossfilter sync is enabled, the column assignment will show the
      * distribution of values instead of the values themself.
@@ -85,4 +85,4 @@ export interface NavigatorComponentOptions extends Component.ComponentOptions {
  * */
 
 
-export default NavigatorComponentOptions;
+export default Options;
