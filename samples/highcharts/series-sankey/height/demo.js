@@ -51,7 +51,6 @@ Highcharts.chart('container', {
             color: '#989898',
             offset: -1
         }],
-
         data: [
             ['Petroleum', 'Electricity & Heat', 9.21],
             ['Electricity & Heat', 'Residential', 4.7],
