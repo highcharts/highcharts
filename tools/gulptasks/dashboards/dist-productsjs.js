@@ -4,8 +4,6 @@
 
 
 const gulp = require('gulp');
-const path = require('path');
-
 
 /* *
  *
@@ -21,14 +19,13 @@ const path = require('path');
  * Promise to keep.
  */
 async function productsJS() {
-
-    const fetch = require('node-fetch').default;
-    const fs = require('fs');
     const logLib = require('../lib/log');
 
     const {
-        buildFolder
-    } = require('./_config.json');
+        writeProducts,
+        fetchCurrentProducts
+    } = require('../dist-productsjs.js');
+
     const {
         release
     } = require('yargs').argv;
@@ -38,10 +35,7 @@ async function productsJS() {
     }
 
     const now = new Date();
-    const prefix = 'var products = ';
-    const products = await fetch('https://code.highcharts.com/products.js')
-        .then(response => response.text())
-        .then(content => JSON.parse(content.substring(prefix.length)));
+    const products = await fetchCurrentProducts();
 
     products['Highcharts Dashboards'] = {
         date: [
@@ -52,10 +46,7 @@ async function productsJS() {
         nr: release
     };
 
-    await fs.promises.writeFile(
-        path.join(buildFolder, '..', 'products.js'),
-        prefix + JSON.stringify(products, void 0, '    ') + '\n'
-    );
+    await writeProducts(products);
 
     logLib.success('Created products.js');
 
