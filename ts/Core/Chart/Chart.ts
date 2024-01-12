@@ -3870,7 +3870,11 @@ class Chart {
                             { move, trigger, scale }
                         );
 
-                        if (!reset && (newMin > floor || newMax < ceiling)) {
+                        if (
+                            !reset &&
+                            (newMin > floor || newMax < ceiling) &&
+                            trigger !== 'mousewheel'
+                        ) {
                             displayButton = true;
                         }
                     }
