@@ -451,8 +451,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 /**
  * The height of the node.
  *
- * @sample    highcharts/series-sankey/height/
- *            Sankey diagram with height options
+ * @sample highcharts/series-sankey/height/
+ *         Sankey diagram with height options
  *
  * @type      {number}
  * @since     11.2.0
