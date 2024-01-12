@@ -23,7 +23,8 @@ Highcharts.chart('container', {
             rotation: 90,
             y: 30,
             verticalAlign: 'top',
-            color: 'black'
+            color: 'black',
+            padding: 0
         },
         offset: '65%',
         data: [
