@@ -1,7 +1,14 @@
 /* eslint-disable jsdoc/require-description */
 
-// Selection of weather stations
-const configMet = {
+// Index of the data to be displayed in map, KPI and spline chart.
+// The number is an offset from the current hour.
+const hourOffset = 0; // Display the current observation
+
+// Index of the weather data in the map chart
+const weatherDataIndex = 1;
+
+// Collection of weather stations
+const weatherStations = {
     // Data source: TBD
     cities: {
         'New York': {
@@ -35,12 +42,14 @@ const configMet = {
             alt: 1767
         }
     },
-    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?',
+    // Endpoint for weather forecast
+    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
+    // Build the full URL for accessing the data
     buildUrl: function (city) {
         if (city in this.cities) {
             const info = this.cities[city];
             const ret = this.baseUrl +
-                `lat=${info.lat}&lon=${info.lon}&altitude=${info.alt}`;
+                `?lat=${info.lat}&lon=${info.lon}&altitude=${info.alt}`;
 
             return ret;
         }
@@ -84,7 +93,7 @@ const KPIChartOptions = {
         startAngle: -90
     },
     series: [{
-        data: [0],
+        data: null, // Populated on the fly
         dataLabels: {
             format: '{y:.0f}',
             y: -34
@@ -111,13 +120,13 @@ const KPIChartOptions = {
     }
 };
 
-function parseMetData(data) {
+function processWeatherData(data) {
     const retData = [];
-    const obsData = data.properties.timeseries;
+    const forecastData = data.properties.timeseries;
 
     // Create object for application specific format (24 hours forecast)
     for (let i = 0; i < 24; i++) {
-        const item = obsData[i];
+        const item = forecastData[i];
         const pred = item.data.instant.details;
         const msec = new Date(item.time).getTime();
         retData.push({
@@ -130,9 +139,8 @@ function parseMetData(data) {
     return retData;
 }
 
-
 async function setupBoard() {
-    let activeCity = 'Tokyo';
+    let activeCity = 'New York';
 
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -141,11 +149,11 @@ async function setupBoard() {
                     id: 'Cities',
                     type: 'JSON',
                     options: {
-                        data: configMet.cities,
+                        data: weatherStations.cities,
                         beforeParse: function () {
                             const ret = [['city', 'lat', 'lon', 'elevation']];
                             // eslint-disable-next-line max-len
-                            for (const [name, item] of Object.entries(configMet.cities)) {
+                            for (const [name, item] of Object.entries(weatherStations.cities)) {
                                 ret.push([name, item.lat, item.lon, item.alt]);
                             }
                             return ret;
@@ -156,8 +164,8 @@ async function setupBoard() {
                     id: activeCity,
                     options: {
                         firstRowAsNames: false,
-                        dataUrl: configMet.buildUrl(activeCity),
-                        beforeParse: parseMetData
+                        dataUrl: weatherStations.buildUrl(activeCity),
+                        beforeParse: processWeatherData
                     }
                 }
             ]
@@ -165,11 +173,6 @@ async function setupBoard() {
         gui: {
             layouts: [{
                 rows: [{
-                    // TBD: remove
-                    cells: [{
-                        id: 'time-range-selector'
-                    }]
-                }, {
                     cells: [{
                         id: 'world-map',
                         responsive: {
@@ -316,7 +319,7 @@ async function setupBoard() {
                             verticalAlign: 'bottom'
                         },
                         enabled: true,
-                        enableMouseWheelZoom: false
+                        enableMouseWheelZoom: true
                     },
                     mapView: {
                         maxZoom: 4
@@ -520,7 +523,7 @@ async function setupBoard() {
                         time: {
                             headerFormat: 'Time (UTC)',
                             cellFormatter: function () {
-                                return Highcharts.dateFormat('%Y-%m-%d %H:%M', this.value);
+                                return Highcharts.dateFormat('%d/%m - %H:%M', this.value);
                             }
                         },
                         humidity: {
@@ -635,10 +638,10 @@ async function setupBoard() {
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityRows = citiesTable.getRowObjects();
 
-    // Add city sources
+    // Add weather station sources
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         const city = cityRows[i].city;
-        const url = configMet.buildUrl(city);
+        const url = weatherStations.buildUrl(city);
 
         if (url !== null) {
             dataPool.setConnectorOptions({
@@ -647,7 +650,7 @@ async function setupBoard() {
                 options: {
                     firstRowAsNames: false,
                     dataUrl: url,
-                    beforeParse: parseMetData
+                    beforeParse: processWeatherData
                 }
             });
         }
@@ -678,7 +681,8 @@ async function setupCity(board, city) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const forecastTable = await dataPool.getConnectorTable(city);
-    const worldMap = board.mountedComponents[0].component.chart.series[1];
+    const worldMap = board.mountedComponents[0]
+        .component.chart.series[weatherDataIndex];
 
     const cityInfo = citiesTable.getRowObject(
         citiesTable.getRowIndexBy('city', city)
@@ -693,13 +697,15 @@ async function setupCity(board, city) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        y: forecastTable.columns.temperature[0] // Latest observation
+        // Latest observation
+        y: forecastTable.columns.temperature[hourOffset]
     });
 }
 
 async function updateBoard(board, city) {
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+    // Geographical data
+    const citiesTable = await dataPool.getConnectorTable('Cities');
 
     const [
         worldMap,
@@ -711,8 +717,8 @@ async function updateBoard(board, city) {
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
-    // Update map
-    const mapPoints = worldMap.chart.series[1].data;
+    // Update map (series 0 is the world map, series 1 the weather data)
+    const mapPoints = worldMap.chart.series[weatherDataIndex].data;
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
@@ -722,24 +728,23 @@ async function updateBoard(board, city) {
 
         mapPoints[i].update({
             custom: {
-                elevation: cityInfo.elevation,
-                yScale: 'C'
+                elevation: cityInfo.elevation
             },
-            y: forecastTable.columns.temperature[0]
+            y: forecastTable.columns.temperature[hourOffset]
         }, false);
     }
 
-    // Update KPI
+    // Update KPI with latest observations
     const forecastTable = await dataPool.getConnectorTable(city);
 
     kpiTemperature.update({
-        value: forecastTable.columns.temperature[0]
+        value: forecastTable.columns.temperature[hourOffset]
     });
     kpiPressure.update({
-        value: forecastTable.columns.pressure[0]
+        value: forecastTable.columns.pressure[hourOffset]
     });
     kpiHumidity.update({
-        value: forecastTable.columns.humidity[0]
+        value: forecastTable.columns.humidity[hourOffset]
     });
 
     // Update geo KPI
