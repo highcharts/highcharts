@@ -1,58 +1,46 @@
 /* eslint-disable jsdoc/require-description */
 
-// Forecast data
+// Selection of weather stations
 const configMet = {
-    /*
-Buenos Aires,Argentine Republic,10,-34.60,-34.75,-58.38,-58.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-34.6_-58.38.csv
-Dublin,Republic of Ireland,8,53.35,53.25,-6.26,-6.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/53.35_-6.26.csv
-New York,United States of America,10,40.71,40.75,-74.01,-74.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/40.71_-74.01.csv
-Sydney,Commonwealth of Australia,35,-33.87,-33.75,151.21,151.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-33.87_151.21.csv
-Tokyo,Japan,17,35.69,35.75,139.69,139.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/35.69_139.69.csv
-*/
+    // Data source: TBD
     cities: {
         'New York': {
-            name: 'New York',
             lat: 40.71,
             lon: -74.01,
             alt: 10
         },
         Dublin: {
-            name: 'Dublin',
             lat: 53.35,
             lon: -6.26,
             alt: 8
         },
         Sydney: {
-            name: 'Sydney',
             lat: -33.87,
             lon: 151.21,
             alt: 35
         },
         'Buenos Aires': {
-            name: 'Buenos Aires',
             lat: -34.60,
             lon: -58.38,
             alt: 10
         },
         Tokyo: {
-            name: 'Tokyo',
             lat: 35.69,
             lon: 139.69,
             alt: 17
         },
         Johannesburg: {
-            name: 'Johannesburg',
             lat: -26.20,
             lon: 28.034,
             alt: 1767
         }
     },
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact?',
-    buildUrl: function (id) {
-        if (id in this.cities) {
-            const city = this.cities[id];
+    buildUrl: function (city) {
+        if (city in this.cities) {
+            const info = this.cities[city];
             const ret = this.baseUrl +
-                `lat=${city.lat}&lon=${city.lon}&altitude=${city.alt}`;
+                `lat=${info.lat}&lon=${info.lon}&altitude=${info.alt}`;
 
             return ret;
         }
@@ -62,7 +50,6 @@ Tokyo,Japan,17,35.69,35.75,139.69,139.75,https://assets.highcharts.com/dashboard
 
 // Launch application
 setupBoard();
-
 
 const colorStopsTemperature = [
     [0.0, '#4CAFFE'],
@@ -128,12 +115,13 @@ function parseMetData(data) {
     const retData = [];
     const obsData = data.properties.timeseries;
 
-    // Create object for application specific format
+    // Create object for application specific format (24 hours forecast)
     for (let i = 0; i < 24; i++) {
         const item = obsData[i];
         const pred = item.data.instant.details;
+        const msec = new Date(item.time).getTime();
         retData.push({
-            time: item.time,
+            time: msec,
             temperature: pred.air_temperature,
             pressure: pred.air_pressure_at_sea_level,
             humidity: pred.relative_humidity
@@ -146,17 +134,22 @@ function parseMetData(data) {
 async function setupBoard() {
     let activeCity = 'Tokyo';
 
-    // Initialize board with most basic data
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
                 {
                     id: 'Cities',
-                    type: 'CSV',
+                    type: 'JSON',
                     options: {
-                        csvURL: (
-                            'https://www.highcharts.com/samples/data/climate-cities-limited.csv'
-                        )
+                        data: configMet.cities,
+                        beforeParse: function () {
+                            const ret = [['city', 'lat', 'lon', 'elevation']];
+                            // eslint-disable-next-line max-len
+                            for (const [name, item] of Object.entries(configMet.cities)) {
+                                ret.push([name, item.lat, item.lon, item.alt]);
+                            }
+                            return ret;
+                        }
                     }
                 }, {
                     type: 'JSON',
@@ -172,6 +165,7 @@ async function setupBoard() {
         gui: {
             layouts: [{
                 rows: [{
+                    // TBD: remove
                     cells: [{
                         id: 'time-range-selector'
                     }]
@@ -388,7 +382,7 @@ async function setupBoard() {
                             pointFormat: (
                                 '<b>{point.name}</b><br>' +
                                 'Elevation: {point.custom.elevation} m<br>' +
-                                '{point.y:.1f}˚{point.custom.yScale}'
+                                '{point.y:.1f}˚C'
                             )
                         }
                     }],
@@ -407,8 +401,7 @@ async function setupBoard() {
                         }
                     },
                     accessibility: {
-                        description: `The chart is displaying maximal temperature
-                    in cities.`,
+                        description: 'The chart is displaying maximal temperature in cities.',
                         point: {
                             valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
                         }
@@ -525,16 +518,19 @@ async function setupBoard() {
                     editable: false,
                     columns: {
                         time: {
-                            headerFormat: 'Time'
+                            headerFormat: 'Time (UTC)',
+                            cellFormatter: function () {
+                                return Highcharts.dateFormat('%Y-%m-%d %H:%M', this.value);
+                            }
                         },
                         humidity: {
-                            headerFormat: 'Humidity %'
+                            headerFormat: 'Humidity (%)'
                         },
                         pressure: {
-                            headerFormat: 'Pressure hPa'
+                            headerFormat: 'Pressure (hPa)'
                         },
                         temperature: {
-                            headerFormat: 'Temperature °C',
+                            headerFormat: 'Temperature (°C)',
                             cellFormat: '{value:.1f}'
                         }
                     }
@@ -563,11 +559,14 @@ async function setupBoard() {
                     credits: {
                         enabled: false
                     },
+                    legend: {
+                        enabled: false
+                    },
                     colorAxis: {
                         startOnTick: false,
                         endOnTick: false,
-                        max: 50,
-                        min: 0,
+                        max: tempRange.maxC,
+                        min: tempRange.minC,
                         stops: colorStopsTemperature,
                         showInLegend: false
                     },
@@ -590,19 +589,14 @@ async function setupBoard() {
                         stickOnContact: true,
                         formatter: function () {
                             const point = this.point;
-                            const name = this.series.name;
 
-                            // Date
-                            let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
+                            // Date/time
+                            let str = Highcharts.dateFormat('%Y-%m-%d %H:%M<br />', point.x);
 
-                            if (name === 'temperature') {
-                                // Temperature
-                                const tempStr = Highcharts.numberFormat(point.y, 1);
-                                str += tempStr + '˚C ' + point.x;
-                            } else {
-                                // TBD
-                                str += 'xxx: ' + point.y;
-                            }
+                            // Temperature
+                            const tempStr = Highcharts.numberFormat(point.y, 1);
+                            str += tempStr + '˚C ';
+
                             return str;
                         }
                     },
@@ -610,7 +604,7 @@ async function setupBoard() {
                         type: 'datetime',
                         labels: {
                             formatter: function () {
-                                return Highcharts.dateFormat('%Y-%m-%d', this.value);
+                                return Highcharts.dateFormat('%H:%M', this.value);
                             },
                             accessibility: {
                                 description: 'Hours'
@@ -631,8 +625,7 @@ async function setupBoard() {
                         }
                     },
                     accessibility: {
-                        description: `The chart is displaying maximal temperature,
-                    average temperature and days of rain.`
+                        description: 'The chart is displaying maximal temperature, average temperature and days of rain.'
                     }
                 }
             }]
@@ -682,11 +675,6 @@ async function setupBoard() {
 }
 
 async function setupCity(board, city) {
-    // Debug
-    if (!(city in configMet.cities)) {
-        return;
-    }
-
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const forecastTable = await dataPool.getConnectorTable(city);
@@ -710,14 +698,7 @@ async function setupCity(board, city) {
 }
 
 async function updateBoard(board, city) {
-    // Debug
-    if (!(city in configMet.cities)) {
-        return;
-    }
     const dataPool = board.dataPool;
-    const colorMin = tempRange.minC;
-    const colorMax = tempRange.maxC;
-    const colorStops = colorStopsTemperature;
     const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
 
     const [
@@ -730,7 +711,7 @@ async function updateBoard(board, city) {
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
-    // Update world map
+    // Update map
     const mapPoints = worldMap.chart.series[1].data;
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
@@ -747,13 +728,6 @@ async function updateBoard(board, city) {
             y: forecastTable.columns.temperature[0]
         }, false);
     }
-    worldMap.chart.update({
-        colorAxis: {
-            min: colorMin,
-            max: colorMax,
-            stops: colorStops
-        }
-    });
 
     // Update KPI
     const forecastTable = await dataPool.getConnectorTable(city);
