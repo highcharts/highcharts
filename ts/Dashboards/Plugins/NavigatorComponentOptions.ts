@@ -22,6 +22,7 @@
 
 
 import type Component from '../Components/Component';
+import type NavigatorComponent from './NavigatorComponent';
 import type { Options as HighchartsOptions } from './HighchartsTypes';
 
 
@@ -72,6 +73,23 @@ export interface NavigatorComponentOptions extends Component.ComponentOptions {
      * ```
      */
     columnAssignments?: Record<string, string | null>;
+
+    /**
+     * Defines which elements should be synced.
+     * ```
+     * Example:
+     * {
+     *     extremes: true
+     * }
+     * ```
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     *
+     */
+    sync?: NavigatorComponent.SyncOptions;
 
     type: 'Navigator';
 

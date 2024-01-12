@@ -34,6 +34,7 @@ import type {
 } from './HighchartsTypes';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../EditMode/SidebarPopup';
+import type Sync from '../Components/Sync/Sync';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -393,6 +394,7 @@ class HighchartsComponent extends Component {
         super(cell, options);
         this.options = options as HighchartsComponent.Options;
 
+
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'Highcharts';
 
@@ -404,6 +406,7 @@ class HighchartsComponent extends Component {
             true
         );
 
+        this.standardizeSyncOptions();
         this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
@@ -511,7 +514,7 @@ class HighchartsComponent extends Component {
     /**
      * Internal method for handling option updates.
      *
-     * @private
+     * @internal
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -1099,6 +1102,72 @@ namespace HighchartsComponent {
          * ```
          */
         columnAssignment?: Record<string, string|Record<string, string>>;
+        /**
+         * Defines which elements should be synced.
+         * ```
+         * Example:
+         * {
+         *     highlight: true
+         * }
+         * ```
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+         *
+         */
+        sync?: SyncOptions;
+    }
+
+    /**
+     * Sync options available for the Highcharts component.
+     *
+     * Example:
+     * ```
+     * {
+     *     highlight: true
+     * }
+     * ```
+     */
+    export interface SyncOptions extends Sync.RawOptionsRecord {
+        /**
+         * Extremes sync is available for Highcharts, KPI, DataGrid and
+         * Navigator components. Sets a common range of displayed data. For the
+         * KPI Component sets the last value.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * @default false
+         */
+        extremes?: boolean|Sync.OptionsEntry;
+        /**
+         * Highlight sync is available for Highcharts and DataGrid components.
+         * It allows to highlight hovered corresponding rows in the table and
+         * chart points.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * @default false
+         */
+        highlight?: boolean|Sync.HighlightSyncOptions;
+        /**
+         * Visibility sync is available for Highcharts and DataGrid components.
+         * Synchronizes the visibility of data from a hidden/shown series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+         *
+         * @default false
+         */
+        visibility?: boolean|Sync.OptionsEntry;
     }
 
     /**

@@ -30,7 +30,10 @@ import type {
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
 import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
@@ -454,11 +457,13 @@ class NavigatorComponent extends Component {
         super(cell, options);
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
+        this.standardizeSyncOptions();
 
         const charter = (
             NavigatorComponent.charter.Chart ||
             Globals.win.Highcharts
         );
+        const crossfilterOptions = this.options.sync?.crossfilter;
 
         this.chartContainer = Globals.win.document.createElement('div');
         this.chart = charter
@@ -469,10 +474,7 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        const crossfilterOptions = this.options.sync?.crossfilter;
-        if (crossfilterOptions === true || (
-            isObject(crossfilterOptions) && crossfilterOptions.enabled
-        )) {
+        if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
@@ -510,7 +512,7 @@ class NavigatorComponent extends Component {
      * Reference to the sync system that allow to sync i.e tooltips.
      * @private
      */
-    public sync: Sync;
+    public sync: Component['sync'];
 
 
     /* *
@@ -518,7 +520,6 @@ class NavigatorComponent extends Component {
      *  Functions
      *
      * */
-
 
     /** @private */
     private adjustNavigator(): void {
@@ -681,9 +682,7 @@ class NavigatorComponent extends Component {
                     Array<[number|string, number|null]>
                 );
 
-            if (crossfilterOptions === true || (
-                isObject(crossfilterOptions) && crossfilterOptions.enabled
-            )) {
+            if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
 
                 const seriesData: Array<[(number|string), number]> = [],
                     xData: Array<(number|string)> = [],
@@ -694,7 +693,6 @@ class NavigatorComponent extends Component {
                     min: number|undefined = void 0;
 
                 if (
-                    crossfilterOptions !== true &&
                     crossfilterOptions.affectNavigator &&
                     modifierOptions?.type === 'Range'
                 ) {
@@ -833,25 +831,17 @@ class NavigatorComponent extends Component {
 
         if (options.chartOptions) {
             chart.update(
-                merge(
-                    (
-                        crossfilterOptions === true || (
-                            isObject(crossfilterOptions) &&
-                            crossfilterOptions.enabled
-                        ) ?
-                            {
-                                navigator: {
-                                    xAxis: {
-                                        labels: {
-                                            format: '{value}'
-                                        }
-                                    }
+                merge(isObject(crossfilterOptions) &&
+                    crossfilterOptions.enabled ? {
+                        navigator: {
+                            xAxis: {
+                                labels: {
+                                    format: '{value}'
                                 }
-                            } :
-                            {}
-                    ),
-                    options.chartOptions
-                ),
+                            }
+                        }
+                    } : {},
+                options.chartOptions),
                 false
             );
         }
@@ -863,11 +853,63 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<NavigatorComponentOptions> {
+    public getOptionsOnDrop(
+        sidebar: SidebarPopup
+    ): Partial<NavigatorComponentOptions> {
         return {};
     }
 }
 
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace NavigatorComponent {
+    /**
+     * Sync options available for the Navigator component.
+     *
+     * Example:
+     * ```
+     * {
+     *     crossfilter: true
+     * }
+     * ```
+     */
+    export interface SyncOptions extends Sync.RawOptionsRecord {
+        /**
+         * Crossfilter sync is available for Navigator components. Modifies data
+         * by selecting only those rows that meet common ranges.
+         *
+         * Alternatively to the boolean value, it can accept an object
+         * containing additional options for operating this type of
+         * synchronization.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Crossfilter with affectNavigators enabled }
+         *
+         * @default false
+         */
+        crossfilter?: boolean|Sync.CrossfilterSyncOptions;
+        /**
+         * Extremes sync is available for Highcharts, KPI, DataGrid and
+         * Navigator components. Sets a common range of displayed data. For the
+         * KPI Component sets the last value.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * @default false
+         */
+        extremes?: boolean|Sync.OptionsEntry;
+    }
+}
 
 /* *
  *

@@ -22,6 +22,7 @@
 
 
 import type Globals from '../Globals';
+import type Sync from '../Components/Sync/Sync';
 import type NavigatorComponentOptions from './NavigatorComponentOptions';
 
 import Component from '../Components/Component.js';
@@ -111,7 +112,6 @@ Globals.DeepPartial<NavigatorComponentOptions> = {
     },
     editableOptions: (Component.defaultOptions.editableOptions || []).concat()
 };
-
 
 /* *
  *
