@@ -307,9 +307,10 @@ class Cell extends GUIElement {
         const { row } = cell;
 
         // Destroy mounted component.
-        if (cell.mountedComponent) {
-            cell.mountedComponent.destroy();
-        }
+        cell.mountedComponent?.destroy();
+
+        // if layout exists in the cell - destroy it
+        cell.nestedLayout?.destroy();
 
         row.unmountCell(cell);
         const destroyRow = row.cells.length === 0;

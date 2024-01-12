@@ -116,7 +116,7 @@ body {
 
 .highcharts-Warning-icon,
 .highcharts-datagrid-cell[data-original-data="Warning"] {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.png') 50% 50% no-repeat;
+    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.svg') 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 

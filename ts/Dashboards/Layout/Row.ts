@@ -298,11 +298,12 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
+        const rowCells = [...row.cells]; // copy to avoid problem with index when shifting array of cells during the destroy.
 
         // Destroy cells.
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            if (row.cells[i]) {
-                row.cells[i].destroy();
+        for (let i = 0, iEnd = rowCells?.length; i < iEnd; ++i) {
+            if (rowCells[i]) {
+                rowCells[i].destroy();
             }
         }
 

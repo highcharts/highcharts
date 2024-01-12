@@ -292,6 +292,10 @@ class Layout extends GUIElement {
             }
         }
 
+        if (layout.parentCell) {
+            delete layout.parentCell.nestedLayout;
+        }
+
         // Destroy rows.
         for (let i = layout.rows.length - 1; i >= 0; i--) {
             layout.rows[i].destroy();

@@ -32,7 +32,6 @@ const chartConnectorOptions = {
     firstRowAsNames: false,
     columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
     beforeParse: function (data) {
-        console.log('123data', data);
         const currentInstance = data.find(
             instance => instance.InstanceId === currentInstanceId
         ) || data;
@@ -685,11 +684,6 @@ const setupDashboard = instanceId => {
                         description: 'Operations'
                     }
                 },
-                // plotOptions: {
-                //     series: {
-                //         pointRange: 3600 * 1000
-                //     }
-                // },
                 accessibility: {
                     description: `The chart is displaying amount of in and out
                                 operations on disk`,
