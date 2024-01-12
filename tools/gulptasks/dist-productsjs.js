@@ -23,6 +23,11 @@ const JS_PREFIX = 'var products = ';
 function getZipLocation(productName, version) {
     const zipName = productName.replace(' ', '-');
 
+    if (productName === 'Highcharts Dashboards') {
+        const { cdnFolder } = require('./dashboards/_config.json');
+        return `https://code.highcharts.com/${cdnFolder.length ? cdnFolder : ''}zips/${zipName}-${version}.zip`;
+    }
+
     return `https://code.highcharts.com/zips/${zipName}-${version}.zip`;
 }
 
