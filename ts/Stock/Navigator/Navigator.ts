@@ -43,6 +43,7 @@ import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js'
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
+import PointOptions, { PointShortOptions } from '../../Core/Series/PointOptions';
 const {
     addEvent,
     clamp,
@@ -1666,6 +1667,17 @@ class Navigator {
                     base.navigatorSeries = chart.initSeries(
                         mergedNavSeriesOptions
                     );
+                    // Set data on initial run with dataSorting enabled (#20318)
+                    if (
+                        base.navigatorSeries.enabledDataSorting &&
+                        !base.navigatorSeries.xData?.length &&
+                        !base.navigatorSeries.yData?.length &&
+                        mergedNavSeriesOptions.data
+                    ) {
+                        base.navigatorSeries.setData(
+                            mergedNavSeriesOptions.data
+                        );
+                    }
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }
