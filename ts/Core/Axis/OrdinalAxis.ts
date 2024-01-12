@@ -660,7 +660,7 @@ namespace OrdinalAxis {
                 // translate back to values. This happens on the extended
                 // ordinal positions if the new position is out of range, else
                 // it happens on the current x axis which is smaller and faster.
-                chart.fixedRange = max - min;
+                chart.setFixedRange(max - min);
 
                 trimmedRange = (xAxis as NavigatorAxisComposition).navigatorAxis
                     .toFixedRange(
