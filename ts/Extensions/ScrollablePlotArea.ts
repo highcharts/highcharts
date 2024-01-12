@@ -195,8 +195,8 @@ class ScrollablePlotArea {
     public innerContainer: HTMLDOMElement;
     public isDirty?: boolean;
     public scrollingContainer: HTMLDOMElement;
-    public scrollingParent: HTMLDOMElement;
-    public scrollableMask: SVGElement;
+    public parentDiv: HTMLDOMElement;
+    public mask: SVGElement;
 
     public constructor(chart: Chart) {
         const chartOptions = chart.options.chart,
@@ -220,7 +220,7 @@ class ScrollablePlotArea {
 
         // Insert a container with relative position that scrolling and fixed
         // container renders to (#10555)
-        const scrollingParent = this.scrollingParent = createElement(
+        const parentDiv = this.parentDiv = createElement(
                 'div',
                 {
                     className: 'highcharts-scrolling-parent'
@@ -235,7 +235,7 @@ class ScrollablePlotArea {
             scrollingContainer = this.scrollingContainer = createElement(
                 'div', {
                     'className': 'highcharts-scrolling'
-                }, styles, scrollingParent
+                }, styles, parentDiv
             ),
 
             innerContainer = this.innerContainer = createElement('div', {
@@ -265,7 +265,7 @@ class ScrollablePlotArea {
             );
 
         // Mask
-        this.scrollableMask = fixedRenderer
+        this.mask = fixedRenderer
             .path()
             .attr({
                 fill: chartOptions.backgroundColor || '#fff',
@@ -306,7 +306,12 @@ class ScrollablePlotArea {
     }
 
     public applyFixed(): void {
-        const { chart, fixedRenderer, isDirty, scrollingContainer } = this,
+        const {
+                chart,
+                fixedRenderer,
+                isDirty,
+                scrollingContainer
+            } = this,
             {
                 axisOffset,
                 chartWidth,
@@ -406,7 +411,7 @@ class ScrollablePlotArea {
         }
 
         if (chart.redrawTrigger !== 'adjustHeight') {
-            this.scrollableMask.attr({ d });
+            this.mask.attr({ d });
         }
     }
 
