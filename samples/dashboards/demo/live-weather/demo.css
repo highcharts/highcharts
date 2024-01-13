@@ -9,12 +9,13 @@
  * */
 
 #city-chart {
-    --color-axis: #f7f7f7;
-    --color-axis-labels: #e7e7ec;
-    --color-background: #5352be;
-    --color-title: #f0f0f0;
+    --color-background: #f0f8f0;
+    --color-axis: #000;
+    --color-axis-labels: #000;
+    --color-title: #000;
     --color-text: #000;
-    --color-tooltip-background: #dadae2;
+    --color-tooltip-text: #e7e7ec;
+    --color-tooltip-background: #5352be;
 }
 
 #kpi-layout {
@@ -47,21 +48,7 @@
     --color-background: #20202c;
 }
 
-#time-range-selector {
-    --color-axis-labels: #646479;
-    --color-background: #fafafa;
-    --color-grid: #9a92ce;
-    --color-handle: #5352be;
-    --color-mask: #41378233;
-    --color-mask-line: #9a92ce;
-    --color-scroll: #f7f7f7;
-    --color-scroll-line: #9a92ce;
-    --color-series: #5352be;
-    --color-thumb: #5352be;
-    --color-thumb-line: #f7f7f7;
-}
-
-#container.highcharts-dark #time-range-selector {
+#container.highcharts-dark {
     --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
@@ -76,7 +63,7 @@
 }
 
 #world-map {
-    --color-background: #5352be;
+    --color-background: #009dc4;
     --color-map: #dddbef;
     --color-marker-border: #fff;
     --color-marker-text: #fff;
@@ -108,19 +95,6 @@
 
     #selection-grid {
         --color-background: #20202c;
-    }
-
-    #time-range-selector {
-        --color-axis-labels: #e7e7ec;
-        --color-background: #0d0d0d;
-        --color-grid: #838394;
-        --color-mask: #dddbef66;
-        --color-mask-line: #838394;
-        --color-scroll: #20202c;
-        --color-scroll-line: #646479;
-        --color-series: #5352be;
-        --color-thumb: #5352be;
-        --color-thumb-line: #838394;
     }
 
     #world-map {
@@ -170,7 +144,7 @@
 }
 
 #city-chart .highcharts-tooltip text {
-    fill: var(--color-text);
+    fill: var(--color-tooltip-text);
 }
 
 #city-chart .highcharts-tooltip-box {
@@ -186,7 +160,7 @@
 }
 
 .highcharts-legend-item > text {
-    fill: #fff;
+    fill: #000;
 }
 
 /* *
@@ -395,7 +369,7 @@
 
 /* *
  *
- *  World Map
+ *  Demo description
  *
  * */
 

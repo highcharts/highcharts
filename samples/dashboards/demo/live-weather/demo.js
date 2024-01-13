@@ -2,65 +2,10 @@
 
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
-const idxLatest = 0; // Display the current observation
+const hourOffset = 0; // Display the current observation
 
 // Index of the weather data in the map chart
 const weatherDataIndex = 1;
-
-// World cities
-const worldCities = {
-    'New York': {
-        lat: 40.71,
-        lon: -74.01,
-        alt: 10
-    },
-    Dublin: {
-        lat: 53.35,
-        lon: -6.26,
-        alt: 8
-    },
-    Sydney: {
-        lat: -33.87,
-        lon: 151.21,
-        alt: 35
-    },
-    'Buenos Aires': {
-        lat: -34.60,
-        lon: -58.38,
-        alt: 10
-    },
-    Tokyo: {
-        lat: 35.69,
-        lon: 139.69,
-        alt: 17
-    },
-    Johannesburg: {
-        lat: -26.20,
-        lon: 28.034,
-        alt: 1767
-    }
-};
-
-// Collection of weather stations
-const weatherStations = {
-    cities: worldCities,
-    // Basic URL for weather forecast
-    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
-    // Build the full URL for accessing the data
-    buildUrl: function (city) {
-        if (city in this.cities) {
-            const info = this.cities[city];
-            const ret = this.baseUrl +
-                `?lat=${info.lat}&lon=${info.lon}&altitude=${info.alt}`;
-
-            return ret;
-        }
-        return null;
-    }
-};
-
-// Launch application
-setupBoard();
 
 const colorStopsTemperature = [
     [0.0, '#4CAFFE'],
@@ -70,9 +15,184 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
-const tempRange = {
-    minC: -10,
-    maxC: 50
+// Ranges for various measurements
+const range = {
+    tempMin: -10,
+    tempMax: 50,
+    humMin: 0,
+    humMax: 100,
+    hpaMin: 800,
+    hpaMax: 1100
+};
+
+// Geolocation info: https://www.maps.ie/coordinates.html
+
+// eslint-disable-next-line no-unused-vars
+const worldLocations = {
+    default: 'Dublin',
+    mapView: {
+        zoom: 1.7,
+        center: [0, 10]
+    },
+    points: {
+        'New York': {
+            lat: 40.71,
+            lon: -74.01,
+            alt: 10
+        },
+        Dublin: {
+            lat: 53.35,
+            lon: -6.26,
+            alt: 8
+        },
+        Sydney: {
+            lat: -33.87,
+            lon: 151.21,
+            alt: 35
+        },
+        'Buenos Aires': {
+            lat: -34.60,
+            lon: -58.38,
+            alt: 10
+        },
+        Tokyo: {
+            lat: 35.69,
+            lon: 139.69,
+            alt: 17
+        },
+        Johannesburg: {
+            lat: -26.20,
+            lon: 28.034,
+            alt: 1767
+        }
+    }
+};
+
+// eslint-disable-next-line no-unused-vars
+const testLocations = {
+    default: 'Oslo',
+    mapView: {
+        zoom: 5,
+        center: [10, 55]
+    },
+    points: {
+        Olomouc: {
+            lat: 49.59552,
+            lon: 17.25175,
+            alt: 223
+        },
+        Vangses: {
+            lat: 61.16981,
+            lon: 6.64151,
+            alt: 49
+        },
+        Bergen: {
+            lat: 60.384,
+            lon: 5.332,
+            alt: 12
+        },
+        Oslo: {
+            lat: 59.93743,
+            lon: 10.71819,
+            alt: 94
+        },
+        Kraków: {
+            lat: 50.06143,
+            lon: 19.93658,
+            alt: 219
+        }
+    }
+};
+
+// eslint-disable-next-line no-unused-vars
+const euroLocations = {
+    default: 'London',
+    mapView: {
+        zoom: 3.8,
+        center: [10, 50]
+    },
+    points: {
+        London: {
+            lat: 51.507351,
+            lon: -0.127758,
+            alt: 22
+        },
+        Berlin: {
+            lat: 52.5170365,
+            lon: 13.3888599,
+            alt: 44
+        },
+        Dublin: {
+            lat: 53.35,
+            lon: -6.26,
+            alt: 8
+        },
+        Istanbul: {
+            lat: 41.008240,
+            lon: 28.978359,
+            alt: 39
+        },
+        Roma: {
+            lat: 41.8933203,
+            lon: 12.4829321,
+            alt: 46
+        },
+        Lyon: {
+            lat: 45.7578137,
+            lon: 4.8320114,
+            alt: 171
+        },
+        Oslo: {
+            lat: 59.93743,
+            lon: 10.71819,
+            alt: 94
+        },
+        Kraków: {
+            lat: 50.06143,
+            lon: 19.93658,
+            alt: 219
+        },
+        Helsinki: {
+            lat: 60.1674881,
+            lon: 24.9427473,
+            alt: 0
+        },
+        Sevilla: {
+            lat: 37.3886303,
+            lon: -5.9953403,
+            alt: 17
+        },
+        Київ: {
+            lat: 50.4500336,
+            lon: 30.5241361,
+            alt: 157
+        },
+        Wien: {
+            lat: 48.2083537,
+            lon: 16.3725042,
+            alt: 190
+        }
+    }
+};
+
+// Application configuration (selection of weather stations + data provider)
+const weatherStations = {
+    location: euroLocations, // testLocations, worldLocations, euroLocations
+
+    // Base URL for weather forecast
+    baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
+
+    // Build the full URL for accessing the data
+    buildUrl: function (city) {
+        if (city in this.location.points) {
+            const point = this.location.points[city];
+            const ret = this.baseUrl +
+                `?lat=${point.lat}&lon=${point.lon}&altitude=${point.alt}`;
+
+            return ret;
+        }
+        return null;
+    }
 };
 
 // Common options for KPI charts
@@ -97,7 +217,7 @@ const KPIChartOptions = {
     series: [{
         data: null, // Populated on the fly
         dataLabels: {
-            format: '{y:.0f}',
+            format: '{y:.1f}',
             y: -34
         },
         animation: false,
@@ -142,7 +262,7 @@ function processWeatherData(data) {
 }
 
 async function setupBoard() {
-    let activeCity = 'New York';
+    let activeCity = weatherStations.location.default;
 
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -151,15 +271,23 @@ async function setupBoard() {
                     id: 'Cities',
                     type: 'JSON',
                     options: {
-                        data: weatherStations.cities,
+                        data: weatherStations.location.points,
                         beforeParse: function () {
                             const ret = [['city', 'lat', 'lon', 'elevation']];
                             // eslint-disable-next-line max-len
-                            for (const [name, item] of Object.entries(weatherStations.cities)) {
+                            for (const [name, item] of Object.entries(weatherStations.location.points)) {
                                 ret.push([name, item.lat, item.lon, item.alt]);
                             }
                             return ret;
                         }
+                    }
+                }, {
+                    type: 'JSON',
+                    id: activeCity,
+                    options: {
+                        firstRowAsNames: false,
+                        dataUrl: weatherStations.buildUrl(activeCity),
+                        beforeParse: processWeatherData
                     }
                 }
             ]
@@ -301,8 +429,8 @@ async function setupBoard() {
                     colorAxis: {
                         startOnTick: false,
                         endOnTick: false,
-                        max: tempRange.maxC,
-                        min: tempRange.minC,
+                        max: range.tempMax,
+                        min: range.tempMin,
                         stops: colorStopsTemperature
                     },
                     legend: {
@@ -315,9 +443,7 @@ async function setupBoard() {
                         enabled: true,
                         enableMouseWheelZoom: true
                     },
-                    mapView: {
-                        maxZoom: 4
-                    },
+                    mapView: weatherStations.location.mapView,
                     series: [{
                         type: 'map',
                         name: 'World Map'
@@ -394,13 +520,13 @@ async function setupBoard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                            chartContainerLabel: 'Weather stations. Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying maximal temperature in cities.',
+                        description: 'The chart is displaying forecasted temperature.',
                         point: {
-                            valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
+                            valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Location'
                         }
                     }
                 }
@@ -426,8 +552,8 @@ async function setupBoard() {
                         accessibility: {
                             description: 'Celsius'
                         },
-                        max: tempRange.maxC,
-                        min: tempRange.minC
+                        max: range.tempMax,
+                        min: range.tempMin
                     }
                 },
                 states: {
@@ -445,7 +571,7 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: 'Air Pressure',
+                        text: 'Pressure',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -453,8 +579,8 @@ async function setupBoard() {
                         accessibility: {
                             description: 'hPa'
                         },
-                        max: 1100,
-                        min: 800
+                        max: range.hpaMax,
+                        min: range.hpaMin
                     }
                 },
                 states: {
@@ -480,8 +606,8 @@ async function setupBoard() {
                         accessibility: {
                             description: '%'
                         },
-                        max: 100,
-                        min: 0
+                        max: range.humMax,
+                        min: range.humMin
                     }
                 },
                 states: {
@@ -544,13 +670,15 @@ async function setupBoard() {
                         enabled: false
                     },
                     legend: {
-                        enabled: false
+                        labelFormatter: function () {
+                            return Highcharts.dateFormat('%d/%m/%Y', this.xAxis.min);
+                        }
                     },
                     colorAxis: {
                         startOnTick: false,
                         endOnTick: false,
-                        max: tempRange.maxC,
-                        min: tempRange.minC,
+                        max: range.tempMax,
+                        min: range.tempMin,
                         stops: colorStopsTemperature,
                         showInLegend: false
                     },
@@ -564,7 +692,6 @@ async function setupBoard() {
                     },
                     title: {
                         margin: 20,
-                        text: 'Temperature in the city',
                         x: 15,
                         y: 5
                     },
@@ -591,7 +718,7 @@ async function setupBoard() {
                                 return Highcharts.dateFormat('%H:%M', this.value);
                             },
                             accessibility: {
-                                description: 'Hours'
+                                description: 'Hours, minutes'
                             }
                         }
                     },
@@ -605,11 +732,11 @@ async function setupBoard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                            chartContainerLabel: 'Weather stations. Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying maximal temperature, average temperature and days of rain.'
+                        description: 'The chart is displaying forecasted temperature.'
                     }
                 }
             }]
@@ -677,7 +804,7 @@ async function setupCity(board, citiesTable, worldMap, city) {
         lon: cityInfo.lon,
         name: cityInfo.city,
         // Latest observation
-        y: forecastTable.columns.temperature[idxLatest]
+        y: forecastTable.columns.temperature[hourOffset]
     });
 }
 
@@ -709,7 +836,7 @@ async function updateBoard(board, city) {
             custom: {
                 elevation: cityInfo.elevation
             },
-            y: forecastTable.columns.temperature[idxLatest]
+            y: forecastTable.columns.temperature[hourOffset]
         }, false);
     }
 
@@ -717,13 +844,13 @@ async function updateBoard(board, city) {
     const forecastTable = await dataPool.getConnectorTable(city);
 
     kpiTemperature.update({
-        value: forecastTable.columns.temperature[idxLatest]
+        value: forecastTable.columns.temperature[hourOffset]
     });
     kpiPressure.update({
-        value: forecastTable.columns.pressure[idxLatest]
+        value: forecastTable.columns.pressure[hourOffset]
     });
     kpiHumidity.update({
-        value: forecastTable.columns.humidity[idxLatest]
+        value: forecastTable.columns.humidity[hourOffset]
     });
 
     // Update geo KPI
@@ -732,7 +859,7 @@ async function updateBoard(board, city) {
         value: citiesTable.getCellAsNumber(
             'elevation',
             citiesTable.getRowIndexBy('city', city)
-        ) || '--'
+        )
     });
 
     // Update city grid data selection
@@ -744,7 +871,7 @@ async function updateBoard(board, city) {
 
     // Update city chart
     const options = cityChart.chartOptions;
-    options.title.text = 'Temperature in ' + city;
+    options.title.text = 'Temperature forecast for ' + city;
     await cityChart.update({
         connector: {
             id: city
@@ -752,3 +879,6 @@ async function updateBoard(board, city) {
         chartOptions: options
     });
 }
+
+// Launch the application
+setupBoard();
