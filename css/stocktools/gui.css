@@ -218,7 +218,6 @@
     color: inherit;
     font: inherit;
     cursor: pointer;
-    outline: inherit;
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
@@ -239,7 +238,6 @@
     font: inherit;
     cursor: pointer;
     background-color: transparent;
-    outline: inherit;
     width: 10px;
     height: 100%;
     position: absolute;
