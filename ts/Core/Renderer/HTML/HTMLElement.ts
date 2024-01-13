@@ -29,7 +29,9 @@ import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
+    attr,
     css,
+    createElement,
     defined,
     extend,
     pInt
@@ -46,7 +48,7 @@ declare module '../SVG/SVGElementLike' {
         /** @requires Core/Renderer/HTML/HTMLElement */
         appendChild: HTMLDOMElement['appendChild'];
         element: DOMElementType;
-        parentGroup?: (HTMLElement|SVGElement);
+        parentGroup?: SVGElement;
         renderer: (HTMLRenderer|SVGRenderer);
         style: (CSSObject&CSSStyleDeclaration);
         xCorr: number;
@@ -76,6 +78,33 @@ declare module '../SVG/SVGElementLike' {
     }
 }
 
+const addSetters = function (
+    gWrapper: HTMLElement|SVGElement,
+    style?: CSSStyleDeclaration
+): void {
+    // These properties are set as attributes on the SVG group, and
+    // as identical CSS properties on the div. (#3542)
+    ['opacity', 'visibility'].forEach(function (
+        prop: string
+    ): void {
+        gWrapper[prop + 'Setter'] = function (
+            value: string,
+            key: string,
+            elem: HTMLElement
+        ): void {
+            const styleObject = gWrapper.div ?
+                gWrapper.div.style :
+                style;
+            SVGElement.prototype[prop + 'Setter']
+                .call(this, value, key, elem);
+            if (styleObject) {
+                styleObject[key as any] = value;
+            }
+        };
+    });
+    gWrapper.addedSetters = true;
+};
+
 /* *
  *
  *  Class
@@ -91,7 +120,7 @@ class HTMLElement extends SVGElement {
      * */
 
     public div?: HTMLDOMElement;
-    public parentGroup?: HTMLElement;
+    public parentGroup?: SVGElement;
 
     /* *
      *
@@ -186,6 +215,8 @@ class HTMLElement extends SVGElement {
     }
 
     /**
+     * Batch update styles and attributes related to transform
+     *
      * @private
      */
     public updateTransform(): void {
@@ -341,6 +372,166 @@ class HTMLElement extends SVGElement {
         });
     }
 
+    public add(svgGroupWrapper?: SVGElement): this {
+        const htmlElement = this,
+            container = this.renderer.box.parentNode,
+            parents = [] as Array<SVGElement>;
+
+        let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined);
+
+        this.parentGroup = svgGroupWrapper;
+
+        // Create a mock group to hold the HTML elements
+        if (svgGroupWrapper) {
+            htmlGroup = svgGroupWrapper.div;
+            if (!htmlGroup) {
+
+                // Read the parent chain into an array and read from top
+                // down
+                let svgGroup: SVGElement|undefined = svgGroupWrapper;
+                while (svgGroup) {
+
+                    parents.push(svgGroup);
+
+                    // Move up to the next parent group
+                    svgGroup = svgGroup.parentGroup;
+                }
+
+                // Ensure dynamically updating position when any parent
+                // is translated
+                parents.reverse().forEach(function (parentGroup): void {
+                    const cls = attr(parentGroup.element, 'class'),
+                        parentProtoCss = parentGroup.css;
+
+                    /**
+                     * Common translate setter for X and Y on the HTML
+                     * group. Reverted the fix for #6957 due to
+                     * positioning problems and offline export (#7254,
+                     * #7280, #7529)
+                     * @private
+                     * @param {*} value
+                     * @param {string} key
+                                             */
+                    function translateSetter(
+                        value: any,
+                        key: string
+                    ): void {
+                        parentGroup[key] = value;
+
+                        if (key === 'translateX') {
+                            htmlGroupStyle.left = value + 'px';
+                        } else {
+                            htmlGroupStyle.top = value + 'px';
+                        }
+
+                        parentGroup.doTransform = true;
+                    }
+
+                    // Create a HTML div and append it to the parent div
+                    // to emulate the SVG group structure
+                    const parentGroupStyles = parentGroup.styles || {};
+                    htmlGroup =
+                    parentGroup.div =
+                    parentGroup.div || createElement(
+                        'div',
+                        cls ? { className: cls } : void 0,
+                        {
+                            position: 'absolute',
+                            left: (parentGroup.translateX || 0) + 'px',
+                            top: (parentGroup.translateY || 0) + 'px',
+                            display: parentGroup.display,
+                            opacity: parentGroup.opacity, // #5075
+                            visibility: parentGroup.visibility
+
+                        // The top group is appended to container
+                        },
+                        (htmlGroup as any) || container
+                    );
+
+                    // Shortcut
+                    const htmlGroupStyle = (htmlGroup as any).style;
+
+                    // Set listeners to update the HTML div's position
+                    // whenever the SVG group position is changed.
+                    extend(parentGroup, {
+                        // (#7287) Pass htmlGroup to use
+                        // the related group
+                        classSetter: (function (
+                            htmlGroup: HTMLElement
+                        ): Function {
+                            return function (
+                                this: HTMLElement,
+                                value: string
+                            ): void {
+                                this.element.setAttribute(
+                                    'class',
+                                    value
+                                );
+                                htmlGroup.className = value;
+                            };
+                        }(htmlGroup as any)),
+
+                        // Extend the parent group's css function by
+                        // updating the shadow div counterpart with the same
+                        // style.
+                        css: function (styles: CSSObject): SVGElement {
+
+                            // Call the base css method. The `parentGroup`
+                            // can be either an SVGElement or an SVGLabel,
+                            // in which the css method is extended (#19200).
+                            parentProtoCss.call(parentGroup, styles);
+
+                            (
+                                [
+                                    // #6794
+                                    'cursor',
+                                    // #5595, #18821
+                                    'pointerEvents'
+                                ] as (keyof CSSObject)[]
+                            ).forEach((prop): void => {
+                                if (styles[prop]) {
+                                    htmlGroupStyle[prop] = styles[prop];
+                                }
+                            });
+                            return parentGroup;
+                        },
+
+                        on: function (): SVGElement {
+                            if (parents[0].div) { // #6418
+                                htmlElement.on.apply({
+                                    element: parents[0].div,
+                                    onEvents: parentGroup.onEvents
+                                }, arguments);
+                            }
+                            return parentGroup;
+                        },
+                        translateXSetter: translateSetter,
+                        translateYSetter: translateSetter
+                    });
+                    if (!parentGroup.addedSetters) {
+                        addSetters(parentGroup);
+                    }
+
+                    // Apply pre-existing style
+                    parentGroup.css(parentGroupStyles);
+
+                });
+
+            }
+        } else {
+            htmlGroup = container as any;
+        }
+
+        (htmlGroup as any).appendChild(this.element);
+
+        this.added = true;
+        if (this.alignOnAdd) {
+            this.updateTransform();
+        }
+
+        return this;
+    }
+
     /**
      * Text setter
      * @private
@@ -380,25 +571,24 @@ class HTMLElement extends SVGElement {
      * CSS properties on the div. (#3542)
      *
      * @private
-     * /
+     */
     public opacitySetter(
         value: string,
         key: string,
         elem: HTMLDOMElement
     ): void {
         const style = this.div?.style || elem.style;
-        super.opacitySetter.call(this, value, key, elem);
+        super[`${key}Setter`].call(this, value, key, elem);
         if (style) {
             style[key as any] = value;
         }
     }
-    */
 
 }
 
 // Some shared setters
 const proto = HTMLElement.prototype;
-// (proto as any).visibilitySetter = proto.opacitySetter;
+(proto as any).visibilitySetter = proto.opacitySetter;
 proto.ySetter = proto.xSetter;
 proto.rotationSetter = proto.xSetter;
 
