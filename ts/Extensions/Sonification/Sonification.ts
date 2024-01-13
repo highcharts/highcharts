@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Sonification module.
  *

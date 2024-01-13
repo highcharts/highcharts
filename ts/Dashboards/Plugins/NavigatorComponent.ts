@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,7 @@ import type {
 } from './HighchartsTypes';
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
-import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
+import type { Options } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
 import type SidebarPopup from '../EditMode/SidebarPopup';
@@ -397,9 +397,9 @@ class NavigatorComponent extends Component {
     /**
      * Default options of the Navigator component.
      */
-    public static defaultOptions: Partial<NavigatorComponentOptions> = merge(
+    public static defaultOptions: Partial<Options> = merge(
         Component.defaultOptions,
-        NavigatorComponentDefaults as Partial<NavigatorComponentOptions>
+        NavigatorComponentDefaults as Partial<Options>
     );
 
 
@@ -428,7 +428,7 @@ class NavigatorComponent extends Component {
         const options = json.options,
             component = new NavigatorComponent(
                 cell,
-                options as unknown as NavigatorComponentOptions
+                options as unknown as Options
             );
 
         component.emit({
@@ -449,7 +449,7 @@ class NavigatorComponent extends Component {
 
     public constructor(
         cell: Cell,
-        options: NavigatorComponentOptions
+        options: Options
     ) {
         super(cell, options);
 
@@ -503,7 +503,7 @@ class NavigatorComponent extends Component {
     /**
      * Options for the navigator component
      */
-    public options: NavigatorComponentOptions;
+    public options: Options;
 
 
     /**
@@ -605,7 +605,7 @@ class NavigatorComponent extends Component {
      * Gets the component's options.
      * @internal
      */
-    public getOptions(): Partial<NavigatorComponentOptions> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, NavigatorComponentDefaults),
             type: 'Navigator'
@@ -819,7 +819,7 @@ class NavigatorComponent extends Component {
      * The options to apply.
      */
     public async update(
-        options: Partial<NavigatorComponentOptions>,
+        options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         const chart = this.chart,
@@ -863,7 +863,7 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<NavigatorComponentOptions> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         return {};
     }
 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -121,6 +121,8 @@ class PackedBubbleSeries extends BubbleSeries {
     public data!: Array<PackedBubblePoint>;
 
     public hoverPoint?: PackedBubblePoint;
+
+    public invertible = false;
 
     public layout!: PackedBubbleLayout;
 

@@ -202,15 +202,30 @@ QUnit.test(
 
 QUnit.test('Null points', function (assert) {
     var chart = Highcharts.mapChart('container', {
+        chart: {
+            map: Highcharts.maps['custom/europe']
+        },
         series: [
             {
-                mapData: Highcharts.maps['custom/europe'],
                 data: [
                     ['no', 5],
                     ['fr', 3],
                     ['gb', 2],
                     ['it', null]
                 ]
+            },
+            {
+                data: [
+                    {
+                        'hc-key': 'pl',
+                        value: 0,
+                        name: ''
+                    }
+                ],
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
             }
         ]
     });
@@ -253,5 +268,22 @@ QUnit.test('Null points', function (assert) {
         chart.series[0].transformGroups[0].element.getAttribute('stroke-width'),
         '0',
         'The stroke width should be 0'
+    );
+
+    // Data labels tests #20231
+    assert.strictEqual(
+        chart.series[1].points[0].name,
+        '',
+        'The name should be an empty string.'
+    );
+
+    chart.series[1].points[0].update({
+        name: 'Name'
+    });
+
+    assert.strictEqual(
+        chart.series[1].points[0].name,
+        'Name',
+        'The name should be updated.'
     );
 });

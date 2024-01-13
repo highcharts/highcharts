@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -75,6 +75,8 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     collapseButton: CollapseButtonOptions;
     fillSpace: boolean;
     link: TreegraphLinkOptions;
+    nodeDistance?: number|string;
+    nodeWidth?: number|string;
     reversed?: boolean;
     marker: PointMarkerOptions;
 }

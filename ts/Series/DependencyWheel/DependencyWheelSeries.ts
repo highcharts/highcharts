@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,7 +35,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    merge
+    merge,
+    relativeLength
 } = U;
 
 /* *
@@ -240,7 +241,9 @@ class DependencyWheelSeries extends SankeySeries {
                     centerX = center[0],
                     centerY = center[1],
                     r = center[2] / 2,
-                    innerR = r - (options.nodeWidth as any),
+                    nodeWidth = options.nodeWidth === 'auto' ?
+                        20 : options.nodeWidth,
+                    innerR = r - relativeLength(nodeWidth || 0, r),
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
                         factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));

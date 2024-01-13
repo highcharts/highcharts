@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -172,7 +172,7 @@ const exporting: ExportingOptions = {
      * for more information
      *
      * @type {Object}
-     * @since next
+     * @since 11.3.0
      * @apioption exporting.fetchOptions
      */
 

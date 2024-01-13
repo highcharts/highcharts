@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -131,7 +131,6 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
-        invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
         toYData?(point: Point): Array<number>;
@@ -313,6 +312,8 @@ class Series {
     public index!: number;
 
     public initialType?: string;
+
+    public invertible: boolean = true;
 
     public isDirty?: boolean;
 
@@ -2382,19 +2383,25 @@ class Series {
         const { chart, xAxis, yAxis } = this;
 
         // If no axes on the series, use global clipBox
-        const seriesBox = merge(chart.clipBox);
+        let { x, y, width, height } = merge(chart.clipBox);
 
         // Otherwise, use clipBox.width which is corrected for plotBorderWidth
         // and clipOffset
         if (xAxis && xAxis.len !== chart.plotSizeX) {
-            seriesBox.width = xAxis.len;
+            width = xAxis.len;
         }
 
         if (yAxis && yAxis.len !== chart.plotSizeY) {
-            seriesBox.height = yAxis.len;
+            height = yAxis.len;
         }
 
-        return seriesBox;
+        // If the chart is inverted and the series is not invertible, the chart
+        // clip box should be inverted, but not the series clip box (#20264)
+        if (chart.inverted && !this.invertible) {
+            [width, height] = [height, width];
+        }
+
+        return { x, y, width, height };
     }
 
     /**
@@ -3297,7 +3304,7 @@ class Series {
                 chart.inverted &&
                 !chart.polar &&
                 horAxis &&
-                this.invertible !== false &&
+                this.invertible &&
                 name === 'series'
             );
 
@@ -4165,6 +4172,7 @@ class Series {
             preserve = [
                 'colorIndex',
                 'eventOptions',
+                'invertible',
                 'navigatorSeries',
                 'symbolIndex',
                 'baseSeries'
@@ -4289,6 +4297,9 @@ class Series {
             series.remove(false, false, false, true);
 
             if (casting) {
+                // #20264: Re-detect a certain chart properties from new series
+                chart.propFromSeries();
+
                 // Modern browsers including IE11
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
