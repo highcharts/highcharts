@@ -112,7 +112,13 @@ Dashboards.board('container', {
                 data: JSON.parse(document.getElementById('data').innerText)
                     .elevationProfile
             }
-        }/*
+        },
+        {
+            id: 'times',
+            type: 'JSON',
+            data: SunCalc.getTimes(date)
+        }
+        /*
         , {
             id: 'sun-trajectory',
             data: getSunTrajectory(),
@@ -125,6 +131,10 @@ Dashboards.board('container', {
             rows: [{
                 cells: [{
                     id: 'horizon-chart'
+                }]
+            }, {
+                cells: [{
+                    id: 'times'
                 }]
             }]
         }]
@@ -258,5 +268,11 @@ Dashboards.board('container', {
                 }
             }]
         }
+    }, {
+        connector: {
+            id: 'times'
+        },
+        cell: 'times',
+        type: 'DataGrid'
     }]
 }, true);
