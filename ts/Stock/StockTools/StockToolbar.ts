@@ -370,7 +370,8 @@ class Toolbar {
         }, void 0, target);
 
         // single button
-        const mainButton = createElement('button', {
+        const elementType = (btnOptions.elementType || 'button') as string;
+        const mainButton = createElement(elementType, {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
