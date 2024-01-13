@@ -156,7 +156,7 @@ class HTMLElement extends SVGElement {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
-        this.styles = extend(this.styles, styles);
+        extend(this.styles, styles);
         css(element, styles);
 
         // Now that all styles are applied, to the transform

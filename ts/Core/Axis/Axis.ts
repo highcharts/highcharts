@@ -3196,7 +3196,6 @@ class Axis {
                         // Reset ellipsis in order to get the correct
                         // bounding box (#4070)
                         if (
-                            label.styles &&
                             label.styles.textOverflow === 'ellipsis'
                         ) {
                             label.css({ textOverflow: 'clip' });
@@ -3276,12 +3275,7 @@ class Axis {
                     label.css(css);
 
                 // Reset previously shortened label (#8210)
-                } else if (
-                    label.styles &&
-                    label.styles.width &&
-                    !css.width &&
-                    !widthOption
-                ) {
+                } else if (label.styles.width && !css.width && !widthOption) {
                     label.css({ width: null as any });
                 }
 

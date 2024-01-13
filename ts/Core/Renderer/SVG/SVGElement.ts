@@ -187,7 +187,7 @@ class SVGElement implements SVGElementLike {
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
     public styledMode?: boolean;
-    public styles?: CSSObject;
+    public styles: CSSObject;
     public SVG_NS = SVG_NS;
     public symbolName?: string;
     public text?: SVGElement;
@@ -1111,8 +1111,8 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
-            // store object
-            this.styles = styles;
+            // Store object
+            extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
@@ -1410,7 +1410,7 @@ class SVGElement implements SVGElementLike {
                 element &&
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
-                styles && styles.fontSize
+                styles.fontSize
             );
 
         let bBox: BBoxObject|undefined,
@@ -1440,8 +1440,8 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
-                styles && styles.textOverflow, // #5968
-                styles && styles.fontWeight // #12163
+                styles.textOverflow, // #5968
+                styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -1687,6 +1687,8 @@ class SVGElement implements SVGElementLike {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        this.styles = {};
 
         fireEvent(this, 'afterInit');
     }
