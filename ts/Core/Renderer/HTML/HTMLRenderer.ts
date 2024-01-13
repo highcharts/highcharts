@@ -17,12 +17,11 @@
  * */
 
 import type CSSObject from '../CSSObject';
-import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
-import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed } = H;
+import HTMLElement from './HTMLElement.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -30,7 +29,6 @@ const {
     attr,
     createElement,
     extend,
-    pick,
     pushUnique
 } = U;
 
@@ -107,7 +105,8 @@ class HTMLRenderer extends SVGRenderer {
         x: number,
         y: number
     ): HTMLElement {
-        const wrapper = this.createElement('span') as HTMLElement,
+        const wrapper = new HTMLElement(this, 'span'),
+            // const wrapper = this.createElement('span') as HTMLElement,
             element = wrapper.element,
             renderer = wrapper.renderer,
             addSetters = function (
@@ -138,6 +137,7 @@ class HTMLRenderer extends SVGRenderer {
             };
 
         // Text setter
+        /*
         wrapper.textSetter = function (value: string): void {
             if (value !== this.textStr) {
                 delete this.bBox;
@@ -149,10 +149,12 @@ class HTMLRenderer extends SVGRenderer {
                 wrapper.doTransform = true;
             }
         };
+        */
 
         addSetters(wrapper, wrapper.element.style);
 
         // Various setters which rely on update transform
+        /*
         wrapper.xSetter =
         wrapper.ySetter =
         wrapper.alignSetter =
@@ -169,16 +171,19 @@ class HTMLRenderer extends SVGRenderer {
             }
             wrapper.doTransform = true;
         };
+        */
 
         // Runs at the end of .attr()
+        /*
         wrapper.afterSetters = function (): void {
             // Update transform. Do this outside the loop to prevent redundant
             // updating for batch setting of attributes.
             if (this.doTransform) {
-                this.htmlUpdateTransform();
+                this.updateTransform();
                 this.doTransform = false;
             }
         };
+        */
 
         // Set the default attributes
         wrapper
@@ -186,23 +191,25 @@ class HTMLRenderer extends SVGRenderer {
                 text: str,
                 x: Math.round(x),
                 y: Math.round(y)
-            })
-            .css({
-                position: 'absolute'
             });
+        /*
+        .css({
+            position: 'absolute'
+        })
+        */
 
+        /*
         if (!renderer.styledMode) {
             wrapper.css({
                 fontFamily: this.style.fontFamily,
                 fontSize: this.style.fontSize
             });
         }
+        */
 
-        // Keep the whiteSpace style outside the wrapper.styles collection
-        element.style.whiteSpace = 'nowrap';
 
         // Use the HTML specific .css method
-        wrapper.css = wrapper.htmlCss;
+        // wrapper.css = wrapper.htmlCss;
         wrapper.add = function (
             svgGroupWrapper?: HTMLElement
         ): HTMLElement {
@@ -359,7 +366,7 @@ class HTMLRenderer extends SVGRenderer {
 
             wrapper.added = true;
             if (wrapper.alignOnAdd) {
-                wrapper.htmlUpdateTransform();
+                wrapper.updateTransform();
             }
 
             return wrapper;

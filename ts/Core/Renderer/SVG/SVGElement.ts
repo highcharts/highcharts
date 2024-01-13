@@ -53,7 +53,6 @@ const {
     SVG_NS,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -1736,7 +1735,7 @@ class SVGElement implements SVGElementLike {
     public opacitySetter(
         value: string,
         key: string,
-        element: SVGDOMElement
+        element: SVGDOMElement|HTMLDOMElement
     ): void {
         // Round off to avoid float errors, like tests where opacity lands on
         // 9.86957e-06 instead of 0
@@ -2402,7 +2401,7 @@ interface SVGElement extends SVGElementLike {
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationSetter(value: string, key?: string): void;
+    rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
     'stroke-widthSetter'(

@@ -25,15 +25,13 @@ import type {
 import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
-import H from '../../Globals.js';
-const { composed } = H;
+import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
     css,
     defined,
     extend,
-    pushUnique,
     pInt
 } = U;
 
@@ -42,13 +40,6 @@ const {
  *  Declarations
  *
  * */
-
-type TransformKeyType = (
-    '-ms-transform'|
-    '-webkit-transform'|
-    'MozTransform'|
-    '-o-transform'
-);
 
 declare module '../SVG/SVGElementLike' {
     interface SVGElementLike {
@@ -68,11 +59,11 @@ declare module '../SVG/SVGElementLike' {
             alignCorrection: number
         ): void;
         /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlCss(styles: CSSObject): HTMLElement;
+        // htmlCss(styles: CSSObject): HTMLElement;
         /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlGetBBox(): BBoxObject;
+        // htmlGetBBox(): BBoxObject;
         /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlUpdateTransform(): void;
+        // htmlUpdateTransform(): void;
         /** @requires Core/Renderer/HTML/HTMLElement */
         setSpanRotation(
             rotation: number,
@@ -95,36 +86,6 @@ class HTMLElement extends SVGElement {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Modifies SVGElement to support HTML elements.
-     * @private
-     */
-    public static compose<T extends typeof SVGElement>(
-        SVGElementClass: T
-    ): (T&typeof HTMLElement) {
-
-        if (pushUnique(composed, this.compose)) {
-            const htmlElementProto = HTMLElement.prototype,
-                svgElementProto = SVGElementClass.prototype;
-
-            svgElementProto.getSpanCorrection = htmlElementProto
-                .getSpanCorrection;
-            svgElementProto.htmlCss = htmlElementProto.htmlCss;
-            svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto
-                .htmlUpdateTransform;
-            svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
-        }
-
-        return SVGElementClass as (T&typeof HTMLElement);
-    }
-
-    /* *
-     *
      *  Prototype
      *
      * */
@@ -137,6 +98,23 @@ class HTMLElement extends SVGElement {
      *  Functions
      *
      * */
+    public constructor(
+        renderer: SVGRenderer,
+        nodeName: 'span'
+    ) {
+        super(renderer, nodeName);
+
+        this.css({
+            position: 'absolute',
+            ...(renderer.styledMode ? {} : {
+                fontFamily: renderer.style.fontFamily,
+                fontSize: renderer.style.fontSize
+            })
+        });
+
+        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
+        this.element.style.whiteSpace = 'nowrap';
+    }
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
@@ -155,7 +133,7 @@ class HTMLElement extends SVGElement {
      * Apply CSS to HTML elements. This is used in text within SVG rendering.
      * @private
      */
-    public htmlCss(styles: CSSObject): HTMLElement {
+    public css(styles: CSSObject): this {
         const { element } = this,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
@@ -178,12 +156,12 @@ class HTMLElement extends SVGElement {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
-        extend(this.styles, styles);
+        this.styles = extend(this.styles, styles);
         css(element, styles);
 
         // Now that all styles are applied, to the transform
         if (doTransform) {
-            this.htmlUpdateTransform();
+            this.updateTransform();
         }
 
         return this;
@@ -191,6 +169,10 @@ class HTMLElement extends SVGElement {
 
     /**
      * The useHTML method for calculating the bounding box based on offsets.
+     * Called internally from the `SVGElement.getBBox` function and subsequently
+     * rotated.
+     *
+     * @private
      */
     public htmlGetBBox(): BBoxObject {
         const { element } = this;
@@ -206,7 +188,7 @@ class HTMLElement extends SVGElement {
     /**
      * @private
      */
-    public htmlUpdateTransform(): void {
+    public updateTransform(): void {
         // Aligning non added elements is expensive
         if (!this.added) {
             this.alignOnAdd = true;
@@ -358,7 +340,67 @@ class HTMLElement extends SVGElement {
             transformOrigin: `${alignCorrection * 100}% ${baseline}px`
         });
     }
+
+    /**
+     * Text setter
+     * @private
+     */
+    public textSetter(value: string): void {
+        if (value !== this.textStr) {
+            delete this.bBox;
+            delete this.oldTextWidth;
+
+            AST.setElementHTML(this.element, value ?? '');
+
+            this.textStr = value;
+            this.doTransform = true;
+        }
+    }
+
+    /**
+     * Align setter
+     *
+     * @private
+     */
+    public alignSetter(value: 'left'|'center'|'right'): void {
+        this.alignValue = this.textAlign = value;
+        this.doTransform = true;
+    }
+    /**
+     * Various setters which rely on update transform
+     * @private
+     */
+    public xSetter(value: number, key: string): void {
+        this[key] = value;
+        this.doTransform = true;
+    }
+
+    /**
+     * These properties are set as attributes on the SVG group, and as identical
+     * CSS properties on the div. (#3542)
+     *
+     * @private
+     * /
+    public opacitySetter(
+        value: string,
+        key: string,
+        elem: HTMLDOMElement
+    ): void {
+        const style = this.div?.style || elem.style;
+        super.opacitySetter.call(this, value, key, elem);
+        if (style) {
+            style[key as any] = value;
+        }
+    }
+    */
+
 }
+
+// Some shared setters
+const proto = HTMLElement.prototype;
+// (proto as any).visibilitySetter = proto.opacitySetter;
+proto.ySetter = proto.xSetter;
+proto.rotationSetter = proto.xSetter;
 
 /* *
  *
