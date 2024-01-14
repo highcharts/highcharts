@@ -1,80 +1,50 @@
-(() => {
-    /*
-    const renderer = new Highcharts.Renderer(
-        document.getElementById('container'),
-        600,
-        400
-    );
-    const text = renderer
-        .text(
-            'Hello HTML <i class="fa fa-check"></i>',
-            100,
-            100,
-            true
-        )
-        .attr({
-            rotation: -90
-        })
-        .add();
+Highcharts.chart('container', {
 
-    console.log(text.getBBox().width)
+    chart: {
+        type: 'column'
+    },
 
-    setTimeout(() => {
-        // text.show();
-    }, 1234);
+    title: {
+        text: 'HTML title <i class="fa fa-check"></i>',
+        useHTML: true
+    },
 
-    return;
-    // */
-
-
-    Highcharts.chart('container', {
-
-        chart: {
-            type: 'column'
-        },
-
+    yAxis: {
         title: {
-            text: 'HTML title <i class="fa fa-check"></i>',
+            text: 'HTML y-axis <i class="fa fa-check"></i>',
             useHTML: true
+        }
+    },
+
+    xAxis: {
+        type: 'category',
+        labels: {
+            useHTML: true,
+            format: '{value} <i class="fa fa-check"></i>'
+        }
+    },
+
+    legend: {
+        useHTML: true
+    },
+
+    tooltip: {
+        useHTML: true
+    },
+
+    series: [{
+        data: [
+            ['Ein', 1234],
+            ['To', 3456],
+            ['Tre', 2345],
+            ['Fire', 4567]
+        ],
+        dataLabels: {
+            enabled: true,
+            useHTML: true,
+            format: '{y} <i class="fa fa-check"></i>'
         },
+        name: 'HTML Series <i class="fa fa-check"></i>'
+    }]
 
-        yAxis: {
-            title: {
-                text: 'HTML y-axis <i class="fa fa-check"></i>',
-                useHTML: true
-            }
-        },
-
-        xAxis: {
-            type: 'category',
-            labels: {
-                useHTML: true,
-                format: '{value} <i class="fa fa-check"></i>'
-            }
-        },
-
-        legend: {
-            useHTML: true
-        },
-
-        tooltip: {
-            useHTML: true
-        },
-
-        series: [{
-            data: [
-                ['Ein', 1234],
-                ['To', 3456],
-                ['Tre', 2345],
-                ['Fire', 4567]
-            ],
-            dataLabels: {
-                enabled: true,
-                useHTML: true,
-                format: '{y} <i class="fa fa-check"></i>'
-            },
-            name: 'HTML Series <i class="fa fa-check"></i>'
-        }]
-
-    });
-})();
+});
