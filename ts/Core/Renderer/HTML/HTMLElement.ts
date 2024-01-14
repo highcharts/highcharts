@@ -175,45 +175,6 @@ const decorateSVGGroup = (
     return g.div;
 };
 
-/**
- * Experimental version of the `add` function where the HTML content is inserted
- * as `foreignObject`. This will resolve all z-index issues, and we can remove
- * the `foreignObject` regex in Exporting.
- *
- * This function can be left as is. As long as it is not called, it will be
- * shaken off and will not affect file size.
- *
- * @private
- */
-const addAsForeignObject = (
-    htmlElement: HTMLElement,
-    parentGroup?: SVGElement
-): HTMLElement => {
-    const renderer = htmlElement.renderer,
-        fo = renderer.createElement('foreignObject')
-            // @todo In order to avoid the foreign object blocking the whole
-            // chart, causing for example tooltip not to work:
-            // * positioning must be done on the fo instead of the span (much
-            //   like SVGLabel positions the group instead of the text)
-            // * the width and height must be that of the span bounding box
-            .attr({
-                x: 0,
-                y: 0,
-                width: renderer.width,
-                height: renderer.height,
-                zIndex: 2
-            })
-            .add(parentGroup),
-        body = renderer.createElement('body')
-            .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
-            .add(fo);
-
-    // Like super.add
-    SVGElement.prototype.add.call(htmlElement, body);
-
-    return htmlElement;
-};
-
 /* *
  *
  *  Class
@@ -528,10 +489,6 @@ class HTMLElement extends SVGElement {
      */
     public add(parentGroup?: SVGElement): this {
 
-        // Uncomment this to use the experimental `foreignObject` approach
-        // addAsForeignObject(this, parentGroup);
-        // return this;
-
         const container = this.renderer.box
                 .parentNode as unknown as HTMLDOMElement,
             parents = [] as Array<SVGElement>;
@@ -614,6 +571,41 @@ const proto = HTMLElement.prototype;
 (proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
 proto.ySetter = proto.xSetter;
 proto.rotationSetter = proto.xSetter;
+
+
+/*
+// Uncomment this to enable experimental support `foreignObject`. This will
+// resolve all z-index issues, and we can remove the `foreignObject` regex in
+// Exporting.
+HTMLElement.prototype.add = function (
+    parentGroup?: SVGElement
+): any {
+    const renderer = this.renderer,
+        fo = this.fo = renderer.createElement('foreignObject')
+            // @todo In order to avoid the foreign object blocking the whole
+            // chart, causing for example tooltip not to work:
+            // * positioning must be done on the fo instead of the span (much
+            //   like SVGLabel positions the group instead of the text)
+            // * the width and height must be that of the span bounding box
+            .attr({
+                x: 0,
+                y: 0,
+                width: renderer.width,
+                height: renderer.height,
+                zIndex: 2
+            })
+            .add(parentGroup),
+        body = renderer.createElement('body')
+            .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
+            .add(fo);
+
+    // Like super.add
+    SVGElement.prototype.add.call(this, body);
+
+    return this;
+};
+
+// */
 
 /* *
  *
