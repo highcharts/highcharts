@@ -23,10 +23,11 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
-import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import AST from './AST.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
@@ -35,7 +36,8 @@ const {
     createElement,
     defined,
     extend,
-    pInt
+    pInt,
+    pushUnique
 } = U;
 
 /* *
@@ -50,7 +52,7 @@ declare module '../SVG/SVGElementLike' {
         appendChild: HTMLDOMElement['appendChild'];
         element: DOMElementType;
         parentGroup?: SVGElement;
-        renderer: (HTMLRenderer|SVGRenderer);
+        renderer: SVGRenderer;
         style: (CSSObject&CSSStyleDeclaration);
         xCorr: number;
         yCorr: number;
@@ -76,6 +78,13 @@ declare module '../SVG/SVGElementLike' {
         textSetter(value: string): void;
         translateXSetter(value: number, key: string): void;
         translateYSetter(value: number, key: string): void;
+    }
+}
+
+declare module '../SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        /** @requires Core/Renderer/HTML/HTMLElement */
+        html(str: string, x: number, y: number): HTMLElement;
     }
 }
 
@@ -209,6 +218,42 @@ const decorateSVGGroup = (
  * */
 
 class HTMLElement extends SVGElement {
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Compose
+     * @private
+     */
+    public static compose<T extends typeof SVGRenderer>(
+        SVGRendererClass: T
+    ): void {
+
+        if (pushUnique(composed, this.compose)) {
+            /**
+             * Create a HTML text node. This is used by the SVG renderer `text`
+             * and `label` functions through the `useHTML` parameter.
+             *
+             * @private
+             */
+            SVGRendererClass.prototype.html = function (
+                str: string,
+                x: number,
+                y: number
+            ): HTMLElement {
+                return new HTMLElement(this, 'span')
+                    // Set the default attributes
+                    .attr({
+                        text: str,
+                        x: Math.round(x),
+                        y: Math.round(y)
+                    });
+            };
+        }
+    }
 
     /* *
      *
@@ -567,7 +612,6 @@ proto.rotationSetter = proto.xSetter;
 
 interface HTMLElement {
     element: HTMLDOMElement;
-    renderer: HTMLRenderer;
 }
 
 /* *
