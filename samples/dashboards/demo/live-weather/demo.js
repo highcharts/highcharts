@@ -281,14 +281,6 @@ async function setupBoard() {
                             return ret;
                         }
                     }
-                }, {
-                    type: 'JSON',
-                    id: activeCity,
-                    options: {
-                        firstRowAsNames: false,
-                        dataUrl: weatherStations.buildUrl(activeCity),
-                        beforeParse: processWeatherData
-                    }
                 }
             ]
         },
