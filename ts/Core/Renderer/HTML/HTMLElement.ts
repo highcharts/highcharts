@@ -107,16 +107,18 @@ function commonSetter(
  *
  * @private
  */
-const decorateSVGGroup = (g: SVGElement): HTMLDOMElement => {
+const decorateSVGGroup = (
+    g: SVGElement,
+    container: HTMLDOMElement
+): HTMLDOMElement => {
     if (!g.div) {
-        const cls = attr(g.element, 'class'),
-            container = g.renderer.box.parentNode as unknown as HTMLDOMElement,
+        const className = attr(g.element, 'class'),
             cssProto = g.css;
 
         // Create the parallel HTML group
         const div = createElement(
             'div',
-            cls ? { className: cls } : void 0,
+            className ? { className } : void 0,
             {
                 // Add HTML specific styles
                 position: 'absolute',
@@ -473,23 +475,23 @@ class HTMLElement extends SVGElement {
      *
      * @private
      */
-    public add(svgGroupWrapper?: SVGElement): this {
+    public add(parentGroup?: SVGElement): this {
         const container = this.renderer.box
                 .parentNode as unknown as HTMLDOMElement,
             parents = [] as Array<SVGElement>;
 
-        let htmlGroup: HTMLDOMElement|undefined;
+        let div: HTMLDOMElement|undefined;
 
-        this.parentGroup = svgGroupWrapper;
+        this.parentGroup = parentGroup;
 
-        // Create a mock group to hold the HTML elements
-        if (svgGroupWrapper) {
-            htmlGroup = svgGroupWrapper.div;
-            if (!htmlGroup) {
+        // Create a parallel divs to hold the HTML elements
+        if (parentGroup) {
+            div = parentGroup.div;
+            if (!div) {
 
                 // Read the parent chain into an array and read from top
                 // down
-                let svgGroup: SVGElement|undefined = svgGroupWrapper;
+                let svgGroup: SVGElement|undefined = parentGroup;
                 while (svgGroup) {
 
                     parents.push(svgGroup);
@@ -498,16 +500,15 @@ class HTMLElement extends SVGElement {
                     svgGroup = svgGroup.parentGroup;
                 }
 
-                // Ensure dynamically updating position when any parent
-                // is translated
-                parents.reverse().forEach((parentGroup): void => {
-                    htmlGroup = decorateSVGGroup(parentGroup);
-                });
-
+                // Decorate each of the ancestor group elements with a parallel
+                // div that reflects translation and styling
+                for (const parentGroup of parents.reverse()) {
+                    div = decorateSVGGroup(parentGroup, container);
+                }
             }
         }
 
-        (htmlGroup || container).appendChild(this.element);
+        (div || container).appendChild(this.element);
 
         this.added = true;
         if (this.alignOnAdd) {
