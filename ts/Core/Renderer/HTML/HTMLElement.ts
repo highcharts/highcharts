@@ -19,7 +19,6 @@
 import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
-    DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
@@ -45,41 +44,6 @@ const {
  *  Declarations
  *
  * */
-
-declare module '../SVG/SVGElementLike' {
-    interface SVGElementLike {
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        appendChild: HTMLDOMElement['appendChild'];
-        element: DOMElementType;
-        parentGroup?: SVGElement;
-        renderer: SVGRenderer;
-        style: (CSSObject&CSSStyleDeclaration);
-        xCorr: number;
-        yCorr: number;
-        afterSetters(): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        getSpanCorrection(
-            width: number,
-            baseline: number,
-            alignCorrection: number
-        ): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        // htmlCss(styles: CSSObject): HTMLElement;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        // htmlGetBBox(): BBoxObject;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        // htmlUpdateTransform(): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        setSpanRotation(
-            rotation: number,
-            alignCorrection: number,
-            baseline: number
-        ): void;
-        textSetter(value: string): void;
-        translateXSetter(value: number, key: string): void;
-        translateYSetter(value: number, key: string): void;
-    }
-}
 
 declare module '../SVG/SVGRendererLike' {
     interface SVGRendererLike {
@@ -197,7 +161,7 @@ const decorateSVGGroup = (
             return g;
         };
 
-        // Event handling @todo
+        // Event handling
         g.on = function (): SVGElement {
             SVGElement.prototype.on.apply({
                 element: div,
@@ -263,6 +227,9 @@ class HTMLElement extends SVGElement {
 
     public div?: HTMLDOMElement;
     public parentGroup?: SVGElement;
+    public xCorr?: number;
+    public yCorr?: number;
+
 
     /* *
      *
@@ -291,7 +258,7 @@ class HTMLElement extends SVGElement {
      * Get the correction in X and Y positioning as the element is rotated.
      * @private
      */
-    public getSpanCorrection(
+    private getSpanCorrection(
         width: number,
         baseline: number,
         alignCorrection: number
@@ -383,7 +350,7 @@ class HTMLElement extends SVGElement {
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
             } as Record<string, number>)[textAlign],
-            whiteSpace = styles?.whiteSpace;
+            whiteSpace = styles.whiteSpace;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -500,7 +467,7 @@ class HTMLElement extends SVGElement {
      * Set the rotation of an individual HTML span.
      * @private
      */
-    public setSpanRotation(
+    private setSpanRotation(
         rotation: number,
         alignCorrection: number,
         baseline: number
