@@ -157,7 +157,7 @@ class SVGElement implements SVGElementLike {
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
-    // @todo public div?: HTMLDOMElement;
+    public div?: HTMLDOMElement;
     public doTransform?: boolean;
     public element: DOMElementType;
     public fakeTS?: boolean;

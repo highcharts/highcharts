@@ -20,7 +20,8 @@ import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
     DOMElementType,
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
@@ -78,31 +79,125 @@ declare module '../SVG/SVGElementLike' {
     }
 }
 
-const addSetters = function (
-    gWrapper: HTMLElement|SVGElement,
-    style?: CSSStyleDeclaration
+/**
+ * The opacity and visibility properties are set as attributes on the main
+ * element and SVG groups, and as identical CSS properties on the HTML element
+ * and the ancestry divs. (#3542)
+ *
+ * @private
+ */
+function commonSetter(
+    this: SVGElement,
+    value: string,
+    key: string,
+    elem: HTMLDOMElement
 ): void {
-    // These properties are set as attributes on the SVG group, and
-    // as identical CSS properties on the div. (#3542)
-    ['opacity', 'visibility'].forEach(function (
-        prop: string
-    ): void {
-        gWrapper[prop + 'Setter'] = function (
+    const style = this.div?.style || elem.style;
+    SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
+    if (style) {
+        style[key as any] = value;
+    }
+}
+
+/**
+ * Decorate each SVG group in the ancestry line. Each SVG `g` element that
+ * contains children with useHTML, will receive a `div` element counterpart to
+ * contain the HTML span. These div elements are translated and styled like
+ * original `g` counterparts.
+ *
+ * @private
+ */
+const decorateSVGGroup = (g: SVGElement): HTMLDOMElement => {
+    if (!g.div) {
+        const cls = attr(g.element, 'class'),
+            container = g.renderer.box.parentNode as unknown as HTMLDOMElement,
+            cssProto = g.css;
+
+        // Create the parallel HTML group
+        const div = createElement(
+            'div',
+            cls ? { className: cls } : void 0,
+            {
+                // Add HTML specific styles
+                position: 'absolute',
+                left: `${g.translateX || 0}px`,
+                top: `${g.translateY || 0}px`,
+
+                // Add pre-existing styles
+                ...g.styles,
+
+                // Add g attributes that correspond to CSS
+                display: g.display,
+                opacity: g.opacity, // #5075
+                visibility: g.visibility
+            },
+            // The top group is appended to container
+            g.parentGroup?.div || container
+        );
+
+        g.classSetter = (
             value: string,
             key: string,
-            elem: HTMLElement
-        ): void {
-            const styleObject = gWrapper.div ?
-                gWrapper.div.style :
-                style;
-            SVGElement.prototype[prop + 'Setter']
-                .call(this, value, key, elem);
-            if (styleObject) {
-                styleObject[key as any] = value;
-            }
+            element: SVGDOMElement
+        ): void => {
+            element.setAttribute('class', value);
+            div.className = value;
         };
-    });
-    gWrapper.addedSetters = true;
+
+        /**
+         * Common translate setter for X and Y on the HTML group.
+         *
+         * Reverted the fix for #6957 due to positioning problems and offline
+         * export (#7254, #7280, #7529)
+         * @private
+         */
+        g.translateXSetter = g.translateYSetter = (
+            value: number|string|null,
+            key: string
+        ): void => {
+            g[key] = value;
+
+            div.style[key === 'translateX' ? 'left' : 'top'] = `${value}px`;
+
+            g.doTransform = true;
+        };
+
+        g.opacitySetter = (g as any).visibilitySetter = commonSetter;
+
+        // Extend the parent group's css function by updating the parallel div
+        // counterpart with the same style.
+        g.css = (styles: CSSObject): SVGElement => {
+
+            // Call the base css method. The `parentGroup` can be either an
+            // SVGElement or an SVGLabel, in which the css method is extended
+            // (#19200).
+            cssProto.call(g, styles);
+
+            // #6794
+            if (styles.cursor) {
+                div.style.cursor = styles.cursor;
+            }
+
+            // #18821
+            if (styles.pointerEvents) {
+                div.style.pointerEvents = styles.pointerEvents;
+            }
+
+            return g;
+        };
+
+        // Event handling @todo
+        g.on = function (): SVGElement {
+            SVGElement.prototype.on.apply({
+                element: div,
+                onEvents: g.onEvents
+            }, arguments);
+            return g;
+        };
+
+        g.div = div;
+    }
+    return g.div;
 };
 
 /* *
@@ -372,12 +467,18 @@ class HTMLElement extends SVGElement {
         });
     }
 
+    /**
+     * Add the element to a group wrapper. For HTML elements, a parallel div
+     * will be created for each ancenstor SVG `g` element.
+     *
+     * @private
+     */
     public add(svgGroupWrapper?: SVGElement): this {
-        const htmlElement = this,
-            container = this.renderer.box.parentNode,
+        const container = this.renderer.box
+                .parentNode as unknown as HTMLDOMElement,
             parents = [] as Array<SVGElement>;
 
-        let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined);
+        let htmlGroup: HTMLDOMElement|undefined;
 
         this.parentGroup = svgGroupWrapper;
 
@@ -399,130 +500,14 @@ class HTMLElement extends SVGElement {
 
                 // Ensure dynamically updating position when any parent
                 // is translated
-                parents.reverse().forEach(function (parentGroup): void {
-                    const cls = attr(parentGroup.element, 'class'),
-                        parentProtoCss = parentGroup.css;
-
-                    /**
-                     * Common translate setter for X and Y on the HTML
-                     * group. Reverted the fix for #6957 due to
-                     * positioning problems and offline export (#7254,
-                     * #7280, #7529)
-                     * @private
-                     * @param {*} value
-                     * @param {string} key
-                                             */
-                    function translateSetter(
-                        value: any,
-                        key: string
-                    ): void {
-                        parentGroup[key] = value;
-
-                        if (key === 'translateX') {
-                            htmlGroupStyle.left = value + 'px';
-                        } else {
-                            htmlGroupStyle.top = value + 'px';
-                        }
-
-                        parentGroup.doTransform = true;
-                    }
-
-                    // Create a HTML div and append it to the parent div
-                    // to emulate the SVG group structure
-                    const parentGroupStyles = parentGroup.styles || {};
-                    htmlGroup =
-                    parentGroup.div =
-                    parentGroup.div || createElement(
-                        'div',
-                        cls ? { className: cls } : void 0,
-                        {
-                            position: 'absolute',
-                            left: (parentGroup.translateX || 0) + 'px',
-                            top: (parentGroup.translateY || 0) + 'px',
-                            display: parentGroup.display,
-                            opacity: parentGroup.opacity, // #5075
-                            visibility: parentGroup.visibility
-
-                        // The top group is appended to container
-                        },
-                        (htmlGroup as any) || container
-                    );
-
-                    // Shortcut
-                    const htmlGroupStyle = (htmlGroup as any).style;
-
-                    // Set listeners to update the HTML div's position
-                    // whenever the SVG group position is changed.
-                    extend(parentGroup, {
-                        // (#7287) Pass htmlGroup to use
-                        // the related group
-                        classSetter: (function (
-                            htmlGroup: HTMLElement
-                        ): Function {
-                            return function (
-                                this: HTMLElement,
-                                value: string
-                            ): void {
-                                this.element.setAttribute(
-                                    'class',
-                                    value
-                                );
-                                htmlGroup.className = value;
-                            };
-                        }(htmlGroup as any)),
-
-                        // Extend the parent group's css function by
-                        // updating the shadow div counterpart with the same
-                        // style.
-                        css: function (styles: CSSObject): SVGElement {
-
-                            // Call the base css method. The `parentGroup`
-                            // can be either an SVGElement or an SVGLabel,
-                            // in which the css method is extended (#19200).
-                            parentProtoCss.call(parentGroup, styles);
-
-                            (
-                                [
-                                    // #6794
-                                    'cursor',
-                                    // #5595, #18821
-                                    'pointerEvents'
-                                ] as (keyof CSSObject)[]
-                            ).forEach((prop): void => {
-                                if (styles[prop]) {
-                                    htmlGroupStyle[prop] = styles[prop];
-                                }
-                            });
-                            return parentGroup;
-                        },
-
-                        on: function (): SVGElement {
-                            if (parents[0].div) { // #6418
-                                htmlElement.on.apply({
-                                    element: parents[0].div,
-                                    onEvents: parentGroup.onEvents
-                                }, arguments);
-                            }
-                            return parentGroup;
-                        },
-                        translateXSetter: translateSetter,
-                        translateYSetter: translateSetter
-                    });
-                    if (!parentGroup.addedSetters) {
-                        addSetters(parentGroup);
-                    }
-
-                    // Apply pre-existing style
-                    parentGroup.css(parentGroupStyles);
-
+                parents.reverse().forEach((parentGroup): void => {
+                    htmlGroup = decorateSVGGroup(parentGroup);
                 });
 
             }
-        } else {
-            htmlGroup = container as any;
         }
 
-        (htmlGroup as any).appendChild(this.element);
+        (htmlGroup || container).appendChild(this.element);
 
         this.added = true;
         if (this.alignOnAdd) {
@@ -565,30 +550,11 @@ class HTMLElement extends SVGElement {
         this[key] = value;
         this.doTransform = true;
     }
-
-    /**
-     * These properties are set as attributes on the SVG group, and as identical
-     * CSS properties on the div. (#3542)
-     *
-     * @private
-     */
-    public opacitySetter(
-        value: string,
-        key: string,
-        elem: HTMLDOMElement
-    ): void {
-        const style = this.div?.style || elem.style;
-        super[`${key}Setter`].call(this, value, key, elem);
-        if (style) {
-            style[key as any] = value;
-        }
-    }
-
 }
 
 // Some shared setters
 const proto = HTMLElement.prototype;
-(proto as any).visibilitySetter = proto.opacitySetter;
+(proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
 proto.ySetter = proto.xSetter;
 proto.rotationSetter = proto.xSetter;
 
