@@ -84,7 +84,7 @@ function fillInfo(mapName, mapKey) {
         href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/master/samples/mapdata/${mapKey}`
     });
 
-    mapNameHeader.innerHTML = mapName;
+    mapNameHeader.innerText = mapName;
 }
 
 function resetDrilldown(chart) {
