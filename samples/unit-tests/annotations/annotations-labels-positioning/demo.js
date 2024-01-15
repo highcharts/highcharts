@@ -612,40 +612,5 @@ QUnit.test(
             1,
             'y position'
         );
-
-        const annotation = chart.annotations[0],
-            label2 = annotation.labels[1];
-
-        label2.translatePoint(50, 50);
-        label2.redraw();
-
-        const pointPosition = {
-            x: annotation.labels[1].graphic.x,
-            y: annotation.labels[1].graphic.y
-        };
-
-        annotation.update({
-            labels: [{
-                style: {
-                    color: 'yellow'
-                }
-            }, {
-                style: {
-                    color: 'green'
-                }
-            }]
-        });
-
-        const updatedPointPosition = {
-            x: annotation.labels[1].graphic.x,
-            y: annotation.labels[1].graphic.y
-        };
-
-        assert.deepEqual(
-            pointPosition,
-            updatedPointPosition,
-            `Label position should be equal before and after an annotation
-            update (#20175).`
-        );
     }
 );

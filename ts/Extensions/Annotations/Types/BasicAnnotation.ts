@@ -79,6 +79,10 @@ class BasicAnnotation extends Annotation {
 
                     (target.annotation.userOptions.labels as any)[0].point =
                         target.options.point;
+
+                    (target.annotation.options.labels as any)[0].point =
+                        target.options.point;
+
                     target.redraw(false);
                 }
             }
@@ -113,6 +117,9 @@ class BasicAnnotation extends Annotation {
                     target.translate(xy.x, xy.y);
 
                     (target.annotation.userOptions.labels as any)[0].point =
+                        target.options.point;
+
+                    (target.annotation.options.labels as any)[0].point =
                         target.options.point;
 
                     target.redraw(false);

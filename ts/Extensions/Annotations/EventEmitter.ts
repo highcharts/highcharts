@@ -386,13 +386,16 @@ abstract class EventEmitter {
         _e: AnnotationEventObject
     ): void {
         const chart = this.chart,
-            annotation = this.target as Annotation || this,
-            annotationsOptions = chart.options.annotations,
-            index = chart.annotations.indexOf(annotation);
+            annotation = this.target?.annotation as Annotation || this;
 
         this.removeDocEvents();
 
-        annotationsOptions[index] = annotation.options;
+        if (annotation) {
+            const annotationsOptions = chart.options.annotations,
+                index = chart.annotations.indexOf(annotation);
+
+            annotationsOptions[index] = annotation.options;
+        }
     }
 
     abstract redraw(animation?: boolean): void;
