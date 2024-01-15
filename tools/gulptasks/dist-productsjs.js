@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 const Path = require('path');
 
 /* *
@@ -65,44 +65,49 @@ async function writeProducts(products) {
 
 /**
  * Creates a products.js file with version numbers for each product.
+ *
+ * @param  {object} options
+ *         Options in case of dashboards.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function distProductsJS() {
+async function distProductsJS(options) {
     const LogLib = require('./lib/log');
+    const { dashboards, release } = options;
 
-    LogLib.message('Generating', TARGET_FILE + '...');
+    LogLib.message(`Creating ${TARGET_FILE} for ${dashboards ? 'dashboards' : 'highcharts'} ...`);
     const products = await fetchCurrentProducts();
 
-    const buildProperties = require('../../build-properties.json');
-    const packageJson = require('../../package.json');
+    if (dashboards) {
+        products['Highcharts Dashboards'] = {
+            date: new Date().toISOString().split('T')[0],
+            nr: release
+        };
+    } else {
+        const buildProperties = require('../../build-properties.json');
+        const packageJson = require('../../package.json');
+        const date = buildProperties.date || '';
+        const nr = (buildProperties.version || packageJson.version || '').split('-')[0];
 
-    const date = (
-        buildProperties.date ||
-        ''
-    );
-
-    const nr = (
-        buildProperties.version ||
-        packageJson.version ||
-        ''
-    ).split('-')[0];
-
-    Object.entries(products).forEach(([productName, productObj]) => {
-        if (productName !== 'Highcharts Dashboards') {
-            productObj.date = date;
-            productObj.nr = nr;
-        }
-    });
+        Object.entries(products).forEach(([productName, productObj]) => {
+            if (productName !== 'Highcharts Dashboards') {
+                productObj.date = date;
+                productObj.nr = nr;
+            }
+        });
+    }
 
     await writeProducts(products);
 
     LogLib.success('Created', TARGET_FILE);
 }
 
-Gulp.task('dist-productsjs', distProductsJS);
+
+gulp.task('dist-productsjs', distProductsJS);
 
 module.exports = {
     writeProducts,
-    fetchCurrentProducts
+    fetchCurrentProducts,
+    distProductsJS
 };

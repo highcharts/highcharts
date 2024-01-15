@@ -106,7 +106,7 @@ function axisMinFromRange(
 
         // Let the fixedRange reflect initial settings (#5930)
         if (this.chart) {
-            this.chart.fixedRange = max - min;
+            this.chart.setFixedRange(max - min);
         }
     }
 
