@@ -135,19 +135,21 @@
     padding: 15px 0;
 }
 
-.highcharts-indicator-list li {
+button.highcharts-indicator-list-item {
     cursor: pointer;
     padding: 5px 20px;
-    margin: 0;
     width: 100%;
     height: auto;
     overflow: hidden;
     word-break: break-all;
     box-sizing: border-box;
+    margin: 2px 0;
 }
 
-.highcharts-indicator-list li:hover {
-    background-color: var(--highcharts-neutral-color-10);
+.highcharts-indicator-list li {
+    width: 100%;
+    padding: 0;
+    height: auto;
 }
 
 .highcharts-popup > button.highcharts-tab-item {
@@ -205,8 +207,6 @@ button.highcharts-tab-item.highcharts-tab-item-active {
     border: none;
     background: var(--highcharts-neutral-color-3);
     color: var(--highcharts-neutral-color-60);
-    margin-left: 5px;
-    margin-top: 12px;
 }
 
 .highcharts-popup button:first-child {
