@@ -58,7 +58,7 @@ namespace Bindings {
     export interface MountedComponent {
         cell: Cell;
         component: ComponentType;
-        options: Partial<Component.ComponentOptions>;
+        options: Partial<Component.Options>;
     }
 
     /* *

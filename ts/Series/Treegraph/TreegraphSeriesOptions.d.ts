@@ -75,6 +75,8 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     collapseButton: CollapseButtonOptions;
     fillSpace: boolean;
     link: TreegraphLinkOptions;
+    nodeDistance?: number|string;
+    nodeWidth?: number|string;
     reversed?: boolean;
     marker: PointMarkerOptions;
 }

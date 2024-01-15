@@ -147,7 +147,7 @@ class HTMLComponent extends Component {
     /**
      * HTML component's options.
      */
-    public options: HTMLComponent.HTMLComponentOptions;
+    public options: HTMLComponent.Options;
     /**
      * Reference to sync component that allows to sync.
      *
@@ -167,14 +167,14 @@ class HTMLComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(cell: Cell, options: Partial<HTMLComponent.HTMLComponentOptions>) {
+    constructor(cell: Cell, options: Partial<HTMLComponent.Options>) {
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
         super(cell, options);
 
-        this.options = options as HTMLComponent.HTMLComponentOptions;
+        this.options = options as HTMLComponent.Options;
 
         this.type = 'HTML';
         this.elements = [];
@@ -253,12 +253,12 @@ class HTMLComponent extends Component {
      * @param options
      * The options to apply.
      */
-    public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
+    public async update(options: Partial<HTMLComponent.Options>): Promise<void> {
         await super.update(options);
         this.emit({ type: 'afterUpdate' });
     }
 
-    public getOptionsOnDrop(): Partial<HTMLComponent.HTMLComponentOptions> {
+    public getOptionsOnDrop(): Partial<HTMLComponent.Options> {
         return {
             cell: '',
             type: 'HTML',
@@ -323,7 +323,7 @@ class HTMLComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<HTMLComponent.HTMLComponentOptions> {
+    public getOptions(): Partial<HTMLComponent.Options> {
         return {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
             type: 'HTML'
@@ -358,7 +358,7 @@ namespace HTMLComponent {
     /** @internal */
     export type ComponentType = HTMLComponent;
 
-    export interface HTMLComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
         /**
          * Array of HTML elements, declared as string or node.
          * ```

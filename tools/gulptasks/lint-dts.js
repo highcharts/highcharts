@@ -24,18 +24,20 @@ const TEST_FOLDER = path.join('test', 'typescript-dts');
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  *
+ * @param  {object} argv
+ *         Command line arguments
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
-
+function lintDTS(argv) {
     const fsLib = require('./lib/fs');
     const processLib = require('./lib/process');
     const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        logLib.message('Linting ...');
+        logLib.message(`Linting TypeScript declarations (.d.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
         let promiseChain = Promise.resolve();
 
@@ -48,14 +50,20 @@ function task() {
             )
         );
 
-        fsLib
-            .getDirectoryPaths(TEST_FOLDER, false)
-            .filter(folder => !folder.includes('dashboards'))
-            .forEach(folder => {
-                promiseChain = promiseChain.then(
-                    () => processLib.exec('npx tsc -p ' + folder)
-                );
-            });
+        let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
+
+        directories = directories.filter(folder => {
+            if (argv.dashboards) {
+                return folder.includes('dashboards');
+            }
+            return !folder.includes('dashboards');
+        });
+
+        directories.forEach(folder => {
+            promiseChain = promiseChain.then(
+                () => processLib.exec('npx tsc -p ' + folder)
+            );
+        });
 
         promiseChain
             .then(() => logLib.success('Finished linting'))
@@ -64,6 +72,12 @@ function task() {
     });
 }
 
-require('./jsdoc-dts');
+lintDTS.description = 'Test TypeScript declarations in the code folder using tsconfig.json';
+lintDTS.flags = {
+    '--dashboards': 'Test only dashboards TypeScript declarations'
+};
+gulp.task('lint-dts', () => lintDTS(require('yargs').argv));
 
-gulp.task('lint-dts', task);
+module.exports = {
+    lintDTS
+};
