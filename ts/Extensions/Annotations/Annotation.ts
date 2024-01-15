@@ -60,9 +60,7 @@ const {
     fireEvent,
     merge,
     pick,
-    splat,
-    isArray,
-    defined
+    splat
 } = U;
 
 /* *
