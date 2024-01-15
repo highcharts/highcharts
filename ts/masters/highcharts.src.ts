@@ -63,6 +63,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.chart = Chart.chart;
 G.Fx = Fx;
+G.HTMLElement = HTMLElement;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
