@@ -581,14 +581,6 @@ QUnit.test(
                             {
                                 point: 'pointII',
                                 y: 0
-                            },
-                            {
-                                point: {
-                                    x: 2,
-                                    y: 50,
-                                    xAxis: 0,
-                                    yAxis: 0
-                                }
                             }
                         ]
                     }
