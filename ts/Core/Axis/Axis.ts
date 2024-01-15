@@ -3931,26 +3931,21 @@ class Axis {
             // Major ticks. Pull out the first item and render it last so that
             // we can get the position of the neighbour label. #808.
             if (tickPositions.length) { // #1300
-
-                const extraTick = axis.series.find( // #20166
-                    (series): string | number | false | undefined => (
-                        series.xAxis && series.options.pointPlacement
-                    )
-                );
-
-                if (extraTick && chart.inverted) {
-                    tickPositions.pop();
-                }
-
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    axis.renderTick(pos, i, slideInTicks);
+                    if (
+                        (isNumber(axis.max) && pos <= axis.max) &&
+                        (isNumber(axis.min) && pos >= axis.min)
+                    ) {
+                        axis.renderTick(pos, i, slideInTicks);
+                    }
                 });
                 // In a categorized axis, the tick marks are displayed
                 // between labels. So we need to add a tick mark and
                 // grid line at the left edge of the X axis.
                 if (
-                    !extraTick &&
                     tickmarkOffset &&
+                    (isNumber(axis.max) && axis.max >= -1) &&
+                    (isNumber(axis.min) && axis.min <= -1) &&
                     (axis.min === 0 || axis.single)
                 ) {
                     if (!ticks[-1]) {
