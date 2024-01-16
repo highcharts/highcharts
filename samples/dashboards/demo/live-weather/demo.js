@@ -283,11 +283,10 @@ const KPIChartOptions = {
 
 // Create JSON object for application specific data format
 function processWeatherData(data) {
-    const timeRange = 48; // Hours
     const retData = [];
     const forecastData = data.properties.timeseries;
 
-    for (let i = 0; i < timeRange; i++) {
+    for (let i = 0; i < rangeConfig.hours; i++) {
         const item = forecastData[i];
         const pred = item.data.instant.details;
         const msec = new Date(item.time).getTime();
