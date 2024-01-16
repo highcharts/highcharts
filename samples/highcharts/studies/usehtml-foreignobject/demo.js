@@ -1,18 +1,14 @@
 // Experimental support `foreignObject`. This will resolve all z-index issues,
 // and we can remove the `foreignObject` regex in Exporting.
 (H => {
-    // return;
     const { addEvent, css, HTMLElement, SVGElement } = H;
 
     addEvent(HTMLElement, 'afterInit', function () {
 
-        const renderer = this.renderer,
-            { x = 0, y = 0 } = this;
+        const renderer = this.renderer;
 
         this.fo = renderer.createElement('foreignObject')
             .attr({
-                x,
-                y: y - this.renderer.fontMetrics(this).b,
                 zIndex: 2
             });
         this.foBody = renderer.createElement('body')
@@ -20,46 +16,28 @@
             .add(this.fo);
     });
 
-    HTMLElement.prototype.add = function (
-        parentGroup
-    ) {
+    HTMLElement.prototype.add = function (parentGroup) {
 
         this.fo.add(parentGroup);
 
         // Like super.add
         SVGElement.prototype.add.call(this, this.foBody);
 
-        const { width, height } = this.getBBox();
-        this.fo.attr({ width, height });
-
-        css(this.element, { left: 0, top: 0 });
+        this.updateTransform();
 
         return this;
-    };
-    HTMLElement.prototype.xSetter = function (
-        value,
-        key
-    ) {
-        this.fo?.attr(key, value);
-        this.doTransform = true;
-        css(this.element, { left: 0 });
-
-    };
-    HTMLElement.prototype.ySetter = function (
-        value,
-        key
-    ) {
-        value -= this.renderer.fontMetrics(this).b;
-        this.fo?.attr(key, value);
-        this.doTransform = true;
-        css(this.element, { left: 0 });
     };
 
     const updateTransform = HTMLElement.prototype.updateTransform;
     HTMLElement.prototype.updateTransform = function () {
         updateTransform.call(this);
         const { width, height } = this.getBBox();
-        this.fo?.attr({ width, height });
+        this.fo?.attr({
+            x: this.x + (this.xCorr || 0),
+            y: this.y + (this.yCorr || 0),
+            width,
+            height
+        });
         css(this.element, { left: 0, top: 0 });
     };
 })(Highcharts);
@@ -76,10 +54,16 @@ ren.circle(100, 100, 3)
         fill: '#2caffe'
     })
     .add();
+
 ren.text('Hello there', 100, 100, true)
+    .attr({
+        align: 'center',
+        // rotation: -45
+    })
     .add();
 // */
 
+//*
 Highcharts.chart('container', {
 
     chart: {
@@ -130,3 +114,4 @@ Highcharts.chart('container', {
     }]
 
 });
+// */
