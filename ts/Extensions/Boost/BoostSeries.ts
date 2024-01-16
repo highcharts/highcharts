@@ -898,12 +898,12 @@ function scatterProcessData(
         data = options.data || series.data,
         xData = series.xData as Array<number>,
         xExtremes = xAxis.getExtremes(),
-        xMax = xExtremes.max,
-        xMin = xExtremes.min,
+        xMax = xExtremes.max ?? Number.MAX_VALUE,
+        xMin = xExtremes.min ?? -Number.MAX_VALUE,
         yData = series.yData as Array<number>,
         yExtremes = yAxis.getExtremes(),
-        yMax = yExtremes.max,
-        yMin = yExtremes.min;
+        yMax = yExtremes.max ?? Number.MAX_VALUE,
+        yMin = yExtremes.min ?? -Number.MAX_VALUE;
 
     // Skip processing in non-boost zoom
     if (
@@ -943,8 +943,12 @@ function scatterProcessData(
         processedYData: Array<number> = [];
 
     let cropped = false,
+        xDataMax = xData[0],
+        xDataMin = xData[0],
         x: number,
-        y: number;
+        y: number,
+        yDataMax = yData[0],
+        yDataMin = yData[0];
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
@@ -957,9 +961,27 @@ function scatterProcessData(
             processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
+            xDataMax = Math.max(xDataMax, x);
+            xDataMin = Math.min(xDataMin, x);
+            yDataMax = Math.max(yDataMax, y);
+            yDataMin = Math.min(yDataMin, y);
         } else {
             cropped = true;
         }
+    }
+
+    if (!isNumber(xExtremes.max) || !isNumber(xExtremes.min)) {
+        xAxis.setOptions({
+            max: xAxis.options.max || xDataMax,
+            min: xAxis.options.min || xDataMin
+        });
+    }
+
+    if (!isNumber(yExtremes.max) || !isNumber(yExtremes.min)) {
+        yAxis.setOptions({
+            max: yAxis.options.max || yDataMax,
+            min: yAxis.options.min || yDataMin
+        });
     }
 
     // Set properties as base processData
