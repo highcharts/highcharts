@@ -981,7 +981,6 @@ class Axis {
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
             cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
             transB = axis.transB;
-
         let translatedValue = options.translatedValue,
             force = options.force,
             x1: number,
@@ -989,7 +988,6 @@ class Axis {
             x2: number,
             y2: number,
             skip: boolean;
-
         // eslint-disable-next-line valid-jsdoc
         /**
          * Check if x is between a and b. If not, either move to a/b
@@ -1030,9 +1028,16 @@ class Axis {
 
             x1 = x2 = Math.round(translatedValue + transB);
             y1 = y2 = Math.round(cHeight - translatedValue - transB);
-            if (!isNumber(translatedValue)) { // No min or max
+
+            if (
+                !axis.horiz ?
+                    (y1 < axisTop || y1 > axisTop + axis.height) :
+                    (x1 < axisLeft || x1 > axisLeft + axis.width) ||
+                // #7175, don't force it when path is invalid
+                !isNumber(translatedValue)
+            ) {
                 skip = true;
-                force = false; // #7175, don't force it when path is invalid
+                force = false;
             } else if (axis.horiz) {
                 y1 = axisTop;
                 y2 = cHeight - axis.bottom;
@@ -3932,22 +3937,12 @@ class Axis {
             // we can get the position of the neighbour label. #808.
             if (tickPositions.length) { // #1300
                 tickPositions.forEach(function (pos: number, i: number): void {
-                    if (
-                        (isNumber(axis.max) && pos <= axis.max) &&
-                        (isNumber(axis.min) && pos >= axis.min)
-                    ) {
-                        axis.renderTick(pos, i, slideInTicks);
-                    }
+                    axis.renderTick(pos, i, slideInTicks);
                 });
                 // In a categorized axis, the tick marks are displayed
                 // between labels. So we need to add a tick mark and
                 // grid line at the left edge of the X axis.
-                if (
-                    tickmarkOffset &&
-                    (isNumber(axis.max) && axis.max >= -1) &&
-                    (isNumber(axis.min) && axis.min <= -1) &&
-                    (axis.min === 0 || axis.single)
-                ) {
+                if (tickmarkOffset && (axis.min === 0 || axis.single)) {
                     if (!ticks[-1]) {
                         ticks[-1] = new Tick(axis, -1, null as any, true);
                     }
