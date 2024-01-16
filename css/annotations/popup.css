@@ -143,7 +143,8 @@ button.highcharts-indicator-list-item {
     overflow: hidden;
     word-break: break-all;
     box-sizing: border-box;
-    margin: 2px 0;
+    background-color: var(--highcharts-background-color);
+    text-align: left;
 }
 
 .highcharts-indicator-list li {
@@ -202,11 +203,12 @@ button.highcharts-tab-item.highcharts-tab-item-active {
     cursor: pointer;
 }
 
-.highcharts-popup button {
+div.highcharts-popup-rhs-col > button {
     float: right;
+}
+
+.highcharts-popup button {
     border: none;
-    background: var(--highcharts-neutral-color-3);
-    color: var(--highcharts-neutral-color-60);
 }
 
 .highcharts-popup button:first-child {
@@ -215,6 +217,10 @@ button.highcharts-tab-item.highcharts-tab-item-active {
 
 button.highcharts-tab-item.highcharts-tab-disabled {
     color: var(--highcharts-neutral-color-20);
+}
+
+button.highcharts-tab-item.highcharts-tab-disabled:hover {
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 /* annotation edit small popup */
