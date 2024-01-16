@@ -22,8 +22,9 @@ Highcharts.chart('container', {
         dataLabels: {
             rotation: 90,
             y: 30,
-            align: 'left',
-            color: 'black'
+            verticalAlign: 'top',
+            color: 'black',
+            padding: 0
         },
         offset: '65%',
         data: [
