@@ -892,8 +892,8 @@ class HighchartsComponent extends Component {
         if (
             this.connector &&
             chart &&
-            chart.series
-            // this.connector.table.id !== connector?.table.id
+            chart.series &&
+            this.connector.table.id !== connector?.table.id
         ) {
             const storeTableID = this.connector.table.id;
             for (let i = chart.series.length - 1; i >= 0; i--) {
