@@ -29,10 +29,10 @@ const paramConfig = {
         min: 800,
         max: 1100,
         colorStops: [
-            [0.0, '#000000'],
-            [0.5, '#CCCCCC'], // 950 hPa
-            [0.7, '#6666CC'], // 1013 hPa
-            [0.8, '#3333CC']  // 1030 hPa
+            [0.0, '#C0CCC0'],
+            [0.5, '#CCCC99'], // 950 hPa
+            [0.7, '#99CC66'], // 1013 hPa
+            [0.8, '#336633']  // 1030 hPa
         ]
     },
     humidity: {
@@ -41,12 +41,8 @@ const paramConfig = {
         min: 0,
         max: 100,
         colorStops: [
-            [0.4, '#dceff5'],
-            [0.5, '#87abd6'],
-            [0.6, '#dceff5'],
-            [0.7, '#5470b3'],
-            [0.8, '#2843b8'],
-            [0.9, '#0f11a6']
+            [0.0, '#000000'],
+            [1.0, '#CCCC00']
         ]
     },
     buildDescription: function (param) {
