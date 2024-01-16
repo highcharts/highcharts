@@ -288,10 +288,22 @@ class ProxyProvider {
     public removeGroup(groupKey: string): void {
         const group = this.groups[groupKey];
         if (group) {
-            const existingIndex = 
-                this.domElementProvider.elements.indexOf(group.groupElement);
-            if (existingIndex !== -1) {
-                this.domElementProvider.elements.splice(existingIndex, 1);
+            const { elements } = this.domElementProvider,
+                groupIndex = elements.indexOf(group.groupElement),
+                containerIndex = elements.indexOf(group.proxyContainerElement)
+
+            // Remove detached HTML elements to prevent memory leak (#20329).
+            if (groupIndex !== -1) {
+                elements.splice(groupIndex, 1);
+            }
+
+            // Sometimes groupElement is a wrapper around the proxyContainer, so
+            // the real one proxyContainer needs to be removed also.
+            if (
+                group.groupElement !== group.proxyContainerElement &&
+                containerIndex !== -1
+            ) {
+                elements.splice(containerIndex, 1);
             }
             
             removeElement(group.groupElement);

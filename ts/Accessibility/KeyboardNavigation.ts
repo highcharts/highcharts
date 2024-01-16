@@ -463,6 +463,8 @@ class KeyboardNavigation {
             keyboardNavigation = this,
             eventName = 'focus';
 
+        // Do not add event to the element if event is already added to prevent
+        // memory leak (#20329).
         if (
             (element as any).hcEvents &&
             !(element as any).hcEvents[eventName]
