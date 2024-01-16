@@ -1180,10 +1180,6 @@ class Tooltip {
                 pointer,
                 scrollablePixelsY = 0,
                 scrollablePixelsX,
-                scrollingContainer: {
-                    scrollLeft,
-                    scrollTop
-                } = { scrollLeft: 0, scrollTop: 0 },
                 styledMode
             },
             distance,
@@ -1192,6 +1188,11 @@ class Tooltip {
                 positioner
             }
         } = tooltip;
+        const {
+            scrollLeft = 0,
+            scrollTop = 0
+        } = chart.scrollablePlotArea?.scrollingContainer || {};
+
 
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If

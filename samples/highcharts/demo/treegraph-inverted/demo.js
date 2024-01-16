@@ -218,7 +218,7 @@ Highcharts.chart('container', {
                         to: -0.5
                     },
                     dataLabels: {
-                        align: 'left',
+                        verticalAlign: 'top',
                         rotation: 90,
                         y: 20
                     }

@@ -715,21 +715,17 @@ class Chart {
         options: Chart.IsInsideOptionsObject = {}
     ): boolean {
         const {
-            inverted,
-            plotBox,
-            plotLeft,
-            plotTop,
-            scrollablePlotBox
-        } = this;
-
-        let scrollLeft = 0,
-            scrollTop = 0;
-
-        if (options.visiblePlotOnly && this.scrollingContainer) {
-            ({ scrollLeft, scrollTop } = this.scrollingContainer);
-        }
-
-        const series = options.series,
+                inverted,
+                plotBox,
+                plotLeft,
+                plotTop,
+                scrollablePlotBox
+            } = this,
+            { scrollLeft = 0, scrollTop = 0 } = (
+                options.visiblePlotOnly &&
+                this.scrollablePlotArea?.scrollingContainer
+            ) || {},
+            series = options.series,
             box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox,
             x = options.inverted ? plotY : plotX,
             y = options.inverted ? plotX : plotY,
@@ -3501,7 +3497,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
                     null :
-                    'scrollablePlotBox'
+                    'plotBox'
             );
 
         /**

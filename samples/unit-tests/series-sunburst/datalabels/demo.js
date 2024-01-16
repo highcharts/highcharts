@@ -53,7 +53,8 @@ QUnit.test('Rotation mode', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[0].points.map(point => typeof point.dataLabel.textPath),
+        chart.series[0].points.map(point =>
+            typeof point.dataLabel.text.textPath),
         [
             'undefined',
             'object',

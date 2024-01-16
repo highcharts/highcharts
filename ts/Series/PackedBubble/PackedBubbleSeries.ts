@@ -122,8 +122,6 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public hoverPoint?: PackedBubblePoint;
 
-    public invertible = false;
-
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
@@ -1268,6 +1266,7 @@ extend(PackedBubbleSeries.prototype, {
     directTouch: true,
     forces: ['barycenter', 'repulsive'],
     hasDraggableNodes: true,
+    invertible: false,
     isCartesian: false,
     noSharedTooltip: true,
     pointArrayMap: ['value'],
