@@ -60,16 +60,13 @@ const paramConfig = {
 
 // Geolocation info: https://www.maps.ie/coordinates.html
 
-// Three sets of locations are available:
-//  - worldLocations, testLocations, euroLocations
-//  - selected in "weatherStations.location"
-
 // eslint-disable-next-line no-unused-vars
 const worldLocations = {
     default: 'Dublin',
     mapView: {
-        zoom: 1.7,
-        center: [0, 10]
+        maxZoom: 4
+        // zoom: 1.7,
+        // center: [0, 10]
     },
     points: {
         'New York': {
@@ -105,116 +102,8 @@ const worldLocations = {
     }
 };
 
-// eslint-disable-next-line no-unused-vars
-const testLocations = {
-    default: 'Bergen',
-    mapView: {
-        zoom: 5,
-        center: [10, 55]
-    },
-    points: {
-        Vangsnes: {
-            lat: 61.16981,
-            lon: 6.64151,
-            alt: 49
-        },
-        Bergen: {
-            lat: 60.384,
-            lon: 5.332,
-            alt: 12
-        },
-        Oslo: {
-            lat: 59.93743,
-            lon: 10.71819,
-            alt: 94
-        },
-        Kraków: {
-            lat: 50.06143,
-            lon: 19.93658,
-            alt: 219
-        },
-        Olomouc: {
-            lat: 49.59552,
-            lon: 17.25175,
-            alt: 223
-        }
-    }
-};
-
-// eslint-disable-next-line no-unused-vars
-const euroLocations = {
-    default: 'London',
-    mapView: {
-        zoom: 3.8,
-        center: [10, 50]
-    },
-    points: {
-        London: {
-            lat: 51.507351,
-            lon: -0.127758,
-            alt: 22
-        },
-        Berlin: {
-            lat: 52.5170365,
-            lon: 13.3888599,
-            alt: 44
-        },
-        Dublin: {
-            lat: 53.35,
-            lon: -6.26,
-            alt: 8
-        },
-        Istanbul: {
-            lat: 41.008240,
-            lon: 28.978359,
-            alt: 39
-        },
-        Roma: {
-            lat: 41.8933203,
-            lon: 12.4829321,
-            alt: 46
-        },
-        Lyon: {
-            lat: 45.7578137,
-            lon: 4.8320114,
-            alt: 171
-        },
-        Oslo: {
-            lat: 59.93743,
-            lon: 10.71819,
-            alt: 94
-        },
-        Kraków: {
-            lat: 50.06143,
-            lon: 19.93658,
-            alt: 219
-        },
-        Helsinki: {
-            lat: 60.1674881,
-            lon: 24.9427473,
-            alt: 0
-        },
-        Sevilla: {
-            lat: 37.3886303,
-            lon: -5.9953403,
-            alt: 17
-        },
-        Київ: {
-            lat: 50.4500336,
-            lon: 30.5241361,
-            alt: 157
-        },
-        Wien: {
-            lat: 48.2083537,
-            lon: 16.3725042,
-            alt: 190
-        }
-    }
-};
-
 // Application configuration (selection of weather stations + data provider)
 const weatherStations = {
-    // One of: testLocations, worldLocations, euroLocations
     location: worldLocations,
 
     // Base URL for weather forecast
@@ -254,7 +143,7 @@ const KPIChartOptions = {
         startAngle: -90
     },
     series: [{
-        data: null, // Populated on the fly
+        data: [0],
         dataLabels: {
             format: '{y:.1f}',
             y: -34

@@ -9,13 +9,12 @@
  * */
 
 #city-chart {
-    --color-background: #f0f8f0;
-    --color-axis: #000;
-    --color-axis-labels: #000;
-    --color-title: #000;
+    --color-axis: #f7f7f7;
+    --color-axis-labels: #e7e7ec;
+    --color-background: #5352be;
+    --color-title: #f0f0f0;
     --color-text: #000;
-    --color-tooltip-text: #e7e7ec;
-    --color-tooltip-background: #5352be;
+    --color-tooltip-background: #dadae2;
 }
 
 #kpi-layout {
@@ -63,7 +62,7 @@
 }
 
 #world-map {
-    --color-background: #009dc4;
+    --color-background: #5352be;
     --color-map: #dddbef;
     --color-marker-border: #fff;
     --color-marker-text: #fff;
@@ -144,7 +143,7 @@
 }
 
 #city-chart .highcharts-tooltip text {
-    fill: var(--color-tooltip-text);
+    fill: var(--color-text);
 }
 
 #city-chart .highcharts-tooltip-box {
@@ -160,7 +159,7 @@
 }
 
 .highcharts-legend-item > text {
-    fill: #000;
+    fill: #fff;
 }
 
 /* *
@@ -172,7 +171,6 @@
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
-    cursor: pointer;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
@@ -273,10 +271,6 @@
     background-color: var(--color-hover-background);
     border-color: var(--color-hover-border);
     color: var(--color-hover-text);
-}
-
-#selection-grid [data-column-name="time"] {
-    font-size: 12px;
 }
 
 /* *
