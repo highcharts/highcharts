@@ -98,6 +98,46 @@ const worldLocations = {
             lat: -26.20,
             lon: 28.034,
             alt: 1767
+        },
+        Istanbul: {
+            lat: 41.00824,
+            lon: 28.978359,
+            alt: 39
+        },
+        Helsinki: {
+            lat: 60.167488,
+            lon: 24.942747,
+            alt: 0
+        },
+        Bengaluru: {
+            lat: 12.976793,
+            lon: 77.590082,
+            alt: 921
+        },
+        Dakar: {
+            lat: 14.693425,
+            lon: -17.447938,
+            alt: 12
+        },
+        Bogotá: {
+            lat: 4.6529539,
+            lon: -74.083564,
+            alt: 2556
+        },
+        Ulanbaatar: {
+            lat: 47.940932,
+            lon: 106.91795,
+            alt: 1316
+        },
+        'Hong Kong': {
+            lat: 22.284893,
+            lon: 114.1583,
+            alt: 6
+        },
+        'San Diego': {
+            lat: 32.7174202,
+            lon: -117.162,
+            alt: 36
         }
     }
 };
@@ -126,7 +166,6 @@ const weatherStations = {
 // - Copied from https://www.highcharts.com/demo/dashboards/climate
 const KPIChartOptions = {
     chart: {
-        height: 166,
         margin: [8, 8, 16, 8],
         spacing: [8, 8, 8, 8],
         styledMode: true,
