@@ -288,6 +288,12 @@ class ProxyProvider {
     public removeGroup(groupKey: string): void {
         const group = this.groups[groupKey];
         if (group) {
+            const existingIndex = 
+                this.domElementProvider.elements.indexOf(group.groupElement);
+            if (existingIndex !== -1) {
+                this.domElementProvider.elements.splice(existingIndex, 1);
+            }
+            
             removeElement(group.groupElement);
             delete this.groups[groupKey];
         }
