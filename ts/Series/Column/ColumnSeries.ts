@@ -450,6 +450,9 @@ class ColumnSeries extends Series {
                 }
             );
 
+            indexInCategory = this.xAxis.reversed ?
+                totalInCategory - 1 - indexInCategory : indexInCategory;
+
             // Compute the adjusted x position
             const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
                 pointWidth;

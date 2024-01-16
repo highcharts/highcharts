@@ -156,7 +156,7 @@ class DataGridComponent extends Component {
 
         const component = new DataGridComponent(
             cell,
-            merge<DataGridComponent.ComponentOptions>(options as any, {
+            merge<DataGridComponent.Options>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -181,7 +181,7 @@ class DataGridComponent extends Component {
     /** @private */
     public dataGridOptions: Partial<BaseDataGridOptions>;
     /** @private */
-    public options: DataGridComponent.ComponentOptions;
+    public options: DataGridComponent.Options;
     /** @private */
     public sync: Component['sync'];
     /** @private */
@@ -195,14 +195,14 @@ class DataGridComponent extends Component {
 
     constructor(
         cell: Cell,
-        options: Partial<DataGridComponent.ComponentOptions>
+        options: Partial<DataGridComponent.Options>
     ) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(cell, options);
 
         this.connectorListeners = [];
-        this.options = options as DataGridComponent.ComponentOptions;
+        this.options = options as DataGridComponent.Options;
         this.type = 'DataGrid';
 
         if (this.options.dataGridClassName) {
@@ -383,7 +383,7 @@ class DataGridComponent extends Component {
     }
 
     public async update(
-        options: Partial<DataGridComponent.ComponentOptions>
+        options: Partial<DataGridComponent.Options>
     ): Promise<void> {
         if (options.connector?.id !== this.connectorId) {
             const connectorListeners = this.connectorListeners;
@@ -476,10 +476,10 @@ class DataGridComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.ComponentOptions> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
-        let options: Partial<DataGridComponent.ComponentOptions> = {
+        let options: Partial<DataGridComponent.Options> = {
             cell: '',
             type: 'DataGrid'
         };
@@ -521,7 +521,7 @@ class DataGridComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<DataGridComponent.ComponentOptions> {
+    public getOptions(): Partial<DataGridComponent.Options> {
         return {
             ...diffObjects(this.options, DataGridComponent.defaultOptions),
             type: 'DataGrid'
@@ -568,7 +568,7 @@ namespace DataGridComponent {
     /**
      * Options to control the DataGrid component.
      */
-    export interface ComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
 
         /**
          * The style class to add to the rendered data grid container.

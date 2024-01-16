@@ -42,5 +42,5 @@ G.Navigator.compose(G.Axis, G.Chart, G.Series);
 G.OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 G.RangeSelector.compose(G.Axis, G.Chart);
 G.Scrollbar.compose(G.Axis);
-G.StockChart.compose(G.Axis, G.Series, G.SVGRenderer);
+G.StockChart.compose(G.Chart, G.Axis, G.Series, G.SVGRenderer);
 export default Highcharts;

@@ -75,6 +75,8 @@ declare module '../Axis/AxisLike' {
 declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+        fixedRange?: number;
+        setFixedRange(range: number|undefined): void;
     }
 }
 
@@ -386,6 +388,7 @@ namespace StockChart {
 
     /** @private */
     export function compose(
+        ChartClass: typeof Chart,
         AxisClass: typeof Axis,
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
@@ -399,7 +402,10 @@ namespace StockChart {
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
 
+            ChartClass.prototype.setFixedRange = setFixedRange;
+
             seriesProto.forceCropping = seriesForceCropping;
+
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
 
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
@@ -910,6 +916,28 @@ namespace StockChart {
             );
 
         return groupingEnabled;
+    }
+
+    /**
+     * Sets the chart.fixedRange to the specified value. If the value is larger
+     * than actual range, sets it to the maximum possible range. (#20327)
+     *
+     * @private
+     * @function Highcharts.StockChart#setFixedRange
+     * @param {number|undefined} range
+     *        Range to set in axis units.
+     */
+    function setFixedRange(this: Chart, range: number | undefined): void {
+        const xAxis = this.xAxis[0];
+        if (
+            defined(xAxis.dataMax) &&
+            defined(xAxis.dataMin) &&
+            range
+        ) {
+            this.fixedRange = Math.min(range, xAxis.dataMax - xAxis.dataMin);
+        } else {
+            this.fixedRange = range;
+        }
     }
 
     /* eslint-disable jsdoc/check-param-names */

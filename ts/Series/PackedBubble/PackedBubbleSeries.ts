@@ -1270,6 +1270,7 @@ extend(PackedBubbleSeries.prototype, {
     directTouch: true,
     forces: ['barycenter', 'repulsive'],
     hasDraggableNodes: true,
+    invertible: false,
     isCartesian: false,
     noSharedTooltip: true,
     pointArrayMap: ['value'],

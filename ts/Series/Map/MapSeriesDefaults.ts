@@ -65,8 +65,9 @@ const MapSeriesDefaults: MapSeriesOptions = {
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
-
-            return isNumber(value) ? numberFormatter(value, -1) : '';
+            return isNumber(value) ?
+                numberFormatter(value, -1) :
+                this.point.name; // #20231
         },
         inside: true, // for the color
         overflow: false as any,
