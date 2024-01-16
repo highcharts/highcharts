@@ -293,11 +293,6 @@ function getDlOptions(
                 2 * (options.padding || 0), 1);
         }
     }
-    // NOTE: alignDataLabel positions the data label differntly when rotation is
-    // 0. Avoiding this by setting rotation to a small number.
-    if (options.rotation === 0) {
-        options.rotation = 0.001;
-    }
     return options;
 }
 
@@ -830,7 +825,7 @@ class SunburstSeries extends TreemapSeries {
 
             child.shapeArgs = merge(values, {
                 plotX: center.x,
-                plotY: center.y + 4 * Math.abs(Math.cos(angle))
+                plotY: center.y
             });
             child.values = merge(values, {
                 val: val

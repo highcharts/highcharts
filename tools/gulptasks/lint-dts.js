@@ -68,7 +68,13 @@ function lintDTS(argv) {
         promiseChain
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
-            .catch(reject);
+            .catch(error => {
+                if (argv.dashboards) {
+                    logLib.failure('Linting failed, make sure you have built the Highcharts declarations first using "npx gulp dist"');
+                }
+
+                reject(error);
+            });
     });
 }
 
