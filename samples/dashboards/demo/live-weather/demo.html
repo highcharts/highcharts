@@ -13,18 +13,33 @@
 <div id="container">Loading...</div>
 
 <div id="description">
-    <p>
-        This demo shows weather forecasts from the <a href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank">Norwegian Meteorological Institute</a>.
-        The data contains the current observation and forecast for the next 24 hours. The data shown is from the largest marker on
-        the map and by clicking on another marker the corresponding forecast is displayed.</p>
-    <p>
-    This demo contains four different components:
+    <h1>Live weather demo</h1>
+    <p>The demo shows weather forecasts from the <a
+            href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank">Norwegian
+            Meteorological Institute</a> in four Dashboard components.
+    </p>
+    <h2>Dashboard components</h2>
     <ul>
-        <li>Highcharts Maps</li>
-        <li>Dashboard KPI (Key Performance Indicator)</li>
-        <li>Dashboard Datagrid</li>
-        <li>Highcharts spline chart</li>
+        <li><b>Highcharts Maps</b> markers and tooltip show the selected parameter.</li>
+        <li><b>Dashboard KPI</b> shows station info, temperature, pressure and humidity of the selected station.</li>
+        <li><b>Dashboard Datagrid</b> shows all the parameters of the selected station for the next 24 hours.</li>
+        <li><b>Highcharts Spline Chart</b> shows the selected parameter of the selected station for the next 24 hours.</li>
+    </ul>
+    <h2>Data set</h2>
+    <p>The data shown in this demo are weather forecasts containing temperature, humidity and pressure from a selection
+        of weather stations around the world.</p>
+    <ul>
+        <li>The station is selected by clicking on the map</li>
+        <li>The weather parameter (e.g. humidity) clicking on an item in the KPI component.</li>
     </ul>
     </p>
+    <h2>Customizing the demo</h2>
+    <p>The demo offers limited customization possibilities directly in the code:</p>
+    <ul>
+        <li>Three sets of weather data are available, covering different regions of the world.</li>
+        <li>New weather stations can be added (and existing deleted).</li>
+        <li>The range of the data set is configurable. By default the sample start from the latest
+            observation and 24 hours into the future. Note that the forecast covers 19 days.</li>
+    </ul>
 </div>
 </div>
