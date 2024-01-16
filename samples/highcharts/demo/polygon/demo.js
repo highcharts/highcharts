@@ -16,8 +16,7 @@ Highcharts.chart('container', {
             text: 'Height (cm)'
         },
         startOnTick: true,
-        endOnTick: true,
-        showLastLabel: true
+        endOnTick: true
     },
     yAxis: {
         title: {

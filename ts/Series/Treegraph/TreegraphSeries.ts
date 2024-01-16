@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -39,9 +39,10 @@ const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
-const { getLevelOptions } = TU;
+const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
+    arrayMax,
     extend,
     merge,
     pick,
@@ -143,7 +144,11 @@ class TreegraphSeries extends TreemapSeries {
         const chart = this.chart,
             series = this,
             plotSizeX = chart.plotSizeX as number,
-            plotSizeY = chart.plotSizeY as number;
+            plotSizeY = chart.plotSizeY as number,
+            columnCount = arrayMax(
+                this.points.map((p): number => p.node.xPosition)
+            );
+
         let minX = Infinity,
             maxX = -Infinity,
             minY = Infinity,
@@ -166,6 +171,10 @@ class TreegraphSeries extends TreemapSeries {
                     level.marker,
                     point.options.marker
                 ),
+                nodeWidth = markerOptions.width ?? getNodeWidth(
+                    this,
+                    columnCount
+                ),
                 radius = relativeLength(
                     markerOptions.radius || 0,
                     Math.min(plotSizeX, plotSizeY)
@@ -174,9 +183,10 @@ class TreegraphSeries extends TreemapSeries {
                 nodeSizeY = (symbol === 'circle' || !markerOptions.height) ?
                     radius * 2 :
                     relativeLength(markerOptions.height, plotSizeY),
-                nodeSizeX = symbol === 'circle' || !markerOptions.width ?
+                nodeSizeX = symbol === 'circle' || !nodeWidth ?
                     radius * 2 :
-                    relativeLength(markerOptions.width, plotSizeX);
+                    relativeLength(nodeWidth, plotSizeX);
+
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 

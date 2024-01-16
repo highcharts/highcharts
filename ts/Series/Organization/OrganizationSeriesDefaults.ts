@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -353,8 +353,8 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     minNodeLength: 10,
     /**
      * In a horizontal chart, the width of the nodes in pixels. Note that
-     * most organization charts are vertical, so the name of this option
-     * is counterintuitive.
+     * most organization charts are inverted (vertical), so the name of this
+     * option is counterintuitive.
      *
      * @see [minNodeLength](#plotOptions.organization.minNodeLength)
      *

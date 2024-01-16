@@ -2,9 +2,15 @@ QUnit.test('setSize parameters', function (assert) {
     document.getElementById('container').style.height = '400px';
     document.getElementById('container').style.width = '600px';
 
-    var chart = Highcharts.chart('container', {
+    let redrawCounter = 0;
+    const chart = Highcharts.chart('container', {
         chart: {
-            animation: false
+            animation: false,
+            events: {
+                redraw() {
+                    redrawCounter++;
+                }
+            }
         },
         series: [
             {
@@ -17,6 +23,13 @@ QUnit.test('setSize parameters', function (assert) {
     assert.strictEqual(chart.chartWidth, 600, 'Initial width');
 
     assert.strictEqual(chart.chartHeight, 400, 'Initial height');
+
+    chart.setSize(undefined, 400);
+    assert.strictEqual(
+        redrawCounter,
+        0,
+        'Chart should not be redrawn when computed size does not change'
+    );
 
     // Missing first parameter
     chart.setSize(undefined, 300);

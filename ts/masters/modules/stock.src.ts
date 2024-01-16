@@ -5,7 +5,7 @@
  *
  * Highcharts Stock as a plugin for Highcharts
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -38,4 +38,4 @@ OHLCSeries.compose(G.Series);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
-StockChart.compose(G.Axis, G.Series, G.SVGRenderer);
+StockChart.compose(G.Chart, G.Axis, G.Series, G.SVGRenderer);

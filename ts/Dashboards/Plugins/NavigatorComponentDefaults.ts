@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,7 @@
 
 
 import type Globals from '../Globals';
-import type NavigatorComponentOptions from './NavigatorComponentOptions';
+import type Options from './NavigatorComponentOptions';
 
 import Component from '../Components/Component.js';
 
@@ -35,7 +35,7 @@ import Component from '../Components/Component.js';
 
 
 const NavigatorComponentDefaults:
-Globals.DeepPartial<NavigatorComponentOptions> = {
+Globals.DeepPartial<Options> = {
     type: 'Navigator',
     chartOptions: {
         chart: {

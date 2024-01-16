@@ -2,7 +2,7 @@
  *
  *  Data Grid class
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

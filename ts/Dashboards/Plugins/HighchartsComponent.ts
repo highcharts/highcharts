@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -1056,7 +1056,7 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-    export interface Options extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
 
         /**
          * Whether to allow the component to edit the store to which it is

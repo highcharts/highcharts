@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -106,7 +106,7 @@ function axisMinFromRange(
 
         // Let the fixedRange reflect initial settings (#5930)
         if (this.chart) {
-            this.chart.fixedRange = max - min;
+            this.chart.setFixedRange(max - min);
         }
     }
 
