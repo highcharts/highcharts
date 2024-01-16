@@ -116,7 +116,12 @@ Dashboards.board('container', {
         {
             id: 'times',
             type: 'JSON',
-            data: SunCalc.getTimes(date)
+            options: {
+                firstRowAsNames: false,
+                data: Object.entries(SunCalc.getTimes(date, lat, lng))
+                    .map(entry => [entry[0], entry[1].getTime()])
+                    .sort((a, b) => a[1] - b[1])
+            }
         }
         /*
         , {
@@ -210,6 +215,45 @@ Dashboards.board('container', {
                         [1, 'white']
                     ]
                 },
+                events: {
+                    load() {
+                        // When the inital date is current, keep the Sun up to
+                        // date
+                        if (Date.now() - date.getTime() < 1000) {
+                            setInterval(() => {
+                                this.get('sun').points[0].update(
+                                    getSunXY(new Date())
+                                );
+                            }, 60000);
+                        }
+                    },
+                    render() {
+                        // When the sun is below the chart, show a pointer
+                        const { y } = this.get('sun').points[0];
+                        if (!this.sunPointer) {
+                            this.sunPointer = this.renderer.label()
+                                .css({
+                                    fontSize: '0.8em'
+                                })
+                                .add();
+                        }
+                        if (y < this.yAxis[0].min) {
+                            this.sunPointer
+                                .attr({
+                                    text: `↓ Sun, ${Math.abs(y).toFixed(1)}° ` +
+                                        'below horizon',
+                                    x: this.get('sun').points[0].plotX,
+                                    y: this.yAxis[0].len - 10,
+                                    zIndex: 6,
+                                    padding: 0,
+                                    fill: 'rgba(255, 255, 255, 0.75)'
+                                })
+                                .show();
+                        } else {
+                            this.sunPointer.hide();
+                        }
+                    }
+                },
                 styledMode: false
             },
             title: {
@@ -269,10 +313,29 @@ Dashboards.board('container', {
             }]
         }
     }, {
+        cell: 'times',
         connector: {
             id: 'times'
         },
-        cell: 'times',
-        type: 'DataGrid'
+        type: 'DataGrid',
+        dataGridOptions: {
+            columns: [{
+                headerFormat: 'Event',
+                cellFormatter: function () {
+                    const str = this.value
+                        .replace(/([A-Z])/g, ' $1')
+                        .toLowerCase();
+                    return str.charAt(0).toUpperCase() + str.slice(1);
+                }
+            },
+            {
+                headerFormat: 'Time',
+                // @todo Fix after #20444
+                // cellFormat: '{value:%H:%M}'
+                cellFormatter: function () {
+                    return Highcharts.dateFormat('%H:%M UTC', this.value);
+                }
+            }]
+        }
     }]
 }, true);
