@@ -19,24 +19,25 @@
  *
  * */
 
-import type Cell from '../Layout/Cell';
-import type DataGrid from '../../DataGrid/DataGrid';
-import type DataTable from '../../Data/DataTable';
-import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
-import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
-import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
-import type SidebarPopup from '../EditMode/SidebarPopup';
+import type Cell from '../../Layout/Cell';
+import type DataGrid from '../../../DataGrid/DataGrid';
+import type DataTable from '../../../Data/DataTable';
+import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
+import type { ColumnOptions } from '../../../DataGrid/DataGridOptions';
+import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
+import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
+import type Options from './DataGridComponentOptions';
+import type SidebarPopup from '../../EditMode/SidebarPopup';
 
-import Component from '../Components/Component.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
-import DataConverter from '../../Data/Converters/DataConverter.js';
+import Component from '../../Components/Component.js';
+import DataConnector from '../../../Data/Connectors/DataConnector.js';
+import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
-import U from '../../Core/Utilities.js';
-import DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import DataGridComponentDefaults from './DataGridComponentDefaults.js';
+import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
-    merge,
-    uniqueKey
+    merge
 } = U;
 
 /* *
@@ -66,18 +67,7 @@ class DataGridComponent extends Component {
     /** @private */
     public static defaultOptions = merge(
         Component.defaultOptions,
-        {
-            dataGridClassName: 'dataGrid-container',
-            dataGridID: 'dataGrid-' + uniqueKey(),
-            dataGridOptions: {},
-            editableOptions: [{
-                name: 'connectorName',
-                propertyPath: ['connector', 'id'],
-                type: 'select'
-            }],
-            syncHandlers: DataGridSyncHandlers,
-            onUpdate: DataGridComponent.onUpdate
-        }
+        DataGridComponentDefaults
     );
 
     /* *
@@ -85,66 +75,6 @@ class DataGridComponent extends Component {
      *  Static Functions
      *
      * */
-
-    /**
-     * Default update function, if data grid has changed. This functionality can
-     * be replaced with the {@link DataGridComponent.DataGridOptions#onUpdate}
-     * option.
-     *
-     * @private
-     *
-     * @param e
-     * Related keyboard event of the change.
-     *
-     * @param connector
-     * Relate store of the change.
-     */
-    public static onUpdate(
-        e: KeyboardEvent,
-        connector: Component.ConnectorTypes
-    ): void {
-        const inputElement = e.target as HTMLInputElement;
-        if (inputElement) {
-            const parentRow = inputElement
-                .closest('.highcharts-datagrid-row');
-            const cell = inputElement.closest('.highcharts-datagrid-cell');
-
-            const converter = new DataConverter();
-
-            if (
-                parentRow &&
-                parentRow instanceof HTMLElement &&
-                cell &&
-                cell instanceof HTMLElement
-            ) {
-                const dataTableRowIndex = parentRow
-                    .dataset.rowIndex;
-                const { columnName } = cell.dataset;
-
-                if (
-                    dataTableRowIndex !== void 0 &&
-                    columnName !== void 0
-                ) {
-                    const table = connector.table;
-
-                    if (table) {
-                        let valueToSet = converter
-                            .asGuessedType(inputElement.value);
-
-                        if (valueToSet instanceof Date) {
-                            valueToSet = valueToSet.toString();
-                        }
-
-                        table.setCell(
-                            columnName,
-                            parseInt(dataTableRowIndex, 10),
-                            valueToSet
-                        );
-                    }
-                }
-            }
-        }
-    }
 
     /** @private */
     public static fromJSON(
@@ -156,7 +86,7 @@ class DataGridComponent extends Component {
 
         const component = new DataGridComponent(
             cell,
-            merge<DataGridComponent.Options>(options as any, {
+            merge<Options>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -178,12 +108,16 @@ class DataGridComponent extends Component {
 
     /** @private */
     public dataGrid?: DataGrid;
+
     /** @private */
     public dataGridOptions: Partial<BaseDataGridOptions>;
+
     /** @private */
-    public options: DataGridComponent.Options;
+    public options: Options;
+
     /** @private */
     public sync: Component['sync'];
+
     /** @private */
     private connectorListeners: Array<Function>;
 
@@ -193,16 +127,13 @@ class DataGridComponent extends Component {
      *
      * */
 
-    constructor(
-        cell: Cell,
-        options: Partial<DataGridComponent.Options>
-    ) {
+    constructor(cell: Cell, options: Partial<Options>) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(cell, options);
 
         this.connectorListeners = [];
-        this.options = options as DataGridComponent.Options;
+        this.options = options as Options;
         this.type = 'DataGrid';
 
         if (this.options.dataGridClassName) {
@@ -373,18 +304,13 @@ class DataGridComponent extends Component {
     }
 
     /** @private */
-    public resize(
-        width?: number|null,
-        height?: number|null
-    ): void {
+    public resize(width?: number|null, height?: number|null): void {
         if (this.dataGrid) {
             super.resize(width, height);
         }
     }
 
-    public async update(
-        options: Partial<DataGridComponent.Options>
-    ): Promise<void> {
+    public async update(options: Partial<Options>): Promise<void> {
         if (options.connector?.id !== this.connectorId) {
             const connectorListeners = this.connectorListeners;
             for (let i = 0, iEnd = connectorListeners.length; i < iEnd; ++i) {
@@ -476,10 +402,10 @@ class DataGridComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.Options> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
-        let options: Partial<DataGridComponent.Options> = {
+        let options: Partial<Options> = {
             cell: '',
             type: 'DataGrid'
         };
@@ -521,7 +447,7 @@ class DataGridComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<DataGridComponent.Options> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, DataGridComponent.defaultOptions),
             type: 'DataGrid'
@@ -564,63 +490,6 @@ namespace DataGridComponent {
         json: ClassJSON;
     }
     >;
-
-    /**
-     * Options to control the DataGrid component.
-     */
-    export interface Options extends Component.Options {
-
-        /**
-         * The style class to add to the rendered data grid container.
-         */
-        dataGridClassName?: string;
-
-        /**
-         * The identifier for the rendered data grid container.
-         */
-        dataGridID?: string;
-
-        /**
-         * Callback to use when a change in the data grid occurs.
-         */
-        onUpdate: typeof DataGridComponent.onUpdate
-
-        type: 'DataGrid';
-        /**
-         * Generic options to adjust behavior and styling of the rendered data
-         * grid.
-         */
-        dataGridOptions?: BaseDataGridOptions;
-
-        /**
-         * The set of options like `dataGridClassName` and `dataGridID`.
-         */
-        chartClassName?: string;
-
-        /**
-         * The id that is applied to the chart's container.
-         */
-        chartID?: string;
-
-        /** @private */
-        tableAxisMap?: Record<string, string | null>;
-
-        /**
-         * If the `visibleColumns` option is not provided, the data grid will
-         * calculate and include each column from the data connector.
-         * When declared, the data grid will only include the columns that are
-         * listed.
-         *
-         * Alternatively, the column visibility can be controlled by the
-         * `dataGridOptions.columns` option.
-         * ```
-         * Example
-         * visibleColumns: ['Food', 'Vitamin A']
-         * ```
-         */
-        visibleColumns?: Array<string>;
-
-    }
 
     /** @private */
     export interface ComponentJSONOptions

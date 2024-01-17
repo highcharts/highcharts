@@ -21,12 +21,12 @@
  *
  * */
 
-import type Sync from '../Components/Sync/Sync';
+import type Sync from '../../Components/Sync/Sync';
 
-import ComponentType from '../Components/ComponentType';
+import ComponentType from '../../Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
-import U from '../../Core/Utilities.js';
-import DataCursor from '../../Data/DataCursor';
+import U from '../../../Core/Utilities.js';
+import DataCursor from '../../../Data/DataCursor';
 const {
     addEvent
 } = U;
