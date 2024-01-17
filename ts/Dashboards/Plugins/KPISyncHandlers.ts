@@ -41,7 +41,7 @@ const configs: {
     },
     handlers: {
         extremesHandler:
-            function (this: KPIComponent): Function | void {
+            function (this: KPIComponent): (() => void) | void {
                 const { board } = this;
 
                 const handleChangeExtremes = (e: DataCursor.Event): void => {
@@ -100,13 +100,7 @@ const configs: {
 
                 if (board) {
                     registerCursorListeners();
-
-                    this.on('setConnector', (): void =>
-                        unregisterCursorListeners()
-                    );
-                    this.on('afterSetConnector', (): void =>
-                        registerCursorListeners()
-                    );
+                    return unregisterCursorListeners;
                 }
             }
     }

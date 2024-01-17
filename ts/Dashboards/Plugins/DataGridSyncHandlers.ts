@@ -28,7 +28,9 @@ import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 import DataCursor from '../../Data/DataCursor';
 const {
-    addEvent
+    addEvent,
+    isObject,
+    removeEvent
 } = U;
 
 /* *
@@ -44,54 +46,65 @@ const configs: {
     emitters: {
         highlightEmitter: [
             'highlightEmitter',
-            function (this: ComponentType): Function | void {
-                if (this.type === 'DataGrid') {
-                    const { dataGrid, board } = this as DataGridComponent;
-
-                    if (board) {
-
-                        const { dataCursor: cursor } = board;
-                        const callbacks: Function[] = [];
-
-                        if (!dataGrid) {
-                            return;
-                        }
-
-                        callbacks.push(
-                            addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
-                                const table = this.connector && this.connector.table;
-                                if (table) {
-                                    const row = e.row;
-                                    const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
-
-                                    cursor.emitCursor(table, {
-                                        type: 'position',
-                                        row: parseInt(row.dataset.rowIndex, 10),
-                                        column: cell ? cell.dataset.columnName : void 0,
-                                        state: 'dataGrid.hoverRow'
-                                    });
-                                }
-                            })
-                        );
-
-                        callbacks.push(
-                            addEvent(dataGrid.container, 'mouseout', (): void => {
-                                const table = this.connector && this.connector.table;
-                                if (table) {
-                                    cursor.emitCursor(table, {
-                                        type: 'position',
-                                        state: 'dataGrid.hoverOut'
-                                    });
-                                }
-                            })
-                        );
-
-                        // Return a function that calls the callbacks
-                        return function (): void {
-                            callbacks.forEach((callback): void => callback());
-                        };
-                    }
+            function (this: ComponentType): (() => void) | void {
+                if (this.type !== 'DataGrid') {
+                    return;
                 }
+
+                const { dataGrid, board } = this as DataGridComponent;
+                const highlightOptions = this.options.sync?.highlight;
+
+                if (
+                    !board || !dataGrid ||
+                    !isObject(highlightOptions) ||
+                    !highlightOptions.enabled
+                ) {
+                    return;
+                }
+
+                const { dataCursor: cursor } = board;
+
+                const onDataGridHover = (e: any): void => {
+                    const table = this.connector && this.connector.table;
+                    if (table) {
+                        const row = e.row;
+                        const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
+
+                        cursor.emitCursor(table, {
+                            type: 'position',
+                            row: parseInt(row.dataset.rowIndex, 10),
+                            column: cell ? cell.dataset.columnName : void 0,
+                            state: 'dataGrid.hoverRow'
+                        });
+                    }
+                };
+
+                const onDataGridMouseOut = (): void => {
+                    const table = this.connector && this.connector.table;
+                    if (table) {
+                        cursor.emitCursor(table, {
+                            type: 'position',
+                            state: 'dataGrid.hoverOut'
+                        });
+                    }
+                };
+
+                addEvent(dataGrid.container, 'dataGridHover', onDataGridHover);
+                addEvent(dataGrid.container, 'mouseout', onDataGridMouseOut);
+
+                // Return a function that calls the callbacks
+                return function (): void {
+                    removeEvent(
+                        dataGrid.container,
+                        'dataGridHover',
+                        onDataGridHover
+                    );
+                    removeEvent(
+                        dataGrid.container,
+                        'mouseout',
+                        onDataGridMouseOut
+                    );
+                };
             }
         ]
     },
@@ -100,6 +113,11 @@ const configs: {
             'highlightHandler',
             function (this: DataGridComponent): (() => void) | void {
                 const { board } = this;
+                const highlightOptions = this.options.sync?.highlight;
+
+                if (!isObject(highlightOptions) || !highlightOptions.enabled) {
+                    return;
+                }
 
                 const handlCursor = (e: DataCursor.Event): void => {
                     const cursor = e.cursor;
@@ -148,9 +166,8 @@ const configs: {
                     if (!table) {
                         return;
                     }
-                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
-                    cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
-
+                    cursor.removeListener(table.id, 'point.mouseOver', handlCursor);
+                    cursor.removeListener(table.id, 'point.mouseOut', handleCursorOut);
                 };
 
                 if (board) {
