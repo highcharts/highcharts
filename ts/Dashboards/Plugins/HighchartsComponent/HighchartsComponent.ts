@@ -22,7 +22,7 @@
  *
  * */
 
-import type Cell from '../Layout/Cell';
+import type Cell from '../../Layout/Cell';
 import type {
     AxisOptions,
     Chart,
@@ -31,18 +31,19 @@ import type {
     Point,
     Series,
     SeriesOptions
-} from './HighchartsTypes';
-import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
-import type SidebarPopup from '../EditMode/SidebarPopup';
-import type Sync from '../Components/Sync/Sync';
+} from '../HighchartsTypes';
+import type { ConstructorType, Options } from './HighchartsComponentOptions';
+import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../../EditMode/SidebarPopup';
 
-import Component from '../Components/Component.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
-import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataTable from '../../Data/DataTable.js';
-import Globals from '../../Dashboards/Globals.js';
+import Component from '../../Components/Component.js';
+import DataConnector from '../../../Data/Connectors/DataConnector.js';
+import DataConverter from '../../../Data/Converters/DataConverter.js';
+import DataTable from '../../../Data/DataTable.js';
+import Globals from '../../Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
-import U from '../../Core/Utilities.js';
+import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
+import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -50,7 +51,6 @@ const {
     isString,
     merge,
     splat,
-    uniqueKey,
     isObject
 } = U;
 
@@ -84,197 +84,7 @@ class HighchartsComponent extends Component {
      */
     public static defaultOptions = merge(
         Component.defaultOptions,
-        {
-            /**
-             * Whether to allow the component to edit the store to which it is
-             * attached.
-             * @default true
-             */
-            allowConnectorUpdate: true,
-            className: [
-                Component.defaultOptions.className,
-                `${Component.defaultOptions.className}-highcharts`
-            ].join(' '),
-            chartClassName: 'chart-container',
-            chartID: 'chart-' + uniqueKey(),
-            chartOptions: {
-                chart: {
-                    styledMode: true
-                },
-                series: []
-            },
-            chartConstructor: '',
-            editableOptions:
-            (Component.defaultOptions.editableOptions || []).concat([
-                {
-                    name: 'chartOptions',
-                    type: 'nested',
-                    nestedOptions: [{
-                        name: 'chart',
-                        options: [{
-                            name: 'title',
-                            propertyPath: ['chartOptions', 'title', 'text'],
-                            type: 'input'
-                        }, {
-                            name: 'subtitle',
-                            propertyPath: ['chartOptions', 'subtitle', 'text'],
-                            type: 'input'
-                        }, {
-                            name: 'type',
-                            propertyPath: ['chartOptions', 'chart', 'type'],
-                            type: 'select',
-                            selectOptions: [{
-                                name: 'column',
-                                iconURL: 'series-types/icon-column.svg'
-                            }, {
-                                name: 'line',
-                                iconURL: 'series-types/icon-line.svg'
-                            }, {
-                                name: 'scatter',
-                                iconURL: 'series-types/icon-scatter.svg'
-                            }, {
-                                name: 'pie',
-                                iconURL: 'series-types/icon-pie.svg'
-                            }]
-                        }]
-                    }, {
-                        name: 'xAxis',
-                        options: [{
-                            name: 'title',
-                            propertyPath:
-                                ['chartOptions', 'xAxis', 'title', 'text'],
-                            type: 'input'
-                        }, {
-                            name: 'type',
-                            propertyPath: ['chartOptions', 'xAxis', 'type'],
-                            type: 'select',
-                            selectOptions: [{
-                                name: 'linear'
-                            }, {
-                                name: 'datetime'
-                            }, {
-                                name: 'logarithmic'
-                            }]
-                        }]
-                    }, {
-                        name: 'yAxis',
-                        options: [{
-                            name: 'title',
-                            propertyPath:
-                                ['chartOptions', 'yAxis', 'title', 'text'],
-                            type: 'input'
-                        }, {
-                            name: 'type',
-                            propertyPath: ['chartOptions', 'yAxis', 'type'],
-                            type: 'select',
-                            selectOptions: [{
-                                name: 'linear'
-                            }, {
-                                name: 'datetime'
-                            }, {
-                                name: 'logarithmic'
-                            }]
-                        }]
-                    }, {
-                        name: 'legend',
-                        showToggle: true,
-                        propertyPath: ['chartOptions', 'legend', 'enabled'],
-                        options: [{
-                            name: 'align',
-                            propertyPath: ['chartOptions', 'legend', 'align'],
-                            type: 'select',
-                            selectOptions: [{
-                                name: 'left'
-                            }, {
-                                name: 'center'
-                            }, {
-                                name: 'right'
-                            }]
-                        }]
-                    }, {
-                        name: 'tooltip',
-                        showToggle: true,
-                        propertyPath: ['chartOptions', 'tooltip', 'enabled'],
-                        options: [{
-                            name: 'split',
-                            propertyPath: ['chartOptions', 'tooltip', 'split'],
-                            type: 'toggle'
-                        }]
-                    }, {
-                        name: 'dataLabels',
-                        propertyPath: [
-                            'chartOptions',
-                            'plotOptions',
-                            'series',
-                            'dataLabels',
-                            'enabled'
-                        ],
-                        showToggle: true,
-                        options: [{
-                            name: 'align',
-                            propertyPath: [
-                                'chartOptions',
-                                'plotOptions',
-                                'series',
-                                'dataLabels',
-                                'align'
-                            ],
-                            type: 'select',
-                            selectOptions: [{
-                                name: 'left'
-                            }, {
-                                name: 'center'
-                            }, {
-                                name: 'right'
-                            }]
-                        }]
-                    }, {
-                        name: 'credits',
-                        showToggle: true,
-                        propertyPath: ['chartOptions', 'credits', 'enabled'],
-                        options: [{
-                            name: 'name',
-                            propertyPath: [
-                                'chartOptions',
-                                'credits',
-                                'text'
-                            ],
-                            type: 'input'
-                        }, {
-                            name: 'url',
-                            propertyPath: [
-                                'chartOptions',
-                                'credits',
-                                'href'
-                            ],
-                            type: 'input'
-                        }]
-                    }]
-                }, {
-                    name: 'chartConfig',
-                    propertyPath: ['chartOptions'],
-                    type: 'textarea'
-                }, {
-                    name: 'chartClassName',
-                    propertyPath: ['chartClassName'],
-                    type: 'input'
-                }, {
-                    name: 'chartID',
-                    propertyPath: ['chartID'],
-                    type: 'input'
-                }
-            ]),
-            syncHandlers: HighchartsSyncHandlers,
-            editableOptionsBindings: merge(
-                Component.defaultOptions.editableOptionsBindings,
-                {
-                    skipRedraw: [
-                        'chartOptions',
-                        'chartConfig'
-                    ]
-                }),
-            columnAssignment: void 0
-        }
+        HighchartsComponentDefaults
     );
 
     /* *
@@ -304,7 +114,7 @@ class HighchartsComponent extends Component {
 
         const component = new HighchartsComponent(
             cell,
-            merge<HighchartsComponent.Options>(
+            merge<Options>(
                 options as any,
                 {
                     chartOptions,
@@ -341,18 +151,22 @@ class HighchartsComponent extends Component {
      *
      */
     public chartOptions: Partial<ChartOptions>;
+
     /**
      * Reference to the chart.
      */
-    public chart: Chart | undefined;
+    public chart?: Chart;
+
     /**
      * HTML element where the chart is created.
      */
     public chartContainer: HTMLElement;
+
     /**
      * Highcharts component's options.
      */
-    public options: HighchartsComponent.Options;
+    public options: Options;
+
     /**
      * Type of constructor used for creating proper chart like: chart, stock,
      * gantt or map.
@@ -366,7 +180,8 @@ class HighchartsComponent extends Component {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-and-stock-constructors/ | Chart and Stock constructors}
      *
      */
-    public chartConstructor: HighchartsComponent.ConstructorType;
+    public chartConstructor: ConstructorType;
+
     /**
      * Reference to sync component that allows to sync i.e tooltips.
      *
@@ -386,16 +201,16 @@ class HighchartsComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(cell: Cell, options: Partial<HighchartsComponent.Options>) {
+    constructor(cell: Cell, options: Partial<Options>) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
         super(cell, options);
-        this.options = options as HighchartsComponent.Options;
+        this.options = options as Options;
 
 
-        this.chartConstructor = this.options.chartConstructor;
+        this.chartConstructor = this.options.chartConstructor || 'chart';
         this.type = 'Highcharts';
 
         this.chartContainer = createElement(
@@ -550,7 +365,7 @@ class HighchartsComponent extends Component {
      *
      */
     public async update(
-        options: Partial<HighchartsComponent.Options>,
+        options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options, false);
@@ -904,11 +719,11 @@ class HighchartsComponent extends Component {
         return this;
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<HighchartsComponent.Options> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
 
-        let options: Partial<HighchartsComponent.Options> = {
+        let options: Partial<Options> = {
             cell: '',
             type: 'Highcharts',
             chartOptions: {
@@ -942,7 +757,7 @@ class HighchartsComponent extends Component {
      */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
-            chartConstructor = this.options.chartConstructor;
+            chartConstructor = this.options.chartConstructor || 'chart';
 
         this.registerChartEvents();
 
@@ -974,14 +789,14 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<HighchartsComponent.Options> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, HighchartsComponent.defaultOptions),
             type: 'Highcharts'
         };
     }
 
-    public getEditableOptions(): HighchartsComponent.Options {
+    public getEditableOptions(): Options {
         const component = this;
         const componentOptions = component.options;
         const chart = component.chart;
@@ -1025,6 +840,7 @@ class HighchartsComponent extends Component {
  *
  * */
 
+/** @private */
 namespace HighchartsComponent {
 
     /* *
@@ -1037,11 +853,6 @@ namespace HighchartsComponent {
     export type ComponentType = HighchartsComponent;
 
     /** @private */
-    export type ConstructorType = (
-        'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
-    );
-
-    /** @private */
     export type ChartComponentEvents =
         JSONEvent |
         Component.EventTypes;
@@ -1050,147 +861,6 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-    export interface Options extends Component.Options {
-
-        /**
-         * Whether to allow the component to edit the store to which it is
-         * attached.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
-         *
-         */
-        allowConnectorUpdate?: boolean,
-        /**
-         * The string that declares constructor that is called for creating
-         * a chart.
-         *
-         * Example: `chart`, `stockChart`, `mapChart` or `ganttChart`.
-         *
-         */
-        chartConstructor: ConstructorType;
-        /**
-         * Type of the component.
-         */
-        type: 'Highcharts';
-        /**
-         * A full set of chart options used by the chart.
-         * [Highcharts API](https://api.highcharts.com/highcharts/)
-         */
-        chartOptions: Partial<ChartOptions>;
-        /**
-         * The name of class that is applied to the chart's container.
-         */
-        chartClassName?: string;
-        /**
-         * The id that is applied to the chart's container.
-         */
-        chartID?: string;
-        /**
-         * Names / aliases that should be mapped to xAxis values. You can
-         * declare which columns will be visible selectively on the chart.
-         *
-         * When the columnAssignment is not declared, all columns are visible.
-         *
-         * ```
-         * Example
-         * columnAssignment: {
-         *      'Food': 'x',
-         *      'Vitamin A': 'y'
-         * }
-         * ```
-         */
-        columnAssignment?: Record<string, string|Record<string, string>>;
-        /**
-         * Defines which elements should be synced.
-         * ```
-         * Example:
-         * {
-         *     highlight: true
-         * }
-         * ```
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         */
-        sync?: SyncOptions;
-    }
-
-    /**
-     * Sync options available for the Highcharts component.
-     *
-     * Example:
-     * ```
-     * {
-     *     highlight: true
-     * }
-     * ```
-     */
-    export interface SyncOptions extends Sync.RawOptionsRecord {
-        /**
-         * Extremes sync is available for Highcharts, KPI, DataGrid and
-         * Navigator components. Sets a common range of displayed data. For the
-         * KPI Component sets the last value.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * @default false
-         */
-        extremes?: boolean|Sync.OptionsEntry;
-        /**
-         * Highlight sync is available for Highcharts and DataGrid components.
-         * It allows to highlight hovered corresponding rows in the table and
-         * chart points.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * @default false
-         */
-        highlight?: boolean|Sync.HighlightSyncOptions;
-        /**
-         * Visibility sync is available for Highcharts and DataGrid components.
-         * Synchronizes the visibility of data from a hidden/shown series.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * @default false
-         */
-        visibility?: boolean|Sync.OptionsEntry;
-    }
-
-    /**
-     * Names that should be mapped to point values or props. You can
-     * declare which columns will be parameter of the point. It is useful for
-     * series like OHLC, candlestick, columnrange or arearange.
-     *
-     * The seriesName field is mandatory for displaying series (for instance in
-     * the legend) properly.
-     *
-     * ```
-     * Example
-     * columnAssignment: {
-     *      'Dates': 'x',
-     *      'mySeriesName': {
-     *             'open': 'myOpen',
-     *             'high': 'myHigh',
-     *             'low': 'myLow',
-     *             'close': 'myClose'
-     *      }
-     * }
-     * ```
-    */
 
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
