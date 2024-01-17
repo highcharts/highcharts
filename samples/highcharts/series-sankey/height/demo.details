@@ -1,0 +1,6 @@
+---
+ name: Highcharts Sankey Diagram with custom height option
+ authors:
+   - Markus Barstad
+ js_wrap: b
+...
