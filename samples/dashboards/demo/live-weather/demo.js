@@ -382,6 +382,9 @@ async function setupBoard() {
                         ).then(response => response.json()),
                         styledMode: true
                     },
+                    title: {
+                        text: paramConfig.getColumnHeader('temperature')
+                    },
                     colorAxis: {
                         startOnTick: false,
                         endOnTick: false,
@@ -473,9 +476,6 @@ async function setupBoard() {
                             }
                         }
                     }],
-                    title: {
-                        text: void 0
-                    },
                     tooltip: {
                         shape: 'rect',
                         distance: -60,
@@ -834,9 +834,10 @@ async function updateBoard(board, city, paramName = 'temperature') {
     const mapPoints = worldMap.chart.series[1].data;
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        // Get elevation of city
         const cityName = mapPoints[i].name;
         const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+
+        // Forecast for city
         const forecastTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({
@@ -857,7 +858,10 @@ async function updateBoard(board, city, paramName = 'temperature') {
     };
 
     worldMap.chart.update({
-        colorAxis: colorAxis
+        colorAxis: colorAxis,
+        title: {
+            text: paramConfig.getColumnHeader(paramName)
+        }
     });
 
     // Update KPI with latest observations

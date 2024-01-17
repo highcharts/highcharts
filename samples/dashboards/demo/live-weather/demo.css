@@ -358,6 +358,10 @@
     color: var(--color-text);
 }
 
+#world-map text.highcharts-title {
+    fill: var(--color-map);
+}
+
 #world-map .highcharts-tooltip-box {
     fill: var(--color-tooltip-background);
     fill-opacity: 1;
