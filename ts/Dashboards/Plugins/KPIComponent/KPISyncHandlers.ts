@@ -19,11 +19,11 @@
  *
  * */
 
-import type DataCursor from '../../Data/DataCursor';
-import type Sync from '../Components/Sync/Sync';
+import type DataCursor from '../../../Data/DataCursor';
+import type Sync from '../../Components/Sync/Sync';
 import type KPIComponent from './KPIComponent';
 
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const { defined } = U;
 
 

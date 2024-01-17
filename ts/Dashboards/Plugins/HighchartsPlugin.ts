@@ -24,7 +24,7 @@ import type { Highcharts as H } from './HighchartsTypes';
 
 import HighchartsComponent from './HighchartsComponent/HighchartsComponent.js';
 import HighchartsSyncHandlers from './HighchartsComponent/HighchartsSyncHandlers.js';
-import KPIComponent from './KPIComponent.js';
+import KPIComponent from './KPIComponent/KPIComponent.js';
 import NavigatorComponent from './NavigatorComponent/NavigatorComponent.js';
 
 /* *

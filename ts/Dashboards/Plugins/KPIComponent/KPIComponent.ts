@@ -22,25 +22,25 @@
  *
  * */
 
-import type Cell from '../Layout/Cell';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+import type Cell from '../../Layout/Cell';
 import type {
     Chart,
     Options as ChartOptions,
     Highcharts as H
-} from './HighchartsTypes';
-import type SidebarPopup from '../EditMode/SidebarPopup';
-import type TextOptions from '../Components/TextOptions';
-import type Types from '../../Shared/Types';
+} from '../HighchartsTypes';
+import type Options from './KPIComponentOptions';
+import type SidebarPopup from '../../EditMode/SidebarPopup';
+import type Types from '../../../Shared/Types';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
-import Component from '../Components/Component.js';
+import AST from '../../../Core/Renderer/HTML/AST.js';
+import Component from '../../Components/Component.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
-import Templating from '../../Core/Templating.js';
+import KPIComponentDefaults from './KPIComponentDefaults.js';
+import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
     createElement,
     css,
@@ -70,7 +70,6 @@ class KPIComponent extends Component {
      *
      * */
 
-    public static syncHandlers = KPISyncHandlers;
     /**
      * Creates component from JSON.
      *
@@ -119,44 +118,11 @@ class KPIComponent extends Component {
      */
     public static defaultOptions = merge(
         Component.defaultOptions,
-        {
-            type: 'KPI',
-            className: [
-                Component.defaultOptions.className,
-                `${Component.defaultOptions.className}-kpi`
-            ].join(' '),
-            minFontSize: 20,
-            syncHandlers: KPISyncHandlers,
-            thresholdColors: ['#f45b5b', '#90ed7d'],
-            editableOptions:
-                (Component.defaultOptions.editableOptions || []).concat(
-                    [{
-                        name: 'Value',
-                        type: 'input',
-                        propertyPath: ['value']
-                    }, {
-                        name: 'Column name',
-                        type: 'input',
-                        propertyPath: ['columnName']
-                    }, {
-                        name: 'Value format',
-                        type: 'input',
-                        propertyPath: ['valueFormat']
-                    }]
-                ),
-            linkedValueTo: {
-                enabled: true,
-                seriesIndex: 0,
-                pointIndex: 0
-            }
-        }
+        KPIComponentDefaults
     );
 
-    /* *
-     *
-     *  Static functions
-     *
-     * */
+    /** @internal */
+    public static syncHandlers = KPISyncHandlers;
 
     /**
      * Default options of the KPI component.
@@ -250,25 +216,30 @@ class KPIComponent extends Component {
     /**
      * KPI component's options.
      */
-    public options: KPIComponent.Options;
+    public options: Options;
+
     /**
      * HTML element where the value is created.
      *
      * @internal
      */
     public value: HTMLElement;
+
     /**
      * The HTML element where the subtitle is created.
      */
     public subtitle: HTMLElement;
+
     /**
      * HTML element where the chart is created.
      */
     public chartContainer?: HTMLElement;
+
     /**
      * Reference to the chart.
      */
     public chart?: Chart;
+
     /**
      * Reference to sync component that allows to sync.
      *
@@ -300,7 +271,7 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<KPIComponent.Options>
+        options: Partial<Options>
     ) {
         options = merge(
             KPIComponent.defaultOptions,
@@ -308,7 +279,7 @@ class KPIComponent extends Component {
         );
         super(cell, options);
 
-        this.options = options as KPIComponent.Options;
+        this.options = options as Options;
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(
@@ -422,13 +393,15 @@ class KPIComponent extends Component {
     private setOptions(): void {
         this.filterAndAssignSyncOptions(KPISyncHandlers);
     }
+
     /**
      * Handles updating via options.
+     *
      * @param options
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.Options>,
+        options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
@@ -469,6 +442,7 @@ class KPIComponent extends Component {
 
     /**
      * Sets the value that should be displayed in the KPI.
+     *
      * @param value
      * The value to display in the KPI.
      */
@@ -671,10 +645,10 @@ class KPIComponent extends Component {
         return '';
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.Options> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
-        let options: Partial<KPIComponent.Options> = {
+        let options: Partial<Options> = {
             cell: '',
             type: 'KPI'
         };
@@ -730,7 +704,7 @@ class KPIComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<KPIComponent.Options> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, KPIComponent.defaultOptions),
             type: 'KPI'
@@ -754,10 +728,12 @@ namespace KPIComponent {
 
     /** @internal */
     export type ComponentType = KPIComponent;
+
     /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }
+
     /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         title?: string;
@@ -768,128 +744,6 @@ namespace KPIComponent {
         value?: number|string;
         subtitle?: string;
         valueFormat?: string;
-    }
-    export interface Options extends Component.Options {
-        columnName: string;
-        /**
-         * A full set of chart options applied into KPI chart that is displayed
-         * below the value.
-         *
-         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
-         *
-         * [Highcharts API](https://api.highcharts.com/highcharts/)
-         */
-        chartOptions?: ChartOptions;
-        style?: CSSObject;
-        /**
-         * The threshold declares the value when color is applied
-         * (according to the `thresholdColors`).
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
-         *
-         */
-        threshold?: number|Array<number>;
-        /**
-         * Array of two colors strings that are applied when threshold is
-         * achieved.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Threshold colors}
-         *
-         */
-        thresholdColors?: Array<string>;
-        type: 'KPI';
-        /**
-         * The value that is displayed in KPI component.
-         */
-        value?: number|string;
-        /**
-         * The minimal value of the font size, that KPI component should have.
-         */
-        minFontSize: number;
-        /**
-         * The KPI's component subtitle. This can be used both to display
-         * a subtitle below the main title.
-         */
-        subtitle?: string|SubtitleOptions;
-        /**
-         * A format string for the value text.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/value-format/ | Add a value format}
-         *
-         */
-        valueFormat?: string;
-        /**
-         * Callback function to format the text of the value from scratch.
-         */
-        valueFormatter?: ValueFormatterCallbackFunction;
-        /**
-         * This option allows user to toggle the KPI value connection with the
-         * chart and set the specific point for the connection.
-         *
-         * Linking is enabled by default for the first point of the first
-         * series.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
-         *
-         * @example
-         * ```js
-         * linkedValueTo: {
-         *     seriesIndex: 1,
-         *     pointIndex: 2
-         * }
-         * ```
-         */
-        linkedValueTo: LinkedValueToOptions;
-    }
-    /** @internal */
-    export interface SubtitleOptions extends TextOptions {
-        type?: SubtitleType;
-    }
-
-    /** @internal */
-    export type SubtitleType = 'text' | 'diff' | 'diffpercent';
-    /** @internal */
-    export interface ValueFormatterCallbackFunction {
-        (
-            this: KPIComponent,
-            value: (number|string)
-        ): string;
-    }
-
-    /**
-     * Options for linking KPI value to the chart point.
-     *
-     * Try it:
-     *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
-     */
-    export interface LinkedValueToOptions {
-        /**
-         * Enable or disable linking KPI value to a point on the chart.
-         *
-         * @default true
-         */
-        enabled?: boolean;
-        /**
-         * Index of the point that is to receiving the KPI value as its Y.
-         *
-         * @default 0
-         */
-        pointIndex?: number;
-        /**
-         * Index of the series with the point receiving the KPI value.
-         *
-         * @default 0
-         */
-        seriesIndex?: number;
     }
 }
 
