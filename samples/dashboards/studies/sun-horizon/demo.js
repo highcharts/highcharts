@@ -102,6 +102,8 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
     return trajectory;
 };
 
+const horizon = JSON.parse(document.getElementById('data').innerText);
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -109,8 +111,7 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                data: JSON.parse(document.getElementById('data').innerText)
-                    .elevationProfile
+                data: horizon.elevationProfile
             }
         },
         {
@@ -198,6 +199,26 @@ Dashboards.board('container', {
                         pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
                     },
                     zIndex: -1
+
+                // Contour lines
+                }, {
+                    type: 'scatter',
+                    color: 'gray',
+                    lineWidth: 1,
+                    opacity: 0.75,
+                    data: horizon.contours.reduce((data, contourLine) => {
+                        if (data.length) {
+                            data.push(null); // Gap
+                        }
+                        [].push.apply(data, contourLine.map(p => [
+                            p.azimuth, p.angle
+                        ]));
+                        return data;
+                    }, []),
+                    marker: {
+                        enabled: false
+                    },
+                    enableMouseTracking: false
                 });
             }
         },
@@ -319,6 +340,7 @@ Dashboards.board('container', {
         },
         type: 'DataGrid',
         dataGridOptions: {
+            editable: false,
             columns: [{
                 headerFormat: 'Event',
                 cellFormatter: function () {
