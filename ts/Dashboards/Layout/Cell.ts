@@ -313,7 +313,7 @@ class Cell extends GUIElement {
         cell.nestedLayout?.destroy();
 
         row.unmountCell(cell);
-        const destroyRow = row.cells.length === 0;
+        const destroyRow = row.cells?.length === 0;
 
         super.destroy();
 

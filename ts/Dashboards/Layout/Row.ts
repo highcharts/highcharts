@@ -314,7 +314,7 @@ class Row extends GUIElement {
 
             super.destroy();
 
-            if (layout.rows.length === 0) {
+            if (layout.rows?.length === 0) {
                 layout.destroy();
             }
         }
@@ -386,7 +386,7 @@ class Row extends GUIElement {
     public getCellIndex(
         cell: Cell
     ): number | undefined {
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = this.cells?.length; i < iEnd; ++i) {
             if (this.cells[i].id === cell.id) {
                 return i;
             }

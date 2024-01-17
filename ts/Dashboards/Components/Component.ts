@@ -838,7 +838,6 @@ abstract class Component {
 
 
         if (shouldRerender || eventObject.shouldForceRerender) {
-            await this.initConnector();
             this.render();
         }
 
