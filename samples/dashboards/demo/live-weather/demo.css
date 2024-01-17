@@ -171,6 +171,7 @@
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
+    cursor: pointer;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
