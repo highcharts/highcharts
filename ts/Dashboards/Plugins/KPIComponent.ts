@@ -60,6 +60,7 @@ const {
 /**
  *
  * Class that represents a KPI component.
+ * Test test
  *
  */
 class KPIComponent extends Component {
