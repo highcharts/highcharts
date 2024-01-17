@@ -20,6 +20,9 @@
  *
  * */
 
+import type Globals from '../../Globals';
+import type Options from './HighchartsComponentOptions';
+
 import Component from '../../Components/Component.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../../Core/Utilities.js';
@@ -35,7 +38,7 @@ const {
  *
  * */
 
-const HighchartsComponentDefaults = {
+const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
     allowConnectorUpdate: true,
     className: [
         Component.defaultOptions.className,
@@ -49,7 +52,7 @@ const HighchartsComponentDefaults = {
         },
         series: []
     },
-    chartConstructor: '',
+    chartConstructor: 'chart',
     editableOptions:
         (Component.defaultOptions.editableOptions || []).concat([
             {

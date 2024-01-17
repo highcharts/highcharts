@@ -23,6 +23,7 @@
 
 import type Component from '../../Components/Component';
 import type { Options as HighchartsOptions } from '../HighchartsTypes';
+import type Sync from '../../Components/Sync/Sync';
 
 
 /* *
@@ -105,6 +106,11 @@ export interface Options extends Component.Options {
      * ```
     */
     columnAssignment?: Record<string, string | Record<string, string>>;
+
+    /**
+     * Sync options for the component.
+     */
+    syncHandlers?: Sync.OptionsRecord;
 }
 
 
