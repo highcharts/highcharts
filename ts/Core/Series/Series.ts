@@ -313,8 +313,6 @@ class Series {
 
     public initialType?: string;
 
-    public invertible: boolean = true;
-
     public isDirty?: boolean;
 
     public isDirtyData?: boolean;
@@ -4172,7 +4170,6 @@ class Series {
             preserve = [
                 'colorIndex',
                 'eventOptions',
-                'invertible',
                 'navigatorSeries',
                 'symbolIndex',
                 'baseSeries'
@@ -4871,6 +4868,7 @@ interface Series extends SeriesLike {
     colorCounter: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    invertible: boolean;
     isCartesian: boolean;
     kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
@@ -4884,6 +4882,7 @@ extend(Series.prototype, {
     coll: 'series',
     colorCounter: 0,
     directTouch: false,
+    invertible: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // Each point's x and y values are stored in this.xData and this.yData:

@@ -27,7 +27,9 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     chart.setTitle({ text: 'New title' });
 
     assert.ok(
-        chart.fixedRenderer.box.contains(chart.title.element),
+        chart.scrollablePlotArea.fixedRenderer.box.contains(
+            chart.title.element
+        ),
         'Title should be outside the scrollable plot area (#11966)'
     );
 
@@ -38,14 +40,16 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     });
 
     assert.ok(
-        chart.fixedRenderer.box.contains(chart.xAxis[0].axisGroup.element),
+        chart.scrollablePlotArea.fixedRenderer.box.contains(
+            chart.xAxis[0].axisGroup.element
+        ),
         'X-axis should be outside the scrollable plot area (#8862)'
     );
 
-    const scrollLeft = chart.scrollingContainer.scrollLeft;
+    const scrollLeft = chart.scrollablePlotArea.scrollingContainer.scrollLeft;
     chart.setSize(chart.chartWidth + 10);
     assert.close(
-        chart.scrollingContainer.scrollLeft,
+        chart.scrollablePlotArea.scrollingContainer.scrollLeft,
         scrollLeft,
         11,
         'Scrolling position should be retained after resize'
