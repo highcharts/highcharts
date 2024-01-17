@@ -25,15 +25,15 @@
 import type {
     Axis,
     Series
-} from './HighchartsTypes';
-import type DataCursor from '../../Data/DataCursor';
-import type Sync from '../Components/Sync/Sync';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
-import type DataTable from '../../Data/DataTable';
+} from '../HighchartsTypes';
+import type DataCursor from '../../../Data/DataCursor';
+import type Sync from '../../Components/Sync/Sync';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
+import type DataTable from '../../../Data/DataTable';
 
-import ComponentType from '../Components/ComponentType';
+import ComponentType from '../../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const { addEvent } = U;
 
 
