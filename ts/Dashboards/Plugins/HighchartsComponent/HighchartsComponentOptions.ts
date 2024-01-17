@@ -125,6 +125,11 @@ export interface Options extends Component.Options {
      *
      */
     sync?: SyncOptions;
+
+    /**
+    * Sync options for the component.
+    */
+    syncHandlers?: Sync.OptionsRecord;
 }
 
 /**
