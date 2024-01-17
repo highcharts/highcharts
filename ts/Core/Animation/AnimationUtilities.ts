@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -247,7 +247,7 @@ function animate(
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-function stop(el: SVGElement, prop?: string): void {
+function stop(el: SVGElement|HTMLElement, prop?: string): void {
     let i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)

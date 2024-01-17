@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -32,9 +32,9 @@ import type {
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -147,7 +147,7 @@ abstract class Component {
     /**
      * Default options of the component.
      */
-    public static defaultOptions: Partial<Component.ComponentOptions> = {
+    public static defaultOptions: Partial<Component.Options> = {
         className: `${classNamePrefix}component`,
         id: '',
         title: false,
@@ -224,7 +224,7 @@ abstract class Component {
     /**
      * The options for the component.
      * */
-    public options: Component.ComponentOptions;
+    public options: Component.Options;
     /**
      * Sets an ID for the component's `div`.
      */
@@ -321,14 +321,14 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.ComponentOptions>
+        options: Partial<Component.Options>
     ) {
         this.board = cell.row.layout.board;
         this.parentElement = cell.container;
         this.cell = cell;
 
         this.options = merge(
-            Component.defaultOptions as Required<Component.ComponentOptions>,
+            Component.defaultOptions as Required<Component.Options>,
             options
         );
 
@@ -388,6 +388,17 @@ abstract class Component {
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
 
+
+    /**
+     * Returns the component's options when it is dropped from the sidebar.
+     *
+     * @param sidebar
+     * The sidebar popup.
+     */
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<ComponentType['options']> {
+        return {};
+    }
+
     /* *
      *
      *  Functions
@@ -401,15 +412,19 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
+        const connectorId = this.options.connector?.id,
+            dataPool = this.board.dataPool;
 
         if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
+            connectorId &&
+            (
+                this.connectorId !== connectorId ||
+                dataPool.isNewConnector(connectorId)
+            )
         ) {
             this.cell.setLoadingState();
 
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+            const connector = await dataPool.getConnector(connectorId);
 
             this.setConnector(connector);
         }
@@ -796,7 +811,7 @@ abstract class Component {
      * Set to true if the update should rerender the component.
      */
     public async update(
-        newOptions: Partial<Component.ComponentOptions>,
+        newOptions: Partial<Component.Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
@@ -1054,11 +1069,11 @@ abstract class Component {
      * @internal
      *
      */
-    public getOptions(): Partial<Component.ComponentOptions> {
+    public getOptions(): Partial<Component.Options> {
         return diffObjects(this.options, Component.defaultOptions);
     }
 
-    public getEditableOptions(): Component.ComponentOptions {
+    public getEditableOptions(): Component.Options {
         const component = this;
         return merge(component.options);
     }
@@ -1145,7 +1160,7 @@ namespace Component {
 
     /** @internal */
     export type UpdateEvent = Event<'update' | 'afterUpdate', {
-        options?: ComponentOptions;
+        options?: Options;
     }>;
 
     /** @internal */
@@ -1269,7 +1284,7 @@ namespace Component {
     /** @internal */
     export type SyncType = keyof SyncOptions;
 
-    export interface ComponentOptions {
+    export interface Options {
 
         /**
          * Cell id, where component is attached.
@@ -1303,9 +1318,9 @@ namespace Component {
         /**
          * Set of options that are available for editing through sidebar.
          */
-        editableOptions: Array<EditableOptions.Options>;
+        editableOptions?: Array<EditableOptions.Options>;
         /** @internal */
-        editableOptionsBindings: EditableOptions.OptionsBindings;
+        editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
         presentationModifier?: DataModifier;
         /**
@@ -1326,7 +1341,7 @@ namespace Component {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
          */
-        sync: SyncOptions;
+        sync?: SyncOptions;
         /**
          * Connector options
          */

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -223,6 +223,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * specified by user when creating the dashboard.
      * */
     public container!: HTMLElement;
+
+    /**
+     * All types of components available in the dashboard.
+     * @internal
+     */
+    public componentTypes = ComponentRegistry.types;
 
     /**
      * The data cursor instance used for interacting with the data.
@@ -603,7 +609,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 options.containerId,
                 {
                     componentOptions: options.componentOptions as
-                        Partial<Component.ComponentOptions>,
+                        Partial<Component.Options>,
                     responsiveBreakpoints: options.responsiveBreakpoints,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
@@ -733,7 +739,7 @@ namespace Board {
         /**
          * General options for the components.
          **/
-        componentOptions?: Partial<Component.ComponentOptions>;
+        componentOptions?: Partial<Component.Options>;
         /**
          * A list of serialized layouts to add to the board.
          * @internal
@@ -862,11 +868,6 @@ namespace Board {
             large: 1200
         }
     };
-
-    /**
-     * @internal
-     */
-    export const componentTypes = ComponentRegistry.types;
 
     /* *
      *

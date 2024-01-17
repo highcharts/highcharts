@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Rafal Sebestjanski, Piotr Madej
+ *  (c) 2010-2024 Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *

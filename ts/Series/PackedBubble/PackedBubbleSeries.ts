@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -1270,6 +1270,7 @@ extend(PackedBubbleSeries.prototype, {
     directTouch: true,
     forces: ['barycenter', 'repulsive'],
     hasDraggableNodes: true,
+    invertible: false,
     isCartesian: false,
     noSharedTooltip: true,
     pointArrayMap: ['value'],

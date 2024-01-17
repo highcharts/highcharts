@@ -134,7 +134,7 @@ describe('Add components through UI', () => {
     });
 
     it('DataGrid component should be added.', function() {
-        grabComponent('datagrid');
+        grabComponent('DataGrid');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
         cy.board().then((board) => {

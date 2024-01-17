@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -33,6 +33,7 @@ import type {
     SeriesOptions
 } from './HighchartsTypes';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -41,7 +42,6 @@ import DataTable from '../../Data/DataTable.js';
 import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     createElement,
@@ -900,6 +900,35 @@ class HighchartsComponent extends Component {
 
         return this;
     }
+
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<HighchartsComponent.Options> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+
+        let options: Partial<HighchartsComponent.Options> = {
+            cell: '',
+            type: 'Highcharts',
+            chartOptions: {
+                chart: {
+                    animation: false,
+                    type: 'column',
+                    zooming: {}
+                }
+            }
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *
@@ -1018,7 +1047,7 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-    export interface Options extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
 
         /**
          * Whether to allow the component to edit the store to which it is

@@ -58,7 +58,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with 1 million points'
+        text: 'Scatter chart with 1 million points',
+        align: 'left'
     },
 
     legend: {

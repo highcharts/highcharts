@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -63,7 +63,7 @@ class AccordionMenu {
 
     private iconsURLPrefix: string;
     private closeSidebar: Function;
-    private changedOptions: DeepPartial<Component.ComponentOptions> = {};
+    private changedOptions: DeepPartial<Component.Options> = {};
     private chartOptionsJSON = {};
 
     /* *
@@ -125,7 +125,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
                     const changedOptions = this
-                        .changedOptions as Partial<Component.ComponentOptions>;
+                        .changedOptions as Partial<Component.Options>;
 
                     component.update(
                         merge(changedOptions, {

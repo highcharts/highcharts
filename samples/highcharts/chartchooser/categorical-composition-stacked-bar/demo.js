@@ -39,6 +39,8 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '{series.name}: {y}%',
                 color: 'black',
+                crop: false,
+                allowOverlap: true,
                 rotation: -55,
                 y: -100,
                 x: 30

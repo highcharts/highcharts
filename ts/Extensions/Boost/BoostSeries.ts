@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -912,6 +912,8 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
+        series.processedXData ??= xData;
+        series.processedYData ??= yData;
         return true;
     }
 
@@ -1396,7 +1398,8 @@ function wrapSeriesProcessData(
     let dataToMeasure = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
-        const series = this as BoostSeriesComposition;
+        const series = this as BoostSeriesComposition,
+            isScatter = series.is('scatter') && !series.is('bubble');
 
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
@@ -1404,13 +1407,13 @@ function wrapSeriesProcessData(
         if (
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||
-            series.is('scatter') ||
-            // processedYData for the stack (#7481):
+            isScatter ||
+            // Use processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
-            // extra check for zoomed scatter data
-            if (series.is('scatter') && !series.yAxis.treeGrid) {
+            // Extra check for zoomed scatter data
+            if (isScatter && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
