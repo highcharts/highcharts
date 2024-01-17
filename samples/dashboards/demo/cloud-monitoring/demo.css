@@ -62,19 +62,19 @@ body {
 /* https://awsicons.dev/ */
 
 #instance-details #instance .highcharts-dashboards-component-content span {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg') 0 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg") 0 50% no-repeat;
 }
 
 #instance-details #zone .highcharts-dashboards-component-content span {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg') 0 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg") 0 50% no-repeat;
 }
 
 #instance-details #ami .highcharts-dashboards-component-content span {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg') 0 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg") 0 50% no-repeat;
 }
 
 #instance-details #os .highcharts-dashboards-component-content span {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg') 0 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg") 0 50% no-repeat;
 }
 
 #instances-table .highcharts-datagrid-container {
@@ -116,19 +116,19 @@ body {
 
 .highcharts-Warning-icon,
 .highcharts-datagrid-cell[data-original-data="Warning"] {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.svg') 50% 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
 .highcharts-Critical-icon,
 .highcharts-datagrid-cell[data-original-data="Critical"] {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/critical-ico.png') 50% 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/critical-ico.png") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
 .highcharts-OK-icon,
 .highcharts-datagrid-cell[data-original-data="OK"] {
-    background: url('https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ok-ico.svg') 50% 50% no-repeat;
+    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ok-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
