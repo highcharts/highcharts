@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -443,16 +443,40 @@ const configs: {
                     if (chart && chart.series.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
-                            const [series] = chart.series.length > 1 && cursor.column ?
-                                chart.series.filter((series): boolean => series.name === cursor.column) :
-                                chart.series;
+                            let [series] = chart.series;
 
+                            // #20133 - Highcharts dashboards don't sync
+                            // tooltips when charts have multiple series
+                            if (chart.series.length > 1 && cursor.column) {
+                                const relatedSeries = chart.series.filter(
+                                    (series): boolean => series.name === cursor.column
+                                );
 
-                            if (series && series.visible && cursor.row !== void 0) {
-                                const point = series.points[cursor.row - offset];
+                                if (relatedSeries.length > 0) {
+                                    [series] = relatedSeries;
+                                }
+                            }
+
+                            if (series?.visible && cursor.row !== void 0) {
+                                const point = series.points[cursor.row - offset],
+                                    useSharedTooltip = chart.tooltip?.shared;
 
                                 if (point) {
-                                    chart.tooltip && chart.tooltip.refresh(point);
+                                    const hoverPoint = chart.hoverPoint,
+                                        hoverSeries = hoverPoint?.series ||
+                                            chart.hoverSeries,
+                                        points = chart.pointer.getHoverData(
+                                            point,
+                                            hoverSeries,
+                                            chart.series,
+                                            true,
+                                            true
+                                        );
+
+                                    chart.tooltip && chart.tooltip.refresh(
+                                        useSharedTooltip ?
+                                            points.hoverPoints : point
+                                    );
                                 }
                             }
                         }

@@ -2,7 +2,7 @@
  *
  *  Data Grid class
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -806,7 +806,12 @@ class DataGrid {
         return Math.min(
             this.dataTable.modified.getRowCount(),
             Math.ceil(
-                this.outerContainer.offsetHeight / this.options.cellHeight
+                (
+                    this.outerContainer.offsetHeight ||
+                    this.options.defaultHeight // when datagrid is hidden,
+                    // offsetHeight is 0, so we need to get defaultValue to
+                    // avoid empty rows
+                ) / this.options.cellHeight
             )
         );
     }

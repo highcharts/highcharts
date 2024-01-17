@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -204,6 +204,15 @@ namespace EditContextMenu {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/ | Change icon}
          */
         icon?: string;
+        /**
+         * The text added next to the icon.
+         * @default undefined
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/ | Add text next to icon}
+         */
+        text?: string;
         /**
          * Width of the context menu.
          *

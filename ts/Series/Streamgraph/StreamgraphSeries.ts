@@ -2,7 +2,7 @@
  *
  *  Streamgraph module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -60,11 +60,11 @@ class StreamgraphSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<StreamgraphPoint> = void 0 as any;
+    public data!: Array<StreamgraphPoint>;
 
-    public points: Array<StreamgraphPoint> = void 0 as any;
+    public points!: Array<StreamgraphPoint>;
 
-    public options: StreamgraphSeriesOptions = void 0 as any;
+    public options!: StreamgraphSeriesOptions;
 
     /* *
      *

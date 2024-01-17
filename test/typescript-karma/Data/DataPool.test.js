@@ -147,4 +147,57 @@ QUnit.test('DataPool promises', async function (assert) {
         firstLoadingDone,
         'DataPool should resolve second connector request after first one.'
     );
+
+});
+
+QUnit.test('DataPool replacement', async function (assert) {
+    const dataPool = new DataPool({
+        connectors: [{
+            id: 'My Data',
+            type: 'CSV',
+            options: {
+                csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9'
+            }
+        }]
+    });
+
+    assert.ok(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be new.'
+    );
+
+    const firstConnector = await dataPool.getConnector('My Data');
+
+    assert.notOk(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be not new anymore.'
+    );
+
+    dataPool.setConnectorOptions({
+        id: 'My Data',
+        type: 'JSON',
+        options: {
+            columns: ['a', 'b', 'c'],
+            data: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        }
+    });
+
+    assert.ok(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be new again.'
+    );
+
+    const secondConnector = await dataPool.getConnector('My Data');
+
+    assert.notOk(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be not new anymore.'
+    );
+
+    assert.notEqual(
+        firstConnector,
+        secondConnector,
+        'DataPool connectors should not be equal.'
+    );
+
 });

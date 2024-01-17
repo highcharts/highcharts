@@ -59,7 +59,7 @@ Highcharts.chart('container', {
         fillOpacity: 0.1,
         data: data,
         marker: {
-            radius: 0.1
+            radius: 0.5
         },
         tooltip: {
             followPointer: false,

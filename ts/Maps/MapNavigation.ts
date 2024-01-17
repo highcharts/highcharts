@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,6 +31,8 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../Core/Globals.js';
+const { composed } = H;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
@@ -55,14 +57,6 @@ declare module '../Core/Chart/ChartLike' {
         mapNavigation: MapNavigation;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -119,7 +113,7 @@ class MapNavigation {
         MapPointer.compose(PointerClass);
         MapSymbols.compose(SVGRendererClass);
 
-        if (pushUnique(composedMembers, MapChartClass)) {
+        if (pushUnique(composed, this.compose)) {
             // Extend the Chart.render method to add zooming and panning
             addEvent(MapChartClass, 'beforeRender', function (
                 this: MapChart
@@ -129,9 +123,7 @@ class MapNavigation {
                 this.mapNavigation = new MapNavigation(this);
                 this.mapNavigation.update();
             });
-        }
 
-        if (pushUnique(composedMembers, setOptions)) {
             setOptions(MapNavigationDefaults);
         }
 
@@ -148,7 +140,6 @@ class MapNavigation {
     ) {
         this.chart = chart;
         this.navButtons = [];
-        this.init(chart);
     }
 
     /* *
@@ -156,9 +147,10 @@ class MapNavigation {
      *  Properties
      *
      * */
+
     public chart: MapChart;
     public navButtons: Array<SVGElement>;
-    public navButtonsGroup: SVGElement = void 0 as any;
+    public navButtonsGroup!: SVGElement;
     public unbindDblClick?: Function;
     public unbindMouseWheel?: Function;
 
@@ -167,22 +159,6 @@ class MapNavigation {
      *  Functions
      *
      * */
-
-    /**
-     * Initialize function.
-     *
-     * @function MapNavigation#init
-     *
-     * @param {Highcharts.Chart} chart
-     *        The Chart instance.
-     *
-     * @return {void}
-     */
-    public init(
-        chart: MapChart
-    ): void {
-        this.chart = chart;
-    }
 
     /**
      * Update the map navigation with new options. Calling this is the same as

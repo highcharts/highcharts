@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,18 +34,22 @@ import Axis from '../Axis.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import ColorAxisLike from './ColorAxisLike.js';
+import D from '../../Defaults.js';
+const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
+    defined,
     extend,
     fireEvent,
     isArray,
     isNumber,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 /* *
@@ -98,6 +102,8 @@ declare module '../../Series/SeriesOptions' {
     }
 }
 
+defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
+
 /* *
  *
  *  Class
@@ -124,8 +130,6 @@ class ColorAxis extends Axis implements AxisLike {
      *  Static Properties
      *
      * */
-
-    public static defaultColorAxisOptions = ColorAxisDefaults;
 
     public static defaultLegendLength: number = 200;
 
@@ -181,14 +185,14 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
     public coll = 'colorAxis' as const;
-    public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
+    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
     public name?: string;
-    public options: ColorAxis.Options = void 0 as any;
-    public stops: GradientColor['stops'] = void 0 as any;
+    public options!: ColorAxis.Options;
+    public stops!: GradientColor['stops'];
     public visible: boolean = true;
 
     /* *
@@ -216,24 +220,13 @@ class ColorAxis extends Axis implements AxisLike {
         const legend = chart.options.legend || {},
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical',
-            visible = userOptions.visible;
-
-        const options = merge(
-            ColorAxis.defaultColorAxisOptions,
-            userOptions,
-            {
-                showEmpty: false,
-                title: null,
-                visible: legend.enabled && visible !== false
-            }
-        );
+                legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options, 'colorAxis');
+        super.init(chart, userOptions, 'colorAxis');
 
         // Super.init saves the extended user options, now replace it with the
         // originals
@@ -280,46 +273,51 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
-        const axis = this;
 
-        super.setOptions(userOptions);
+        const options = merge(
+            defaultOptions.colorAxis as ColorAxis.Options,
+            userOptions,
+            // Forced options
+            {
+                showEmpty: false,
+                title: null,
+                visible: this.chart.options.legend.enabled &&
+                    userOptions.visible !== false
+            }
+        );
 
-        axis.options.crosshair = axis.options.marker;
+        super.setOptions(options);
+
+        this.options.crosshair = this.options.marker;
     }
 
     /**
      * @private
      */
     public setAxisSize(): void {
-        const axis = this;
-        const symbol = axis.legendItem && axis.legendItem.symbol;
-        const chart = axis.chart;
-        const legendOptions = chart.options.legend || {};
+        const axis = this,
+            chart = axis.chart,
+            symbol = axis.legendItem?.symbol;
 
-        let x,
-            y,
+        let {
             width,
-            height;
+            height
+        } = axis.getSize();
 
         if (symbol) {
-            this.left = x = symbol.attr('x') as any;
-            this.top = y = symbol.attr('y') as any;
-            this.width = width = symbol.attr('width') as any;
-            this.height = height = symbol.attr('height') as any;
-            this.right = chart.chartWidth - x - width;
-            this.bottom = chart.chartHeight - y - height;
-
-            this.len = this.horiz ? width : height;
-            this.pos = this.horiz ? x : y;
-        } else {
-            // Fake length for disabled legend to avoid tick issues
-            // and such (#5205)
-            this.len = (
-                this.horiz ?
-                    legendOptions.symbolWidth :
-                    legendOptions.symbolHeight
-            ) || ColorAxis.defaultLegendLength;
+            this.left = +symbol.attr('x');
+            this.top = +symbol.attr('y');
+            this.width = width = +symbol.attr('width');
+            this.height = height = +symbol.attr('height');
+            this.right = chart.chartWidth - this.left - width;
+            this.bottom = chart.chartHeight - this.top - height;
+            this.pos = this.horiz ? this.left : this.top;
         }
+
+        // Fake length for disabled legend to avoid tick issues
+        // and such (#5205)
+        this.len = (this.horiz ? width : height) ||
+            ColorAxis.defaultLegendLength;
     }
 
     /**
@@ -329,7 +327,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public getOffset(): void {
         const axis = this;
-        const group = axis.legendItem && axis.legendItem.group;
+        const group = axis.legendItem?.group;
         const sideOffset = axis.chart.axisOffset[axis.side];
 
         if (group) {
@@ -405,14 +403,10 @@ class ColorAxis extends Axis implements AxisLike {
             labelOptions = axis.options.labels,
             itemDistance = pick(legendOptions.itemDistance, 10),
             horiz = axis.horiz,
-            width = pick(
-                legendOptions.symbolWidth,
-                horiz ? ColorAxis.defaultLegendLength : 12
-            ),
-            height = pick(
-                legendOptions.symbolHeight,
-                horiz ? 12 : ColorAxis.defaultLegendLength
-            ),
+            {
+                width,
+                height
+            } = axis.getSize(),
             labelPadding = pick(
                 // @todo: This option is not documented, nor implemented when
                 // vertical
@@ -424,17 +418,19 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Create the gradient
         if (!legendItem.symbol) {
-            legendItem.symbol = this.chart.renderer.symbol(
-                'roundedRect',
-                0,
-                (legend.baseline as any) - 11,
-                width,
-                height,
-                { r: legendOptions.symbolRadius ?? 3 }
-            ).attr({
-                zIndex: 1
-            }).add(legendItem.group);
+            legendItem.symbol = this.chart.renderer.symbol('roundedRect')
+                .attr({
+                    r: legendOptions.symbolRadius ?? 3,
+                    zIndex: 1
+                }).add(legendItem.group);
         }
+
+        legendItem.symbol.attr({
+            x: 0,
+            y: (legend.baseline || 0) - 11,
+            width: width,
+            height: height
+        });
 
         // Set how much space this legend item takes up
         legendItem.labelWidth = (
@@ -475,7 +471,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         let colorValArray,
             colorKey,
-            colorValIndex: any,
+            colorValIndex,
             pointArrayMap,
             calculatedExtremes,
             cSeries,
@@ -539,11 +535,14 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = cExtremes.dataMax;
             }
 
-            if (typeof cSeries.minColorValue !== 'undefined') {
+            if (
+                defined(cSeries.minColorValue) &&
+                defined(cSeries.maxColorValue)
+            ) {
                 this.dataMin =
-                    Math.min(this.dataMin, cSeries.minColorValue as any);
+                    Math.min(this.dataMin, cSeries.minColorValue);
                 this.dataMax =
-                    Math.max(this.dataMax, cSeries.maxColorValue as any);
+                    Math.max(this.dataMax, cSeries.maxColorValue);
             }
 
             if (!calculatedExtremes) {
@@ -584,10 +583,10 @@ class ColorAxis extends Axis implements AxisLike {
             crossPos = axis.toPixels(point.getNestedProperty(
                 point.series.colorKey
             ) as number);
-            if (crossPos < (axisPos as any)) {
-                crossPos = (axisPos as any) - 2;
-            } else if (crossPos > (axisPos as any) + axisLen) {
-                crossPos = (axisPos as any) + axisLen + 2;
+            if (crossPos < axisPos) {
+                crossPos = axisPos - 2;
+            } else if (crossPos > axisPos + axisLen) {
+                crossPos = axisPos + axisLen + 2;
             }
 
             point.plotX = crossPos;
@@ -833,6 +832,42 @@ class ColorAxis extends Axis implements AxisLike {
         return legendItems;
     }
 
+    /**
+     * Get size of color axis symbol.
+     * @private
+     */
+    public getSize(): ({
+        width: number,
+        height: number
+    }) {
+        const axis = this,
+            {
+                chart,
+                horiz
+            } = axis,
+            {
+                legend: legendOptions,
+                height: colorAxisHeight,
+                width: colorAxisWidth
+            } = axis.options,
+            width = pick(
+                defined(colorAxisWidth) ?
+                    relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
+                legendOptions?.symbolWidth,
+                horiz ? ColorAxis.defaultLegendLength : 12
+            ),
+            height = pick(
+                defined(colorAxisHeight) ?
+                    relativeLength(colorAxisHeight, chart.chartHeight) : void 0,
+                legendOptions?.symbolHeight,
+                horiz ? 12 : ColorAxis.defaultLegendLength
+            );
+
+        return {
+            width,
+            height
+        };
+    }
 }
 
 /* *

@@ -5,7 +5,7 @@
  * @requires highcharts
  * @requires highcharts/modules/sankey
  *
- * (c) 2019-2021 Torstein Honsi
+ * (c) 2019-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

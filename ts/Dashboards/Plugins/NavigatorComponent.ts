@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -29,20 +29,24 @@ import type {
 } from './HighchartsTypes';
 import type Cell from '../Layout/Cell';
 import type DataCursor from '../../Data/DataCursor';
-import type { NavigatorComponentOptions } from './NavigatorComponentOptions';
-import type { RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
+import type { Options } from './NavigatorComponentOptions';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
 import type Sync from '../Components/Sync/Sync';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataModifier from '../../Data/Modifiers/DataModifier.js';
 const { Range: RangeModifier } = DataModifier.types;
 import Globals from '../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
+import DataTable from '../../Data/DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     diffObjects,
     isNumber,
+    isObject,
     merge,
     pick
 } = U;
@@ -393,9 +397,9 @@ class NavigatorComponent extends Component {
     /**
      * Default options of the Navigator component.
      */
-    public static defaultOptions: Partial<NavigatorComponentOptions> = merge(
+    public static defaultOptions: Partial<Options> = merge(
         Component.defaultOptions,
-        NavigatorComponentDefaults as Partial<NavigatorComponentOptions>
+        NavigatorComponentDefaults as Partial<Options>
     );
 
 
@@ -424,7 +428,7 @@ class NavigatorComponent extends Component {
         const options = json.options,
             component = new NavigatorComponent(
                 cell,
-                options as unknown as NavigatorComponentOptions
+                options as unknown as Options
             );
 
         component.emit({
@@ -445,15 +449,15 @@ class NavigatorComponent extends Component {
 
     public constructor(
         cell: Cell,
-        options: NavigatorComponentOptions
+        options: Options
     ) {
         super(cell, options);
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
 
         const charter = (
-            NavigatorComponent.charter ||
-            Globals.win.Highcharts as H
+            NavigatorComponent.charter.Chart ||
+            Globals.win.Highcharts
         );
 
         this.chartContainer = Globals.win.document.createElement('div');
@@ -465,7 +469,10 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(navigatorComponentSync);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        if (this.options.sync.crossfilter) {
+        const crossfilterOptions = this.options.sync?.crossfilter;
+        if (crossfilterOptions === true || (
+            isObject(crossfilterOptions) && crossfilterOptions.enabled
+        )) {
             this.chart.update(
                 { navigator: { xAxis: { labels: { format: '{value}' } } } },
                 false
@@ -496,7 +503,7 @@ class NavigatorComponent extends Component {
     /**
      * Options for the navigator component
      */
-    public options: NavigatorComponentOptions;
+    public options: Options;
 
 
     /**
@@ -598,7 +605,7 @@ class NavigatorComponent extends Component {
      * Gets the component's options.
      * @internal
      */
-    public getOptions(): Partial<NavigatorComponentOptions> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, NavigatorComponentDefaults),
             type: 'Navigator'
@@ -665,20 +672,84 @@ class NavigatorComponent extends Component {
             const table = this.connector.table,
                 options = this.options,
                 column = this.getColumnAssignment(),
-                values = (table.getColumn(column[0], true) || []);
+                columnValues = table.getColumn(column[0], true) || [],
+                crossfilterOptions = options.sync?.crossfilter;
 
-            let data: (
-                Array<(number|string|null)>|
-                Array<[(number|string), number]>
-            );
+            let values: DataTable.Column = [],
+                data: (
+                    Array<(number|string|null)>|
+                    Array<[number|string, number|null]>
+                );
 
-            if (options.sync.crossfilter) {
+            if (crossfilterOptions === true || (
+                isObject(crossfilterOptions) && crossfilterOptions.enabled
+            )) {
+
                 const seriesData: Array<[(number|string), number]> = [],
-                    xData: Array<(number|string)> = [];
+                    xData: Array<(number|string)> = [],
+                    modifierOptions = table.getModifier()?.options;
 
-                let index: number;
+                let index: number,
+                    max: number|undefined = void 0,
+                    min: number|undefined = void 0;
 
-                for (let value of values) {
+                if (
+                    crossfilterOptions !== true &&
+                    crossfilterOptions.affectNavigator &&
+                    modifierOptions?.type === 'Range'
+                ) {
+                    const appliedRanges: RangeModifierRangeOptions[] = [],
+                        rangedColumns: DataTable.Column[] = [],
+                        { ranges } = (modifierOptions as RangeModifierOptions);
+
+                    for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
+                        if (ranges[i].column !== column[0]) {
+                            appliedRanges.push(ranges[i]);
+                            rangedColumns.push(table.getColumn(
+                                ranges[i].column, true
+                            ) || []);
+                        }
+                    }
+
+                    const appliedRagesLength = appliedRanges.length;
+                    for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
+                        let value = columnValues[i];
+
+                        if (!defined(value) || !isNumber(+value)) {
+                            continue;
+                        }
+
+                        value = +value;
+                        if (max === void 0 || max < value) {
+                            max = value;
+                        }
+                        if (min === void 0 || min > value) {
+                            min = value;
+                        }
+
+                        let allConditionsMet = true;
+                        for (let j = 0; j < appliedRagesLength; j++) {
+                            const range = appliedRanges[j];
+                            if (!(
+                                rangedColumns[j][i] as string|number|boolean >=
+                                    (range.minValue ?? -Infinity) &&
+                                rangedColumns[j][i] as string|number|boolean <=
+                                    (range.maxValue ?? Infinity)
+                            )) {
+                                allConditionsMet = false;
+                                break;
+                            }
+                        }
+                        if (allConditionsMet) {
+                            values.push(value);
+                        }
+                    }
+                } else {
+                    values = columnValues;
+                }
+
+                for (let i = 0, iEnd = values.length; i < iEnd; i++) {
+                    let value = values[i];
 
                     if (value === null) {
                         continue;
@@ -703,6 +774,16 @@ class NavigatorComponent extends Component {
                 ));
 
                 data = seriesData;
+
+                // Add a minimum and maximum of the unmodified column with null
+                // values to maintain the correct extremes without having to
+                // refresh them.
+                if (min !== void 0) {
+                    data.unshift([min, null]);
+                }
+                if (max !== void 0) {
+                    data.push([max, null]);
+                }
             } else if (typeof values[0] === 'string') {
                 data = values.slice() as Array<string>;
             } else {
@@ -738,10 +819,11 @@ class NavigatorComponent extends Component {
      * The options to apply.
      */
     public async update(
-        options: Partial<NavigatorComponentOptions>,
+        options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
-        const chart = this.chart;
+        const chart = this.chart,
+            crossfilterOptions = this.options.sync?.crossfilter;
 
         await super.update(options, false);
 
@@ -753,7 +835,10 @@ class NavigatorComponent extends Component {
             chart.update(
                 merge(
                     (
-                        this.options.sync.crossfilter ?
+                        crossfilterOptions === true || (
+                            isObject(crossfilterOptions) &&
+                            crossfilterOptions.enabled
+                        ) ?
                             {
                                 navigator: {
                                     xAxis: {
@@ -778,7 +863,9 @@ class NavigatorComponent extends Component {
         }
     }
 
-
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
+        return {};
+    }
 }
 
 

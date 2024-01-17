@@ -54,6 +54,13 @@ QUnit.test('series.centerInCategory', function (assert) {
                     [1, 2],
                     [3, 4]
                 ]
+            },
+            // #20221, a series that does not support centerInCategory should
+            // not affect the layout of the ones that do
+            {
+                name: 'Line',
+                type: 'line',
+                data: [1]
             }
         ]
     });
@@ -304,5 +311,18 @@ QUnit.test('series.centerInCategory', function (assert) {
             chart.series[0].points[1].graphic.getBBox().x,
         2,
         '#17764: Points should be evenly spaced, null point between'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.ok(
+        chart.series[0].points[0].barX <
+        chart.series[1].points[0].barX <
+        chart.series[2].points[0].barX,
+        'Points should have correct order in inverted chart, #19730'
     );
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -106,10 +106,10 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * */
 
-    public data: Array<DumbbellPoint> = void 0 as any;
-    public options: DumbbellSeriesOptions = void 0 as any;
-    public points: Array<DumbbellPoint> = void 0 as any;
-    public columnMetrics: ColumnMetricsObject = void 0 as any;
+    public data!: Array<DumbbellPoint>;
+    public options!: DumbbellSeriesOptions;
+    public points!: Array<DumbbellPoint>;
+    public columnMetrics!: ColumnMetricsObject;
     public lowColor?: ColorType;
 
 

@@ -78,7 +78,7 @@ describe('Editable component options', () => {
 
         cy.get('.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-accordion-header')
             .each((item) => {
-                cy.wrap(item).click().then(() => {
+                cy.wrap(item).find('.highcharts-dashboards-edit-accordion-header-btn').click().then(() => {
                     const currentOption = item.find('span').text();
                     const detailsContent = item.siblings('.highcharts-dashboards-edit-accordion-content').eq(0);
                     const toggleInput = item.find('input');

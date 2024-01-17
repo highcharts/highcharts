@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -28,6 +28,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  * */
 
 export interface LegendItemObject {
+    area?: SVGElement;
     group?: SVGElement;
     label?: (ColorAxis.LegendItemObject|SVGElement);
     labelHeight?: number;

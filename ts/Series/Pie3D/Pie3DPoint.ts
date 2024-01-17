@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  3D pie series
  *
@@ -40,7 +40,7 @@ class Pie3DPoint extends PiePoint {
      *
      * */
 
-    public series: Pie3DSeries = void 0 as any;
+    public series!: Pie3DSeries;
 
     /* *
      *

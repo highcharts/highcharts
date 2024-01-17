@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -29,10 +29,13 @@ import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -61,14 +64,6 @@ declare module '../../Core/Chart/ChartLike'{
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -81,7 +76,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
+    if (wglMode && pushUnique(composed, compose)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 
@@ -306,12 +301,10 @@ function onChartCallback(
     }
 
     addEvent(chart, 'predraw', preRender);
-    addEvent(chart, 'render', canvasToSVG);
-
-    // addEvent(chart, 'zoom', function () {
-    //     chart.boostForceChartBoost =
-    //         shouldForceChartSeriesBoosting(chart);
-    // });
+    // Use the load event rather than redraw, otherwise user load events will
+    // fire too early (#18755)
+    addEvent(chart, 'load', canvasToSVG, { order: -1 });
+    addEvent(chart, 'redraw', canvasToSVG);
 
     let prevX = -1;
     let prevY = -1;

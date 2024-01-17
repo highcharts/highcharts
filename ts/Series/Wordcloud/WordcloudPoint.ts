@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -45,13 +45,13 @@ class WordcloudPoint extends ColumnPoint {
      *
      * */
 
-    public dimensions: SizeObject = void 0 as any;
+    public dimensions!: SizeObject;
     public lastCollidedWith?: WordcloudPoint;
-    public options: WordcloudPointOptions = void 0 as any;
-    public polygon?: WordcloudUtils.PolygonObject = void 0 as any;
-    public rect?: PolygonBoxObject = void 0 as any;
+    public options!: WordcloudPointOptions;
+    public polygon?: WordcloudUtils.PolygonObject;
+    public rect?: PolygonBoxObject;
     public rotation?: (boolean|number);
-    public series: WordcloudSeries = void 0 as any;
+    public series!: WordcloudSeries;
 
     /* *
      *

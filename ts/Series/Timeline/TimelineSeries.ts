@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -87,15 +87,15 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
-    public data: Array<TimelinePoint> = void 0 as any;
+    public data!: Array<TimelinePoint>;
 
-    public options: TimelineSeriesOptions = void 0 as any;
+    public options!: TimelineSeriesOptions;
 
-    public points: Array<TimelinePoint> = void 0 as any;
+    public points!: Array<TimelinePoint>;
 
-    public userOptions: TimelineSeriesOptions = void 0 as any;
+    public userOptions!: TimelineSeriesOptions;
 
-    public visibilityMap: Array<(boolean|TimelinePoint|TimelinePointOptions)> = void 0 as any;
+    public visibilityMap!: Array<(boolean|TimelinePoint|TimelinePointOptions)>;
 
     public visiblePointsCount?: number;
 

@@ -2,7 +2,7 @@ Highcharts.chart('container', {
     chart: {
         height: '100%',
         type: 'heatmap',
-        plotBackgroundImage: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@3c36bd6dc1/samples/graphics/example-screenshot.png'
+        plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/example-screenshot.png'
     },
     title: {
         text: 'Interpolated heatmap image displaying user activity on a website'

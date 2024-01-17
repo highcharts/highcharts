@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -33,6 +33,7 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import H from '../../Core/Globals.js';
 const {
     charts,
+    composed,
     deg2rad
 } = H;
 import Math3D from '../../Core/Math3D.js';
@@ -88,14 +89,6 @@ interface CylinderPathsObject extends SVGPath3D {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -104,7 +97,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (pushUnique(composed, compose)) {
         const rendererProto =
             SVGRendererClass.prototype as SVGRenderer3D.Composition;
 

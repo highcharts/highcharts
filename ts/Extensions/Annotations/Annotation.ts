@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -343,17 +343,17 @@ class Annotation extends EventEmitter implements ControlTarget {
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
-    public animationConfig: Partial<AnimationOptions> = void 0 as any;
-    public graphic: SVGElement = void 0 as any;
-    public group: SVGElement = void 0 as any;
+    public animationConfig!: Partial<AnimationOptions>;
+    public graphic!: SVGElement;
+    public group!: SVGElement;
     public index: number;
     public isUpdating?: boolean;
-    public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
+    public labelCollector!: Chart.LabelCollectorFunction;
     public labels: Array<ControllableLabelType>;
-    public labelsGroup: SVGElement = void 0 as any;
+    public labelsGroup!: SVGElement;
     public options: AnnotationOptions;
     public shapes: Array<ControllableShapeType>;
-    public shapesGroup: SVGElement = void 0 as any;
+    public shapesGroup!: SVGElement;
     public userOptions: AnnotationOptions;
 
     /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,12 +27,15 @@ import type {
 import type Series from './Series';
 
 import DataTable from '../../Data/DataTable.js';
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     fireEvent,
     isNumber,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -57,14 +60,6 @@ declare module './SeriesOptions' {
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -97,7 +92,7 @@ function wrapSeriesGeneratePoints(
         cursor = cropStart + i;
         point = data[cursor];
         if (!point) {
-            point = data[cursor] = (new PointClass()).init(
+            point = data[cursor] = new PointClass(
                 this,
                 processedYData[cursor],
                 processedXData[i]
@@ -189,14 +184,14 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
+
             addEvent(SeriesClass, 'init', function (): void {
                 this.datas = new DataSeriesAdditions(
                     this as DataSeriesComposition
                 );
             });
-
-            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             wrap(seriesProto, 'generatePoints', wrapSeriesGeneratePoints);
             wrap(seriesProto, 'setData', wrapSeriesSetData);

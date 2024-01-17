@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,8 @@ import type MapNavigation from './MapNavigation';
 import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -61,14 +63,6 @@ namespace MapPointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -90,7 +84,7 @@ namespace MapPointer {
         PointerClass: typeof Pointer
     ): void {
 
-        if (pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composed, compose)) {
             const pointerProto = PointerClass.prototype as MapPointer;
 
             extend(pointerProto, {

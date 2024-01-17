@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -103,23 +103,23 @@ class Toolbar {
      *
      * */
 
-    public arrowDown: HTMLDOMElement = void 0 as any;
-    public arrowUp: HTMLDOMElement = void 0 as any;
-    public arrowWrapper: HTMLDOMElement = void 0 as any;
+    public arrowDown!: HTMLDOMElement;
+    public arrowUp!: HTMLDOMElement;
+    public arrowWrapper!: HTMLDOMElement;
     public chart: Chart;
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
     public lang: (Record<string, string>|undefined);
-    public listWrapper: HTMLDOMElement = void 0 as any;
+    public listWrapper!: HTMLDOMElement;
     public options: StockToolsGuiOptions;
     public placed: boolean;
     public prevOffsetWidth: (number|undefined);
-    public showhideBtn: HTMLDOMElement = void 0 as any;
-    public submenu: HTMLDOMElement = void 0 as any;
-    public toolbar: HTMLDOMElement = void 0 as any;
+    public showhideBtn!: HTMLDOMElement;
+    public submenu!: HTMLDOMElement;
+    public toolbar!: HTMLDOMElement;
     public visible: boolean;
-    public wrapper: HTMLDOMElement = void 0 as any;
+    public wrapper!: HTMLDOMElement;
 
     /* *
      *

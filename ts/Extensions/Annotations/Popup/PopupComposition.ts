@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -27,10 +27,13 @@ import type {
 import type NavigationBindings from '../NavigationBindings';
 import type Pointer from '../../../Core/Pointer';
 
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -49,14 +52,6 @@ interface PopupConfigObject {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -69,7 +64,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, NagivationBindingsClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',
@@ -80,9 +75,7 @@ function compose(
             'showPopup',
             onNavigationBindingsShowPopup
         );
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'onContainerMouseDown',

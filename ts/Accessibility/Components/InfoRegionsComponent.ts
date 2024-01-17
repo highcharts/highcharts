@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for chart info region and table.
  *
@@ -222,7 +222,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -145,13 +145,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Properties
      *
      * */
-    public data: Array<HollowCandlestickPoint> = void 0 as any;
+    public data!: Array<HollowCandlestickPoint>;
 
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
-    public options: HollowCandlestickSeriesOptions = void 0 as any;
+    public options!: HollowCandlestickSeriesOptions;
 
-    public points: Array<HollowCandlestickPoint> = void 0 as any;
+    public points!: Array<HollowCandlestickPoint>;
 
     /* *
      *

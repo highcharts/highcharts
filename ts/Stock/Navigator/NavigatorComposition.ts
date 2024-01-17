@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -28,7 +28,10 @@ const {
     setOptions
 } = D;
 import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
+const {
+    composed,
+    isTouchDevice
+} = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
@@ -39,7 +42,8 @@ const {
     addEvent,
     extend,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -71,14 +75,6 @@ declare module '../../Core/Series/SeriesLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Variables
  *
  * */
@@ -103,7 +99,7 @@ function compose(
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
@@ -114,17 +110,11 @@ function compose(
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         addEvent(ChartClass, 'beforeShowResetZoom', onChartBeforeShowResetZoom);
         addEvent(ChartClass, 'update', onChartUpdate);
-    }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
-    }
 
-    if (U.pushUnique(composedMembers, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
-    }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -41,6 +41,8 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
+import H from '../Globals.js';
+const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
@@ -79,6 +81,8 @@ declare module '../Axis/AxisLike' {
 declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+        fixedRange?: number;
+        setFixedRange(range: number|undefined): void;
     }
 }
 
@@ -115,37 +119,33 @@ declare module '../Renderer/SVG/SVGRendererLike' {
  * @function getDefaultAxisOptions
  */
 function getDefaultAxisOptions(
-    type: string,
-    options: DeepPartial<AxisOptions>
+    coll: string,
+    options: DeepPartial<AxisOptions>,
+    defaultOptions: DeepPartial<AxisOptions>
 ): DeepPartial<AxisOptions> {
-    if (type === 'xAxis') {
+    if (coll === 'xAxis') {
         return {
             minPadding: 0,
             maxPadding: 0,
             overscroll: 0,
-            ordinal: true,
-            title: {
-                text: null
-            },
-            labels: {
-                overflow: 'justify'
-            },
-            showLastLabel: true
+            ordinal: true
         };
     }
-    if (type === 'yAxis') {
+    if (coll === 'yAxis') {
         return {
             labels: {
                 y: -2
             },
-            opposite: pick(options.opposite, true),
+            opposite: defaultOptions.opposite ?? options.opposite ?? true,
             showLastLabel: !!(
                 // #6104, show last label by default for category axes
                 options.categories ||
                 options.type === 'category'
             ),
             title: {
-                text: null
+                text: defaultOptions.title?.text !== 'Values' ?
+                    defaultOptions.title?.text :
+                    null
             }
         };
     }
@@ -290,41 +290,43 @@ class StockChart extends Chart {
 
             },
 
-            userOptions, // user's options
+            userOptions, // User's options
 
-            { // forced options
-                isStock: true // internal flag
+            { // Forced options
+                isStock: true // Internal flag
             }
         );
 
         userOptions.xAxis = xAxisOptions;
         userOptions.yAxis = yAxisOptions;
 
-        // apply X axis options to both single and multi y axes
+        // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
             xAxisOptions: AxisOptions,
             i: number
         ): AxisOptions => merge(
-            getDefaultAxisOptions('xAxis', xAxisOptions),
-            defaultOptions.xAxis, // #3802
+            getDefaultAxisOptions(
+                'xAxis',
+                xAxisOptions,
+                defaultOptions.xAxis as AxisOptions
+            ),
             // #7690
-            // @todo remove, default axis options are not arrays
-            defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
-            xAxisOptions, // user options
+            xAxisOptions, // User options
             getForcedAxisOptions('xAxis', userOptions)
         ));
 
-        // apply Y axis options to both single and multi y axes
+        // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
             yAxisOptions: YAxisOptions,
             i: number
         ): YAxisOptions => merge(
-            getDefaultAxisOptions('yAxis', yAxisOptions),
-            defaultOptions.yAxis, // #3802
+            getDefaultAxisOptions(
+                'yAxis',
+                yAxisOptions,
+                defaultOptions.yAxis as AxisOptions
+            ),
             // #7690
-            // @todo remove, default axis options are not arrays
-            defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
-            yAxisOptions // user options
+            yAxisOptions // User options
         ));
 
         super.init(options, callback);
@@ -346,7 +348,11 @@ class StockChart extends Chart {
         options: Chart.CreateAxisOptionsObject
     ): Axis {
         options.axis = merge(
-            getDefaultAxisOptions(coll, options.axis),
+            getDefaultAxisOptions(
+                coll,
+                options.axis,
+                getOptions()[coll] as AxisOptions
+            ),
             options.axis,
             getForcedAxisOptions(coll, this.userOptions)
         );
@@ -382,39 +388,30 @@ namespace StockChart {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
 
     /** @private */
     export function compose(
+        ChartClass: typeof Chart,
         AxisClass: typeof Axis,
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
-        }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+            ChartClass.prototype.setFixedRange = setFixedRange;
+
             SeriesClass.prototype.forceCropping = seriesForceCropping;
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
-        }
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
         }
 
@@ -923,6 +920,28 @@ namespace StockChart {
             );
 
         return groupingEnabled;
+    }
+
+    /**
+     * Sets the chart.fixedRange to the specified value. If the value is larger
+     * than actual range, sets it to the maximum possible range. (#20327)
+     *
+     * @private
+     * @function Highcharts.StockChart#setFixedRange
+     * @param {number|undefined} range
+     *        Range to set in axis units.
+     */
+    function setFixedRange(this: Chart, range: number | undefined): void {
+        const xAxis = this.xAxis[0];
+        if (
+            defined(xAxis.dataMax) &&
+            defined(xAxis.dataMin) &&
+            range
+        ) {
+            this.fixedRange = Math.min(range, xAxis.dataMax - xAxis.dataMin);
+        } else {
+            this.fixedRange = range;
+        }
     }
 
     /* eslint-disable jsdoc/check-param-names */

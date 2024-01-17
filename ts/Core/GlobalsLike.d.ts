@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,6 +37,7 @@ export interface GlobalsLike {
     readonly SVG_NS: string;
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
+    readonly composed: Array<string>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;

@@ -284,6 +284,11 @@
     transition: stroke 150ms;
 }
 
+.highcharts-tooltip .highcharts-tracker {
+    fill: none;
+    stroke: none;
+}
+
 .highcharts-tooltip text {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
@@ -361,7 +366,7 @@ g.highcharts-series,
 }
 
 .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
-.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover, .highcharts-point-select),
 .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
     opacity: 0.2;
@@ -1197,9 +1202,11 @@ g.highcharts-series,
 }
 
 .highcharts-grid-axis .highcharts-tick {
+    stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
 }
 
 .highcharts-grid-axis .highcharts-axis-line {
+    stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
 }

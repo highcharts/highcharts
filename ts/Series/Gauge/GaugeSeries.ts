@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -409,11 +409,11 @@ class GaugeSeries extends Series {
      *
      * */
 
-    public data: Array<GaugePoint> = void 0 as any;
-    public points: Array<GaugePoint> = void 0 as any;
-    public options: GaugeSeriesOptions = void 0 as any;
+    public data!: Array<GaugePoint>;
+    public points!: Array<GaugePoint>;
+    public options!: GaugeSeriesOptions;
 
-    public yAxis: RadialAxis.AxisComposition = void 0 as any;
+    public yAxis!: RadialAxis.AxisComposition;
     public pivot?: SVGElement;
 
     /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,7 +25,6 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
 import type LineSeries from '../../Series/Line/LineSeries';
-import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
@@ -51,7 +50,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
-import type { LegendSymbolType } from './SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -133,7 +131,6 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
-        invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
         toYData?(point: Point): Array<number>;
@@ -258,7 +255,7 @@ class Series {
 
     public _hasTracking?: boolean;
 
-    public _i: number = void 0 as any;
+    public _i!: number;
 
     public animationTimeout?: number;
 
@@ -268,7 +265,7 @@ class Series {
 
     public buildingKdTree?: boolean;
 
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
 
     public closestPointRange?: number;
 
@@ -280,7 +277,7 @@ class Series {
 
     public cropped?: boolean;
 
-    public data: Array<Point> = void 0 as any;
+    public data!: Array<Point>;
 
     public dataMax?: number;
 
@@ -300,9 +297,9 @@ class Series {
 
     public group?: SVGElement;
 
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
-    public eventsToUnbind: Array<Function> = void 0 as any;
+    public eventsToUnbind!: Array<Function>;
 
     public halo?: SVGElement;
 
@@ -312,7 +309,7 @@ class Series {
 
     public id?: string;
 
-    public index: number = void 0 as any;
+    public index!: number;
 
     public initialType?: string;
 
@@ -326,9 +323,9 @@ class Series {
 
     public linkedParent?: Series;
 
-    public linkedSeries: Array<Series> = void 0 as any;
+    public linkedSeries!: Array<Series>;
 
-    public options: SeriesOptions = void 0 as any;
+    public options!: SeriesOptions;
 
     public markerGroup?: SVGElement;
 
@@ -338,13 +335,13 @@ class Series {
 
     public pointInterval?: number;
 
-    public points: Array<Point> = void 0 as any;
+    public points!: Array<Point>;
 
     public pointValKey?: string;
 
-    public processedXData: Array<number> = void 0 as any;
+    public processedXData!: Array<number>;
 
-    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
+    public processedYData!: (Array<(number|null)>|Array<Array<(number|null)>>);
 
     public selected?: boolean;
 
@@ -358,21 +355,21 @@ class Series {
 
     public symbolIndex?: number;
 
-    public tooltipOptions: TooltipOptions = void 0 as any;
+    public tooltipOptions!: TooltipOptions;
 
     public tracker?: SVGElement;
 
     public trackerGroups?: Array<string>;
 
-    public userOptions: DeepPartial<SeriesTypeOptions> = void 0 as any;
+    public userOptions!: DeepPartial<SeriesTypeOptions>;
 
-    public xAxis: AxisType = void 0 as any;
+    public xAxis!: AxisType;
 
     public xData?: Array<number>;
 
     public xIncrement?: (number|null);
 
-    public yAxis: AxisType = void 0 as any;
+    public yAxis!: AxisType;
 
     public yData?: (
         Array<(number|null)>|
@@ -381,7 +378,7 @@ class Series {
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
-    public zones: Array<Series.ZoneObject> = void 0 as any;
+    public zones!: Array<Series.ZoneObject>;
 
     /* *
      *
@@ -434,8 +431,17 @@ class Series {
         const options = series.options,
             visible = options.visible !== false;
 
+        /**
+         * All child series that are linked to the current series through the
+         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+         * option.
+         *
+         * @name Highcharts.Series#linkedSeries
+         * @type {Array<Highcharts.Series>}
+         * @readonly
+         */
         series.linkedSeries = [];
-        // bind the axes
+        // Bind the axes
         series.bindAxes();
 
         extend<Series>(series, {
@@ -456,7 +462,7 @@ class Series {
              * @name Highcharts.Series#visible
              * @type {boolean}
              */
-            visible, // true by default
+            visible, // True by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
@@ -464,7 +470,7 @@ class Series {
              * @name Highcharts.Series#selected
              * @type {boolean}
              */
-            selected: options.selected === true // false by default
+            selected: options.selected === true // False by default
         });
 
         registerEventOptions(this, options);
@@ -1776,9 +1782,7 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = (
-                (series as unknown as MapSeries).processedData || options.data
-            ),
+            dataOptions = series.processedData || options.data,
             processedXData = series.processedXData,
             processedYData = series.processedYData,
             PointClass = series.pointClass,
@@ -1821,15 +1825,15 @@ class Series {
                     !point &&
                     typeof (dataOptions as any)[cursor] !== 'undefined'
                 ) {
-                    data[cursor] = point = (new PointClass()).init(
+                    data[cursor] = point = new PointClass(
                         series,
                         (dataOptions as any)[cursor],
                         (processedXData as any)[i]
                     );
                 }
             } else {
-                // splat the y data in case of ohlc data array
-                point = (new PointClass()).init(
+                // Splat the y data in case of ohlc data array
+                point = new PointClass(
                     series,
                     [(processedXData as any)[i]].concat(
                         splat((processedYData as any)[i])
@@ -1891,9 +1895,11 @@ class Series {
          * In case the series data length exceeds the `cropThreshold`, or if
          * the data is grouped, `series.data` doesn't contain all the
          * points. Also, in case a series is hidden, the `data` array may be
-         * empty. To access raw values, `series.options.data` will always be
-         * up to date. `Series.data` only contains the points that have been
-         * created on demand. To modify the data, use
+         * empty. In case of cropping, the `data` array may contain `undefined`
+         * values, instead of points. To access raw values,
+         * `series.options.data` will always be up to date. `Series.data` only
+         * contains the points that have been created on demand. To modify the
+         * data, use
          * {@link Highcharts.Series#setData} or
          * {@link Highcharts.Point#update}.
          *
@@ -2375,19 +2381,25 @@ class Series {
         const { chart, xAxis, yAxis } = this;
 
         // If no axes on the series, use global clipBox
-        const seriesBox = merge(chart.clipBox);
+        let { x, y, width, height } = merge(chart.clipBox);
 
         // Otherwise, use clipBox.width which is corrected for plotBorderWidth
         // and clipOffset
         if (xAxis && xAxis.len !== chart.plotSizeX) {
-            seriesBox.width = xAxis.len;
+            width = xAxis.len;
         }
 
         if (yAxis && yAxis.len !== chart.plotSizeY) {
-            seriesBox.height = yAxis.len;
+            height = yAxis.len;
         }
 
-        return seriesBox;
+        // If the chart is inverted and the series is not invertible, the chart
+        // clip box should be inverted, but not the series clip box (#20264)
+        if (chart.inverted && !this.invertible) {
+            [width, height] = [height, width];
+        }
+
+        return { x, y, width, height };
     }
 
     /**
@@ -3290,7 +3302,7 @@ class Series {
                 chart.inverted &&
                 !chart.polar &&
                 horAxis &&
-                this.invertible !== false &&
+                this.invertible &&
                 name === 'series'
             );
 
@@ -3925,7 +3937,7 @@ class Series {
             isInTheMiddle ||
             // When processedData is present we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
-            (series as unknown as MapSeries).processedData
+            series.processedData
         ) {
             series.data.splice(i, 0, null as any);
             series.processData();
@@ -4239,19 +4251,24 @@ class Series {
         }
 
         // Do the merge, with some forced options
-        options = merge(oldOptions, animation as any, {
-            // When oldOptions.index is null it should't be cleared.
-            // Otherwise navigator series will have wrong indexes (#10193).
-            index: typeof oldOptions.index === 'undefined' ?
-                series.index : oldOptions.index,
-            pointStart: pick(
-                // When updating from blank (#7933)
-                plotOptions?.series?.pointStart,
-                oldOptions.pointStart,
-                // When updating after addPoint
-                (series.xData as any)[0]
-            )
-        }, (!keepPoints && { data: series.options.data }) as any, options);
+        options = merge(
+            oldOptions,
+            {
+                // When oldOptions.index is null it should't be cleared.
+                // Otherwise navigator series will have wrong indexes (#10193).
+                index: oldOptions.index === void 0 ?
+                    series.index : oldOptions.index,
+                pointStart:
+                    // When updating from blank (#7933)
+                    plotOptions?.series?.pointStart ??
+                    oldOptions.pointStart ??
+                    // When updating after addPoint
+                    series.xData?.[0]
+            },
+            !keepPoints && { data: series.options.data },
+            options,
+            animation
+        );
 
         // Merge does not merge arrays, but replaces them. Since points were
         // updated, `series.options.data` has correct merged options, use it:
@@ -4277,6 +4294,9 @@ class Series {
             series.remove(false, false, false, true);
 
             if (casting) {
+                // #20264: Re-detect a certain chart properties from new series
+                chart.propFromSeries();
+
                 // Modern browsers including IE11
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
@@ -4368,6 +4388,8 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+        // Set data for series with sorting enabled if it isn't set yet (#19715)
+        chart.setSortedData();
 
         // #15383: Fire updatedData if the type has changed to keep linked
         // series such as indicators updated
@@ -4846,6 +4868,7 @@ interface Series extends SeriesLike {
     colorCounter: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    invertible: boolean;
     isCartesian: boolean;
     kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
@@ -4859,6 +4882,7 @@ extend(Series.prototype, {
     coll: 'series',
     colorCounter: 0,
     directTouch: false,
+    invertible: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // Each point's x and y values are stored in this.xData and this.yData:

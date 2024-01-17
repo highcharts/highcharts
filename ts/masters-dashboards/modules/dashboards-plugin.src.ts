@@ -3,7 +3,7 @@
  * @module dashboards/modules/dashboards-plugin
  * @requires dashboards
  *
- * (c) 2009-2023 Highsoft AS
+ * (c) 2009-2024 Highsoft AS
  *
  * License: www.highcharts.com/license
  * */
@@ -19,7 +19,7 @@
  * */
 
 
-import type GlobalsLike from '../../Core/GlobalsLike';
+import type { Highcharts as H } from '../../Dashboards/Plugins/HighchartsTypes';
 
 import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 import Globals from '../../Dashboards/Globals.js';
@@ -39,7 +39,7 @@ declare global {
         HighchartsPlugin: typeof HighchartsPlugin;
     }
     interface Window {
-        Highcharts?: GlobalsLike;
+        Highcharts?: H;
     }
 }
 

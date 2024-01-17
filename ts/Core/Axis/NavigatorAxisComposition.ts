@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,14 +20,18 @@ import type Axis from './Axis.js';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const { isTouchDevice } = H;
+const {
+    composed,
+    isTouchDevice
+} = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -45,14 +49,6 @@ declare module './AxisComposition' {
 export declare class NavigatorAxisComposition extends Axis {
     navigatorAxis: NavigatorAxisAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -154,7 +150,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

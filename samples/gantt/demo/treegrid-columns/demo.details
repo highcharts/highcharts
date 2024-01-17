@@ -1,0 +1,12 @@
+---
+name: Treegrid axis with columns
+js_wrap: b
+authors:
+  - Torstein Hønsi
+new_until: 2024-04-01
+tags:
+  - Highcharts Gantt demo
+categories:
+  - Highcharts Gantt:
+      priority: 12
+...

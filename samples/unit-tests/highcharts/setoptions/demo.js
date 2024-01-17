@@ -1,5 +1,6 @@
 QUnit.test('Stock chart specific options in setOptions', function (assert) {
-    var chart;
+    const yAxis = Highcharts.merge(Highcharts.defaultOptions.yAxis);
+    let chart;
 
     chart = $('#container')
         .highcharts('StockChart', {
@@ -32,13 +33,9 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         tooltip: {
             split: false
         },
-        yAxis: [
-            {
-                title: {
-                    text: 'Custom title'
-                }
-            }
-        ]
+        xAxis: {
+            type: 'datetime'
+        }
     });
 
     chart = $('#container')
@@ -65,10 +62,21 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     );
 
     assert.strictEqual(
+        typeof chart.xAxis[0].dateTime,
+        'object',
+        'The axis should have dateTime props'
+    );
+
+    // Skip this. Default options for corresponding index has never been
+    // properly supported, and is now removed. The default options/setOptions
+    // should have only a single object for xAxis, yAxis and colorAxis.
+    /*
+    assert.strictEqual(
         chart.yAxis[0].options.title.text,
         'Custom title',
         'Axis option set as array should apply to corresponding index (#7690)'
     );
+    */
 
     chart = $('#container')
         .highcharts('StockChart', {
@@ -100,5 +108,5 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     delete Highcharts.defaultOptions.navigator.enabled;
     delete Highcharts.defaultOptions.rangeSelector.enabled;
     delete Highcharts.defaultOptions.tooltip.split;
-    delete Highcharts.defaultOptions.yAxis;
+    Highcharts.defaultOptions.yAxis = yAxis;
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -160,7 +160,7 @@ class SVGElement implements SVGElementLike {
     // @todo public d?: number;
     // @todo public div?: HTMLDOMElement;
     public doTransform?: boolean;
-    public element: DOMElementType = void 0 as any;
+    public element: DOMElementType;
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
@@ -178,7 +178,7 @@ class SVGElement implements SVGElementLike {
     public placed?: boolean;
     public r?: number;
     public radAttr?: SVGAttributes;
-    public renderer: SVGRenderer = void 0 as any;
+    public renderer: SVGRenderer;
     public rotation?: number;
     public rotationOriginX?: number;
     public rotationOriginY?: number;
@@ -193,7 +193,7 @@ class SVGElement implements SVGElementLike {
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
-    // @todo public textWidth?: number;
+    public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
@@ -397,12 +397,17 @@ class SVGElement implements SVGElementLike {
      *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
      *        holds `width`, `height`, `x` and `y` properties.
      *
+     * @param {boolean} [redraw]
+     *        Decide if SVGElement should be redrawed with new alignment or
+     *        just change its attributes.
+     *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public align(
         alignOptions?: AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|BBoxObject)
+        box?: (string|BBoxObject),
+        redraw: boolean = true
     ): this {
         const attribs = {} as SVGAttributes,
             renderer = this.renderer,
@@ -436,8 +441,6 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ?
-                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -475,8 +478,10 @@ class SVGElement implements SVGElementLike {
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
-        this[this.placed ? 'animate' : 'attr'](attribs);
-        this.placed = true;
+        if (redraw) {
+            this[this.placed ? 'animate' : 'attr'](attribs);
+            this.placed = true;
+        }
         this.alignAttr = attribs;
 
         return this;
@@ -1540,42 +1545,11 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-
                 const baseline = Number(
-                        element.getAttribute('y') || 0
-                    ) - bBox.y,
-                    alignFactor = ({
-                        'right': 1,
-                        'center': 0.5
-                    } as Record<string, number>)[alignValue || 0] || 0,
-                    rad = rotation * deg2rad,
-                    rad90 = (rotation - 90) * deg2rad,
-                    wCosRad = width * Math.cos(rad),
-                    wSinRad = width * Math.sin(rad),
-                    cosRad90 = Math.cos(rad90),
-                    sinRad90 = Math.sin(rad90),
+                    element.getAttribute('y') || 0
+                ) - bBox.y;
 
-                    // Find the starting point on the left side baseline of
-                    // the text
-                    pX = bBox.x + alignFactor * (width - wCosRad),
-                    pY = bBox.y + baseline - alignFactor * wSinRad,
-
-                    // Find all corners
-                    aX = pX + baseline * cosRad90,
-                    bX = aX + wCosRad,
-                    cX = bX - height * cosRad90,
-                    dX = cX - wCosRad,
-
-                    aY = pY + baseline * sinRad90,
-                    bY = aY + wSinRad,
-                    cY = bY - height * sinRad90,
-                    dY = cY - wSinRad;
-
-                // Deduct the bounding box from the corners
-                bBox.x = Math.min(aX, bX, cX, dX);
-                bBox.y = Math.min(aY, bY, cY, dY);
-                bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
-                bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
+                bBox = this.getRotatedBox(bBox, rotation, baseline);
             }
         }
 
@@ -1594,6 +1568,59 @@ class SVGElement implements SVGElementLike {
             cache[cacheKey] = bBox;
         }
         return bBox;
+    }
+
+    /**
+     * Get the rotated box.
+     * @private
+     */
+    public getRotatedBox(
+        box: BBoxObject,
+        rotation: number,
+        baseline: number
+    ): BBoxObject {
+        const width = box.width,
+            height = box.height,
+            alignValue = this.alignValue,
+            alignFactor = ({
+                'right': 1,
+                'center': 0.5
+            } as Record<string, number>)[alignValue || 0] || 0,
+            rad = rotation * deg2rad,
+            rad90 = (rotation - 90) * deg2rad,
+            wCosRad = width * Math.cos(rad),
+            wSinRad = width * Math.sin(rad),
+            cosRad90 = Math.cos(rad90),
+            sinRad90 = Math.sin(rad90),
+
+            // Find the starting point on the left side baseline of
+            // the text
+            pX = box.x + alignFactor * (width - wCosRad),
+            pY = box.y + baseline - alignFactor * wSinRad,
+
+            // Find all corners
+            aX = pX + baseline * cosRad90,
+            bX = aX + wCosRad,
+            cX = bX - height * cosRad90,
+            dX = cX - wCosRad,
+
+            aY = pY + baseline * sinRad90,
+            bY = aY + wSinRad,
+            cY = bY - height * sinRad90,
+            dY = cY - wSinRad;
+
+        // Deduct the bounding box from the corners
+        const x = Math.min(aX, bX, cX, dX),
+            y = Math.min(aY, bY, cY, dY),
+            boxWidth = Math.max(aX, bX, cX, dX) - x,
+            boxHeight = Math.max(aY, bY, cY, dY) - y;
+
+        return {
+            x,
+            y,
+            width: boxWidth,
+            height: boxHeight
+        };
     }
 
     /**
@@ -1665,10 +1692,10 @@ class SVGElement implements SVGElementLike {
      * @param {string} nodeName
      * The SVG node name.
      */
-    public init(
+    public constructor(
         renderer: SVGRenderer,
         nodeName: string
-    ): void {
+    ) {
 
         /**
          * The primary DOM node. Each `SVGElement` instance wraps a main DOM
@@ -2204,7 +2231,9 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#updateTransform
      */
-    public updateTransform(): void {
+    public updateTransform(
+        attrib: 'transform' | 'patternTransform' = 'transform'
+    ): void {
         const {
             element,
             matrix,
@@ -2245,7 +2274,7 @@ class SVGElement implements SVGElementLike {
         }
 
         if (transform.length && !(this.text || this).textPath) {
-            element.setAttribute('transform', transform.join(' '));
+            element.setAttribute(attrib, transform.join(' '));
         }
     }
 
