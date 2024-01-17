@@ -156,7 +156,8 @@
         rgba(44, 187, 99, 0.25) 0 4px 8px,
         rgba(44, 187, 99, 0.25) 0 8px 16px,
         rgba(44, 187, 99, 0.25) 0 16px 32px;
-    transform: scale(1.05);
+    padding: 10px 23px;
+    margin: -3px;
 }
 
 .links {
@@ -170,7 +171,7 @@
 }
 
 .links:hover {
-    transform: scale(1.05);
+    font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {

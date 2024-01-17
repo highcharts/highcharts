@@ -150,8 +150,7 @@ function resetDrilldown(chart) {
             chart.mapView.update(
                 Highcharts.merge({
                     insets: undefined,
-                    padding: 0,
-                    fitToGeometry: undefined
+                    padding: 0
                 },
                 topology.objects.default['hc-recommended-mapview']
                 )
@@ -204,19 +203,6 @@ function resetDrilldown(chart) {
             projection: {
                 name: 'Miller',
                 rotation: [0]
-            },
-            fitToGeometry: {
-                type: 'MultiPoint',
-                coordinates: [
-                    // Alaska west
-                    [-164, 54],
-                    // Greenland north
-                    [-35, 84],
-                    // New Zealand east
-                    [179, -38],
-                    // Chile south
-                    [-68, -55]
-                ]
             }
         },
         mapData.objects.default['hc-recommended-mapview']
@@ -328,19 +314,6 @@ function resetDrilldown(chart) {
                     name: 'Miller',
                     rotation: [0]
                 },
-                fitToGeometry: mapKey === 'custom/world' ? {
-                    type: 'MultiPoint',
-                    coordinates: [
-                        // Alaska west
-                        [-164, 54],
-                        // Greenland north
-                        [-35, 84],
-                        // New Zealand east
-                        [179, -38],
-                        // Chile south
-                        [-68, -55]
-                    ]
-                } : undefined,
                 insets: undefined
             },
             mapData.objects.default['hc-recommended-mapview']
