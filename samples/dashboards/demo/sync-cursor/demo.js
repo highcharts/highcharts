@@ -12,19 +12,9 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'top-left',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'top-left'
                 }, {
-                    id: 'top-right',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'top-right'
                 }]
             }, {
                 cells: [{
