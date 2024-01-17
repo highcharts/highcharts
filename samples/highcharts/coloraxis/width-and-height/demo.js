@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     colorAxis: {
         width: '50%',
-        height: 80
+        height: 10
     },
 
     title: {

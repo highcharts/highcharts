@@ -113,6 +113,7 @@ class KPIComponent extends Component {
 
     /** @internal */
     public static charter?: H;
+
     /**
      * Default options of the KPI component.
      */
@@ -159,6 +160,46 @@ class KPIComponent extends Component {
 
     /**
      * Default options of the KPI component.
+     *
+     * @default {
+        chart: {
+            type: 'spline',
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: void 0
+        },
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false,
+            title: {
+                text: null
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            outside: true
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
+                }
+            }
+        }
+    }
      */
     public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
         chart: {
@@ -209,7 +250,7 @@ class KPIComponent extends Component {
     /**
      * KPI component's options.
      */
-    public options: KPIComponent.ComponentOptions;
+    public options: KPIComponent.Options;
     /**
      * HTML element where the value is created.
      *
@@ -259,7 +300,7 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<KPIComponent.ComponentOptions>
+        options: Partial<KPIComponent.Options>
     ) {
         options = merge(
             KPIComponent.defaultOptions,
@@ -267,7 +308,7 @@ class KPIComponent extends Component {
         );
         super(cell, options);
 
-        this.options = options as KPIComponent.ComponentOptions;
+        this.options = options as KPIComponent.Options;
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(
@@ -302,9 +343,6 @@ class KPIComponent extends Component {
     /** @internal */
     public async load(): Promise<this> {
         await super.load();
-
-        this.contentElement.style.display = 'flex';
-        this.contentElement.style.flexDirection = 'column';
 
         this.linkValueToChart();
 
@@ -390,7 +428,7 @@ class KPIComponent extends Component {
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.ComponentOptions>,
+        options: Partial<KPIComponent.Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
@@ -633,10 +671,10 @@ class KPIComponent extends Component {
         return '';
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.ComponentOptions> {
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
-        let options: Partial<KPIComponent.ComponentOptions> = {
+        let options: Partial<KPIComponent.Options> = {
             cell: '',
             type: 'KPI'
         };
@@ -692,7 +730,7 @@ class KPIComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+    public getOptions(): Partial<KPIComponent.Options> {
         return {
             ...diffObjects(this.options, KPIComponent.defaultOptions),
             type: 'KPI'
@@ -731,11 +769,13 @@ namespace KPIComponent {
         subtitle?: string;
         valueFormat?: string;
     }
-    export interface ComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
         columnName: string;
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
+         *
+         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
          *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
