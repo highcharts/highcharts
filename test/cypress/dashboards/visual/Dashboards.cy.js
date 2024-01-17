@@ -47,12 +47,12 @@ describe('Test the rest', () => {
         });
 
         it('small screen vertical ' + demo, () => {
-            cy.viewport('iphone-x').wait(100);
+            cy.viewport('iphone-x').wait(500);
             cy.get('#demo-content').compareSnapshot(name + '-mobile-vertical', 0.1);
         });
 
         it('small screen horizontal ' + demo, () => {
-            cy.viewport('iphone-x', 'landscape').wait(100);
+            cy.viewport('iphone-x', 'landscape').wait(500);
             cy.get('#demo-content').compareSnapshot(name + '-mobile-horizontal', 0.1);
         });
     }
