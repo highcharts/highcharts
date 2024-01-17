@@ -136,6 +136,15 @@
     height: 260px;
 }
 
+#dashboard-row-3-cell-1,
+#dashboard-row-3-cell-2 {
+    flex: 1 1 20%;
+}
+
+#dashboard-row-3-cell-3 {
+    flex: 1 1 60%;
+}
+
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-row-1-cell-1,
