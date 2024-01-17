@@ -112,7 +112,10 @@ pollingCheckbox.onchange = async e => {
         if (connectorId) {
             if (connectorId === 'charts') {
                 mComp.component.setConnector(chartConnector);
-            } else if (connectorId === 'instanceDetails') {
+            } else if (
+                connectorId === 'instanceDetails' &&
+                mComp.cell.id !== 'disk-usage'
+            ) {
                 mComp.component.setConnector(instanceDetailsConnector);
             }
             mComp.component.render();
