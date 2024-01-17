@@ -45,12 +45,12 @@ const paramConfig = {
             [1.0, '#CCCC00']
         ]
     },
-    buildDescription: function (param) {
+    getColumnHeader: function (param) {
         const info = this[param];
         // First letter uppercase
         const name = info.name[0].toUpperCase() + info.name.slice(1);
 
-        return `${name} (${info.unit})`;
+        return `${name} ${info.unit}`;
     }
 };
 
@@ -61,8 +61,6 @@ const worldLocations = {
     default: 'Dublin',
     mapView: {
         maxZoom: 4
-        // zoom: 1.7,
-        // center: [0, 10]
     },
     points: {
         'New York': {
@@ -140,7 +138,7 @@ const worldLocations = {
 
 // Application configuration (weather station data set + data provider)
 const weatherStations = {
-    location: worldLocations, // Picks weather station data set
+    location: worldLocations, // Weather station data set
 
     // Base URL for weather forecast
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
@@ -162,7 +160,6 @@ const weatherStations = {
 // - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const KPIChartOptions = {
     chart: {
-        margin: [8, 8, 16, 8],
         spacing: [8, 8, 8, 8],
         styledMode: true,
         type: 'solidgauge'
@@ -508,16 +505,17 @@ async function setupBoard() {
                 cell: 'kpi-temperature',
                 type: 'KPI',
                 columnName: 'temperature',
+                custom: 'test',
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: 'Temperature',
+                        text: paramConfig.getColumnHeader('temperature'),
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         accessibility: {
-                            description: 'Celsius'
+                            description: paramConfig.getColumnHeader('temperature')
                         },
                         max: paramConfig.temperature.max,
                         min: paramConfig.temperature.min
@@ -548,13 +546,13 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: 'Pressure',
+                        text: paramConfig.getColumnHeader('pressure'),
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         accessibility: {
-                            description: paramConfig.pressure.unit
+                            description: paramConfig.getColumnHeader('pressure')
                         },
                         max: paramConfig.pressure.max,
                         min: paramConfig.pressure.min
@@ -582,13 +580,13 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: 'Humidity',
+                        text: paramConfig.getColumnHeader('humidity'),
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         accessibility: {
-                            description: paramConfig.buildDescription('humidity')
+                            description: paramConfig.getColumnHeader('humidity')
                         },
                         max: paramConfig.humidity.max,
                         min: paramConfig.humidity.min
@@ -620,21 +618,21 @@ async function setupBoard() {
                     editable: false,
                     columns: {
                         time: {
-                            headerFormat: 'Time (UTC)',
+                            headerFormat: 'Time UTC',
                             cellFormatter: function () {
                                 return Highcharts.dateFormat('%d/%m, %H:%M', this.value);
                             }
                         },
-                        humidity: {
-                            headerFormat: 'Humidity (%)',
+                        temperature: {
+                            headerFormat: paramConfig.getColumnHeader('temperature'),
                             cellFormat: '{value:.1f}'
                         },
                         pressure: {
-                            headerFormat: 'Pressure (hPa)',
+                            headerFormat: paramConfig.getColumnHeader('pressure'),
                             cellFormat: '{value:.1f}'
                         },
-                        temperature: {
-                            headerFormat: 'Temperature (°C)',
+                        humidity: {
+                            headerFormat: paramConfig.getColumnHeader('humidity'),
                             cellFormat: '{value:.1f}'
                         }
                     }
@@ -711,7 +709,7 @@ async function setupBoard() {
                     },
                     yAxis: {
                         title: {
-                            text: paramConfig.buildDescription(activeParam.name)
+                            text: paramConfig.getColumnHeader(activeParam.name)
                         },
                         accessibility: {
                             description: activeParam.unit
@@ -728,23 +726,6 @@ async function setupBoard() {
                 }
             }]
     }, true);
-
-    // Get map chart
-    function getMapChart(board) {
-        // Update map (series 0 is the world map, series 1 the weather data)
-        return board.mountedComponents[0].component.chart.series[1];
-    }
-
-    // Select a city on the map
-    function selectActiveCity() {
-        const worldMap = getMapChart(board);
-        for (let idx = 0; idx < worldMap.data.length; idx++) {
-            if (worldMap.data[idx].name === activeCity) {
-                worldMap.data[idx].select();
-                break;
-            }
-        }
-    }
 
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
@@ -782,6 +763,25 @@ async function setupBoard() {
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         if (cityRows[i].city !== activeCity) {
             await addCityToMap(board, citiesTable, worldMap, cityRows[i].city);
+        }
+    }
+
+    // HELPER functions
+
+    // Get map chart
+    function getMapChart(board) {
+        // Update map (series 0 is the world map, series 1 the weather data)
+        return board.mountedComponents[0].component.chart.series[1];
+    }
+
+    // Select a city on the map
+    function selectActiveCity() {
+        const worldMap = getMapChart(board);
+        for (let idx = 0; idx < worldMap.data.length; idx++) {
+            if (worldMap.data[idx].name === activeCity) {
+                worldMap.data[idx].select();
+                break;
+            }
         }
     }
 }
@@ -893,7 +893,7 @@ async function updateBoard(board, city, paramName = 'temperature') {
     const options = cityChart.chartOptions;
     options.colorAxis = colorAxis;
     options.title.text = 'Forecast for ' + city + ' (' + paramName + ')';
-    options.yAxis.title.text = paramConfig.buildDescription(paramName);
+    options.yAxis.title.text = paramConfig.getColumnHeader(paramName);
 
     await cityChart.update({
         connector: {
