@@ -966,6 +966,11 @@ const ChartDefaults: ChartOptions = {
      * Additional CSS styles to apply inline to the container `div` and the root
      * SVG.
      *
+     * According to the CSS syntax documentation, it is recommended to quote
+     * font family names that contain white space, digits, or punctuation
+     * characters other than hyphens. In such cases, wrap the fontFamily
+     * name as follows: `fontFamily: "'Font name'"`.
+     *
      * Since v11, the root font size is 1rem by default, and all child element
      * are given a relative `em` font size by default. This allows implementers
      * to control all the chart's font sizes by only setting the root level.
