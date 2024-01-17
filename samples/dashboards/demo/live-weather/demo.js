@@ -56,7 +56,7 @@ const paramConfig = {
 
 // Geolocation info: https://www.maps.ie/coordinates.html
 
-// eslint-disable-next-line no-unused-vars
+// Selection of weather stations to display data from
 const worldLocations = {
     default: 'Dublin',
     mapView: {
@@ -138,9 +138,9 @@ const worldLocations = {
     }
 };
 
-// Application configuration (selection of weather stations + data provider)
+// Application configuration (weather station data set + data provider)
 const weatherStations = {
-    location: worldLocations,
+    location: worldLocations, // Picks weather station data set
 
     // Base URL for weather forecast
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
@@ -159,7 +159,7 @@ const weatherStations = {
 };
 
 // Common options for KPI charts
-// - Copied from https://www.highcharts.com/demo/dashboards/climate
+// - Adapted from https://www.highcharts.com/demo/dashboards/climate
 const KPIChartOptions = {
     chart: {
         margin: [8, 8, 16, 8],
@@ -205,7 +205,7 @@ const KPIChartOptions = {
     }
 };
 
-// Create JSON object for application specific data format
+// Create JSON object on the format required by this application
 function processWeatherData(data) {
     const retData = [];
     const forecastData = data.properties.timeseries;
@@ -249,7 +249,7 @@ async function setupBoard() {
                 }
             ]
         },
-        // Layout from https://www.highcharts.com/demo/dashboards/climate)
+        // Copied from https://www.highcharts.com/demo/dashboards/climate)
         gui: {
             layouts: [{
                 rows: [{
@@ -435,12 +435,19 @@ async function setupBoard() {
                         }],
                         events: {
                             click: function (e) {
-                                activeCity = e.point.name;
-                                updateBoard(
-                                    board,
-                                    activeCity,
-                                    activeParam.name
-                                );
+                                const city = e.point.name;
+                                if (city !== activeCity) {
+                                    // New city
+                                    activeCity = city;
+                                    updateBoard(
+                                        board,
+                                        activeCity,
+                                        activeParam.name
+                                    );
+                                } else {
+                                    // Re-select (otherwise marker is reset)
+                                    selectActiveCity();
+                                }
                             }
                         },
                         marker: {
@@ -722,6 +729,23 @@ async function setupBoard() {
             }]
     }, true);
 
+    // Get map chart
+    function getMapChart(board) {
+        // Update map (series 0 is the world map, series 1 the weather data)
+        return board.mountedComponents[0].component.chart.series[1];
+    }
+
+    // Select a city on the map
+    function selectActiveCity() {
+        const worldMap = getMapChart(board);
+        for (let idx = 0; idx < worldMap.data.length; idx++) {
+            if (worldMap.data[idx].name === activeCity) {
+                worldMap.data[idx].select();
+                break;
+            }
+        }
+    }
+
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityRows = citiesTable.getRowObjects();
@@ -752,12 +776,7 @@ async function setupBoard() {
     await updateBoard(board, activeCity);
 
     // Select active city on the map
-    for (let idx = 0; idx < worldMap.data.length; idx++) {
-        if (worldMap.data[idx].name === activeCity) {
-            worldMap.data[idx].select();
-            break;
-        }
-    }
+    selectActiveCity();
 
     // Load additional cities
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
@@ -766,6 +785,7 @@ async function setupBoard() {
         }
     }
 }
+
 
 // Add station to map
 async function addCityToMap(board, citiesTable, worldMap, city) {
@@ -779,12 +799,12 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
     worldMap.addPoint({
         custom: {
             elevation: cityInfo.elevation,
-            yScale: 'C'
+            yScale: null // Parameter dependent
         },
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        // Latest observation
+        // First item in current data set
         y: forecastTable.columns.temperature[rangeConfig.first]
     });
 }
