@@ -579,10 +579,15 @@ namespace Cell {
 
     /**
      * Responsive options of the cell.
+     *
+     * @deprecated
      */
     export interface CellResponsiveOptions {
         /**
          * The width, that should the cell have in the given responsive mode.
+         *
+         * @deprecated
+         *
          */
         width: (string|number);
     }
@@ -608,40 +613,16 @@ namespace Cell {
          * The fraction converts value into percents like in CSS grid is.
          * For example `1/3` means `33.333%`.
          *
-         * Examples:
-         * ```
-         * width: 300 // 300px
-         * ```
-         * ```
-         * width: '300px'
-         * ```
-         * ```
-         * width: '1/3' // 33.333%
-         * ```
-         * ```
-         * width: '33.333%'
-         * ```
+         * @deprecated
          *
-         *  Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         width?: (string|number);
         /**
          * Height of the cell.
          *
-         * Examples:
-         * ```
-         * height: 300 // 300px
-         * ```
-         * ```
-         * height: '300px'
-         * ```
+         * @deprecated
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
-         **/
+         * **/
         height?: (string|number);
         /**
          * CSS styles for cell container.
@@ -669,10 +650,6 @@ namespace Cell {
         layoutJSON?: LayoutType.JSON;
         /**
          * Options for responsive design.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
          *
          * @deprecated
          **/
