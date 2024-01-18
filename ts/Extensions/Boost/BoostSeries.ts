@@ -940,12 +940,14 @@ function scatterProcessData(
     // Filter unsorted scatter data for ranges
     const processedData: Array<PointOptions> = [],
         processedXData: Array<number> = [],
-        processedYData: Array<number> = [];
+        processedYData: Array<number> = [],
+        xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
+        yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
 
     let cropped = false,
+        x: number,
         xDataMax = xData[0],
         xDataMin = xData[0],
-        x: number,
         y: number,
         yDataMax = yData[0],
         yDataMin = yData[0];
@@ -961,23 +963,26 @@ function scatterProcessData(
             processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
-            xDataMax = Math.max(xDataMax, x);
-            xDataMin = Math.min(xDataMin, x);
-            yDataMax = Math.max(yDataMax, y);
-            yDataMin = Math.min(yDataMin, y);
+            if (xRangeNeeded) {
+                xDataMax = Math.max(xDataMax, x);
+                xDataMin = Math.min(xDataMin, x);
+            }
+            if (yRangeNeeded) {
+                yDataMax = Math.max(yDataMax, y);
+                yDataMin = Math.min(yDataMin, y);
+            }
         } else {
             cropped = true;
         }
     }
 
-    if (!isNumber(xExtremes.max) || !isNumber(xExtremes.min)) {
+    if (xRangeNeeded) {
         xAxis.setOptions({
             max: xAxis.options.max || xDataMax,
             min: xAxis.options.min || xDataMin
         });
     }
-
-    if (!isNumber(yExtremes.max) || !isNumber(yExtremes.min)) {
+    if (yRangeNeeded) {
         yAxis.setOptions({
             max: yAxis.options.max || yDataMax,
             min: yAxis.options.min || yDataMin
