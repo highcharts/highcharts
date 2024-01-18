@@ -213,7 +213,7 @@ class FlagsSeries extends ColumnSeries {
 
                     // Add reference to the point for tracker (#6303)
                     if (point.graphic.div) {
-                        point.graphic.div.point = point;
+                        (point.graphic.div as any).point = point;
                     }
 
                     graphic.isNew = true;
