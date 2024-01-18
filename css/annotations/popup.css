@@ -20,8 +20,9 @@
     min-width: 0;
 }
 
-.highcharts-popup.highcharts-annotation-toolbar button {
+.highcharts-annotation-toolbar button {
     margin-top: 0;
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > p {
@@ -185,6 +186,7 @@ button.highcharts-tab-item.highcharts-tab-item-active {
     margin: 0;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    background-color: var(--highcharts-background-color);
     width: 40px;
     height: 40px;
     cursor: pointer;
@@ -200,7 +202,6 @@ button.highcharts-tab-item.highcharts-tab-item-active {
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
     background-color: var(--highcharts-neutral-color-10);
-    cursor: pointer;
 }
 
 div.highcharts-popup-rhs-col > button {
@@ -209,10 +210,7 @@ div.highcharts-popup-rhs-col > button {
 
 .highcharts-popup button {
     border: none;
-}
-
-.highcharts-popup button:first-child {
-    margin-left: 0;
+    margin: 0 5px 0 0;
 }
 
 button.highcharts-tab-item.highcharts-tab-disabled {

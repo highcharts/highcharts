@@ -176,19 +176,8 @@ function addToolbar(
     );
 
     // add buttons
+
     let button = this.addButton(
-        popupDiv,
-        lang.removeButton || 'Remove',
-        'remove',
-        popupDiv,
-        callback
-    );
-
-    button.className += ' highcharts-annotation-remove-button';
-    button.style['background-image' as any] = 'url(' +
-        this.iconsURL + 'destroy.svg)';
-
-    button = this.addButton(
         popupDiv,
         lang.editButton || 'Edit',
         'edit',
@@ -208,6 +197,17 @@ function addToolbar(
     button.style['background-image' as any] = 'url(' +
         this.iconsURL + 'edit.svg)';
 
+    button = this.addButton(
+        popupDiv,
+        lang.removeButton || 'Remove',
+        'remove',
+        popupDiv,
+        callback
+    );
+
+    button.className += ' highcharts-annotation-remove-button';
+    button.style['background-image' as any] = 'url(' +
+        this.iconsURL + 'destroy.svg)';
 }
 
 /**
