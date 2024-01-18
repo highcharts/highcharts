@@ -128,7 +128,7 @@ class CSVConnector extends DataConnector {
                 csvURL,
                 dataModifier
             } = connector.options;
-
+        console.log('load CSV');
         connector.emit<CSVConnector.Event>({
             type: 'load',
             csv,
@@ -137,7 +137,7 @@ class CSVConnector extends DataConnector {
         });
 
         // If already loaded, clear the current rows
-        table.deleteRows();
+        table.deleteColumns();
 
         return Promise
             .resolve(

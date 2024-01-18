@@ -124,7 +124,7 @@ class HTMLTableConnector extends DataConnector {
                 dataModifier,
                 table: tableHTML
             } = connector.options;
-
+        console.log('load HTML');
         connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,

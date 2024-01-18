@@ -167,7 +167,7 @@ class GoogleSheetsConnector extends DataConnector {
                 googleSpreadsheetKey,
                 connector.options
             );
-
+        console.log('load Google');
         connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,

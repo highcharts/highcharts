@@ -120,7 +120,7 @@ class JSONConnector extends DataConnector {
             converter = connector.converter,
             table = connector.table,
             { data, dataUrl, dataModifier } = connector.options;
-
+        console.log('load JSON');
         connector.emit<JSONConnector.Event>({
             type: 'load',
             data,
@@ -129,7 +129,7 @@ class JSONConnector extends DataConnector {
         });
 
         // If already loaded, clear the current rows
-        table.deleteRows();
+        table.deleteColumns();
 
         return Promise
             .resolve(

@@ -22,7 +22,7 @@
     "dapi": "gulp dashboards/api",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
-    "dtest": "gulp dashboards/test",
+    "dtest": "gulp jsdoc-dts && gulp dashboards/test",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npx ts-node ./test/ts-node-unit-tests",
     "testall": "npx gulp test --browsers all --force --speak",

@@ -78,49 +78,36 @@ Highcharts.setOptions({
 });
 
 pollingCheckbox.onchange = async e => {
+    if (e.target.checked) {
+        // charts data
+        (await board.dataPool.getConnector('charts')).startPolling();
+        // KPI instances data
+        (await board.dataPool.getConnector('instanceDetails')).startPolling();
+    } else {
+        // charts data
+        (await board.dataPool.getConnector('charts')).stopPolling();
+        // KPI instances data
+        (await board.dataPool.getConnector('instanceDetails')).stopPolling();
+    }
 
-    // charts data
-    board.dataPool.setConnectorOptions({
-        id: 'charts',
-        type: 'JSON',
-        options: {
-            ...chartConnectorOptions,
-            enablePolling: e.target.checked,
-            dataRefreshRate: 2,
-            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json'
-        }
-    });
+    // const chartConnector = await board.dataPool.getConnector('charts');
+    // const instanceDetailsConnector = await board.dataPool.getConnector('instanceDetails');
 
-    // KPI instances data
-    board.dataPool.setConnectorOptions({
-        id: 'instanceDetails',
-        type: 'JSON',
-        options: {
-            ...instancesDetailsConnectorOptions,
-            enablePolling: e.target.checked,
-            dataRefreshRate: 2,
-            dataUrl: 'https://demo-live-data.highcharts.com/instances.json'
-        }
-    });
-
-    const chartConnector = await board.dataPool.getConnector('charts');
-    const instanceDetailsConnector = await board.dataPool.getConnector('instanceDetails');
-
-    // update connector and rerender component
-    board.mountedComponents.forEach(mComp => {
-        const connectorId = mComp.component.options?.connector?.id;
-        if (connectorId) {
-            if (connectorId === 'charts') {
-                mComp.component.setConnector(chartConnector);
-            } else if (
-                connectorId === 'instanceDetails' &&
-                mComp.cell.id !== 'disk-usage'
-            ) {
-                mComp.component.setConnector(instanceDetailsConnector);
-            }
-            mComp.component.render();
-        }
-    });
+    // // update connector and rerender component
+    // board.mountedComponents.forEach(mComp => {
+    //     const connectorId = mComp.component.options?.connector?.id;
+    //     if (connectorId) {
+    //         if (connectorId === 'charts') {
+    //             mComp.component.setConnector(chartConnector);
+    //         } else if (
+    //             connectorId === 'instanceDetails' &&
+    //             mComp.cell.id !== 'disk-usage'
+    //         ) {
+    //             mComp.component.setConnector(instanceDetailsConnector);
+    //         }
+    //         mComp.component.render();
+    //     }
+    // });
 };
 
 const setupDashboard = instanceId => {
@@ -138,14 +125,18 @@ const setupDashboard = instanceId => {
                 type: 'JSON',
                 options: {
                     ...instancesDetailsConnectorOptions,
-                    data: instance
+                    data: instance,
+                    dataRefreshRate: 2,
+                    dataUrl: 'https://demo-live-data.highcharts.com/instances.json'
                 }
             }, {
                 id: 'charts',
                 type: 'JSON',
                 options: {
                     ...chartConnectorOptions,
-                    data: instance
+                    data: instance,
+                    dataRefreshRate: 2,
+                    dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json'
                 }
             }, {
                 id: 'instances',
@@ -394,7 +385,12 @@ const setupDashboard = instanceId => {
                     }
                 },
                 chart: {
-                    type: 'bar'
+                    type: 'bar',
+                    events: {
+                        redraw: function () {
+                            console.log('disk-usage', this.series[0].points.length);
+                        }
+                    }
                 },
                 tooltip: {
                     headerFormat: '',
@@ -426,7 +422,12 @@ const setupDashboard = instanceId => {
             },
             chartOptions: {
                 chart: {
-                    type: 'spline'
+                    type: 'spline',
+                    events: {
+                        redraw: function () {
+                            console.log('cpu-utilization', this.series[0].points.length);
+                        }
+                    }
                 },
                 series: [{
                     name: 'cpuUtilization'
@@ -621,7 +622,12 @@ const setupDashboard = instanceId => {
             },
             chartOptions: {
                 chart: {
-                    type: 'spline'
+                    type: 'spline',
+                    events: {
+                        redraw: function () {
+                            console.log('network-opt', this.series[0].points.length);
+                        }
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
@@ -667,7 +673,12 @@ const setupDashboard = instanceId => {
             },
             chartOptions: {
                 chart: {
-                    type: 'column'
+                    type: 'column',
+                    events: {
+                        redraw: function () {
+                            console.log('disk-opt', this.series[0].points.length);
+                        }
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
