@@ -379,8 +379,7 @@ async function setupBoard() {
                     chart: {
                         map: await fetch(
                             'https://code.highcharts.com/mapdata/custom/world.topo.json'
-                        ).then(response => response.json()),
-                        styledMode: true
+                        ).then(response => response.json())
                     },
                     title: {
                         text: paramConfig.getColumnHeader('temperature')
@@ -691,8 +690,8 @@ async function setupBoard() {
                             const point = this.point;
 
                             // Date + value
-                            const hdr = Highcharts.dateFormat('%Y-%m-%d %H:%M<br />', point.x);
-                            return hdr + Highcharts.numberFormat(point.y, 1) +
+                            return Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x) +
+                                Highcharts.numberFormat(point.y, 1) +
                                 activeParam.unit;
                         }
                     },
