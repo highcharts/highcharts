@@ -140,7 +140,22 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
-                    id: 'times'
+                    id: 'controls',
+                    width: '50%',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
+
+                }, {
+                    id: 'times',
+                    width: '50%',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
                 }]
             }]
         }]
@@ -150,6 +165,7 @@ Dashboards.board('container', {
             id: 'horizon'
         },
         cell: 'horizon-chart',
+        id: 'horizon-chart',
         type: 'Highcharts',
         columnAssignment: {
             azimuth: 'x',
@@ -176,7 +192,9 @@ Dashboards.board('container', {
                     },
                     tooltip: {
                         headerFormat: '',
-                        pointFormat: '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b><br>{point.y:.2f}°'
+                        pointFormat: 'Sun position<br>' +
+                            '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
+                            '<br>Angle: {point.y:.2f}°'
                     },
                     zIndex: -2
                 }, {
@@ -292,7 +310,6 @@ Dashboards.board('container', {
                 title: {
                     enabled: false
                 },
-                floor: -10,
                 gridLineWidth: 0,
                 tickPixelInterval: 30,
                 endOnTick: false,
@@ -303,8 +320,9 @@ Dashboards.board('container', {
                     color: 'gray',
                     zIndex: 10
                 }],
-                staticScale: 10
-                // ...yExtremes
+                staticScale: 10,
+                max: 30,
+                min: -10
             },
             legend: {
                 enabled: false
@@ -330,9 +348,123 @@ Dashboards.board('container', {
                 name: 'Horizon',
                 marker: {
                     enabled: false
-                }
+                },
+                enableMouseTracking: false
             }]
         }
+    }, {
+        cell: 'controls',
+        type: 'HTML',
+        style: {
+            padding: '10px'
+        },
+        title: 'Time control',
+        elements: [`
+        <div class="component-padding">
+            <p>
+                <label id="date-input-label" for="date-input"></label>
+                <input id="date-input" type="range" min="0" max="365" />
+            </p>
+            <p>
+                <label id="time-input-label" for="time-input"></label>
+                <input id="time-input" type="range" min="0" max="1440" />
+            </p>
+        </div>
+        `],
+        events: {
+            // @todo - at the time of the `mount` event, the elements are not
+            // yet attached, so I need to use `resize`. What is the preferred
+            // way of defining behavior for the HTML content? Missing an
+            // `afterMount` event?
+            resize() {
+                if (this.initialized) {
+                    return;
+                }
+
+                // Date input
+                const dateInput = document.querySelector('#date-input'),
+                    updateDateInputLabel = () => {
+                        document.getElementById('date-input-label')
+                            .innerText = new Intl.DateTimeFormat('nn-NO', {
+                                dateStyle: 'medium'
+                            }).format(date);
+                    },
+                    newYear = new Date(date.getTime());
+                newYear.setMonth(0);
+                newYear.setDate(1);
+                newYear.setHours(0);
+                newYear.setMinutes(0);
+                newYear.setSeconds(0);
+                dateInput.addEventListener('input', e => {
+                    const chart = this.board.mountedComponents
+                        .map(c => c.component)
+                        .find(c => c.id === 'horizon-chart')
+                        .chart;
+                    date.setMonth(0);
+                    date.setDate(Number(e.target.value));
+                    updateDateInputLabel();
+                    chart.get('sun-trajectory').setData(
+                        // Get downsampled sun trajectory for speed
+                        getSunTrajectory(horizon.elevationProfile, true),
+                        false,
+                        false
+                    );
+                    chart.get('sun-point').update(getSunXY(date), false);
+                    chart.redraw(false);
+                });
+                dateInput.addEventListener('change', () => {
+                    const chart = this.board.mountedComponents
+                        .map(c => c.component)
+                        .find(c => c.id === 'horizon-chart')
+                        .chart;
+
+                    // Get the full sun trajectory, not the downsampled one
+                    chart.get('sun-trajectory').setData(
+                        getSunTrajectory(horizon.elevationProfile),
+                        true,
+                        false
+                    );
+                });
+
+                // Workaround for not exposed AST (#20463)
+                dateInput.min = 0;
+                dateInput.max = 365;
+
+                dateInput.value = Math.floor((date - newYear) / (24 * 36e5));
+                updateDateInputLabel();
+
+
+                // Time input
+                const timeInput = document.getElementById('time-input'),
+                    updateTimeInputLabel = () => {
+                        document.getElementById('time-input-label')
+                            .innerText = new Intl.DateTimeFormat('nn-NO', {
+                                timeStyle: 'short'
+                            }).format(date);
+                    };
+                timeInput.addEventListener('input', e => {
+                    const chart = this.board.mountedComponents
+                        .map(c => c.component)
+                        .find(c => c.id === 'horizon-chart')
+                        .chart;
+                    date.setHours(0);
+                    date.setMinutes(Number(e.target.value));
+                    updateTimeInputLabel();
+                    chart.get('sun-point').update(getSunXY(date), true, false);
+                });
+
+                // Workaround for not exposed AST (#20463)
+                timeInput.min = 0;
+                timeInput.max = 1440;
+
+                timeInput.value = date.getHours() * 60 + date.getMinutes();
+                updateTimeInputLabel();
+
+
+                this.initialized = true;
+            }
+        }
+
     }, {
         cell: 'times',
         connector: {

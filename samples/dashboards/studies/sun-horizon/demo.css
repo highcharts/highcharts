@@ -7,6 +7,20 @@ h1#title {
     text-align: center;
 }
 
+#controls .component-padding {
+    padding: 10px;
+}
+
+#controls label {
+    display: inline-block;
+    text-align: right;
+    width: 7em;
+}
+
+#controls input {
+    width: calc(100% - 10em);
+}
+
 pre#data {
     display: none;
 }
