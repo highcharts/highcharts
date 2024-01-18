@@ -1,5 +1,8 @@
 QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
     var chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
             plotOptions: {
                 series: {
                     dataLabels: {

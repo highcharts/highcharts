@@ -19,22 +19,24 @@
 import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
-    DOMElementType,
-    HTMLDOMElement
+    HTMLDOMElement,
+    SVGDOMElement
 } from '../DOMElementType';
-import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
+import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
+    attr,
     css,
+    createElement,
     defined,
     extend,
-    pushUnique,
-    pInt
+    pInt,
+    pushUnique
 } = U;
 
 /* *
@@ -43,47 +45,135 @@ const {
  *
  * */
 
-type TransformKeyType = (
-    '-ms-transform'|
-    '-webkit-transform'|
-    'MozTransform'|
-    '-o-transform'
-);
-
-declare module '../SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../SVG/SVGRendererLike' {
+    interface SVGRendererLike {
         /** @requires Core/Renderer/HTML/HTMLElement */
-        appendChild: HTMLDOMElement['appendChild'];
-        element: DOMElementType;
-        parentGroup?: (HTMLElement|SVGElement);
-        renderer: (HTMLRenderer|SVGRenderer);
-        style: (CSSObject&CSSStyleDeclaration);
-        xCorr: number;
-        yCorr: number;
-        afterSetters(): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        getSpanCorrection(
-            width: number,
-            baseline: number,
-            alignCorrection: number
-        ): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlCss(styles: CSSObject): HTMLElement;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlGetBBox(): BBoxObject;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        htmlUpdateTransform(): void;
-        /** @requires Core/Renderer/HTML/HTMLElement */
-        setSpanRotation(
-            rotation: number,
-            alignCorrection: number,
-            baseline: number
-        ): void;
-        textSetter(value: string): void;
-        translateXSetter(value: number, key: string): void;
-        translateYSetter(value: number, key: string): void;
+        html(str: string, x: number, y: number): HTMLElement;
     }
 }
+
+/**
+ * The opacity and visibility properties are set as attributes on the main
+ * element and SVG groups, and as identical CSS properties on the HTML element
+ * and the ancestry divs. (#3542)
+ *
+ * @private
+ */
+function commonSetter(
+    this: SVGElement,
+    value: string,
+    key: string,
+    elem: HTMLDOMElement
+): void {
+    const style = this.div?.style || elem.style;
+    SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
+    if (style) {
+        style[key as any] = value;
+    }
+}
+
+/**
+ * Decorate each SVG group in the ancestry line. Each SVG `g` element that
+ * contains children with useHTML, will receive a `div` element counterpart to
+ * contain the HTML span. These div elements are translated and styled like
+ * original `g` counterparts.
+ *
+ * @private
+ */
+const decorateSVGGroup = (
+    g: SVGElement,
+    container: HTMLDOMElement
+): HTMLDOMElement => {
+    if (!g.div) {
+        const className = attr(g.element, 'class'),
+            cssProto = g.css;
+
+        // Create the parallel HTML group
+        const div = createElement(
+            'div',
+            className ? { className } : void 0,
+            {
+                // Add HTML specific styles
+                position: 'absolute',
+                left: `${g.translateX || 0}px`,
+                top: `${g.translateY || 0}px`,
+
+                // Add pre-existing styles
+                ...g.styles,
+
+                // Add g attributes that correspond to CSS
+                display: g.display,
+                opacity: g.opacity, // #5075
+                visibility: g.visibility
+            },
+            // The top group is appended to container
+            g.parentGroup?.div || container
+        );
+
+        g.classSetter = (
+            value: string,
+            key: string,
+            element: SVGDOMElement
+        ): void => {
+            element.setAttribute('class', value);
+            div.className = value;
+        };
+
+        /**
+         * Common translate setter for X and Y on the HTML group.
+         *
+         * Reverted the fix for #6957 due to positioning problems and offline
+         * export (#7254, #7280, #7529)
+         * @private
+         */
+        g.translateXSetter = g.translateYSetter = (
+            value: number|string|null,
+            key: string
+        ): void => {
+            g[key] = value;
+
+            div.style[key === 'translateX' ? 'left' : 'top'] = `${value}px`;
+
+            g.doTransform = true;
+        };
+
+        g.opacitySetter = (g as any).visibilitySetter = commonSetter;
+
+        // Extend the parent group's css function by updating the parallel div
+        // counterpart with the same style.
+        g.css = (styles: CSSObject): SVGElement => {
+
+            // Call the base css method. The `parentGroup` can be either an
+            // SVGElement or an SVGLabel, in which the css method is extended
+            // (#19200).
+            cssProto.call(g, styles);
+
+            // #6794
+            if (styles.cursor) {
+                div.style.cursor = styles.cursor;
+            }
+
+            // #18821
+            if (styles.pointerEvents) {
+                div.style.pointerEvents = styles.pointerEvents;
+            }
+
+            return g;
+        };
+
+        // Event handling
+        g.on = function (): SVGElement {
+            SVGElement.prototype.on.apply({
+                element: div,
+                onEvents: g.onEvents
+            }, arguments);
+            return g;
+        };
+
+        g.div = div;
+    }
+    return g.div;
+};
 
 /* *
  *
@@ -92,7 +182,6 @@ declare module '../SVG/SVGElementLike' {
  * */
 
 class HTMLElement extends SVGElement {
-
     /* *
      *
      *  Static Functions
@@ -100,27 +189,34 @@ class HTMLElement extends SVGElement {
      * */
 
     /**
-     * Modifies SVGElement to support HTML elements.
+     * Compose
      * @private
      */
-    public static compose<T extends typeof SVGElement>(
-        SVGElementClass: T
-    ): (T&typeof HTMLElement) {
+    public static compose<T extends typeof SVGRenderer>(
+        SVGRendererClass: T
+    ): void {
 
         if (pushUnique(composed, this.compose)) {
-            const htmlElementProto = HTMLElement.prototype,
-                svgElementProto = SVGElementClass.prototype;
-
-            svgElementProto.getSpanCorrection = htmlElementProto
-                .getSpanCorrection;
-            svgElementProto.htmlCss = htmlElementProto.htmlCss;
-            svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto
-                .htmlUpdateTransform;
-            svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
+            /**
+             * Create a HTML text node. This is used by the SVG renderer `text`
+             * and `label` functions through the `useHTML` parameter.
+             *
+             * @private
+             */
+            SVGRendererClass.prototype.html = function (
+                str: string,
+                x: number,
+                y: number
+            ): HTMLElement {
+                return new HTMLElement(this, 'span')
+                    // Set the default attributes
+                    .attr({
+                        text: str,
+                        x: Math.round(x),
+                        y: Math.round(y)
+                    });
+            };
         }
-
-        return SVGElementClass as (T&typeof HTMLElement);
     }
 
     /* *
@@ -130,19 +226,39 @@ class HTMLElement extends SVGElement {
      * */
 
     public div?: HTMLDOMElement;
-    public parentGroup?: HTMLElement;
+    public parentGroup?: SVGElement;
+    public xCorr?: number;
+    public yCorr?: number;
+
 
     /* *
      *
      *  Functions
      *
      * */
+    public constructor(
+        renderer: SVGRenderer,
+        nodeName: 'span'
+    ) {
+        super(renderer, nodeName);
+
+        this.css({
+            position: 'absolute',
+            ...(renderer.styledMode ? {} : {
+                fontFamily: renderer.style.fontFamily,
+                fontSize: renderer.style.fontSize
+            })
+        });
+
+        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
+        this.element.style.whiteSpace = 'nowrap';
+    }
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
      * @private
      */
-    public getSpanCorrection(
+    private getSpanCorrection(
         width: number,
         baseline: number,
         alignCorrection: number
@@ -155,7 +271,7 @@ class HTMLElement extends SVGElement {
      * Apply CSS to HTML elements. This is used in text within SVG rendering.
      * @private
      */
-    public htmlCss(styles: CSSObject): HTMLElement {
+    public css(styles: CSSObject): this {
         const { element } = this,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
@@ -183,7 +299,7 @@ class HTMLElement extends SVGElement {
 
         // Now that all styles are applied, to the transform
         if (doTransform) {
-            this.htmlUpdateTransform();
+            this.updateTransform();
         }
 
         return this;
@@ -191,6 +307,10 @@ class HTMLElement extends SVGElement {
 
     /**
      * The useHTML method for calculating the bounding box based on offsets.
+     * Called internally from the `SVGElement.getBBox` function and subsequently
+     * rotated.
+     *
+     * @private
      */
     public htmlGetBBox(): BBoxObject {
         const { element } = this;
@@ -204,9 +324,11 @@ class HTMLElement extends SVGElement {
     }
 
     /**
+     * Batch update styles and attributes related to transform
+     *
      * @private
      */
-    public htmlUpdateTransform(): void {
+    public updateTransform(): void {
         // Aligning non added elements is expensive
         if (!this.added) {
             this.alignOnAdd = true;
@@ -228,7 +350,7 @@ class HTMLElement extends SVGElement {
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
             } as Record<string, number>)[textAlign],
-            whiteSpace = styles?.whiteSpace;
+            whiteSpace = styles.whiteSpace;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -345,7 +467,7 @@ class HTMLElement extends SVGElement {
      * Set the rotation of an individual HTML span.
      * @private
      */
-    public setSpanRotation(
+    private setSpanRotation(
         rotation: number,
         alignCorrection: number,
         baseline: number
@@ -358,7 +480,98 @@ class HTMLElement extends SVGElement {
             transformOrigin: `${alignCorrection * 100}% ${baseline}px`
         });
     }
+
+    /**
+     * Add the element to a group wrapper. For HTML elements, a parallel div
+     * will be created for each ancenstor SVG `g` element.
+     *
+     * @private
+     */
+    public add(parentGroup?: SVGElement): this {
+
+        const container = this.renderer.box
+                .parentNode as unknown as HTMLDOMElement,
+            parents = [] as Array<SVGElement>;
+
+        let div: HTMLDOMElement|undefined;
+
+        this.parentGroup = parentGroup;
+
+        // Create a parallel divs to hold the HTML elements
+        if (parentGroup) {
+            div = parentGroup.div;
+            if (!div) {
+
+                // Read the parent chain into an array and read from top
+                // down
+                let svgGroup: SVGElement|undefined = parentGroup;
+                while (svgGroup) {
+
+                    parents.push(svgGroup);
+
+                    // Move up to the next parent group
+                    svgGroup = svgGroup.parentGroup;
+                }
+
+                // Decorate each of the ancestor group elements with a parallel
+                // div that reflects translation and styling
+                for (const parentGroup of parents.reverse()) {
+                    div = decorateSVGGroup(parentGroup, container);
+                }
+            }
+        }
+
+        (div || container).appendChild(this.element);
+
+        this.added = true;
+        if (this.alignOnAdd) {
+            this.updateTransform();
+        }
+
+        return this;
+    }
+
+    /**
+     * Text setter
+     * @private
+     */
+    public textSetter(value: string): void {
+        if (value !== this.textStr) {
+            delete this.bBox;
+            delete this.oldTextWidth;
+
+            AST.setElementHTML(this.element, value ?? '');
+
+            this.textStr = value;
+            this.doTransform = true;
+        }
+    }
+
+    /**
+     * Align setter
+     *
+     * @private
+     */
+    public alignSetter(value: 'left'|'center'|'right'): void {
+        this.alignValue = this.textAlign = value;
+        this.doTransform = true;
+    }
+    /**
+     * Various setters which rely on update transform
+     * @private
+     */
+    public xSetter(value: number, key: string): void {
+        this[key] = value;
+        this.doTransform = true;
+    }
 }
+
+// Some shared setters
+const proto = HTMLElement.prototype;
+(proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
+proto.ySetter = proto.xSetter;
+proto.rotationSetter = proto.xSetter;
+
 
 /* *
  *
@@ -368,7 +581,6 @@ class HTMLElement extends SVGElement {
 
 interface HTMLElement {
     element: HTMLDOMElement;
-    renderer: HTMLRenderer;
 }
 
 /* *
