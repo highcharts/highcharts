@@ -750,14 +750,20 @@ namespace Board {
     export interface ResponsiveBreakpoints extends JSON.Object {
         /**
          * Value in px to test the dashboard is in small mode.
+         *
+         * @deprecated
          **/
         small: number;
         /**
          * Value in px to test the dashboard is in medium mode.
+         *
+         * @deprecated
          **/
         medium: number;
         /**
          * Value in px to test the dashboard is in large mode.
+         *
+         * @deprecated
          **/
         large: number;
     }

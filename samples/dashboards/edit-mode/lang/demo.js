@@ -21,10 +21,7 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp',
-    small: 'Liten',
-    medium: 'Medium',
-    large: 'Stor'
+    dataLabels: 'Data merkelapp'
 };
 
 Dashboards.board('container', {
