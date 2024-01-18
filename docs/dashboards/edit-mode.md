@@ -22,9 +22,7 @@ When edit mode is enabled, the appearance of the dashboard changes. When hoverin
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
-Next to the burger menu, some additional buttons are added.
-
-The “Large”, “Medium”, and “Small” buttons change the width of the dashboard, to let the designer check how the dashboard will appear on smaller screens such as tablets and smartphones.
+Next to the burger menu, the [Add Component](#add-component) button is added.
 
 
 ## Add Component
