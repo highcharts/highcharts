@@ -218,7 +218,7 @@ describe('Edit mode with toolbars disabled', () => {
     });
 
     it('Add component button should not exist.', () => {
-        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').should('not.exist');
+        cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
 });
 
@@ -229,6 +229,6 @@ describe('Edit mode with add component button disabled', () => {
     });
 
     it('Add component button should not exist.', () => {
-        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').should('not.exist');
+        cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
 });
