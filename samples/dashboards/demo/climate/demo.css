@@ -510,11 +510,17 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
     padding: 0 20px;
 }
 
+#kpi-layout {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #kpi-data,
 #kpi-temperature,
 #kpi-max-temperature,
 #kpi-rain {
     height: 204px;
+    flex: 1 1 50%;
 }
 
 /* LARGE */

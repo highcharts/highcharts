@@ -555,6 +555,12 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
     padding: 0 20px;
 }
 
+
+#kpi-layout {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #kpi-data,
 #kpi-temperature,
 #kpi-max-temperature,
@@ -562,6 +568,7 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
 #kpi-ice,
 #kpi-frost {
     height: 204px;
+    flex: 1 1 33.333%;
 }
 
 /* LARGE */

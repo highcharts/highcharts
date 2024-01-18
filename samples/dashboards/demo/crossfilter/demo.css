@@ -10,3 +10,30 @@ h2 {
 #csv {
     display: none;
 }
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #top-left,
+    #top-middle,
+    #top-right {
+        flex: 1 1 33.333%;
+    }
+}
+  
+/* MEDIUM */
+@media (max-width: 992px) {
+    #top-left,
+    #top-middle,
+    #top-right {
+        flex: 1 1 100%;
+    }
+}
+  
+/* SMALL */
+@media (max-width: 576px) {
+    #top-left,
+    #top-middle,
+    #top-right {
+        flex: 1 1 100%;
+    }
+}
