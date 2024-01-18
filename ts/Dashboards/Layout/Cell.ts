@@ -491,24 +491,6 @@ class Cell extends GUIElement {
         }
     }
 
-    // Updates width in responsive options.
-    public updateSize(
-        width: string, // % value or 'auto' or px
-        rwdMode?: string // small, medium, large
-    ): void {
-        const cell = this,
-            cntSize = rwdMode ||
-                cell.row.layout.board.getLayoutContainerSize();
-
-        if (!cell.options.responsive) {
-            cell.options.responsive = {};
-        }
-
-        cell.options.responsive[cntSize] = {
-            width: width
-        };
-    }
-
     public setHighlight(
         remove?: boolean
     ): void {

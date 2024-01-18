@@ -470,34 +470,6 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Returns the current size of the layout container based on the selected
-     * responsive breakpoints.
-     * @internal
-     *
-     * @returns Return current size of the layout container in px.
-     */
-    public getLayoutContainerSize(): string {
-        const board = this,
-            responsiveOptions = board.options.responsiveBreakpoints,
-            cntWidth = (board.layoutsWrapper || {}).clientWidth;
-
-        let size = Globals.responsiveBreakpoints.large;
-
-        if (responsiveOptions) {
-            if (cntWidth <= responsiveOptions.small) {
-                size = Globals.responsiveBreakpoints.small;
-            } else if (
-                cntWidth > responsiveOptions.small &&
-                cntWidth <= responsiveOptions.medium
-            ) {
-                size = Globals.responsiveBreakpoints.medium;
-            }
-        }
-
-        return size;
-    }
-
-    /**
      * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
@@ -587,7 +559,6 @@ class Board implements Serializable<Board, Board.JSON> {
                 {
                     componentOptions: options.componentOptions as
                         Partial<Component.Options>,
-                    responsiveBreakpoints: options.responsiveBreakpoints,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
                 }
@@ -621,8 +592,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions as
-                    Partial<Component.ComponentOptionsJSON>,
-                responsiveBreakpoints: board.options.responsiveBreakpoints
+                    Partial<Component.ComponentOptionsJSON>
             }
         };
     }
@@ -722,14 +692,6 @@ namespace Board {
          * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
-        /**
-         * Responsive breakpoints for the board - small, medium and large.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
-         **/
-        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
@@ -762,10 +724,6 @@ namespace Board {
          * Whether the GUI is enabled or not.
          **/
         guiEnabled?: boolean;
-        /**
-         * Responsive breakpoints for the board - small, medium and large.
-         **/
-        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
@@ -838,12 +796,7 @@ namespace Board {
             },
             layouts: []
         },
-        components: [],
-        responsiveBreakpoints: {
-            small: 576,
-            medium: 992,
-            large: 1200
-        }
+        components: []
     };
 
     /* *
