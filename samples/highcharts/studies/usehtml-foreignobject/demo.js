@@ -18,7 +18,7 @@
 
     HTMLElement.prototype.add = function (parentGroup) {
 
-        this.fo.add(parentGroup);
+        this.fo?.add(parentGroup);
 
         // Like super.add
         SVGElement.prototype.add.call(this, this.foBody);
