@@ -59,81 +59,23 @@ const paramConfig = {
 // Selection of weather stations to display data from
 const worldLocations = {
     default: 'Dublin',
-    mapView: {
-        maxZoom: 4
-    },
-    points: {
-        'New York': {
-            lat: 40.71,
-            lon: -74.01,
-            alt: 10
-        },
-        Dublin: {
-            lat: 53.35,
-            lon: -6.26,
-            alt: 8
-        },
-        Sydney: {
-            lat: -33.87,
-            lon: 151.21,
-            alt: 35
-        },
-        'Buenos Aires': {
-            lat: -34.60,
-            lon: -58.38,
-            alt: 10
-        },
-        Tokyo: {
-            lat: 35.69,
-            lon: 139.69,
-            alt: 17
-        },
-        Johannesburg: {
-            lat: -26.20,
-            lon: 28.034,
-            alt: 1767
-        },
-        Istanbul: {
-            lat: 41.00824,
-            lon: 28.978359,
-            alt: 39
-        },
-        Helsinki: {
-            lat: 60.167488,
-            lon: 24.942747,
-            alt: 0
-        },
-        Bengaluru: {
-            lat: 12.976793,
-            lon: 77.590082,
-            alt: 921
-        },
-        Dakar: {
-            lat: 14.693425,
-            lon: -17.447938,
-            alt: 12
-        },
-        Bogotá: {
-            lat: 4.6529539,
-            lon: -74.083564,
-            alt: 2556
-        },
-        Ulanbaatar: {
-            lat: 47.940932,
-            lon: 106.91795,
-            alt: 1316
-        },
-        'Hong Kong': {
-            lat: 22.284893,
-            lon: 114.1583,
-            alt: 6
-        },
-        'San Diego': {
-            lat: 32.7174202,
-            lon: -117.162,
-            alt: 36
-        }
-    }
+    points: [
+        ['city', 'lat', 'lon', 'elevation'],
+        ['New York', 40.71, -74.01, 10],
+        ['Dublin', 53.35, -6.26, 8],
+        ['Sydney', -33.87, 151.21, 35],
+        ['Buenos Aires', -34.6, -58.38, 10],
+        ['Tokyo', 35.69, 139.69, 17],
+        ['Johannesburg', -26.2, 28.03, 1767],
+        ['Istanbul', 41.01, 28.98, 39],
+        ['Helsinki', 60.17, 24.94, 0],
+        ['Bengaluru', 12.98, 77.59, 921],
+        ['Dakar', 14.69, -17.45, 12],
+        ['Bogotá', 4.65, -74.08, 2556],
+        ['Ulanbaatar', 47.94, 106.92, 1316],
+        ['Hong Kong', 22.28, 114.16, 6],
+        ['San Diego', 32.71, -117.16, 36]
+    ]
 };
 
 // Application configuration (weather station data set + data provider)
@@ -145,12 +87,12 @@ const weatherStations = {
 
     // Build the full URL for accessing the data
     buildUrl: function (city) {
-        if (city in this.location.points) {
-            const point = this.location.points[city];
-            const ret = this.baseUrl +
-                `?lat=${point.lat}&lon=${point.lon}&altitude=${point.alt}`;
-
-            return ret;
+        for (let i = 1; i < this.location.points.length; i++) {
+            const point = this.location.points[i];
+            if (point[0] === city) {
+                return this.baseUrl +
+                    `?lat=${point[1]}&lon=${point[2]}&altitude=${point[3]}`;
+            }
         }
         return null;
     }
@@ -161,7 +103,6 @@ const weatherStations = {
 const KPIChartOptions = {
     chart: {
         spacing: [8, 8, 8, 8],
-        styledMode: true,
         type: 'solidgauge'
     },
     pane: {
@@ -202,25 +143,6 @@ const KPIChartOptions = {
     }
 };
 
-// Create JSON object on the format required by this application
-function processWeatherData(data) {
-    const retData = [];
-    const forecastData = data.properties.timeseries;
-
-    for (let i = 0; i < rangeConfig.hours; i++) {
-        const item = forecastData[i];
-        const pred = item.data.instant.details;
-        const msec = new Date(item.time).getTime();
-        retData.push({
-            time: msec,
-            temperature: pred.air_temperature,
-            pressure: pred.air_pressure_at_sea_level,
-            humidity: pred.relative_humidity
-        });
-    }
-    return retData;
-}
-
 // Launches the applications
 async function setupBoard() {
     let activeCity = weatherStations.location.default;
@@ -233,15 +155,8 @@ async function setupBoard() {
                     id: 'Cities',
                     type: 'JSON',
                     options: {
-                        data: weatherStations.location.points,
-                        beforeParse: function () {
-                            const ret = [['city', 'lat', 'lon', 'elevation']];
-                            // eslint-disable-next-line max-len
-                            for (const [name, item] of Object.entries(weatherStations.location.points)) {
-                                ret.push([name, item.lat, item.lon, item.alt]);
-                            }
-                            return ret;
-                        }
+                        firstRowAsNames: true,
+                        data: weatherStations.location.points
                     }
                 }
             ]
@@ -401,7 +316,9 @@ async function setupBoard() {
                         enabled: true,
                         enableMouseWheelZoom: true
                     },
-                    mapView: weatherStations.location.mapView,
+                    mapView: {
+                        maxZoom: 4
+                    },
                     series: [{
                         type: 'map',
                         name: 'Weather Station Map'
@@ -742,7 +659,26 @@ async function setupBoard() {
                 options: {
                     firstRowAsNames: false,
                     dataUrl: url,
-                    beforeParse: processWeatherData
+                    beforeParse: function (data) {
+                        const retData = [];
+                        const forecastData = data.properties.timeseries;
+
+                        for (let i = 0; i < rangeConfig.hours; i++) {
+                            const item = forecastData[i];
+                            // Prediction
+                            const pred = item.data.instant.details;
+
+                            // Picks the parameters this application uses
+                            retData.push({
+                                // UTC -> milliseconds
+                                time: new Date(item.time).getTime(),
+                                temperature: pred.air_temperature,
+                                pressure: pred.air_pressure_at_sea_level,
+                                humidity: pred.relative_humidity
+                            });
+                        }
+                        return retData;
+                    }
                 }
             });
         }
@@ -785,24 +721,22 @@ async function setupBoard() {
     }
 }
 
-
 // Add station to map
 async function addCityToMap(board, citiesTable, worldMap, city) {
-    const dataPool = board.dataPool;
-    const forecastTable = await dataPool.getConnectorTable(city);
+    const forecastTable = await board.dataPool.getConnectorTable(city);
     const cityInfo = citiesTable.getRowObject(
         citiesTable.getRowIndexBy('city', city)
     );
 
     // Add city to world map
     worldMap.addPoint({
+        name: cityInfo.city,
+        lat: cityInfo.lat,
+        lon: cityInfo.lon,
         custom: {
             elevation: cityInfo.elevation,
             yScale: null // Parameter dependent
         },
-        lat: cityInfo.lat,
-        lon: cityInfo.lon,
-        name: cityInfo.city,
         // First item in current data set
         y: forecastTable.columns.temperature[rangeConfig.first]
     });
