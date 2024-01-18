@@ -299,7 +299,6 @@ function wrapRenderLabel(
             {
                 color: (
                     !styledMode &&
-                    label.styles &&
                     label.styles.color ||
                     ''
                 ),
