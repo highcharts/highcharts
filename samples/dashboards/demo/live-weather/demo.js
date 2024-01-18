@@ -659,6 +659,7 @@ async function setupBoard() {
                 options: {
                     firstRowAsNames: false,
                     dataUrl: url,
+                    // Pre-parsing for filtering incoming data
                     beforeParse: function (data) {
                         const retData = [];
                         const forecastData = data.properties.timeseries;
