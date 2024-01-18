@@ -58,6 +58,7 @@ const paramConfig = {
 
 // Selection of weather stations to display data from
 const worldLocations = {
+    mapUrl: 'https://code.highcharts.com/mapdata/custom/world.topo.json',
     default: 'Dublin',
     points: [
         ['city', 'lat', 'lon', 'elevation'],
@@ -292,9 +293,8 @@ async function setupBoard() {
                 chartConstructor: 'mapChart',
                 chartOptions: {
                     chart: {
-                        map: await fetch(
-                            'https://code.highcharts.com/mapdata/custom/world.topo.json'
-                        ).then(response => response.json())
+                        map: await fetch(weatherStations.location.mapUrl)
+                            .then(response => response.json())
                     },
                     title: {
                         text: paramConfig.getColumnHeader('temperature')
@@ -358,7 +358,9 @@ async function setupBoard() {
                                     updateBoard(
                                         board,
                                         activeCity,
-                                        activeParam.name
+                                        activeParam.name,
+                                        false, // No parameter update
+                                        true // Data set update
                                     );
                                 } else {
                                     // Re-select (otherwise marker is reset)
@@ -441,7 +443,8 @@ async function setupBoard() {
                     click: function () {
                         // Update board
                         activeParam = paramConfig.temperature;
-                        updateBoard(board, activeCity, 'temperature');
+                        // Parameter update, data set unchanged
+                        updateBoard(board, activeCity, 'temperature', true, false);
                     },
                     afterLoad: function () {
                         this.cell.setActiveState();
@@ -478,7 +481,8 @@ async function setupBoard() {
                     click: function () {
                         // Update board
                         activeParam = paramConfig.pressure;
-                        updateBoard(board, activeCity, 'pressure');
+                        // Parameter update, data set unchanged
+                        updateBoard(board, activeCity, 'pressure', true, false);
                     }
                 },
                 states: {
@@ -512,7 +516,8 @@ async function setupBoard() {
                     click: function () {
                         // Update board
                         activeParam = paramConfig.humidity;
-                        updateBoard(board, activeCity, 'humidity');
+                        // Parameter update, data set unchanged
+                        updateBoard(board, activeCity, 'humidity', true, false);
                     }
                 },
                 states: {
@@ -690,7 +695,7 @@ async function setupBoard() {
 
     // Load active city
     await addCityToMap(board, citiesTable, worldMap, activeCity);
-    await updateBoard(board, activeCity);
+    await updateBoard(board, activeCity, activeParam.name);
 
     // Select active city on the map
     selectActiveCity();
@@ -735,24 +740,19 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         custom: {
-            elevation: cityInfo.elevation,
-            yScale: null // Parameter dependent
+            elevation: cityInfo.elevation
         },
         // First item in current data set
         y: forecastTable.columns.temperature[rangeConfig.first]
     });
 }
 
-// Update board after changing city or parameter selection
-async function updateBoard(board, city, paramName = 'temperature') {
-    // Parameter info
-    const param = paramConfig[paramName];
+// Update board after changing data set (city) or parameter
+async function updateBoard(board, city, paramName,
+    updateParam = true, updateCity = true) {
 
     // Data access
     const dataPool = board.dataPool;
-
-    // Geographical data
-    const citiesTable = await dataPool.getConnectorTable('Cities');
 
     const [
         worldMap,
@@ -764,87 +764,102 @@ async function updateBoard(board, city, paramName = 'temperature') {
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
-    // Update map (series 0 is the world map, series 1 the weather data)
-    const mapPoints = worldMap.chart.series[1].data;
+    if (updateParam) {
+        // Parameters update, e.g. temperature -> pressure.
+        // Refreshes: map, chart
 
-    for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        const cityName = mapPoints[i].name;
-        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+        // Parameter info
+        const param = paramConfig[paramName];
 
-        // Forecast for city
-        const forecastTable = await dataPool.getConnectorTable(cityName);
+        // Common to map and chart
+        const colorAxis = {
+            min: param.min,
+            max: param.max,
+            stops: param.colorStops
+        };
 
-        mapPoints[i].update({
-            custom: {
-                elevation: cityInfo.elevation,
-                yScale: param.unit
+        // Update map properties
+        await worldMap.chart.update({
+            colorAxis: colorAxis,
+            title: {
+                text: paramConfig.getColumnHeader(paramName)
+            }
+        });
+
+        // Update all map points (series 1: weather data)
+        const mapPoints = worldMap.chart.series[1].data;
+
+        for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
+            // Forecast for city
+            const forecastTable = await dataPool.getConnectorTable(
+                mapPoints[i].name);
+
+            mapPoints[i].update({
+                y: forecastTable.modified.getCell(paramName, rangeConfig.first)
+            }, true);
+        }
+
+        // Update chart
+        const options = cityChart.chartOptions;
+        options.colorAxis = colorAxis;
+        options.yAxis.title.text = paramConfig.getColumnHeader(paramName);
+
+        await cityChart.update({
+            columnAssignment: {
+                time: 'x',
+                temperature: paramName === 'temperature' ? 'y' : null,
+                pressure: paramName === 'pressure' ? 'y' : null,
+                humidity: paramName === 'humidity' ? 'y' : null
             },
-            y: forecastTable.modified.getCell(paramName, rangeConfig.first)
-
-        }, true);
+            chartOptions: options
+        });
     }
 
-    // Updated scale on map and station chart
-    const colorAxis = {
-        min: param.min,
-        max: param.max,
-        stops: param.colorStops
-    };
+    if (updateCity) {
+        // Data update, e.g. Dublin -> Tokyo
+        // Refreshes: KPIs, grid and chart.
 
-    worldMap.chart.update({
-        colorAxis: colorAxis,
-        title: {
-            text: paramConfig.getColumnHeader(paramName)
-        }
-    });
+        const forecastTable = await dataPool.getConnectorTable(city);
 
-    // Update KPI with latest observations
-    const forecastTable = await dataPool.getConnectorTable(city);
+        await kpiTemperature.update({
+            value: forecastTable.columns.temperature[rangeConfig.first]
+        });
+        await kpiPressure.update({
+            value: forecastTable.columns.pressure[rangeConfig.first]
+        });
+        await kpiHumidity.update({
+            value: forecastTable.columns.humidity[rangeConfig.first]
+        });
 
-    kpiTemperature.update({
-        value: forecastTable.columns.temperature[rangeConfig.first]
-    });
-    kpiPressure.update({
-        value: forecastTable.columns.pressure[rangeConfig.first]
-    });
-    kpiHumidity.update({
-        value: forecastTable.columns.humidity[rangeConfig.first]
-    });
+        // Update geo KPI
+        const citiesTable = await dataPool.getConnectorTable('Cities');
 
-    // Update geo KPI
-    await kpiGeoData.update({
-        title: city,
-        value: citiesTable.getCellAsNumber(
-            'elevation',
-            citiesTable.getRowIndexBy('city', city)
-        )
-    });
+        await kpiGeoData.update({
+            title: city,
+            value: citiesTable.getCellAsNumber(
+                'elevation',
+                citiesTable.getRowIndexBy('city', city)
+            )
+        });
 
-    // Update city grid data selection
-    await selectionGrid.update({
-        connector: {
-            id: city
-        }
-    });
+        // Update grid
+        await selectionGrid.update({
+            connector: {
+                id: city
+            }
+        });
 
-    // Update city chart
-    const options = cityChart.chartOptions;
-    options.colorAxis = colorAxis;
-    options.title.text = 'Forecast for ' + city + ' (' + paramName + ')';
-    options.yAxis.title.text = paramConfig.getColumnHeader(paramName);
+        // Update chart
+        const options = cityChart.chartOptions;
+        options.title.text = 'Forecast for ' + city;
 
-    await cityChart.update({
-        connector: {
-            id: city
-        },
-        columnAssignment: {
-            time: 'x',
-            temperature: paramName === 'temperature' ? 'y' : null,
-            pressure: paramName === 'pressure' ? 'y' : null,
-            humidity: paramName === 'humidity' ? 'y' : null
-        },
-        chartOptions: options
-    });
+        await cityChart.update({
+            connector: {
+                id: city
+            },
+            chartOptions: options
+        });
+    }
 }
 
 // Launch the application
