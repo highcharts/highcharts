@@ -43,10 +43,10 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
         const { x, y } = getSunXY(sunDate),
             hourFormat = dateTimeFormat.format(sunDate);
 
-        let horizonPoint = { x: 0, y: 0 };
+        let horizonPoint = { azimuth: 0, angle: 0 };
         for (horizonPoint of horizon) {
             // Find the closest point
-            if (horizonPoint.x >= x) {
+            if (horizonPoint.azimuth >= x) {
                 break;
             }
         }
@@ -55,25 +55,29 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
         // Sunrise
         if (
             trajectory.length &&
-            horizonPoint.y <= y &&
-            trajectory.at(-1).horizonPoint.y >= trajectory.at(-1).y
+            horizonPoint.angle <= y &&
+            trajectory.at(-1).horizonPoint.angle >= trajectory.at(-1).y
         ) {
             dataLabels = {
                 align: 'left',
+                y: -5,
+                rotation: -90,
                 enabled: true,
-                format: hourFormat
+                format: `→ ${hourFormat}`
             };
 
         // Sunset
         } else if (
             trajectory.length &&
-            horizonPoint.y >= y &&
-            trajectory.at(-1).horizonPoint.y <= trajectory.at(-1).y
+            horizonPoint.angle >= y &&
+            trajectory.at(-1).horizonPoint.angle <= trajectory.at(-1).y
         ) {
             dataLabels = {
                 align: 'right',
+                y: -5,
+                rotation: 90,
                 enabled: true,
-                format: hourFormat
+                format: `${hourFormat} →`
             };
         }
 
@@ -103,6 +107,8 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
 };
 
 const horizon = JSON.parse(document.getElementById('data').innerText);
+
+let currentSunInterval;
 
 Dashboards.board('container', {
     dataPool: {
@@ -178,7 +184,7 @@ Dashboards.board('container', {
                 this.chartOptions.series.push({
                     type: 'line',
                     id: 'sun-trajectory',
-                    data: getSunTrajectory(),
+                    data: getSunTrajectory(horizon.elevationProfile),
                     name: 'Sun trajectory',
                     color: 'orange',
                     marker: {
@@ -242,6 +248,7 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
+                animation: false,
                 zoomType: 'xy',
                 scrollablePlotArea: {
                     minWidth: 3000,
@@ -259,7 +266,7 @@ Dashboards.board('container', {
                         // When the inital date is current, keep the Sun up to
                         // date
                         if (Date.now() - date.getTime() < 1000) {
-                            setInterval(() => {
+                            currentSunInterval = setInterval(() => {
                                 this.get('sun').points[0].update(
                                     getSunXY(new Date())
                                 );
@@ -400,6 +407,9 @@ Dashboards.board('container', {
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
                         .chart;
+
+                    clearInterval(currentSunInterval);
+
                     date.setMonth(0);
                     date.setDate(Number(e.target.value));
                     updateDateInputLabel();
@@ -417,6 +427,8 @@ Dashboards.board('container', {
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
                         .chart;
+
+                    clearInterval(currentSunInterval);
 
                     // Get the full sun trajectory, not the downsampled one
                     chart.get('sun-trajectory').setData(
@@ -447,6 +459,7 @@ Dashboards.board('container', {
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
                         .chart;
+                    clearInterval(currentSunInterval);
                     date.setHours(0);
                     date.setMinutes(Number(e.target.value));
                     updateTimeInputLabel();
