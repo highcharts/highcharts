@@ -1008,6 +1008,12 @@ namespace EditMode {
         */
         addComponentBtn?: AddComponentBtn;
         /**
+         * RWD buttons options.
+         *
+         * @deprecated
+         */
+        rwdButtons?: RwdButtons;
+        /**
         * @internal
         */
         contextMenu?: EditContextMenu;
@@ -1039,6 +1045,52 @@ namespace EditMode {
          * URL to the Add Component button icon.
          */
         icon: string;
+    }
+
+    /**
+     * RWD buttons options.
+     *
+     * @deprecated
+     */
+    export interface RwdButtons {
+        /**
+         * Whether the RWD buttons should be visible.
+         *
+         * @deprecated
+         */
+        enabled?: boolean;
+        /**
+         * RWD buttons icons options.
+         *
+         * @deprecated
+         */
+        icons: RwdIcons;
+    }
+
+    /**
+     * RWD Buttons icons options.
+     *
+     * @deprecated
+     */
+    export interface RwdIcons {
+        /**
+         * URL to small RWD button icon.
+         *
+         * @deprecated
+         */
+        small: string;
+        /**
+         * URL to medium RWD button icon.
+         *
+         * @deprecated
+         */
+        medium: string;
+        /**
+         * URL to large RWD button icon.
+         *
+         * @deprecated
+         */
+        large: string;
     }
 
     /**

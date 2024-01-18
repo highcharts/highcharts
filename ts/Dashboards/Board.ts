@@ -692,6 +692,14 @@ namespace Board {
          * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
+        /**
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
+         *
+         * @deprecated
+         **/
+        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
@@ -728,6 +736,8 @@ namespace Board {
 
     /**
      * Responsive breakpoints for the board - small, medium and large.
+     *
+     * @deprecated
      **/
     export interface ResponsiveBreakpoints extends JSON.Object {
         /**
