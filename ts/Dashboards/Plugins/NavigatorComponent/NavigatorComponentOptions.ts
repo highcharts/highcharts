@@ -22,8 +22,8 @@
 
 
 import type Component from '../../Components/Component';
+import type Sync from '../../Components/Sync/Sync';
 import type { Options as HighchartsOptions } from '../HighchartsTypes';
-import type NavigatorComponent from './NavigatorComponent';
 
 
 /* *
@@ -89,12 +89,54 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      */
-    sync?: NavigatorComponent.SyncOptions;
+    sync?: SyncOptions;
 
     /**
      * Default type of the navigator.
      */
     type: 'Navigator';
+}
+
+/**
+ * Sync options available for the Navigator component.
+ *
+ * Example:
+ * ```
+ * {
+ *     crossfilter: true
+ * }
+ * ```
+ */
+export interface SyncOptions extends Sync.RawOptionsRecord {
+    /**
+     * Crossfilter sync is available for Navigator components. Modifies data
+     * by selecting only those rows that meet common ranges.
+     *
+     * Alternatively to the boolean value, it can accept an object
+     * containing additional options for operating this type of
+     * synchronization.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Crossfilter with affectNavigators enabled }
+     *
+     * @default false
+     */
+    crossfilter?: boolean|Sync.CrossfilterSyncOptions;
+    /**
+     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Navigator components. Sets a common range of displayed data. For the
+     * KPI Component sets the last value.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     *
+     * @default false
+     */
+    extremes?: boolean|Sync.OptionsEntry;
 }
 
 

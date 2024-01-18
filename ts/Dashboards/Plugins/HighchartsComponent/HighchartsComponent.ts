@@ -209,7 +209,6 @@ class HighchartsComponent extends Component {
         super(cell, options);
         this.options = options as Options;
 
-
         this.chartConstructor = this.options.chartConstructor || 'chart';
         this.type = 'Highcharts';
 
