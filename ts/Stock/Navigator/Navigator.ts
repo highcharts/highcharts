@@ -1667,16 +1667,7 @@ class Navigator {
                         mergedNavSeriesOptions
                     );
                     // Set data on initial run with dataSorting enabled (#20318)
-                    if (
-                        base.navigatorSeries.enabledDataSorting &&
-                        !base.navigatorSeries.xData?.length &&
-                        !base.navigatorSeries.yData?.length &&
-                        mergedNavSeriesOptions.data
-                    ) {
-                        base.navigatorSeries.setData(
-                            mergedNavSeriesOptions.data
-                        );
-                    }
+                    chart.setSortedData();
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }
