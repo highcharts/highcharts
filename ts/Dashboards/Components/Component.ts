@@ -883,7 +883,7 @@ abstract class Component {
         }
         const resizeObserverCallback = (): void => {
             this.resizeTo(this.parentElement);
-        }
+        };
 
         if (typeof ResizeObserver === 'function') {
             this.resizeObserver = new ResizeObserver(resizeObserverCallback);
