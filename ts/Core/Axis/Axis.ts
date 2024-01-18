@@ -284,6 +284,7 @@ class Axis {
     public right!: number;
     public sector?: number;
     public series!: Array<Series>;
+    public setNavigatorRange?: boolean;
     public showAxis?: boolean;
     public side!: number;
     public single?: boolean;
@@ -429,6 +430,7 @@ class Axis {
          * @type {boolean}
          */
         axis.reversed = pick(options.reversed, axis.reversed);
+        axis.setNavigatorRange = options.setNavigatorRange;
         axis.visible = options.visible;
         axis.zoomEnabled = options.zoomEnabled;
 

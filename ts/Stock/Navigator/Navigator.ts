@@ -89,7 +89,7 @@ export interface SetRangeEvent {
     redraw: boolean;
     animation?: boolean;
     eventArguments: {
-        trigger: 'navigator' | 'scrollbar';
+        trigger: 'navigator' | 'scrollbar' | Axis;
         triggerOp: string;
         DOMEvent: any;
     }

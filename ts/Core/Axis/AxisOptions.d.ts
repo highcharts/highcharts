@@ -172,6 +172,7 @@ export interface AxisOptions {
     range?: number;
     reversed?: boolean;
     reversedStacks: boolean;
+    setNavigatorRange?: boolean;
     showEmpty: boolean;
     showFirstLabel: boolean;
     showLastLabel: boolean;

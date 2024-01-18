@@ -60,9 +60,8 @@ declare module '../../Core/GlobalsLike.d.ts' {
  */
 class StandaloneNavigator {
 
-    public eventsToUnbind: Array<Function> = [];
     public navigator: Navigator;
-    public boundAxes: Array<Axis> = [];
+    public boundAxes: Map<Axis, Array<Function>> = new Map();
     public chartOptions: Partial<Options>;
     public userOptions: StandaloneNavigatorOptions;
 
@@ -158,9 +157,43 @@ class StandaloneNavigator {
             return;
         }
 
-        const { min, max } = this.navigator.xAxis;
+        const { min, max } = this.navigator.xAxis,
+            removeEventCallbacks = [];
+        // For axes with enabled setNavigatorRange, add event to update
+        // navigator range
+        if (axis.setNavigatorRange) {
+            const removeSetExtremesEvent = addEvent(
+                axis,
+                'setExtremes',
+                (e: AnyRecord): void => {
+                    if (e.trigger === 'pan' || e.trigger === 'zoom') {
+                        nav.setRange(
+                            e.min,
+                            e.max,
+                            true,
+                            e.trigger !== 'pan',
+                            { trigger: axis }
+                        );
+                    }
+                });
 
-        this.boundAxes.push(axis);
+            removeEventCallbacks.push(removeSetExtremesEvent);
+        }
+
+        const removeSetRangeEvent = addEvent(
+            this.navigator,
+            'setRange',
+            (e: SetRangeEvent): void => {
+                const { min, max, redraw, animation, eventArguments } = e;
+
+                if (eventArguments.trigger !== axis) {
+                    axis.setExtremes(min, max, redraw, animation);
+                }
+            }
+        );
+        removeEventCallbacks.push(removeSetRangeEvent);
+
+        this.boundAxes.set(axis, removeEventCallbacks);
 
         // Show axis' series in navigator based on showInNavigator property
         axis.series.forEach((series): void => {
@@ -196,7 +229,14 @@ class StandaloneNavigator {
     public unbind(axisOrChart?: Chart | Axis): void {
         // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
-            this.boundAxes.length = 0;
+            this.boundAxes.forEach((removeEventCallbacks): void => {
+                removeEventCallbacks.forEach(
+                    (removeCallback): void => removeCallback()
+                );
+            });
+
+            this.boundAxes.clear();
+
             return;
         }
 
@@ -204,9 +244,17 @@ class StandaloneNavigator {
             axisOrChart :
             axisOrChart.xAxis[0];
 
-        this.boundAxes = this.boundAxes.filter((a): boolean => a !== axis);
-    }
+        // Call the event removal callbacks for this specific axis
+        const removeEventCallbacks = this.boundAxes.get(axis);
+        if (removeEventCallbacks) {
+            removeEventCallbacks.forEach(
+                (removeCallback): void => removeCallback()
+            );
+        }
 
+        // Remove this axis from the Map
+        this.boundAxes.delete(axis);
+    }
 
     /**
      * Destroys allocated standalone navigator elements.
@@ -215,11 +263,12 @@ class StandaloneNavigator {
      */
     public destroy(): void {
         // Disconnect events
-        this.eventsToUnbind.forEach((f): void => {
-            f();
+        this.boundAxes.forEach((removeEventCallbacks): void => {
+            removeEventCallbacks.forEach(
+                (removeCallback): void => removeCallback()
+            );
         });
-        this.boundAxes.length = 0;
-        this.eventsToUnbind.length = 0;
+        this.boundAxes.clear();
         this.navigator.destroy();
         this.navigator.chart.destroy();
     }
@@ -299,20 +348,6 @@ class StandaloneNavigator {
         nav.chart.xAxis[0].userMax = max;
 
         nav.render(min, max);
-
-        this.eventsToUnbind.push(
-            addEvent(
-                this.navigator,
-                'setRange',
-                (e: SetRangeEvent): void => {
-                    const { min, max } = e;
-
-                    this.boundAxes.forEach((axis): void => {
-                        axis.setExtremes(min, max, e.redraw, e.animation);
-                    });
-                }
-            )
-        );
     }
 
     /**
@@ -357,11 +392,24 @@ class StandaloneNavigator {
      *
      * @emits Highcharts.StandaloneNavigator#event:setRange
      */
-    public setRange(min?: number, max?: number): void {
+    public setRange(
+        min?: number,
+        max?: number,
+        redraw?: boolean,
+        animation?: boolean,
+        eventArguments?: AnyRecord
+    ): void {
         fireEvent(
             this.navigator,
             'setRange',
-            { min, max, trigger: 'navigator' }
+            {
+                min,
+                max,
+                redraw,
+                animation,
+                trigger: 'navigator',
+                eventArguments
+            }
         );
     }
 

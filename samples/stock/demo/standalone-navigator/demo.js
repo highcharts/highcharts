@@ -57,6 +57,15 @@
     // create charts
     const priceChart = Highcharts.stockChart('price-chart', {
         ...baseConfing,
+        chart: {
+            panKey: 'shift',
+            zooming: {
+                type: 'x'
+            }
+        },
+        xAxis: {
+            setNavigatorRange: true
+        },
         series: [{
             name: 'AAPL',
             data: price
