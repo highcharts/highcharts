@@ -20,6 +20,8 @@
         }]
     });
 
+    navigator.bind(chart);
+
     document.getElementById('button').addEventListener('click', () => {
         navigator.update({
             maskFill: 'rgba(131,131,131,0.3)'
