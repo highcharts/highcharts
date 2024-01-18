@@ -823,6 +823,18 @@ class Tick {
             reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
                 (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        // #20166 anything that is not between axis.pos and
+        // axis.pos + axis.length should not be visible.
+        if (
+            tick.isNew &&
+            (
+                (horiz && (x < axis.pos || x > axis.pos + axis.len)) ||
+                (!horiz && (y < axis.pos || y > axis.pos + axis.len))
+            )
+        ) {
+            opacity = 0;
+        }
+
         const labelOpacity = pick(
             opacity,
             tick.label && tick.label.newOpacity, // #15528
