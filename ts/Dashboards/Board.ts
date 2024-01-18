@@ -732,6 +732,14 @@ namespace Board {
          * Whether the GUI is enabled or not.
          **/
         guiEnabled?: boolean;
+        /**
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
+         *
+         * @deprecated
+         **/
+        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**

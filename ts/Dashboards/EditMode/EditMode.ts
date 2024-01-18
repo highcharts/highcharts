@@ -1010,6 +1010,9 @@ namespace EditMode {
         /**
          * RWD buttons options.
          *
+         * RWD buttons are permanently disabled since the change from
+         * options-managed responsiveness to fully CSS-managed.
+         *
          * @deprecated
          */
         rwdButtons?: RwdButtons;
@@ -1048,7 +1051,10 @@ namespace EditMode {
     }
 
     /**
-     * RWD buttons options.
+     * Deprecated RWD buttons options.
+     *
+     * RWD buttons are permanently disabled since the change from
+     * options-managed responsiveness to fully CSS-managed.
      *
      * @deprecated
      */
