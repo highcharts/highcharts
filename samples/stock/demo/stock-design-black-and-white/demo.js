@@ -21,6 +21,7 @@
         rangeSelector: {
             buttons: [{
                 text: 'M1',
+                title: 'Set timeframe to 1 minute',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -29,6 +30,7 @@
                 }
             }, {
                 text: 'M5',
+                title: 'Set timeframe to 5 minutes',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -37,6 +39,7 @@
                 }
             }, {
                 text: 'M15',
+                title: 'Set timeframe to 15 minutes',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -45,6 +48,7 @@
                 }
             }, {
                 text: 'M30',
+                title: 'Set timeframe to 30 minutes',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -53,6 +57,7 @@
                 }
             }, {
                 text: 'H1',
+                title: 'Set timeframe to 1 hour',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -61,6 +66,7 @@
                 }
             }, {
                 text: 'H4',
+                title: 'Set timeframe to 4 hour',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -69,6 +75,7 @@
                 }
             }, {
                 text: 'D1',
+                title: 'Set timeframe to 1 day',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -77,6 +84,7 @@
                 }
             }, {
                 text: 'W1',
+                title: 'Set timeframe to 1 week',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -85,6 +93,7 @@
                 }
             }, {
                 text: 'MN',
+                title: 'Set timeframe to 1 month',
                 dataGrouping: {
                     forced: true,
                     units: [
@@ -127,15 +136,7 @@
             shadow: false,
             borderWidth: 0,
             backgroundColor: 'transparent',
-            formatter() {
-                const {
-                    open,
-                    high,
-                    low,
-                    close
-                } = this.point;
-                return `${this.series.name} ${open} ${high} ${low} ${close}`;
-            }
+            format: '{series.name} {point.open:.2f} {point.high:.2f} {point.low:.2f} {point.close:.2f}'
         },
 
         xAxis: {
