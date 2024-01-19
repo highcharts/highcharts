@@ -1,0 +1,6 @@
+{
+    "compilerOptions": {
+        "sourceMap": false,
+        "target": "es2020",
+    }
+}

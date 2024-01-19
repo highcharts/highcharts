@@ -1,5 +1,8 @@
+// @ts-nocheck
 import languageOptions from 'langFile';
+import H from 'highchartsGlobal';
 
-Highcharts.setOptions({
+H.setOptions({
     lang: languageOptions
 });
+
