@@ -142,10 +142,9 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'horizon-chart'
-                }]
-            }, {
-                cells: [{
+                    id: 'horizon-chart',
+                    width: '100%'
+                }, {
                     id: 'controls',
                     width: '50%',
                     responsive: {
@@ -162,6 +161,8 @@ Dashboards.board('container', {
                             width: '100%'
                         }
                     }
+                }, {
+                    id: 'horizon-map'
                 }]
             }]
         }]
@@ -402,6 +403,8 @@ Dashboards.board('container', {
                 newYear.setHours(0);
                 newYear.setMinutes(0);
                 newYear.setSeconds(0);
+
+                // While dragging slider
                 dateInput.addEventListener('input', e => {
                     const chart = this.board.mountedComponents
                         .map(c => c.component)
@@ -422,7 +425,10 @@ Dashboards.board('container', {
                     chart.get('sun-point').update(getSunXY(date), false);
                     chart.redraw(false);
                 });
+
+                // On end dragging sliders, do the full path
                 dateInput.addEventListener('change', () => {
+
                     const chart = this.board.mountedComponents
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
@@ -436,6 +442,19 @@ Dashboards.board('container', {
                         true,
                         false
                     );
+
+                    // Update the grid
+                    const dataTable = this.board.dataPool
+                        .connectors
+                        .times
+                        .table;
+                    Object.entries(SunCalc.getTimes(date, lat, lng))
+                        .map(entry => [entry[0], entry[1].getTime()])
+                        .sort((a, b) => a[1] - b[1])
+                        .forEach((entry, i) => {
+                            dataTable.setCell(0, i, entry[0]);
+                            dataTable.setCell(1, i, entry[1]);
+                        });
                 });
 
                 // Workaround for not exposed AST (#20463)
@@ -500,8 +519,87 @@ Dashboards.board('container', {
                 // @todo Fix after #20444
                 // cellFormat: '{value:%H:%M}'
                 cellFormatter: function () {
-                    return Highcharts.dateFormat('%H:%M UTC', this.value);
+                    try {
+                        return new Intl.DateTimeFormat('nn-NO', {
+                            timeStyle: 'short'
+                        }).format(this.value);
+                    } catch (e) {
+                        return '-';
+                    }
                 }
+            }]
+        }
+    }, {
+        _connector: {
+            id: 'horizon'
+        },
+        cell: 'horizon-map',
+        id: 'horizon-map',
+        type: 'Highcharts',
+        _columnAssignment: {
+            azimuth: 'x',
+            Horizon: {
+                y: 'angle'
+            }
+        },
+        chartConstructor: 'mapChart',
+        title: 'Horizon outline',
+        chartOptions: {
+            chart: {
+                styledMode: false,
+                height: '100%',
+                margin: 1
+            },
+            title: {
+                text: null
+            },
+
+            legend: {
+                backgroundColor: 'rgba(255, 255, 255, 0.75)',
+                align: 'left',
+                verticalAlign: 'bottom'
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    alignTo: 'spacingBox'
+                }
+            },
+
+            mapView: {
+                padding: 20
+            },
+
+            series: [{
+                type: 'tiledwebmap',
+                name: 'TWM Tiles',
+                provider: {
+                    type: 'OpenStreetMap',
+                    theme: 'Standard'
+                }
+            }, {
+                type: 'mapline',
+                name: 'Horizon',
+                data: [{
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [
+                            horizon.elevationProfile.map(p =>
+                                [p.latLng.lng, p.latLng.lat]
+                            )
+                        ]
+                    }
+                }],
+                lineWidth: 2
+            }, {
+                type: 'mappoint',
+                name: 'POI',
+                data: [{
+                    lon: horizon.origin.lng,
+                    lat: horizon.origin.lat
+                }],
+                color: 'black'
             }]
         }
     }]
