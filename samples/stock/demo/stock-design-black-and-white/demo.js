@@ -66,7 +66,7 @@
                 }
             }, {
                 text: 'H4',
-                title: 'Set timeframe to 4 hour',
+                title: 'Set timeframe to 4 hours',
                 dataGrouping: {
                     forced: true,
                     units: [
