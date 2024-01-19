@@ -1118,6 +1118,7 @@ function compose(
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
+        addEvent(ChartClass, 'destroy', onChartDestroy);
 
         chartProto.downloadCSV = chartDownloadCSV;
         chartProto.downloadXLS = chartDownloadXLS;
@@ -1340,6 +1341,16 @@ function onChartRenderer(
     ) {
         this.viewData();
     }
+}
+
+/**
+ * Clean up
+ * @private
+ */
+function onChartDestroy(
+    this: Chart
+): void {
+    this.dataTableDiv?.remove();
 }
 
 /* *
