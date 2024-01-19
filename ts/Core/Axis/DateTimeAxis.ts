@@ -28,6 +28,7 @@ const {
     addEvent,
     getMagnitude,
     normalizeTickInterval,
+    pick,
     pushUnique,
     timeUnits
 } = U;
@@ -113,7 +114,7 @@ namespace DateTimeAxis{
 
             axisProto.getTimeTicks = getTimeTicks;
 
-            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
+            addEvent(AxisClass, 'init', onInit);
         }
 
         return AxisClass as (typeof Composition&T);
@@ -145,16 +146,21 @@ namespace DateTimeAxis{
     /**
      * @private
      */
-    function onAfterSetOptions(
-        this: Axis
+    function onInit(
+        this: Axis,
+        e: { userOptions: AxisOptions }
     ): void {
-        if (this.options.type !== 'datetime') {
-            this.dateTime = void 0;
-            return;
-        }
+        const axisType = pick(
+            e.userOptions.type,
+            this.options?.type
+        );
 
-        if (!this.dateTime) {
-            this.dateTime = new Additions(this as DateTimeAxis.Composition);
+        if (axisType === 'datetime') {
+            if (!this.dateTime) {
+                this.dateTime = new Additions(this as DateTimeAxis.Composition);
+            }
+        } else {
+            delete this.dateTime;
         }
     }
 
