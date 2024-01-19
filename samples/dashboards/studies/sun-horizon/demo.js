@@ -7,9 +7,9 @@ const places = {
     klokkarvegen: { lat: 61.0843901, lng: 6.5774637 }
 };
 
-// const date = new Date(2023, 5, 23, 20, 12),
+const skyColor = '#40a0ff';
+
 const date = new Date(),
-    // const date = new Date(2024, 0, 26, 14, 20),
     { lat, lng } = places[place.toLowerCase()];
 
 const getSunXY = date => {
@@ -104,6 +104,35 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
     }
     trajectory.sort((a, b) => a.x - b.x);
     return trajectory;
+};
+
+const colorize = (chart, angle) => {
+    angle = angle ?? chart.get('sun-point').y;
+    const relativeBrightness = Math.min(0, angle / 7);
+
+    chart.series[0]?.update({
+        color: Highcharts.color('#b4d0a4').brighten(relativeBrightness).get()
+    }, false);
+    chart.update({
+        chart: {
+            plotBackgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [
+                        0,
+                        Highcharts.color(skyColor)
+                            .brighten(relativeBrightness).get()
+                    ],
+                    [
+                        1,
+                        Highcharts.color(skyColor)
+                            .brighten(relativeBrightness + 1).get()
+                    ]
+                ]
+            }
+        }
+    }, false);
+
 };
 
 const horizon = JSON.parse(document.getElementById('data').innerText);
@@ -212,6 +241,13 @@ Dashboards.board('container', {
                         id: 'sun-point',
                         ...getSunXY(date)
                     }],
+                    point: {
+                        events: {
+                            update(e) {
+                                colorize(this.series.chart, e.options.y);
+                            }
+                        }
+                    },
                     color: 'orange',
                     marker: {
                         symbol: 'circle',
@@ -255,15 +291,11 @@ Dashboards.board('container', {
                     minWidth: 3000,
                     scrollPositionX: 0.5
                 },
-                plotBackgroundColor: {
-                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                    stops: [
-                        [0, 'lightblue'],
-                        [1, 'white']
-                    ]
-                },
+                margin: [0, 0, 60, 0],
                 events: {
                     load() {
+                        colorize(this);
+
                         // When the inital date is current, keep the Sun up to
                         // date
                         if (Date.now() - date.getTime() < 1000) {
@@ -290,10 +322,24 @@ Dashboards.board('container', {
                                     text: `↓ Sun, ${Math.abs(y).toFixed(1)}° ` +
                                         'below horizon',
                                     x: this.get('sun').points[0].plotX,
-                                    y: this.yAxis[0].len - 10,
+                                    y: this.yAxis[0].len - 15,
                                     zIndex: 6,
-                                    padding: 0,
-                                    fill: 'rgba(255, 255, 255, 0.75)'
+                                    padding: 1,
+                                    fill: 'rgba(255, 255, 255, 0.75)',
+                                    r: 3
+                                })
+                                .show();
+                        } else if (y > this.yAxis[0].max) {
+                            this.sunPointer
+                                .attr({
+                                    text: `↑ Sun, ${Math.abs(y).toFixed(1)}° ` +
+                                        'above horizon',
+                                    x: this.get('sun').points[0].plotX,
+                                    y: 0,
+                                    zIndex: 6,
+                                    padding: 1,
+                                    fill: 'rgba(255, 255, 255, 0.75)',
+                                    r: 3
                                 })
                                 .show();
                         } else {
@@ -303,13 +349,21 @@ Dashboards.board('container', {
                 },
                 styledMode: false
             },
+            credits: {
+                position: {
+                    y: -20
+                }
+            },
             title: {
                 text: null
             },
             xAxis: {
                 tickInterval: 30,
                 minPadding: 0,
-                maxPadding: 0
+                maxPadding: 0,
+                labels: {
+                    format: '{value}°'
+                }
             },
             yAxis: {
                 labels: {
@@ -322,6 +376,29 @@ Dashboards.board('container', {
                 tickPixelInterval: 30,
                 endOnTick: false,
                 startOnTick: false,
+                plotBands: [{
+                    from: -12,
+                    to: -6,
+                    label: {
+                        text: 'Nautical twilight',
+                        align: 'center',
+                        style: {
+                            color: '#cccccc'
+                        }
+                    },
+                    color: Highcharts.color(skyColor).brighten(-0.6).get()
+                }, {
+                    from: -6,
+                    to: -0,
+                    label: {
+                        text: 'Civil twilight',
+                        align: 'center',
+                        style: {
+                            color: '#cccccc'
+                        }
+                    },
+                    color: Highcharts.color(skyColor).brighten(-0.3).get()
+                }],
                 plotLines: [{
                     value: 0,
                     width: 2,
@@ -330,7 +407,7 @@ Dashboards.board('container', {
                 }],
                 staticScale: 10,
                 max: 30,
-                min: -10
+                min: -12
             },
             legend: {
                 enabled: false
@@ -351,6 +428,7 @@ Dashboards.board('container', {
             },
             series: [{
                 type: 'area',
+                id: 'land',
                 lineColor: 'gray',
                 color: '#b4d0a4',
                 name: 'Horizon',
@@ -597,7 +675,14 @@ Dashboards.board('container', {
                 name: 'POI',
                 data: [{
                     lon: horizon.origin.lng,
-                    lat: horizon.origin.lat
+                    lat: horizon.origin.lat,
+                    marker: {
+                        symbol: 'mapmarker',
+                        radius: 10,
+                        fillColor: '#2caffe',
+                        lineColor: '#ffffff',
+                        lineWidth: 2
+                    }
                 }],
                 color: 'black'
             }]
