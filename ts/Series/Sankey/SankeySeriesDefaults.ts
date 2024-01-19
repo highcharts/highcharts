@@ -484,6 +484,17 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
+ * The height of the node.
+ *
+ * @sample highcharts/series-sankey/height/
+ *         Sankey diagram with height options
+ *
+ * @type      {number}
+ * @since     11.3.0
+ * @apioption series.sankey.nodes.height
+ */
+
+/**
  * An optional level index of where to place the node. The default behaviour is
  * to place it next to the preceding node. Alias of `nodes.column`, but in
  * inverted sankeys and org charts, the levels are laid out as rows.

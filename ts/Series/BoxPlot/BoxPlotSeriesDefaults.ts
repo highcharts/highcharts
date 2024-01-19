@@ -34,6 +34,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @sample highcharts/demo/box-plot/
  *         Box plot
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
+ *         Jittered scatter plot on top of a box plot
  *
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
