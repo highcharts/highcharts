@@ -58,24 +58,16 @@ const paramConfig = {
 
 // Selection of weather stations to display data from
 const worldLocations = {
-    mapUrl: 'https://code.highcharts.com/mapdata/custom/world.topo.json',
-    default: 'Dublin',
+    mapUrl: 'https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json',
+    default: 'New York',
     points: [
         ['city', 'lat', 'lon', 'elevation'],
         ['New York', 40.71, -74.01, 10],
-        ['Dublin', 53.35, -6.26, 8],
-        ['Sydney', -33.87, 151.21, 35],
-        ['Buenos Aires', -34.6, -58.38, 10],
-        ['Tokyo', 35.69, 139.69, 17],
-        ['Johannesburg', -26.2, 28.03, 1767],
-        ['Istanbul', 41.01, 28.98, 39],
-        ['Helsinki', 60.17, 24.94, 0],
-        ['Bengaluru', 12.98, 77.59, 921],
-        ['Dakar', 14.69, -17.45, 12],
-        ['Bogotá', 4.65, -74.08, 2556],
-        ['Ulanbaatar', 47.94, 106.92, 1316],
-        ['Hong Kong', 22.28, 114.16, 6],
-        ['San Diego', 32.71, -117.16, 36]
+        ['San Diego', 32.71, -117.16, 36],
+        ['Anchorage', 61.22, -149.89, 0],
+        ['Winnipeg', 49.90, -97.14, 236],
+        ['Mexico D.F.', 19.43, -99.13, 2230],
+        ['Baracoa', 20.35, -74.50, 15]
     ]
 };
 
