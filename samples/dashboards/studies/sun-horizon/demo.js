@@ -60,10 +60,10 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
         ) {
             dataLabels = {
                 align: 'left',
-                y: -5,
                 rotation: -90,
                 enabled: true,
-                format: `→ ${hourFormat}`
+                format: `→ ${hourFormat}`,
+                x: -15
             };
 
         // Sunset
@@ -74,10 +74,10 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
         ) {
             dataLabels = {
                 align: 'right',
-                y: -5,
                 rotation: 90,
                 enabled: true,
-                format: `${hourFormat} →`
+                format: `${hourFormat} →`,
+                x: 15
             };
         }
 
@@ -138,6 +138,12 @@ const colorize = (chart, angle) => {
 const horizon = JSON.parse(document.getElementById('data').innerText);
 
 let currentSunInterval;
+
+Highcharts.setOptions({
+    time: {
+        timezone: 'Europe/Oslo'
+    }
+});
 
 Dashboards.board('container', {
     dataPool: {
@@ -225,7 +231,8 @@ Dashboards.board('container', {
                         style: {
                             textOutline: 'none',
                             fontSize: '0.9rem'
-                        }
+                        },
+                        y: -5
                     },
                     tooltip: {
                         headerFormat: '',
