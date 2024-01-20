@@ -221,9 +221,10 @@ Dashboards.board('container', {
                         enabled: false
                     },
                     dataLabels: {
-                        color: 'orange',
+                        color: 'white',
                         style: {
-                            textOutline: 'none'
+                            textOutline: 'none',
+                            fontSize: '0.9rem'
                         }
                     },
                     tooltip: {
