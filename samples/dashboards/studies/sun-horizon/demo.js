@@ -1,16 +1,10 @@
 /* global SunCalc */
 
-const place = 'Klokkarvegen';
-const places = {
-    hamnen: { lat: 61.2113254, lng: 6.5320583 },
-    hytta: { lat: 60.9890245, lng: 6.5316614 },
-    klokkarvegen: { lat: 61.0843901, lng: 6.5774637 }
-};
+const horizon = JSON.parse(document.getElementById('data').innerText),
+    { lat, lng } = horizon.origin,
+    skyColor = '#40a0ff';
 
-const skyColor = '#40a0ff';
-
-const date = new Date(),
-    { lat, lng } = places[place.toLowerCase()];
+let date = new Date();
 
 const getSunXY = date => {
     const position = SunCalc.getPosition(
@@ -135,9 +129,7 @@ const colorize = (chart, angle) => {
 
 };
 
-const horizon = JSON.parse(document.getElementById('data').innerText);
-
-let currentSunInterval;
+let ticker;
 
 Highcharts.setOptions({
     time: {
@@ -145,7 +137,7 @@ Highcharts.setOptions({
     }
 });
 
-Dashboards.board('container', {
+const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'horizon',
@@ -303,19 +295,10 @@ Dashboards.board('container', {
                 events: {
                     load() {
                         colorize(this);
-
-                        // When the inital date is current, keep the Sun up to
-                        // date
-                        if (Date.now() - date.getTime() < 1000) {
-                            currentSunInterval = setInterval(() => {
-                                this.get('sun').points[0].update(
-                                    getSunXY(new Date())
-                                );
-                            }, 60000);
-                        }
                     },
                     render() {
-                        // When the sun is below the chart, show a pointer
+                        // When the sun is below or above the chart, show a
+                        // pointer
                         const { y } = this.get('sun').points[0];
                         if (!this.sunPointer) {
                             this.sunPointer = this.renderer.label()
@@ -491,57 +474,43 @@ Dashboards.board('container', {
                 newYear.setSeconds(0);
 
                 // While dragging slider
-                dateInput.addEventListener('input', e => {
+                const onInput = e => {
                     const chart = this.board.mountedComponents
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
                         .chart;
 
-                    clearInterval(currentSunInterval);
+                    clearInterval(ticker);
 
                     date.setMonth(0);
                     date.setDate(Number(e.target.value));
                     updateDateInputLabel();
                     chart.get('sun-trajectory').setData(
-                        // Get downsampled sun trajectory for speed
                         getSunTrajectory(horizon.elevationProfile, true),
-                        false,
+                        e.type === 'change',
                         false
                     );
                     chart.get('sun-point').update(getSunXY(date), false);
                     chart.redraw(false);
-                });
-
-                // On end dragging sliders, do the full path
-                dateInput.addEventListener('change', () => {
-
-                    const chart = this.board.mountedComponents
-                        .map(c => c.component)
-                        .find(c => c.id === 'horizon-chart')
-                        .chart;
-
-                    clearInterval(currentSunInterval);
-
-                    // Get the full sun trajectory, not the downsampled one
-                    chart.get('sun-trajectory').setData(
-                        getSunTrajectory(horizon.elevationProfile),
-                        true,
-                        false
-                    );
 
                     // Update the grid
-                    const dataTable = this.board.dataPool
-                        .connectors
-                        .times
-                        .table;
-                    Object.entries(SunCalc.getTimes(date, lat, lng))
-                        .map(entry => [entry[0], entry[1].getTime()])
-                        .sort((a, b) => a[1] - b[1])
-                        .forEach((entry, i) => {
-                            dataTable.setCell(0, i, entry[0]);
-                            dataTable.setCell(1, i, entry[1]);
-                        });
-                });
+                    if (e.type === 'change') {
+                        const dataTable = this.board.dataPool
+                            .connectors
+                            .times
+                            .table;
+                        Object.entries(SunCalc.getTimes(date, lat, lng))
+                            .map(entry => [entry[0], entry[1].getTime()])
+                            .sort((a, b) => a[1] - b[1])
+                            .forEach((entry, i) => {
+                                dataTable.setCell(0, i, entry[0]);
+                                dataTable.setCell(1, i, entry[1]);
+                            });
+                    }
+                };
+
+                dateInput.addEventListener('input', onInput);
+                dateInput.addEventListener('change', onInput);
 
                 // Workaround for not exposed AST (#20463)
                 dateInput.min = 0;
@@ -564,7 +533,9 @@ Dashboards.board('container', {
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
                         .chart;
-                    clearInterval(currentSunInterval);
+                    if (!e.detail?.keepGoing) {
+                        clearInterval(ticker);
+                    }
                     date.setHours(0);
                     date.setMinutes(Number(e.target.value));
                     updateTimeInputLabel();
@@ -592,7 +563,7 @@ Dashboards.board('container', {
         dataGridOptions: {
             editable: false,
             columns: [{
-                headerFormat: 'Event',
+                headerFormat: 'Solar event',
                 cellFormatter: function () {
                     const str = this.value
                         .replace(/([A-Z])/g, ' $1')
@@ -696,4 +667,24 @@ Dashboards.board('container', {
             }]
         }
     }]
-}, true);
+});
+
+// When the inital date is current, keep the Sun up to date
+if (Date.now() - date.getTime() < 1000) {
+    ticker = setInterval(() => {
+        date = new Date();
+        const chart = board.mountedComponents
+            .map(c => c.component)
+            .find(c => c.id === 'horizon-chart')
+            .chart;
+        chart.get('sun').points[0].update(getSunXY(date));
+
+        const timeInput = document.getElementById('time-input');
+        if (timeInput) {
+            timeInput.value = date.getHours() * 60 + date.getMinutes();
+            timeInput.dispatchEvent(new CustomEvent(
+                'input', { detail: { keepGoing: true } }
+            ));
+        }
+    }, 60000);
+}
