@@ -108,7 +108,15 @@ const colorize = (chart, angle) => {
         const relativeBrightness = Math.min(0, angle / 7);
 
         chart.series[0]?.update({
-            color: Highcharts.color('#b4d0a4').brighten(relativeBrightness).get()
+            color: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, Highcharts.color('#b4d0a4')
+                        .brighten(relativeBrightness + 0.2).get()],
+                    [1, Highcharts.color('#b4d0a4')
+                        .brighten(relativeBrightness - 0.2).get()]
+                ]
+            }
         }, false);
         chart.update({
             chart: {
@@ -676,6 +684,8 @@ const board = Dashboards.board('container', {
             }, {
                 type: 'mapline',
                 name: 'Horizon',
+                // @todo - How can I use the data table with this data format?
+                // Transformation rules? Event handlers?
                 data: [{
                     geometry: {
                         type: 'Polygon',

@@ -794,7 +794,7 @@ class HighchartsComponent extends Component {
 
         const Factory = charter[this.chartConstructor];
         if (Factory) {
-            //try {
+            try {
                 if (this.chartConstructor === 'chart') {
                     return charter.Chart.chart(
                         this.chartContainer,
@@ -802,14 +802,12 @@ class HighchartsComponent extends Component {
                     );
                 }
                 return new Factory(this.chartContainer, this.chartOptions);
-            /*
             } catch {
                 throw new Error(
                     'The Highcharts component is misconfigured: `' +
                     this.cell.id + '`'
                 );
             }
-            */
         }
 
         if (typeof charter.chart !== 'function') {
