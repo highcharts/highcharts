@@ -100,32 +100,36 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
     return trajectory;
 };
 
+// Set the chart colors to reflect day, night and twilight
 const colorize = (chart, angle) => {
-    angle = angle ?? chart.get('sun-point').y;
-    const relativeBrightness = Math.min(0, angle / 7);
+    angle = angle ?? chart.get('sun-point')?.y;
 
-    chart.series[0]?.update({
-        color: Highcharts.color('#b4d0a4').brighten(relativeBrightness).get()
-    }, false);
-    chart.update({
-        chart: {
-            plotBackgroundColor: {
-                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                stops: [
-                    [
-                        0,
-                        Highcharts.color(skyColor)
-                            .brighten(relativeBrightness).get()
-                    ],
-                    [
-                        1,
-                        Highcharts.color(skyColor)
-                            .brighten(relativeBrightness + 1).get()
+    if (typeof angle === 'number') {
+        const relativeBrightness = Math.min(0, angle / 7);
+
+        chart.series[0]?.update({
+            color: Highcharts.color('#b4d0a4').brighten(relativeBrightness).get()
+        }, false);
+        chart.update({
+            chart: {
+                plotBackgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [
+                            0,
+                            Highcharts.color(skyColor)
+                                .brighten(relativeBrightness).get()
+                        ],
+                        [
+                            1,
+                            Highcharts.color(skyColor)
+                                .brighten(relativeBrightness + 1).get()
+                        ]
                     ]
-                ]
+                }
             }
-        }
-    }, false);
+        }, false);
+    }
 
 };
 
@@ -146,8 +150,29 @@ const board = Dashboards.board('container', {
                 firstRowAsNames: false,
                 data: horizon.elevationProfile
             }
-        },
-        {
+        }, {
+            id: 'sun-trajectory-data',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                data: getSunTrajectory(horizon.elevationProfile)
+            }
+        }, {
+            id: 'contours-data',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                data: horizon.contours.reduce((data, contourLine) => {
+                    if (data.length) {
+                        data.push([null, null]); // Gap
+                    }
+                    [].push.apply(data, contourLine.map(p => [
+                        p.azimuth, p.angle
+                    ]));
+                    return data;
+                }, [])
+            }
+        }, {
             id: 'times',
             type: 'JSON',
             options: {
@@ -156,14 +181,7 @@ const board = Dashboards.board('container', {
                     .map(entry => [entry[0], entry[1].getTime()])
                     .sort((a, b) => a[1] - b[1])
             }
-        }
-        /*
-        , {
-            id: 'sun-trajectory',
-            data: getSunTrajectory(),
-            type: 'JSON'
-        }*/
-        ]
+        }]
     },
     gui: {
         layouts: [{
@@ -208,79 +226,33 @@ const board = Dashboards.board('container', {
             }
         },
         events: {
-            mount: function () {
-                this.chartOptions.series.push({
-                    type: 'line',
-                    id: 'sun-trajectory',
-                    data: getSunTrajectory(horizon.elevationProfile),
-                    name: 'Sun trajectory',
-                    color: 'orange',
-                    marker: {
-                        enabled: false
-                    },
-                    dataLabels: {
-                        color: 'white',
-                        style: {
-                            textOutline: 'none',
-                            fontSize: '0.9rem'
-                        },
-                        y: -5
-                    },
-                    tooltip: {
-                        headerFormat: '',
-                        pointFormat: 'Sun position<br>' +
-                            '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
-                            '<br>Angle: {point.y:.2f}°'
-                    },
-                    zIndex: -2
-                }, {
-                    type: 'scatter',
-                    id: 'sun',
-                    name: 'The Sun',
-                    data: [{
-                        id: 'sun-point',
-                        ...getSunXY(date)
-                    }],
-                    point: {
-                        events: {
-                            update(e) {
-                                colorize(this.series.chart, e.options.y);
-                            }
-                        }
-                    },
-                    color: 'orange',
-                    marker: {
-                        symbol: 'circle',
-                        raidus: 3,
-                        fillColor: 'orange',
-                        lineColor: 'black',
-                        lineWidth: 1
-                    },
-                    tooltip: {
-                        pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
-                    },
-                    zIndex: -1
+            mount: async function () {
 
-                // Contour lines
-                }, {
-                    type: 'scatter',
-                    color: 'gray',
-                    lineWidth: 1,
-                    opacity: 0.75,
-                    data: horizon.contours.reduce((data, contourLine) => {
-                        if (data.length) {
-                            data.push(null); // Gap
-                        }
-                        [].push.apply(data, contourLine.map(p => [
-                            p.azimuth, p.angle
-                        ]));
-                        return data;
-                    }, []),
-                    marker: {
-                        enabled: false
-                    },
-                    enableMouseTracking: false
-                });
+                // @todo Is it possible to apply multiple connectors to one
+                // chart through config?
+                const dataPool = this.board.dataPool,
+                    sunTrajectory = await dataPool.getConnectorTable(
+                        'sun-trajectory-data'
+                    ),
+                    contours = await dataPool.getConnectorTable(
+                        'contours-data'
+                    );
+
+                this.chart.get('sun-trajectory').setData(
+                    sunTrajectory.getRowObjects(),
+                    false
+                );
+
+                this.chart.get('sun').setData([{
+                    id: 'sun-point',
+                    ...getSunXY(date)
+                }], false);
+
+                this.chart.get('contours').setData(
+                    contours.getRows(),
+                    false
+                );
+                this.chart.redraw();
             }
         },
         chartOptions: {
@@ -293,13 +265,13 @@ const board = Dashboards.board('container', {
                 },
                 margin: [0, 0, 60, 0],
                 events: {
-                    load() {
-                        colorize(this);
-                    },
                     render() {
+                        colorize(this);
+
                         // When the sun is below or above the chart, show a
-                        // pointer
-                        const { y } = this.get('sun').points[0];
+                        // label pointing down or up
+                        const y = this.get('sun-point')?.y;
+
                         if (!this.sunPointer) {
                             this.sunPointer = this.renderer.label()
                                 .css({
@@ -427,6 +399,62 @@ const board = Dashboards.board('container', {
                     enabled: false
                 },
                 enableMouseTracking: false
+            }, {
+                type: 'line',
+                id: 'sun-trajectory',
+                name: 'Sun trajectory',
+                color: 'orange',
+                marker: {
+                    enabled: false
+                },
+                dataLabels: {
+                    color: 'white',
+                    style: {
+                        textOutline: 'none',
+                        fontSize: '0.9rem'
+                    },
+                    y: -5
+                },
+                tooltip: {
+                    headerFormat: '',
+                    pointFormat: 'Sun position<br>' +
+                        '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
+                        '<br>Angle: {point.y:.2f}°'
+                },
+                zIndex: -2
+            }, {
+                type: 'scatter',
+                id: 'sun',
+                name: 'The Sun',
+                point: {
+                    events: {
+                        update(e) {
+                            colorize(this.series.chart, e.options.y);
+                        }
+                    }
+                },
+                color: 'orange',
+                marker: {
+                    symbol: 'circle',
+                    raidus: 3,
+                    fillColor: 'orange',
+                    lineColor: 'black',
+                    lineWidth: 1
+                },
+                tooltip: {
+                    pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
+                },
+                zIndex: -1
+            }, {
+                type: 'scatter',
+                id: 'contours',
+                color: 'gray',
+                lineWidth: 1,
+                opacity: 0.75,
+                marker: {
+                    enabled: false
+                },
+                enableMouseTracking: false
             }]
         }
     }, {
@@ -474,7 +502,7 @@ const board = Dashboards.board('container', {
                 newYear.setSeconds(0);
 
                 // While dragging slider
-                const onInput = e => {
+                const onInput = async e => {
                     const chart = this.board.mountedComponents
                         .map(c => c.component)
                         .find(c => c.id === 'horizon-chart')
@@ -485,28 +513,38 @@ const board = Dashboards.board('container', {
                     date.setMonth(0);
                     date.setDate(Number(e.target.value));
                     updateDateInputLabel();
+
+                    const sunTrajectoryData = getSunTrajectory(
+                        horizon.elevationProfile,
+                        e.type === 'input'
+                    );
+
+                    // @todo - this is not working because the chart is not
+                    // really connected to the table, it is just
+                    // programmatically connected in the mount event.
+                    /*
+                    const sunTrajectory = await this.board.dataPool
+                        .getConnectorTable('sun-trajectory-data');
+                    sunTrajectory.setRows(sunTrajectoryData, 0);
+                    */
                     chart.get('sun-trajectory').setData(
-                        getSunTrajectory(horizon.elevationProfile, true),
-                        e.type === 'change',
+                        sunTrajectoryData,
                         false
                     );
                     chart.get('sun-point').update(getSunXY(date), false);
                     chart.redraw(false);
 
                     // Update the grid
-                    if (e.type === 'change') {
-                        const dataTable = this.board.dataPool
-                            .connectors
-                            .times
-                            .table;
-                        Object.entries(SunCalc.getTimes(date, lat, lng))
-                            .map(entry => [entry[0], entry[1].getTime()])
-                            .sort((a, b) => a[1] - b[1])
-                            .forEach((entry, i) => {
-                                dataTable.setCell(0, i, entry[0]);
-                                dataTable.setCell(1, i, entry[1]);
-                            });
-                    }
+                    const dataTable = this.board.dataPool
+                        .connectors
+                        .times
+                        .table;
+                    const rows = Object.entries(
+                        SunCalc.getTimes(date, lat, lng)
+                    )
+                        .map(entry => [entry[0], entry[1].getTime()])
+                        .sort((a, b) => a[1] - b[1]);
+                    dataTable.setRows(rows, 0);
                 };
 
                 dateInput.addEventListener('input', onInput);
