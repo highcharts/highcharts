@@ -187,6 +187,7 @@ class TreegraphSeries extends TreemapSeries {
                 nodeSizeX = symbol === 'circle' || !nodeWidth ?
                     radius * 2 :
                     relativeLength(nodeWidth, plotSizeX);
+
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
