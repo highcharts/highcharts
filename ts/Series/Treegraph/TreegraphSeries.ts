@@ -20,6 +20,7 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
@@ -39,10 +40,9 @@ const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
-const { getLevelOptions, getNodeWidth } = TU;
+const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    arrayMax,
     extend,
     merge,
     pick,
@@ -144,11 +144,7 @@ class TreegraphSeries extends TreemapSeries {
         const chart = this.chart,
             series = this,
             plotSizeX = chart.plotSizeX as number,
-            plotSizeY = chart.plotSizeY as number,
-            columnCount = arrayMax(
-                this.points.map((p): number => p.node.xPosition)
-            );
-
+            plotSizeY = chart.plotSizeY as number;
         let minX = Infinity,
             maxX = -Infinity,
             minY = Infinity,
@@ -171,10 +167,6 @@ class TreegraphSeries extends TreemapSeries {
                     level.marker,
                     point.options.marker
                 ),
-                nodeWidth = markerOptions.width ?? getNodeWidth(
-                    this,
-                    columnCount
-                ),
                 radius = relativeLength(
                     markerOptions.radius || 0,
                     Math.min(plotSizeX, plotSizeY)
@@ -183,10 +175,9 @@ class TreegraphSeries extends TreemapSeries {
                 nodeSizeY = (symbol === 'circle' || !markerOptions.height) ?
                     radius * 2 :
                     relativeLength(markerOptions.height, plotSizeY),
-                nodeSizeX = symbol === 'circle' || !nodeWidth ?
+                nodeSizeX = symbol === 'circle' || !markerOptions.width ?
                     radius * 2 :
-                    relativeLength(nodeWidth, plotSizeX);
-
+                    relativeLength(markerOptions.width, plotSizeX);
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
@@ -523,6 +514,29 @@ class TreegraphSeries extends TreemapSeries {
 
             // Render link labels.
             seriesProto.drawDataLabels.call(this, this.links);
+
+            if (!this.options.dataLabels[0].allowOverlap) {
+                const getLabels = (
+                    labelOwners: TreegraphLink[] | TreegraphPoint[]
+                ): SVGElement[] => {
+                    const labels = [];
+
+                    for (let i = labelOwners.length - 1; i; i--) {
+                        const dataLabel = labelOwners[i]?.dataLabel;
+
+                        if (dataLabel) {
+                            labels.push(dataLabel);
+                        }
+                    }
+
+                    return labels;
+                };
+
+                this.chart.hideOverlappingLabels([
+                    ...getLabels(this.points),
+                    ...getLabels(this.links)
+                ]);
+            }
         }
     }
 
