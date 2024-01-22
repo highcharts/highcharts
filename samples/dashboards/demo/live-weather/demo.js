@@ -25,18 +25,18 @@ const paramConfig = {
             [0.7, '#DD2323']
         ]
     },
-    pressure: {
-        name: 'pressure',
-        unit: 'hPa',
-        min: 800,
-        max: 1100,
-        floatRes: 0,
-        chartType: 'spline',
+    wind: {
+        name: 'wind',
+        unit: 'm/s',
+        min: 0,
+        max: 100,
+        floatRes: 1,
+        chartType: 'areaspline',
         colorStops: [
             [0.0, '#C0CCC0'],
-            [0.5, '#CCCC99'], // 950 hPa
-            [0.7, '#99CC66'], // 1013 hPa
-            [0.8, '#336633']  // 1030 hPa
+            [0.25, '#CCCC99'],
+            [0.50, '#99CC66'],
+            [0.75, '#336633']
         ]
     },
     precipitation: {
@@ -47,8 +47,10 @@ const paramConfig = {
         floatRes: 1,
         chartType: 'column',
         colorStops: [
-            [0.0, '#000000'],
-            [1.0, '#CCCC00']
+            [0.0, '#CCCCCC'],
+            [0.1, '#CCCCAA'],
+            [0.2, '#9999AA'],
+            [0.8, '#0000CC']
         ]
     },
     getColumnHeader: function (param) {
@@ -221,7 +223,7 @@ async function setupBoard() {
                                     },
                                     height: '204px'
                                 }, {
-                                    id: 'kpi-pressure',
+                                    id: 'kpi-wind',
                                     responsive: {
                                         large: {
                                             width: '1/2'
@@ -424,7 +426,7 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: paramConfig.getColumnHeader('temperature'),
+                        text: paramConfig.getColumnHeader('temperature')  + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -456,30 +458,30 @@ async function setupBoard() {
                     }
                 }
             }, {
-                cell: 'kpi-pressure',
+                cell: 'kpi-wind',
                 type: 'KPI',
-                columnName: 'pressure',
+                columnName: 'wind',
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: paramConfig.getColumnHeader('pressure'),
+                        text: paramConfig.getColumnHeader('wind') + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         accessibility: {
-                            description: paramConfig.getColumnHeader('pressure')
+                            description: paramConfig.getColumnHeader('wind')
                         },
-                        max: paramConfig.pressure.max,
-                        min: paramConfig.pressure.min
+                        max: paramConfig.wind.max,
+                        min: paramConfig.wind.min
                     }
                 },
                 events: {
                     click: function () {
                         // Update board
-                        activeParam = paramConfig.pressure;
+                        activeParam = paramConfig.wind;
                         // Parameter update, data set unchanged
-                        updateBoard(board, activeCity, 'pressure', true, false);
+                        updateBoard(board, activeCity, 'wind', true, false);
                     }
                 },
                 states: {
@@ -497,7 +499,7 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: paramConfig.getColumnHeader('precipitation'),
+                        text: paramConfig.getColumnHeader('precipitation') + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -545,13 +547,13 @@ async function setupBoard() {
                             headerFormat: paramConfig.getColumnHeader('temperature'),
                             cellFormat: '{value:.1f}'
                         },
-                        pressure: {
-                            headerFormat: paramConfig.getColumnHeader('pressure'),
+                        wind: {
+                            headerFormat: paramConfig.getColumnHeader('wind'),
                             cellFormat: '{value:.1f}'
                         },
                         precipitation: {
                             headerFormat: paramConfig.getColumnHeader('precipitation'),
-                            cellFormat: '{value:.0f}'
+                            cellFormat: '{value:.1f}'
                         }
                     }
                 }
@@ -640,7 +642,7 @@ async function setupBoard() {
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature, pressure or precipitation.'
+                        description: 'The chart is displaying forecasted temperature, wind or precipitation.'
                     }
                 }
             }]
@@ -681,7 +683,7 @@ async function setupBoard() {
                                 // UTC -> milliseconds
                                 time: new Date(item.time).getTime(),
                                 temperature: instantData.air_temperature,
-                                pressure: instantData.air_pressure_at_sea_level,
+                                wind: instantData.wind_speed,
                                 precipitation: hourSpan.precipitation_amount
                             });
                         }
@@ -755,9 +757,13 @@ function accumulatePrecipitation(forecastTable) {
     for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
         sum += forecastTable.columns.precipitation[i];
     }
-    return sum;
+    return Math.round(sum);
 }
 
+// Latest observation
+function getLatestObservation(forecastTable, param) {
+    return forecastTable.columns[param][rangeConfig.first];
+}
 
 // Update board after changing data set (city) or parameter
 async function updateBoard(board, city, paramName,
@@ -770,7 +776,7 @@ async function updateBoard(board, city, paramName,
         worldMap,
         kpiGeoData,
         kpiTemperature,
-        kpiPressure,
+        kpiWind,
         kpiRain,
         selectionGrid,
         cityChart
@@ -810,8 +816,7 @@ async function updateBoard(board, city, paramName,
             if (paramName === 'precipitation') {
                 value = accumulatePrecipitation(forecastTable);
             } else {
-                value = forecastTable.modified.getCell(paramName,
-                    rangeConfig.first);
+                value = getLatestObservation(forecastTable, paramName);
             }
             mapPoints[i].update({
                 y: value
@@ -827,7 +832,7 @@ async function updateBoard(board, city, paramName,
             columnAssignment: {
                 time: 'x',
                 temperature: paramName === 'temperature' ? 'y' : null,
-                pressure: paramName === 'pressure' ? 'y' : null,
+                wind: paramName === 'wind' ? 'y' : null,
                 precipitation: paramName === 'precipitation' ? 'y' : null
             },
             chartOptions: options
@@ -840,10 +845,11 @@ async function updateBoard(board, city, paramName,
         const forecastTable = await dataPool.getConnectorTable(city);
 
         await kpiTemperature.update({
-            value: forecastTable.columns.temperature[rangeConfig.first]
+            value: getLatestObservation(forecastTable, 'temperature')
         });
-        await kpiPressure.update({
-            value: forecastTable.columns.pressure[rangeConfig.first]
+
+        await kpiWind.update({
+            value: getLatestObservation(forecastTable, 'wind')
         });
 
         await kpiRain.update({
