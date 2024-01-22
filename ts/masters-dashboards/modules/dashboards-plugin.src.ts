@@ -23,7 +23,6 @@ import type { Highcharts as H } from '../../Dashboards/Plugins/HighchartsTypes';
 
 import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 import Globals from '../../Dashboards/Globals.js';
-import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
 
 
 /* *
@@ -36,7 +35,6 @@ import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
 declare global {
     interface Dashboards {
         DataGridPlugin: typeof DataGridPlugin;
-        HighchartsPlugin: typeof HighchartsPlugin;
     }
     interface Window {
         Highcharts?: H;
@@ -54,12 +52,6 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.DataGridPlugin = DataGridPlugin;
-G.HighchartsPlugin = HighchartsPlugin;
-
-if (G.win.Highcharts) {
-    HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
-    G.PluginHandler.addPlugin(HighchartsPlugin);
-}
 
 if (G.win.DataGrid) {
     DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);

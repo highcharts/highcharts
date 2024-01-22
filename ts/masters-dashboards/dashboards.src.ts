@@ -27,6 +27,7 @@ import DataCursor from '../Data/DataCursor.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
+import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
@@ -65,6 +66,7 @@ declare global {
         DataModifier: typeof DataModifier;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        HighchartsPlugin: typeof HighchartsPlugin;
         PluginHandler: typeof PluginHandler;
         Sync: typeof Sync;
     }
@@ -95,6 +97,7 @@ G.DataCursor = DataCursor;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;
 G.Sync = Sync;
 
@@ -108,6 +111,11 @@ G.Sync = Sync;
 
 if (!G.win.Dashboards) {
     G.win.Dashboards = G;
+}
+
+if (G.win.Highcharts) {
+    HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
+    G.PluginHandler.addPlugin(HighchartsPlugin);
 }
 
 
