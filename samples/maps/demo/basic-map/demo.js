@@ -61,7 +61,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-highres.topo.json">World, high resolution</a>'
+            text: 'Source map: <a target="_blank" href="https://code.highcharts.com/mapdata/custom/world-highres.topo.json">World, high resolution (opens a new window)</a>'
         },
 
         mapNavigation: {
@@ -78,11 +78,6 @@
         series: [{
             data: data,
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#BADA55'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.name}'
