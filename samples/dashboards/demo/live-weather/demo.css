@@ -250,7 +250,7 @@
 
 #kpi-temperature .highcharts-dashboards-component-kpi-value,
 #kpi-pressure .highcharts-dashboards-component-kpi-value,
-#kpi-humidity .highcharts-dashboards-component-kpi-value {
+#kpi-precipitation .highcharts-dashboards-component-kpi-value {
     display: none;
 }
 

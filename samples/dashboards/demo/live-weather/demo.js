@@ -15,6 +15,8 @@ const paramConfig = {
         unit: '˚C',
         min: -20,
         max: 50,
+        floatRes: 1,
+        chartType: 'spline',
         colorStops: [
             [0.0, '#4CAFFE'],
             [0.3, '#53BB6C'],
@@ -28,6 +30,8 @@ const paramConfig = {
         unit: 'hPa',
         min: 800,
         max: 1100,
+        floatRes: 0,
+        chartType: 'spline',
         colorStops: [
             [0.0, '#C0CCC0'],
             [0.5, '#CCCC99'], // 950 hPa
@@ -35,11 +39,13 @@ const paramConfig = {
             [0.8, '#336633']  // 1030 hPa
         ]
     },
-    humidity: {
-        name: 'humidity',
-        unit: '%',
+    precipitation: {
+        name: 'precipitation',
+        unit: 'mm',
         min: 0,
-        max: 100,
+        max: 10, // per hour
+        floatRes: 1,
+        chartType: 'column',
         colorStops: [
             [0.0, '#000000'],
             [1.0, '#CCCC00']
@@ -229,7 +235,7 @@ async function setupBoard() {
                                     },
                                     height: '204px'
                                 }, {
-                                    id: 'kpi-humidity',
+                                    id: 'kpi-precipitation',
                                     responsive: {
                                         large: {
                                             width: '1/2'
@@ -415,7 +421,6 @@ async function setupBoard() {
                 cell: 'kpi-temperature',
                 type: 'KPI',
                 columnName: 'temperature',
-                custom: 'test',
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
@@ -486,30 +491,30 @@ async function setupBoard() {
                     }
                 }
             }, {
-                cell: 'kpi-humidity',
+                cell: 'kpi-precipitation',
                 type: 'KPI',
-                columnName: 'humidity',
+                columnName: 'precipitation',
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: paramConfig.getColumnHeader('humidity'),
+                        text: paramConfig.getColumnHeader('precipitation'),
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         accessibility: {
-                            description: paramConfig.getColumnHeader('humidity')
+                            description: paramConfig.getColumnHeader('precipitation')
                         },
-                        max: paramConfig.humidity.max,
-                        min: paramConfig.humidity.min
+                        max: 50, // Per 24 hours
+                        min: paramConfig.precipitation.min
                     }
                 },
                 events: {
                     click: function () {
                         // Update board
-                        activeParam = paramConfig.humidity;
+                        activeParam = paramConfig.precipitation;
                         // Parameter update, data set unchanged
-                        updateBoard(board, activeCity, 'humidity', true, false);
+                        updateBoard(board, activeCity, 'precipitation', true, false);
                     }
                 },
                 states: {
@@ -544,9 +549,9 @@ async function setupBoard() {
                             headerFormat: paramConfig.getColumnHeader('pressure'),
                             cellFormat: '{value:.1f}'
                         },
-                        humidity: {
-                            headerFormat: paramConfig.getColumnHeader('humidity'),
-                            cellFormat: '{value:.1f}'
+                        precipitation: {
+                            headerFormat: paramConfig.getColumnHeader('precipitation'),
+                            cellFormat: '{value:.0f}'
                         }
                     }
                 }
@@ -564,7 +569,7 @@ async function setupBoard() {
                     chart: {
                         spacing: [40, 40, 40, 10],
                         styledMode: true,
-                        type: 'spline',
+                        type: activeParam.chartType,
                         animation: false,
                         animationLimit: 0
                     },
@@ -605,7 +610,8 @@ async function setupBoard() {
 
                             // Date + value
                             return Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x) +
-                                Highcharts.numberFormat(point.y, 1) +
+                                Highcharts.numberFormat(point.y,
+                                    activeParam.floatRes) + ' ' +
                                 activeParam.unit;
                         }
                     },
@@ -634,7 +640,7 @@ async function setupBoard() {
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature, pressure or humidity.'
+                        description: 'The chart is displaying forecasted temperature, pressure or precipitation.'
                     }
                 }
             }]
@@ -663,16 +669,20 @@ async function setupBoard() {
 
                         for (let i = 0; i < rangeConfig.hours; i++) {
                             const item = forecastData[i];
-                            // Prediction
-                            const pred = item.data.instant.details;
+
+                            // Instant data
+                            const instantData = item.data.instant.details;
+
+                            // Data for next hour
+                            const hourSpan = item.data.next_1_hours.details;
 
                             // Picks the parameters this application uses
                             retData.push({
                                 // UTC -> milliseconds
                                 time: new Date(item.time).getTime(),
-                                temperature: pred.air_temperature,
-                                pressure: pred.air_pressure_at_sea_level,
-                                humidity: pred.relative_humidity
+                                temperature: instantData.air_temperature,
+                                pressure: instantData.air_pressure_at_sea_level,
+                                precipitation: hourSpan.precipitation_amount
                             });
                         }
                         return retData;
@@ -739,6 +749,16 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
     });
 }
 
+// Accumulated precipitation
+function accumulatePrecipitation(forecastTable) {
+    let sum = 0;
+    for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
+        sum += forecastTable.columns.precipitation[i];
+    }
+    return sum;
+}
+
+
 // Update board after changing data set (city) or parameter
 async function updateBoard(board, city, paramName,
     updateParam = true, updateCity = true) {
@@ -751,13 +771,13 @@ async function updateBoard(board, city, paramName,
         kpiGeoData,
         kpiTemperature,
         kpiPressure,
-        kpiHumidity,
+        kpiRain,
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
     if (updateParam) {
-        // Parameters update, e.g. temperature -> pressure.
+        // Parameters update, e.g. temperature -> precipitation.
         // Refreshes: map, chart
 
         // Parameter info
@@ -786,8 +806,15 @@ async function updateBoard(board, city, paramName,
             const forecastTable = await dataPool.getConnectorTable(
                 mapPoints[i].name);
 
+            let value;
+            if (paramName === 'precipitation') {
+                value = accumulatePrecipitation(forecastTable);
+            } else {
+                value = forecastTable.modified.getCell(paramName,
+                    rangeConfig.first);
+            }
             mapPoints[i].update({
-                y: forecastTable.modified.getCell(paramName, rangeConfig.first)
+                y: value
             }, true);
         }
 
@@ -795,22 +822,21 @@ async function updateBoard(board, city, paramName,
         const options = cityChart.chartOptions;
         options.colorAxis = colorAxis;
         options.yAxis.title.text = paramConfig.getColumnHeader(paramName);
-
+        options.chart.type = param.chartType;
         await cityChart.update({
             columnAssignment: {
                 time: 'x',
                 temperature: paramName === 'temperature' ? 'y' : null,
                 pressure: paramName === 'pressure' ? 'y' : null,
-                humidity: paramName === 'humidity' ? 'y' : null
+                precipitation: paramName === 'precipitation' ? 'y' : null
             },
             chartOptions: options
         });
     }
 
     if (updateCity) {
-        // Data update, e.g. Dublin -> Tokyo
+        // Data update, e.g. New York -> Winnipeg
         // Refreshes: KPIs, grid and chart.
-
         const forecastTable = await dataPool.getConnectorTable(city);
 
         await kpiTemperature.update({
@@ -819,8 +845,9 @@ async function updateBoard(board, city, paramName,
         await kpiPressure.update({
             value: forecastTable.columns.pressure[rangeConfig.first]
         });
-        await kpiHumidity.update({
-            value: forecastTable.columns.humidity[rangeConfig.first]
+
+        await kpiRain.update({
+            value: accumulatePrecipitation(forecastTable)
         });
 
         // Update geo KPI
