@@ -6,7 +6,7 @@ const horizon = JSON.parse(document.getElementById('data').innerText),
 
 let date = new Date();
 
-const getCelestialBodyXY = (celestialBody, date) => {
+const getCelestialBodyXY = (celestialBody, date, moonIllumination) => {
     const positionFunction = {
             sun: 'getPosition',
             moon: 'getMoonPosition'
@@ -20,7 +20,8 @@ const getCelestialBodyXY = (celestialBody, date) => {
 
     return {
         x: position.azimuth / deg2rad + 180,
-        y: position.altitude / deg2rad
+        y: position.altitude / deg2rad,
+        custom: moonIllumination && SunCalc.getMoonIllumination(date)
     };
 };
 
@@ -339,7 +340,7 @@ const board = Dashboards.board('container', {
 
                 this.chart.get('moon-series').setData([{
                     id: 'moon-point',
-                    ...getCelestialBodyXY('moon', date)
+                    ...getCelestialBodyXY('moon', date, true)
                 }], false);
 
                 this.chart.get('contours').setData(
@@ -471,13 +472,16 @@ const board = Dashboards.board('container', {
                     },
                     y: -5
                 },
+                /*
                 tooltip: {
                     headerFormat: '',
                     pointFormat: 'Sun position<br>' +
                         '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
                         '<br>Angle: {point.y:.2f}°'
                 },
-                zIndex: -2
+                */
+                zIndex: -2,
+                enableMouseTracking: false
             }, {
                 type: 'scatter',
                 id: 'sun-series',
@@ -530,12 +534,15 @@ const board = Dashboards.board('container', {
                     },
                     y: -5
                 },
+                /*
                 tooltip: {
                     headerFormat: '',
                     pointFormat: 'Moon position<br>' +
                         '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
                         '<br>Angle: {point.y:.2f}°'
                 },
+                */
+                enableMouseTracking: false,
                 zIndex: -2
             }, {
                 type: 'scatter',
@@ -550,7 +557,11 @@ const board = Dashboards.board('container', {
                     lineWidth: 1
                 },
                 tooltip: {
-                    pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
+                    pointFormat: `
+                        {(multiply point.custom.fraction 100):.0f}% illuminated
+                        <br>
+                        Azimuth: {point.x:.1f}°, angle: {point.y:.1f}°
+                    `
                 },
                 zIndex: -1,
 
@@ -669,7 +680,7 @@ const board = Dashboards.board('container', {
                         false
                     );
                     chart.get('moon-point').update(
-                        getCelestialBodyXY('moon', date),
+                        getCelestialBodyXY('moon', date, true),
                         false
                     );
                     chart.redraw(false);
