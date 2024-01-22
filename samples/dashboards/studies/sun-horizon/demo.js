@@ -42,9 +42,14 @@ const getTrajectory = (
     tDate.setMinutes(0);
     tDate.setSeconds(0);
     tDate.setMilliseconds(0);
+
+    let x, y;
     for (let minutes = 0; minutes < 24 * 60; minutes++) {
-        const { x, y } = getCelestialBodyXY(celestialBody, tDate),
-            hourFormat = dateTimeFormat.format(tDate);
+        const hourFormat = dateTimeFormat.format(tDate),
+            xy = getCelestialBodyXY(celestialBody, tDate);
+
+        x = xy.x;
+        y = xy.y;
 
         let horizonPoint = { azimuth: 0, angle: 0 };
         for (horizonPoint of horizon) {
@@ -66,7 +71,7 @@ const getTrajectory = (
                 rotation: -90,
                 enabled: true,
                 format: `→ ${hourFormat}`,
-                x: -15
+                x: 0
             };
 
         // Sunset below horizon
@@ -80,7 +85,7 @@ const getTrajectory = (
                 rotation: 90,
                 enabled: true,
                 format: `${hourFormat} →`,
-                x: 15
+                x: 0
             };
         }
 
@@ -105,6 +110,11 @@ const getTrajectory = (
         tDate.setHours(0);
         tDate.setMinutes(minutes);
     }
+
+    // Push a null point to represent a gap for midnight, especially for the
+    // moon
+    trajectory.push([x + 0.01, null]);
+
     trajectory.sort((a, b) => a.x - b.x);
     return trajectory;
 };
