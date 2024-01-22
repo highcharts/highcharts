@@ -20,6 +20,8 @@ import "./es-modules/Data/Modifiers/SortModifier";
 export * as Board from "./es-modules/Dashboards/Board";
 export * as Component from "./es-modules/Dashboards/Components/Component";
 export * as ComponentRegistry from "./es-modules/Dashboards/Components/ComponentRegistry";
+export * as HighchartsPlugin from "./es-modules/Dashboards/Plugins/HighchartsPlugin";
+
 export * as PluginHandler from "./es-modules/Dashboards/PluginHandler";
 export * as Sync from "./es-modules/Dashboards/Components/Sync/Sync";
 
