@@ -22,6 +22,7 @@
  *
  * */
 
+import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
@@ -301,13 +302,14 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<KPIComponent.Options>
+        options: Partial<KPIComponent.Options>,
+        board?: Board
     ) {
         options = merge(
             KPIComponent.defaultOptions,
             options
         );
-        super(cell, options);
+        super(cell, options, board);
 
         this.options = options as KPIComponent.Options;
         this.standardizeSyncOptions();

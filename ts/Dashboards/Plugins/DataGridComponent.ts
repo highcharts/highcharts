@@ -19,6 +19,7 @@
  *
  * */
 
+import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type DataTable from '../../Data/DataTable';
@@ -196,11 +197,12 @@ class DataGridComponent extends Component {
 
     constructor(
         cell: Cell,
-        options: Partial<DataGridComponent.Options>
+        options: Partial<DataGridComponent.Options>,
+        board?: Board
     ) {
         options = merge(DataGridComponent.defaultOptions, options);
 
-        super(cell, options);
+        super(cell, options, board);
 
         this.connectorListeners = [];
         this.options = options as DataGridComponent.Options;

@@ -329,10 +329,11 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>
+        options: Partial<Component.Options>,
+        board?: Board
     ) {
-        this.board = cell.row.layout.board;
-        this.parentElement = cell.container;
+        this.board = board || cell?.row?.layout?.board || {};
+        this.parentElement = cell?.container || document.querySelector('#' + options.cell);
         this.cell = cell;
 
         this.options = merge(
@@ -376,20 +377,22 @@ abstract class Component {
         this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
 
-        this.setupEventListeners();
-        this.attachCellListeneres();
+        if (cell) {
+            this.setupEventListeners();
+            this.attachCellListeneres();
 
-        this.on('tableChanged', (): void => {
-            this.onTableChanged();
-        });
+            this.on('tableChanged', (): void => {
+                this.onTableChanged();
+            });
 
-        this.on('update', (): void => {
-            this.cell.setLoadingState();
-        });
+            this.on('update', (): void => {
+                this.cell.setLoadingState();
+            });
 
-        this.on('afterRender', (): void => {
-            this.cell.setLoadingState(false);
-        });
+            this.on('afterRender', (): void => {
+                this.cell.setLoadingState(false);
+            });
+        }
     }
 
     /**
@@ -434,10 +437,9 @@ abstract class Component {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            this.cell.setLoadingState();
+            this.cell?.setLoadingState();
 
             const connector = await dataPool.getConnector(connectorId);
-
             this.setConnector(connector);
         }
 

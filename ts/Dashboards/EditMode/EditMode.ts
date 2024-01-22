@@ -372,19 +372,21 @@ class EditMode {
             );
         }
 
-        addEvent(
-            board.layoutsWrapper,
-            'mousemove',
-            editMode.onDetectContext.bind(editMode)
-        );
-        addEvent(
-            board.layoutsWrapper,
-            'click',
-            editMode.onContextConfirm.bind(editMode)
-        );
-        addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
-            editMode.hideContextPointer();
-        });
+        if (board.layoutsWrapper) {
+            addEvent(
+                board.layoutsWrapper,
+                'mousemove',
+                editMode.onDetectContext.bind(editMode)
+            );
+            addEvent(
+                board.layoutsWrapper,
+                'click',
+                editMode.onContextConfirm.bind(editMode)
+            );
+            addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
+                editMode.hideContextPointer();
+            });
+        }
     }
 
     /**
