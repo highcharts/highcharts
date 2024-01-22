@@ -108,6 +108,20 @@ const getTrajectory = (
     return trajectory;
 };
 
+// Get the times of sun and moon events
+const getTimes = d => {
+    const times = Object.entries(SunCalc.getTimes(d, lat, lng))
+        .map(entry => [entry[0], entry[1].getTime()]);
+
+    const moonTimes = Object.entries(SunCalc.getMoonTimes(d, lat, lng))
+        .map(entry => [`moon ${entry[0]}`, entry[1].getTime()]);
+
+    return [
+        ...times,
+        ...moonTimes
+    ].sort((a, b) => a[1] - b[1]);
+};
+
 // Set the chart colors to reflect day, night and twilight
 const colorize = (chart, angle) => {
     angle = angle ?? chart.get('sun-point')?.y;
@@ -119,9 +133,9 @@ const colorize = (chart, angle) => {
             color: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
-                    [0, Highcharts.color('#b4d0a4')
+                    [0, Highcharts.color('#89c269')
                         .brighten(relativeBrightness + 0.2).get()],
-                    [1, Highcharts.color('#b4d0a4')
+                    [1, Highcharts.color('#89c269')
                         .brighten(relativeBrightness - 0.2).get()]
                 ]
             }
@@ -246,9 +260,7 @@ const board = Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                data: Object.entries(SunCalc.getTimes(date, lat, lng))
-                    .map(entry => [entry[0], entry[1].getTime()])
-                    .sort((a, b) => a[1] - b[1])
+                data: getTimes(date)
             }
         }]
     },
@@ -667,11 +679,7 @@ const board = Dashboards.board('container', {
                         .connectors
                         .times
                         .table;
-                    const rows = Object.entries(
-                        SunCalc.getTimes(date, lat, lng)
-                    )
-                        .map(entry => [entry[0], entry[1].getTime()])
-                        .sort((a, b) => a[1] - b[1]);
+                    const rows = getTimes(date);
                     dataTable.setRows(rows, 0);
                 };
 
@@ -736,7 +744,7 @@ const board = Dashboards.board('container', {
         dataGridOptions: {
             editable: false,
             columns: [{
-                headerFormat: 'Solar event',
+                headerFormat: 'Celestial event',
                 cellFormatter: function () {
                     const str = this.value
                         .replace(/([A-Z])/g, ' $1')
