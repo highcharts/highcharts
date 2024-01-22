@@ -1,5 +1,5 @@
 ---
- name: Disabling the rwd / add component buttons
+ name: Disabling the add component button
  authors:
    - Dawid Dragula
  js_wrap: b

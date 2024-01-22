@@ -55,79 +55,30 @@ Dashboards.board('container', {
             rows: [{
                 id: 'current-sprint',
                 cells: [{
+                    id: 'current-sprint-kpi',
                     layout: {
                         rows: [{
                             cells: [{
-                                id: 'dashboard-kpi-1',
-                                height: 300,
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    },
-                                    medium: {
-                                        width: '50%'
-                                    },
-                                    large: {
-                                        width: '50%'
-                                    }
-                                }
+                                id: 'dashboard-kpi-1'
                             }, {
-                                id: 'dashboard-kpi-2',
-                                height: 300
+                                id: 'dashboard-kpi-2'
                             }]
                         }]
                     }
                 }, {
-                    id: 'dashboard-kpi-4',
-                    height: 300,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    }
+                    id: 'dashboard-kpi-4'
                 }]
             }, {
                 id: 'charts-1',
                 cells: [{
-                    id: 'dashboard-chart-1',
-                    height: 350,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '2/5'
-                        }
-                    }
+                    id: 'dashboard-chart-1'
                 }, {
-                    id: 'dashboard-chart-2',
-                    height: 350,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '3/5'
-                        }
-                    }
+                    id: 'dashboard-chart-2'
                 }]
             }, {
                 id: 'cumulative',
                 cells: [{
-                    id: 'dashboard-chart-cumulative',
-                    height: 350
+                    id: 'dashboard-chart-cumulative'
                 }]
             }]
         }]

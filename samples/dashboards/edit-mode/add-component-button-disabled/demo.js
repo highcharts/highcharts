@@ -4,9 +4,6 @@ Dashboards.board('container', {
         tools: {
             addComponentBtn: {
                 enabled: false
-            },
-            rwdButtons: {
-                enabled: false
             }
         },
         resize: {

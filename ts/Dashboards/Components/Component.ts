@@ -261,6 +261,13 @@ abstract class Component {
      * @internal
      */
     private cellListeners: Function[] = [];
+
+    /**
+     * Reference to ResizeObserver, which allows running 'unobserve'.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /**
      * @internal
      */
@@ -750,23 +757,10 @@ abstract class Component {
             this.element.style.height = this.dimensions.height + 'px';
             this.contentElement.style.height = this.getContentHeight() + 'px';
         }
-        if (width) {
-            const pad =
-                getPaddings(this.element).x + getMargins(this.element).x;
-            this.dimensions.width = relativeLength(
-                width, Number(getStyle(this.parentElement, 'width'))
-            ) - pad;
-            this.element.style.width = this.dimensions.width + 'px';
-        }
 
         if (height === null) {
             this.dimensions.height = null;
             this.element.style.removeProperty('height');
-        }
-
-        if (width === null) {
-            this.dimensions.width = null;
-            this.element.style.removeProperty('width');
         }
 
         fireEvent(this, 'resize', {
@@ -887,12 +881,17 @@ abstract class Component {
                 }
             });
         }
+        const resizeObserverCallback = (): void => {
+            this.resizeTo(this.parentElement);
+        };
 
-        // TODO: Replace with a resize observer.
-        window.addEventListener(
-            'resize',
-            (): void => this.resizeTo(this.parentElement)
-        );
+        if (typeof ResizeObserver === 'function') {
+            this.resizeObserver = new ResizeObserver(resizeObserverCallback);
+            this.resizeObserver.observe(this.element);
+        } else {
+            const unbind = addEvent(window, 'resize', resizeObserverCallback);
+            addEvent(this, 'destroy', unbind);
+        }
     }
 
     /**

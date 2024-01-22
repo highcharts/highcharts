@@ -37,47 +37,11 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-
-                    }
+                    id: 'dashboard-col-0'
                 }, {
-                    id: 'dashboard-col-1',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-
-
-                    }
+                    id: 'dashboard-col-1'
                 }, {
-                    id: 'dashboard-col-2',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-                    }
+                    id: 'dashboard-col-2'
                 }]
             }, {
                 cells: [{

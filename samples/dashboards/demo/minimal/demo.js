@@ -27,81 +27,24 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '30%'
-                        }
-                    },
+                    id: 'kpi-wrapper',
                     layout: {
                         rows: [{
                             cells: [{
-                                id: 'kpi-vitamin-a',
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '50%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                height: 205
+                                id: 'kpi-vitamin-a'
                             }, {
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '50%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                id: 'kpi-iron',
-                                height: 205
+                                id: 'kpi-iron'
                             }]
                         }]
                     }
                 }, {
-                    id: 'dashboard-col-0',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '35%'
-                        }
-                    }
+                    id: 'dashboard-col-0'
                 }, {
-                    id: 'dashboard-col-1',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '35%'
-                        }
-                    }
+                    id: 'dashboard-col-1'
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-2',
-                    height: 323
+                    id: 'dashboard-col-2'
                 }]
             }]
         }]

@@ -20,3 +20,29 @@ Each row consists of at least one cell. There can be many cells in the same row,
 
 ### How the dashboard layout engine makes your dashboard responsive
 The layout takes care of calculating the position of the components. Generally, each row is placed in columns, and cells are placed in rows. Things get more complicated when dealing with the resizer module, which lets you change the width and height of the row and cell. The dashboard layout engine is based on flexbox, and by setting width and height in percentage values, cell and row sizes are adjusted dynamically when the outer container resizes. This can happen in nested layouts, when several rows are positioned inside of a cell which also can be resized.
+
+Use regular CSS media queries to adjust your layout to different screens.
+
+Example:
+```css
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-cell-1 {
+        flex: 1 1 33.333%;
+    }
+}
+  
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-cell-1 {
+        flex: 1 1 50%;
+    }
+}
+  
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-cell-1 {
+        flex: 1 1 100%;
+    }
+}
+```

@@ -139,120 +139,28 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'world-map'
                     }, {
                         id: 'kpi-layout',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        },
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-data',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-data'
                                 }, {
-                                    id: 'kpi-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-max-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-max-temperature'
                                 }, {
-                                    id: 'kpi-rain',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-rain'
                                 }]
                             }]
                         }
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'selection-grid'
                     }, {
-                        id: 'city-chart',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'city-chart'
                     }]
                 }]
             }]

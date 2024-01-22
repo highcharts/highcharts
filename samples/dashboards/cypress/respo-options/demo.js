@@ -10,19 +10,9 @@ Dashboards.board('container', {
                         rows: [{
                             id: 'row',
                             cells: [{
-                                id: 'cell-1',
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    }
-                                }
+                                id: 'cell-1'
                             }, {
-                                id: 'cell-2',
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    }
-                                }
+                                id: 'cell-2'
                             }]
                         }]
                     }
