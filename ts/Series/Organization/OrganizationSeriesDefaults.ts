@@ -314,6 +314,16 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     hangingIndentTranslation: 'inherit',
     /**
+     * Whether links connecting hanging nodes should be drawn on the right
+     * side. Useful for RTL layouts.
+     * **Note:** Only effects inverted charts (vertical layout).
+     *
+     * @type {boolean}
+     * @since 11.3.0
+     * @default false
+     */
+    hangingRight: false,
+    /**
      *
      * The color of the links between nodes. This option is moved to
      * [link.color](#plotOptions.organization.link.color).
