@@ -525,7 +525,7 @@ class Breadcrumbs {
                     breadcrumbsOptions.relativeTo === 'chart' ||
                     breadcrumbsOptions.relativeTo === 'spacingBox' ?
                         void 0 :
-                        'scrollablePlotBox'
+                        'plotBox'
                 ),
                 bBox = breadcrumbs.group.getBBox(),
                 additionalSpace = 2 * (buttonTheme.padding || 0) +
