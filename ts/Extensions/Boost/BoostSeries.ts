@@ -547,7 +547,10 @@ function destroyGraphics(
         }
     });
 
-    series.zones.forEach(destroyObjectProperties);
+    for (const zone of series.zones) {
+        destroyObjectProperties(zone, void 0, true);
+    }
+
 }
 
 /**
