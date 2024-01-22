@@ -6,8 +6,12 @@ const horizon = JSON.parse(document.getElementById('data').innerText),
 
 let date = new Date();
 
-const getSunXY = date => {
-    const position = SunCalc.getPosition(
+const getCelestialBodyXY = (celestialBody, date) => {
+    const positionFunction = {
+            sun: 'getPosition',
+            moon: 'getMoonPosition'
+        }[celestialBody],
+        position = SunCalc[positionFunction](
             date,
             lat,
             lng
@@ -20,22 +24,26 @@ const getSunXY = date => {
     };
 };
 
-const getSunTrajectory = (horizon = [], downsample = false) => {
+const getTrajectory = (
+    celestialBody = 'sun',
+    horizon = [],
+    downsample = false
+) => {
     // Sun trajectory
-    const sunDate = new Date(date.getTime()),
+    const tDate = new Date(date.getTime()),
         trajectory = [],
         dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
             timeStyle: 'short',
             timeZone: 'Europe/Oslo'
         });
 
-    sunDate.setHours(0);
-    sunDate.setMinutes(0);
-    sunDate.setSeconds(0);
-    sunDate.setMilliseconds(0);
+    tDate.setHours(0);
+    tDate.setMinutes(0);
+    tDate.setSeconds(0);
+    tDate.setMilliseconds(0);
     for (let minutes = 0; minutes < 24 * 60; minutes++) {
-        const { x, y } = getSunXY(sunDate),
-            hourFormat = dateTimeFormat.format(sunDate);
+        const { x, y } = getCelestialBodyXY(celestialBody, tDate),
+            hourFormat = dateTimeFormat.format(tDate);
 
         let horizonPoint = { azimuth: 0, angle: 0 };
         for (horizonPoint of horizon) {
@@ -46,7 +54,7 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
         }
 
         let dataLabels;
-        // Sunrise
+        // Sunrise above horizon
         if (
             trajectory.length &&
             horizonPoint.angle <= y &&
@@ -60,7 +68,7 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
                 x: -15
             };
 
-        // Sunset
+        // Sunset below horizon
         } else if (
             trajectory.length &&
             horizonPoint.angle >= y &&
@@ -88,13 +96,13 @@ const getSunTrajectory = (horizon = [], downsample = false) => {
                 dataLabels,
                 horizonPoint,
                 custom: {
-                    datetime: sunDate.getTime()
+                    datetime: tDate.getTime()
                 }
             });
         }
 
-        sunDate.setHours(0);
-        sunDate.setMinutes(minutes);
+        tDate.setHours(0);
+        tDate.setMinutes(minutes);
     }
     trajectory.sort((a, b) => a.x - b.x);
     return trajectory;
@@ -138,7 +146,53 @@ const colorize = (chart, angle) => {
             }
         }, false);
     }
+};
 
+// When the sun is below or above the chart, show a label pointing down or up
+const offscreenLabel = (chart, celestialBody) => {
+    const point = chart.get(`${celestialBody}-point`),
+        yValue = point?.y,
+        x = point?.plotX,
+        key = `${celestialBody}Label`,
+        name = celestialBody.charAt(0).toUpperCase() + celestialBody.slice(1);
+
+    let label = chart[key];
+
+    if (!label) {
+        label = chart.renderer.label()
+            .attr({
+                zIndex: 6,
+                padding: 1,
+                fill: 'rgba(255, 255, 255, 0.75)',
+                r: 3
+            })
+            .css({
+                fontSize: '0.8em'
+            })
+            .add();
+    }
+    if (yValue < chart.yAxis[0].min) {
+        label
+            .attr({
+                text: `↓ ${name}, ${Math.abs(yValue).toFixed(1)}° ` +
+                    'below horizon',
+                x,
+                y: chart.yAxis[0].len - 15
+            })
+            .show();
+    } else if (yValue > chart.yAxis[0].max) {
+        label
+            .attr({
+                text: `↑ ${name}, ${Math.abs(yValue).toFixed(1)}° ` +
+                    'above horizon',
+                x,
+                y: 0
+            })
+            .show();
+    } else {
+        label.hide();
+    }
+    chart[key] = label;
 };
 
 let ticker;
@@ -163,7 +217,14 @@ const board = Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                data: getSunTrajectory(horizon.elevationProfile)
+                data: getTrajectory('sun', horizon.elevationProfile)
+            }
+        }, {
+            id: 'moon-trajectory-data',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                data: getTrajectory('moon', horizon.elevationProfile)
             }
         }, {
             id: 'contours-data',
@@ -242,6 +303,9 @@ const board = Dashboards.board('container', {
                     sunTrajectory = await dataPool.getConnectorTable(
                         'sun-trajectory-data'
                     ),
+                    moonTrajectory = await dataPool.getConnectorTable(
+                        'moon-trajectory-data'
+                    ),
                     contours = await dataPool.getConnectorTable(
                         'contours-data'
                     );
@@ -251,9 +315,19 @@ const board = Dashboards.board('container', {
                     false
                 );
 
-                this.chart.get('sun').setData([{
+                this.chart.get('sun-series').setData([{
                     id: 'sun-point',
-                    ...getSunXY(date)
+                    ...getCelestialBodyXY('sun', date)
+                }], false);
+
+                this.chart.get('moon-trajectory').setData(
+                    moonTrajectory.getRowObjects(),
+                    false
+                );
+
+                this.chart.get('moon-series').setData([{
+                    id: 'moon-point',
+                    ...getCelestialBodyXY('moon', date)
                 }], false);
 
                 this.chart.get('contours').setData(
@@ -276,46 +350,8 @@ const board = Dashboards.board('container', {
                     render() {
                         colorize(this);
 
-                        // When the sun is below or above the chart, show a
-                        // label pointing down or up
-                        const y = this.get('sun-point')?.y;
-
-                        if (!this.sunPointer) {
-                            this.sunPointer = this.renderer.label()
-                                .css({
-                                    fontSize: '0.8em'
-                                })
-                                .add();
-                        }
-                        if (y < this.yAxis[0].min) {
-                            this.sunPointer
-                                .attr({
-                                    text: `↓ Sun, ${Math.abs(y).toFixed(1)}° ` +
-                                        'below horizon',
-                                    x: this.get('sun').points[0].plotX,
-                                    y: this.yAxis[0].len - 15,
-                                    zIndex: 6,
-                                    padding: 1,
-                                    fill: 'rgba(255, 255, 255, 0.75)',
-                                    r: 3
-                                })
-                                .show();
-                        } else if (y > this.yAxis[0].max) {
-                            this.sunPointer
-                                .attr({
-                                    text: `↑ Sun, ${Math.abs(y).toFixed(1)}° ` +
-                                        'above horizon',
-                                    x: this.get('sun').points[0].plotX,
-                                    y: 0,
-                                    zIndex: 6,
-                                    padding: 1,
-                                    fill: 'rgba(255, 255, 255, 0.75)',
-                                    r: 3
-                                })
-                                .show();
-                        } else {
-                            this.sunPointer.hide();
-                        }
+                        offscreenLabel(this, 'sun');
+                        offscreenLabel(this, 'moon');
                     }
                 },
                 styledMode: false
@@ -416,7 +452,7 @@ const board = Dashboards.board('container', {
                     enabled: false
                 },
                 dataLabels: {
-                    color: 'white',
+                    color: '#ffde85',
                     style: {
                         textOutline: 'none',
                         fontSize: '0.9rem'
@@ -432,7 +468,7 @@ const board = Dashboards.board('container', {
                 zIndex: -2
             }, {
                 type: 'scatter',
-                id: 'sun',
+                id: 'sun-series',
                 name: 'The Sun',
                 point: {
                     events: {
@@ -440,6 +476,19 @@ const board = Dashboards.board('container', {
                             colorize(this.series.chart, e.options.y);
                         }
                     }
+                },
+                dataLabels: {
+                    enabled: true,
+                    align: 'left',
+                    verticalAlign: 'middle',
+                    format: 'Sun',
+                    style: {
+                        color: '#ffde85',
+                        textOutline: 'none',
+                        fontWeight: 'normal'
+                    },
+                    x: 10,
+                    y: -1
                 },
                 color: 'orange',
                 marker: {
@@ -453,6 +502,59 @@ const board = Dashboards.board('container', {
                     pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
                 },
                 zIndex: -1
+            }, {
+                type: 'line',
+                id: 'moon-trajectory',
+                name: 'Moon trajectory',
+                color: 'lightblue',
+                marker: {
+                    enabled: false
+                },
+                dataLabels: {
+                    color: 'lightblue',
+                    style: {
+                        textOutline: 'none',
+                        fontSize: '0.9rem'
+                    },
+                    y: -5
+                },
+                tooltip: {
+                    headerFormat: '',
+                    pointFormat: 'Moon position<br>' +
+                        '<b>{point.custom.datetime:%b %e, %Y %H:%M}</b>' +
+                        '<br>Angle: {point.y:.2f}°'
+                },
+                zIndex: -2
+            }, {
+                type: 'scatter',
+                id: 'moon-series',
+                name: 'The Moon',
+                color: 'lightblue',
+                marker: {
+                    symbol: 'circle',
+                    raidus: 3,
+                    fillColor: 'lightblue',
+                    lineColor: 'black',
+                    lineWidth: 1
+                },
+                tooltip: {
+                    pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
+                },
+                zIndex: -1,
+
+                dataLabels: {
+                    enabled: true,
+                    align: 'left',
+                    verticalAlign: 'middle',
+                    format: 'Moon',
+                    style: {
+                        color: 'lightblue',
+                        textOutline: 'none',
+                        fontWeight: 'normal'
+                    },
+                    x: 10,
+                    y: -1
+                }
             }, {
                 type: 'scatter',
                 id: 'contours',
@@ -522,10 +624,17 @@ const board = Dashboards.board('container', {
                     date.setDate(Number(e.target.value));
                     updateDateInputLabel();
 
-                    const sunTrajectoryData = getSunTrajectory(
-                        horizon.elevationProfile,
-                        e.type === 'input'
-                    );
+                    const sunTrajectoryData = getTrajectory(
+                            'sun',
+                            horizon.elevationProfile,
+                            e.type === 'input'
+                        ),
+                        moonTrajectoryData = getTrajectory(
+                            'moon',
+                            horizon.elevationProfile,
+                            e.type === 'input'
+                        );
+
 
                     // @todo - this is not working because the chart is not
                     // really connected to the table, it is just
@@ -539,7 +648,18 @@ const board = Dashboards.board('container', {
                         sunTrajectoryData,
                         false
                     );
-                    chart.get('sun-point').update(getSunXY(date), false);
+                    chart.get('sun-point').update(
+                        getCelestialBodyXY('sun', date),
+                        false
+                    );
+                    chart.get('moon-trajectory').setData(
+                        moonTrajectoryData,
+                        false
+                    );
+                    chart.get('moon-point').update(
+                        getCelestialBodyXY('moon', date),
+                        false
+                    );
                     chart.redraw(false);
 
                     // Update the grid
@@ -585,7 +705,14 @@ const board = Dashboards.board('container', {
                     date.setHours(0);
                     date.setMinutes(Number(e.target.value));
                     updateTimeInputLabel();
-                    chart.get('sun-point').update(getSunXY(date), true, false);
+                    chart.get('sun-point').update(
+                        getCelestialBodyXY('sun', date), true,
+                        false
+                    );
+                    chart.get('moon-point').update(
+                        getCelestialBodyXY('moon', date), true,
+                        false
+                    );
                 });
 
                 // Workaround for not exposed AST (#20463)
@@ -626,7 +753,7 @@ const board = Dashboards.board('container', {
                         return new Intl.DateTimeFormat('nn-NO', {
                             timeStyle: 'short'
                         }).format(this.value);
-                    } catch (e) {
+                    } catch {
                         return '-';
                     }
                 }
@@ -725,7 +852,7 @@ if (Date.now() - date.getTime() < 1000) {
             .map(c => c.component)
             .find(c => c.id === 'horizon-chart')
             .chart;
-        chart.get('sun').points[0].update(getSunXY(date));
+        chart.get('sun-series').points[0].update(getCelestialBodyXY('sun', date));
 
         const timeInput = document.getElementById('time-input');
         if (timeInput) {
