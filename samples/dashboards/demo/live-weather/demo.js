@@ -53,11 +53,13 @@ const paramConfig = {
             [0.8, '#0000CC']
         ]
     },
-    getColumnHeader: function (param) {
+    getColumnHeader: function (param, simple = false) {
         const info = this[param];
         // First letter uppercase
         const name = info.name[0].toUpperCase() + info.name.slice(1);
-
+        if (simple) {
+            return name;
+        }
         return `${name} ${info.unit}`;
     }
 };
@@ -426,7 +428,7 @@ async function setupBoard() {
                 chartOptions: {
                     ...KPIChartOptions,
                     title: {
-                        text: paramConfig.getColumnHeader('temperature')  + ' (latest)',
+                        text: paramConfig.getColumnHeader('temperature') + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -576,20 +578,19 @@ async function setupBoard() {
                         animationLimit: 0
                     },
                     credits: {
-                        enabled: false
+                        enabled: true,
+                        href: 'https://api.met.no/weatherapi/locationforecast/2.0/documentation',
+                        text: 'MET Norway'
                     },
                     legend: {
-                        labelFormatter: function () {
-                            return Highcharts.dateFormat('%d/%m/%Y', this.xAxis.min);
-                        }
+                        enabled: false
                     },
                     colorAxis: {
                         startOnTick: false,
                         endOnTick: false,
                         max: activeParam.max,
                         min: activeParam.min,
-                        stops: activeParam.colorStops,
-                        showInLegend: false
+                        stops: activeParam.colorStops
                     },
                     plotOptions: {
                         series: {
@@ -603,6 +604,9 @@ async function setupBoard() {
                         margin: 20,
                         x: 15,
                         y: 5
+                    },
+                    subtitle: {
+                        text: '----'
                     },
                     tooltip: {
                         enabled: true,
@@ -630,7 +634,7 @@ async function setupBoard() {
                     },
                     yAxis: {
                         title: {
-                            text: paramConfig.getColumnHeader(activeParam.name)
+                            enabled: false
                         },
                         accessibility: {
                             description: activeParam.unit
@@ -769,6 +773,9 @@ function getLatestObservation(forecastTable, param) {
 async function updateBoard(board, city, paramName,
     updateParam = true, updateCity = true) {
 
+    // Parameter info
+    const param = paramConfig[paramName];
+
     // Data access
     const dataPool = board.dataPool;
 
@@ -782,19 +789,36 @@ async function updateBoard(board, city, paramName,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
+    // Common to map and chart
+    const colorAxis = {
+        min: param.min,
+        max: param.max,
+        stops: param.colorStops
+    };
+
+    // Update chart
+    const options = cityChart.chartOptions;
+    options.title.text = paramConfig.getColumnHeader(paramName, true) + ' forecast for ' + city;
+    options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
+    options.colorAxis = colorAxis;
+    options.chart.type = param.chartType;
+
+    await cityChart.update({
+        connector: {
+            id: city
+        },
+        columnAssignment: {
+            time: 'x',
+            temperature: paramName === 'temperature' ? 'y' : null,
+            wind: paramName === 'wind' ? 'y' : null,
+            precipitation: paramName === 'precipitation' ? 'y' : null
+        },
+        chartOptions: options
+    });
+
     if (updateParam) {
         // Parameters update, e.g. temperature -> precipitation.
         // Refreshes: map, chart
-
-        // Parameter info
-        const param = paramConfig[paramName];
-
-        // Common to map and chart
-        const colorAxis = {
-            min: param.min,
-            max: param.max,
-            stops: param.colorStops
-        };
 
         // Update map properties
         await worldMap.chart.update({
@@ -822,21 +846,6 @@ async function updateBoard(board, city, paramName,
                 y: value
             }, true);
         }
-
-        // Update chart
-        const options = cityChart.chartOptions;
-        options.colorAxis = colorAxis;
-        options.yAxis.title.text = paramConfig.getColumnHeader(paramName);
-        options.chart.type = param.chartType;
-        await cityChart.update({
-            columnAssignment: {
-                time: 'x',
-                temperature: paramName === 'temperature' ? 'y' : null,
-                wind: paramName === 'wind' ? 'y' : null,
-                precipitation: paramName === 'precipitation' ? 'y' : null
-            },
-            chartOptions: options
-        });
     }
 
     if (updateCity) {
@@ -873,18 +882,15 @@ async function updateBoard(board, city, paramName,
                 id: city
             }
         });
-
-        // Update chart
-        const options = cityChart.chartOptions;
-        options.title.text = 'Forecast for ' + city;
-
+    }
+    /*
         await cityChart.update({
             connector: {
                 id: city
             },
             chartOptions: options
         });
-    }
+        */
 }
 
 // Launch the application
