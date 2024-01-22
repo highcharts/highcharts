@@ -91,6 +91,11 @@ namespace ForcedMarkersComposition {
                 'afterRender',
                 seriesOnAfterRender
             );
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'renderCanvas',
+                seriesOnRenderCanvas
+            );
         }
 
     }
@@ -302,7 +307,7 @@ namespace ForcedMarkersComposition {
     function unforceSeriesMarkerOptions(series: SeriesComposition): void {
         const resetMarkerOptions = series.resetA11yMarkerOptions;
         if (resetMarkerOptions) {
-            const originalOpactiy = resetMarkerOptions.states &&
+            const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
 
@@ -315,10 +320,25 @@ namespace ForcedMarkersComposition {
                 marker: {
                     enabled: resetMarkerOptions.enabled,
                     states: {
-                        normal: { opacity: originalOpactiy }
+                        normal: { opacity: originalOpacity }
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Reset markers if series is boosted and had forced markers (#17320).
+     * @private
+     */
+    function seriesOnRenderCanvas(this: SeriesComposition): void {
+        if (this.boosted && this.a11yMarkersForced) {
+            merge(true, this.options, {
+                marker: {
+                    enabled: false
+                }
+            });
+            delete this.a11yMarkersForced;
         }
     }
 
