@@ -1,22 +1,14 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
 import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
 
 DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardsPlugin.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
-
 DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.HighchartsPlugin);
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.DataGridPlugin);
 
+const { test } = QUnit;
 
-const { test, only, skip } = QUnit;
-
-const Component = Dashboards.Component;
-const CSVConnector = Dashboards.DataConnector.types.CSV;
-const HighchartsComponent = Dashboards.ComponentRegistry.types.Highcharts;
-
+const registeredEvents = [];
 const eventTypes = [
     'load',
     'afterLoad',
@@ -28,8 +20,6 @@ const eventTypes = [
     'afterUpdate'
 ];
 
-const registeredEvents = [];
-
 function registerEvent(e) {
     registeredEvents.push(e.type);
 }
@@ -37,7 +27,7 @@ function registerEvent(e) {
 function emptyArray(array) {
     array.length = 0;
 }
-/** @param {HighchartsComponent | HTMLComponent} component */
+
 function registerEvents(component) {
     eventTypes.forEach((eventType) => component.on(eventType, registerEvent));
 }
@@ -267,139 +257,6 @@ test('Board with data connectors and HighchartsComponent update', async function
     // assert.deepEqual(registeredEvents, expectedEvents);
 });
 
-test('component resizing', function (assert) {
-    const parentElement = document.getElementById('container');
-    if (!parentElement) {
-        return;
-    }
-
-    const board = Dashboards.board(parentElement, {
-        gui: {
-            enabled: true,
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-cell'
-                    }]
-                }]
-            }]
-        },
-        components: [{
-            type: 'HTML',
-            cell: 'dashboard-cell'
-        }]
-    });
-
-    const component = board.mountedComponents[0].component;
-
-    assert.deepEqual(
-        {
-            width: component.element.style.width,
-            height: component.element.style.height
-        },
-        {
-            width: '',
-            height: ''
-        },
-        'Component with no dimensional options should have no internal styles set'
-    );
-
-    component.resize(200);
-    assert.deepEqual(
-        {
-            width: component.element.style.width,
-            height: component.element.style.height
-        },
-        {
-            width: '',
-            height: ''
-        },
-        'Should be able to update just the width'
-    );
-
-    component.resize(undefined, 300);
-
-    assert.deepEqual(
-        {
-            width: component.element.style.width,
-            height: component.element.style.height
-        },
-        {
-            width: '',
-            height: '300px'
-        },
-        'Should be able to update just the height. Width should stay the same.'
-    );
-
-    component.destroy();
-
-    // parentElement.style.width = '1000px';
-    // parentElement.style.height = '200px';
-    // component.resize('100%', '100%');
-    // assert.deepEqual(
-    //     {
-    //         width: component.element.style.width,
-    //         height: component.element.style.height
-    //     },
-    //     {
-    //         width: 1000,
-    //         height: 200
-    //     },
-    //     'Should be able to update just the height'
-    // );
-
-    // const widthComponent = new HTMLComponent({
-    //     dimensions: {
-    //         width: '100'
-    //     }
-    // }).render();
-    // assert.strictEqual(widthComponent.dimensions.width, 100)
-    // assert.strictEqual(widthComponent.dimensions.height, null)
-
-    // widthComponent.destroy()
-
-    //  const heightComponent = new HTMLComponent({
-    //      dimensions: {
-    //          height: '100'
-    //      }
-    //  }).render();
-    //  assert.strictEqual(heightComponent.dimensions.width, null)
-    //  assert.strictEqual(heightComponent.dimensions.height, 100)
-    //
-    //  heightComponent.destroy()
-    //
-    //  const emptyDimensions = new HTMLComponent({
-    //      dimensions: {}
-    // }).render();
-    //  assert.strictEqual(emptyDimensions.dimensions.width, null)
-    //  assert.strictEqual(emptyDimensions.element.style.height, "")
-    //
-    //  emptyDimensions.destroy();
-    //
-    //  const percentageDimensions = new HTMLComponent({
-    //      parentElement: parent,
-    //      dimensions: {
-    //          width: '50%',
-    //          height: '50%'
-    //      }
-    //  }).render();
-    //
-    //  let rect = percentageDimensions.element.getBoundingClientRect()
-    //  assert.strictEqual(rect.width, parent.scrollWidth / 2)
-    //  assert.strictEqual(rect.height, parent.scrollHeight / 2 )
-    //
-    //
-    // // With padding
-    // percentageDimensions.element.style.padding = '5px';
-    // percentageDimensions.resize('50%', '50%')
-    //
-    // rect = percentageDimensions.element.getBoundingClientRect()
-    // assert.strictEqual(rect.width, parent.scrollWidth / 2)
-    // assert.strictEqual(rect.height, parent.scrollHeight / 2)
-    //
-    // percentageDimensions.destroy();
-});
-
 test('HighchartsComponent resizing', function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
@@ -459,118 +316,6 @@ test('HighchartsComponent resizing', function (assert) {
 
     component.destroy();
 
-});
-
-skip('toJSON', function (assert) {
-    const container = document.createElement('div');
-    container.id = 'container';
-
-    const connector = new CSVConnector();
-    const component = new HighchartsComponent(void 0, {
-        connector,
-        parentElement: container,
-        chartOptions: {
-            chart: {},
-            series: [
-                {
-                    data: [1, 2, 3, 5, 15, 1, 5, 15, 1]
-                }
-            ]
-        }
-    });
-
-    component.render();
-    const json = component.toJSON();
-    const clone = HighchartsComponent.fromJSON(json);
-    clone.render();
-
-    assert.deepEqual(json, clone.toJSON());
-});
-
-test('DataGrid component with dataTable', async function (assert) {
-    const container = document.createElement('div');
-    container.id = 'container';
-
-    const { DataTable } = Dashboards;
-
-    const columns = {
-        product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-        weight: [100, 40, 0.5, 200],
-        price: [1.5, 2.53, 5, 4.5],
-        metaData: ['a', 'b', 'c', 'd']
-    };
-
-    const dashboard = await Dashboards.board('container', {
-        gui: {
-            layouts: [
-                {
-                    id: 'layout-1',
-                    rows: [
-                        {
-                            cells: [
-                                {
-                                    id: 'dashboard-col-1'
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        components: [
-            {
-                cell: 'dashboard-col-1',
-                type: 'DataGrid',
-                dataGridOptions: {
-                    dataTable: new DataTable({
-                        columns
-                    })
-                }
-            }
-        ]
-    }, true);
-
-    assert.ok(
-        dashboard.mountedComponents[0].component.dataGrid.dataTable.columns.product,
-        'DataGrid component should have a dataTable with columns.'
-    );
-});
-
-test('KPI Component updating', async function (assert) {
-    const container = document.createElement('div');
-    container.id = 'container';
-
-    const dashboard = await Dashboards.board('container', {
-        gui: {
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-cell-1'
-                    }]
-                }]
-            }]
-        },
-        components: [{
-            cell: 'dashboard-cell-1',
-            type: 'KPI',
-            title: 'Value',
-            value: 1
-        }]
-    }, true),
-        kpi = dashboard.mountedComponents[0].component;
-
-    assert.notOk(kpi.chart, 'KPI Component should be loaded without a chart.');
-
-    kpi.update({
-        value: 2,
-        chartOptions: {
-            series: [{
-                data: [1, 2, 3]
-            }]
-        }
-    });
-
-    assert.ok(kpi.chart, 'KPI Component should have a chart after update.');
 });
 
 test('Data columnAssignment', async function (assert) {
@@ -871,6 +616,7 @@ test('Data columnAssignment', async function (assert) {
 
 });
 
+
 test('JSON data with columnNames and columnAssignment.', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
@@ -1000,93 +746,5 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
         mountedComponents[0].component.chart.series[1].yData,
         [1500, 500, 400],
         'Each server instance should be rendered as a column.'
-    );
-});
-
-test('Sync events leak in updated components', async function (assert) {
-    const parentElement = document.getElementById('container');
-    if (!parentElement) {
-        return;
-    }
-
-    const dashboard = await Dashboards.board('container', {
-        dataPool: {
-            connectors: [{
-                id: 'micro-element',
-                type: 'JSON',
-                options: {
-                    data: [
-                        ['Food', 'Vitamin A',  'Iron'],
-                        ['Beef Liver', 6421, 6.5],
-                        ['Lamb Liver', 2122, 6.5],
-                        ['Cod Liver Oil', 1350, 0.9],
-                        ['Mackerel', 388, 1],
-                        ['Tuna', 214, 0.6]
-                    ]
-                }
-            }]
-        },
-        gui: {
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'chart'
-                    }, {
-                        id: 'datagrid'
-                    }]
-                }]
-            }]
-        },
-        components: [{
-            cell: 'chart',
-            type: 'Highcharts',
-            connector: {
-                id: 'micro-element'
-            },
-            sync: {
-                highlight: true,
-                visibility: true,
-                extremes: true
-            }
-        }, {
-            cell: 'datagrid',
-            type: 'DataGrid',
-            connector: {
-                id: 'micro-element'
-            },
-            sync: {
-                highlight: true,
-                visibility: true,
-                extremes: true
-            }
-        }]
-    }, true);
-
-    const cChart = dashboard.mountedComponents[0].component;
-    const cDataGrid = dashboard.mountedComponents[1].component;
-
-    const testLeaks = async (component) => {
-        // only the most important events, not all possible ones are checked
-        const events = {
-            setConnector: component.hcEvents.setConnector?.length,
-            afterSetConnector: component.hcEvents.afterSetConnector?.length,
-            afterRender: component.hcEvents.afterRender?.length
-        };
-
-        await component.update({});
-
-        return Object.keys(events).every((key) => (
-            events[key] === component.hcEvents[key]?.length
-        ));
-    }
-
-    assert.ok(
-        await testLeaks(cChart),
-        'Highcharts Component should not leak events when update.'
-    );
-
-    assert.ok(
-        await testLeaks(cDataGrid),
-        'DataGrid Component should not leak events when update.'
     );
 });
