@@ -1,13 +1,12 @@
 ---
-name: Overview
+name: World High Resolution
 authors:
   - Torstein Hønsi
 js_wrap: b
-requiresManualTesting: true
 tags:
   - Highcharts Maps demo
 categories:
   - General:
-      priority: 2
+      priority: 1
 use_png_thumbnail: true
 ...
