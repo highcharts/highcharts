@@ -14,7 +14,7 @@ const paramConfig = {
         name: 'temperature',
         unit: '˚C',
         min: -20,
-        max: 50,
+        max: 40,
         floatRes: 1,
         chartType: 'spline',
         colorStops: [
@@ -416,19 +416,55 @@ async function setupBoard() {
                 type: 'KPI',
                 columnName: 'temperature',
                 chartOptions: {
-                    ...KPIChartOptions,
+                    chart: {
+                        spacing: [8, 8, 8, 8],
+                        type: 'solidgauge'
+                    },
+                    pane: {
+                        background: {
+                            innerRadius: '90%',
+                            outerRadius: '120%',
+                            shape: 'arc'
+                        },
+                        center: ['50%', '70%'],
+                        endAngle: 90,
+                        startAngle: -90
+                    },
                     title: {
-                        text: paramConfig.getColumnHeader('temperature') + ' (latest)',
+                        text: paramConfig.getColumnHeader('temperature', true) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
+                        lineWidth: 2,
+                        minorTicks: false,
+                        tickWidth: 2,
+                        tickAmount: 2,
+                        labels: {
+                            distance: '105%',
+                            y: 5,
+                            align: 'auto'
+                        },
+                        stops: paramConfig.temperature.colorStops,
+                        min: paramConfig.temperature.min,
+                        max: paramConfig.temperature.max,
+                        visible: true,
                         accessibility: {
                             description: paramConfig.getColumnHeader('temperature')
+                        }
+                    },
+                    series: [{
+                        data: [0],
+                        dataLabels: {
+                            format: '{y:.1f} ' + paramConfig.temperature.unit,
+                            y: -40
                         },
-                        max: paramConfig.temperature.max,
-                        min: paramConfig.temperature.min
-                    }
+                        animation: false,
+                        animationLimit: 0,
+                        enableMouseTracking: false,
+                        innerRadius: '90%',
+                        radius: '120%'
+                    }]
                 },
                 events: {
                     click: function () {
