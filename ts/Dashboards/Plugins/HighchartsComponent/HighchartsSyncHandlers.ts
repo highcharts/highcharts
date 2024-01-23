@@ -24,17 +24,17 @@
 
 import type {
     Axis,
+    Point,
     Series
-} from './HighchartsTypes';
-import type DataCursor from '../../Data/DataCursor';
-import type Sync from '../Components/Sync/Sync';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../Data/Modifiers/RangeModifierOptions';
-import type DataTable from '../../Data/DataTable';
-import type Point from '../../Core/Series/Point';
-import type HighchartsComponent from './HighchartsComponent';
+} from '../HighchartsTypes';
+import type DataCursor from '../../../Data/DataCursor';
+import type Sync from '../../Components/Sync/Sync';
+import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
+import type DataTable from '../../../Data/DataTable';
 
-import ComponentType from '../Components/ComponentType';
-import U from '../../Core/Utilities.js';
+import ComponentType from '../../Components/ComponentType';
+import HighchartsComponent from './HighchartsComponent';
+import U from '../../../Core/Utilities.js';
 const { addEvent, isObject } = U;
 
 
