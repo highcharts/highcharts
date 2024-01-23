@@ -978,7 +978,7 @@ function scatterProcessData(
 
     if (xRangeNeeded) {
         xAxis.options.max ??= xDataMax;
-        xAxis.options.max ??= xDataMin;
+        xAxis.options.min ??= xDataMin;
     }
     if (yRangeNeeded) {
         yAxis.options.max ??= yDataMax;
