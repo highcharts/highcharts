@@ -632,13 +632,21 @@ const board = Dashboards.board('container', {
                     return;
                 }
 
+                let currentDate = '';
+
                 // Date input
                 const dateInput = document.querySelector('#date-input'),
+                    dateInputLabel = document.getElementById(
+                        'date-input-label'
+                    ),
                     updateDateInputLabel = () => {
-                        document.getElementById('date-input-label')
-                            .innerText = new Intl.DateTimeFormat('nn-NO', {
+                        dateInputLabel.innerText = new Intl.DateTimeFormat(
+                            'nn-NO',
+                            {
                                 dateStyle: 'medium'
-                            }).format(date);
+                            }
+                        ).format(date);
+                        currentDate = date.toDateString();
                     },
                     newYear = new Date(date.getTime());
                 newYear.setMonth(0);
@@ -735,9 +743,7 @@ const board = Dashboards.board('container', {
                         clearInterval(ticker);
                     }
                     date.setTime(
-                        Date.parse(document.getElementById(
-                            'date-input-label'
-                        ).innerText)
+                        Date.parse(currentDate)
                     );
                     date.setMinutes(0);
 
