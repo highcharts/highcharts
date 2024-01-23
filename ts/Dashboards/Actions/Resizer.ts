@@ -420,14 +420,12 @@ class Resizer {
         addEvent(document, 'mouseup', mouseUpSnap);
 
         // Touch events
-        // if (hasTouch) {
-        //     addEvent(snapX, 'touchstart', mouseDownSnapX);
-        //     addEvent(snapY, 'touchstart', mouseDownSnapY);
+        // addEvent(snapX, 'touchstart', mouseDownSnapX);
+        // addEvent(snapY, 'touchstart', mouseDownSnapY);
 
-        //     if (!rowContainer.hcEvents.mousemove) {
-        //         addEvent(rowContainer, 'touchmove', mouseMoveSnap);
-        //         addEvent(rowContainer, 'touchend', mouseUpSnap);
-        //     }
+        // if (!rowContainer.hcEvents.mousemove) {
+        //     addEvent(rowContainer, 'touchmove', mouseMoveSnap);
+        //     addEvent(rowContainer, 'touchend', mouseUpSnap);
         // }
 
         const runReflow = (): void => {
