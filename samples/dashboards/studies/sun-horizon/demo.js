@@ -64,7 +64,10 @@ const getTrajectory = (
         if (
             trajectory.length &&
             horizonPoint.angle <= y &&
-            trajectory.at(-1).horizonPoint.angle >= trajectory.at(-1).y
+            trajectory.at(-1).horizonPoint.angle >= trajectory.at(-1).y &&
+            // Special case, remove when we fixed overlapping rotated data
+            // labels
+            Math.floor(x) !== 166
         ) {
             dataLabels = {
                 align: 'left',
@@ -731,8 +734,16 @@ const board = Dashboards.board('container', {
                     if (!e.detail?.keepGoing) {
                         clearInterval(ticker);
                     }
-                    date.setHours(0);
+                    date.setTime(
+                        Date.parse(document.getElementById(
+                            'date-input-label'
+                        ).innerText)
+                    );
+                    date.setMinutes(0);
+
+                    // Minutes since midnight, hours are still 0
                     date.setMinutes(Number(e.target.value));
+
                     updateTimeInputLabel();
                     chart.get('sun-point').update(
                         getCelestialBodyXY('sun', date), true,
