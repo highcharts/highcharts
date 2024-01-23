@@ -132,6 +132,8 @@ declare global {
     }
 
     interface Window {
+        /** @internal */
+        TestController?: unknown;
         /** @deprecated */
         opera?: unknown;
         /** @deprecated */
@@ -213,7 +215,7 @@ namespace Globals {
             isFirefox &&
             parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
         ),
-        hasTouch = !!win.TouchEvent,
+        hasTouch = !!(win.TouchEvent || win.TestController),
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
