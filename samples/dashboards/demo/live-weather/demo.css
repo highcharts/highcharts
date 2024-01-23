@@ -362,7 +362,7 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-point:hover {
-    stroke-width: 6;
+    stroke-width: 4;
     stroke: var(--color-marker-border-hover);
 }
 

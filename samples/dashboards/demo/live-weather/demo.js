@@ -745,17 +745,15 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
     });
 }
 
-// Accumulated precipitation
-function accumulatePrecipitation(forecastTable) {
-    let sum = 0;
-    for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
-        sum += forecastTable.columns.precipitation[i];
+// Get observation (accumulated or latest)
+function getObservation(forecastTable, param) {
+    if (param === 'precipitation') {
+        let sum = 0;
+        for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
+            sum += forecastTable.columns[param][i];
+        }
+        return Math.round(sum);
     }
-    return Math.round(sum);
-}
-
-// Latest observation
-function getLatestObservation(forecastTable, param) {
     return forecastTable.columns[param][rangeConfig.first];
 }
 
@@ -786,7 +784,7 @@ async function updateBoard(board, city, paramName,
         stops: param.colorStops
     };
 
-    // Update chart
+    // Update city chart
     const options = cityChart.chartOptions;
     options.title.text = paramConfig.getColumnHeader(paramName, true) + ' forecast for ' + city;
     options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
@@ -807,8 +805,8 @@ async function updateBoard(board, city, paramName,
     });
 
     if (updateParam) {
-        // Parameters update, e.g. temperature -> precipitation.
-        // Refreshes: map, chart
+        // Parameters update: e.g. temperature -> precipitation.
+        // Affects: map
 
         // Update map properties
         await worldMap.chart.update({
@@ -826,33 +824,27 @@ async function updateBoard(board, city, paramName,
             const forecastTable = await dataPool.getConnectorTable(
                 mapPoints[i].name);
 
-            let value;
-            if (paramName === 'precipitation') {
-                value = accumulatePrecipitation(forecastTable);
-            } else {
-                value = getLatestObservation(forecastTable, paramName);
-            }
             mapPoints[i].update({
-                y: value
+                y: getObservation(forecastTable, paramName)
             }, true);
         }
     }
 
     if (updateCity) {
-        // Data update, e.g. New York -> Winnipeg
-        // Refreshes: KPIs, grid and chart.
+        // City update: e.g. New York -> Winnipeg
+        // Affects: KPIs and grid.
         const forecastTable = await dataPool.getConnectorTable(city);
 
         await kpiTemperature.update({
-            value: getLatestObservation(forecastTable, 'temperature')
+            value: getObservation(forecastTable, 'temperature')
         });
 
         await kpiWind.update({
-            value: getLatestObservation(forecastTable, 'wind')
+            value: getObservation(forecastTable, 'wind')
         });
 
         await kpiRain.update({
-            value: accumulatePrecipitation(forecastTable)
+            value: getObservation(forecastTable, 'precipitation')
         });
 
         // Update geo KPI
@@ -873,14 +865,6 @@ async function updateBoard(board, city, paramName,
             }
         });
     }
-    /*
-        await cityChart.update({
-            connector: {
-                id: city
-            },
-            chartOptions: options
-        });
-        */
 }
 
 // Launch the application
