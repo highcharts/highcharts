@@ -239,12 +239,12 @@ class Scrollbar {
             mouseMoveHandler = this.mouseMoveHandler.bind(this),
             mouseUpHandler = this.mouseUpHandler.bind(this);
 
-        // Mouse events
         const _events: Array<[
             any,
             string,
             (e: PointerEvent) => void
         ]> = [
+            // Mouse events
             [
                 buttons[buttonsOrder[0]].element,
                 'click',
@@ -258,17 +258,12 @@ class Scrollbar {
             [track, 'click', this.trackClick.bind(this)],
             [bar, 'mousedown', mouseDownHandler],
             [bar.ownerDocument, 'mousemove', mouseMoveHandler],
-            [bar.ownerDocument, 'mouseup', mouseUpHandler]
+            [bar.ownerDocument, 'mouseup', mouseUpHandler],
+            // Touch events
+            [bar, 'touchstart', mouseDownHandler],
+            [bar.ownerDocument, 'touchmove', mouseMoveHandler],
+            [bar.ownerDocument, 'touchend', mouseUpHandler]
         ];
-
-        // Touch events
-        if (H.hasTouch) {
-            _events.push(
-                [bar, 'touchstart', mouseDownHandler],
-                [bar.ownerDocument, 'touchmove', mouseMoveHandler],
-                [bar.ownerDocument, 'touchend', mouseUpHandler]
-            );
-        }
 
         // Add them all
         _events.forEach(function (args): void {

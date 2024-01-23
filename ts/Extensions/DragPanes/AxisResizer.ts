@@ -28,8 +28,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AxisResizerDefaults from './AxisResizerDefaults.js';
-import H from '../../Core/Globals.js';
-const { hasTouch } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -211,22 +209,17 @@ class AxisResizer {
             resizer.onMouseDown(e)
         );
 
-        // Add mouse move and mouseup events. These are bind to doc/container,
-        // because resizer.grabbed flag is stored in mousedown events.
         eventsToUnbind.push(
+            // Add mouse move and mouseup events. These are bind to doc/div,
+            // because resizer.grabbed flag is stored in mousedown events.
             addEvent(container, 'mousemove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
-            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler)
+            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler),
+            // Touch events.
+            addEvent(container, 'touchmove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
+            addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
         );
-
-        // Touch events.
-        if (hasTouch) {
-            eventsToUnbind.push(
-                addEvent(container, 'touchmove', mouseMoveHandler),
-                addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
-                addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
-            );
-        }
 
         resizer.eventsToUnbind = eventsToUnbind;
     }
