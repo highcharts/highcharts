@@ -547,7 +547,10 @@ function destroyGraphics(
         }
     });
 
-    series.zones.forEach(destroyObjectProperties);
+    for (const zone of series.zones) {
+        destroyObjectProperties(zone, void 0, true);
+    }
+
 }
 
 /**
@@ -1147,6 +1150,8 @@ function seriesRenderCanvas(this: Series): void {
 
     // Do not start building while drawing
     this.buildKDTree = noop;
+
+    fireEvent(this, 'renderCanvas');
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);

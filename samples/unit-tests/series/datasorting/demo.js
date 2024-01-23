@@ -3,6 +3,9 @@ QUnit.test('Data sorting ', function (assert) {
             chart: {
                 animation: false
             },
+            navigator: {
+                enabled: true
+            },
             series: [
                 {
                     type: 'column',
@@ -24,7 +27,17 @@ QUnit.test('Data sorting ', function (assert) {
         'Series should be correctly sorted.'
     );
 
+    assert.strictEqual(
+        chart.series[1].xData[0],
+        2,
+        `Navigator series data should be correctly set and sorted on initial
+        load, #20318`
+    );
+
     chart.update({
+        navigator: {
+            enabled: false
+        },
         series: {
             data: [3, 2, 1]
         }

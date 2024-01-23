@@ -114,7 +114,7 @@ function handleDefaultOptionsFunctions(save) {
             } else if (save && typeof value === 'function') {
                 defaultOptionsFunctions[path + '.' + key] = value;
 
-            } else if ( // restore
+            } else if ( // restore
                 !save &&
                 typeof value === 'function'
             ) {
