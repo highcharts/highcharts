@@ -11,7 +11,7 @@
 #city-chart {
     --color-axis: #333;
     --color-axis-labels: #333;
-    --color-background: #5352be;
+    --color-background: #fff;
     --color-title: #2f2b38;
     --color-text: #2f2b38;
     --color-tooltip-background: #5352be;
@@ -23,6 +23,7 @@
     --color-background: #fff;
     --color-gauge: #4caffe;
     --color-hover: #5352be;
+    --color-active: #336;
     --color-hover-text: #fff;
     --color-pane: #eee;
     --color-pane-line: #ccc;
@@ -63,9 +64,11 @@
 }
 
 #world-map {
-    --color-background: #5352be;
+    --color-background: #3c7496;
     --color-map: #dddbef;
     --color-marker-border: #fff;
+    --color-marker-border-active: #336;
+    --color-marker-border-hover: #5352be;
     --color-marker-text: #fff;
     --color-marker-text-border: #000;
     --color-navigation: #f7f7f7;
@@ -73,7 +76,8 @@
     --color-navigation-text: #20202b;
     --color-text: #000;
     --color-text-border: #fff;
-    --color-tooltip-background: #dadae2;
+    --color-tooltip-background: #5352be;
+    --color-tooltip-text: #fff;
 }
 
 #container.highcharts-dark #world-map {
@@ -101,6 +105,14 @@
         --color-navigation: #20202b;
         --color-navigation-line: #646478;
         --color-navigation-text: #838393;
+    }
+
+    #city-chart {
+        --color-axis: #ccc;
+        --color-axis-labels: #ccc;
+        --color-background: #20202c;
+        --color-title: #dadae2;
+        --color-text: #dadae2;
     }
 }
 
@@ -201,19 +213,29 @@
     stroke: none;
 }
 
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component,
 #kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
+    background-color: var(--color-active);
+    color: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component {
     background-color: var(--color-hover);
     color: var(--color-hover-text);
 }
 
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover text,
 #kpi-layout .highcharts-dashboards-cell-state-active text {
     fill: var(--color-hover-text);
 }
 
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover text {
+    fill: var(--color-hover-text);
+}
+
 #kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text {
     fill: var(--color-hover-text);
 }
 
@@ -334,9 +356,14 @@
     cursor: pointer;
 }
 
-#world-map .highcharts-series-1 .highcharts-point:hover,
 #world-map .highcharts-series-1 .highcharts-point-select {
     stroke-width: 6;
+    stroke: var(--color-marker-border-active);
+}
+
+#world-map .highcharts-series-1 .highcharts-point:hover {
+    stroke-width: 6;
+    stroke: var(--color-marker-border-hover);
 }
 
 #world-map .highcharts-tooltip {
@@ -346,7 +373,7 @@
 }
 
 #world-map div.highcharts-tooltip {
-    color: var(--color-text);
+    color: var(--color-tooltip-text);
 }
 
 #world-map text.highcharts-title {

@@ -29,7 +29,7 @@ const paramConfig = {
         name: 'wind',
         unit: 'm/s',
         min: 0,
-        max: 100,
+        max: 30, // Hurricane > 32.7
         floatRes: 1,
         chartType: 'areaspline',
         colorStops: [
@@ -76,7 +76,7 @@ const worldLocations = {
         ['San Diego', 32.71, -117.16, 36],
         ['Anchorage', 61.22, -149.89, 0],
         ['Winnipeg', 49.90, -97.14, 236],
-        ['Mexico D.F.', 19.43, -99.13, 2230],
+        ['Monterrey', 25.68, -99.13, 2230],
         ['Baracoa', 20.35, -74.50, 15]
     ]
 };
@@ -374,16 +374,6 @@ async function setupBoard() {
                             enabled: true,
                             lineWidth: 2,
                             radius: 12,
-                            states: {
-                                hover: {
-                                    lineWidthPlus: 4,
-                                    radiusPlus: 0
-                                },
-                                select: {
-                                    lineWidthPlus: 4,
-                                    radiusPlus: 2
-                                }
-                            },
                             symbol: 'mapmarker'
                         },
                         tooltip: {
