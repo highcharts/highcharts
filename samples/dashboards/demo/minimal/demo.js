@@ -114,13 +114,6 @@ Dashboards.board('container', {
         title: 'Vitamin A',
         subtitle: 'daily recommended dose'
     }, {
-        type: 'KPI',
-        cell: 'kpi-iron',
-        value: 8,
-        title: 'Iron',
-        valueFormat: '{value}',
-        subtitle: 'daily recommended dose'
-    }, {
         sync: {
             visibility: true,
             highlight: true,
