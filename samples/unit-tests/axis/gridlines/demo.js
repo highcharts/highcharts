@@ -22,11 +22,7 @@ QUnit.test('Guard too dense minor grid lines', function (assert) {
     });
 
     // Reset
-    Highcharts.setOptions({
-        yAxis: {
-            minorTickInterval: null
-        }
-    });
+    delete Highcharts.defaultOptions.yAxis.minorTickInterval;
 });
 
 QUnit.test('Animation of grid lines and tick marks', function (assert) {
