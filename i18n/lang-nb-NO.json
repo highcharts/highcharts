@@ -5,7 +5,42 @@
         "pieSliceName": "Skive",
         "seriesName": "Serie {series.index}",
         "yAxisTitle": "Verdier",
-        "rangeselectorButtons": []
+        "rangeselectorButtons": [
+            {
+                "type": "month",
+                "count": 1,
+                "text": "1m",
+                "title": "Vis 1 måned"
+            },
+            {
+                "type": "month",
+                "count": 3,
+                "text": "3m",
+                "title": "Vis 3 måneder"
+            },
+            {
+                "type": "month",
+                "count": 6,
+                "text": "6m",
+                "title": "Vis 6 måneder"
+            },
+            {
+                "type": "ytd",
+                "text": "YTD",
+                "title": "Vis år til dato"
+            },
+            {
+                "type": "year",
+                "count": 1,
+                "text": "1y",
+                "title": "Vis 1 år"
+            },
+            {
+                "type": "all",
+                "text": "Alle",
+                "title": "Vis alle"
+            }
+        ]
     },
     "viewFullscreen": "Vis i fullskjerm",
     "exitFullscreen": "Avslutt fullskjerm",
