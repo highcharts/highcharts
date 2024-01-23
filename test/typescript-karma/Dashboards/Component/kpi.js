@@ -27,6 +27,7 @@ test('KPI Component updating', async function (assert) {
     }, true),
         kpi = dashboard.mountedComponents[0].component;
 
+    // @ts-ignore
     assert.notOk(kpi.chart, 'KPI Component should be loaded without a chart.');
 
     kpi.update({
@@ -38,5 +39,6 @@ test('KPI Component updating', async function (assert) {
         }
     });
 
+    // @ts-ignore
     assert.ok(kpi.chart, 'KPI Component should have a chart after update.');
 });

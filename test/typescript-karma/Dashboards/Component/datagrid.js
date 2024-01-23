@@ -53,6 +53,7 @@ test('DataGrid component with dataTable', async function (assert) {
     }, true);
 
     assert.ok(
+        // @ts-ignore
         dashboard.mountedComponents[0].component.dataGrid.dataTable.columns.product,
         'DataGrid component should have a dataTable with columns.'
     );

@@ -103,6 +103,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
     emptyArray(registeredEvents);
 
     assert.strictEqual(
+        // @ts-ignore
         highchartsComponent.options.chartOptions.title.text,
         'Hello World',
         'HighchartsComponent should have updated title'
@@ -130,29 +131,6 @@ test('Board without data connectors and HighchartsComponent update', async funct
         ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
     );
-
-    // @TODO test update with the redraw flag set to false !!!!!!!!!!!!!!!!!!!
-    // component.update({
-    //     chartOptions: {
-    //         title: {
-    //             text: 'This should fire a redraw'
-    //         }
-    //     },
-    //     false
-    // });
-
-    // expectedEvents.push(
-    //       "update",
-    //       "redraw",
-    //       "render",
-    //       "load",
-    //       "afterLoad",
-    //       "afterRender",
-    //       "update",
-    //       "afterUpdate"
-
-    // );
-    // assert.deepEqual(registeredEvents, expectedEvents, 'events after forced update');
 
     emptyArray(registeredEvents);
 });
@@ -234,27 +212,6 @@ test('Board with data connectors and HighchartsComponent update', async function
     );
 
     emptyArray(registeredEvents);
-
-    // // Message
-    // expectedEvents.push('message');
-
-    // // This should fire a 'message' event to all the other components
-    // // We should expect N - 1 'message' events (in this case 1)
-
-    // componentWithConnector.postMessage('hello');
-
-    // assert.deepEqual(registeredEvents, expectedEvents);
-
-    // // This should bounce a message back and forth
-    // componentWithConnector.postMessage({
-    //     callback: function () {
-    //         this.postMessage('hello');
-    //     }
-    // });
-
-    // expectedEvents.push('message', 'message');
-
-    // assert.deepEqual(registeredEvents, expectedEvents);
 });
 
 test('HighchartsComponent resizing', function (assert) {
@@ -524,38 +481,45 @@ test('Data columnAssignment', async function (assert) {
 
     // basic column assignment
     assert.ok(
+        // @ts-ignore
         mountedComponents[0].component.chart.series.length === 2,
         'Columns parsed to series.'
     );
 
     // columnAssigment merged with the same series options array
     assert.ok(
+        // @ts-ignore
         mountedComponents[1].component.chart.series.length === 2,
         'Columns parsed to series.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[1].component.chart.series[0].yAxis.index === 0,
         'First series is assigned to basic yAxis.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[1].component.chart.series[1].yAxis.index === 1,
         'First series is assigned to opposite yAxis.'
     );
 
     // columnAssigment merged with shorter series options array
     assert.ok(
+        // @ts-ignore
         mountedComponents[2].component.chart.series.length === 2,
         'Columns parsed to series.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[2].component.chart.series[0].yAxis.index === 1,
         'First series is assigned to basic yAxis.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[2].component.chart.series[1].yAxis.index === 0,
         'First series is assigned to opposite yAxis.'
     );
@@ -563,53 +527,63 @@ test('Data columnAssignment', async function (assert) {
     // columnAssigment and seriesColumnMap (mapping columns into point props)
     // OHLC
     assert.ok(
+        // @ts-ignore
         mountedComponents[3].component.chart.series.length === 3,
         'Columns parsed to series.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[3].component.chart.series[2].type === 'ohlc',
         'OHLC series is initialized.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[3].component.chart.series[2].points.length > 0,
         'OHLC points are created.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
         'OHLC point is an array of open/low/high/close'
     );
 
     // Candlestick
     assert.ok(
+        // @ts-ignore
         mountedComponents[4].component.chart.series.length === 3,
         'Columns parsed to series.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[4].component.chart.series[2].type === 'candlestick',
         'Candlestick series is initialized.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[4].component.chart.series[2].points.length > 0,
         'Candlestick points are created.'
     );
 
     // columnAssigment, series options array and extra series with data
     assert.ok(
+        // @ts-ignore
         mountedComponents[5].component.chart.series.length === 3,
         'Columns parsed to series.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[5].component.chart.series[1].name === 'fake trend',
         'Implicited series is created.'
     );
 
     assert.ok(
+        // @ts-ignore
         mountedComponents[5].component.chart.series[2].points.length > 0,
         'Points are created in implicited series.'
     );
@@ -699,6 +673,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
                     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
                     ReadOps: ['DiskOperations', 0, 'ReadOps']
                 },
+                // @ts-ignore
                 data
             }
             }]
@@ -737,12 +712,14 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
     const mountedComponents = dashboard.mountedComponents;
 
     assert.deepEqual(
+        // @ts-ignore
         mountedComponents[0].component.chart.series[0].yData,
         [30, 20, 50],
         'Each server instance should be rendered as a column.'
     );
 
     assert.deepEqual(
+        // @ts-ignore
         mountedComponents[0].component.chart.series[1].yData,
         [1500, 500, 400],
         'Each server instance should be rendered as a column.'
