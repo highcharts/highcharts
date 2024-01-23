@@ -42,7 +42,6 @@ export interface GlobalsLike {
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;
-    readonly hasTouch: boolean;
     readonly isChrome: boolean;
     readonly isFirefox: boolean;
     readonly isMS: boolean;
