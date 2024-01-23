@@ -2,9 +2,13 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 h1#title {
-    padding-top: 10px;
+    padding: 10px;
     margin: 0;
     text-align: center;
+}
+
+p {
+    padding: 0 10px;
 }
 
 #controls .component-padding {

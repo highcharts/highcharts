@@ -800,18 +800,9 @@ const board = Dashboards.board('container', {
             }]
         }
     }, {
-        _connector: {
-            id: 'horizon'
-        },
         cell: 'horizon-map',
         id: 'horizon-map',
         type: 'Highcharts',
-        _columnAssignment: {
-            azimuth: 'x',
-            Horizon: {
-                y: 'angle'
-            }
-        },
         chartConstructor: 'mapChart',
         title: 'Horizon outline',
         chartOptions: {
