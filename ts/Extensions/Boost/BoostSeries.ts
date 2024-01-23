@@ -977,12 +977,12 @@ function scatterProcessData(
     }
 
     if (xRangeNeeded) {
-        xAxis.options.max = xAxis.options.max || xDataMax;
-        xAxis.options.max = xAxis.options.min || xDataMin;
+        xAxis.options.max ??= xDataMax;
+        xAxis.options.max ??= xDataMin;
     }
     if (yRangeNeeded) {
-        yAxis.options.max = yAxis.options.max || yDataMax;
-        yAxis.options.min = yAxis.options.min || yDataMin;
+        yAxis.options.max ??= yDataMax;
+        yAxis.options.min ??= yDataMin;
     }
 
     // Set properties as base processData
