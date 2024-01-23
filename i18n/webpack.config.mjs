@@ -11,37 +11,74 @@ async function getLangFiles() {
 
 const langFiles = await getLangFiles();
 
-export default langFiles.map((langFile) => ({
-    mode: 'production',
-    entry: path.resolve(dir, './lang-module.ts'),
-    module: {
-        rules: [{
-            test: /\.ts$/,
-            use: [{
-                loader: 'ts-loader',
-                options: {
-                    // transpileOnly: true
-                }
-            }]
+export default langFiles.map((langFile) => [
+    {
+        mode: 'production',
+        entry: path.resolve(dir, './lang-module.ts'),
+        module: {
+            rules: [{
+                test: /\.ts$/,
+                use: [{
+                    loader: 'ts-loader',
+                    options: {
+                        // transpileOnly: true
+                    }
+                }]
 
-        }]
-    },
-    output: {
-        filename: `${langFile.replace('.json', '')}.src.js`,
-        path: path.resolve(dir, '../ts/masters/i18n'),
-        scriptType: 'module',
-        module: true
-    },
-    resolve: {
-        alias: {
-            langFile$: path.resolve(dir, langFile),
+            }]
+        },
+        output: {
+            filename: `${langFile.replace('.json', '')}.src.js`,
+            path: path.resolve(dir, '../ts/masters/i18n'),
+            scriptType: 'module',
+            module: true
+        },
+        resolve: {
+            alias: {
+                langFile$: path.resolve(dir, langFile),
+            }
+        },
+        externals: {
+            'highchartsGlobal': '../../Core/Globals.js'
+        },
+        experiments: {
+            outputModule: true
         }
     },
-    externals: {
-        'highchartsGlobal': '../../Core/Globals.js'
+    {
+        mode: 'production',
+        entry: path.resolve(dir, './lang-module.ts'),
+        module: {
+            rules: [{
+                test: /\.ts$/,
+                use: [{
+                    loader: 'ts-loader',
+                    options: {
+                        // transpileOnly: true
+                    }
+                }]
+
+            }]
+        },
+        output: {
+            filename: `${langFile.replace('.json', '')}.src.js`,
+            path: path.resolve(dir, '../code/i18n'),
+            scriptType: 'module',
+            module: true
+        },
+        resolve: {
+            alias: {
+                langFile$: path.resolve(dir, langFile),
+            }
+        },
+        externals: {
+            'highchartsGlobal': '../../Core/Globals.js'
+        },
+        experiments: {
+            outputModule: true
+        }
     },
-    experiments: {
-        outputModule: true
-    }
-}));
+
+]
+).flat();
 

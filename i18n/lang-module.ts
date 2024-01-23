@@ -5,7 +5,7 @@ import H from 'highchartsGlobal';
 H.setOptions({
     lang: languageOptions,
     title: {
-        text: languageOptions.defaults.chartTitle
+        text: languageOptions.chartTitle
     }
 });
 

@@ -1,46 +1,18 @@
 {
     "language": "nb-NO",
-    "defaults": {
-        "chartTitle": "Diagramtittel",
-        "pieSliceName": "Skive",
-        "seriesName": "Serie {series.index}",
-        "yAxisTitle": "Verdier",
-        "rangeselectorButtons": [
-            {
-                "type": "month",
-                "count": 1,
-                "text": "1m",
-                "title": "Vis 1 måned"
-            },
-            {
-                "type": "month",
-                "count": 3,
-                "text": "3m",
-                "title": "Vis 3 måneder"
-            },
-            {
-                "type": "month",
-                "count": 6,
-                "text": "6m",
-                "title": "Vis 6 måneder"
-            },
-            {
-                "type": "ytd",
-                "text": "YTD",
-                "title": "Vis år til dato"
-            },
-            {
-                "type": "year",
-                "count": 1,
-                "text": "1y",
-                "title": "Vis 1 år"
-            },
-            {
-                "type": "all",
-                "text": "Alle",
-                "title": "Vis alle"
-            }
-        ]
+    "chartTitle": "Diagramtittel",
+    "pieSliceName": "Skive",
+    "seriesName": "Serie {series.index}",
+    "yAxisTitle": "Verdier",
+    "rangeSelector": {
+        "monthText": "{count}m",
+        "yearText": "{count}å",
+        "YTDText": "YTD",
+        "allText": "Alle",
+        "monthTitle": "Vis {count} {eq count 1}måned{else}måneder{/eq}",
+        "yearTitle": "Vis {count} {eq count 1}år{else}år{/eq}",
+        "YTDTitle": "Vis år til dato",
+        "allText": "Vis alle"
     },
     "viewFullscreen": "Vis i fullskjerm",
     "exitFullscreen": "Avslutt fullskjerm",
