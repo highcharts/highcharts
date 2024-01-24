@@ -95,14 +95,14 @@ namespace Bindings {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
 
-        cell = cell || Bindings.getCell(options.cell || '');
+        cell = cell || Bindings.getCell(options.renderTo || '');
 
-        const componentContainer = cell?.container || document.querySelector('#' + options.cell);
+        const componentContainer = cell?.container || document.querySelector('#' + options.renderTo);
 
         if (!componentContainer || !options.type) {
             error(
                 `The component is misconfigured and is unable to find the
-                HTML cell element ${options.cell} to render the content.`
+                HTML cell element ${options.renderTo} to render the content.`
             );
             return;
         }
@@ -199,7 +199,7 @@ namespace Bindings {
         if (!componentClass) {
             return;
         }
-        const cell = Bindings.getCell(json.options.cell || '');
+        const cell = Bindings.getCell(json.options.renderTo || '');
         if (!cell) {
             return;
         }

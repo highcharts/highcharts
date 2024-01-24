@@ -333,7 +333,7 @@ abstract class Component {
         board?: Board
     ) {
         this.board = board || cell?.row?.layout?.board || {};
-        this.parentElement = cell?.container || document.querySelector('#' + options.cell);
+        this.parentElement = cell?.container || document.querySelector('#' + options.renderTo);
         this.cell = cell;
 
         this.options = merge(
@@ -1069,7 +1069,7 @@ abstract class Component {
         const json: Component.JSON = {
             $class: this.options.type,
             options: {
-                cell: this.options.cell,
+                renderTo: this.options.renderTo,
                 parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
@@ -1209,8 +1209,17 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         *
+         * @deprecated
          */
         cell?: string;
+
+        /**
+         * Cell id, where component is attached.
+         *
+         * @deprecated
+         */
+        renderTo?: string;
 
         /**
          * The name of class that is applied to the component's container.
@@ -1279,7 +1288,7 @@ namespace Component {
     export interface ComponentOptionsJSON extends JSON.Object {
         caption?: string;
         className?: string;
-        cell?: string;
+        renderTo?: string;
         editableOptions?: JSON.Array<string>;
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
