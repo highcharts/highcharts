@@ -165,6 +165,16 @@ function resetDrilldown(chart) {
                     value
                 }));
 
+            // Data labels formatter. Use shorthand codes for world and US
+            const formatter = function () {
+                return (
+                    mapKey === 'custom/world' ||
+                    mapKey === 'countries/us/us-all'
+                ) ?
+                    (this.point.properties && this.point.properties['hc-a2']) :
+                    this.point.name;
+            };
+
             // Apply the recommended map view if any
             chart.mapView.update(
                 Highcharts.merge({
@@ -181,6 +191,9 @@ function resetDrilldown(chart) {
                 name: e.point.name,
                 data,
                 joinBy: ['hc-key', 'key'],
+                dataLabels: {
+                    formatter
+                },
                 custom: {
                     mapView: topology.objects.default['hc-recommended-mapview'],
                     mapName,
@@ -278,12 +291,19 @@ function resetDrilldown(chart) {
             verticalAlign: 'bottom'
         },
 
+        plotOptions: {
+            map: {
+                dataLabels: {
+                    enabled: dataLabelsCheckbox.checked
+                }
+            }
+        },
+
         series: [{
             data,
             joinBy: ['hc-key', 'key'],
             name: initialMapName,
             dataLabels: {
-                enabled: false,
                 formatter: function () {
                     return this.point.properties && this.point.properties['hc-a2'];
                 }
@@ -367,16 +387,27 @@ function resetDrilldown(chart) {
         if (allMaps[this.value]) {
             prevMapButton.style.opacity = 1;
             nextMapButton.style.opacity = 1;
-            resetDrilldown(chart);
-            updateChart(this.value);
+            const pointOnCurrentMap =
+                chart.series[0].points.find(point => point.name === this.value);
+
+            if (pointOnCurrentMap) {
+                pointOnCurrentMap.doDrilldown();
+            } else {
+                resetDrilldown(chart);
+                updateChart(this.value);
+            }
         }
     });
 
     // Toggle data labels
     dataLabelsCheckbox.addEventListener('click', function () {
-        chart.series[0].update({
-            dataLabels: {
-                enabled: this.checked
+        chart.update({
+            plotOptions: {
+                map: {
+                    dataLabels: {
+                        enabled: this.checked
+                    }
+                }
             }
         });
     });
