@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -547,7 +547,10 @@ function destroyGraphics(
         }
     });
 
-    series.zones.forEach(destroyObjectProperties);
+    for (const zone of series.zones) {
+        destroyObjectProperties(zone, void 0, true);
+    }
+
 }
 
 /**
@@ -895,12 +898,12 @@ function scatterProcessData(
         data = options.data || series.data,
         xData = series.xData as Array<number>,
         xExtremes = xAxis.getExtremes(),
-        xMax = xExtremes.max,
-        xMin = xExtremes.min,
+        xMax = xExtremes.max ?? Number.MAX_VALUE,
+        xMin = xExtremes.min ?? -Number.MAX_VALUE,
         yData = series.yData as Array<number>,
         yExtremes = yAxis.getExtremes(),
-        yMax = yExtremes.max,
-        yMin = yExtremes.min;
+        yMax = yExtremes.max ?? Number.MAX_VALUE,
+        yMin = yExtremes.min ?? -Number.MAX_VALUE;
 
     // Skip processing in non-boost zoom
     if (
@@ -912,6 +915,8 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
+        series.processedXData ??= xData;
+        series.processedYData ??= yData;
         return true;
     }
 
@@ -935,11 +940,17 @@ function scatterProcessData(
     // Filter unsorted scatter data for ranges
     const processedData: Array<PointOptions> = [],
         processedXData: Array<number> = [],
-        processedYData: Array<number> = [];
+        processedYData: Array<number> = [],
+        xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
+        yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
 
     let cropped = false,
         x: number,
-        y: number;
+        xDataMax = xData[0],
+        xDataMin = xData[0],
+        y: number,
+        yDataMax = yData[0],
+        yDataMin = yData[0];
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
@@ -952,9 +963,26 @@ function scatterProcessData(
             processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
+            if (xRangeNeeded) {
+                xDataMax = Math.max(xDataMax, x);
+                xDataMin = Math.min(xDataMin, x);
+            }
+            if (yRangeNeeded) {
+                yDataMax = Math.max(yDataMax, y);
+                yDataMin = Math.min(yDataMin, y);
+            }
         } else {
             cropped = true;
         }
+    }
+
+    if (xRangeNeeded) {
+        xAxis.options.max ??= xDataMax;
+        xAxis.options.min ??= xDataMin;
+    }
+    if (yRangeNeeded) {
+        yAxis.options.max ??= yDataMax;
+        yAxis.options.min ??= yDataMin;
     }
 
     // Set properties as base processData
@@ -1118,6 +1146,8 @@ function seriesRenderCanvas(this: Series): void {
 
     // Do not start building while drawing
     this.buildKDTree = noop;
+
+    fireEvent(this, 'renderCanvas');
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
@@ -1396,7 +1426,8 @@ function wrapSeriesProcessData(
     let dataToMeasure = this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
-        const series = this as BoostSeriesComposition;
+        const series = this as BoostSeriesComposition,
+            isScatter = series.is('scatter') && !series.is('bubble');
 
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
@@ -1404,13 +1435,13 @@ function wrapSeriesProcessData(
         if (
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||
-            series.is('scatter') ||
-            // processedYData for the stack (#7481):
+            isScatter ||
+            // Use processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
-            // extra check for zoomed scatter data
-            if (series.is('scatter') && !series.yAxis.treeGrid) {
+            // Extra check for zoomed scatter data
+            if (isScatter && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));

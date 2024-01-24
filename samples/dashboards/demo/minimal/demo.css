@@ -70,3 +70,64 @@ h1#title {
 .highcharts-description {
     padding: 0 20px;
 }
+
+#dashboard-col-2 {
+    height: 323px;
+  }
+  
+#kpi-vitamin-a,
+#kpi-iron {
+    flex: 1 1 100%;
+    height: 205px;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 35%;
+    }
+  
+    #kpi-wrapper {
+        flex: 1 1 30%;
+    }
+  
+    #kpi-vitamin-a,
+    #kpi-iron {
+        flex: 1 1 100%;
+    }
+}
+  
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 50%;
+    }
+  
+    #kpi-wrapper {
+        flex: 1 1 100%;
+    }
+  
+    #kpi-vitamin-a,
+    #kpi-iron {
+        flex: 1 1 50%;
+    }
+}
+  
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 100%;
+    }
+  
+    #kpi-wrapper {
+        flex: 1 1 100%;
+    }
+  
+    #kpi-vitamin-a,
+    #kpi-iron {
+        flex: 1 1 50%;
+    }
+}

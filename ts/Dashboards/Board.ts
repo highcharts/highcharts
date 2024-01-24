@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -470,34 +470,6 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Returns the current size of the layout container based on the selected
-     * responsive breakpoints.
-     * @internal
-     *
-     * @returns Return current size of the layout container in px.
-     */
-    public getLayoutContainerSize(): string {
-        const board = this,
-            responsiveOptions = board.options.responsiveBreakpoints,
-            cntWidth = (board.layoutsWrapper || {}).clientWidth;
-
-        let size = Globals.responsiveBreakpoints.large;
-
-        if (responsiveOptions) {
-            if (cntWidth <= responsiveOptions.small) {
-                size = Globals.responsiveBreakpoints.small;
-            } else if (
-                cntWidth > responsiveOptions.small &&
-                cntWidth <= responsiveOptions.medium
-            ) {
-                size = Globals.responsiveBreakpoints.medium;
-            }
-        }
-
-        return size;
-    }
-
-    /**
      * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
@@ -554,10 +526,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * layouts and its cells.
      */
     public reflow(): void {
-        const board = this,
-            cntSize = board.getLayoutContainerSize();
-
-        let layout;
+        const board = this;
 
         if (board.editMode) {
             const editModeTools = board.editMode.tools;
@@ -569,26 +538,6 @@ class Board implements Serializable<Board, Board.JSON> {
             if (editModeTools.contextMenu) {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
-            }
-        }
-
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            this.reflowLayout(board.layouts[i], cntSize);
-        }
-    }
-
-    public reflowLayout(layout: Layout, cntSize: string): void {
-        let row, cell;
-
-        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-            row = layout.rows[j];
-
-            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                cell = row.cells[k];
-                cell.reflow(cntSize);
-                if (cell.nestedLayout) {
-                    this.reflowLayout(cell.nestedLayout, cntSize);
-                }
             }
         }
     }
@@ -609,8 +558,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 options.containerId,
                 {
                     componentOptions: options.componentOptions as
-                        Partial<Component.ComponentOptions>,
-                    responsiveBreakpoints: options.responsiveBreakpoints,
+                        Partial<Component.Options>,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
                 }
@@ -644,8 +592,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions as
-                    Partial<Component.ComponentOptionsJSON>,
-                responsiveBreakpoints: board.options.responsiveBreakpoints
+                    Partial<Component.ComponentOptionsJSON>
             }
         };
     }
@@ -739,18 +686,18 @@ namespace Board {
         /**
          * General options for the components.
          **/
-        componentOptions?: Partial<Component.ComponentOptions>;
+        componentOptions?: Partial<Component.Options>;
         /**
          * A list of serialized layouts to add to the board.
          * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
         /**
-         * Responsive breakpoints for the board - small, medium and large.
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
+         * @deprecated
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
@@ -786,25 +733,37 @@ namespace Board {
          **/
         guiEnabled?: boolean;
         /**
-         * Responsive breakpoints for the board - small, medium and large.
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
+         *
+         * @deprecated
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
      * Responsive breakpoints for the board - small, medium and large.
+     *
+     * @deprecated
      **/
     export interface ResponsiveBreakpoints extends JSON.Object {
         /**
          * Value in px to test the dashboard is in small mode.
+         *
+         * @deprecated
          **/
         small: number;
         /**
          * Value in px to test the dashboard is in medium mode.
+         *
+         * @deprecated
          **/
         medium: number;
         /**
          * Value in px to test the dashboard is in large mode.
+         *
+         * @deprecated
          **/
         large: number;
     }
@@ -861,12 +820,7 @@ namespace Board {
             },
             layouts: []
         },
-        components: [],
-        responsiveBreakpoints: {
-            small: 576,
-            medium: 992,
-            large: 1200
-        }
+        components: []
     };
 
     /* *

@@ -43,7 +43,7 @@ In prose text inside doclets, code comments, documentation article markdown and 
 Bad (line break inside paragraph):
 ```
 This feature turns something off, so that it does not show.
-It is `undefined` by defalt.
+It is `undefined` by default.
 ```
 
 Good (single paragraph, break at 80):
@@ -56,5 +56,5 @@ Good (two paragraph):
 ```
 This feature turns something off, so that it does not show.
 
-It is `undefined` by defalt.
+It is `undefined` by default.
 ```

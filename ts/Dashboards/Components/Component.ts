@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -148,7 +148,7 @@ abstract class Component {
     /**
      * Default options of the component.
      */
-    public static defaultOptions: Partial<Component.ComponentOptions> = {
+    public static defaultOptions: Partial<Component.Options> = {
         className: `${classNamePrefix}component`,
         id: '',
         title: false,
@@ -225,7 +225,7 @@ abstract class Component {
     /**
      * The options for the component.
      * */
-    public options: Component.ComponentOptions;
+    public options: Component.Options;
     /**
      * Sets an ID for the component's `div`.
      */
@@ -261,6 +261,13 @@ abstract class Component {
      * @internal
      */
     private cellListeners: Function[] = [];
+
+    /**
+     * Reference to ResizeObserver, which allows running 'unobserve'.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /**
      * @internal
      */
@@ -322,14 +329,14 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.ComponentOptions>
+        options: Partial<Component.Options>
     ) {
         this.board = cell.row.layout.board;
         this.parentElement = cell.container;
         this.cell = cell;
 
         this.options = merge(
-            Component.defaultOptions as Required<Component.ComponentOptions>,
+            Component.defaultOptions as Required<Component.Options>,
             options
         );
 
@@ -417,15 +424,19 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
+        const connectorId = this.options.connector?.id,
+            dataPool = this.board.dataPool;
 
         if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
+            connectorId &&
+            (
+                this.connectorId !== connectorId ||
+                dataPool.isNewConnector(connectorId)
+            )
         ) {
             this.cell.setLoadingState();
 
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+            const connector = await dataPool.getConnector(connectorId);
 
             this.setConnector(connector);
         }
@@ -746,23 +757,10 @@ abstract class Component {
             this.element.style.height = this.dimensions.height + 'px';
             this.contentElement.style.height = this.getContentHeight() + 'px';
         }
-        if (width) {
-            const pad =
-                getPaddings(this.element).x + getMargins(this.element).x;
-            this.dimensions.width = relativeLength(
-                width, Number(getStyle(this.parentElement, 'width'))
-            ) - pad;
-            this.element.style.width = this.dimensions.width + 'px';
-        }
 
         if (height === null) {
             this.dimensions.height = null;
             this.element.style.removeProperty('height');
-        }
-
-        if (width === null) {
-            this.dimensions.width = null;
-            this.element.style.removeProperty('width');
         }
 
         fireEvent(this, 'resize', {
@@ -806,7 +804,7 @@ abstract class Component {
      * Set to true if the update should rerender the component.
      */
     public async update(
-        newOptions: Partial<Component.ComponentOptions>,
+        newOptions: Partial<Component.Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
@@ -883,12 +881,17 @@ abstract class Component {
                 }
             });
         }
+        const resizeObserverCallback = (): void => {
+            this.resizeTo(this.parentElement);
+        };
 
-        // TODO: Replace with a resize observer.
-        window.addEventListener(
-            'resize',
-            (): void => this.resizeTo(this.parentElement)
-        );
+        if (typeof ResizeObserver === 'function') {
+            this.resizeObserver = new ResizeObserver(resizeObserverCallback);
+            this.resizeObserver.observe(this.element);
+        } else {
+            const unbind = addEvent(window, 'resize', resizeObserverCallback);
+            addEvent(this, 'destroy', unbind);
+        }
     }
 
     /**
@@ -1083,11 +1086,11 @@ abstract class Component {
      * @internal
      *
      */
-    public getOptions(): Partial<Component.ComponentOptions> {
+    public getOptions(): Partial<Component.Options> {
         return diffObjects(this.options, Component.defaultOptions);
     }
 
-    public getEditableOptions(): Component.ComponentOptions {
+    public getEditableOptions(): Component.Options {
         const component = this;
         return merge(component.options);
     }
@@ -1173,7 +1176,7 @@ namespace Component {
 
     /** @internal */
     export type UpdateEvent = Event<'update' | 'afterUpdate', {
-        options?: ComponentOptions;
+        options?: Options;
     }>;
 
     /** @internal */
@@ -1200,7 +1203,7 @@ namespace Component {
             detail?: Globals.AnyRecord;
         } & EventRecord;
 
-    export interface ComponentOptions {
+    export interface Options {
 
         /**
          * Cell id, where component is attached.

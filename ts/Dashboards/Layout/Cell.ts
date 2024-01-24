@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -158,9 +158,6 @@ class Cell extends GUIElement {
                 }
             )
         });
-
-        // Set cell width respecting responsive options.
-        this.reflow();
 
         // Mount component from JSON.
         if (this.options.mountedComponentJSON) {
@@ -431,32 +428,6 @@ class Cell extends GUIElement {
         return levels;
     }
 
-    public reflow(
-        dashContainerSize?: string
-    ): void {
-        const cell = this,
-            cntSize = dashContainerSize ||
-                cell.row.layout.board.getLayoutContainerSize(),
-            respoOptions = cell.options.responsive,
-            optWidth = cell.options.width;
-
-        if (cell.container) {
-            let width = '';
-
-            if (
-                respoOptions &&
-                respoOptions[cntSize] &&
-                respoOptions[cntSize].width
-            ) {
-                width = cell.convertWidthToValue(respoOptions[cntSize].width);
-            } else if (optWidth) {
-                width = cell.convertWidthToValue(optWidth);
-            }
-
-            cell.setSize(width || 'auto');
-        }
-    }
-
     /**
      * Set cell size.
      *
@@ -518,24 +489,6 @@ class Cell extends GUIElement {
             fireEvent(cell.row.layout.board, 'cellResize', { cell: cell });
             fireEvent(cell.row, 'cellChange', { cell: cell, row: cell.row });
         }
-    }
-
-    // Updates width in responsive options.
-    public updateSize(
-        width: string, // % value or 'auto' or px
-        rwdMode?: string // small, medium, large
-    ): void {
-        const cell = this,
-            cntSize = rwdMode ||
-                cell.row.layout.board.getLayoutContainerSize();
-
-        if (!cell.options.responsive) {
-            cell.options.responsive = {};
-        }
-
-        cell.options.responsive[cntSize] = {
-            width: width
-        };
     }
 
     public setHighlight(
@@ -626,10 +579,15 @@ namespace Cell {
 
     /**
      * Responsive options of the cell.
+     *
+     * @deprecated
      */
     export interface CellResponsiveOptions {
         /**
          * The width, that should the cell have in the given responsive mode.
+         *
+         * @deprecated
+         *
          */
         width: (string|number);
     }
@@ -655,40 +613,16 @@ namespace Cell {
          * The fraction converts value into percents like in CSS grid is.
          * For example `1/3` means `33.333%`.
          *
-         * Examples:
-         * ```
-         * width: 300 // 300px
-         * ```
-         * ```
-         * width: '300px'
-         * ```
-         * ```
-         * width: '1/3' // 33.333%
-         * ```
-         * ```
-         * width: '33.333%'
-         * ```
+         * @deprecated
          *
-         *  Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         width?: (string|number);
         /**
          * Height of the cell.
          *
-         * Examples:
-         * ```
-         * height: 300 // 300px
-         * ```
-         * ```
-         * height: '300px'
-         * ```
+         * @deprecated
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
-         **/
+         * **/
         height?: (string|number);
         /**
          * CSS styles for cell container.
@@ -717,9 +651,7 @@ namespace Cell {
         /**
          * Options for responsive design.
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
+         * @deprecated
          **/
         responsive?: Record<string, CellResponsiveOptions>;
     }

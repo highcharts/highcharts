@@ -86,3 +86,67 @@
     font-size: 1em;
     font-weight: bold;
 }
+
+#dashboard-kpi-1,
+#dashboard-kpi-2,
+#dashboard-kpi-4,
+#current-sprint-kpi {
+    flex: 1 1 50%;
+    height: 300px;
+}
+
+#dashboard-chart-1,
+#dashboard-chart-2,
+#dashboard-chart-cumulative {
+    height: 350px;
+}
+
+#dashboard-chart-1 {
+    flex: 1 1 20%;
+}
+
+#dashboard-chart-2 {
+    flex: 1 1 60%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-kpi-1,
+    #dashboard-kpi-2,
+    #current-sprint-kpi,
+    #dashboard-kpi-4 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-chart-1 {
+        flex: 1 1 20%;
+    }
+
+    #dashboard-chart-2 {
+        flex: 1 1 60%;
+    }
+}
+  
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-kpi-1,
+    #dashboard-kpi-2 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-kpi-4,
+    #dashboard-chart-1,
+    #dashboard-chart-2 {
+        flex: 1 1 100%;
+    }
+}
+  
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-kpi-1,
+    #dashboard-kpi-4,
+    #dashboard-chart-1,
+    #dashboard-chart-2 {
+        flex: 1 1 100%;
+    }
+}

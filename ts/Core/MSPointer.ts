@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -140,7 +140,7 @@ class MSPointer extends Pointer {
      * */
 
     public static isRequired(): boolean {
-        return !!(!H.hasTouch && (win.PointerEvent || win.MSPointerEvent));
+        return !!(!win.TouchEvent && (win.PointerEvent || win.MSPointerEvent));
     }
 
     /* *

@@ -27,18 +27,7 @@ Dashboards.board(
                                     id: 'dashboard-col-0'
                                 },
                                 {
-                                    id: 'dashboard-col-1',
-                                    responsive: {
-                                        small: {
-                                            width: '50%'
-                                        },
-                                        medium: {
-                                            width: '40%'
-                                        },
-                                        large: {
-                                            width: '30%'
-                                        }
-                                    }
+                                    id: 'dashboard-col-1'
                                 }
                             ]
                         }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,7 @@
 import type DataGrid from '../../DataGrid/DataGrid';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from './DataGridComponent.js';
+import DataGridComponent from './DataGridComponent/DataGridComponent.js';
 
 /* *
  *

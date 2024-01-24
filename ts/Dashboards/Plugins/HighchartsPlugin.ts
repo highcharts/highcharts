@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,10 +22,10 @@
 import type PluginHandler from '../PluginHandler';
 import type { Highcharts as H } from './HighchartsTypes';
 
-import HighchartsComponent from './HighchartsComponent.js';
-import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
-import KPIComponent from './KPIComponent.js';
-import NavigatorComponent from './NavigatorComponent.js';
+import HighchartsComponent from './HighchartsComponent/HighchartsComponent.js';
+import HighchartsSyncHandlers from './HighchartsComponent/HighchartsSyncHandlers.js';
+import KPIComponent from './KPIComponent/KPIComponent.js';
+import NavigatorComponent from './NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *

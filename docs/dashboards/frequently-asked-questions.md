@@ -180,7 +180,31 @@ You need to import the default CSS stylesheet to your project, so that the dashb
 But you can also customize the style of the dashboard by adding your own CSS stylesheet.
 More about this topic [in the Styling section](https://www.highcharts.com/docs/dashboards/style-by-css).
 
+Use regular CSS media queries to adjust your layout to different screens.
 
+Example:
+```css
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-cell-1 {
+        flex: 1 1 33.333%;
+    }
+}
+  
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-cell-1 {
+        flex: 1 1 50%;
+    }
+}
+  
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-cell-1 {
+        flex: 1 1 100%;
+    }
+}
+```
 
 Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
 To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)

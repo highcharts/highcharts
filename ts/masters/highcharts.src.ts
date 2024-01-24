@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -18,7 +18,6 @@ import RendererUtilities from '../Core/Renderer/RendererUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
-import HTMLRenderer from '../Core/Renderer/HTML/HTMLRenderer.js';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import LogarithmicAxis from '../Core/Axis/LogarithmicAxis.js';
@@ -64,6 +63,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.chart = Chart.chart;
 G.Fx = Fx;
+G.HTMLElement = HTMLElement;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
@@ -80,8 +80,7 @@ G.Tooltip = Tooltip;
 G.Color = Color;
 G.color = Color.parse;
 // Compositions
-HTMLRenderer.compose(SVGRenderer);
-HTMLElement.compose(SVGElement);
+HTMLElement.compose(SVGRenderer);
 Pointer.compose(Chart);
 Legend.compose(Chart);
 // DefaultOptions

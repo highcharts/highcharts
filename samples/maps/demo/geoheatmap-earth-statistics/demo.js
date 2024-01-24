@@ -125,8 +125,17 @@
         },
 
         mapView: {
-            center: [0, 0],
-            zoom: 1.5
+            fitToGeometry: {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [-180, 0],
+                        [90, 0],
+                        [180, 0],
+                        [-90, 0]
+                    ]
+                ]
+            }
         },
 
         legend: {

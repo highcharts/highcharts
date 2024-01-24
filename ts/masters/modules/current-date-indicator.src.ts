@@ -5,7 +5,7 @@
  *
  * CurrentDateIndicator
  *
- * (c) 2010-2021 Lars A. V. Cabrera
+ * (c) 2010-2024 Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */

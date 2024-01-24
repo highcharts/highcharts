@@ -99,31 +99,9 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-3',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    }
+                    id: 'dashboard-col-3'
                 }, {
-                    id: 'dashboard-col-4',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    }
+                    id: 'dashboard-col-4'
                 }]
             }]
         }]
