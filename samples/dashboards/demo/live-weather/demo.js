@@ -648,7 +648,13 @@ async function setupBoard() {
                         formatter: function () {
                             const point = this.point;
 
-                            // Date + value
+                            if ('beaufort' in point) {
+                                // Windbarb series
+                                return `Beaufort level ${point.beaufortLevel}` +
+                                `, ${point.beaufort}.<br />Direction: ` +
+                                point.direction + ' degrees.';
+                            }
+                            // Regular series
                             return Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x) +
                                 Highcharts.numberFormat(point.y,
                                     activeParam.floatRes) + ' ' +
