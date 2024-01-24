@@ -332,9 +332,10 @@ abstract class Component {
         options: Partial<Component.Options>,
         board?: Board
     ) {
+        const renderTo = options.renderTo || options.cell;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
-            cell?.container || document.querySelector('#' + options.renderTo);
+            cell?.container || document.querySelector('#' + renderTo);
         this.cell = cell;
 
         this.options = merge(

@@ -94,16 +94,17 @@ namespace Bindings {
     ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
+        const renderTo = options.renderTo || options.cell;
 
-        cell = cell || Bindings.getCell(options.renderTo || '');
+        cell = cell || Bindings.getCell(renderTo || '');
 
         const componentContainer =
-            cell?.container || document.querySelector('#' + options.renderTo);
+            cell?.container || document.querySelector('#' + renderTo);
 
         if (!componentContainer || !options.type) {
             error(
                 `The component is misconfigured and is unable to find the
-                HTML cell element ${options.renderTo} to render the content.`
+                HTML cell element ${renderTo} to render the content.`
             );
             return;
         }
@@ -200,6 +201,7 @@ namespace Bindings {
         if (!componentClass) {
             return;
         }
+
         const cell = Bindings.getCell(json.options.renderTo || '');
         if (!cell) {
             return;
