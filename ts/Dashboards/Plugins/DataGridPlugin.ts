@@ -22,7 +22,7 @@
 import type DataGrid from '../../DataGrid/DataGrid';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from './DataGridComponent.js';
+import DataGridComponent from './DataGridComponent/DataGridComponent.js';
 
 /* *
  *
