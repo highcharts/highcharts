@@ -726,8 +726,6 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
     );
 <<<<<<< HEAD
 });
-=======
-});
 
 test('Crossfilter with string values', async function (assert) {
     assert.timeout(1000);
@@ -868,4 +866,3 @@ test('Crossfilter with string values', async function (assert) {
     numbersNavigator.chart.xAxis[0].setExtremes(2300, 3000);
     stringsNavigator.chart.xAxis[0].setExtremes(0, 1);
 });
->>>>>>> dashboards/v2
