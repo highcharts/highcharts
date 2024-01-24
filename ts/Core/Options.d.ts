@@ -39,6 +39,7 @@ export interface LangOptions {
     numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
+    seriesName: string;
     shortMonths: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep: string;

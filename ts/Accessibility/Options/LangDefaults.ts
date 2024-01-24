@@ -27,7 +27,6 @@ import type LangOptions from './LangOptions';
  * */
 
 const langOptions: DeepPartial<LangOptions> = {
-
     /**
      * Configure the accessibility strings in the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
@@ -482,7 +481,13 @@ const langOptions: DeepPartial<LangOptions> = {
             pointAnnotationsDescription: '{#each annotations}' +
                 'Annotation: {this}{/each}'
         }
-    }
+    },
+    /**
+     * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+     *
+     * @since next
+     */
+    seriesName: 'Series {add series.index 1}'
 };
 
 /* *

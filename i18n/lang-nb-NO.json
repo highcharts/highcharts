@@ -2,7 +2,7 @@
     "language": "nb-NO",
     "chartTitle": "Diagramtittel",
     "pieSliceName": "Skive",
-    "seriesName": "Serie {series.index}",
+    "seriesName": "Serie {add series.index 1} av {chart.series.length}",
     "yAxisTitle": "Verdier",
     "rangeSelector": {
         "monthText": "{count}m",

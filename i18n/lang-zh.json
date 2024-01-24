@@ -2,7 +2,7 @@
     "language": "zh-Hans",
     "chartTitle": "图表标题",
     "pieSliceName": "切片",
-    "seriesName": "系列 {series.index}",
+    "seriesName": "系列 {add series.index 1}",
     "yAxisTitle": "值",
     "rangeSelector": {
         "monthText": "{count}个月",

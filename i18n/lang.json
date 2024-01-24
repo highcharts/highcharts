@@ -1,7 +1,7 @@
 {
     "chartTitle": "Chart title",
     "pieSliceName": "Slice",
-    "seriesName": "Series {series.index}",
+    "seriesName": "Series {add series.index 1}",
     "yAxisTitle": "Values",
     "rangeSelector": {
         "monthText": "{count}m",
