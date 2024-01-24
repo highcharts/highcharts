@@ -14,7 +14,7 @@ After that, you need to pass the connector to the component config, and that’s
 
 How to connect component to a cell?
 ----------------------------------
-Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and renderTo:
+Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
 
 ```js
     gui: {
@@ -207,4 +207,4 @@ Example:
 ```
 
 Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
-To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
