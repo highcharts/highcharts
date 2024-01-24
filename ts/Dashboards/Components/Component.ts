@@ -378,9 +378,10 @@ abstract class Component {
 
         this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
+        this.setupEventListeners();
 
         if (cell) {
-            this.setupEventListeners();
+            
             this.attachCellListeneres();
 
             this.on('tableChanged', (): void => {
