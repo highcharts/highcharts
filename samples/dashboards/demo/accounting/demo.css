@@ -101,6 +101,10 @@
     stroke: #a0a0a080;
 }
 
+.highcharts-description {
+    padding: 0 20px;
+}
+
 #csv {
     display: none;
 }
