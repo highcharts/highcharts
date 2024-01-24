@@ -525,18 +525,17 @@ class TreegraphSeries extends TreemapSeries {
             // Render link labels.
             seriesProto.drawDataLabels.call(this, this.links);
 
+            // Check links for overlap
             if (!this.options.dataLabels[0].allowOverlap) {
-                const labels: SVGElement[] = [];
+                const linkLabels = [];
 
-                for (const labelOwner of [...this.points, ...this.links]) {
-                    const dataLabel = labelOwner.dataLabel;
-
-                    if (dataLabel) {
-                        labels.push(dataLabel);
+                for (const link of this.links) {
+                    if (link.dataLabel) {
+                        linkLabels.push(link.dataLabel);
                     }
                 }
 
-                this.chart.hideOverlappingLabels(labels);
+                this.chart.hideOverlappingLabels(linkLabels);
             }
         }
     }
