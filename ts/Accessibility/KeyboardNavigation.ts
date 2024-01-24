@@ -36,6 +36,7 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     fireEvent,
     pushUnique
 } = U;
@@ -445,8 +446,23 @@ class KeyboardNavigation {
      * @private
      */
     private removeExitAnchor(): void {
-        if (this.exitAnchor && this.exitAnchor.parentNode) {
-            this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+        // Remove event from element and from eventRemovers array to prevent
+        // memory leak (#20329).
+        if (this.exitAnchor) {
+            if (defined((this.exitAnchor as any).focusEventRemover)) {
+                const i =
+                this.eventProvider.eventRemovers.indexOf(
+                    (this.exitAnchor as any).focusEventRemover);
+
+                this.eventProvider.eventRemovers[i]();
+                this.eventProvider.eventRemovers.splice(i, 1);
+                delete (this.exitAnchor as any).focusEventRemover;
+            }
+
+            if (this.exitAnchor.parentNode) {
+                this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+            }
+
             delete this.exitAnchor;
         }
     }
@@ -460,71 +476,63 @@ class KeyboardNavigation {
         element: DOMElementType
     ): void {
         const chart = this.chart,
-            keyboardNavigation = this,
-            eventName = 'focus';
+            keyboardNavigation = this;
 
-        // Do not add event to the element if event is already added to prevent
-        // memory leak (#20329).
-        if (
-            (element as any).hcEvents &&
-            !(element as any).hcEvents[eventName]
-        ) {
-            this.eventProvider.addEvent(
-                element,
-                eventName,
-                function (ev: MouseEvent): void {
-                    const e = ev || win.event,
-                        focusComesFromChart = (
-                            e.relatedTarget &&
-                            chart.container.contains(e.relatedTarget as any)
-                        ),
-                        comingInBackwards = !(
-                            focusComesFromChart || keyboardNavigation.exiting
-                        );
+        (element as any).focusEventRemover = this.eventProvider.addEvent(
+            element,
+            'focus',
+            function (ev: MouseEvent): void {
+                const e = ev || win.event,
+                    focusComesFromChart = (
+                        e.relatedTarget &&
+                        chart.container.contains(e.relatedTarget as any)
+                    ),
+                    comingInBackwards = !(
+                        focusComesFromChart || keyboardNavigation.exiting
+                    );
 
-                    if (chart.focusElement) {
-                        delete chart.focusElement;
-                    }
-
-                    if (comingInBackwards) {
-                        // Focus the container instead
-                        keyboardNavigation.tabbingInBackwards = true;
-                        keyboardNavigation.tabindexContainer.focus();
-                        delete keyboardNavigation.tabbingInBackwards;
-                        e.preventDefault();
-
-                        // Move to last valid keyboard nav module
-                        // Note the we don't run it, just set the index
-                        if (
-                            keyboardNavigation.modules &&
-                            keyboardNavigation.modules.length
-                        ) {
-                            keyboardNavigation.currentModuleIx =
-                                keyboardNavigation.modules.length - 1;
-                            const curModule = keyboardNavigation.modules[
-                                keyboardNavigation.currentModuleIx
-                            ];
-
-                            // Validate the module
-                            if (
-                                curModule &&
-                                curModule.validate && !curModule.validate()
-                            ) {
-                                // Invalid.
-                                // Try moving backwards to find next valid.
-                                keyboardNavigation.move(-1);
-                            } else if (curModule) {
-                                // We have a valid module, init it
-                                curModule.init(-1);
-                            }
-                        }
-                    } else {
-                        // Don't skip the next focus, we only skip once.
-                        keyboardNavigation.exiting = false;
-                    }
+                if (chart.focusElement) {
+                    delete chart.focusElement;
                 }
-            );
-        }
+
+                if (comingInBackwards) {
+                    // Focus the container instead
+                    keyboardNavigation.tabbingInBackwards = true;
+                    keyboardNavigation.tabindexContainer.focus();
+                    delete keyboardNavigation.tabbingInBackwards;
+                    e.preventDefault();
+
+                    // Move to last valid keyboard nav module
+                    // Note the we don't run it, just set the index
+                    if (
+                        keyboardNavigation.modules &&
+                        keyboardNavigation.modules.length
+                    ) {
+                        keyboardNavigation.currentModuleIx =
+                            keyboardNavigation.modules.length - 1;
+                        const curModule = keyboardNavigation.modules[
+                            keyboardNavigation.currentModuleIx
+                        ];
+
+                        // Validate the module
+                        if (
+                            curModule &&
+                            curModule.validate && !curModule.validate()
+                        ) {
+                            // Invalid.
+                            // Try moving backwards to find next valid.
+                            keyboardNavigation.move(-1);
+                        } else if (curModule) {
+                            // We have a valid module, init it
+                            curModule.init(-1);
+                        }
+                    }
+                } else {
+                    // Don't skip the next focus, we only skip once.
+                    keyboardNavigation.exiting = false;
+                }
+            }
+        );
     }
 
 
