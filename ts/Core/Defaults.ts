@@ -253,6 +253,13 @@ const defaultOptions: DefaultOptions = {
         numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
 
         /**
+         * The default name for a pie slice (point).
+         * @since next
+         */
+
+        pieSliceName: 'Slice',
+
+        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.

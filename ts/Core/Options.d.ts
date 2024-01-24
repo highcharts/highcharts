@@ -37,6 +37,7 @@ export interface LangOptions {
     months: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
     seriesName: string;
