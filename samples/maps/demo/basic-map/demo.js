@@ -1,21 +1,3 @@
-const parseData = () => {
-    const lifeData = document.getElementById('csv').innerHTML;
-    const lines = lifeData.trim().split('\n');
-    lines.shift(); // Remove first line
-
-    const data = lines.map(line => {
-        const values = line.split(';');
-        if (values.length < 3 || isNaN(parseFloat(values[2]))) {
-            return null;
-        }
-        return {
-            code: values[1],
-            value: parseFloat(values[2])
-        };
-    }).filter(p => p); // Filter out null values
-    return data;
-};
-
 (async () => {
 
     const topology = await fetch(
@@ -49,6 +31,7 @@ const parseData = () => {
         },
 
         data: {
+            csv: document.getElementById('csv').innerText,
             seriesMapping: [{
                 code: 1,
                 value: 2
@@ -60,12 +43,19 @@ const parseData = () => {
         },
 
         series: [{
-            data: parseData(),
             name: 'Life expectancy',
             joinBy: ['iso-a3', 'code'],
             dataLabels: {
                 enabled: true,
-                format: '{point.value:.0f}'
+                format: '{point.value:.0f}',
+                filter: {
+                    operator: '>',
+                    property: 'labelrank',
+                    value: 250
+                },
+                style: {
+                    fontWeight: 'normal'
+                }
             }
         }]
     });
