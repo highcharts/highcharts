@@ -700,10 +700,8 @@ class NavigatorComponent extends Component {
                 isObject(crossfilterOptions) && crossfilterOptions.enabled
             )) {
                 data = this.generateCrossfilterData();
-            } else if (typeof columnValues[0] === 'string') {
-                data = columnValues.slice() as Array<string>;
             } else {
-                data = columnValues.slice() as Array<(number|null)>;
+                data = columnValues.slice() as Array<string|number|null>;
             }
 
             if (!chart.series[0]) {
@@ -721,11 +719,18 @@ class NavigatorComponent extends Component {
      * Generates the data for the crossfilter navigator.
      */
     private generateCrossfilterData(): [number, number | null][] {
-        const crossfilterOptions = this.options.sync?.crossfilter;
+        let crossfilterOptions = this.options.sync?.crossfilter;
         const table = this.connector?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
+
+        // TODO: Remove this when merging to v2.
+        if (crossfilterOptions === true) {
+            crossfilterOptions = {
+                affectNavigator: false
+            };
+        }
 
         if (
             !table ||
