@@ -154,6 +154,13 @@ const defaultOptions: DefaultOptions = {
         ],
 
         /**
+         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+         *
+         * @since next
+         */
+        seriesName: 'Series {add series.index 1}',
+
+        /**
          * An array containing the months names in abbreviated form. Corresponds
          * to the `%b` format in `Highcharts.dateFormat()`.
          *

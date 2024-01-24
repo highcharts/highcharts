@@ -481,13 +481,7 @@ const langOptions: DeepPartial<LangOptions> = {
             pointAnnotationsDescription: '{#each annotations}' +
                 'Annotation: {this}{/each}'
         }
-    },
-    /**
-     * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
-     *
-     * @since next
-     */
-    seriesName: 'Series {add series.index 1}'
+    }
 };
 
 /* *
