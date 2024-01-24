@@ -128,6 +128,7 @@ function resetDrilldown(chart) {
     // On point click, look for a detailed map to drill into
     const drilldown = async function (e) {
         const map = Object.entries(allMaps).find(map =>
+            map[0] === e.point.name) || Object.entries(allMaps).find(map =>
             map[0].indexOf(e.point.name) === 0);
         if (!e.seriesOptions && map) {
             const chart = this,
