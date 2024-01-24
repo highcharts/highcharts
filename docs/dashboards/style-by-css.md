@@ -6,6 +6,16 @@ ability to change the look and feel of the dashboard. Most of the elements
 have classes that you can use to style them. You can also add your own classes
 or ids to the elements.
 
+If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Please remember that each container should have an unique `id` for rendered component.
+
+```js
+    gui: {
+        enabled: false
+    }
+```
+
+[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
+[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
 ## Importing the CSS
 The CSS is not included in the library but you can import it like that:
