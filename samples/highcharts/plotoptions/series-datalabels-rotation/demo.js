@@ -6,11 +6,9 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             dataLabels: {
-                align: 'left',
                 enabled: true,
-                rotation: 270,
-                x: 2,
-                y: -10
+                padding: 10,
+                rotation: 270
             }
         }
     },

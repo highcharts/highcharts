@@ -266,21 +266,35 @@ class SVGLabel extends SVGElement {
     /*
      * Return the bounding box of the box, not the group.
      */
-    public getBBox(): BBoxObject {
+    public getBBox(reload?: boolean, rot?: number): BBoxObject {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
-        const padding = this.padding;
-        const paddingLeft = pick(this.paddingLeft, padding);
-        return {
-            width: this.width || 0,
-            height: this.height || 0,
+        const padding = this.padding,
+            paddingLeft = pick(this.paddingLeft, padding),
+            rotation = Math.abs(pick(rot, this.rotation, 0)),
+            width = this.width || 0,
+            height = this.height || 0;
+
+        let bBox = {
+            width,
+            height,
             x: this.bBox.x - paddingLeft,
             y: this.bBox.y - padding
         };
+
+        if (rotation) {
+            const baseline = Number(
+                this.element.getAttribute('y') || 0
+            ) - bBox.y;
+
+            bBox = this.getRotatedBox(bBox, rotation, baseline);
+        }
+
+        return bBox;
     }
 
     private getCrispAdjust(): number {

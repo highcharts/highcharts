@@ -130,8 +130,9 @@ Highcharts.chart('container', {
             color: 'rgba(255, 141, 100, 0.8)',
             dataLabels: {
                 rotation: -90,
-                x: -10,
+                y: -55,
                 style: {
+                    textAnchor: 'middle',
                     width: '110px'
                 }
             }

@@ -93,7 +93,6 @@ const getFile = url => new Promise((resolve, reject) => {
             params.branches,
             params.highchartsDashboards
         ).catch(e => console.error(e));
-
         callback(log);
     }
 

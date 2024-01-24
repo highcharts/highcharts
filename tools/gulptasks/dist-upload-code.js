@@ -113,7 +113,10 @@ function uploadProductPackage(productProps, options = {}) {
     const promises = [];
     const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
-    const cdnFiles = [{ to: 'products.js' }];
+    const cdnFiles = [
+        { to: 'products.js' },
+        { to: 'products.json' }
+    ];
 
     // For testing cache purging without uploading:
     /*
@@ -262,10 +265,6 @@ function distUploadCode() {
         throw new Error('No --bucket or --use-git-ignore-me argument specified.');
     }
 
-    const productJs = glob.sync(`${DIST_DIR}/products.js`).map(file => ({
-        from: file,
-        to: [...file.split('/')].pop()
-    }));
     const promises = Object.keys(products).map(productName => {
         if (!properties.products[productName]) {
             return Promise.reject(new Error(`Could not find entry in build-properties.json for: ${productName}`));
@@ -274,12 +273,18 @@ function distUploadCode() {
         return uploadProductPackage(productProps, { bucket });
     });
 
-    promises.push(uploadFiles({
-        files: productJs,
-        name: 'products.js',
-        bucket,
-        profile: argv.profile
-    }));
+    for (const file of ['products.js', 'products.json']) {
+        promises.push(uploadFiles({
+            files: [{
+                from: `${DIST_DIR}/${file}`,
+                to: file
+            }],
+            name: file,
+            bucket,
+            profile: argv.profile
+        }));
+    }
+
     return Promise.all(promises);
 }
 

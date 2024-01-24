@@ -35,10 +35,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -450,6 +447,9 @@ class ColumnSeries extends Series {
                 }
             );
 
+            indexInCategory = this.xAxis.reversed ?
+                totalInCategory - 1 - indexInCategory : indexInCategory;
+
             // Compute the adjusted x position
             const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
                 pointWidth;
@@ -856,11 +856,7 @@ class ColumnSeries extends Series {
             (dataLabels as any).forEach(function (
                 dataLabel: SVGElement
             ): void {
-                if (dataLabel.div) {
-                    dataLabel.div.point = point;
-                } else {
-                    (dataLabel.element as any).point = point;
-                }
+                (dataLabel.div || dataLabel.element as any).point = point;
             });
         });
 
@@ -874,10 +870,8 @@ class ColumnSeries extends Series {
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
                             pointer.onTrackerMouseOut(e);
-                        });
-                    if (hasTouch) {
-                        (series as any)[key].on('touchstart', onMouseOver);
-                    }
+                        })
+                        .on('touchstart', onMouseOver);
 
                     if (!chart.styledMode && series.options.cursor) {
                         (series as any)[key]
