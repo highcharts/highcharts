@@ -333,7 +333,8 @@ abstract class Component {
         board?: Board
     ) {
         this.board = board || cell?.row?.layout?.board || {};
-        this.parentElement = cell?.container || document.querySelector('#' + options.renderTo);
+        this.parentElement =
+            cell?.container || document.querySelector('#' + options.renderTo);
         this.cell = cell;
 
         this.options = merge(

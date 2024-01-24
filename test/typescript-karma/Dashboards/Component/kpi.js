@@ -19,7 +19,7 @@ test('KPI Component updating', async function (assert) {
             }]
         },
         components: [{
-            cell: 'dashboard-cell-1',
+            renderTo: 'dashboard-cell-1',
             type: 'KPI',
             title: 'Value',
             value: 1

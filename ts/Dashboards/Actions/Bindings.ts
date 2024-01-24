@@ -97,7 +97,8 @@ namespace Bindings {
 
         cell = cell || Bindings.getCell(options.renderTo || '');
 
-        const componentContainer = cell?.container || document.querySelector('#' + options.renderTo);
+        const componentContainer =
+            cell?.container || document.querySelector('#' + options.renderTo);
 
         if (!componentContainer || !options.type) {
             error(

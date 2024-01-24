@@ -411,7 +411,6 @@ class Board implements Serializable<Board, Board.JSON> {
         } else {
             board.container = renderTo;
         }
-        
     }
 
     /**

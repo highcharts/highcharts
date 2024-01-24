@@ -22,7 +22,7 @@ test('component resizing', function (assert) {
         },
         components: [{
             type: 'HTML',
-            cell: 'dashboard-cell'
+            renderTo: 'dashboard-cell'
         }]
     });
 
