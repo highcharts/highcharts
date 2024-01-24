@@ -267,6 +267,19 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
         '40,30',
         'Zones dash array'
     );
+
+    const colors = chart.series[0].points.map(p => p.graphic.attr('fill'));
+    chart.update({
+        series: [{
+            data: [1.1, 3, 2, 4]
+        }]
+    });
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.graphic.attr('fill')),
+        colors,
+        'Colors should be preserved after update (#20426)'
+    );
+
 });
 
 QUnit.test('Adding and removing zones', function (assert) {
