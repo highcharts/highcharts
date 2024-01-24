@@ -223,6 +223,83 @@ const offscreenLabel = (chart, celestialBody) => {
     chart[key] = label;
 };
 
+// Display the moon phase
+const moonPhase = chart => {
+    const { fraction, phase } = SunCalc.getMoonIllumination(date),
+        radius = 25;
+
+    // The following code is borrowed from
+    // https://github.com/tingletech/moon-phase
+    // Copyright © 2012, Regents of the University of California All rights
+    // reserved.
+    let sweep = [],
+        mag;
+    if (phase <= 0.25) {
+        sweep = [1, 0];
+        mag = 20 - 20 * phase * 4;
+    } else if (phase <= 0.50) {
+        sweep = [0, 0];
+        mag = 20 * (phase - 0.25) * 4;
+    } else if (phase <= 0.75) {
+        sweep = [1, 1];
+        mag = 20 - 20 * (phase - 0.50) * 4;
+    } else if (phase <= 1) {
+        sweep = [0, 1];
+        mag = 20 * (phase - 0.75) * 4;
+    } else {
+        return;
+    }
+
+    if (!chart.moon) {
+        chart.moon = chart.renderer.g().add();
+        chart.moon.shadow = chart.renderer.circle()
+            .attr({
+                fill: '#eeeeee44'
+            })
+            .add(chart.moon);
+        chart.moon.light = chart.renderer.path()
+            .attr({
+                fill: '#eeeeee'
+            })
+            .add(chart.moon);
+        chart.moon.label = chart.renderer.text()
+            .attr({
+                'alignment-baseline': 'middle',
+                'text-anchor': 'middle',
+                x: radius,
+                y: radius
+            })
+            .add(chart.moon);
+    }
+
+    const box = chart.scrollablePlotArea?.fixedRenderer?.box;
+    if (box && chart.moon.element.parentElement !== box) {
+        box.appendChild(chart.moon.element);
+    }
+
+    chart.moon.attr({
+        translateX: chart.plotWidth - 2 * radius -
+            (chart.scrollablePixelsX || 0) - 10,
+        translateY: 10
+    });
+    chart.moon.shadow.attr({
+        cx: radius,
+        cy: radius,
+        r: radius
+    });
+    chart.moon.light.attr({
+        d: [
+            ['m', radius, 0],
+            ['a', mag, 20, 0, 1, sweep[0], 0, 2 * radius],
+            ['a', 20, 20, 0, 1, sweep[1], 0, -2 * radius]
+        ]
+    });
+    chart.moon.label.attr({
+        text: Math.round(fraction * 100) + '%'
+    });
+
+};
+
 let ticker;
 
 Highcharts.setOptions({
@@ -378,6 +455,8 @@ const board = Dashboards.board('container', {
 
                         offscreenLabel(this, 'sun');
                         offscreenLabel(this, 'moon');
+
+                        moonPhase(this);
                     }
                 },
                 styledMode: false
