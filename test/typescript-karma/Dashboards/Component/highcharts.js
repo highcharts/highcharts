@@ -724,7 +724,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
         [1500, 500, 400],
         'Each server instance should be rendered as a column.'
     );
-<<<<<<< HEAD
+
 });
 
 test('Crossfilter with string values', async function (assert) {
