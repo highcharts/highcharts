@@ -8,6 +8,9 @@ const rangeConfig = {
     hours: 24 // max: 19 days
 };
 
+// Windbarb series object (deleted when not showing wind)
+let windbarbSeries = null;
+
 // Parameter configuration
 const paramConfig = {
     temperature: {
@@ -31,7 +34,7 @@ const paramConfig = {
         min: 0,
         max: 30, // Hurricane > 32.7
         floatRes: 1,
-        chartType: 'areaspline',
+        chartType: 'area',
         colorStops: [
             [0.0, '#C0CCC0'],
             [0.25, '#CCCC99'],
@@ -118,11 +121,23 @@ const KPIChartOptions = {
         endAngle: 90,
         startAngle: -90
     },
+    yAxis: {
+        labels: {
+            distance: '105%',
+            y: 5,
+            align: 'auto'
+        },
+        lineWidth: 2,
+        minorTicks: false,
+        tickWidth: 2,
+        tickAmount: 2,
+        visible: true
+    },
     series: [{
-        data: [0],
+        data: null, // Populated later
         dataLabels: {
             format: '{y:.1f}',
-            y: -34
+            y: -25
         },
         animation: false,
         animationLimit: 0,
@@ -130,17 +145,6 @@ const KPIChartOptions = {
         innerRadius: '90%',
         radius: '120%'
     }],
-    yAxis: {
-        labels: {
-            distance: 4,
-            y: 12
-        },
-        max: 10,
-        min: 0,
-        stops: paramConfig.temperature.colorStops,
-        tickAmount: 2,
-        visible: true
-    },
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'
     }
@@ -416,54 +420,27 @@ async function setupBoard() {
                 type: 'KPI',
                 columnName: 'temperature',
                 chartOptions: {
-                    chart: {
-                        spacing: [8, 8, 8, 8],
-                        type: 'solidgauge'
-                    },
-                    pane: {
-                        background: {
-                            innerRadius: '90%',
-                            outerRadius: '120%',
-                            shape: 'arc'
-                        },
-                        center: ['50%', '70%'],
-                        endAngle: 90,
-                        startAngle: -90
-                    },
+                    chart: KPIChartOptions.chart,
+                    pane: KPIChartOptions.pane,
                     title: {
                         text: paramConfig.getColumnHeader('temperature', true) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
-                        lineWidth: 2,
-                        minorTicks: false,
-                        tickWidth: 2,
-                        tickAmount: 2,
-                        labels: {
-                            distance: '105%',
-                            y: 5,
-                            align: 'auto'
-                        },
-                        stops: paramConfig.temperature.colorStops,
+                        ...KPIChartOptions.yAxis,
                         min: paramConfig.temperature.min,
                         max: paramConfig.temperature.max,
-                        visible: true,
                         accessibility: {
                             description: paramConfig.getColumnHeader('temperature')
                         }
                     },
                     series: [{
-                        data: [0],
+                        ...KPIChartOptions.series[0],
                         dataLabels: {
                             format: '{y:.1f} ' + paramConfig.temperature.unit,
-                            y: -40
-                        },
-                        animation: false,
-                        animationLimit: 0,
-                        enableMouseTracking: false,
-                        innerRadius: '90%',
-                        radius: '120%'
+                            y: KPIChartOptions.series[0].dataLabels.y
+                        }
                     }]
                 },
                 events: {
@@ -490,19 +467,28 @@ async function setupBoard() {
                 type: 'KPI',
                 columnName: 'wind',
                 chartOptions: {
-                    ...KPIChartOptions,
+                    chart: KPIChartOptions.chart,
+                    pane: KPIChartOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('wind') + ' (latest)',
+                        text: paramConfig.getColumnHeader('wind', true) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
+                        ...KPIChartOptions.yAxis,
+                        min: paramConfig.wind.min,
+                        max: paramConfig.wind.max,
                         accessibility: {
                             description: paramConfig.getColumnHeader('wind')
-                        },
-                        max: paramConfig.wind.max,
-                        min: paramConfig.wind.min
-                    }
+                        }
+                    },
+                    series: [{
+                        ...KPIChartOptions.series[0],
+                        dataLabels: {
+                            format: '{y:.1f} ' + paramConfig.wind.unit,
+                            y: KPIChartOptions.series[0].dataLabels.y
+                        }
+                    }]
                 },
                 events: {
                     click: function () {
@@ -525,19 +511,28 @@ async function setupBoard() {
                 type: 'KPI',
                 columnName: 'precipitation',
                 chartOptions: {
-                    ...KPIChartOptions,
+                    chart: KPIChartOptions.chart,
+                    pane: KPIChartOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('precipitation') + ' (next 24 hours)',
+                        text: paramConfig.getColumnHeader('precipitation', true) + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
+                        ...KPIChartOptions.yAxis,
+                        min: paramConfig.precipitation.min,
+                        max: 50, // Per 24 hours
                         accessibility: {
                             description: paramConfig.getColumnHeader('precipitation')
-                        },
-                        max: 50, // Per 24 hours
-                        min: paramConfig.precipitation.min
-                    }
+                        }
+                    },
+                    series: [{
+                        ...KPIChartOptions.series[0],
+                        dataLabels: {
+                            format: '{y:.1f} ' + paramConfig.precipitation.unit,
+                            y: KPIChartOptions.series[0].dataLabels.y
+                        }
+                    }]
                 },
                 events: {
                     click: function () {
@@ -795,7 +790,7 @@ function getObservation(forecastTable, param) {
 
 // Update board after changing data set (city) or parameter
 async function updateBoard(board, city, paramName,
-    updateParam = true, updateCity = true) {
+    paramUpdated = true, cityUpdated = true) {
 
     // Parameter info
     const param = paramConfig[paramName];
@@ -822,10 +817,22 @@ async function updateBoard(board, city, paramName,
 
     // Update city chart
     const options = cityChart.chartOptions;
+    const isWind = paramName === 'wind';
+
     options.title.text = paramConfig.getColumnHeader(paramName, true) + ' forecast for ' + city;
     options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
+    options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
+
+    // Handle auxiliary series (Windbarb)
+    const chart = cityChart.chart;
+
+    if (chart.series.length === 2) {
+        // Remove any existing Windbarb series
+        await windbarbSeries.remove();
+        windbarbSeries = null;
+    }
 
     await cityChart.update({
         connector: {
@@ -834,13 +841,33 @@ async function updateBoard(board, city, paramName,
         columnAssignment: {
             time: 'x',
             temperature: paramName === 'temperature' ? 'y' : null,
-            wind: paramName === 'wind' ? 'y' : null,
+            wind: isWind ? 'y' : null,
             precipitation: paramName === 'precipitation' ? 'y' : null
         },
         chartOptions: options
     });
 
-    if (updateParam) {
+    if (isWind) {
+        // Add Windbarb series
+        const forecastTable = await dataPool.getConnectorTable(city);
+
+        // Create series data
+        const data = [];
+        for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
+            const speed = forecastTable.columns.wind[i];
+            data.push([speed, speed + 40]); // TBD: use real data
+        }
+
+        // Add series (and store for removal)
+        windbarbSeries = await chart.addSeries({
+            type: 'windbarb',
+            pointStart: forecastTable.columns.time[0],
+            pointInterval: 36e5,
+            data: data
+        });
+    }
+
+    if (paramUpdated) {
         // Parameters update: e.g. temperature -> precipitation.
         // Affects: map
 
@@ -866,7 +893,7 @@ async function updateBoard(board, city, paramName,
         }
     }
 
-    if (updateCity) {
+    if (cityUpdated) {
         // City update: e.g. New York -> Winnipeg
         // Affects: KPIs and grid.
         const forecastTable = await dataPool.getConnectorTable(city);
