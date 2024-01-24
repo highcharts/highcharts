@@ -10,7 +10,7 @@
         },
 
         title: {
-            text: 'Life expectancy in the world (2021)'
+            text: 'Life expectancy by country (2021)'
         },
 
 
@@ -39,7 +39,7 @@
         },
 
         tooltip: {
-            pointFormat: '{point.name}: <b>{point.value}</b> years'
+            pointFormat: '{point.name}: <b>{point.value:.1f}</b> years'
         },
 
         series: [{
