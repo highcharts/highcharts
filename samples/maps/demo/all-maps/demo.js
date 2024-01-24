@@ -170,8 +170,7 @@ function resetDrilldown(chart) {
                     insets: undefined,
                     padding: 0
                 },
-                topology.objects.default['hc-recommended-mapview']
-                )
+                topology.objects.default['hc-recommended-mapview'])
             );
             // Hide loading and add series
             chart.hideLoading();
@@ -217,13 +216,13 @@ function resetDrilldown(chart) {
             drilldown: g.properties['hc-key'],
             value
         })),
-        mapView = Highcharts.merge({
-            projection: {
-                name: 'Miller',
-                rotation: [0]
+        mapView = Highcharts.merge(
+            mapData.objects.default['hc-recommended-mapview'], {
+                projection: {
+                    name: 'Miller',
+                    rotation: [0]
+                }
             }
-        },
-        mapData.objects.default['hc-recommended-mapview']
         );
 
     console.time('map');
@@ -334,14 +333,15 @@ function resetDrilldown(chart) {
                 value
             })),
             mapView = Highcharts.merge({
+                insets: undefined,
+                padding: 0
+            },
+            mapData.objects.default['hc-recommended-mapview'], {
                 projection: {
                     name: 'Miller',
                     rotation: [0]
-                },
-                insets: undefined
-            },
-            mapData.objects.default['hc-recommended-mapview']
-            );
+                }
+            });
         chart.update({
             mapView
         }, false);
