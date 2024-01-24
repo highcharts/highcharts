@@ -84,7 +84,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-kpi-1',
+        renderTo: 'dashboard-kpi-1',
         type: 'KPI',
         title: 'Completed tasks',
         subtitle: 'tasks completed',
@@ -92,7 +92,7 @@ Dashboards.board('container', {
             enabled: false
         }
     }, {
-        cell: 'dashboard-kpi-2',
+        renderTo: 'dashboard-kpi-2',
         type: 'KPI',
         title: 'Incomplete tasks',
         subtitle: 'to be done',
@@ -100,7 +100,7 @@ Dashboards.board('container', {
             enabled: false
         }
     }, {
-        cell: 'dashboard-kpi-4',
+        renderTo: 'dashboard-kpi-4',
         type: 'Highcharts',
         title: 'Tasks by status',
         chartOptions: {
@@ -156,7 +156,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-1',
+        renderTo: 'dashboard-chart-1',
         type: 'Highcharts',
         title: 'Total tasks by assignee',
         connector: {
@@ -192,7 +192,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-2',
+        renderTo: 'dashboard-chart-2',
         type: 'Highcharts',
         title: 'Timeline',
         chartConstructor: 'ganttChart',
@@ -299,7 +299,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-cumulative',
+        renderTo: 'dashboard-chart-cumulative',
         type: 'Highcharts',
         title: 'Cumulative flow',
         connector: {

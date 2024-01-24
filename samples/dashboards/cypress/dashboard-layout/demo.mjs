@@ -95,7 +95,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'cell-1',
+        renderTo: 'cell-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {
@@ -121,7 +121,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'cell-2',
+        renderTo: 'cell-2',
         ...chartDemo
     }]
 });

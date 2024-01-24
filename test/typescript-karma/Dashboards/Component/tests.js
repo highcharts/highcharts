@@ -70,7 +70,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
         },
         components: [
             {
-                cell: 'cell-1',
+                renderTo: 'cell-1',
                 type: 'Highcharts',
                 chartOptions: {
                     title: {
@@ -80,7 +80,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 }
             },
             {
-                cell: 'cell-2',
+                renderTo: 'cell-2',
                 type: 'HTML',
                 elements: [
                     {
@@ -204,7 +204,7 @@ test('Board with data connectors and HighchartsComponent update', async function
         },
         components: [
             {
-                cell: 'cell-1',
+                renderTo: 'cell-1',
                 type: 'Highcharts',
                 connector: {
                     id: 'connector-1'
@@ -286,7 +286,7 @@ test('component resizing', function (assert) {
         },
         components: [{
             type: 'HTML',
-            cell: 'dashboard-cell'
+            renderTo: 'dashboard-cell'
         }]
     });
 
@@ -421,7 +421,7 @@ test('HighchartsComponent resizing', function (assert) {
         },
         components: [{
             type: 'Highcharts',
-            cell: 'dashboard-cell',
+            renderTo: 'dashboard-cell',
             chartOptions: {
                 series: [{
                     data: [1, 2, 3]
@@ -519,7 +519,7 @@ test('DataGrid component with dataTable', async function (assert) {
         },
         components: [
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 type: 'DataGrid',
                 dataGridOptions: {
                     dataTable: new DataTable({
@@ -551,7 +551,7 @@ test('KPI Component updating', async function (assert) {
             }]
         },
         components: [{
-            cell: 'dashboard-cell-1',
+            renderTo: 'dashboard-cell-1',
             type: 'KPI',
             title: 'Value',
             value: 1
@@ -629,7 +629,7 @@ test('Data columnAssignment', async function (assert) {
             }]
         },
         components: [{
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             connector: {
                 id: 'EUR-USD'
@@ -640,7 +640,7 @@ test('Data columnAssignment', async function (assert) {
                 Rate: 'y'
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
                 id: 'EUR-USD'
@@ -662,7 +662,7 @@ test('Data columnAssignment', async function (assert) {
                 }]
             }
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
                 id: 'EUR-USD'
@@ -682,7 +682,7 @@ test('Data columnAssignment', async function (assert) {
                 }]
             }
         }, {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
                 id: 'micro-element'
@@ -711,7 +711,7 @@ test('Data columnAssignment', async function (assert) {
                 }]
             }
         }, {
-            cell: 'dashboard-col-4',
+            renderTo: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
                 id: 'micro-element'
@@ -740,7 +740,7 @@ test('Data columnAssignment', async function (assert) {
                 }]
             }
         }, {
-            cell: 'dashboard-col-5',
+            renderTo: 'dashboard-col-5',
             type: 'Highcharts',
             connector: {
                 id: 'EUR-USD'
@@ -967,7 +967,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
             }]
         },
         components: [{
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             connector: {
                 id: 'micro-element'
             },
@@ -1038,7 +1038,7 @@ test('Sync events leak in updated components', async function (assert) {
             }]
         },
         components: [{
-            cell: 'chart',
+            renderTo: 'chart',
             type: 'Highcharts',
             connector: {
                 id: 'micro-element'
@@ -1049,7 +1049,7 @@ test('Sync events leak in updated components', async function (assert) {
                 extremes: true
             }
         }, {
-            cell: 'datagrid',
+            renderTo: 'datagrid',
             type: 'DataGrid',
             connector: {
                 id: 'micro-element'

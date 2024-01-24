@@ -38,7 +38,7 @@ Dashboards.board(
         },
         components: [
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 type: 'Highcharts',
                 chartOptions: {
                     chart: {
@@ -52,7 +52,7 @@ Dashboards.board(
                 }
             },
             {
-                cell: 'dashboard-col-2',
+                renderTo: 'dashboard-col-2',
                 type: 'DataGrid'
             }
         ]

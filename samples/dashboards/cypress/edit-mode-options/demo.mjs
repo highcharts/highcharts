@@ -36,7 +36,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
                 plotOptions: {
@@ -52,7 +52,7 @@ Dashboards.board('container', {
                 }]
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'HTML',
             elements: [{
                 tagName: 'h1',

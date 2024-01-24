@@ -60,7 +60,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Population'
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
             City: 'x',
@@ -112,7 +112,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         title: {
             text: 'Metropolitan Area'
         },
@@ -173,7 +173,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'Population'
         },
@@ -234,7 +234,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-3',
+        renderTo: 'dashboard-col-3',
         connector: {
             id: 'Population'
         },

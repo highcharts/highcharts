@@ -20,7 +20,7 @@ const norwegianEditMode = {
     chartType: 'Graf type',
     pointFormat: 'Punkt format',
     confirmDestroyRow: 'Vil du ødelegge raden?',
-    confirmDestroyCell: 'Vil du ødelegge cellen?',
+    confirmDestroyrenderTo: 'Vil du ødelegge cellen?',
     confirmButton: 'Bekreft',
     cancelButton: 'Avbryt',
     viewFullscreen: 'Se fullskjerm',
@@ -54,7 +54,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             chart: {
@@ -70,7 +70,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {

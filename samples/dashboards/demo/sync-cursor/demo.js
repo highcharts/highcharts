@@ -24,7 +24,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Highcharts',
         sync: {
             highlight: true
@@ -64,7 +64,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Highcharts',
         sync: {
             highlight: true
@@ -107,7 +107,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'Highcharts',
         sync: {
             highlight: true

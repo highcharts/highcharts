@@ -39,7 +39,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             chartOptions: {
                 type: 'column',
@@ -58,7 +58,7 @@ Dashboards.board('container', {
             }
         },
         {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             type: 'HTML',
             elements: [{
                 tagName: 'img',

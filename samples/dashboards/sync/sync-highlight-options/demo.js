@@ -21,7 +21,7 @@ const board = Dashboards.board('container', {
     },
     components: [{
         type: 'DataGrid',
-        cell: 'datagrid',
+        renderTo: 'datagrid',
         connector: {
             id: 'vegetables'
         },
@@ -30,7 +30,7 @@ const board = Dashboards.board('container', {
         }
     }, {
         type: 'Highcharts',
-        cell: 'chart',
+        renderTo: 'chart',
         connector: {
             id: 'vegetables'
         },
