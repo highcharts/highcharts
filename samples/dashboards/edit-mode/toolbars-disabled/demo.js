@@ -2,7 +2,7 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         toolbars: {
-            renderTo: {
+            cell: {
                 enabled: false
             },
             row: {

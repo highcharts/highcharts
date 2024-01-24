@@ -677,7 +677,7 @@ const editMode = {
         }]
     },
     toolbars: {
-        renderTo: {
+        cell: {
             menu: {
                 items: [{
                     id: 'drag',
