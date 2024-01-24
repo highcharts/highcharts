@@ -210,18 +210,6 @@ function resetDrilldown(chart) {
 
     console.time('map');
     const chart = Highcharts.mapChart('container', {
-        chart: {
-            map: mapData,
-            events: {
-                drilldown,
-                afterDrillUp
-            }
-        },
-
-        title: {
-            text: null
-        },
-
         accessibility: {
             series: {
                 descriptionFormat: '{series.name}, map with {series.points.length} areas.',
@@ -229,15 +217,13 @@ function resetDrilldown(chart) {
             }
         },
 
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                alignTo: 'spacingBox',
-                x: 10
+        chart: {
+            map: mapData,
+            events: {
+                drilldown,
+                afterDrillUp
             }
         },
-
-        mapView,
 
         colorAxis: {
             min: 0,
@@ -251,6 +237,22 @@ function resetDrilldown(chart) {
                 ]
             ]
         },
+
+        drilldown: {
+            breadcrumbs: {
+                floating: true
+            }
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                alignTo: 'spacingBox',
+                x: 10
+            }
+        },
+
+        mapView,
 
         legend: {
             layout: 'vertical',
@@ -273,7 +275,11 @@ function resetDrilldown(chart) {
                 mapName: initialMapName,
                 mapKey: initialMapKey
             }
-        }]
+        }],
+
+        title: {
+            text: null
+        }
     });
     console.timeEnd('map');
 
