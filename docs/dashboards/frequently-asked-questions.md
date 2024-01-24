@@ -14,7 +14,7 @@ After that, you need to pass the connector to the component config, and that’s
 
 How to connect component to a cell?
 ----------------------------------
-Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
+Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and renderTo:
 
 ```js
     gui: {
@@ -30,7 +30,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
@@ -61,7 +61,7 @@ Example of synchronized components
             highlight: true,
             extremes: true
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
@@ -73,7 +73,7 @@ Example of synchronized components
             }
         },
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'Vitamin'
         },

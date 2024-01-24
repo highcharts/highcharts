@@ -60,7 +60,7 @@ class YouTubeComponent extends Component {
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
-            cell: '',
+            renderTo: '',
             type: 'YouTube',
             videoId: '115hdz9NsrY'
         };
@@ -84,7 +84,7 @@ Dashboards.board({
         }]
     }],
     components: [{
-        cell: 'cell-id',
+        renderTo: 'cell-id',
         type: 'YouTube',
         videoId: 'video-id-from-youtube'
     }]
@@ -171,11 +171,11 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'CustomHTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         id: 'custom-html-div'
     }, {
         type: 'CustomHTML',
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
@@ -184,7 +184,7 @@ Dashboards.board('container', {
         `
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -297,7 +297,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'Threshold',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         component: 'HTML',
         value: 7,
         thresholds: [{

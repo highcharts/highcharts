@@ -66,7 +66,7 @@ To do so, you have to pass two arguments:
         ```js
         components: [{
             type: 'HTML',
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             elements: [
                 {
                     tagName: 'h1',
@@ -78,7 +78,7 @@ To do so, you have to pass two arguments:
                 }
             ]
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             chartOptions: {
                 series: [{

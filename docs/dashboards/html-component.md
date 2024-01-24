@@ -47,7 +47,7 @@ Apart from the `type` property, the component requires the `cell` property to be
 ```js
 components: [{
     type: 'HTML',
-    cell: 'dashboard-col-0',
+    renderTo: 'dashboard-col-0',
     elements: [{
         tagName: 'h1',
         textContent: 'Your text',

@@ -20,7 +20,7 @@ Code snippet:
 ```js
 {
     type: 'HTML',
-    cell: 'dashboard-1',
+    renderTo: 'dashboard-1',
     elements: [{
         tagName: 'img',
         attributes: {
@@ -83,7 +83,7 @@ This component type is bundled with the Highcharts plugin and you need to connec
 Code snippet:
 ```js
 {
-    cell: 'kpi-00',
+    renderTo: 'kpi-00',
     type: 'KPI',
     title: 'Average revenue',
     value: 888,

@@ -46,7 +46,7 @@ To style the dashboard's row:
 }
 ```
 
-To style the dashboard's cell:
+To style the dashboard's renderTo:
 ```css
 .highcharts-dashboards-cell {
     text-align: left;
@@ -146,7 +146,7 @@ See how the HTML component was configured and how the `id` and `class` were used
 ```ts
 {
     type: 'HTML',
-    cell: 'dashboard-row-1-cell-3',
+    renderTo: 'dashboard-row-1-cell-3',
     elements: [
         {
             tagName: 'div',
@@ -236,7 +236,7 @@ To style the dashboard's toolbar in the Edit Mode:
 
 ### Highlights
 
-To style the highlights of edited cell:
+To style the highlights of edited renderTo:
 ```css
 .highcharts-dashboards-toolbar-cell-outline {
     border-color: red;

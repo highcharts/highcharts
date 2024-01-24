@@ -8,7 +8,7 @@ The KPIComponent allows you to visualize key performance indicators.
 ## How to start
 1. To be able to use KPIComponent you first have to load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
 
-2. Define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
+2. Define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
 
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
@@ -27,7 +27,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'KPI',
         title: 'My KPI',
         value: 10
@@ -77,7 +77,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         title: 'My KPI',
         type: 'KPI',
         value: 10,
@@ -118,7 +118,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'kpi',
+        renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
         columnName: 'Value',
