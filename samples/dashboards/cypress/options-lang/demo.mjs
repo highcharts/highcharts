@@ -20,7 +20,7 @@ const norwegianEditMode = {
     chartType: 'Graf type',
     pointFormat: 'Punkt format',
     confirmDestroyRow: 'Vil du ødelegge raden?',
-    confirmDestroyrenderTo: 'Vil du ødelegge cellen?',
+    confirmDestroyCell: 'Vil du ødelegge cellen?',
     confirmButton: 'Bekreft',
     cancelButton: 'Avbryt',
     viewFullscreen: 'Se fullskjerm',
