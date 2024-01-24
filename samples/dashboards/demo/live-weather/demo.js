@@ -15,6 +15,7 @@ let windbarbSeries = null;
 const paramConfig = {
     temperature: {
         name: 'temperature',
+        descr: 'Temperure',
         unit: '˚C',
         min: -20,
         max: 40,
@@ -30,6 +31,7 @@ const paramConfig = {
     },
     wind: {
         name: 'wind',
+        descr: 'Wind speed',
         unit: 'm/s',
         min: 0,
         max: 30, // Hurricane > 32.7
@@ -42,8 +44,15 @@ const paramConfig = {
             [0.75, '#336633']
         ]
     },
+    windDir: {
+        // Used by Windbarb and grid only
+        name: 'windDir',
+        descr: 'Wind dir.',
+        unit: 'degr.'
+    },
     precipitation: {
         name: 'precipitation',
+        descr: 'Precipitation',
         unit: 'mm',
         min: 0,
         max: 10, // per hour
@@ -59,7 +68,7 @@ const paramConfig = {
     getColumnHeader: function (param, simple = false) {
         const info = this[param];
         // First letter uppercase
-        const name = info.name[0].toUpperCase() + info.name.slice(1);
+        const name = info.descr;
         if (simple) {
             return name;
         }
@@ -574,6 +583,10 @@ async function setupBoard() {
                             headerFormat: paramConfig.getColumnHeader('wind'),
                             cellFormat: '{value:.1f}'
                         },
+                        windDir: {
+                            headerFormat: paramConfig.getColumnHeader('windDir'),
+                            cellFormat: '{value:.0f}'
+                        },
                         precipitation: {
                             headerFormat: paramConfig.getColumnHeader('precipitation'),
                             cellFormat: '{value:.1f}'
@@ -708,8 +721,9 @@ async function setupBoard() {
                                 // UTC -> milliseconds
                                 time: new Date(item.time).getTime(),
                                 temperature: instantData.air_temperature,
+                                precipitation: hourSpan.precipitation_amount,
                                 wind: instantData.wind_speed,
-                                precipitation: hourSpan.precipitation_amount
+                                windDir: instantData.wind_from_direction
                             });
                         }
                         return retData;
@@ -819,16 +833,20 @@ async function updateBoard(board, city, paramName,
     const options = cityChart.chartOptions;
     const isWind = paramName === 'wind';
 
-    options.title.text = paramConfig.getColumnHeader(paramName, true) + ' forecast for ' + city;
+    let title;
+    if (isWind) {
+        title = 'Wind';
+    } else {
+        title = paramConfig.getColumnHeader(paramName, true);
+    }
+    options.title.text = title + ' forecast for ' + city;
     options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
     options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
 
     // Handle auxiliary series (Windbarb)
-    const chart = cityChart.chart;
-
-    if (chart.series.length === 2) {
+    if (windbarbSeries !== null) {
         // Remove any existing Windbarb series
         await windbarbSeries.remove();
         windbarbSeries = null;
@@ -847,6 +865,7 @@ async function updateBoard(board, city, paramName,
         chartOptions: options
     });
 
+    const chart = cityChart.chart;
     if (isWind) {
         // Add Windbarb series
         const forecastTable = await dataPool.getConnectorTable(city);
@@ -854,8 +873,9 @@ async function updateBoard(board, city, paramName,
         // Create series data
         const data = [];
         for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
-            const speed = forecastTable.columns.wind[i];
-            data.push([speed, speed + 40]); // TBD: use real data
+            const windSpeed = forecastTable.columns.wind[i];
+            const windDir = forecastTable.columns.windDir[i];
+            data.push([windSpeed, windDir]);
         }
 
         // Add series (and store for removal)
