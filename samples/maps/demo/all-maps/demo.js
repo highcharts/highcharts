@@ -22,7 +22,15 @@ const datalist = document.getElementById('maps'),
 // Base path to maps
 const baseMapPath = 'https://code.highcharts.com/mapdata/',
     options = [], // Options elements
-    allMaps = {};
+    allMaps = {},
+    mapsToSkip = [
+        'World, Eckert III projection, high resolution',
+        'World, Eckert III projection, low resolution',
+        'World, Eckert III projection, medium resolution',
+        'World, Robinson projection, high resolution',
+        'World, Robinson projection, low resolution',
+        'World, Robinson projection, medium resolution'
+    ];
 
 // Populate dropdown options
 for (const [mapGroup, maps] of Object.entries(Highcharts.mapDataIndex)) {
@@ -31,11 +39,21 @@ for (const [mapGroup, maps] of Object.entries(Highcharts.mapDataIndex)) {
     }
 }
 
+// Remove unwanted text from maps display name
+for (const key of Object.keys(allMaps)) {
+    if (key.includes(', Miller projection')) {
+        allMaps[key.replace(', Miller projection', '')] = allMaps[key];
+        delete allMaps[key];
+    }
+}
+
 for (const [desc, path] of Object.entries(allMaps)) {
-    const option = document.createElement('option');
-    option.value = desc; // Display name
-    option.dataset.value = path; // Desired value
-    options.push(option);
+    if (!mapsToSkip.includes(desc)) {
+        const option = document.createElement('option');
+        option.value = desc; // Display name
+        option.dataset.value = path; // Desired value
+        options.push(option);
+    }
 }
 
 datalist.append(...options);
@@ -99,7 +117,7 @@ function resetDrilldown(chart) {
 
 // Initial creation of the chart
 (async () => {
-    const initialMapName = 'World, Miller projection, medium resolution',
+    const initialMapName = 'World, medium resolution',
         initialMapKey = 'custom/world',
         mapData = await fetch(`https://code.highcharts.com/mapdata/${initialMapKey}.topo.json`)
             .then(response => response.json())
