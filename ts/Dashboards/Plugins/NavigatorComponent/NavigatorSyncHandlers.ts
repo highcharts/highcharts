@@ -35,33 +35,6 @@ const {
  * */
 
 /** @internal */
-function getAxisExtremes(
-    axis: Axis,
-    extremes: Axis.ExtremesObject
-): ([number, number] | [string, string]) {
-    let max: (number | string) = (
-            typeof extremes.max === 'number' ?
-                extremes.max :
-                extremes.dataMax
-        ),
-        min: (number | string) = (
-            typeof extremes.min === 'number' ?
-                extremes.min :
-                extremes.dataMin
-        );
-
-    if (axis.hasNames) {
-        return [
-            axis.names[Math.round(min)],
-            axis.names[Math.round(max)]
-        ];
-    }
-
-    return [min, max];
-}
-
-
-/** @internal */
 function setRangeOptions(
     ranges: Array<RangeModifierRangeOptions>,
     column: string,
@@ -227,14 +200,13 @@ const configs: {
             const component = this as NavigatorComponent;
 
             const afterSetExtremes = async (
-                axis: Axis,
                 extremes: Axis.ExtremesObject
             ): Promise<void> => {
                 if (component.connector) {
                     const table = component.connector.table,
                         dataCursor = component.board.dataCursor,
                         filterColumn = component.getColumnAssignment()[0],
-                        [min, max] = getAxisExtremes(axis, extremes);
+                        [min, max] = component.getAxisExtremes();
 
                     let modifier = table.getModifier();
 
@@ -288,14 +260,13 @@ const configs: {
             const component = this as NavigatorComponent;
 
             const afterSetExtremes = (
-                axis: Axis,
                 extremes: Axis.ExtremesObject
             ): void => {
                 if (component.connector) {
                     const table = component.connector.table,
                         dataCursor = component.board.dataCursor,
                         filterColumn = component.getColumnAssignment()[0],
-                        [min, max] = getAxisExtremes(axis, extremes);
+                        [min, max] = component.getAxisExtremes();
 
                     dataCursor.emitCursor(
                         table,
