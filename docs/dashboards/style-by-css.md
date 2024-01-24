@@ -17,6 +17,8 @@ If you prefer to use your own layout structure, feel free to use it as well. Onl
 [Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
 [Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
+
 ## Importing the CSS
 The CSS is not included in the library but you can import it like that:
 ```css

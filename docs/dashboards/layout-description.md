@@ -31,6 +31,8 @@ If you prefer to use your own layout structure, feel free to use it as well. Onl
 [Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
 [Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
 
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
+
 ### Rows
 Each layout consists of at least one row. The row spans through the entire width of the outer layout it's defined in. Using Edit mode, you can change its width and height, and by doing so, you also resize the cells inside the row.
 Each row can have its own style defined, and its cells can be defined either as a js object or as a JSON.

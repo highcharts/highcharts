@@ -60,21 +60,22 @@ Please remember that each container should have an unique `id` for rendered comp
     gui: {
         enabled: false
     }
-    components: [
-        {
-            renderTo: 'dashboard-col-0',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    type: 'pie'
-                },
-                series: [{data: [1,2,3]}]
+    components: [{
+        renderTo: 'dashboard-col-0',
+        type: 'Highcharts',
+        chartOptions: {
+            chart: {
+                type: 'pie'
             },
-        }]
+            series: [{data: [1,2,3]}]
+        },
+    }]
 ```
 
 [Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
 [Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
 
 * * *
 
@@ -249,3 +250,5 @@ Please remember that each container should have an unique `id` for rendered comp
 
 [Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
 [Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
