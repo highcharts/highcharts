@@ -20,6 +20,7 @@
 
 
 import type { Highcharts as H } from '../../Dashboards/Plugins/HighchartsTypes';
+import type { DataGrid as D } from '../../Dashboards/Plugins/DataGridTypes';
 
 import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 import Globals from '../../Dashboards/Globals.js';
@@ -38,6 +39,7 @@ declare global {
     }
     interface Window {
         Highcharts?: H;
+        Datagrid?: D;
     }
 }
 
@@ -53,8 +55,8 @@ const G = Globals as unknown as Dashboards;
 
 G.DataGridPlugin = DataGridPlugin;
 
-if (G.win.DataGrid) {
-    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+if ((G.win as any).DataGrid) {
+    DataGridPlugin.custom.connectDataGrid((G.win as any).DataGrid.DataGrid);
     G.PluginHandler.addPlugin(DataGridPlugin);
 }
 
