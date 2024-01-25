@@ -537,21 +537,21 @@ board.then(res => {
     });
 
     revForecast.update({
-        title: `Forecast for ${currentYear} is $${revYearlyForecast
-            .toFixed(2)}M`,
+        title: `Revenue forecast for ${currentYear} is $${revYearlyForecast
+            .toFixed(2)}M, the goal will be achieved at:`,
         value: Math.round(revYearlyForecast / revTarget * 100)
     });
 
     costForecast.update({
-        title: `Forecast for ${currentYear} is $${costYearlyForecast
-            .toFixed(2)}M`,
+        title: `Cost forecast for ${currentYear} is $${costYearlyForecast
+            .toFixed(2)}M, the goal will be achieved at:`,
         value: Math.round(costYearlyForecast / costTarget * 100)
     });
 
     resForecast.update({
-        title: `Forecast for ${currentYear} is $${(
+        title: `Result forecast for ${currentYear} is $${(
             revYearlyForecast - costYearlyForecast
-        ).toFixed(2)}M`,
+        ).toFixed(2)}M, the goal will be achieved at:`,
         value: Math.round((
             revYearlyForecast - costYearlyForecast
         ) / (revTarget - costTarget) * 100)
