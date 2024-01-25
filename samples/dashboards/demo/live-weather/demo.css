@@ -357,7 +357,7 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 6;
+    stroke-width: 8;
     stroke: var(--color-marker-border-active);
 }
 

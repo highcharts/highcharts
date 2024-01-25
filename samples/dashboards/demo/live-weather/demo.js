@@ -65,14 +65,14 @@ const ParamConfig = {
             [0.8, '#0000CC']
         ]
     },
-    getColumnHeader: function (param, simple = false) {
+    getColumnHeader: function (param, unit = true) {
         const info = this[param];
         // First letter uppercase
         const name = info.descr;
-        if (simple) {
-            return name;
+        if (unit) {
+            return `${name} ${info.unit}`;
         }
-        return `${name} ${info.unit}`;
+        return name;
     }
 };
 
@@ -211,7 +211,7 @@ async function setupDashboard() {
                 }
             ]
         },
-        // Copied from https://www.highcharts.com/demo/dashboards/climate
+        // GUI based on https://www.highcharts.com/demo/dashboards/climate
         gui: {
             layouts: [{
                 rows: [{
@@ -337,7 +337,12 @@ async function setupDashboard() {
                             enabled: true,
                             lineWidth: 2,
                             radius: 12,
-                            symbol: 'mapmarker'
+                            symbol: 'mapmarker',
+                            states: {
+                                select: {
+                                    radiusPlus: 4
+                                }
+                            }
                         },
                         tooltip: {
                             footerFormat: '',
@@ -382,7 +387,7 @@ async function setupDashboard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: ParamConfig.getColumnHeader('temperature', true) + ' (latest)',
+                        text: ParamConfig.getColumnHeader('temperature', false) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -406,7 +411,7 @@ async function setupDashboard() {
                     click: function () {
                         // Update board
                         activeParam = ParamConfig.temperature;
-                        // Parameter update, data set unchanged
+                        // Parameter update, city unchanged
                         updateBoard(board, activeCity, 'temperature', true, false);
                     },
                     afterLoad: function () {
@@ -429,7 +434,7 @@ async function setupDashboard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: ParamConfig.getColumnHeader('wind', true) + ' (latest)',
+                        text: ParamConfig.getColumnHeader('wind', false) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -453,7 +458,7 @@ async function setupDashboard() {
                     click: function () {
                         // Update board
                         activeParam = ParamConfig.wind;
-                        // Parameter update, data set unchanged
+                        // Parameter update, city unchanged
                         updateBoard(board, activeCity, 'wind', true, false);
                     }
                 },
@@ -473,7 +478,7 @@ async function setupDashboard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: ParamConfig.getColumnHeader('precipitation', true) + ' (next 24 hours)',
+                        text: ParamConfig.getColumnHeader('precipitation', false) + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -497,7 +502,7 @@ async function setupDashboard() {
                     click: function () {
                         // Update board
                         activeParam = ParamConfig.precipitation;
-                        // Parameter update, data set unchanged
+                        // Parameter update, city unchanged
                         updateBoard(board, activeCity, 'precipitation', true, false);
                     }
                 },
@@ -789,7 +794,7 @@ async function updateBoard(board, city, paramName,
     const options = cityChart.chartOptions;
     const isWind = paramName === 'wind';
 
-    const title = isWind ? 'Wind' : ParamConfig.getColumnHeader(paramName, true);
+    const title = isWind ? 'Wind' : ParamConfig.getColumnHeader(paramName, false);
     options.title.text = title + ' forecast for ' + city;
     options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
     options.colorAxis = colorAxis;
