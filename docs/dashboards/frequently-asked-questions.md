@@ -45,7 +45,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 2. Disabled default layout creator
-You can create your own HTML structure of a layout, styled by CSS or Tailwind.
+You can create your own HTML structure of a layout, styled by CSS or other CSS framework (i.e Tailwind, Bootstrap).
 Please remember that each container should have an unique `id` for rendered component.
 
 ```html

@@ -64,7 +64,7 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
     ```
     Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
-5. Once you have the data and where to place your component, you can define it as below. In the `cell` option, we're passing the ID of the cell, which we defined in point 3, and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
+5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we defined in point 3 or created in our own layout), and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
     ```js
     components: [{
         renderTo: 'dashboard-col-1',

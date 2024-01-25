@@ -33,6 +33,6 @@
 
     #dashboard-col-0,
     #dashboard-col-1 {
-        flex: 1 1 100%;
+      flex: 1 1 100%;
     }
 }
