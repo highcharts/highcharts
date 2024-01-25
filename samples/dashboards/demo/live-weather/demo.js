@@ -763,7 +763,7 @@ function getObservation(forecastTable, param) {
     return forecastTable.columns[param][RangeConfig.first];
 }
 
-// Update board after changing data set (city) or parameter
+// Update board after changing data set (city) or parameter (measurement type)
 async function updateBoard(board, city, paramName,
     paramUpdated = true, cityUpdated = true) {
 
@@ -774,6 +774,8 @@ async function updateBoard(board, city, paramName,
     const dataPool = board.dataPool;
 
     const [
+        // The order here must be the same as in the component
+        // definition in the Dashboard.
         worldMap,
         kpiGeoData,
         kpiTemperature,
