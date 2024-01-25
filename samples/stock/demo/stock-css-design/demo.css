@@ -1,0 +1,66 @@
+@import url("https://code.highcharts.com/css/annotations/popup.css");
+@import url("https://code.highcharts.com/css/stocktools/gui.css");
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+:root {
+    --highcharts-background-color: #19191b;
+}
+
+#container {
+    height: 730px;
+}
+
+.highcharts-candlestick-series .highcharts-point {
+    stroke-width: 1px;
+}
+
+.highcharts-point-down {
+    fill: #ff4242;
+    stroke: #ff4242;
+}
+
+.highcharts-candlestick-series .highcharts-point-down {
+    fill: #ff4242;
+    stroke: #ff4242;
+}
+
+.highcharts-candlestick-series .highcharts-point-up {
+    fill: #51af7b;
+    stroke: #51af7b;
+}
+
+.highcharts-point-up {
+    fill: #51af7b;
+    stroke: #51af7b;
+}
+
+.highcharts-crosshair-label text {
+    font-size: 1em;
+}
+
+.highcharts-grid-line {
+    stroke: black;
+}
+
+.highcharts-label .highcharts-crosshair-label > .highcharts-label-box {
+    fill: red;
+}
+
+.highcharts-crosshair {
+    stroke-width: 1px;
+    stroke-dasharray: 1;
+}
+
+.highcharts-crosshair-custom {
+    stroke: white;
+    stroke-width: 1px;
+    stroke-dasharray: 4;
+}
+
+.highcharts-menu-item-btn {
+    filter: invert(1);
+}
+
+.highcharts-popup > button {
+    /* filter: invert(1); */
+}
