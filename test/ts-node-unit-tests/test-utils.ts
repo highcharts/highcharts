@@ -1,7 +1,15 @@
 import type { AssertionError } from 'assert';
-import { message, failure, warn } from '../../tools/gulptasks/lib/log.js';
+import * as PosixPath from 'node:path/posix';
+import { message, failure } from '../../tools/gulptasks/lib/log.js';
 
 const { argv } = process;
+
+const codePath = PosixPath.join(__dirname, '../../code/');
+
+const defaultHTML = (
+    '<!DOCTYPE html><html><head><meta charset="UTF-8" /></head>' +
+    '<body><div id="container"></div></body></html>'
+);
 
 /**
  * Logs the output if `argv.verbose` is given
@@ -9,7 +17,7 @@ const { argv } = process;
  */
 export function describe(...text: string[]): void {
     if (argv.includes('--verbose')) {
-        message(text);
+        message(...text);
     }
 }
 
@@ -33,41 +41,38 @@ Expected: ${printArrayOrString(expected as any)}
 `);
 }
 
-export function setupDOM( customBody = '' ){
-  const { JSDOM } = require('jsdom');
-  const { doc, win } = new JSDOM(
-      customBody ??
-    '<!DOCTYPE html><html><body></body></html>');
+export function setupDOM( customBody = defaultHTML ){
+    const { JSDOM } = require('jsdom');
+    const { window: win } = new JSDOM(customBody);
 
-  global.Node = win.Node; // Workaround for issue #1
-  win.Date = Date;
+    global.Node = win.Node; // Workaround for issue #1
+    win.Date = Date;
 
-  // DispatchEvent workaround
-  const originalDispatchEvent = win.dispatchEvent;
-  win.dispatchEvent = function (e: Record<string, any>){
-      const event = new win.Event(e.type, e);
-      return originalDispatchEvent.call(this, event);
-  };
-  // Do some modifications to the jsdom document in order to get the SVG bounding
-  // boxes right.
-  let el = doc.createElement('div');
-  doc.body.appendChild(el);
+    // DispatchEvent workaround
+    const originalDispatchEvent = win.dispatchEvent;
+    win.dispatchEvent = function (e: Record<string, any>){
+        const event = new win.Event(e.type, e);
+        return originalDispatchEvent.call(this, event);
+    };
+    // Do some modifications to the jsdom document in order to get the SVG bounding
+    // boxes right.
+    const doc = win.document;
+    let el = doc.createElement('div');
+    doc.body.appendChild(el);
 
-  return {
-    win,
-    doc,
-    el
-  };
+    return {
+        win,
+        doc,
+        el
+    };
 }
 
 export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
-    const { doc, win } = setupDOM(
-        '<!DOCTYPE html><html><body><div id="container"></div></body></html>'
-    );
+    const { doc, win } = setupDOM(defaultHTML);
 
     global.window = global.window || win;
 
-    let Highcharts = require(`highcharts/${hc}`);
+    let Highcharts = require(`../../code/${hc}.src.js`);
 
     if (typeof Highcharts === 'function') {
         Highcharts = Highcharts(win); // old UMD pattern
@@ -75,7 +80,6 @@ export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
         Highcharts.doc = Highcharts.doc || doc;
         Highcharts.win = Highcharts.win || win;
     }
-    console.log(Object.keys(Highcharts).filter(k => k[0] === 'S'));
 
     if (modules.length){
         modules.forEach(module => {
@@ -87,4 +91,22 @@ export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
     }
 
     return Highcharts;
+}
+
+export function wrapRequire() {
+    const modulePrototype = Object.getPrototypeOf(module);
+    const originalRequire = modulePrototype.require;
+
+    modulePrototype.require = function (id) {
+        if (id.startsWith('highcharts')) {
+            if (id.startsWith('highcharts/')) {
+                id = id.substring(11);
+            }
+            if (!id.endsWith('.js')) {
+                id += '.src.js';
+            }
+            id = codePath + id;
+        }
+        return originalRequire.call(this, id)
+    };
 }

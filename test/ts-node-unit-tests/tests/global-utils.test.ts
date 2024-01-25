@@ -1,5 +1,5 @@
 import { ok, strictEqual } from 'assert';
-import { describe, loadHCWithModules, setupDOM } from '../test-utils';
+import { describe, loadHCWithModules } from '../test-utils';
 
 export function testGlobalUtilities() {
     describe('Testing global utilities ...');
