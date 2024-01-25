@@ -1,15 +1,19 @@
 {
     "buildFolder": "build/dist/dashboards/",
     "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
+    "bundleSourceFolderDataGrid": "code/dashboards/es-modules/masters-datagrid/",
     "bundleTargetFolder": "code/dashboards/",
+    "bundleTargetFolderDataGrid": "code/datagrid/",
     "cdnFolder": "dashboards/",
     "cssFolder": "code/dashboards/css/",
     "distRepository": "../dashboards-dist/",
     "esModulesFolder": "code/dashboards/es-modules/",
+    "esModulesFolderDataGrid": "code/datagrid/es-modules/",
     "examplesFolder": "samples/dashboards/demo/",
     "gfxFolder": "code/dashboards/gfx/",
     "namespace": "Dashboards",
     "product": "Highcharts Dashboards",
     "readmeFile": "ts/Dashboards/README.md",
-    "typeScriptFolder": "ts/masters-dashboards/"
+    "typeScriptFolder": "ts/masters-dashboards/",
+    "typeScriptFolderDatagrid": "ts/masters-datagrid/"
 }

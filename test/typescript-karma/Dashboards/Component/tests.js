@@ -1,7 +1,7 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
+import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
 
 DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);

@@ -16,6 +16,25 @@ const gulp = require('gulp');
  * */
 
 /**
+ * Removes Highcharts files from the `js` folder.
+ */
+function removeHighcharts() {
+    const fsLib = require('./lib/fs');
+
+    fsLib.deleteDirectory('js/Accessibility/', true);
+    fsLib.deleteDirectory('js/Core/Axis/', true);
+    fsLib.deleteDirectory('js/Core/Legend/', true);
+    fsLib.deleteDirectory('js/Core/Renderer/SVG/', true);
+    fsLib.deleteDirectory('js/Core/Series/', true);
+    fsLib.deleteDirectory('js/Extensions/', true);
+    fsLib.deleteDirectory('js/Gantt/', true);
+    fsLib.deleteDirectory('js/Maps/', true);
+    fsLib.deleteDirectory('js/Series/', true);
+    fsLib.deleteDirectory('js/Stock/', true);
+    fsLib.deleteDirectory('js/masters', true);
+}
+
+/**
  * Builds files of `/ts` folder into `/js` folder.
  *
  * @param  {object} argv
@@ -31,7 +50,8 @@ async function scriptsTS(argv) {
     const processLib = require('./lib/process');
     const {
         bundleTargetFolder,
-        typeScriptFolder
+        typeScriptFolder,
+        typeScriptFolderDatagrid
     } = require('./dashboards/_config.json');
 
     try {
@@ -55,26 +75,26 @@ async function scriptsTS(argv) {
 
         if (argv.dashboards) {
             await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
+        } else if (argv.datagrid) {
+            await processLib.exec(`npx tsc -p ${typeScriptFolderDatagrid}`);
         } else {
             await processLib.exec('npx tsc --build ts');
         }
 
         if (argv.dashboards) {
-            // Remove Highcharts
-            fsLib.deleteDirectory('js/Accessibility/', true);
-            fsLib.deleteDirectory('js/Core/Axis/', true);
-            fsLib.deleteDirectory('js/Core/Legend/', true);
-            fsLib.deleteDirectory('js/Core/Renderer/SVG/', true);
-            fsLib.deleteDirectory('js/Core/Series/', true);
-            fsLib.deleteDirectory('js/Extensions/', true);
-            fsLib.deleteDirectory('js/Gantt/', true);
-            fsLib.deleteDirectory('js/Maps/', true);
-            fsLib.deleteDirectory('js/Series/', true);
-            fsLib.deleteDirectory('js/Stock/', true);
-            fsLib.deleteDirectory('js/masters', true);
+            removeHighcharts();
+
+            // Remove DataGrid
+            fsLib.deleteDirectory('js/datagrid/', true);
+            fsLib.deleteDirectory('js/DataGrid/', true);
 
             // Fix masters
             fs.renameSync('js/masters-dashboards/', 'js/masters/');
+        } else if (argv.datagrid) {
+            removeHighcharts();
+
+            // Fix masters
+            fs.renameSync('js/masters-datagrid/', 'js/masters/');
         } else {
             // Remove Dashboards
             fsLib.deleteDirectory('js/Dashboards/', true);
@@ -89,7 +109,8 @@ async function scriptsTS(argv) {
 
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
-    '--dashboards': 'Build dashboards files only'
+    '--dashboards': 'Build dashboards files only',
+    '--datagrid': 'Build datagrid files only'
 };
 gulp.task(
     'scripts-ts',
