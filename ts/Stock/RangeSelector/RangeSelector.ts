@@ -553,8 +553,34 @@ class RangeSelector {
                 isSelectedTooGreat = true;
             }
 
-            // Months and years have a variable range so we check the extremes
             if (
+                baseAxis.min &&
+                baseAxis.isOrdinal &&
+                baseAxis.series[0]?.points?.length &&
+                range &&
+                actualRange < range
+            ) {
+                // Handle ordinal ranges
+                const series = baseAxis.series;
+                let lastPointX =
+                    series[0].points[series[0].points.length - 1].x;
+
+                // Find the closest point outside the visible range
+                series.forEach((s): void => {
+                    if (s.points?.length) {
+                        lastPointX =
+                        Math.min(
+                            s.points[s.points.length - 1].x,
+                            lastPointX
+                        );
+                    }
+                });
+
+                if (lastPointX - baseAxis.min > range) {
+                    isSameRange = true;
+                }
+            } else if (
+                // Months and years have variable range so we check the extremes
                 (type === 'month' || type === 'year') &&
                 (
                     actualRange + 36e5 >=
