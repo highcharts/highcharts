@@ -43,10 +43,10 @@ import DataTable from '../../Data/DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    defined,
     diffObjects,
     isNumber,
     isObject,
+    isString,
     merge,
     pick
 } = U;
@@ -84,14 +84,13 @@ function crossfilterEmitter(
     const component = this as NavigatorComponent;
 
     const afterSetExtremes = async (
-        axis: Axis,
         extremes: Axis.ExtremesObject
     ): Promise<void> => {
         if (component.connector) {
             const table = component.connector.table,
                 dataCursor = component.board.dataCursor,
                 filterColumn = component.getColumnAssignment()[0],
-                [min, max] = getAxisExtremes(axis, extremes);
+                [min, max] = component.getAxisExtremes();
 
             let modifier = table.getModifier();
 
@@ -148,14 +147,13 @@ function extremesEmitter(
     const component = this as NavigatorComponent;
 
     const afterSetExtremes = (
-        axis: Axis,
         extremes: Axis.ExtremesObject
     ): void => {
         if (component.connector) {
             const table = component.connector.table,
                 dataCursor = component.board.dataCursor,
                 filterColumn = component.getColumnAssignment()[0],
-                [min, max] = getAxisExtremes(axis, extremes);
+                [min, max] = component.getAxisExtremes();
 
             dataCursor.emitCursor(
                 table,
@@ -303,33 +301,6 @@ function extremesReceiver(
 
     component.on('setConnector', (): void => unregisterCursorListeners());
     component.on('afterSetConnector', (): void => registerCursorListeners());
-}
-
-
-/** @internal */
-function getAxisExtremes(
-    axis: Axis,
-    extremes: Axis.ExtremesObject
-): ([number, number]|[string, string]) {
-    let max: (number|string) = (
-            typeof extremes.max === 'number' ?
-                extremes.max :
-                extremes.dataMax
-        ),
-        min: (number|string) = (
-            typeof extremes.min === 'number' ?
-                extremes.min :
-                extremes.dataMin
-        );
-
-    if (axis.hasNames) {
-        return [
-            axis.names[Math.round(min)],
-            axis.names[Math.round(max)]
-        ];
-    }
-
-    return [min, max];
 }
 
 
@@ -513,6 +484,20 @@ class NavigatorComponent extends Component {
     public sync: Sync;
 
 
+    /**
+     * The content of the navigator is of type string.
+     * @private
+     */
+    private stringData?: boolean;
+
+
+    /**
+     * An array of virtual x-axis categories. Index is value on the x-axis.
+     * @private
+     */
+    private categories?: string[];
+
+
     /* *
      *
      *  Functions
@@ -612,6 +597,37 @@ class NavigatorComponent extends Component {
         };
     }
 
+    /**
+     * Gets the extremes of the navigator's x-axis.
+     */
+    public getAxisExtremes(): [number, number] | [string, string] {
+        const axis = this.chart.xAxis[0],
+            extremes = axis.getExtremes(),
+            min = isNumber(extremes.min) ? extremes.min : extremes.dataMin,
+            max = isNumber(extremes.max) ? extremes.max : extremes.dataMax;
+
+        if (this.categories) {
+            return [
+                this.categories[Math.max(
+                    0,
+                    Math.ceil(min)
+                )],
+                this.categories[Math.min(
+                    this.categories.length - 1,
+                    Math.floor(max)
+                )]
+            ];
+        }
+
+        if (axis.hasNames) {
+            return [
+                axis.names[Math.ceil(min)],
+                axis.names[Math.floor(max)]
+            ];
+        }
+
+        return [min, max];
+    }
 
     /** @private */
     public async load(): Promise<this> {
@@ -675,119 +691,17 @@ class NavigatorComponent extends Component {
                 columnValues = table.getColumn(column[0], true) || [],
                 crossfilterOptions = options.sync?.crossfilter;
 
-            let values: DataTable.Column = [],
-                data: (
-                    Array<(number|string|null)>|
-                    Array<[number|string, number|null]>
-                );
+            let data: (
+                Array<(number|string|null)>|
+                Array<[number|string, number|null]>
+            );
 
             if (crossfilterOptions === true || (
                 isObject(crossfilterOptions) && crossfilterOptions.enabled
             )) {
-
-                const seriesData: Array<[(number|string), number]> = [],
-                    xData: Array<(number|string)> = [],
-                    modifierOptions = table.getModifier()?.options;
-
-                let index: number,
-                    max: number|undefined = void 0,
-                    min: number|undefined = void 0;
-
-                if (
-                    crossfilterOptions !== true &&
-                    crossfilterOptions.affectNavigator &&
-                    modifierOptions?.type === 'Range'
-                ) {
-                    const appliedRanges: RangeModifierRangeOptions[] = [],
-                        rangedColumns: DataTable.Column[] = [],
-                        { ranges } = (modifierOptions as RangeModifierOptions);
-
-                    for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
-                        if (ranges[i].column !== column[0]) {
-                            appliedRanges.push(ranges[i]);
-                            rangedColumns.push(table.getColumn(
-                                ranges[i].column, true
-                            ) || []);
-                        }
-                    }
-
-                    const appliedRagesLength = appliedRanges.length;
-                    for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
-                        let value = columnValues[i];
-
-                        if (!defined(value) || !isNumber(+value)) {
-                            continue;
-                        }
-
-                        value = +value;
-                        if (max === void 0 || max < value) {
-                            max = value;
-                        }
-                        if (min === void 0 || min > value) {
-                            min = value;
-                        }
-
-                        let allConditionsMet = true;
-                        for (let j = 0; j < appliedRagesLength; j++) {
-                            const range = appliedRanges[j];
-                            if (!(
-                                rangedColumns[j][i] as string|number|boolean >=
-                                    (range.minValue ?? -Infinity) &&
-                                rangedColumns[j][i] as string|number|boolean <=
-                                    (range.maxValue ?? Infinity)
-                            )) {
-                                allConditionsMet = false;
-                                break;
-                            }
-                        }
-                        if (allConditionsMet) {
-                            values.push(value);
-                        }
-                    }
-                } else {
-                    values = columnValues;
-                }
-
-                for (let i = 0, iEnd = values.length; i < iEnd; i++) {
-                    let value = values[i];
-
-                    if (value === null) {
-                        continue;
-                    } else if (!isNumber(value)) {
-                        value = `${value}`;
-                    }
-
-                    index = xData.indexOf(value);
-
-                    if (index === -1) {
-                        index = xData.length;
-                        xData[index] = value;
-                        seriesData[index] = [value, 1];
-                    } else {
-                        seriesData[index][1] = seriesData[index][1] + 1;
-                    }
-                }
-
-                seriesData.sort((pointA, pointB): number => (
-                    pick(pointA[0], NaN) < pick(pointB[0], NaN) ? -1 :
-                        pointA[0] === pointB[0] ? 0 : 1
-                ));
-
-                data = seriesData;
-
-                // Add a minimum and maximum of the unmodified column with null
-                // values to maintain the correct extremes without having to
-                // refresh them.
-                if (min !== void 0) {
-                    data.unshift([min, null]);
-                }
-                if (max !== void 0) {
-                    data.push([max, null]);
-                }
-            } else if (typeof values[0] === 'string') {
-                data = values.slice() as Array<string>;
+                data = this.generateCrossfilterData();
             } else {
-                data = values.slice() as Array<(number|null)>;
+                data = columnValues.slice() as Array<string|number|null>;
             }
 
             if (!chart.series[0]) {
@@ -798,6 +712,127 @@ class NavigatorComponent extends Component {
         }
 
         this.redrawNavigator();
+    }
+
+
+    /**
+     * Generates the data for the crossfilter navigator.
+     */
+    private generateCrossfilterData(): [number, number | null][] {
+        let crossfilterOptions = this.options.sync?.crossfilter;
+        const table = this.connector?.table;
+        const columnValues = table?.getColumn(
+            this.getColumnAssignment()[0], true
+        ) || [];
+
+        // TODO: Remove this when merging to v2.
+        if (crossfilterOptions === true) {
+            crossfilterOptions = {
+                affectNavigator: false
+            };
+        }
+
+        if (
+            !table ||
+            columnValues.length < 1 ||
+            !isObject(crossfilterOptions)
+        ) {
+            return [];
+        }
+
+        const values: (number | string)[] = [];
+        const uniqueXValues: (number | string)[] = [];
+        for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
+            let value = columnValues[i];
+
+            if (value === null) {
+                continue;
+            } else if (!isNumber(value)) {
+                value = `${value}`;
+            }
+
+            // Check if the x-axis data is not of mixed type.
+            if (this.stringData === void 0) {
+                this.stringData = isString(value);
+            } else if (this.stringData !== isString(value)) {
+                throw new Error(
+                    'Mixed data types in crossfilter navigator are ' +
+                    'not supported.'
+                );
+            }
+
+            values.push(value);
+            if (uniqueXValues.indexOf(value) === -1) {
+                uniqueXValues.push(value);
+            }
+        }
+
+        uniqueXValues.sort((a, b): number => (
+            pick(a, NaN) < pick(b, NaN) ? -1 : a === b ? 0 : 1
+        ));
+
+        let filteredValues: (number | string)[];
+
+        const modifierOptions = table.getModifier()?.options;
+        if (crossfilterOptions.affectNavigator && modifierOptions) {
+            const appliedRanges: RangeModifierRangeOptions[] = [],
+                rangedColumns: DataTable.Column[] = [],
+                { ranges } = (modifierOptions as RangeModifierOptions);
+
+            for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
+                if (ranges[i].column !== this.getColumnAssignment()[0]) {
+                    appliedRanges.push(ranges[i]);
+                    rangedColumns.push(table.getColumn(
+                        ranges[i].column, true
+                    ) || []);
+                }
+            }
+
+            filteredValues = [];
+            const appliedRagesLength = appliedRanges.length;
+            for (let i = 0, iEnd = values.length; i < iEnd; i++) {
+                const value = values[i];
+
+                let allConditionsMet = true;
+                for (let j = 0; j < appliedRagesLength; j++) {
+                    const range = appliedRanges[j];
+                    if (!(
+                        rangedColumns[j][i] as string|number|boolean >=
+                            (range.minValue ?? -Infinity) &&
+                        rangedColumns[j][i] as string|number|boolean <=
+                            (range.maxValue ?? Infinity)
+                    )) {
+                        allConditionsMet = false;
+                        break;
+                    }
+                }
+
+                if (allConditionsMet) {
+                    filteredValues.push(value);
+                }
+            }
+        } else {
+            filteredValues = values;
+        }
+
+        const seriesData: [number, number | null][] = [];
+        if (this.stringData) {
+            this.categories = uniqueXValues as string[];
+            for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
+                seriesData.push([i, null]);
+            }
+        } else {
+            for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
+                seriesData.push([uniqueXValues[i] as number, null]);
+            }
+        }
+
+        for (let i = 0, iEnd = filteredValues.length; i < iEnd; i++) {
+            const index = uniqueXValues.indexOf(filteredValues[i]);
+            seriesData[index][1] = (seriesData[index][1] || 0) + 1;
+        }
+
+        return seriesData;
     }
 
 
