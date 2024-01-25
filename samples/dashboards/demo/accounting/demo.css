@@ -27,6 +27,20 @@
     display: none;
 }
 
+@media (max-width: 965px) {
+    #rev-chart,
+    #cost-chart {
+        flex-basis: 100%;
+    }
+}
+
+@media (max-width: 750px) {
+    #kpi-layout-cell,
+    #stock-cell {
+        flex-basis: 100%;
+    }
+}
+
 /* Highcharts */
 
 :root,

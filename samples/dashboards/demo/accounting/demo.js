@@ -151,58 +151,30 @@ const board = Dashboards.board('container', {
                     layout: {
                         rows: [{
                             cells: [{
-                                id: 'rev-chart-kpi',
-                                width: '55%'
+                                id: 'rev-chart-kpi'
                             }, {
-                                id: 'rev-forecast-kpi',
-                                width: '45%'
+                                id: 'rev-forecast-kpi'
                             }]
                         }, {
                             cells: [{
-                                id: 'cost-chart-kpi',
-                                width: '55%'
+                                id: 'cost-chart-kpi'
                             }, {
-                                id: 'cost-forecast-kpi',
-                                width: '45%'
+                                id: 'cost-forecast-kpi'
                             }]
                         }, {
                             cells: [{
-                                id: 'res-chart-kpi',
-                                width: '55%'
+                                id: 'res-chart-kpi'
                             }, {
-                                id: 'res-forecast-kpi',
-                                width: '45%'
+                                id: 'res-forecast-kpi'
                             }]
                         }]
-                    },
-                    responsive: {
-                        large: {
-                            width: 470
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        small: {
-                            width: '100%'
-                        }
                     }
                 }, {
                     id: 'stock-cell'
                 }]
             }, {
                 cells: [{
-                    id: 'rev-chart',
-                    responsive: {
-                        large: {
-                            width: '50%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        small: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'rev-chart'
                 }, {
                     id: 'cost-chart'
                 }]
