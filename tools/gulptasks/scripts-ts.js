@@ -55,7 +55,14 @@ async function scriptsTS(argv) {
     } = require('./dashboards/_config.json');
 
     try {
-        logLib.message(`Generating files for ${argv.dashboards ? 'dashboards' : 'highcharts'}...`);
+        let library = 'Highcharts';
+
+        if (argv.dashboards) {
+            library = 'Dashboards';
+        } else if (argv.datagrid) {
+            library = 'DataGrid';
+        }
+        logLib.message(`Generating files for ${library}...`);
 
         processLib.isRunning('scripts-ts', true);
 

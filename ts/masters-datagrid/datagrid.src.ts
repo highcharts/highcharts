@@ -17,6 +17,7 @@
  *
  * */
 
+
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataCursor from '../Data/DataCursor.js';
 import _DataGrid from '../DataGrid/DataGrid.js';
@@ -53,7 +54,7 @@ declare global {
         DataTable: typeof DataTable;
     }
     interface Window {
-        DataGrid: DataGrid;
+        // DataGrid: DataGrid;
     }
     let DataGrid: DataGrid;
 }

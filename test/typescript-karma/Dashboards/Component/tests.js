@@ -1,14 +1,13 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
-import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
-import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 
-DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardsPlugin.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.DataGridPlugin.connectDataGrid(DataGrid.DataGrid);
 
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.HighchartsPlugin);
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 
 const { test, only, skip } = QUnit;

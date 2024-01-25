@@ -17,6 +17,9 @@
  *
  * */
 
+import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
+import type { DataGrid as D } from '../Dashboards/Plugins/DataGridTypes';
+
 
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';
@@ -27,6 +30,7 @@ import DataCursor from '../Data/DataCursor.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
+import DatagridPlugin from '../Dashboards/Plugins/DataGridPlugin.js';
 import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
@@ -66,12 +70,15 @@ declare global {
         DataModifier: typeof DataModifier;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        DatagridPlugin: typeof DatagridPlugin;
         HighchartsPlugin: typeof HighchartsPlugin;
         PluginHandler: typeof PluginHandler;
         Sync: typeof Sync;
     }
     interface Window {
         Dashboards: Dashboards;
+        Highcharts?: H;
+        DataGrid?: D;
     }
     let Dashboards: Dashboards;
 }
@@ -97,6 +104,7 @@ G.DataCursor = DataCursor;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.DatagridPlugin = DatagridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;
 G.Sync = Sync;
@@ -111,6 +119,11 @@ G.Sync = Sync;
 
 if (!G.win.Dashboards) {
     G.win.Dashboards = G;
+}
+
+if (G.win.DataGrid) {
+    DatagridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+    G.PluginHandler.addPlugin(DatagridPlugin);
 }
 
 if (G.win.Highcharts) {
