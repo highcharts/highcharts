@@ -22,6 +22,7 @@
 
 .highcharts-annotation-toolbar button {
     margin-top: 0;
+    cursor: pointer;
     background-color: var(--highcharts-neutral-color-3);
 }
 
