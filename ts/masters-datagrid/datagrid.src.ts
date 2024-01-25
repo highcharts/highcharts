@@ -26,7 +26,6 @@ import DataTable from '../Data/DataTable.js';
 import Globals from '../DataGrid/Globals.js';
 
 // Fill registries
-import '../Dashboards/Components/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
