@@ -3,19 +3,19 @@
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 
-const rangeConfig = {
+const RangeConfig = {
     first: 0, // 0: current observation
     hours: 24 // max: 19 days
 };
 
 // Windbarb series object (deleted when not showing wind)
-let windbarbSeries = null;
+let WindbarbSeries = null;
 
-// Parameter configuration
-const paramConfig = {
+// Weather parameter configuration
+const ParamConfig = {
     temperature: {
         name: 'temperature',
-        descr: 'Temperure',
+        descr: 'Temperature',
         unit: '˚C',
         min: -20,
         max: 40,
@@ -79,7 +79,7 @@ const paramConfig = {
 // Geolocation info: https://www.maps.ie/coordinates.html
 
 // Selection of weather stations to display data from
-const worldLocations = {
+const Locations = {
     mapUrl: 'https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json',
     default: 'New York',
     points: [
@@ -94,8 +94,8 @@ const worldLocations = {
 };
 
 // Application configuration (weather station data set + data provider)
-const weatherStations = {
-    location: worldLocations, // Weather station data set
+const WeatherStationConfig = {
+    location: Locations, // Weather station data set
 
     // Base URL for weather forecast
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
@@ -148,8 +148,6 @@ const KPIChartOptions = {
             format: '{y:.1f}',
             y: -25
         },
-        animation: false,
-        animationLimit: 0,
         enableMouseTracking: false,
         innerRadius: '90%',
         radius: '120%'
@@ -159,10 +157,46 @@ const KPIChartOptions = {
     }
 };
 
-// Launches the applications
-async function setupBoard() {
-    let activeCity = weatherStations.location.default;
-    let activeParam = paramConfig.temperature;
+// Configuration shared by the four top level cells
+// ! ------------ !
+// ! Map  ! KPI   !
+// ! ---- ! ----- !
+// ! Grid ! Chart !
+// ! ------------ !
+const TopLevelCellLayout = {
+    responsive: {
+        large: {
+            width: '1/2'
+        },
+        medium: {
+            width: '100%'
+        },
+        small: {
+            width: '100%'
+        }
+    }
+};
+
+// Configuration shared by all KPI cells
+const KPICellLayout = {
+    responsive: {
+        large: {
+            width: '1/2'
+        },
+        medium: {
+            width: '1/2'
+        },
+        small: {
+            width: '1/2'
+        }
+    },
+    height: '204px'
+};
+
+// Launches the Dashboards application
+async function setupDashboard() {
+    let activeCity = WeatherStationConfig.location.default;
+    let activeParam = ParamConfig.temperature;
 
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -172,130 +206,50 @@ async function setupBoard() {
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: weatherStations.location.points
+                        data: WeatherStationConfig.location.points
                     }
                 }
             ]
         },
-        // Copied from https://www.highcharts.com/demo/dashboards/climate)
+        // Copied from https://www.highcharts.com/demo/dashboards/climate
         gui: {
             layouts: [{
                 rows: [{
                     cells: [{
+                        // Top left
                         id: 'world-map',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        ...TopLevelCellLayout
                     }, {
+                        // Top right
                         id: 'kpi-layout',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        },
+                        TopLevelCellLayout,
                         layout: {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    ...KPICellLayout
                                 }, {
                                     id: 'kpi-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    ...KPICellLayout
                                 }, {
                                     id: 'kpi-wind',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    ...KPICellLayout
                                 }, {
                                     id: 'kpi-precipitation',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    ...KPICellLayout
                                 }]
                             }]
                         }
                     }]
                 }, {
                     cells: [{
+                        // Bottom left
                         id: 'selection-grid',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        TopLevelCellLayout
                     }, {
+                        // Bottom right
                         id: 'city-chart',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        TopLevelCellLayout
                     }]
                 }]
             }]
@@ -308,11 +262,11 @@ async function setupBoard() {
                 chartConstructor: 'mapChart',
                 chartOptions: {
                     chart: {
-                        map: await fetch(weatherStations.location.mapUrl)
+                        map: await fetch(WeatherStationConfig.location.mapUrl)
                             .then(response => response.json())
                     },
                     title: {
-                        text: paramConfig.getColumnHeader('temperature')
+                        text: ParamConfig.getColumnHeader('temperature')
                     },
                     colorAxis: {
                         startOnTick: false,
@@ -341,12 +295,9 @@ async function setupBoard() {
                         type: 'mappoint',
                         name: 'Cities',
                         data: [],
-                        animation: false,
-                        animationLimit: 0,
                         allowPointSelect: true,
                         dataLabels: [{
                             align: 'left',
-                            animation: false,
                             crop: false,
                             enabled: true,
                             format: '{point.name}',
@@ -355,7 +306,6 @@ async function setupBoard() {
                             x: -2,
                             y: 2
                         }, {
-                            animation: false,
                             crop: false,
                             enabled: true,
                             format: '{point.y:.0f}',
@@ -432,22 +382,22 @@ async function setupBoard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('temperature', true) + ' (latest)',
+                        text: ParamConfig.getColumnHeader('temperature', true) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         ...KPIChartOptions.yAxis,
-                        min: paramConfig.temperature.min,
-                        max: paramConfig.temperature.max,
+                        min: ParamConfig.temperature.min,
+                        max: ParamConfig.temperature.max,
                         accessibility: {
-                            description: paramConfig.getColumnHeader('temperature')
+                            description: ParamConfig.getColumnHeader('temperature')
                         }
                     },
                     series: [{
                         ...KPIChartOptions.series[0],
                         dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.temperature.unit,
+                            format: '{y:.1f} ' + ParamConfig.temperature.unit,
                             y: KPIChartOptions.series[0].dataLabels.y
                         }
                     }]
@@ -455,7 +405,7 @@ async function setupBoard() {
                 events: {
                     click: function () {
                         // Update board
-                        activeParam = paramConfig.temperature;
+                        activeParam = ParamConfig.temperature;
                         // Parameter update, data set unchanged
                         updateBoard(board, activeCity, 'temperature', true, false);
                     },
@@ -479,22 +429,22 @@ async function setupBoard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('wind', true) + ' (latest)',
+                        text: ParamConfig.getColumnHeader('wind', true) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         ...KPIChartOptions.yAxis,
-                        min: paramConfig.wind.min,
-                        max: paramConfig.wind.max,
+                        min: ParamConfig.wind.min,
+                        max: ParamConfig.wind.max,
                         accessibility: {
-                            description: paramConfig.getColumnHeader('wind')
+                            description: ParamConfig.getColumnHeader('wind')
                         }
                     },
                     series: [{
                         ...KPIChartOptions.series[0],
                         dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.wind.unit,
+                            format: '{y:.1f} ' + ParamConfig.wind.unit,
                             y: KPIChartOptions.series[0].dataLabels.y
                         }
                     }]
@@ -502,7 +452,7 @@ async function setupBoard() {
                 events: {
                     click: function () {
                         // Update board
-                        activeParam = paramConfig.wind;
+                        activeParam = ParamConfig.wind;
                         // Parameter update, data set unchanged
                         updateBoard(board, activeCity, 'wind', true, false);
                     }
@@ -523,22 +473,22 @@ async function setupBoard() {
                     chart: KPIChartOptions.chart,
                     pane: KPIChartOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('precipitation', true) + ' (next 24 hours)',
+                        text: ParamConfig.getColumnHeader('precipitation', true) + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
                     yAxis: {
                         ...KPIChartOptions.yAxis,
-                        min: paramConfig.precipitation.min,
+                        min: ParamConfig.precipitation.min,
                         max: 50, // Per 24 hours
                         accessibility: {
-                            description: paramConfig.getColumnHeader('precipitation')
+                            description: ParamConfig.getColumnHeader('precipitation')
                         }
                     },
                     series: [{
                         ...KPIChartOptions.series[0],
                         dataLabels: {
-                            format: '{y:.1f} ' + paramConfig.precipitation.unit,
+                            format: '{y:.1f} ' + ParamConfig.precipitation.unit,
                             y: KPIChartOptions.series[0].dataLabels.y
                         }
                     }]
@@ -546,7 +496,7 @@ async function setupBoard() {
                 events: {
                     click: function () {
                         // Update board
-                        activeParam = paramConfig.precipitation;
+                        activeParam = ParamConfig.precipitation;
                         // Parameter update, data set unchanged
                         updateBoard(board, activeCity, 'precipitation', true, false);
                     }
@@ -576,19 +526,19 @@ async function setupBoard() {
                             }
                         },
                         temperature: {
-                            headerFormat: paramConfig.getColumnHeader('temperature'),
+                            headerFormat: ParamConfig.getColumnHeader('temperature'),
                             cellFormat: '{value:.1f}'
                         },
                         wind: {
-                            headerFormat: paramConfig.getColumnHeader('wind'),
+                            headerFormat: ParamConfig.getColumnHeader('wind'),
                             cellFormat: '{value:.1f}'
                         },
                         windDir: {
-                            headerFormat: paramConfig.getColumnHeader('windDir'),
+                            headerFormat: ParamConfig.getColumnHeader('windDir'),
                             cellFormat: '{value:.0f}'
                         },
                         precipitation: {
-                            headerFormat: paramConfig.getColumnHeader('precipitation'),
+                            headerFormat: ParamConfig.getColumnHeader('precipitation'),
                             cellFormat: '{value:.1f}'
                         }
                     }
@@ -607,9 +557,7 @@ async function setupBoard() {
                     chart: {
                         spacing: [40, 40, 40, 10],
                         styledMode: true,
-                        type: activeParam.chartType,
-                        animation: false,
-                        animationLimit: 0
+                        type: activeParam.chartType
                     },
                     credits: {
                         enabled: true,
@@ -647,18 +595,19 @@ async function setupBoard() {
                         stickOnContact: true,
                         formatter: function () {
                             const point = this.point;
+                            const dateStr = Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x);
 
                             if ('beaufort' in point) {
                                 // Windbarb series
-                                return `Beaufort level ${point.beaufortLevel}` +
-                                `, ${point.beaufort}.<br />Direction: ` +
-                                point.direction + ' degrees.';
+                                return dateStr +
+                                    `Beaufort level ${point.beaufortLevel}, ` +
+                                    `${point.beaufort}.<br />` +
+                                    `Wind direction ${point.direction} degrees`;
                             }
                             // Regular series
-                            return Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x) +
+                            return dateStr +
                                 Highcharts.numberFormat(point.y,
-                                    activeParam.floatRes) + ' ' +
-                                activeParam.unit;
+                                    activeParam.floatRes) + ' ' + activeParam.unit;
                         }
                     },
                     xAxis: {
@@ -699,7 +648,7 @@ async function setupBoard() {
     // Add weather station sources
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
         const city = cityRows[i].city;
-        const url = weatherStations.buildUrl(city);
+        const url = WeatherStationConfig.buildUrl(city);
 
         if (url !== null) {
             dataPool.setConnectorOptions({
@@ -713,13 +662,13 @@ async function setupBoard() {
                         const retData = [];
                         const forecastData = data.properties.timeseries;
 
-                        for (let i = 0; i < rangeConfig.hours; i++) {
+                        for (let i = 0; i < RangeConfig.hours; i++) {
                             const item = forecastData[i];
 
                             // Instant data
                             const instantData = item.data.instant.details;
 
-                            // Data for next hour
+                            // Data for the next hour
                             const hourSpan = item.data.next_1_hours.details;
 
                             // Picks the parameters this application uses
@@ -740,19 +689,20 @@ async function setupBoard() {
     }
 
     // Update map (series 0 is the world map, series 1 the weather data)
-    const worldMap = board.mountedComponents[0].component.chart.series[1];
+    const mapChart = getMapChart(board);
 
     // Load active city
-    await addCityToMap(board, citiesTable, worldMap, activeCity);
+    await addCityToMap(board, citiesTable, mapChart, activeCity);
     await updateBoard(board, activeCity, activeParam.name);
 
     // Select active city on the map
     selectActiveCity();
 
     // Load additional cities
-    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
-        if (cityRows[i].city !== activeCity) {
-            await addCityToMap(board, citiesTable, worldMap, cityRows[i].city);
+    for (let i = 0; i < cityRows.length; i++) {
+        const city = cityRows[i].city;
+        if (city !== activeCity) {
+            await addCityToMap(board, citiesTable, mapChart, city);
         }
     }
 
@@ -766,10 +716,10 @@ async function setupBoard() {
 
     // Select a city on the map
     function selectActiveCity() {
-        const worldMap = getMapChart(board);
-        for (let idx = 0; idx < worldMap.data.length; idx++) {
-            if (worldMap.data[idx].name === activeCity) {
-                worldMap.data[idx].select();
+        const mapData = getMapChart(board).data;
+        for (let i = 0; i < mapData.length; i++) {
+            if (mapData[i].name === activeCity) {
+                mapData[i].select();
                 break;
             }
         }
@@ -792,7 +742,7 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
             elevation: cityInfo.elevation
         },
         // First item in current data set
-        y: forecastTable.columns.temperature[rangeConfig.first]
+        y: forecastTable.columns.temperature[RangeConfig.first]
     });
 }
 
@@ -800,12 +750,12 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
 function getObservation(forecastTable, param) {
     if (param === 'precipitation') {
         let sum = 0;
-        for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
+        for (let i = RangeConfig.first; i < RangeConfig.hours; i++) {
             sum += forecastTable.columns[param][i];
         }
         return Math.round(sum);
     }
-    return forecastTable.columns[param][rangeConfig.first];
+    return forecastTable.columns[param][RangeConfig.first];
 }
 
 // Update board after changing data set (city) or parameter
@@ -813,7 +763,7 @@ async function updateBoard(board, city, paramName,
     paramUpdated = true, cityUpdated = true) {
 
     // Parameter info
-    const param = paramConfig[paramName];
+    const param = ParamConfig[paramName];
 
     // Data access
     const dataPool = board.dataPool;
@@ -839,23 +789,20 @@ async function updateBoard(board, city, paramName,
     const options = cityChart.chartOptions;
     const isWind = paramName === 'wind';
 
-    let title;
-    if (isWind) {
-        title = 'Wind';
-    } else {
-        title = paramConfig.getColumnHeader(paramName, true);
-    }
+    const title = isWind ? 'Wind' : ParamConfig.getColumnHeader(paramName, true);
     options.title.text = title + ' forecast for ' + city;
     options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
     options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
 
+    const chart = cityChart.chart;
+
     // Handle auxiliary series (Windbarb)
-    if (windbarbSeries !== null) {
+    if (WindbarbSeries !== null) {
         // Remove any existing Windbarb series
-        await windbarbSeries.remove();
-        windbarbSeries = null;
+        await WindbarbSeries.remove();
+        WindbarbSeries = null;
     }
 
     await cityChart.update({
@@ -871,21 +818,20 @@ async function updateBoard(board, city, paramName,
         chartOptions: options
     });
 
-    const chart = cityChart.chart;
     if (isWind) {
         // Add Windbarb series
         const forecastTable = await dataPool.getConnectorTable(city);
 
         // Create series data
         const data = [];
-        for (let i = rangeConfig.first; i < rangeConfig.hours; i++) {
+        for (let i = RangeConfig.first; i < RangeConfig.hours; i++) {
             const windSpeed = forecastTable.columns.wind[i];
             const windDir = forecastTable.columns.windDir[i];
             data.push([windSpeed, windDir]);
         }
 
         // Add series (and store for removal)
-        windbarbSeries = await chart.addSeries({
+        WindbarbSeries = await chart.addSeries({
             type: 'windbarb',
             pointStart: forecastTable.columns.time[0],
             pointInterval: 36e5,
@@ -901,7 +847,7 @@ async function updateBoard(board, city, paramName,
         await worldMap.chart.update({
             colorAxis: colorAxis,
             title: {
-                text: paramConfig.getColumnHeader(paramName)
+                text: ParamConfig.getColumnHeader(paramName)
             }
         });
 
@@ -957,4 +903,4 @@ async function updateBoard(board, city, paramName,
 }
 
 // Launch the application
-setupBoard();
+setupDashboard();
