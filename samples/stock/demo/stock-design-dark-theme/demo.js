@@ -3,10 +3,102 @@
         'https://www.highcharts.com/samples/data/new-intraday.json'
     ).then(response => response.json());
 
-    Highcharts.stockChart('container', {
+    Highcharts.setOptions({
         chart: {
             backgroundColor: '#202d3b'
         },
+        navigator: {
+            xAxis: {
+                labels: {
+                    style: {
+                        color: '#c5c7c9',
+                        opacity: 1,
+                        textOutline: 0
+                    }
+                }
+            },
+            series: {
+                lineColor: '#FFF'
+            }
+        },
+        plotOptions: {
+            candlestick: {
+                color: '#b82d0d',
+                upColor: '#8cc076',
+                lineColor: '#ccc'
+            },
+            series: {
+
+                lastPrice: {
+                    color: '#c0c0c0',
+                    enabled: true,
+                    label: {
+                        backgroundColor: '#fbfbfb',
+                        borderRadius: 0,
+                        enabled: true,
+                        padding: 3,
+                        style: {
+                            color: '#000'
+                        }
+                    }
+                }
+            }
+        },
+        rangeSelector: {
+            buttonTheme: {
+                r: 0,
+                padding: 1
+            },
+            inputStyle: {
+                color: '#c5c7c9'
+            },
+            labelStyle: {
+                color: '#c5c7c9'
+            }
+        },
+        tooltip: {
+            backgroundColor: '#fbfbfb',
+            borderRadius: 0,
+            borderWidth: 0,
+            padding: 3
+        },
+        xAxis: {
+            gridLineColor: '#21323f',
+            gridLineWidth: 1,
+            lineColor: '#999999',
+            tickColor: '#999999',
+            tickLength: 5,
+            labels: {
+                style: {
+                    color: '#c5c7c9'
+                }
+            }
+        },
+        yAxis: {
+            crosshair: {
+                label: {
+                    backgroundColor: '#fbfbfb',
+                    borderRadius: 0,
+                    enabled: true,
+                    padding: 3,
+                    style: {
+                        color: '#000'
+                    }
+                }
+            },
+            gridLineColor: '#21323f',
+            lineColor: '#999999',
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                style: {
+                    color: '#c5c7c9'
+                }
+            }
+        }
+    });
+
+    Highcharts.stockChart('container', {
         rangeSelector: {
             buttons: [{
                 text: '1m',
@@ -73,94 +165,15 @@
                     ]
                 }
             }],
-            buttonTheme: {
-                r: 0,
-                padding: 1
-            },
-            inputStyle: {
-                color: '#c5c7c9'
-            },
-            labelStyle: {
-                color: '#c5c7c9'
-            },
             selected: 4
         },
-        navigator: {
-            xAxis: {
-                labels: {
-                    style: {
-                        color: '#c5c7c9',
-                        opacity: 1,
-                        textOutline: 0
-                    }
-                }
-            },
-            series: {
-                lineColor: '#FFF'
-            }
-        },
         tooltip: {
-            backgroundColor: '#fbfbfb',
-            borderRadius: 0,
-            borderWidth: 0,
-            padding: 3,
             pointFormat: ''
-        },
-        xAxis: {
-            gridLineColor: '#21323f',
-            gridLineWidth: 1,
-            lineColor: '#999999',
-            tickColor: '#999999',
-            tickLength: 5,
-            labels: {
-                style: {
-                    color: '#c5c7c9'
-                }
-            }
-        },
-        yAxis: {
-            crosshair: {
-                label: {
-                    backgroundColor: '#fbfbfb',
-                    borderRadius: 0,
-                    enabled: true,
-                    padding: 3,
-                    style: {
-                        color: '#000'
-                    }
-                }
-            },
-            gridLineColor: '#21323f',
-            lineColor: '#999999',
-            lineWidth: 1,
-            labels: {
-                align: 'left',
-                style: {
-                    color: '#c5c7c9'
-                }
-            }
-
         },
         series: [{
             name: 'AAPL',
-            color: '#b82d0d',
-            upColor: '#8cc076',
             data: data,
-            lineColor: '#ccc',
-            type: 'candlestick',
-            lastPrice: {
-                color: '#c0c0c0',
-                enabled: true,
-                label: {
-                    backgroundColor: '#fbfbfb',
-                    borderRadius: 0,
-                    enabled: true,
-                    padding: 3,
-                    style: {
-                        color: '#000'
-                    }
-                }
-            }
+            type: 'candlestick'
         }]
     });
 })();
