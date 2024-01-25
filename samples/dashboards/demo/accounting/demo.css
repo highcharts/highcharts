@@ -32,12 +32,14 @@
 :root,
 .highcharts-light {
     --highcharts-color-0: #4689eb;
-    --highcharts-color-1: #afafaf;
+    --highcharts-color-1: #949494;
+    --demo-prediction-color: #d36f00;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --highcharts-color-1: #616161;
+        --highcharts-color-1: #7c7c7c;
+        --demo-prediction-color: #debd5b;
     }
 }
 
@@ -89,8 +91,8 @@
 
 .highcharts-stock-chart .highcharts-color-1,
 .highcharts-stock-chart .highcharts-color-2 {
-    fill: #debd5b;
-    stroke: #debd5b;
+    fill: var(--demo-prediction-color);
+    stroke: var(--demo-prediction-color);
     stroke-dasharray: 1px 6px;
 }
 
