@@ -9,22 +9,18 @@
  */
 function onChartLoad() {
 
-    var centerX = Math.max(this.chartWidth * 0.2, 140),
+    const centerX = Math.max(this.chartWidth * 0.2, 140),
         centerY = Math.max(this.chartHeight * 0.3, 110),
-        path = [],
-        angle,
-        radius,
         badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
             .brighten(-0.2)
             .get(),
+        path = [];
+
+    let angle,
+        radius,
         spike,
-        empImage,
-        big5,
-        label,
         left,
-        right,
-        years,
-        renderer;
+        right;
 
     if (this.chartWidth < 530) {
         return;
@@ -50,7 +46,7 @@ function onChartLoad() {
         .add();
 
     // Employee image overlay
-    empImage = this.renderer.path(path)
+    const empImage = this.renderer.path(path)
         .attr({
             zIndex: 7,
             opacity: 0,
@@ -60,7 +56,7 @@ function onChartLoad() {
         .add();
 
     // Big 5
-    big5 = this.renderer.text('10')
+    const big5 = this.renderer.text('10')
         .attr({
             zIndex: 6
         })
@@ -77,7 +73,7 @@ function onChartLoad() {
     });
 
     // Draw the label
-    label = this.renderer.text('Highcharts Anniversary')
+    const label = this.renderer.text('Highcharts Anniversary')
         .attr({
             zIndex: 6
         })
@@ -134,7 +130,7 @@ function onChartLoad() {
         .add();
 
     // 2009-2019
-    years = this.renderer.text('2009-2019')
+    const years = this.renderer.text('2009-2019')
         .attr({
             zIndex: 6
         })
@@ -150,7 +146,7 @@ function onChartLoad() {
     });
 
     // Prepare mouseover
-    renderer = this.renderer;
+    const renderer = this.renderer;
     if (renderer.defs) { // is SVG
         this.get('employees').points.forEach(point => {
             let pattern;

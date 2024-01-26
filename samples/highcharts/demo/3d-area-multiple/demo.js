@@ -9,7 +9,8 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Visual comparison of Mountains Panorama'
+        text: 'Visual comparison of Mountains Panorama',
+        align: 'left'
     },
     accessibility: {
         description: 'The chart is showing the shapes of three mountain ranges as three area line series laid out in 3D behind each other.',

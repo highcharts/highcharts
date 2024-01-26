@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -263,11 +263,11 @@ class MapBubbleSeries extends BubbleSeries {
      *
      * */
 
-    public data: Array<MapBubblePoint> = void 0 as any;
+    public data!: Array<MapBubblePoint>;
 
-    public options: MapBubbleSeriesOptions = void 0 as any;
+    public options!: MapBubbleSeriesOptions;
 
-    public points: Array<MapBubblePoint> = void 0 as any;
+    public points!: Array<MapBubblePoint>;
 
     public clearBounds = mapProto.clearBounds;
 
@@ -276,7 +276,7 @@ class MapBubbleSeries extends BubbleSeries {
         compareX?: boolean
     ): (Point|undefined) {
         return this.searchKDTree({
-            clientX: e.chartX - this.chart.plotLeft,
+            plotX: e.chartX - this.chart.plotLeft,
             plotY: e.chartY - this.chart.plotTop
         }, compareX, e);
     }
@@ -343,6 +343,8 @@ extend(MapBubbleSeries.prototype, {
     processData: mapProto.processData,
 
     projectPoint: mapPointProto.projectPoint,
+
+    kdAxisArray: ['plotX', 'plotY'],
 
     setData: mapProto.setData,
 

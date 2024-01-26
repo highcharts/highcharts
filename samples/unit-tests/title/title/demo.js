@@ -109,8 +109,8 @@ QUnit.test('Title alignment', function (assert) {
         .getAttribute('aria-label');
 
     assert.ok(
-        !/\</g.test(ariaValue),
-        '"<" should not be included in aria-label#17753'
+        /\</g.test(ariaValue),
+        '"<" can be included in aria-label if not for export (#17753, #19002)'
     );
 
     chart.update({

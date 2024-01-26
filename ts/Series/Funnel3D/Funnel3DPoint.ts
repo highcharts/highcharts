@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -45,13 +45,13 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public dlBoxRaw: Record<string, number> = void 0 as any;
+    public dlBoxRaw!: Record<string, number>;
 
-    public options: Funnel3DPointOptions = void 0 as any;
+    public options!: Funnel3DPointOptions;
 
-    public series: Funnel3DSeries = void 0 as any;
+    public series!: Funnel3DSeries;
 
-    public y: number = void 0 as any;
+    public y!: number;
 
 }
 

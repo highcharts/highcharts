@@ -42,6 +42,7 @@
 	"code/modules/geoheatmap.src.js",
 	"code/modules/pyramid3d.src.js",
 	"code/modules/networkgraph.src.js",
+	"code/modules/overlapping-datalabels.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
 	"code/modules/pictorial.src.js",
@@ -90,5 +91,4 @@
 	"samples/data/ohlc.js",
 	"samples/data/three-series-1000-points.js",
 	"samples/data/large-dataset.js"
-
 ]

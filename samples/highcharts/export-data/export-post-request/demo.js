@@ -1,11 +1,11 @@
 $(function () {
     $('#b').click(testPOST);
 
-    var exportUrl = 'https://export.highcharts.com/';
+    const exportUrl = 'https://export.highcharts.com/';
 
     function testPOST() {
 
-        var optionsStr = JSON.stringify({
+        const optionsStr = JSON.stringify({
             infile: {
                 xAxis: {
                     categories: ['Jan', 'Feb', 'Mar']

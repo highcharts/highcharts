@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,12 +16,10 @@
  *
  * */
 
-import type { Options } from './Options';
+import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import H from './Globals.js';
 const {
     isTouchDevice,
@@ -41,7 +39,7 @@ const { merge } = U;
 
 declare module './GlobalsLike' {
     interface GlobalsLike {
-        defaultOptions: Options;
+        defaultOptions: DefaultOptions;
         time: Time;
     }
 }
@@ -61,7 +59,7 @@ declare module './GlobalsLike' {
  * @optionparent
  * @private
  */
-const defaultOptions: Options = {
+const defaultOptions: DefaultOptions = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -91,7 +89,7 @@ const defaultOptions: Options = {
      *     "#2ee0ca",
      *     "#fa4b42",
      *     "#feb56a",
-     *     "#91e8e12
+     *     "#91e8e1"
      * ]
      */
     colors: Palettes.colors,
@@ -234,7 +232,7 @@ const defaultOptions: Options = {
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `null` disables shortening altogether.
+         * `numericSymbols` to `undefined` disables shortening altogether.
          *
          * @sample {highcharts} highcharts/lang/numericsymbols/
          *         Replacing the symbols with text
@@ -462,23 +460,25 @@ const defaultOptions: Options = {
         getTimezoneOffset: void 0,
 
         /**
-         * Requires [moment.js](https://momentjs.com/). If the timezone option
-         * is specified, it creates a default
-         * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
-         * up the specified timezone in moment.js. If moment.js is not included,
-         * this throws a Highcharts error in the console, but does not crash the
-         * chart.
+         * A named time zone. Supported time zone names rely on the browser
+         * implementations, as described in the [mdn
+         * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+         * If the given time zone is not recognized by the browser, Highcharts
+         * provides a warning and falls back to returning a 0 offset,
+         * corresponding to the UCT time zone.
+         *
+         * Until v11.2.0, this option depended on moment.js.
          *
          * @see [getTimezoneOffset](#time.getTimezoneOffset)
          *
-         * @sample {highcharts|highstock} highcharts/time/timezone/
-         *         Europe/Oslo
+         * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
          *
          * @type      {string}
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
         timezone: void 0,
+
         /**
          * The timezone offset in minutes. Positive values are west, negative
          * values are east of UTC, as in the ECMAScript
@@ -1265,6 +1265,12 @@ const defaultOptions: Options = {
          * exported images. One way of working around that is to
          * [increase the chart height in
          * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
+         *
+         * @sample highcharts/legend/scrollable-vertical/
+         *         Legend with vertical scrollable extension
+         * @sample highcharts/legend/scrollable-horizontal/
+         *         Legend with horizontal scrollable extension
+         *
          */
         navigation: {
 
@@ -1568,6 +1574,10 @@ const defaultOptions: Options = {
          * The pixel height of the symbol for series types that use a rectangle
          * in the legend. Defaults to the font size of legend items.
          *
+         * Note: This option is a default source of color axis height, if the
+         * [colorAxis.height](https://api.highcharts.com/highcharts/colorAxis.height)
+         * option is not set.
+         *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a vertical color
          * axis, the height defaults to 200.
@@ -1605,6 +1615,10 @@ const defaultOptions: Options = {
          * The pixel width of the legend item symbol. When the `squareSymbol`
          * option is set, this defaults to the `symbolHeight`, otherwise 16.
          *
+         * Note: This option is a default source of color axis width, if the
+         * [colorAxis.width](https://api.highcharts.com/highcharts/colorAxis.width)
+         * option is not set.
+         *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a horizontal color
          * axis, the width defaults to 200.
@@ -1626,6 +1640,11 @@ const defaultOptions: Options = {
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
+         *
+         * @sample highcharts/legend/scrollable-vertical/
+         *         Legend with vertical scrollable extension
+         * @sample highcharts/legend/scrollable-horizontal/
+         *         Legend with horizontal scrollable extension
          *
          * @type      {boolean}
          * @default   false
@@ -1887,16 +1906,19 @@ const defaultOptions: Options = {
          * The color of the tooltip border. When `undefined`, the border takes
          * the color of the corresponding series or point.
          *
-         * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
-         * @sample {highcharts} highcharts/tooltip/bordercolor-black/
-         *         Black border
-         * @sample {highstock} stock/tooltip/general/
-         *         Styled tooltip
-         * @sample {highmaps} maps/tooltip/background-border/
-         *         Background and border demo
+         * Note that the [borderWidth](#tooltip.borderWidth) is usually 0 by
+         * default, so the border color may not be visible until a border width
+         * is set.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow
+         *         series by default
+         * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black
+         *         border
+         * @sample {highstock} stock/tooltip/general/ Styled tooltip
+         * @sample {highmaps} maps/tooltip/background-border/ Background and
+         *         border demo
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 
@@ -2355,7 +2377,7 @@ const defaultOptions: Options = {
          *         Different shapes for header and split boxes
          *
          * @type       {Highcharts.TooltipShapeValue}
-         * @validvalue ["callout", "square"]
+         * @validvalue ["callout", "rect"]
          * @since      7.0
          */
         headerShape: 'callout',
@@ -2752,7 +2774,7 @@ const defaultTime = new Time(defaultOptions.time);
  * @return {Highcharts.Options}
  * Default options.
  */
-function getOptions(): Options {
+function getOptions(): DefaultOptions {
     return defaultOptions;
 }
 
@@ -2772,7 +2794,7 @@ function getOptions(): Options {
  * Updated options.
  */
 function setOptions(
-    options: DeepPartial<Options>
+    options: DeepPartial<DefaultOptions>
 ): Options {
 
     // Copy in the default options

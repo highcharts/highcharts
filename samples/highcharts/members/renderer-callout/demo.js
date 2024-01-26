@@ -12,7 +12,7 @@ const liveDot = renderer.circle(-10, -10, 3)
     })
     .add();
 
-const liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout')
+const liveLabel = renderer.label('Callout test<br>Click buttons below', 200, 140, 'callout')
     .attr({
         align: 'center',
         stroke: 'green',
@@ -24,26 +24,38 @@ const liveLabel = renderer.label('Callout test<br>Click me', 200, 140, 'callout'
         color: 'white',
         cursor: 'pointer'
     })
-    .on('click', () => {
-        setInterval(() => {
-            var anchorX = Math.cos(angle) * 100 + 200,
-                anchorY = Math.sin(angle) * 100 + 140;
-
-            liveDot.attr({
-                cx: anchorX,
-                cy: anchorY
-            });
-
-            liveLabel.attr({
-                anchorX: anchorX,
-                anchorY: anchorY
-            });
-
-            angle += Math.PI / 100;
-
-        }, 25);
-    })
     .add();
+
+const move = sign => {
+
+    angle += sign * Math.PI / 100;
+    const anchorX = Math.cos(angle) * 100 + 200,
+        anchorY = Math.sin(angle) * 100 + 140;
+
+    liveDot.attr({
+        cx: anchorX,
+        cy: anchorY
+    });
+
+    liveLabel.attr({
+        anchorX: anchorX,
+        anchorY: anchorY
+    });
+};
+
+let interval;
+document.getElementById('play').addEventListener('click', () => {
+    clearInterval(interval);
+    interval = setInterval(() => move(1), 25);
+});
+document.getElementById('clockwise').addEventListener('click', () => {
+    clearInterval(interval);
+    move(1);
+});
+document.getElementById('anticlockwise').addEventListener('click', () => {
+    clearInterval(interval);
+    move(-1);
+});
 
 renderer.circle(10, 10, 3)
     .attr({

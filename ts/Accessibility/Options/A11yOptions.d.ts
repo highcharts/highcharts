@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -129,6 +129,10 @@ export interface ExportingAccessibilityOptions {
     enabled: boolean;
 }
 
+export interface NavigatorAccessibilityOptions {
+    enabled: boolean;
+}
+
 export interface FocusBorderStyleObject {
     borderRadius?: number;
     color?: ColorType;
@@ -213,6 +217,13 @@ declare module '../../Extensions/Exporting/ExportingOptions' {
         accessibility?: ExportingAccessibilityOptions;
     }
 }
+
+declare module '../../Stock/Navigator/NavigatorOptions' {
+    interface NavigatorOptions {
+        accessibility?: NavigatorAccessibilityOptions;
+    }
+}
+
 
 /* *
  *

@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+    Highcharts.getJSON('https://www.highcharts.com/samples/data/world-population-density.json', function (data) {
 
         // Prevent logarithmic errors in color calulcation
         data.forEach(function (p) {

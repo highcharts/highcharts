@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -382,16 +382,16 @@ class WGLRenderer {
                 series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high'
             ),
-            chart = series.chart,
-            options = series.options,
+            { chart, options, sorted, xAxis, yAxis } = series,
             isStacked = !!options.stacking,
             rawData = isArray(options.data) && options.data,
             xExtremes = series.xAxis.getExtremes(),
-            xMin = xExtremes.min,
-            xMax = xExtremes.max,
+            // Taking into account the offset of the min point #19497
+            xMin = xExtremes.min - (series.xAxis.minPointOffset || 0),
+            xMax = xExtremes.max + (series.xAxis.minPointOffset || 0),
             yExtremes = series.yAxis.getExtremes(),
-            yMin = yExtremes.min,
-            yMax = yExtremes.max,
+            yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
+            yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
             xData =
                 series.xData || (options as any).xData || series.processedXData,
             yData =
@@ -400,8 +400,6 @@ class WGLRenderer {
                 series.zData || (options as any).zData ||
                 (series as any).processedZData
             ),
-            yAxis = series.yAxis,
-            xAxis = series.xAxis,
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -884,8 +882,9 @@ class WGLRenderer {
             }
 
             // The first point before and first after extremes should be
-            // rendered (#9962)
+            // rendered (#9962, 19701)
             if (
+                sorted &&
                 (nx >= xMin || x >= xMin) &&
                 (px <= xMax || x <= xMax)
             ) {
@@ -1010,7 +1009,6 @@ class WGLRenderer {
             }
 
             if (drawAsBar) {
-                // maxVal = y;
                 minVal = low;
 
                 if ((low as any) === false || typeof low === 'undefined') {
@@ -1021,7 +1019,10 @@ class WGLRenderer {
                     }
                 }
 
-                if (!isRange && !isStacked) {
+                if (
+                    (!isRange && !isStacked) ||
+                    yAxis.logarithmic // #16850
+                ) {
                     minVal = Math.max(
                         threshold === null ? yMin : threshold, // #5268
                         yMin
@@ -1433,11 +1434,21 @@ class WGLRenderer {
 
             // If there are entries in the colorData buffer, build and bind it.
             if (s.colorData.length > 0) {
-                shader.setUniform('hasColor', 1.0);
+                shader.setUniform('hasColor', 1);
                 cbuffer = new WGLVertexBuffer(gl, shader);
-                cbuffer.build(s.colorData, 'aColor', 4);
+                cbuffer.build(
+                    // The color array attribute for vertex is assigned from 0,
+                    // so it needs to be shifted to be applied to further
+                    // segments. #18858
+                    Array(s.segments[0].from).concat(s.colorData),
+                    'aColor', 4
+                );
                 cbuffer.bind();
             } else {
+                // Set the hasColor uniform to false (0) when the series
+                // contains no colorData buffer points. #18858
+                shader.setUniform('hasColor', 0);
+
                 // #15869, a buffer with fewer points might already be bound by
                 // a different series/chart causing out of range errors
                 gl.disableVertexAttribArray(

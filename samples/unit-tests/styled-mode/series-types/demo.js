@@ -20,7 +20,7 @@ QUnit.module('Styled mode for series types', function () {
                 container
                     .querySelectorAll('*[' + attr + ']')
                     .forEach(function (elem) {
-                        if (elem.className === 'highcharts-a11y-proxy-button') {
+                        if (elem.className === 'highcharts-a11y-proxy-element') {
                             return;
                         }
                         var key = [

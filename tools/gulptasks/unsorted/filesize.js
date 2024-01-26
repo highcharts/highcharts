@@ -31,14 +31,13 @@ const filesize = async () => {
     } = require('../../build.js');
     const colors = require('colors');
     const {
-        compile
-    } = require('../../compile.js');
-    const {
         getFile
     } = require('@highcharts/highcharts-assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');
+    const scriptsCompile = require('../../../tools/gulptasks/scripts-compile');
+
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled and rename the param to
     // 'mode'
@@ -76,7 +75,7 @@ const filesize = async () => {
 
     const runFileSize = async (obj, key) => {
         await getBuildScripts({ files }).fnFirstBuild();
-        await compile(files, sourceFolder);
+        await scriptsCompile(files.map(path => `${sourceFolder}${path}`));
         files.reduce(
             (o, n) => {
                 const filename = n.replace('.src.js', '.js');
@@ -120,7 +119,7 @@ const filesize = async () => {
     const list = await commandLine(`git stash list | grep -m1 ${stashName}`);
 
     if (list.length) {
-        const stashRegex = new RegExp(`^stash\@\{(.*)\}:.+?${stashName}`);
+        const stashRegex = new RegExp(`^stash\\@\\{(.*)\\}:.+?${stashName}`);
         const match = list.match(stashRegex);
         if (!match.length) {
             throw new Error('could not find filesize stash, aborting');

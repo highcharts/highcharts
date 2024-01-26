@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,7 @@ import type PieDataLabelOptions from './PieDataLabelOptions';
  * */
 
 export interface PiePointOptions extends LinePointOptions {
-    dataLabels?: PieDataLabelOptions;
+    dataLabels?: PieDataLabelOptions|PieDataLabelOptions[];
     sliced?: boolean;
     visible?: boolean;
 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -211,6 +211,39 @@ const langOptions: DeepPartial<LangOptions> = {
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'
+        },
+
+        /**
+         * Navigator language options for accessibility.
+         *
+         * @since 11.2.0
+         */
+        navigator: {
+            /**
+             * Label for the navigator handles.
+             *
+             * Receives `handleIx` and `chart` as context.
+             * `handleIx` refers to the index of the navigator handle.
+             */
+            handleLabel:
+                '{#eq handleIx 0}Start, percent{else}End, percent{/eq}',
+
+            /**
+             * Label for the navigator region.
+             *
+             * Receives `chart` as context.
+             */
+            groupLabel: 'Axis zoom',
+
+            /**
+             * Announcement for assistive technology when navigator values
+             * are changed.
+             *
+             * Receives `axisRangeDescription` and `chart` as context.
+             * `axisRangeDescription` corresponds to the range description
+             * defined in [lang.accessibility.axis](#lang.accessibility.axis)
+             */
+            changeAnnouncement: '{axisRangeDescription}'
         },
 
         /**

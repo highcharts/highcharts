@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,10 +35,7 @@ import Axis from '../../Core/Axis/Axis.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
@@ -52,6 +49,7 @@ const {
     erase,
     extend,
     find,
+    fireEvent,
     isArray,
     isNumber,
     merge,
@@ -136,8 +134,8 @@ class Navigator {
      *
      * */
 
-    public baseSeries: Array<Series> = void 0 as any;
-    public chart: Chart = void 0 as any;
+    public baseSeries!: Array<Series>;
+    public chart!: Chart;
     public dragOffset?: number;
     public eventsToUnbind?: Array<Function>;
     public fixedExtreme?: (null|number);
@@ -145,40 +143,40 @@ class Navigator {
     public grabbedCenter?: number;
     public grabbedLeft?: boolean;
     public grabbedRight?: boolean;
-    public handles: Array<SVGElement> = void 0 as any;
+    public handles!: Array<SVGElement>;
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
-    public height: number = void 0 as any;
-    public left: number = void 0 as any;
+    public height!: number;
+    public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public navigatorEnabled: boolean = void 0 as any;
-    public navigatorGroup: SVGElement = void 0 as any;
-    public navigatorOptions: NavigatorOptions = void 0 as any;
-    public navigatorSeries: Series = void 0 as any;
-    public navigatorSize: number = void 0 as any;
-    public opposite: boolean = void 0 as any;
+    public navigatorEnabled!: boolean;
+    public navigatorGroup!: SVGElement;
+    public navigatorOptions!: NavigatorOptions;
+    public navigatorSeries!: Series;
+    public navigatorSize!: number;
+    public opposite!: boolean;
     public otherHandlePos?: number;
-    public outline: SVGElement = void 0 as any;
-    public range: number = void 0 as any;
-    public rendered: boolean = void 0 as any;
+    public outline!: SVGElement;
+    public range!: number;
+    public rendered!: boolean;
     public reversedExtremes?: boolean;
     public scrollbar?: Scrollbar;
     public scrollbarEnabled?: boolean;
     public scrollbarHeight = 0;
-    public scrollButtonSize: number = void 0 as any;
+    public scrollButtonSize!: number;
     public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
-    public shades: Array<SVGElement> = void 0 as any;
-    public size: number = void 0 as any;
+    public shades!: Array<SVGElement>;
+    public size!: number;
     public stickToMax?: boolean;
     public stickToMin?: boolean;
-    public top: number = void 0 as any;
+    public top!: number;
     public unbindRedraw?: Function;
-    public xAxis: NavigatorAxisComposition = void 0 as any;
-    public yAxis: NavigatorAxisComposition = void 0 as any;
-    public zoomedMax: number = void 0 as any;
-    public zoomedMin: number = void 0 as any;
+    public xAxis!: NavigatorAxisComposition;
+    public yAxis!: NavigatorAxisComposition;
+    public zoomedMax!: number;
+    public zoomedMin!: number;
 
     /* *
      *
@@ -736,6 +734,7 @@ class Navigator {
             );
         }
         navigator.rendered = true;
+        fireEvent(this, 'afterRender');
     }
 
     /**
@@ -770,22 +769,17 @@ class Navigator {
 
         // Add shades and handles mousedown events
         eventsToUnbind = navigator.getPartsEvents('mousedown');
-        // Add mouse move and mouseup events. These are bind to doc/container,
-        // because Navigator.grabbedSomething flags are stored in mousedown
-        // events
         eventsToUnbind.push(
+            // Add mouse move and mouseup events. These are bind to doc/div,
+            // because Navigator.grabbedSomething flags are stored in mousedown
+            // events
             addEvent(chart.renderTo, 'mousemove', mouseMoveHandler),
-            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
+            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
+            // Touch events
+            addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
         );
-
-        // Touch events
-        if (hasTouch) {
-            eventsToUnbind.push(
-                addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
-                addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
-            );
-            eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
-        }
+        eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 
         navigator.eventsToUnbind = eventsToUnbind;
 
@@ -962,7 +956,7 @@ class Navigator {
             navigator.fixedExtreme = reverse ? baseXAxis.max : baseXAxis.min;
         }
 
-        chart.fixedRange = null as any;
+        chart.setFixedRange(void 0);
     }
     /**
      * Mouse move event based on x/y mouse position.
@@ -1668,6 +1662,8 @@ class Navigator {
                     base.navigatorSeries = chart.initSeries(
                         mergedNavSeriesOptions
                     );
+                    // Set data on initial run with dataSorting enabled (#20318)
+                    chart.setSortedData();
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }

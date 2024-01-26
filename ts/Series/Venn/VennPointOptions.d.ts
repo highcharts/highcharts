@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -34,5 +34,11 @@ export interface VennPointOptions extends ScatterPointOptions {
     sets?: Array<string>;
     value?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VennPointOptions;

@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -25,10 +25,15 @@ import type AxisResizerOptions from './AxisResizerOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -58,14 +63,6 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -78,17 +75,15 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
-        merge(true, AxisClass.defaultOptions, AxisResizer.resizerOptions);
+    if (pushUnique(composed, compose)) {
+        merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
         AxisClass.keepProps.push('resizer');
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',
@@ -110,13 +105,12 @@ function compose(
 function onAxisAfterRender(
     this: Axis
 ): void {
-    let axis = this,
+    const axis = this,
         resizer = axis.resizer,
-        resizerOptions = axis.options.resize,
-        enabled;
+        resizerOptions = axis.options.resize;
 
     if (resizerOptions) {
-        enabled = resizerOptions.enabled !== false;
+        const enabled = resizerOptions.enabled !== false;
 
         if (resizer) {
             // Resizer present and enabled
@@ -146,10 +140,12 @@ function onAxisAfterRender(
  */
 function onAxisDestroy(
     this: Axis,
-    e: Event
+    e: { keepEvents: boolean }
 ): void {
-    if (!(e as any).keepEvents && this.resizer) {
-        this.resizer.destroy();
+    const axis = this;
+
+    if (!e.keepEvents && axis.resizer) {
+        axis.resizer.destroy();
     }
 }
 
@@ -162,8 +158,10 @@ function wrapPointerDrag(
     this: Pointer,
     proceed: Function
 ): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    const pointer = this;
+
+    if (!pointer.chart.activeResizer) {
+        proceed.apply(pointer, [].slice.call(arguments, 1));
     }
 }
 
@@ -175,8 +173,10 @@ function wrapPointerRunPointActions(
     this: Pointer,
     proceed: Function
 ): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    const pointer = this;
+
+    if (!pointer.chart.activeResizer) {
+        proceed.apply(pointer, [].slice.call(arguments, 1));
     }
 }
 

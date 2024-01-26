@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,6 @@ import type TreegraphNode from './TreegraphNode';
 import type TreegraphLink from './TreegraphLink';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
@@ -41,8 +40,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -63,12 +61,12 @@ class TreegraphPoint extends TreemapPoint {
      *
      * */
 
-    public options: TreegraphPointOptions = void 0 as any;
+    public options!: TreegraphPointOptions;
     public isLink = false;
     public collapseButton?: SVGElement;
-    public series: TreegraphSeries = void 0 as any;
+    public series!: TreegraphSeries;
     public collapsed?: boolean;
-    public node: TreegraphNode = void 0 as any;
+    public node!: TreegraphNode;
     public level?: number;
     public linkToParent?: TreegraphLink;
     public collapseButtonOptions?: CollapseButtonOptions;
@@ -96,15 +94,21 @@ class TreegraphPoint extends TreemapPoint {
             series = point.series,
             parentGroup = point.graphic && point.graphic.parentGroup,
             levelOptions =
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
+                series.mapOptionsToLevel[point.node.level || 0] || {},
             btnOptions = merge(
                 series.options.collapseButton,
                 levelOptions.collapseButton,
                 point.options.collapseButton
-            ) as CollapseButtonOptions,
+            ),
             { width, height, shape, style } = btnOptions,
             padding = 2,
-            chart = this.series.chart;
+            chart = this.series.chart,
+            calculatedOpacity = (
+                point.visible &&
+                (point.collapsed ||
+                    !btnOptions.onlyOnHover ||
+                    point.state === 'hover')
+            ) ? 1 : 0;
         if (!point.shapeArgs) {
             return;
         }
@@ -134,7 +138,9 @@ class TreegraphPoint extends TreemapPoint {
                     'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
-                    zIndex: 1
+                    zIndex: 1,
+                    opacity: calculatedOpacity,
+                    visibility: point.visible ? 'inherit' : 'hidden'
                 })
                 .addClass('highcharts-tracker')
                 .addClass('highcharts-collapse-button')
@@ -151,9 +157,6 @@ class TreegraphPoint extends TreemapPoint {
 
             (point.collapseButton.element as any).point = point;
 
-            if (btnOptions.onlyOnHover && !point.collapsed) {
-                point.collapseButton.attr({ opacity: 0 });
-            }
         } else {
             if (!point.node.children.length || !btnOptions.enabled) {
                 point.collapseButton.destroy();
@@ -165,25 +168,27 @@ class TreegraphPoint extends TreemapPoint {
                         text: point.collapsed ? '+' : '-',
                         rotation: chart.inverted ? 90 : 0,
                         rotationOriginX: width / 2,
-                        rotationOriginY: height / 2
+                        rotationOriginY: height / 2,
+                        visibility: point.visible ? 'inherit' : 'hidden'
                     })
                     .animate({
                         x,
                         y,
-                        opacity: point.visible && (
-                            !btnOptions.onlyOnHover ||
-                            point.state === 'hover' ||
-                            point.collapsed
-                        ) ? 1 : 0
+                        opacity: calculatedOpacity
                     });
             }
         }
     }
 
     public toggleCollapse(state?: boolean): void {
-        this.collapsed = pick(state, !this.collapsed);
-        fireEvent(this.series, 'toggleCollapse');
-        this.series.redraw();
+        const series = this.series;
+
+        this.update({
+            collapsed: state ?? !this.collapsed
+        }, false, void 0, false);
+
+        fireEvent(series, 'toggleCollapse');
+        series.redraw();
     }
 
     public destroy(): void {
@@ -192,6 +197,11 @@ class TreegraphPoint extends TreemapPoint {
             this.collapseButton.destroy();
             delete this.collapseButton;
             this.collapseButton = void 0;
+        }
+
+        if (this.linkToParent) {
+            this.linkToParent.destroy();
+            delete this.linkToParent;
         }
 
         super.destroy.apply(this, arguments);
@@ -222,18 +232,16 @@ class TreegraphPoint extends TreemapPoint {
 addEvent(TreegraphPoint, 'mouseOut', function (): void {
     const btn = this.collapseButton,
         btnOptions = this.collapseButtonOptions;
-    if (btn && btnOptions && btnOptions.onlyOnHover && !this.collapsed) {
+    if (btn && btnOptions?.onlyOnHover && !this.collapsed) {
         btn.animate({ opacity: 0 });
     }
 });
 
 addEvent(TreegraphPoint, 'mouseOver', function (): void {
-    if (this.collapseButton) {
+    if (this.collapseButton && this.visible) {
         this.collapseButton.animate(
             { opacity: 1 },
-            this.series.options.states &&
-            this.series.options.states.hover &&
-            this.series.options.states.hover.animation
+            this.series.options.states?.hover?.animation
         );
     }
 });

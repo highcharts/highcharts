@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -27,5 +27,11 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 export interface DependencyWheelPointOptions extends SankeyPointOptions {
     linkWeight?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DependencyWheelPointOptions;

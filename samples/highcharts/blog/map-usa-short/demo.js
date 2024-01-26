@@ -1,5 +1,5 @@
 // Load the data from the HTML table and tag it with an upper case name used for joining
-var data = [],
+const data = [],
     // Get the map data
     mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);
 

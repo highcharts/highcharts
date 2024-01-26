@@ -1,7 +1,7 @@
 // Data gathered from http://populationpyramid.net/germany/2015/
 
 // Age categories
-var categories = [
+const categories = [
     '0-4', '5-9', '10-14', '15-19',
     '20-24', '25-29', '30-34', '35-39', '40-44',
     '45-49', '50-54', '55-59', '60-64', '65-69',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -148,13 +148,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Properties
      *
      * */
-    public data: Array<HollowCandlestickPoint> = void 0 as any;
+    public data!: Array<HollowCandlestickPoint>;
 
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
-    public options: HollowCandlestickSeriesOptions = void 0 as any;
+    public options!: HollowCandlestickSeriesOptions;
 
-    public points: Array<HollowCandlestickPoint> = void 0 as any;
+    public points!: Array<HollowCandlestickPoint>;
 
     /* *
      *
@@ -179,45 +179,44 @@ class HollowCandlestickSeries extends CandlestickSeries {
             dataLength = series.useDataTable ?
                 table.rowCount :
                 processedYData?.length,
-            hollowCandlestickData = this.hollowCandlestickData,
-            pointArrayMap = series.pointArrayMap || [];
+            hollowCandlestickData = this.hollowCandlestickData;
 
-        if (!hollowCandlestickData.length && dataLength) {
+        hollowCandlestickData.length = 0;
 
-            // First point is allways bullish (transparent).
-            hollowCandlestickData.push({
-                isBullish: true,
-                trendDirection: 'up'
-            });
+        // First point is always bullish (transparent).
+        hollowCandlestickData.push({
+            isBullish: true,
+            trendDirection: 'up'
+        });
 
-            const row2Arr = (row: number): DataArr => [
-                columns.open?.[row] || 0,
-                columns.high?.[row] || 0,
-                columns.low?.[row] || 0,
-                columns.close?.[row] || 0
-            ];
 
-            if (series.useDataTable) {
-                let previousDataArr: DataArr|undefined;
-                for (let i = 1; i < dataLength; i++) {
-                    const dataArr = row2Arr(i);
+        const row2Arr = (row: number): DataArr => [
+            columns.open?.[row] || 0,
+            columns.high?.[row] || 0,
+            columns.low?.[row] || 0,
+            columns.close?.[row] || 0
+        ];
 
-                    hollowCandlestickData.push(series.isBullish(
-                        dataArr,
-                        previousDataArr
-                    ));
-                    previousDataArr = dataArr;
-                }
-            } else {
-                for (let i = 1; i < dataLength; i++) {
-                    const dataPoint: any = processedYData[i],
-                        previousDataPoint: any = processedYData[i - 1];
+        if (series.useDataTable) {
+            let previousDataArr: DataArr|undefined;
+            for (let i = 1; i < dataLength; i++) {
+                const dataArr = row2Arr(i);
 
-                    hollowCandlestickData.push(series.isBullish(
-                        dataPoint,
-                        previousDataPoint
-                    ));
-                }
+                hollowCandlestickData.push(series.isBullish(
+                    dataArr,
+                    previousDataArr
+                ));
+                previousDataArr = dataArr;
+            }
+        } else {
+            for (let i = 1; i < dataLength; i++) {
+                const dataPoint: any = processedYData[i],
+                    previousDataPoint: any = processedYData[i - 1];
+
+                hollowCandlestickData.push(series.isBullish(
+                    dataPoint,
+                    previousDataPoint
+                ));
             }
         }
     }

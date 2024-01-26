@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,8 +31,8 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type {
     LabelIntersectBoxObject,
@@ -47,11 +47,12 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import Chart from '../../Core/Chart/Chart.js';
 import T from '../../Core/Templating.js';
 const { format } = T;
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesLabelDefaults from './SeriesLabelDefaults.js';
 import SLU from './SeriesLabelUtilities.js';
@@ -67,6 +68,7 @@ const {
     fireEvent,
     isNumber,
     pick,
+    pushUnique,
     syncTimeout
 } = U;
 
@@ -125,8 +127,6 @@ interface LabelClearPointObject extends PositionObject {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const labelDistance = 3;
 
@@ -362,17 +362,13 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         // Leave both events, we handle animation differently (#9815)
-        addEvent(Chart, 'load', onChartRedraw);
-        addEvent(Chart, 'redraw', onChartRedraw);
-    }
+        addEvent(ChartClass, 'load', onChartRedraw);
+        addEvent(ChartClass, 'redraw', onChartRedraw);
 
-    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
-    }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 
@@ -399,10 +395,10 @@ function drawSeriesLabels(chart: Chart): void {
         (s.points || []).forEach((p): void =>
             (p.dataLabels || []).forEach((label): void => {
                 const { width, height } = label.getBBox(),
-                    left = label.translateX + (
+                    left = (label.translateX || 0) + (
                         s.xAxis ? s.xAxis.pos : s.chart.plotLeft
                     ),
-                    top = label.translateY + (
+                    top = (label.translateY || 0) + (
                         s.yAxis ? s.yAxis.pos : s.chart.plotTop
                     );
 

@@ -3,7 +3,7 @@ System requirements
 
 Highcharts is a standalone library, which means that it does not require any additional frameworks or plugins to work. It is solely based on native browser technologies, and all core functionality runs in the browser. As it is a front-end library, Highcharts can be used with any server that can serve static files. It needs only the core `highcharts.js` script to run.
 
-There are Highcharts wrappers available for frameworks such as React and Vue, as well as for native iOS and Android development. See our [wrapper overview](https://www.highcharts.com/wrappers-addons-and-plugins/wrappers/) for more information.
+There are Highcharts integrations available for frameworks such as React and Vue, as well as for native iOS and Android development. See our [integrations overview](https://www.highcharts.com/integrations/) for more information.
 
 Browser compatibility
 ---------------------
@@ -29,3 +29,5 @@ Beginning with Highcharts v11, legacy browsers must load Highcharts from the `es
 <script src="https://code.highcharts.com/es5/highcharts.js"></script>
 <script src="https://code.highcharts.com/es5/modules/exporting.js"></script>
 ```
+
+One of the legacy browsers requiring the files from the `es5` folder is QtWeb (wkhtmltopdf's QT Webkit rendering engine is based on this browser).

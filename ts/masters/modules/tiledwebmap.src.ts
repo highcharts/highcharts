@@ -3,13 +3,14 @@
  * @module highcharts/modules/tiledwebmap
  * @requires highcharts
  *
- * (c) 2009-2022
+ * (c) 2009-2024
  *
  * License: www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Series/TiledWebMap/TiledWebMapSeries.js';
-import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
+import TiledWebMapSeries from '../../Series/TiledWebMap/TiledWebMapSeries.js';
+import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 const G: AnyRecord = Highcharts;
-G.TilesProvidersRegistry = TilesProvidersRegistry;
+G.TilesProviderRegistry = TilesProviderRegistry;
+TiledWebMapSeries.compose(G.Chart);

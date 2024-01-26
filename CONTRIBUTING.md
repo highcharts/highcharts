@@ -27,19 +27,19 @@ link to the closed one in your issue description (use `#<ticket number>`, e.g. `
 
 Please also follow the directions in our [ticket submission template](https://github.com/highcharts/highcharts/blob/master/ISSUE_TEMPLATE.md).
 
-### Writing a clear bug report
+### Writing a Clear Bug Report
 
 To help us find and resolve issues as quickly as possible, it's important that your 
 issue description contains a clear description of the problem. 
 
 Your issue should:
 
-* have a clear and descriptive title
-* include any `console.error` output related to the issue
-* describe the expected behaviour/output
-* link to a JSFiddle demo of the issue
-* if it's not reproducable in a minimal demo, explain what actions where done to trigger the bug
-* include the tested Highcharts and browser version(s)
+* have a clear and descriptive title.
+* include any `console.error` output related to the issue.
+* describe the expected behaviour/output.
+* link to a JSFiddle demo of the issue.
+* if it's not reproducable in a minimal demo, explain what actions where done to trigger the bug.
+* include the tested Highcharts and browser version(s).
 
 ## Suggesting Features and Enhancements
 
@@ -88,12 +88,12 @@ Commits should use the following format:
 **JavaScript**
 
 We use the following JavaScript style:
-* spaces over tabs
-* 4 character indentation
-* max columns in a line is 80
-* top-level var declarations
+* spaces over tabs.
+* 4 character indentation.
+* max columns in a line is 80.
+* top-level var declarations.
 * no `console.*`
-* single quotes
+* single quotes.
 
 This style is enforced by ESLint, which is run in a post-commit hook.
 
@@ -104,15 +104,15 @@ feature/fix branches, and then merged through pull requests.
 
 We use a standard naming convention for these branches:
 
-* `feature/<description>`: the branch contains a new feature
-* `bugfix/<issuenumber>-<description>`: the branch contains a bugfix for an open issue
-* `docs/<description>`: the branch contains a fix to the documentation/doclets
+* `feature/<description>`: the branch contains a new feature.
+* `bugfix/<issuenumber>-<description>`: the branch contains a bugfix for an open issue.
+* `docs/<description>`: the branch contains a fix to the documentation/doclets.
 
 Your pull request should:
 
-* use the branch name (or follow the branch naming convention if the PR is based on the master branch on a fork) as the title
-* contain a link to an open issue - if there is one - in the description
-* contain a description of what the pull request implements/fixes
+* use the branch name (or follow the branch naming convention if the PR is based on the master branch on a fork) as the title.
+* contain a link to an open issue - if there is one - in the description.
+* contain a description of what the pull request implements/fixes.
 
 
 

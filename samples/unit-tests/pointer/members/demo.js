@@ -85,6 +85,8 @@ QUnit.test(
             0,
             'mousemove to 0.0: no unexpected events'
         );
+        // Clear to mark only failed tests.
+        events.length = 0;
 
         // New point, and new series.
         // NOTICE Qunit has added new content to the page,
@@ -122,6 +124,8 @@ QUnit.test(
             0,
             'mousemove 30px below 1.0: no unexpected events'
         );
+        // Clear to mark only failed tests.
+        events.length = 0;
 
         // New point, same series
         // NOTICE Qunit has added new content to the page,
@@ -159,6 +163,9 @@ QUnit.test(
             0,
             'mousemove to 1.2: no unexpected events'
         );
+        // Clear to mark only failed tests.
+        events.length = 0;
+
         // Same point, same series.
         controller.setPosition(
             chart.plotLeft + chart.series[1].points[2].plotX,
@@ -172,6 +179,46 @@ QUnit.test(
             events.length,
             0,
             'mousemove to 30px below 1.2: no unexpected events'
+        );
+        // Clear to mark only failed tests.
+        events.length = 0;
+
+        // Bubble series (#18940)
+        const bigRadius = 60;
+        chart.addSeries({
+            type: 'bubble',
+            maxSize: bigRadius * 2,
+            minSize: 20,
+            data: [
+                [1, 9, 2],
+                [1.2, 9, 1],
+                [1.2, 6, 1]
+            ]
+        });
+        controller.setPosition(
+            chart.plotLeft + chart.series[2].points[0].plotX + bigRadius + 7,
+            chart.plotTop + chart.series[2].points[0].plotY
+        );
+        // Mouse move between the bubbles should trigger tooltip only for the
+        // first point at the start and the last point close to the end of the
+        // mouse move event due to searchKDTree including radius of the marker.
+        controller.moveTo(
+            chart.plotLeft + chart.series[2].points[0].plotX + bigRadius + 7,
+            chart.plotTop + chart.series[2].points[0].plotY + 70
+        );
+        assert.strictEqual(
+            events.pop(),
+            'mouseOver.2.2',
+            'mousemove ends close to 2.2: mouseOver fired on series[2].points[2]'
+        );
+        assert.ok(
+            events.indexOf('mouseOver.2.0') !== -1,
+            'mousemove close to 2.0: mouseOver fired on series[2].points[0]'
+        );
+        assert.strictEqual(
+            events.indexOf('mouseOver.2.1'),
+            -1,
+            'mousemove should never trigger mouseOver for series[2].points[1]'
         );
     }
 );

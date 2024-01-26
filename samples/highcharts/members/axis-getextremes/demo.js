@@ -3,13 +3,14 @@ const chart = Highcharts.chart('container', {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+            135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
     }]
 });
 
 // the button action
 document.getElementById('button').addEventListener('click', e => {
-    var extremes = chart.yAxis[0].getExtremes();
+    const extremes = chart.yAxis[0].getExtremes();
 
     chart.renderer.label(
         'dataMax: ' + extremes.dataMax + '<br/>' +

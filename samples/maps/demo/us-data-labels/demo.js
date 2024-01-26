@@ -56,7 +56,14 @@
         colorAxis: {
             labels: {
                 format: '{value}%'
-            }
+            },
+            stops: [
+                [0.2, '#188e2a'], // Green
+                [0.5, '#fee401'], // Yellow
+                [1, '#df1309'] // Red
+            ],
+            min: 0,
+            max: 8
         },
 
         series: [{
@@ -75,7 +82,7 @@
                 valueSuffix: '%'
             }
         }, {
-            // The connector lines
+        // The connector lines
             type: 'mapline',
             data: Highcharts.geojson(topology, 'mapline'),
             color: 'silver',

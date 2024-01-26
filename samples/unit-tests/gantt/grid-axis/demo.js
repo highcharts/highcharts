@@ -610,7 +610,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
-    const types = ['line', 'column', 'bar', 'bubble'];
+    const types = ['line', 'column', /*'bar',*/ 'bubble'];
 
     const options = {
         chart: {
@@ -691,7 +691,11 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             const axis = axes[i],
                 $axisGroup = $(axis.axisGroup.element),
                 axisGroupBox = $axisGroup[0].getBBox(),
-                ticks = $axisGroup.find('.highcharts-tick'),
+                ticks = [
+                    ...axis.axisGroup.element.querySelectorAll(
+                        '.highcharts-tick'
+                    )
+                ].sort((a, b) => a.getBBox().x - b.getBBox().x),
                 leftTick = ticks[0].getBBox(),
                 rightTick = ticks.slice(-1)[0].getBBox();
 
@@ -1288,7 +1292,8 @@ QUnit.module('labels alignment', function () {
 
         /**
          * Test label positions on the x and yAxis with a single line.
-         * NOTE: options and chart must be set again, due to tests running async.
+         * NOTE: options and chart must be set again, due to tests running
+         * async.
          */
         optionsAxis.labels.useHTML = false;
         optionsAxis.categories = categories;
@@ -1328,7 +1333,8 @@ QUnit.module('labels alignment', function () {
 
         /**
          * Test label positions on the x and yAxis with a single line.
-         * NOTE: options and chart must be set again, due to tests running async.
+         * NOTE: options and chart must be set again, due to tests running
+         * async.
          */
         optionsAxis.categories = map(categories, function (str) {
             return '<span>' + str + '<span>';
@@ -1860,6 +1866,46 @@ QUnit.test(
             '2019',
             '#15692: Primary axis should show years'
         );
+
+        chart.setSize(800);
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2018, 6, 2),
+                    end: Date.UTC(2019, 6, 1)
+                }]
+            }],
+            xAxis: [{
+                units: [['month', [6]]]
+            }, {
+                units: [['year', null]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.map(tickPosition =>
+                chart.xAxis[0].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Primary axis should show months when xAxis.units set (#16626)'
+        );
+
+        chart.update({
+            xAxis: [{
+                units: [['year', null]]
+            }, {
+                units: [['month', [6]]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[1].tickPositions.map(tickPosition =>
+                chart.xAxis[1].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Secondary axis should show months when xAxis.units set (#16626)'
+        );
     }
 );
 
@@ -1985,6 +2031,24 @@ QUnit.test(
             chart.yAxis[0].scrollbar,
             'Only one scrollbar should be visible.'
         );
+
+        const [series] = chart.series;
+        chart.update({
+            yAxis: {
+                min: undefined,
+                max: undefined
+            }
+        });
+
+        series.hide();
+        assert.ok(true, 'Hiding the series should not throw an error');
+        assert.strictEqual(
+            series.group.attr('visibility'),
+            'hidden',
+            'The series should be hidden'
+        );
+
+        series.show();
     }
 );
 
@@ -2141,24 +2205,109 @@ QUnit.test(
 );
 
 QUnit.test('slotWidth', assert => {
-    const chart = Highcharts.ganttChart('container', {
+    let chart = Highcharts.ganttChart('container', {
         chart: {
-            width: 600
+            width: 1000
         },
+
+        yAxis: {
+            type: 'category',
+            grid: {
+                enabled: true,
+                borderColor: 'rgba(0,0,0,0.3)',
+                borderWidth: 1,
+                columns: [{
+                    title: {
+                        text: 'Regular Title',
+                        style: {
+                            width: 100
+                        }
+                    },
+                    labels: {
+                        format: '{point.name}'
+                    }
+                }, {
+                    title: {
+                        text: 'The quick brown fox jumps over the lazy dog'
+                    },
+                    labels: {
+                        format: '{point.assignee}'
+                    }
+                }]
+            }
+        },
+
         series: [{
-            data: [
-                {
-                    start: Date.UTC(2017, 8, 1),
-                    end: Date.UTC(2017, 11, 4)
-                }
-            ]
+            name: 'Project 1',
+            data: [{
+                start: Date.UTC(2017, 8, 1),
+                end: Date.UTC(2017, 11, 4),
+                name: 'Start prototye',
+                assignee: 'Ola Nordmann',
+                y: 0
+            }]
         }]
     });
 
-    const axis = chart.xAxis[1];
+    const xAxis = chart.xAxis[1],
+        yAxis = chart.yAxis[0];
 
     assert.ok(
-        axis.ticks[axis.tickPositions[3]].slotWidth < 30,
+        xAxis.ticks[xAxis.tickPositions[3]].slotWidth < 30,
         '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
+    );
+
+    assert.ok(
+        yAxis.axisTitle.getBBox().width <= yAxis.ticks[0].slotWidth,
+        'The column title should not exceed the cell width'
+    );
+    assert.ok(
+        yAxis.axisTitle.getBBox().width > yAxis.len,
+        'The column title width should not be based on axis length (#19657)'
+    );
+    assert.ok(
+        yAxis.axisTitle.element.textContent.indexOf('...'),
+        'The column title should contain an ellipsis'
+    );
+
+    xAxis.remove();
+    chart.xAxis[0].update({
+        tickInterval: 1000 * 60 * 60 * 24 * 30,
+        min: Date.UTC(2016, 11, 31),
+        max: Date.UTC(2018, 1, 30)
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[0],
+        chart.xAxis[0].min,
+        'First tick on x-axis should be set to x-axis min value (#19845).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[chart.xAxis[0].tickPositions.length - 1],
+        chart.xAxis[0].max,
+        'Last tick on x-axis should be set to x-axis max value (#19845).'
+    );
+
+    chart = Highcharts.ganttChart('container', {
+        chart: {
+            inverted: true
+        },
+        xAxis: [{
+            tickInterval: 563609302.32558
+        }],
+        series: [{
+            data: [{
+                start: Date.UTC(2018, 11, 1),
+                end: Date.UTC(2018, 11, 2)
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        2,
+        `For inverted chart, grid x-axis should be closed from both sides
+        with two ticks.`
     );
 });

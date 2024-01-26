@@ -1,4 +1,10 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+(async () => {
+
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
+
     const length = data.length;
     // The control point's visibility
     let cpVisibility = true;
@@ -58,4 +64,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         }]
 
     });
-});
+})();

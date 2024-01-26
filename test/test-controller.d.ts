@@ -2,11 +2,13 @@
  *
  *  Copyright (c) Highsoft AS. All rights reserved.
  *
+ *  Transpile with `npx gulp scripts && npx gulp jsdoc-dts && npx tsc -b test`.
+ *
  *!*/
 /**
  * Contains x and y position relative to the chart.
  */
-declare type TestControllerPoint = [number, number];
+type TestControllerPoint = [number, number];
 /**
  * SVG clip paths
  */
@@ -256,6 +258,25 @@ declare class TestController {
      * might catch events and mess up the test result.
      */
     mouseUp(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    /**
+     * Triggers mouse wheel event on the chart.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     *
+     * @param extra
+     * Extra properties for the event arguments for the scroll deltas.
+     * For only `deltaY`, use number primitive.
+     *
+     * @param debug
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
+     */
+    mouseWheel(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
     /**
      * Move the cursor from current position to a new one. Fire a series of
      * mousemoves, also mouseout and mouseover if new targets are found.

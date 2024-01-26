@@ -3,13 +3,12 @@
 (function (H) {
     if (window.zipcelx && H.getOptions().exporting) {
         H.Chart.prototype.downloadXLSX = function () {
-            var div = document.createElement('div'),
-                name,
-                xlsxRows = [],
-                rows;
+            const div = document.createElement('div');
+            let name,
+                xlsxRows = [];
             div.style.display = 'none';
             document.body.appendChild(div);
-            rows = this.getDataRows(true);
+            const rows = this.getDataRows(true);
             xlsxRows = rows.slice(1).map(function (row) {
                 return row.map(function (column) {
                     return {
@@ -48,7 +47,8 @@
         };
 
         // Replace the menu item
-        var menuItems = H.getOptions().exporting.buttons.contextButton.menuItems;
+        const menuItems =
+         H.getOptions().exporting.buttons.contextButton.menuItems;
         menuItems[menuItems.indexOf('downloadXLS')] = 'downloadXLSX';
     }
 
@@ -69,6 +69,11 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [29.9, 71.5,
+            106.4, 129.2,
+            144.0, 176.0,
+            135.6, 148.5,
+            216.4, 194.1,
+            95.6, 54.4]
     }]
 });

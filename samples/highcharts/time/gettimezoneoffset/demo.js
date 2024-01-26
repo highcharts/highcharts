@@ -5,7 +5,7 @@ Highcharts.setOptions({
          * timestamps, used in the X axis labels and the tooltip header.
          */
         getTimezoneOffset: function (timestamp) {
-            var zone = 'Europe/Oslo',
+            const zone = 'Europe/Oslo',
                 timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
 
             return timezoneOffset;
@@ -29,9 +29,8 @@ Highcharts.chart('container', {
 
     series: [{
         data: (function () {
-            var arr = [],
-                i;
-            for (i = 0; i < 16; i = i + 1) {
+            const arr = [];
+            for (let i = 0; i < 16; i = i + 1) {
                 arr.push(i);
             }
             return arr;

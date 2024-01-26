@@ -25,7 +25,7 @@ function getSubtitle() {
 
 (async () => {
     dataset = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@88f2067/samples/data/nuclear-energy-production.json'
+        'https://www.highcharts.com/samples/data/nuclear-energy-production.json'
     ).then(response => response.json());
 
     chart = Highcharts.chart('container', {

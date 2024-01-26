@@ -1,0 +1,45 @@
+.highcharts-figure {
+    min-width: 360px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.smallerLabel {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+small {
+    font-size: 0.6em;
+}
+
+.innerTable {
+    font-size: 0.9em;
+}
+
+table.innerTable td {
+    padding: 0;
+}
+
+.symbol {
+    font-size: 2em;
+}
+
+.uppercase {
+    text-transform: uppercase;
+    font-size: 1.3em;
+}
+
+.label {
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+.percentage {
+    font-weight: bold;
+    font-size: 2em;
+}
+
+#csv {
+    display: none;
+}

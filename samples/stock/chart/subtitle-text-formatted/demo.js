@@ -1,19 +1,26 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    title: {
-        text: 'The title'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    subtitle: {
-        text: 'This text has <b>bold</b>, <i>italic</i>, <span style="color: red">coloured</span>, <a href="http://example.com">linked</a> and<br/>line-broken text.'
-    },
+    Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 1
-    },
+        title: {
+            text: 'The title'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        subtitle: {
+            text: 'This text has <b>bold</b>, <i>italic</i>, <span style="color: red">coloured</span>, <a href="http://example.com">linked</a> and<br/>line-broken text.'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

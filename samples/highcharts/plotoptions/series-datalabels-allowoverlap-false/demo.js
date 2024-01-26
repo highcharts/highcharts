@@ -7,7 +7,7 @@ const chart = Highcharts.chart('container', {
     },
     series: [{
         data: ((arr, len) => {
-            var i;
+            let i;
             for (i = 0; i < len; i = i + 1) {
                 arr.push(i);
             }

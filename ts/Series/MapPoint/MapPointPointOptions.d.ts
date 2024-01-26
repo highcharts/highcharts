@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,7 @@
  *
  * */
 
-import { GeoJSONGeometryPoint } from '../../Maps/GeoJSON';
+import type { GeoJSONGeometryPoint } from '../../Maps/GeoJSON';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -31,5 +31,11 @@ export interface MapPointPointOptions extends ScatterPointOptions {
     x?: number;
     y?: (number|null);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapPointPointOptions;

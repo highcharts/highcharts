@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,5 +25,11 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
     // nothing here yet
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Scatter3DSeriesOptions;

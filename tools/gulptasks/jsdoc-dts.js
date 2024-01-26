@@ -11,6 +11,7 @@ const gulp = require('gulp');
  * */
 
 const productBundles = [
+    'custom',
     'highcharts',
     'highcharts-gantt',
     'highmaps',
@@ -38,6 +39,7 @@ function jsDocESMDTS() {
         .filter(file => (
             file.endsWith('.src.d.ts') &&
             !file.endsWith('globals.src.d.ts') &&
+            !file.includes('dashboards') &&
             !file.includes('es-modules')
         ));
     const path = require('path');
@@ -61,12 +63,12 @@ function jsDocESMDTS() {
                 product => dtsFile.endsWith(`${product}.src.d.ts`)
             ) ?
                 [
-                    `import * as Highcharts from '${source}';`,
+                    `import * as Highcharts from '${fsLib.path(source, true)}';`,
                     'export default Highcharts;',
                     ''
                 ].join('\n') :
                 [
-                    `import '${source}';`,
+                    `import '${fsLib.path(source, true)}';`,
                     ''
                 ].join('\n')
         ));
@@ -85,12 +87,18 @@ function jsDocESMDTS() {
  */
 function jsDocDTS() {
 
+    const argv = require('yargs').argv;
     const gulpLib = require('./lib/gulp');
     const highchartsDeclarationsGenerator = require(
         '@highcharts/highcharts-declarations-generator'
     );
 
     return new Promise((resolve, reject) => {
+
+        if (argv.custom) {
+            highchartsDeclarationsGenerator.config
+                .mainModule = 'code/custom';
+        }
 
         gulpLib
             .requires([], ['jsdoc-namespace', 'jsdoc-options'])

@@ -1,4 +1,4 @@
-var eventsData = [{
+const eventsData = [{
     x: -7889270400000,
     y: 1,
     lbl: 'The Mississippi Bubble',
@@ -349,7 +349,7 @@ Highcharts.stockChart('container', {
             'white-space': 'normal'
         },
         formatter: function () {
-            var tooltipString = '<div>';
+            let tooltipString = '<div>';
 
             if (this.series.name === 'Series 1') {
                 return false;
@@ -429,12 +429,10 @@ Highcharts.stockChart('container', {
         chart.container,
         document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel',
         function (event) {
-            var range, delta, extr, step, newMin, newMax,
-                axis = chart.xAxis[0],
-                prevent = true,
-                e;
-
-            e = chart.pointer.normalize(event);
+            let range, delta, extr, step, newMin, newMax,
+                prevent = true;
+            const axis = chart.xAxis[0];
+            const e = chart.pointer.normalize(event);
             // Firefox uses e.detail, WebKit and IE uses wheelDelta
             delta = e.detail || -(e.wheelDelta / 120);
             delta = delta < 0 ?

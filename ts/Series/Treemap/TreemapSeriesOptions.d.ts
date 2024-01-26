@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2021 Highsoft AS
+ *  (c) 2014-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -95,5 +95,11 @@ export interface TreemapSeriesUpButtonPositionOptions {
     x?: number;
     y?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreemapSeriesOptions;

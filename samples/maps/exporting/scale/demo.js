@@ -4,49 +4,50 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    let chart;
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
 
-        // Initialize the chart
-        chart = Highcharts.mapChart('container', {
+    // Initialize the chart
+    const chart = Highcharts.mapChart('container', {
 
+        title: {
+            text: 'Exporting scale demonstrated'
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        legend: {
             title: {
-                text: 'Exporting scale demonstrated'
-            },
+                text: 'Population density per km²'
+            }
+        },
 
-            credits: {
-                enabled: false
-            },
+        colorAxis: {
+            min: 1,
+            max: 1000,
+            type: 'logarithmic'
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
-                }
-            },
-
-            legend: {
-                title: {
-                    text: 'Population density per km²'
-                }
-            },
-
-            colorAxis: {
-                min: 1,
-                max: 1000,
-                type: 'logarithmic'
-            },
-
-            series: [{
-                data: data,
-                mapData: topology,
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                tooltip: {
-                    valueSuffix: '/km²'
-                }
-            }]
-        });
+        series: [{
+            data: data,
+            mapData: topology,
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            tooltip: {
+                valueSuffix: '/km²'
+            }
+        }]
     });
 
     const expScale = scale => {

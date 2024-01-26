@@ -1,5 +1,5 @@
-var hour = 3600 * 1000;
-var data = [
+const hour = 3600 * 1000;
+const data = [
     [0.2 * hour, 1], // first group
     [1 * hour, 2], // first group
     [1.3 * hour, 2], // first group

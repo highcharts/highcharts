@@ -1,12 +1,13 @@
 #container {
-    width: 100%;
     min-width: 320px;
-    max-height: 380px;
+    max-height: 480px;
 }
 
 /* styles for testing */
 body {
     color: white;
+
+    /* margin-top: -80px; */
 }
 
 .btn-small {
@@ -40,13 +41,7 @@ body {
     opacity: 0;
 }
 
-@media screen  and (min-width: 996px) {
-    #container {
-        width: 100%;
-        min-width: 480px;
-        min-height: 600px;
-    }
-
+@media screen  and (min-width: 992px) {
     .highcharts-root image.move {
         transform: translate(-435px, 185px)  scale(3, 4);
     }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,8 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
-import type Pane from '../../Extensions/Pane';
+import type Pane from '../../Extensions/Pane/Pane';
+import type { PaneBackgroundShapeValue } from '../../Extensions/Pane/PaneOptions.js';
 import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
 import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
@@ -29,11 +30,13 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
-import AxisDefaults from './AxisDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -41,8 +44,10 @@ const {
     defined,
     extend,
     fireEvent,
+    isObject,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     wrap
 } = U;
@@ -75,7 +80,7 @@ declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
         innerRadius?: (number|string);
         outerRadius?: (number|string);
-        shape?: Highcharts.PaneBackgroundShapeValue;
+        shape?: PaneBackgroundShapeValue;
         thickness?: (number|string);
     }
 }
@@ -116,7 +121,6 @@ namespace RadialAxis {
         angleRad: number;
         autoConnect?: boolean;
         center: Array<number>;
-        defaultPolarOptions: DeepPartial<Options>;
         endAngleRad: number;
         isCircular?: boolean;
         isHidden?: boolean;
@@ -149,7 +153,7 @@ namespace RadialAxis {
             from: number,
             to: number,
             options: PlotBandOptions
-        ): Path;
+        ): SVGPath;
         getPlotLinePath(options: PlotLineOptions): SVGPath;
         getPosition(
             value: number,
@@ -165,13 +169,8 @@ namespace RadialAxis {
         setOptions(userOptions: DeepPartial<Options>): void;
     }
 
-    interface Options extends YAxisOptions {
-        // nothing to add yet
-    }
-
-    interface Path extends SVGPath {
-        xBounds?: Array<number>;
-        yBounds?: Array<number>;
+    export interface Options extends YAxisOptions {
+        // Nothing to add yet
     }
 
     export declare class TickComposition extends Tick {
@@ -183,8 +182,6 @@ namespace RadialAxis {
      *  Constants
      *
      * */
-
-    const composedMembers: Array<unknown> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -211,24 +208,30 @@ namespace RadialAxis {
      * @private
      */
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
+        endOnTick: false,
+        gridLineWidth: 0,
         labels: {
             align: 'center',
             distance: -25,
             x: 0,
-            y: void 0 // auto
+            y: void 0 // Auto
         },
+        lineWidth: 1,
         minorGridLineWidth: 0,
         minorTickInterval: 'auto',
         minorTickLength: 10,
         minorTickPosition: 'inside',
         minorTickWidth: 1,
+        startOnTick: false,
         tickLength: 10,
+        tickPixelInterval: 100,
         tickPosition: 'inside',
         tickWidth: 2,
         title: {
-            rotation: 0
+            rotation: 0,
+            text: ''
         },
-        zIndex: 2 // behind dials, points in the series group
+        zIndex: 2 // Behind dials, points in the series group
     };
 
     /**
@@ -351,7 +354,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -377,9 +380,7 @@ namespace RadialAxis {
                 'initialAxisTranslation',
                 onAxisInitialAxisTranslation
             );
-        }
 
-        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',
@@ -509,7 +510,7 @@ namespace RadialAxis {
         _lineWidth: number,
         radius?: number,
         innerRadius?: number
-    ): Path {
+    ): SVGPath {
         const center = this.pane.center,
             chart = this.chart,
             left = this.left || 0,
@@ -517,7 +518,7 @@ namespace RadialAxis {
 
         let end,
             r = pick(radius, center[2] / 2 - this.offset),
-            path: Path;
+            path: SVGPath;
 
         if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
@@ -588,7 +589,7 @@ namespace RadialAxis {
         from: number,
         to: number,
         options: PlotBandOptions
-    ): Path {
+    ): SVGPath {
 
         const chart = this.chart,
             radiusToPixels = (
@@ -617,7 +618,7 @@ namespace RadialAxis {
             angle,
             xOnPerimeter,
             open,
-            path: Path,
+            path: SVGPath,
             outerRadius = pick(
                 radiusToPixels(options.outerRadius),
                 fullRadius
@@ -1053,7 +1054,6 @@ namespace RadialAxis {
             isX = this.isXAxis,
             coll = this.coll,
             isHidden = angular && isX,
-            chartOptions = chart.options,
             paneIndex = e.userOptions.pane || 0,
             pane = this.pane = chart.pane && chart.pane[paneIndex] as any;
 
@@ -1074,31 +1074,12 @@ namespace RadialAxis {
                 modify(this);
             }
             isCircular = !isX;
-            if (isCircular) {
-                this.defaultPolarOptions = defaultRadialGaugeOptions;
-            }
 
         } else if (polar) {
             modify(this);
 
             // Check which axis is circular
             isCircular = this.horiz;
-
-            this.defaultPolarOptions = isCircular ?
-                defaultCircularOptions :
-                merge(
-                    coll === 'xAxis' ?
-                        AxisDefaults.defaultXAxisOptions :
-                        AxisDefaults.defaultYAxisOptions,
-                    defaultRadialOptions
-                );
-
-            // Apply the stack labels for yAxis in case of inverted chart
-            if (inverted && coll === 'yAxis') {
-                this.defaultPolarOptions.stackLabels = AxisDefaults
-                    .defaultYAxisOptions.stackLabels;
-                this.defaultPolarOptions.reversedStacks = true;
-            }
         }
 
         // Disable certain features on angular and polar axes
@@ -1445,10 +1426,39 @@ namespace RadialAxis {
         this: AxisComposition,
         userOptions: DeepPartial<Options>
     ): void {
+        const { coll } = this;
+        const { angular, inverted, polar } = this.chart;
+
+        let defaultPolarOptions: DeepPartial<Options> = {};
+
+        if (angular) {
+            if (!this.isXAxis) {
+                defaultPolarOptions = merge(
+                    defaultOptions.yAxis,
+                    defaultRadialGaugeOptions
+                );
+            }
+        } else if (polar) {
+            defaultPolarOptions = this.horiz ?
+                merge(defaultOptions.xAxis, defaultCircularOptions) :
+                merge(
+                    coll === 'xAxis' ?
+                        defaultOptions.xAxis :
+                        defaultOptions.yAxis,
+                    defaultRadialOptions
+                );
+        }
+
+        if (inverted && coll === 'yAxis') {
+            defaultPolarOptions.stackLabels = isObject(
+                defaultOptions.yAxis, true
+            ) ? defaultOptions.yAxis.stackLabels : {};
+            defaultPolarOptions.reversedStacks = true;
+        }
+
+
         const options = this.options = merge<Options>(
-            (this.constructor as typeof Axis).defaultOptions,
-            this.defaultPolarOptions,
-            (defaultOptions as any)[this.coll], // #16112
+            defaultPolarOptions as Options,
             userOptions
         );
 

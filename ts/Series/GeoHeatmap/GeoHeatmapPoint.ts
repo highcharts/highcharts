@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -38,6 +38,26 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/KDPointSearchObjectLike' {
+    interface KDPointSearchObjectLike {
+        lat?: number;
+        lon?: number;
+    }
+}
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        lat?: number;
+        lon?: number;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -50,9 +70,13 @@ class GeoHeatmapPoint extends MapPoint {
      *
      * */
 
-    public options: GeoHeatmapPointOptions = void 0 as any;
+    public lat!: number;
 
-    public series: GeoHeatmapSeries = void 0 as any;
+    public lon!: number;
+
+    public options!: GeoHeatmapPointOptions;
+
+    public series!: GeoHeatmapSeries;
 
     /* *
      *

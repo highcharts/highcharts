@@ -459,4 +459,81 @@ QUnit.test('Touch and panning', function (assert) {
         true,
         'Touch-device panning allows panning outside the xAxis options: min & max (#10633)'
     );
+
+    chart.update({
+        chart: {
+            inverted: true,
+            zooming: {
+                type: 'xy'
+            }
+        },
+        xAxis: {
+            min: void 0,
+            max: void 0
+        }
+    }, false);
+
+    chart.zoomOut();
+    const {
+        rotation: previousRotation,
+        scaleX: previousScaleX,
+        scaleY: previousScaleY
+    } = chart.series[0].group;
+
+    chart.pointer.onContainerTouchStart({
+        type: 'touchstart',
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop
+            },
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop
+            }
+        ],
+        preventDefault: function () {}
+    });
+
+    chart.pointer.onContainerTouchMove({
+        type: 'touchmove',
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop + 100
+            },
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop
+            }
+        ],
+        preventDefault: function () {}
+    });
+
+    chart.pointer.onDocumentTouchEnd({
+        type: 'touchend',
+        touches: [
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop + 100
+            },
+            {
+                pageX: offset.left + chart.plotLeft + chart.plotWidth / 2,
+                pageY: offset.top + chart.plotTop
+            }
+        ]
+    });
+
+    const {
+        rotation: actualRotation,
+        scaleX: actualScaleX,
+        scaleY: actualScaleY
+    } = chart.series[0].group;
+
+    assert.deepEqual(
+        [previousRotation, previousScaleX, previousScaleY],
+        [actualRotation, actualScaleX, actualScaleY],
+        `After pinching rotation, scaleX and scaleY shouldn't be changed/lost
+        for inverted charts (#19217).`
+    );
 });

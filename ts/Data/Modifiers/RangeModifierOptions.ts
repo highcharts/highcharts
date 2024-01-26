@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -35,7 +35,12 @@ export interface RangeModifierOptions extends DataModifierOptions {
     /**
      * Name of the related modifier for these options.
      */
-    modifier: 'Range';
+    type: 'Range';
+
+    /**
+     * If set to true, multiple ranges will add up instead of reduce.
+     */
+    additive?: boolean;
 
     /**
      * Value ranges to include in the result.
@@ -45,7 +50,7 @@ export interface RangeModifierOptions extends DataModifierOptions {
     /**
      * If set to true, it will also compare the value type.
      */
-    strict: boolean;
+    strict?: boolean;
 
 }
 

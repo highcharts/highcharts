@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -24,9 +24,12 @@ import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    pushUnique
 } = U;
 
 /* *
@@ -78,8 +81,6 @@ export type GraphLayoutType = RFLayout;
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 const integrations: Record<string, GraphIntegrationObject> = {};
 
 const layouts: Record<string, typeof RFLayout> = {};
@@ -97,7 +98,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(ChartClass, 'afterPrint', onChartAfterPrint);
         addEvent(ChartClass, 'beforePrint', onChartBeforePrint);
         addEvent(ChartClass, 'predraw', onChartPredraw);

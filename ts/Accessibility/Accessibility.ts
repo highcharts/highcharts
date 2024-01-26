@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -31,13 +31,17 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -46,11 +50,12 @@ const {
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
-import FocusBorder from './FocusBorder.js';
+import FocusBorderComposition from './FocusBorder.js';
 import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
+import NavigatorComponent from './Components/NavigatorComponent.js';
 import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
 import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
@@ -119,10 +124,10 @@ class Accessibility {
      *
      * */
 
-    public chart: Accessibility.ChartComposition = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
-    public keyboardNavigation: KeyboardNavigation = void 0 as any;
-    public proxyProvider: ProxyProvider = void 0 as any;
+    public chart!: Accessibility.ChartComposition;
+    public components!: Accessibility.ComponentsObject;
+    public keyboardNavigation!: KeyboardNavigation;
+    public proxyProvider!: ProxyProvider;
     public zombie?: boolean; // Zombie object on old browsers
 
 
@@ -131,8 +136,6 @@ class Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -181,7 +184,8 @@ class Accessibility {
             chartMenu: new MenuComponent(),
             rangeSelector: new RangeSelectorComponent(),
             series: new SeriesComponent(),
-            zoom: new ZoomComponent()
+            zoom: new ZoomComponent(),
+            navigator: new NavigatorComponent()
         };
 
         if (a11yOptions.customComponents) {
@@ -344,6 +348,7 @@ namespace Accessibility {
         rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
         zoom: ZoomComponent;
+        navigator: NavigatorComponent;
     }
 
     export declare class ChartComposition extends Chart {
@@ -374,8 +379,6 @@ namespace Accessibility {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const i18nFormat = A11yI18n.i18nFormat;
 
     /* *
@@ -383,8 +386,6 @@ namespace Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroy with chart.
@@ -492,21 +493,22 @@ namespace Accessibility {
         SVGElementClass: typeof SVGElement,
         RangeSelectorClass?: typeof RangeSelector
     ): void {
-        // ordered:
+
+        // Ordered:
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
         LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
-        // RangeSelector
         A11yI18n.compose(ChartClass);
-        FocusBorder.compose(ChartClass, SVGElementClass);
+        FocusBorderComposition.compose(ChartClass, SVGElementClass);
 
+        // RangeSelector
         if (RangeSelectorClass) {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
@@ -550,17 +552,13 @@ namespace Accessibility {
                     }
                 );
             });
-        }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
                 pointOnUpdate
             );
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(

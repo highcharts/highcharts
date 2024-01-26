@@ -14,7 +14,7 @@ mouse/touch event handler to bind the charts together.
     document.getElementById('container').addEventListener(
         eventType,
         function (e) {
-            var chart,
+            let chart,
                 point,
                 i,
                 event;
@@ -56,7 +56,7 @@ Highcharts.Point.prototype.highlight = function (event) {
  * Synchronize zooming through the setExtremes event handler.
  */
 function syncExtremes(e) {
-    var thisChart = this.chart;
+    const thisChart = this.chart;
 
     if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
         Highcharts.each(Highcharts.charts, function (chart) {
@@ -77,7 +77,7 @@ function syncExtremes(e) {
 
 // Get the data. The contents of the data file can be viewed at
 Highcharts.ajax({
-    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/activity.json',
+    url: 'https://www.highcharts.com/samples/data/activity.json',
     dataType: 'text',
     success: function (activity) {
 
@@ -89,7 +89,7 @@ Highcharts.ajax({
                 return [activity.xData[j], val];
             });
 
-            var chartDiv = document.createElement('div');
+            const chartDiv = document.createElement('div');
             chartDiv.className = 'chart';
             document.getElementById('container').appendChild(chartDiv);
 

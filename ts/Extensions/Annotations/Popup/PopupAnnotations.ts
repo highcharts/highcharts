@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -145,7 +145,7 @@ function addToolbar(
 
     // set small size
     if (popupDiv.className.indexOf(toolbarClass) === -1) {
-        popupDiv.className += ' ' + toolbarClass;
+        popupDiv.className += ' ' + toolbarClass + ' highcharts-no-mousewheel';
     }
 
     // set position

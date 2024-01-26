@@ -1,0 +1,45 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+* {
+    transition: background-color 100ms, color 100ms;
+}
+
+.highcharts-description {
+    margin-top: 1em;
+}
+
+.highcharts-point {
+    fill-opacity: 0.5;
+}
+
+.highcharts-dark .highcharts-point {
+    fill-opacity: 0.9;
+}
+
+.datagrid {
+    height: 100%;
+}
+
+#dashboard-col-0 h2 {
+    margin-bottom: 0;
+}
+
+.inputs-wrapper {
+    padding: 12px;
+    background-color: white;
+    box-shadow: none;
+    margin: 1em;
+}
+
+.inputs-wrapper label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-point {
+        fill-opacity: 0.9;
+    }
+}

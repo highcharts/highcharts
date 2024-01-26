@@ -19,4 +19,10 @@ export interface Funnel3DPointOptions extends ColumnPointOptions {
     y?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Funnel3DPointOptions;

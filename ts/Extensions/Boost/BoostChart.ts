@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -30,10 +30,13 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -62,14 +65,6 @@ declare module '../../Core/Chart/ChartLike'{
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -82,7 +77,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
+    if (wglMode && pushUnique(composed, compose)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 
@@ -101,12 +96,30 @@ function getBoostClipRect(
     chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
-    const clipBox = {
+    let clipBox = {
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
-        height: chart.plotHeight
+        height: chart.navigator ? // #17820
+            chart.navigator.top + chart.navigator.height - chart.plotTop :
+            chart.plotHeight
     };
+
+    // Clipping of individal series (#11906, #19039).
+    if ((target as Series).getClipBox) {
+        const { xAxis, yAxis } = target as Series;
+        clipBox = (target as Series).getClipBox();
+        if (chart.inverted) {
+            const lateral = clipBox.width;
+            clipBox.width = clipBox.height;
+            clipBox.height = lateral;
+            clipBox.x = yAxis.pos;
+            clipBox.y = xAxis.pos;
+        } else {
+            clipBox.x = xAxis.pos;
+            clipBox.y = yAxis.pos;
+        }
+    }
 
     if (target === chart) {
         const verticalAxes =
@@ -119,8 +132,6 @@ function getBoostClipRect(
                 chart.plotTop +
                 verticalAxes[0].len
             );
-        } else {
-            clipBox.height = chart.plotHeight;
         }
     }
 
@@ -216,8 +227,11 @@ function isChartSeriesBoosting(
 
     boost.forceChartBoost = allowBoostForce && (
         (
+            // Even when the series that need a boost are less than or equal
+            // to 5, force a chart boost when all series are to be boosted.
+            // See #18815
             canBoostCount === allSeries.length &&
-            needBoostCount > 0
+            needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5
     );
@@ -288,12 +302,10 @@ function onChartCallback(
     }
 
     addEvent(chart, 'predraw', preRender);
-    addEvent(chart, 'render', canvasToSVG);
-
-    // addEvent(chart, 'zoom', function () {
-    //     chart.boostForceChartBoost =
-    //         shouldForceChartSeriesBoosting(chart);
-    // });
+    // Use the load event rather than redraw, otherwise user load events will
+    // fire too early (#18755)
+    addEvent(chart, 'load', canvasToSVG, { order: -1 });
+    addEvent(chart, 'redraw', canvasToSVG);
 
     let prevX = -1;
     let prevY = -1;

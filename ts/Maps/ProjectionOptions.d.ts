@@ -8,17 +8,36 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { MapBounds } from './MapViewOptions';
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 export type ProjectionRotationOption = (
     [number, number]|[number, number, number]
 );
 
 export interface ProjectionOptions {
-    projectedBounds?: 'world'|MapBounds;
-    name?: string;
+    projectedBounds?: ('world'|MapBounds);
+    name?: ProjectionRegistryName;
     parallels?: number[];
     rotation?: ProjectionRotationOption;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ProjectionOptions;

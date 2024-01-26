@@ -43,10 +43,25 @@ Highcharts.chart('container', {
         type: 'logarithmic'
     }],
     series: [{
-        data: [Date.UTC(2000, 0, 12), Date.UTC(2015, 0, 1, 15, 20), 0, Date.UTC(2018, 0, 1), 0.5]
+        data: [
+            Date.UTC(2000, 0, 12),
+            Date.UTC(2015, 0, 1, 15, 20),
+            0,
+            Date.UTC(2018, 0, 1),
+            0.5]
     }, {
-        data: [Date.UTC(2000, 0, 18), Date.UTC(2015, 0, 1, 11, 56), 2, Date.UTC(2017, 0, 1), 15600]
+        data: [
+            Date.UTC(2000, 0, 18),
+            Date.UTC(2015, 0, 1, 11, 56),
+            2,
+            Date.UTC(2017, 0, 1),
+            15600]
     }, {
-        data: [Date.UTC(2000, 0, 21), Date.UTC(2015, 0, 1, 22, 44), 1, Date.UTC(2016, 0, 1), 5000]
+        data: [
+            Date.UTC(2000, 0, 21),
+            Date.UTC(2015, 0, 1, 22, 44),
+            1,
+            Date.UTC(2016, 0, 1),
+            5000]
     }]
 });

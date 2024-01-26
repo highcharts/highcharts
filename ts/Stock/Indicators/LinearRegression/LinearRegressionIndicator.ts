@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Kamil Kulig
+ *  (c) 2010-2024 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -138,9 +138,9 @@ class LinearRegressionIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionPoint> = void 0 as any;
+    public data!: Array<LinearRegressionPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionPoint>;
 
     /* *
      *

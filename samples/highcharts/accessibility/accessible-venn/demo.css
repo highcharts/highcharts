@@ -10,7 +10,7 @@ body {
     white-space: nowrap;
     clip: rect(1px, 1px, 1px, 1px);
     margin-top: -3px;
-    filter: alpha(opacity=1);
+    filter: opacity(1);
     opacity: 1%;
 }
 
@@ -159,7 +159,7 @@ body {
 }
 
 .data-label.over {
-    opacity: 100%;
+    opacity: 1;
     z-index: 1000;
 }
 
@@ -189,13 +189,13 @@ body {
     font-size: 16px;
     line-height: 22px;
     color: #000;
-    opacity: 0%;
+    opacity: 0;
     white-space: normal;
     grid-column: 1 /span 2;
 }
 
 .data-label.over .info {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .data-label.over p,
@@ -205,7 +205,7 @@ body {
 }
 
 #innovation p {
-    opacity: 0%;
+    opacity: 0;
     margin-bottom: 45px;
     height: fit-content;
 }
@@ -329,23 +329,23 @@ body {
 }
 
 #innovation h4.open {
-    opacity: 0%;
+    opacity: 0;
     margin-top: 20px;
     font-weight: bold;
 }
 
 #innovation h4.closed {
-    opacity: 100%;
+    opacity: 1;
 }
 
 #innovation.over h4.open {
-    opacity: 100%;
+    opacity: 1;
     margin-top: 70px;
     color: #fff;
 }
 
 #innovation.over h4.closed {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #reach.over a:hover {
@@ -361,7 +361,7 @@ body {
 
 #innovation.over p {
     margin-bottom: 30px;
-    opacity: 100%;
+    opacity: 1;
     display: block;
     color: #fff;
 }
@@ -515,7 +515,7 @@ body {
 
 #container svg {
     transform: scale(1, 0.8);
-    opacity: 60%;
+    opacity: 0.6;
 }
 
 .fas,

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,13 +16,14 @@
 
 import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
  *
  *  Declarations
  *
  * */
+
 interface DumbbellPointOptions extends AreaRangePointOptions {
     connectorColor?: ColorType;
     connectorWidth?: number;
@@ -32,7 +33,7 @@ interface DumbbellPointOptions extends AreaRangePointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

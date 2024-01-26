@@ -1,16 +1,18 @@
 function getLinearRegression(xData, yData) {
-    var sumX = 0,
+    let sumX = 0,
         sumY = 0,
         sumXY = 0,
         sumX2 = 0,
-        linearData = [],
+        x,
+        y;
+
+    const linearData = [],
         linearXData = [],
         linearYData = [],
-        n = xData.length,
-        alpha, beta, i, x, y;
+        n = xData.length;
 
     // Get sums:
-    for (i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         x = xData[i];
         y = yData[i];
         sumX += x;
@@ -20,14 +22,16 @@ function getLinearRegression(xData, yData) {
     }
 
     // Get slope and offset:
-    alpha = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    let alpha = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+
     if (isNaN(alpha)) {
         alpha = 0;
     }
-    beta = (sumY - alpha * sumX) / n;
+
+    const beta = (sumY - alpha * sumX) / n;
 
     // Calculate linear regression:
-    for (i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         x = xData[i];
         y = alpha * x + beta;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,6 +34,7 @@ const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
+    composed,
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
@@ -53,6 +54,7 @@ const {
     objectEach,
     offset,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -116,13 +118,6 @@ class Pointer {
      *
      * */
 
-    public constructor(chart: Chart, options: Options) {
-        this.chart = chart;
-        this.hasDragged = false;
-        this.options = options;
-        this.init(chart, options);
-    }
-
     /* *
      *
      *  Properties
@@ -133,7 +128,7 @@ class Pointer {
 
     public chartPosition?: Pointer.ChartPositionObject;
 
-    public hasDragged: (false|number);
+    public hasDragged: (false|number) = false;
 
     public hasPinched?: boolean;
 
@@ -157,7 +152,7 @@ class Pointer {
 
     public res?: boolean;
 
-    public runChartClick: boolean = false;
+    public runChartClick?: boolean;
 
     public selectionMarker?: SVGElement;
 
@@ -582,7 +577,7 @@ class Pointer {
         // (#877)
         if (chart && isNumber(chart.index)) {
             css(chart.container, { cursor: chart._cursor as any });
-            chart.cancelClick = this.hasDragged > 10; // #370
+            chart.cancelClick = +this.hasDragged > 10; // #370
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
         }
@@ -998,16 +993,14 @@ class Pointer {
      * The root options object. The pointer uses options from the chart and
      * tooltip structures.
      */
-    public init(chart: Chart, options: Options): void {
+    public constructor(chart: Chart, options: Options) {
 
         // Store references
         this.options = options;
         this.chart = chart;
 
         // Do we need to handle click on a touch device?
-        this.runChartClick = Boolean(
-            options.chart.events && options.chart.events.click
-        );
+        this.runChartClick = Boolean(options.chart.events?.click);
 
         this.pinchDown = [];
         this.lastValidTouch = {};
@@ -1169,6 +1162,8 @@ class Pointer {
 
         e = this.normalize(e);
 
+        this.onContainerMouseMove(e);
+
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
@@ -1200,7 +1195,7 @@ class Pointer {
             tooltip = chart.tooltip,
             pEvt = this.normalize(e);
 
-        this.setHoverChartIndex();
+        this.setHoverChartIndex(e);
 
         if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
@@ -1598,7 +1593,8 @@ class Pointer {
 
         selectionMarker[wh] = selectionWH;
         selectionMarker[xy] = selectionXY;
-        transform[scaleKey] = scale;
+        // Invert scale if needed (#19217)
+        transform[scaleKey] = scale * (inverted && !horiz ? -1 : 1);
         transform['translate' + XY] = (transformScale * plotLeftTop) +
             (touch0Now - (transformScale * touch0Start));
     }
@@ -1902,7 +1898,8 @@ class Pointer {
 
         // Scale each series
         chart.series.forEach(function (series): void {
-            const seriesAttribs = attribs || series.getPlotBox(); // #1701
+            const seriesAttribs =
+                attribs || series.getPlotBox('series'); // #1701 and #19217
             if (
                 series.group &&
                 (
@@ -1912,7 +1909,10 @@ class Pointer {
             ) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
-                    series.markerGroup.attr(seriesAttribs);
+                    series.markerGroup.attr(
+                        // #20018
+                        attribs || series.getPlotBox('marker')
+                    );
                     series.markerGroup.clip(
                         clip ? (chart.clipRect as any) : (null as any)
                     );
@@ -1943,16 +1943,18 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
-        this.eventsToUnbind.push(addEvent(
-            container,
-            'mouseenter',
-            this.onContainerMouseEnter.bind(this)
-        ));
-        this.eventsToUnbind.push(addEvent(
-            container,
-            'mouseleave',
-            this.onContainerMouseLeave.bind(this)
-        ));
+        this.eventsToUnbind.push(
+            addEvent(
+                container,
+                'mouseenter',
+                this.onContainerMouseEnter.bind(this)
+            ),
+            addEvent(
+                container,
+                'mouseleave',
+                this.onContainerMouseLeave.bind(this)
+            )
+        );
         if (!Pointer.unbindDocumentMouseUp) {
             Pointer.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
@@ -1971,27 +1973,27 @@ class Pointer {
             parent = parent.parentElement;
         }
 
-        if (H.hasTouch) {
-            this.eventsToUnbind.push(addEvent(
+        this.eventsToUnbind.push(
+            addEvent(
                 container,
                 'touchstart',
                 this.onContainerTouchStart.bind(this),
                 { passive: false }
-            ));
-            this.eventsToUnbind.push(addEvent(
+            ),
+            addEvent(
                 container,
                 'touchmove',
                 this.onContainerTouchMove.bind(this),
                 { passive: false }
-            ));
-            if (!Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = addEvent(
-                    ownerDoc,
-                    'touchend',
-                    this.onDocumentTouchEnd.bind(this),
-                    { passive: false }
-                );
-            }
+            )
+        );
+        if (!Pointer.unbindDocumentTouchEnd) {
+            Pointer.unbindDocumentTouchEnd = addEvent(
+                ownerDoc,
+                'touchend',
+                this.onDocumentTouchEnd.bind(this),
+                { passive: false }
+            );
         }
     }
 
@@ -2001,7 +2003,7 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#setHoverChartIndex
      */
-    public setHoverChartIndex(): void {
+    public setHoverChartIndex(e?: MouseEvent): void {
         const chart = this.chart;
         const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
 
@@ -2010,7 +2012,7 @@ class Pointer {
             hoverChart !== chart
         ) {
             hoverChart.pointer.onContainerMouseLeave(
-                { relatedTarget: chart.container } as any
+                e || { relatedTarget: chart.container } as any
             );
         }
 
@@ -2182,16 +2184,6 @@ namespace Pointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedEvents: Array<Function> = [];
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -2200,7 +2192,8 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (U.pushUnique(composedMembers, ChartClass)) {
+
+        if (pushUnique(composed, compose)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch
@@ -2215,18 +2208,6 @@ namespace Pointer {
             });
         }
 
-    }
-
-    /**
-     * @private
-     */
-    export function dissolve(): void {
-
-        for (let i = 0, iEnd = composedEvents.length; i < iEnd; ++i) {
-            composedEvents[i]();
-        }
-
-        composedEvents.length = 0;
     }
 
 }

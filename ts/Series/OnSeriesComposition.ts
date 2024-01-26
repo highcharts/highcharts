@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,12 +20,16 @@ import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 import type Point from '../Core/Series/Point';
 
 import ColumnSeries from './Column/ColumnSeries.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
+import SplinePoint from './Spline/SplinePoint';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
 const {
     defined,
+    pushUnique,
     stableSort
 } = U;
 
@@ -59,19 +63,9 @@ namespace OnSeriesComposition {
 
     /* *
      *
-     *  Properties
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -80,7 +74,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, compose)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;
@@ -183,17 +177,95 @@ namespace OnSeriesComposition {
                                 rightPoint &&
                                 typeof rightPoint[onKey] !== 'undefined'
                             ) {
-                                // the distance ratio, between 0 and 1
-                                distanceRatio =
-                                    ((point.x as any) - leftPoint.x) /
-                                    (rightPoint.x - leftPoint.x);
-                                (point.plotY as any) +=
-                                    distanceRatio *
-                                    // the plotY distance
-                                    (rightPoint[onKey] - leftPoint[onKey]);
-                                (point.y as any) +=
-                                    distanceRatio *
-                                    (rightPoint.y - leftPoint.y);
+                                // If the series is spline, calculate Y of the
+                                // point on the bezier line. #19264
+                                if (
+                                    defined(point.plotX) &&
+                                    onSeries.is('spline')
+                                ) {
+                                    leftPoint = leftPoint as SplinePoint;
+                                    rightPoint = rightPoint as SplinePoint;
+
+                                    const p0 = [
+                                            leftPoint.plotX || 0,
+                                            leftPoint.plotY || 0
+                                        ],
+                                        p3 = [
+                                            rightPoint.plotX || 0,
+                                            rightPoint.plotY || 0
+                                        ],
+                                        p1 = (
+                                            leftPoint.controlPoints?.high ||
+                                            p0
+                                        ),
+                                        p2 = (
+                                            rightPoint.controlPoints?.low ||
+                                            p3
+                                        ),
+                                        pixelThreshold = 0.25,
+                                        maxIterations = 100,
+                                        calculateCoord = (
+                                            t: number,
+                                            key: 0 | 1
+                                        ): number => (
+                                            // The parametric formula for the
+                                            // cubic Bezier curve.
+                                            Math.pow(1 - t, 3) * p0[key] +
+                                            3 * (1 - t) * (1 - t) * t *
+                                            p1[key] + 3 * (1 - t) * t * t *
+                                            p2[key] + t * t * t * p3[key]
+                                        );
+
+                                    let tMin = 0,
+                                        tMax = 1,
+                                        t;
+
+                                    // Find `t` of the parametric function of
+                                    // the bezier curve for the given `plotX`.
+                                    for (let i = 0; i < maxIterations; i++) {
+                                        const tMid = (tMin + tMax) / 2;
+                                        const xMid =
+                                            calculateCoord(tMid, 0);
+
+                                        if (xMid === null) {
+                                            break;
+                                        }
+
+                                        if (
+                                            Math.abs(
+                                                xMid - point.plotX
+                                            ) < pixelThreshold
+                                        ) {
+                                            t = tMid;
+                                            break;
+                                        }
+
+                                        if (xMid < point.plotX) {
+                                            tMin = tMid;
+                                        } else {
+                                            tMax = tMid;
+                                        }
+                                    }
+
+                                    if (defined(t)) {
+                                        point.plotY =
+                                            calculateCoord(t, 1);
+                                        point.y =
+                                            yAxis.toValue(point.plotY, true);
+                                    }
+                                } else {
+                                    // the distance ratio, between 0 and 1
+                                    distanceRatio =
+                                        ((point.x as any) - leftPoint.x) /
+                                        (rightPoint.x - leftPoint.x);
+                                    (point.plotY as any) +=
+                                        distanceRatio *
+                                        // the plotY distance
+                                        (rightPoint[onKey] - leftPoint[onKey]);
+                                    (point.y as any) +=
+                                        distanceRatio *
+                                        (rightPoint.y - leftPoint.y);
+                                }
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,8 +35,9 @@ import type {
  *
  * */
 
-export interface MapSeriesOptions extends ColorAxisComposition.SeriesCompositionOptions, ScatterSeriesOptions
-{
+export interface MapSeriesOptions
+    extends ColorAxisComposition.SeriesCompositionOptions,
+    ScatterSeriesOptions {
     affectsMapView?: boolean;
     data?: (
         Array<(PointOptions|PointShortOptions|MapPointOptions)>|
@@ -46,5 +47,11 @@ export interface MapSeriesOptions extends ColorAxisComposition.SeriesComposition
     nullInteraction?: boolean;
     states?: SeriesStatesOptions<MapSeries>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapSeriesOptions;

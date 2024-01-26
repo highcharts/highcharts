@@ -1,4 +1,4 @@
-var chart = Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
     chart: {
         type: 'candlestick'
     },
@@ -22,7 +22,7 @@ var chart = Highcharts.stockChart('container', {
 
 // Add random point when clicking button
 document.getElementById('add').onclick = function () {
-    var price = Math.round(Math.random() * 100);
+    const price = Math.round(Math.random() * 100);
     chart.series[0].addPoint([
         Math.round(+new Date() / 1000) * 1000,
         price,

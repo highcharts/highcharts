@@ -200,7 +200,7 @@ const network = Highcharts.chart('network', {
         enabled: true,
         outside: true,
         formatter: function () {
-            var info = '';
+            let info = '';
             switch (this.color) {
             case dirDist50:
                 info = 'is an airport <b>more than 50</b> direct distinations';

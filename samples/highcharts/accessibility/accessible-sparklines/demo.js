@@ -1,5 +1,5 @@
 // Table row definitions. The table is built from this data.
-var tableRows = [{
+const tableRows = [{
     trackTitle: 'Education',
     chartData: [178, 184, 167, 183, 160, 138]
 }, {
@@ -21,7 +21,7 @@ var tableRows = [{
 
 
 // Default options for the sparkline charts
-var defaultChartOptions = {
+const defaultChartOptions = {
     chart: {
         type: 'line',
         backgroundColor: 'transparent'
@@ -85,23 +85,24 @@ var defaultChartOptions = {
             width: '200px'
         },
         formatter: function () {
-            var point = this.point;
-            var chart = this.series.chart;
-            var longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
-            var longdescFormat = '<span style="font-size: 12px">' + longdescText + '</span><br/>';
-            var pointFormat = '<div style="margin-top:10px;"><span style="color:' + point.color +
+            const point = this.point;
+            const chart = this.series.chart;
+            const longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
+            const longdescFormat = '<span style="font-size: 12px">' + longdescText + '</span><br/>';
+            const pointFormat = '<div style="margin-top:10px;"><span style="color:' + point.color +
                 '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';
 
             return longdescFormat + pointFormat;
         },
         positioner: function () {
-            var chart = this.chart;
-            var chartPosition = chart.pointer.getChartPosition();
-            var tooltipBBox = this.label && this.label.getBBox() || { width: 100, height: 100 };
-            var tooltipXOffset = (chart.plotWidth - tooltipBBox.width) / 2;
-            var tooltipYOffset = 12;
-            var x = chartPosition.left + tooltipXOffset;
-            var y = chartPosition.top - tooltipBBox.height - tooltipYOffset;
+            const chart = this.chart;
+            const chartPosition = chart.pointer.getChartPosition();
+            const tooltipBBox = this.label &&
+             this.label.getBBox() || { width: 100, height: 100 };
+            const tooltipXOffset = (chart.plotWidth - tooltipBBox.width) / 2;
+            const tooltipYOffset = 12;
+            const x = chartPosition.left + tooltipXOffset;
+            const y = chartPosition.top - tooltipBBox.height - tooltipYOffset;
             return { x: x, y: y };
         },
         shape: 'square'
@@ -120,11 +121,11 @@ var defaultChartOptions = {
 
 // Get string with basic description of chart data.
 function describeChart(data) {
-    var firstPoint = data[0];
-    var lastPoint = data[data.length - 1];
-    var minPoint = Math.min.apply(null, data);
-    var maxPoint = Math.max.apply(null, data);
-    var slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
+    const firstPoint = data[0];
+    const lastPoint = data[data.length - 1];
+    const minPoint = Math.min.apply(null, data);
+    const maxPoint = Math.max.apply(null, data);
+    const slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
     return 'Sessions ' + slopeText + ' overall from 2015 to 2020, starting at ' + firstPoint +
         ' and ending at ' + lastPoint + '. Values ranged between ' +
@@ -140,7 +141,7 @@ tableRows.forEach(function (rowDefinition) {
 
 // Add a cell with the track title to a table row element
 function addTrackCell(tableRowElement, rowDefinition) {
-    var cell = document.createElement('th');
+    const cell = document.createElement('th');
     cell.setAttribute('scope', 'row');
     cell.textContent = rowDefinition.trackTitle;
     tableRowElement.appendChild(cell);
@@ -149,8 +150,9 @@ function addTrackCell(tableRowElement, rowDefinition) {
 
 // Add a cell with the average data to a table row element
 function addAverageCell(tableRowElement, rowDefinition) {
-    var cell = document.createElement('td');
-    var getArrayAverage = arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
+    const cell = document.createElement('td');
+    const getArrayAverage =
+        arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
 
     cell.textContent = Math.round(getArrayAverage(rowDefinition.chartData)) + ' sessions';
     tableRowElement.appendChild(cell);
@@ -159,8 +161,8 @@ function addAverageCell(tableRowElement, rowDefinition) {
 
 // Add a sparkline cell to a table row element
 function addSparklineCell(tableRowElement, rowDefinition) {
-    var cell = document.createElement('td');
-    var sparklineContainer = document.createElement('div');
+    const cell = document.createElement('td');
+    const sparklineContainer = document.createElement('div');
 
     sparklineContainer.className = 'sparkline-container';
     cell.appendChild(sparklineContainer);
@@ -182,9 +184,9 @@ function addSparklineCell(tableRowElement, rowDefinition) {
 
 
 // Populate the table
-var tableBody = document.getElementById('tbody');
+const tableBody = document.getElementById('tbody');
 tableRows.forEach(function (rowDefinition) {
-    var tableRowElement = document.createElement('tr');
+    const tableRowElement = document.createElement('tr');
 
     tableBody.appendChild(tableRowElement);
 

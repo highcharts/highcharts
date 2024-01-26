@@ -23,10 +23,10 @@ function getProperties() {
 
     try {
         // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER || process.env.BROWSERSTACK_USERNAME;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY || process.env.BROWSERSTACK_ACCESS_KEY;
 
-        if (!process.env.BROWSERSTACK_USER) {
+        if (!properties['browserstack.username']) {
             // fallback to good old property file
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
@@ -59,7 +59,7 @@ function getHTML(path) {
         // load async, so sometimes they're loaded prior to screenshot,
         // sometimes not
         .replace(
-            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
         );
 
@@ -86,9 +86,9 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
-            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-\.]+$)/
         ) || src.match(
-            /^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
         if (innerMatch) {
@@ -107,7 +107,7 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to the map collection
         innerMatch = src.match(
-            /^(https:\/\/code.highcharts.com\/mapdata\/([a-z\/\.\-]+))$/
+            /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
         if (innerMatch) {
             filename = innerMatch[2];
@@ -164,8 +164,8 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-module.exports = function (config) {
 
+module.exports = function (config) {
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
 
@@ -223,7 +223,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = (
+    let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -232,6 +232,10 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
+
+    if (argv.reverse) {
+        tests = require('glob').sync(tests[0]).reverse();
+    }
 
     // Get the files
     let files = require('./karma-files.json');
@@ -243,7 +247,6 @@ module.exports = function (config) {
             // Essentials
             'test/call-analyzer.js',
             'test/test-controller.js',
-            'test/test-touch.js',
             'test/test-utilities.js',
             'test/json-sources.js',
 
@@ -395,7 +398,8 @@ module.exports = function (config) {
             '**/maps/*/*/demo.js': ['generic'],
             '**/stock/*/*/demo.js': ['generic'],
             '**/gantt/*/*/demo.js': ['generic'],
-            '**/issues/*/*/demo.js': ['generic']
+            '**/issues/*/*/demo.js': ['generic'],
+            '**/dashboard/*/*/demo.js': ['generic']
         },
 
         /*
@@ -557,8 +561,11 @@ module.exports = function (config) {
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
             build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
-            name: `circle-ci-karma-highcharts-${randomString}`,
-            localIdentifier: randomString, // to avoid instances interfering with each other.
+            name: `karma-highcharts-${randomString}`,
+            startTunnel: false,
+            tunnelIdentifier: 'karma-highcharts',
+            localIdentifier: 'karma-highcharts', // to avoid instances interfering with each other.
+            forcelocal: true,
             video: false,
             retryLimit: 1,
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.

@@ -1,4 +1,4 @@
-var series = [{
+const series = [{
     type: 'map',
     name: 'Areas',
     data: [{

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,20 +26,17 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataGroupingSeriesComposition from './DataGroupingSeriesComposition.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
+import Point from '../../Core/Series/Point';
 const {
     addEvent,
     extend,
-    isNumber
+    isNumber,
+    pick,
+    pushUnique
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
 
 /* *
  *
@@ -60,7 +57,7 @@ function compose(
 
     if (
         TooltipClass &&
-        U.pushUnique(composedMembers, TooltipClass)
+        pushUnique(composed, compose)
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }
@@ -76,10 +73,12 @@ function onTooltipHeaderFormatter(
     this: Tooltip,
     e: Event&AnyRecord
 ): void {
+
     const chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
         series = labelConfig.series as Series,
+        point = labelConfig.point as Point,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
@@ -112,8 +111,9 @@ function onTooltipHeaderFormatter(
         // if we have grouped data, use the grouping information to get the
         // right format
         if (currentDataGrouping) {
-            labelFormats =
-                dateTimeLabelFormats[(currentDataGrouping as any).unitName];
+            labelFormats = (dateTimeLabelFormats as AnyRecord)[
+                currentDataGrouping.unitName
+            ];
             if ((currentDataGrouping as any).count === 1) {
                 xDateFormat = labelFormats[0];
             } else {
@@ -131,12 +131,20 @@ function onTooltipHeaderFormatter(
             );
         }
 
-        // now format the key
-        formattedKey = time.dateFormat(xDateFormat as any, labelConfig.key);
+        const groupStart = pick(
+                series.groupMap?.[point.index].groupStart,
+                labelConfig.key
+            ),
+            groupEnd = groupStart + currentDataGrouping?.totalRange - 1;
+
+        formattedKey = time.dateFormat(
+            xDateFormat as any,
+            groupStart
+        );
         if (xDateFormatEnd) {
             formattedKey += time.dateFormat(
                 xDateFormatEnd,
-                labelConfig.key + (currentDataGrouping as any).totalRange - 1
+                groupEnd
             );
         }
 

@@ -289,8 +289,8 @@ function temps() {
                 margin: [0, 0, 10, 0],
                 events: {
                     load: function () {
-                        var countries = this.series[0];
-                        var capitals = this.series[1];
+                        const countries = this.series[0];
+                        const capitals = this.series[1];
                         newData.forEach(function (elem) {
                             getTemp(elem, countries, capitals);
                         });
@@ -361,7 +361,7 @@ function temps() {
             tooltip: {
                 headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
                 pointFormatter: function () {
-                    var value = Number.isInteger(this.temp) ? this.temp + '°C' : 'No data';
+                    const value = Number.isInteger(this.temp) ? this.temp + '°C' : 'No data';
                     return 'Temperature: <b>' + value + '</b>';
                 }
             },
@@ -393,7 +393,7 @@ function temps() {
                 dataLabels: {
                     crop: true,
                     formatter: function () {
-                        var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
+                        const value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
                         return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
                     }
                 },
@@ -454,7 +454,7 @@ function clusters() {
         ).then(response => response.json());
 
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json'
+            'https://www.highcharts.com/samples/data/european-train-stations-near-airports.json'
         ).then(response => response.json());
 
         Highcharts.mapChart('container', {

@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,11 +30,18 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     from?: string;
     height?: number;
     level?: number;
+    linkColorMode?: ('from'|'gradient'|'to');
     offset?: (number|string);
     offsetHorizontal?: (number|string);
     offsetVertical?: (number|string);
     to?: string;
     width?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SankeyPointOptions;

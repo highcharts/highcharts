@@ -1,4 +1,10 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
     const chart = Highcharts.stockChart('container', {
         chart: {
             height: 400
@@ -57,4 +63,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
     document.getElementById('auto').addEventListener('click', () => {
         chart.setSize(null);
     });
-});
+})();

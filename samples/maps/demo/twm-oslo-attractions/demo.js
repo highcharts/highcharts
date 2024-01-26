@@ -75,145 +75,109 @@ Highcharts.mapChart('container', {
         type: 'mappoint',
         name: 'Museums',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/museum.svg)',
+            symbol: 'url(https://www.highcharts.com/samples/graphics/museum.svg)',
             width: 24,
             height: 24
         },
         data: [{
             name: 'Fram Museum',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.692997228, 59.901996392]
-            }
+            lon: 10.69299,
+            lat: 59.90199
         }, {
             name: 'Vigeland Museum',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.70013, 59.92285]
-            }
+            lon: 10.70013,
+            lat: 59.92285
         }, {
             name: 'Norwegian Museum of Cultural History',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.6849055937, 59.9041430501]
-            }
+            lon: 10.68490,
+            lat: 59.90414
         }, {
             name: 'The Viking Ship Museum (Vikingskipshuset)',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.684461, 59.904756]
-            }
+            lon: 10.68446,
+            lat: 59.90475
         }, {
             name: 'Museum of Cultural History',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.735472, 59.916806]
-            }
+            lon: 10.73547,
+            lat: 59.91680
         }, {
             name: 'The Astrup Fearnley Museum of Modern Art',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.720863, 59.907062]
-            }
+            lon: 10.72086,
+            lat: 59.90706
         }, {
             name: 'Munch Museum',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.755656, 59.906169]
-            }
+            lon: 10.75565,
+            lat: 59.90616
         }, {
             name: 'Natural History Museum at the University of Oslo',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.7717, 59.9198]
-            }
+            lon: 10.77170,
+            lat: 59.9198
         }]
     }, {
         type: 'mappoint',
         name: 'Parks',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/tree.svg)',
+            symbol: 'url(https://www.highcharts.com/samples/graphics/tree.svg)',
             width: 24,
             height: 24
         },
         data: [{
             name: 'The Vigeland Park',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.705147, 59.924484]
-            }
+            lon: 10.70514,
+            lat: 59.92448
         }, {
             name: 'Frogner Park',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.703473, 59.926458]
-            }
+            lon: 10.70347,
+            lat: 59.92645
         }, {
             name: 'The University\'s Botanical Garden',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.7699, 59.9174]
-            }
+            lon: 10.76990,
+            lat: 59.91740
         }]
     }, {
         type: 'mappoint',
         name: 'Great buildings',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/building.svg)',
+            symbol: 'url(https://www.highcharts.com/samples/graphics/building.svg)',
             width: 24,
             height: 24
         },
         data: [{
             name: 'The Norwegian National Opera & Ballet',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.751825, 59.90766]
-            }
+            lon: 10.75182,
+            lat: 59.90766
         }, {
             name: 'Akershus Fortress',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.736011, 59.907667]
-            }
+            lon: 10.73601,
+            lat: 59.90766
         }, {
             name: 'Royal Palace in Oslo',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.7275, 59.916944]
-            }
+            lon: 10.72750,
+            lat: 59.91694
         }, {
             name: 'Oslo City Hall',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.733583, 59.911764]
-            }
+            lon: 10.73358,
+            lat: 59.91176
         }, {
             name: 'Akrobaten bru',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.759654, 59.909714]
-            }
+            lon: 10.75965,
+            lat: 59.90971
         }]
     }, {
         type: 'mappoint',
         name: 'Restaurants',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/eat.svg)',
+            symbol: 'url(https://www.highcharts.com/samples/graphics/eat.svg)',
             width: 24,
             height: 24
         },
         data: [{
             name: 'Elias mat & sånt',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.738687049524728, 59.9163183916486]
-            }
+            lon: 10.73868,
+            lat: 59.91631
         }, {
             name: 'Østbanehallen renovated train station & food court',
-            geometry: {
-                type: 'Point',
-                coordinates: [10.751095761430776, 59.91085233408226]
-            }
+            lon: 10.75109,
+            lat: 59.91085
         }]
     }]
 });

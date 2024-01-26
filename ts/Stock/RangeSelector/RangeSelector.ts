@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -63,7 +63,7 @@ const {
 declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         newMax?: number;
-        range?: (null|number|RangeSelectorButtonOptions);
+        range?: (number|RangeSelectorButtonOptions);
     }
 }
 
@@ -169,7 +169,9 @@ class RangeSelector {
      *
      * */
 
-    public buttons: Array<SVGElement> = void 0 as any;
+
+    public buttons!: Array<SVGElement>;
+    public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
@@ -191,7 +193,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: RangeSelectorOptions = void 0 as any;
+    public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
@@ -247,9 +249,6 @@ class RangeSelector {
         if (dataMin === null || dataMax === null) {
             return;
         }
-
-        // Set the fixed range before range is altered
-        chart.fixedRange = range;
 
         rangeSelector.setSelected(i);
 
@@ -370,6 +369,7 @@ class RangeSelector {
             minSetting = baseXAxisOptions.min;
             baseXAxisOptions.min = rangeMin;
             addEvent(chart, 'load', function resetMinAndRange(): void {
+                chart.setFixedRange(rangeOptions._range);
                 baseXAxisOptions.range = rangeSetting;
                 baseXAxisOptions.min = minSetting;
             });
@@ -385,6 +385,7 @@ class RangeSelector {
                     rangeSelectorButton: rangeOptions
                 }
             );
+            chart.setFixedRange(rangeOptions._range);
         }
 
         fireEvent(this, 'afterBtnClick');
@@ -427,10 +428,10 @@ class RangeSelector {
                     maxInput = rangeSelector.maxInput;
 
                 // #3274 in some case blur is not defined
-                if (minInput && (minInput.blur)) {
+                if (minInput && !!minInput.blur) {
                     fireEvent(minInput, 'blur');
                 }
-                if (maxInput && (maxInput.blur)) {
+                if (maxInput && !!maxInput.blur) {
                     fireEvent(maxInput, 'blur');
                 }
             };
@@ -518,7 +519,8 @@ class RangeSelector {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        let selectedExists = isNumber(selected);
+        let selectedExists = isNumber(selected),
+            isSelectedTooGreat = false;
 
         rangeSelector.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
@@ -546,6 +548,10 @@ class RangeSelector {
                 // Disable the All button if we're already showing all
                 isAllButAlreadyShowingAll = false,
                 isSameRange = range === actualRange;
+
+            if (isSelected && isTooGreatRange) {
+                isSelectedTooGreat = true;
+            }
 
             // Months and years have a variable range so we check the extremes
             if (
@@ -581,6 +587,7 @@ class RangeSelector {
             // across the night gap.
             const disable = (
                 !allButtonsEnabled &&
+                !(isSelectedTooGreat && type === 'all') &&
                 (
                     isTooGreatRange ||
                     isTooSmallRange ||
@@ -589,6 +596,7 @@ class RangeSelector {
                 )
             );
             const select = (
+                (isSelectedTooGreat && type === 'all') ||
                 (isSelected && isSameRange) ||
                 (isSameRange && !selectedExists && !isYTDButNotSelected) ||
                 (isSelected && rangeSelector.frozenStates)
@@ -616,6 +624,11 @@ class RangeSelector {
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
                     rangeSelector.setSelected();
+                } else if (
+                    (state === 2 && !defined(selected)) ||
+                    isSelectedTooGreat
+                ) {
+                    rangeSelector.setSelected(i);
                 }
             }
         });
@@ -763,25 +776,26 @@ class RangeSelector {
      * @param {string} name
      */
     public showInput(name: ('min'|'max')): void {
-        const dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
-        const input = name === 'min' ? this.minInput : this.maxInput;
+        const dateBox = name === 'min' ? this.minDateBox : this.maxDateBox,
+            input = name === 'min' ? this.minInput : this.maxInput;
 
         if (input && dateBox && this.inputGroup) {
-            const isTextInput = input.type === 'text';
-            const { translateX, translateY } = this.inputGroup;
-            const { inputBoxWidth } = this.options;
+            const isTextInput = input.type === 'text',
+                { translateX = 0, translateY = 0 } = this.inputGroup,
+                { x = 0, width = 0, height = 0 } = dateBox,
+                { inputBoxWidth } = this.options;
 
             css(input, {
                 width: isTextInput ?
-                    ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
+                    ((width + (inputBoxWidth ? -2 : 20)) + 'px') :
                     'auto',
-                height: (dateBox.height - 2) + 'px',
+                height: (height - 2) + 'px',
                 border: '2px solid silver'
             });
 
             if (isTextInput && inputBoxWidth) {
                 css(input, {
-                    left: (translateX + dateBox.x) + 'px',
+                    left: (translateX + x) + 'px',
                     top: translateY + 'px'
                 });
 
@@ -791,14 +805,14 @@ class RangeSelector {
                 css(input, {
                     left: Math.min(
                         Math.round(
-                            dateBox.x +
+                            x +
                             translateX -
-                            (input.offsetWidth - dateBox.width) / 2
+                            (input.offsetWidth - width) / 2
                         ),
                         this.chart.chartWidth - input.offsetWidth
                     ) + 'px',
                     top: (
-                        translateY - (input.offsetHeight - dateBox.height) / 2
+                        translateY - (input.offsetHeight - height) / 2
                     ) + 'px'
                 });
             }
@@ -1459,7 +1473,7 @@ class RangeSelector {
                         button: SVGElement,
                         i: number
                     ): void => {
-                        width += button.width;
+                        width += button.width || 0;
                         if (i !== buttons.length - 1) {
                             width += options.buttonSpacing;
                         }
@@ -1664,8 +1678,8 @@ class RangeSelector {
             if (buttons[i].visibility !== 'hidden') {
                 buttons[i][verb]({ x: buttonLeft });
 
-                // increase button position for the next button
-                buttonLeft += buttons[i].width + options.buttonSpacing;
+                // Increase the button position for the next button
+                buttonLeft += (buttons[i].width || 0) + options.buttonSpacing;
             } else {
                 buttons[i][verb]({ x: plotLeft });
             }
@@ -1813,6 +1827,13 @@ class RangeSelector {
             zoomText
         } = this;
 
+        // If the buttons are already collapsed do nothing.
+        if (this.isCollapsed === true) {
+            return;
+
+        }
+        this.isCollapsed = true;
+
         const userButtonTheme = (
             chart.userOptions.rangeSelector &&
             chart.userOptions.rangeSelector.buttonTheme
@@ -1893,6 +1914,12 @@ class RangeSelector {
 
         this.hideDropdown();
 
+        // If buttons are already not collapsed, do nothing.
+        if (this.isCollapsed === false) {
+            return;
+
+        }
+        this.isCollapsed = false;
         if (zoomText) {
             zoomText.show();
         }
@@ -1949,8 +1976,8 @@ class RangeSelector {
         } = this;
 
         if (buttonGroup && dropdown) {
-            const { translateX, translateY } = buttonGroup;
-            const bBox = buttons[this.currentButtonIndex()].getBBox();
+            const { translateX = 0, translateY = 0 } = buttonGroup,
+                bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
                 left: (chart.plotLeft + translateX) + 'px',
                 top: (translateY + 0.5) + 'px',

@@ -1,79 +1,65 @@
-var seriesOptions = [],
-    seriesCounter = 0,
-    names = ['MSFT', 'AAPL', 'GOOG'];
+(async () => {
 
-/**
- * Create the chart when all data is loaded
- */
-function createChart() {
+    const names = ['MSFT', 'AAPL', 'GOOG'];
 
-    Highcharts.stockChart('container', {
-        title: {
-            text: 'Series compare by <em>percent</em>'
-        },
-        subtitle: {
-            text: 'Compare the values of the series against the first value in the visible range'
-        },
+    /**
+     * Create the chart when all data is loaded
+     */
+    function createChart(series) {
 
-        rangeSelector: {
-            selected: 4
-        },
-
-        yAxis: {
-            labels: {
-                format: '{value} %'
+        Highcharts.stockChart('container', {
+            title: {
+                text: 'Series compare by <em>percent</em>'
             },
-            plotLines: [{
-                value: 100,
-                width: 1,
-                color: '#333333',
-                zIndex: 3
-            }]
-        },
+            subtitle: {
+                text: 'Compare the values of the series against the first value in the visible range'
+            },
 
-        plotOptions: {
-            series: {
-                compare: 'percent',
-                compareBase: 100
-            }
-        },
+            rangeSelector: {
+                selected: 4
+            },
 
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-            changeDecimals: 2,
-            valueDecimals: 2
-        },
+            yAxis: {
+                labels: {
+                    format: '{value} %'
+                },
+                plotLines: [{
+                    value: 100,
+                    width: 1,
+                    color: '#333333',
+                    zIndex: 3
+                }]
+            },
 
-        series: seriesOptions
-    });
-}
+            plotOptions: {
+                series: {
+                    compare: 'percent',
+                    compareBase: 100
+                }
+            },
 
-function success(data) {
-    var name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
-    var i = names.indexOf(name);
-    seriesOptions[i] = {
-        name: name,
-        data: data
-    };
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                changeDecimals: 2,
+                valueDecimals: 2
+            },
 
-    // As we're loading the data asynchronously, we don't know what order it
-    // will arrive. So we keep a counter and create the chart when all the data is loaded.
-    seriesCounter += 1;
-
-    if (seriesCounter === names.length) {
-        createChart();
+            series
+        });
     }
-}
 
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json',
-    success
-);
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json',
-    success
-);
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json',
-    success
-);
+    const promises = names.map(name => new Promise(resolve => {
+        (async () => {
+            const data = await fetch(
+                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/' +
+                'samples/data/' + name.toLowerCase() + '-c.json'
+            )
+                .then(response => response.json());
+            resolve({ name, data });
+        })();
+    }));
+
+    const series = await Promise.all(promises);
+    createChart(series);
+
+})();

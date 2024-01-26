@@ -124,7 +124,7 @@ Another way to approach the same problem, is to combine two or more map sources 
 Modify our maps
 ---------------
 
-Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](https://www.highcharts.com/docs/maps/create-custom-maps-for-highmaps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](https://highcharts.com/docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
+Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](https://www.highcharts.com/docs/maps/create-custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](https://highcharts.com/docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
 
 Disclaimer
 ----------

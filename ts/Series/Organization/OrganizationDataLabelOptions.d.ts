@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -39,16 +39,22 @@ export interface OrganizationDataLabelsFormatterCallbackFunction {
         )
     ): (string|undefined);
 }
+
 export interface OrganizationDataLabelFormatterContext extends SankeyDataLabelFormatterContext {
     point: OrganizationPoint;
     series: OrganizationSeries;
 }
-
 
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OrganizationDataLabelOptions;

@@ -73,10 +73,11 @@ class ArcDiagramSeries extends SankeySeries {
      * @product      highcharts
      * @requires     modules/arc-diagram
      * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
-     *               dataSorting, dragDrop, getExtremesFromAll, nodePadding,
-     *               centerInCategory, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, relativeXValue, softThreshold,
-     *               stack, stacking, step, xAxis, yAxis
+     *               dataSorting, dragDrop, getExtremesFromAll, nodeAlignment,
+     *               nodePadding, centerInCategory, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointStart,
+     *               relativeXValue, softThreshold, stack, stacking, step,
+     *               xAxis, yAxis
      * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
@@ -120,8 +121,11 @@ class ArcDiagramSeries extends SankeySeries {
         offset: '100%',
 
         /**
-         * The global link weight. If not set, width is calculated per link,
-         * depending on the weight value.
+         * The global link weight, in pixels. If not set, width is calculated
+         * per link, depending on the weight value.
+         *
+         * @sample highcharts/series-arcdiagram/link-weight
+         *         Link weight
          *
          * @type    {number}
          * @since 10.0.0
@@ -206,15 +210,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<ArcDiagramPoint> = void 0 as any;
+    public data!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramSeriesOptions = void 0 as any;
+    public options!: ArcDiagramSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
-    public nodes: Array<ArcDiagramPoint> = void 0 as any;
+    public nodes!: Array<ArcDiagramPoint>;
 
-    public points: Array<ArcDiagramPoint> = void 0 as any;
+    public points!: Array<ArcDiagramPoint>;
 
     /* *
      *

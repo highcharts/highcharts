@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,17 +19,16 @@
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
 
+import H from './Globals.js';
+const { composed } = H;
 import U from './Utilities.js';
 const {
     diffObjects,
     extend,
     find,
-    isArray,
-    isObject,
     merge,
-    objectEach,
     pick,
-    splat,
+    pushUnique,
     uniqueKey
 } = U;
 
@@ -113,14 +112,6 @@ namespace Responsive {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -132,7 +123,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             extend(
                 ChartClass.prototype as Composition,
                 {

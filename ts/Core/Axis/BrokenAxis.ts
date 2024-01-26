@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -28,6 +28,8 @@ import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
@@ -36,7 +38,8 @@ const {
     fireEvent,
     isArray,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -118,19 +121,9 @@ namespace BrokenAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Adds support for broken axes.
@@ -141,7 +134,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -152,9 +145,7 @@ namespace BrokenAxis {
                 onAxisAfterSetTickPositions
             );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
@@ -186,7 +177,7 @@ namespace BrokenAxis {
      */
     function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
-        if (axis.brokenAxis && axis.brokenAxis.hasBreaks) {
+        if (axis.brokenAxis?.hasBreaks) {
             axis.options.ordinal = false;
         }
     }
@@ -198,10 +189,7 @@ namespace BrokenAxis {
         const axis = this,
             brokenAxis = axis.brokenAxis;
 
-        if (
-            brokenAxis &&
-            brokenAxis.hasBreaks
-        ) {
+        if (brokenAxis?.hasBreaks) {
             const tickPositions = axis.tickPositions,
                 info = axis.tickPositions.info,
                 newPositions = [];
@@ -251,15 +239,8 @@ namespace BrokenAxis {
                 const nullGap = point.y === null && connectNulls === false;
                 const isPointInBreak = (
                     !nullGap && (
-                        (
-                            xAxis &&
-                            xAxis.brokenAxis &&
-                            xAxis.brokenAxis.isInAnyBreak(point.x, true)
-                        ) || (
-                            yAxis &&
-                            yAxis.brokenAxis &&
-                            yAxis.brokenAxis.isInAnyBreak(point.y, true)
-                        )
+                        xAxis?.brokenAxis?.isInAnyBreak(point.x, true) ||
+                        yAxis?.brokenAxis?.isInAnyBreak(point.y, true)
                     )
                 );
                 // Set point.visible if in any break.
@@ -292,30 +273,49 @@ namespace BrokenAxis {
 
         let breaks: Array<AxisBreakObject>,
             threshold: (number|null|undefined),
-            eventName: string,
             y: (number|null|undefined);
 
-        if (
-            axis && // #5950
-            axis.brokenAxis &&
-            axis.brokenAxis.hasBreaks
-        ) {
+        if (axis?.brokenAxis?.hasBreaks) {
             const brokenAxis = axis.brokenAxis;
 
             keys.forEach(function (key: string): void {
-                breaks = brokenAxis && brokenAxis.breakArray || [];
+                breaks = brokenAxis?.breakArray || [];
                 threshold = axis.isXAxis ?
                     axis.min :
                     pick(series.options.threshold, axis.min);
+
+                // Array of breaks that have been "zoomed-out" which means that
+                // they were shown previously, but now after zoom, they are not
+                // (#19885).
+                const breaksOutOfRange = axis?.options?.breaks?.filter(
+                    function (brk): boolean {
+                        let isOut = true;
+
+                        // Iterate to see if "brk" is in axis range
+                        for (let i = 0; i < breaks.length; i++) {
+                            const otherBreak = breaks[i];
+                            if (
+                                otherBreak.from === brk.from &&
+                                otherBreak.to === brk.to
+                            ) {
+                                isOut = false;
+                                break;
+                            }
+                        }
+
+                        return isOut;
+                    }
+                );
+
                 points.forEach(function (point: Point): void {
                     y = pick(
                         (point as any)['stack' + key.toUpperCase()],
                         (point as any)[key]
                     );
+
                     breaks.forEach(function (brk: AxisBreakObject): void {
                         if (isNumber(threshold) && isNumber(y)) {
-
-                            eventName = false as any;
+                            let eventName = '';
 
                             if (
                                 (threshold < brk.from && y > brk.to) ||
@@ -334,11 +334,22 @@ namespace BrokenAxis {
                             )) {
                                 eventName = 'pointInBreak';
                             }
+
                             if (eventName) {
                                 fireEvent(axis, eventName, { point, brk });
                             }
                         }
                     });
+
+                    breaksOutOfRange?.forEach(
+                        function (brk: AxisBreakOptions | undefined): void {
+                            fireEvent(
+                                axis,
+                                'pointOutsideOfBreak',
+                                { point, brk }
+                            );
+                        }
+                    );
                 });
             });
         }
@@ -357,7 +368,7 @@ namespace BrokenAxis {
      */
     function seriesGappedPath(this: LineSeries): SVGPath {
         const currentDataGrouping = this.currentDataGrouping,
-            groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
+            groupingSize = currentDataGrouping?.gapSize,
             points = this.points.slice(),
             yAxis = this.yAxis;
 
@@ -708,7 +719,9 @@ namespace BrokenAxis {
         ): void {
             const brokenAxis = this;
             const axis = brokenAxis.axis;
-            const hasBreaks = (isArray(breaks) && !!breaks.length);
+            const hasBreaks = isArray(breaks) &&
+                !!breaks.length &&
+                !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;

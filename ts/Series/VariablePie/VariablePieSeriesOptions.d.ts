@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -36,5 +36,11 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
 }
 
 export type VariablePieSizeByValue = ('area'|'radius');
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VariablePieSeriesOptions;

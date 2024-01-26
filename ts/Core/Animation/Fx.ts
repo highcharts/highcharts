@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -289,7 +289,7 @@ class Fx {
         let ret,
             done;
 
-        if ((elem.attr) && !elem.element) { // #2616, element is destroyed
+        if (!!elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
 
         } else if (gotoEnd || t >= duration + (this.startTime as any)) {

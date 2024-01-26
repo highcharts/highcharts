@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type BoxPlotPoint from './BoxPlotPoint';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
@@ -21,6 +22,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *  Declarations
  *
  * */
+
 export interface BoxPlotPointOptions extends ColumnPointOptions {
     high?: BoxPlotPoint['high'];
     low?: BoxPlotPoint['low'];
@@ -31,7 +33,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

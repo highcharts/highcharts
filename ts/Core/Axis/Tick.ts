@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -348,7 +348,6 @@ class Tick {
              * @type {Highcharts.SVGElement|undefined}
              */
             tick.label = label = tick.createLabel(
-                { x: 0, y: 0 },
                 str,
                 labelOptions
             );
@@ -381,9 +380,9 @@ class Tick {
      * @function Highcharts.Tick#createLabel
      */
     public createLabel(
-        xy: PositionObject,
         str: string,
-        labelOptions: AxisLabelOptions
+        labelOptions: AxisLabelOptions,
+        xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
             chart = axis.chart,
@@ -391,12 +390,12 @@ class Tick {
                 chart.renderer
                     .text(
                         str,
-                        xy.x,
-                        xy.y,
+                        xy?.x,
+                        xy?.y,
                         labelOptions.useHTML
                     )
                     .add(axis.labelGroup) :
-                null as any;
+                void 0;
 
         // Un-rotated length
         if (label) {
@@ -786,9 +785,9 @@ class Tick {
             labelPos = tick.labelPos || (label as any).xy;
 
             tick.movedLabel = tick.createLabel(
-                labelPos,
                 str,
-                labelOptions
+                labelOptions,
+                labelPos
             );
 
             if (tick.movedLabel) {
@@ -821,8 +820,22 @@ class Tick {
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
-                (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+            axisStart = axis.pos,
+            axisEnd = axisStart + axis.len,
+            reverseCrisp = (
+                (horiz && x === axisEnd) ||
+                (!horiz && y === axisStart)
+            ) ? -1 : 1, // #1480, #1687
+            pxPos = horiz ? x : y;
+
+        // Anything that is not between `axis.pos` and `axis.pos + axis.length`
+        // should not be visible (#20166)
+        if (
+            tick.isNew &&
+            (pxPos < axisStart || pxPos > axisEnd)
+        ) {
+            opacity = 0;
+        }
 
         const labelOpacity = pick(
             opacity,
@@ -835,10 +848,10 @@ class Tick {
         // Create the grid line
         this.renderGridLine(old, opacity, reverseCrisp);
 
-        // create the tick mark
+        // Create the tick mark
         this.renderMark(xy, opacity, reverseCrisp);
 
-        // the label is created on init - now move it into place
+        // The label is created on init - now move it into place
         this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;

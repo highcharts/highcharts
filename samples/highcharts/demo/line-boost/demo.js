@@ -1,6 +1,6 @@
 function getData(n) {
-    var arr = [],
-        i,
+    const arr = [];
+    let i,
         x,
         a,
         b,
@@ -32,7 +32,7 @@ function getData(n) {
     }
     return arr;
 }
-var n = 500000,
+const n = 500000,
     data = getData(n);
 
 
@@ -44,11 +44,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts drawing ' + n + ' points'
+        text: 'Highcharts drawing ' + n + ' points',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Using the Boost module'
+        text: 'Using the Boost module',
+        align: 'left'
     },
 
     accessibility: {

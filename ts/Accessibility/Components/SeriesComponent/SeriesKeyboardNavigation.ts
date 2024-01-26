@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -29,11 +29,15 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -42,7 +46,7 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const {
     getPointFromXY,
     getSeriesFromName,
-    scrollToPoint
+    scrollAxisToPoint
 } = ChartUtilities;
 
 /* *
@@ -120,7 +124,7 @@ function isSkipSeries(
         // reached
         (
             seriesNavOptions.pointNavigationEnabledThreshold &&
-            seriesNavOptions.pointNavigationEnabledThreshold <=
+            +seriesNavOptions.pointNavigationEnabledThreshold <=
             series.points.length
         );
 }
@@ -339,7 +343,9 @@ class SeriesKeyboardNavigation {
                 focusedElement && focusedElement.getAttribute('class')
             );
             const isProxyFocused = focusedElClassName &&
-                focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
+                focusedElClassName.indexOf(
+                    'highcharts-a11y-proxy-element'
+                ) > -1;
 
             if (
                 chart.highlightedPoint === point &&
@@ -678,14 +684,6 @@ namespace SeriesKeyboardNavigation {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -900,24 +898,18 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        if (pushUnique(composed, compose)) {
+            const chartProto = ChartClass.prototype as ChartComposition,
+                pointProto = PointClass.prototype as PointComposition,
+                seriesProto = SeriesClass.prototype as SeriesComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical
             );
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
-        }
-
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**
              * Set for which series types it makes sense to move to the closest
@@ -1009,7 +1001,8 @@ namespace SeriesKeyboardNavigation {
         this: PointComposition,
         highlightVisually: boolean = true
     ): PointComposition {
-        const chart = this.series.chart;
+        const chart = this.series.chart,
+            tooltipElement = chart.tooltip?.label?.element;
 
         if (!this.isNull && highlightVisually) {
             this.onMouseOver(); // Show the hover marker and tooltip
@@ -1021,7 +1014,7 @@ namespace SeriesKeyboardNavigation {
             // div element of the chart
         }
 
-        scrollToPoint(this);
+        scrollAxisToPoint(this);
 
         // We focus only after calling onMouseOver because the state change can
         // change z-index and mess up the element.
@@ -1033,6 +1026,22 @@ namespace SeriesKeyboardNavigation {
         }
 
         chart.highlightedPoint = this;
+
+        // Get position of the tooltip.
+        const tooltipTop = tooltipElement?.getBoundingClientRect().top;
+
+        if (tooltipElement && tooltipTop && tooltipTop < 0) {
+            // Calculate scroll position.
+            const scrollTop = window.scrollY,
+                newScrollTop = scrollTop + tooltipTop;
+
+            // Scroll window to new position.
+            window.scrollTo({
+                behavior: 'smooth',
+                top: newScrollTop
+            });
+        }
+
         return this;
     }
 

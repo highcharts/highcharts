@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,27 +14,29 @@
  *
  * */
 
-import BBoxObject from '../../Core/Renderer/BBoxObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type WaterfallPointOptions from './WaterfallPointOptions';
+import type WaterfallSeries from './WaterfallSeries';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
-import WaterfallSeries from './WaterfallSeries';
-const { isNumber } = U;
 import U from '../../Core/Utilities.js';
-
+const { isNumber } = U;
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
+
 class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public below?: boolean;
 
     public box?: BBoxObject;
@@ -45,15 +47,16 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     public minPointLengthOffset?: number;
 
-    public options: WaterfallPointOptions = void 0 as any;
+    public options!: WaterfallPointOptions;
 
-    public series: WaterfallSeries = void 0 as any;
+    public series!: WaterfallSeries;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this);
 
@@ -62,8 +65,10 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
         } else if (this.isIntermediateSum) {
             className += ' highcharts-intermediate-sum';
         }
+
         return className;
     }
+
     // Pass the null test in ColumnSeries.translate.
     public isValid(): boolean {
         return (
@@ -72,11 +77,13 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
             Boolean(this.isIntermediateSum)
         );
     }
+
 }
 
 /* *
  *
- * Export
+ *  Export
  *
  * */
+
 export default WaterfallPoint;

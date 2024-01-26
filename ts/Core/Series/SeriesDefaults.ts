@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -63,7 +63,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @product highcharts highstock
      */
-    lineWidth: 1,
+    lineWidth: 2,
 
     /**
      * For some series, there is a limit that shuts down animation
@@ -200,6 +200,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * chart's legend and tooltip.
      *
      * @sample {highcharts} highcharts/css/point-series-classname
+     *         Series and point class name
      *
      * @type      {string}
      * @since     5.0.0
@@ -442,6 +443,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     4.1.6
      * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
+     */
+
+    /**
+     * Highlight only the hovered point and fade the remaining points.
+     *
+     * Scatter-type series require enabling the 'inactive' marker state and
+     * adjusting opacity. Note that this approach could affect performance
+     * with large datasets.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-inactiveotherpoints-enabled/
+     *         Chart with inactiveOtherPoints option enabled.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @apioption plotOptions.series.inactiveOtherPoints
      */
 
     /**
@@ -1718,10 +1734,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`,
-         * `==`, and `===`.
+         * `==`, `===`, `!=` and `!==`.
          *
          * @type       {string}
-         * @validvalue [">", "<", ">=", "<=", "==", "==="]
+         * @validvalue [">", "<", ">=", "<=", "==", "===", "!=", "!=="]
          * @apioption  plotOptions.series.dataLabels.filter.operator
          */
 
@@ -2500,9 +2516,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * What type of legend symbol to render for this series. Can be one of
-     * `lineMarker` or `rectangle`.
+     * `areaMarker`, `lineMarker` or `rectangle`.
      *
-     * @validvalue ["lineMarker", "rectangle"]
+     * @validvalue ["areaMarker", "lineMarker", "rectangle"]
      *
      * @sample {highcharts} highcharts/series/legend-symbol/
      *         Change the legend symbol

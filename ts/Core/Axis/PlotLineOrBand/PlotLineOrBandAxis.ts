@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,11 +22,14 @@ import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
+import H from '../../Globals.js';
+const { composed } = H;
 import U from '../../Utilities.js';
 const {
     erase,
     extend,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -83,14 +86,6 @@ namespace PlotLineOrBandAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -116,7 +111,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band.
+     * The added plot band, or `undefined` if the options are not valid.
      */
     function addPlotBand(
         this: Composition,
@@ -192,7 +187,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line.
+     * The added plot line, or `undefined` if the options are not valid.
      */
     function addPlotLine(
         this: Composition,
@@ -209,11 +204,9 @@ namespace PlotLineOrBandAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (!PlotLineOrBandClass) {
+        if (pushUnique(composed, compose)) {
             PlotLineOrBandClass = PlotLineOrBandType;
-        }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
             extend(
                 AxisClass.prototype as Composition,
                 {
@@ -252,8 +245,9 @@ namespace PlotLineOrBandAxis {
         this: Composition,
         from: number,
         to: number,
-        options: (PlotBandOptions|PlotLineOptions) = this.options
+        options?: (PlotBandOptions|PlotLineOptions)
     ): SVGPath {
+        options = options || this.options;
         const toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
@@ -265,14 +259,14 @@ namespace PlotLineOrBandAxis {
                 !isNumber(this.min) ||
                 !isNumber(this.max) ||
                 (from < this.min && to < this.min) ||
-                (from > this.max && to > this.max);
-
-        let path = this.getPlotLinePath({
+                (from > this.max && to > this.max),
+            path = this.getPlotLinePath({
                 value: from,
                 force: true,
                 acrossPanes: options.acrossPanes
-            }),
-            i,
+            });
+
+        let i,
             // #4964 check if chart is inverted or plotband is on yAxis
             plus = 1,
             isFlat: (boolean|undefined);
@@ -317,11 +311,9 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-                (result as any).isFlat = isFlat;
+                result.isFlat = isFlat;
             }
 
-        } else { // outside the axis area
-            path = null;
         }
 
         return result;

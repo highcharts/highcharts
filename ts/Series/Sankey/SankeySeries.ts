@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,6 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
 import SankeyPoint from './SankeyPoint.js';
@@ -37,13 +36,13 @@ import SankeySeriesDefaults from './SankeySeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SankeyColumnComposition from './SankeyColumnComposition.js';
 const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries,
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
-const { getLevelOptions } = TU;
+const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -87,7 +86,6 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    // eslint-disable-next-line valid-jsdoc
     /**
      * @private
      */
@@ -119,37 +117,35 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    public colDistance: number = void 0 as any;
+    public colDistance!: number;
 
-    public data: Array<SankeyPoint> = void 0 as any;
+    public data!: Array<SankeyPoint>;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
     public mapOptionsToLevel?: (Record<string, SankeySeriesLevelOptions>|null);
 
     public nodeColumns?: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>>;
 
-    public nodeLookup: Record<string, SankeyPoint> = void 0 as any;
+    public nodeLookup!: Record<string, SankeyPoint>;
 
-    public nodePadding: number = void 0 as any;
+    public nodePadding!: number;
 
-    public nodes: Array<SankeyPoint> = void 0 as any;
+    public nodes!: Array<SankeyPoint>;
 
-    public nodeWidth: number = void 0 as any;
+    public nodeWidth!: number;
 
-    public options: SankeySeriesOptions = void 0 as any;
+    public options!: SankeySeriesOptions;
 
-    public points: Array<SankeyPoint> = void 0 as any;
+    public points!: Array<SankeyPoint>;
 
-    public translationFactor: number = void 0 as any;
+    public translationFactor!: number;
 
     /* *
      *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Create node columns by analyzing the nodes and the relations between
@@ -159,7 +155,7 @@ class SankeySeries extends ColumnSeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> {
         const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
 
-        this.nodes.forEach(function (node: SankeyPoint): void {
+        for (const node of this.nodes) {
 
             node.setNodeColumn();
 
@@ -170,7 +166,7 @@ class SankeySeries extends ColumnSeries {
 
             columns[node.column as any].push(node);
 
-        }, this);
+        }
 
         // Fill in empty columns (#8865)
         for (let i = 0; i < columns.length; i++) {
@@ -192,13 +188,11 @@ class SankeySeries extends ColumnSeries {
         // Prevents circular recursion:
         if (typeof node.level === 'undefined') {
             node.level = level;
-            node.linksFrom.forEach(function (
-                link: SankeyPoint
-            ): void {
+            for (const link of node.linksFrom) {
                 if (link.toNode) {
                     series.order(link.toNode, level + 1);
                 }
-            });
+            }
         }
     }
     /**
@@ -208,25 +202,17 @@ class SankeySeries extends ColumnSeries {
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
-        const series = this;
 
         if (this.orderNodes) {
-            this.nodes
+            for (const node of this.nodes) {
                 // Identify the root node(s)
-                .filter(function (node: SankeyPoint): boolean {
-                    return node.linksTo.length === 0;
-                })
-                // Start by the root node(s) and recursively set the level
-                // on all following nodes.
-                .forEach(function (node: SankeyPoint): void {
-                    series.order(node, 0);
-                });
-            stableSort(this.nodes, function (
-                a: SankeyPoint,
-                b: SankeyPoint
-            ): number {
-                return a.level - b.level;
-            });
+                if (node.linksTo.length === 0) {
+                    // Start by the root node(s) and recursively set the level
+                    // on all following nodes.
+                    this.order(node, 0);
+                }
+            }
+            stableSort(this.nodes, (a, b): number => (a.level - b.level));
         }
     }
 
@@ -293,10 +279,10 @@ class SankeySeries extends ColumnSeries {
                 'borderWidth',
                 'linkOpacity',
                 'opacity'
-            ].reduce(function (
+            ].reduce((
                 obj: AnyRecord,
                 key: string
-            ): AnyRecord {
+            ): AnyRecord => {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -351,20 +337,18 @@ class SankeySeries extends ColumnSeries {
         if (!this.processedXData) {
             this.processData();
         }
+
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = relativeLength(
-            this.options.nodeWidth as any,
-            this.chart.plotSizeX as any
-        );
 
         const series = this,
             chart = this.chart,
             options = this.options,
-            nodeWidth = this.nodeWidth,
-            nodeColumns = this.nodeColumns;
+            nodeColumns = this.nodeColumns,
+            columnCount = nodeColumns.length;
 
+        this.nodeWidth = getNodeWidth(this, columnCount);
         this.nodePadding = this.getNodePadding();
 
         // Find out how much space is needed. Base it on the translation
@@ -384,7 +368,7 @@ class SankeySeries extends ColumnSeries {
 
         this.colDistance =
             (
-                (chart.plotSizeX as any) - nodeWidth -
+                (chart.plotSizeX as any) - this.nodeWidth -
                 (options.borderWidth as any)
             ) / Math.max(1, nodeColumns.length - 1);
 
@@ -412,31 +396,24 @@ class SankeySeries extends ColumnSeries {
         });
 
         // First translate all nodes so we can use them when drawing links
-        nodeColumns.forEach(function (
-            this: SankeySeries,
-            column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
-        ): void {
-
-            column.forEach(function (node: SankeyPoint): void {
+        for (const column of nodeColumns) {
+            for (const node of column) {
                 series.translateNode(node, column);
-            });
-
-        }, this);
+            }
+        }
 
         // Then translate links
-        this.nodes.forEach(function (node: SankeyPoint): void {
+        for (const node of this.nodes) {
             // Translate the links from this node
-            node.linksFrom.forEach(function (
-                linkPoint: SankeyPoint
-            ): void {
+            for (const linkPoint of node.linksFrom) {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
                 if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }
-            });
-        });
+            }
+        }
     }
 
     /**
@@ -463,25 +440,28 @@ class SankeySeries extends ColumnSeries {
             return y;
         };
 
-        let fromNode = point.fromNode,
+        const fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
+            { inverted } = chart,
             translationFactor = this.translationFactor,
-            linkHeight = Math.max(
-                (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any)
-            ),
             options = this.options,
+            linkColorMode = pick(point.linkColorMode, options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
             ),
+            nodeLeft = fromNode.nodeX,
+            right = toNode.nodeX,
+            outgoing = point.outgoing;
+
+        let linkHeight = Math.max(
+                (point.weight as any) * translationFactor,
+                (this.options.minLinkWidth as any)
+            ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),
-            nodeLeft = fromNode.nodeX,
             nodeW = this.nodeWidth,
-            right = toNode.nodeX,
-            outgoing = point.outgoing,
             straight = right > nodeLeft + nodeW;
 
         if (chart.inverted) {
@@ -605,10 +585,28 @@ class SankeySeries extends ColumnSeries {
         point.y = point.plotY = 1;
         point.x = point.plotX = 1;
 
-        if (!point.color) {
-            point.color = fromNode.color;
+        if (!point.options.color) {
+            if (linkColorMode === 'from') {
+                point.color = fromNode.color;
+            } else if (linkColorMode === 'to') {
+                point.color = toNode.color;
+            } else if (linkColorMode === 'gradient') {
+                const fromColor = color(fromNode.color).get(),
+                    toColor = color(toNode.color).get();
+                point.color = {
+                    linearGradient: {
+                        x1: 1,
+                        x2: 0,
+                        y1: 0,
+                        y2: 0
+                    },
+                    stops: [
+                        [0, inverted ? fromColor : toColor],
+                        [1, inverted ? toColor : fromColor]
+                    ]
+                };
+            }
         }
-
     }
 
     /**
@@ -641,7 +639,11 @@ class SankeySeries extends ColumnSeries {
             left = Math.floor(
                 this.colDistance * (node.column as any) +
                 borderWidth / 2
-            ) + relativeLength(node.options.offsetHorizontal || 0, nodeWidth) +
+            ) + relativeLength(node.options[
+                chart.inverted ?
+                    'offsetVertical' :
+                    'offsetHorizontal'
+            ] || 0, nodeWidth) +
             crisp,
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
@@ -660,7 +662,7 @@ class SankeySeries extends ColumnSeries {
                 width = node.options.width || options.width || nodeWidth,
                 height = node.options.height || options.height || nodeHeight;
 
-            // border radius should not greater than half the height of the node
+            // Border radius should not greater than half the height of the node
             // #18956
             const r = clamp(relativeLength((
                 typeof borderRadius === 'object' ?
@@ -709,8 +711,6 @@ class SankeySeries extends ColumnSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -736,8 +736,9 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
 }
 
 NodesComposition.compose(SankeyPoint, SankeySeries);
+
 extend(SankeySeries.prototype, {
-    animate: Series.prototype.animate,
+    animate: LineSeries.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesComposition.createNode as any,
@@ -762,6 +763,7 @@ declare module '../../Core/Series/SeriesType' {
         sankey: typeof SankeySeries;
     }
 }
+
 SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 
 /* *

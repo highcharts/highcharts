@@ -89,14 +89,6 @@ namespace ControlTarget {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -178,9 +170,10 @@ namespace ControlTarget {
     export function compose(
         ControlTargetClass: Class
     ): void {
+        const controlProto = ControlTargetClass.prototype;
 
-        if (U.pushUnique(composedMembers, ControlTargetClass)) {
-            U.merge(true, ControlTargetClass.prototype, {
+        if (!controlProto.addControlPoints) {
+            U.merge(true, controlProto, {
                 addControlPoints,
                 anchor,
                 destroyControlTarget,

@@ -54,7 +54,7 @@ Highcharts.sonification.InstrumentPresets.myCustomInstrument = {
 
 // ----------------------------------------------------------------------------
 // Create the chart and use the custom instrument
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Custom instrument',
         align: 'left',

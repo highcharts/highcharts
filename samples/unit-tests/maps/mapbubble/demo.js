@@ -42,6 +42,38 @@ QUnit.test('MapBubble', function (assert) {
         }]
     });
 
+    const done = assert.async();
+
+    setTimeout(() => {
+        const point = chart.series[1].points[0],
+            { plotX, plotY } = point,
+            chartPosition = Highcharts.offset(chart.container),
+            chartX = chart.plotLeft + plotX + chartPosition.left,
+            chartY = chart.plotTop + plotY + chartPosition.top;
+
+        // Simulate mouse move over the point
+        chart.pointer.onContainerMouseMove({
+            type: 'mousemove',
+            pageX: chartX,
+            pageY: chartY,
+            target: chart.container
+        });
+
+        assert.strictEqual(
+            chart.hoverPoint,
+            point,
+            'The hoverPoint should be the expected mapbubble point (#20086).'
+        );
+
+        assert.strictEqual(
+            chart.tooltip.label.text.element.textContent,
+            '●  Series 2​: 3',
+            'The tooltip should contain the correct capital information (#20086).'
+        );
+
+        done();
+    }, 0);
+
     assert.strictEqual(
         chart.series[1].points[0].color,
         'green',

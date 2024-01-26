@@ -11,9 +11,9 @@ Highcharts.stockChart('container', {
             load: function () {
 
                 // set up the updating of the chart each second
-                var series = this.series[0];
+                const series = this.series[0];
                 setInterval(function () {
-                    var y = Math.round(Math.random() * 100);
+                    const y = Math.round(Math.random() * 100);
                     series.addPoint(y, true, true);
                 }, 1000);
             }
@@ -61,10 +61,9 @@ Highcharts.stockChart('container', {
         pointInterval: 1000, // 1s
         data: (function () {
             // generate an array of random data
-            var data = [],
-                i;
+            const data = [];
 
-            for (i = 0; i <= 1000; i += 1) {
+            for (let i = 0; i <= 1000; i += 1) {
                 data.push(
                     Math.round(Math.random() * 100)
                 );

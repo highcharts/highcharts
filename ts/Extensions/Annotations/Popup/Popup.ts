@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -162,7 +162,7 @@ class Popup extends BaseForm {
         super(parentDiv, iconsURL);
 
         this.chart = chart;
-        this.lang = (getOptions().lang.navigation as any).popup;
+        this.lang = (getOptions().lang.navigation || {}).popup as any || {};
 
         addEvent(this.container, 'mousedown', (): void => {
             const activeAnnotation = chart &&

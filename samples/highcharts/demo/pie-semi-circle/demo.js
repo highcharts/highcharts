@@ -45,13 +45,7 @@ Highcharts.chart('container', {
             ['Firefox', 5.52],
             ['Safari', 2.98],
             ['Internet Explorer', 1.90],
-            {
-                name: 'Other',
-                y: 3.77,
-                dataLabels: {
-                    enabled: false
-                }
-            }
+            ['Other', 3.77]
         ]
     }]
 });

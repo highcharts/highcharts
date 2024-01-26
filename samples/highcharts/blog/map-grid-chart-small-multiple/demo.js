@@ -1,11 +1,11 @@
 /* Colors */
-var liberal = '#EE696B',
+const liberal = '#EE696B',
     conservative = '#5A98EA',
     newDemocratic = '#F8A166',
     blocQuebecios = '#80D0F8',
     green = '#99C85F';
 
-var parties = [{
+const parties = [{
         name: 'Liberal',
         color: liberal
     }, {
@@ -74,7 +74,7 @@ var parties = [{
         data: [1, 0, 0, 0, 0]
     }
     ];
-var bc = 0,
+const bc = 0,
     ab = 1,
     sk = 2,
     mb = 3,
@@ -93,7 +93,7 @@ for (let i = 0; i < seats.length; i++) {
         seats[i][Object.keys(seats[i])[0]] = seats[i][Object.keys(seats[i])[0]] + '<span style="color:' + parties[j].color + '">\u25CF</span>' + parties[j].name + ' ' + seats[i].data[j] + '<br>';
     }
 }
-var titleStyle = '14px';
+const titleStyle = '14px';
 
 Highcharts.mapChart('nl', {
     chart: {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,28 +24,21 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import OHLCPoint from './OHLCPoint.js';
 import OHLCSeriesDefaults from './OHLCSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        hlc: HLCSeries
-    }
-} = SeriesRegistry;
+    hlc: HLCSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge
+    merge,
+    pushUnique
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<{}> = [];
 
 /* *
  *
@@ -136,7 +129,7 @@ class OHLCSeries extends HLCSeries {
         ..._args: Array<never>
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterSetOptions', onSeriesAfterSetOptions);
             addEvent(SeriesClass, 'init', onSeriesInit);
         }
@@ -149,11 +142,11 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public data: Array<OHLCPoint> = void 0 as any;
+    public data!: Array<OHLCPoint>;
 
-    public options: OHLCSeriesOptions = void 0 as any;
+    public options!: OHLCSeriesOptions;
 
-    public points: Array<OHLCPoint> = void 0 as any;
+    public points!: Array<OHLCPoint>;
 
     /* *
      *

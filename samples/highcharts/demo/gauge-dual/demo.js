@@ -81,9 +81,9 @@ Highcharts.chart('container', {
 function (chart) {
     setInterval(function () {
         if (chart.axes) { // not destroyed
-            var point = chart.series[0].points[0],
-                newVal,
+            const point = chart.series[0].points[0],
                 inc = Math.round((Math.random() - 0.5) * 20);
+            let newVal;
 
             newVal = point.y + inc;
             if (newVal < 0 || newVal > 200) {

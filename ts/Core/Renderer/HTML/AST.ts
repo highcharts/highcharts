@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -139,6 +139,7 @@ class AST {
         'dy',
         'disabled',
         'fill',
+        'filterUnits',
         'flood-color',
         'flood-opacity',
         'height',

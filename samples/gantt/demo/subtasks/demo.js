@@ -1,4 +1,4 @@
-var today = new Date(),
+const today = new Date(),
     day = 1000 * 60 * 60 * 24;
 
 // Set to 00:00:00:000 today
@@ -25,7 +25,7 @@ Highcharts.ganttChart('container', {
         },
         point: {
             descriptionFormatter: function (point) {
-                var dependency = point.dependency &&
+                const dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
                     dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
 

@@ -2,7 +2,7 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -28,5 +28,11 @@ export interface VectorPointOptions extends ScatterPointOptions {
     direction?: number;
     length?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VectorPointOptions;

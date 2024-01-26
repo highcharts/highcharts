@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,6 +26,7 @@ import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
  *  Declarations
  *
  * */
+
 declare module '../Core/Options' {
     interface Options {
         mapNavigation?: MapNavigationOptions;
@@ -60,5 +61,11 @@ export interface MapNavigationOptions {
     enableTouchZoom?: boolean;
     mouseWheelSensitivity?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapNavigationOptions;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -627,9 +627,9 @@ function translateReferences<T extends Arguments|Formula>(
     for (let i = 0, iEnd = formula.length, item: Item; i < iEnd; ++i) {
         item = formula[i];
         if (item instanceof Array) {
-            translateReferences(item);
+            translateReferences(item, columnDelta, rowDelta);
         } else if (isFunction(item)) {
-            translateReferences(item.args);
+            translateReferences(item.args, columnDelta, rowDelta);
         } else if (isRange(item)) {
             if (item.beginColumnRelative) {
                 item.beginColumn += columnDelta;

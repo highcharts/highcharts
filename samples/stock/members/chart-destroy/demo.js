@@ -3,7 +3,7 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    var chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 1
         },

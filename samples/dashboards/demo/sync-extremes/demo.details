@@ -1,0 +1,11 @@
+---
+name: Sync panning demo
+author:
+  - Mustapha Mekhatria
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
+use_png_thumbnail: true
+...

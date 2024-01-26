@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Scatter 3D series.
  *
@@ -20,11 +20,11 @@
 
 import type Scatter3DPointOptions from './Scatter3DPointOptions';
 import type Scatter3DSeries from './Scatter3DSeries';
+
 import ScatterSeries from '../Scatter/ScatterSeries.js';
+const { pointClass: ScatterPoint } = ScatterSeries.prototype;
 import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
+const { defined } = U;
 
 /* *
  *
@@ -32,7 +32,7 @@ const {
  *
  * */
 
-class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
+class Scatter3DPoint extends ScatterPoint {
 
     /* *
      *
@@ -40,9 +40,9 @@ class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
-    public options: Scatter3DPointOptions = void 0 as any;
+    public options!: Scatter3DPointOptions;
 
-    public series: Scatter3DSeries = void 0 as any;
+    public series!: Scatter3DSeries;
 
     /* *
      *
@@ -52,6 +52,7 @@ class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
 
     public applyOptions(): Scatter3DPoint {
         super.applyOptions.apply(this, arguments);
+
         if (!defined(this.z)) {
             this.z = 0;
         }

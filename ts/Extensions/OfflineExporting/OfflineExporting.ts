@@ -37,13 +37,12 @@ const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    composed,
+    doc,
+    win
 } = H;
 import HU from '../../Core/HttpUtilities.js';
-const {
-    ajax
-} = HU;
+const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -51,16 +50,19 @@ const {
     error,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
+    'filter',
     'rx',
     'ry',
     'stroke-dasharray',
     'stroke-linejoin',
+    'stroke-opacity',
     'text-anchor',
     'transform',
     'version',
@@ -96,14 +98,6 @@ declare module '../../Core/Chart/ChartLike' {
         ): void;
     }
 }
-
-/* *
- *
- * Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -165,7 +159,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
@@ -178,7 +172,6 @@ namespace OfflineExporting {
         return ChartClass as (typeof Composition&T);
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Get data URL to an image of an SVG and call download on it options
      * object:
@@ -408,6 +401,7 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
+                        scale,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -1009,10 +1003,13 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
+        scale: number,
         callback: Function
     ): void {
-        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
-            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+        const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
+            scale,
+            height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
+                scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',

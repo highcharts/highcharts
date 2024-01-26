@@ -55,7 +55,10 @@ Highcharts.chart('container', {
 
     yAxis: {
         labels: {
-            distance: -20
+            distance: -23,
+            style: {
+                fontSize: '18px'
+            }
         },
         min: 0,
         max: 12,
@@ -63,14 +66,14 @@ Highcharts.chart('container', {
         showFirstLabel: false,
 
         minorTickInterval: 'auto',
-        minorTickWidth: 1,
+        minorTickWidth: 3,
         minorTickLength: 5,
         minorTickPosition: 'inside',
         minorGridLineWidth: 0,
         minorTickColor: '#666',
 
         tickInterval: 1,
-        tickWidth: 2,
+        tickWidth: 4,
         tickPosition: 'inside',
         tickLength: 10,
         tickColor: '#666',
@@ -79,7 +82,7 @@ Highcharts.chart('container', {
             style: {
                 color: '#BBB',
                 fontWeight: 'normal',
-                fontSize: '8px',
+                fontSize: '10px',
                 lineHeight: '10px'
             },
             y: 10

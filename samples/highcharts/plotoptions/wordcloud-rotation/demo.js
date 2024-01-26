@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     name: 'creativity',
     weight: 31
 }, {

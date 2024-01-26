@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -28,5 +28,11 @@ import type Funnel3DPointOptions from '../Funnel3D/Funnel3DPointOptions';
 export interface Pyramid3DPointOptions extends Funnel3DPointOptions {
     // nothing here yet
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pyramid3DPointOptions;

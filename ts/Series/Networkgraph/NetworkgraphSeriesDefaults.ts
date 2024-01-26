@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -56,7 +56,8 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     stickyTracking: false,
 
     /**
-     * @ignore-option
+     * @default   true
+     * @extends   plotOptions.series.inactiveOtherPoints
      * @private
      */
     inactiveOtherPoints: true,

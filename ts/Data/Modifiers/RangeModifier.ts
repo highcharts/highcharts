@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -11,13 +11,16 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
  *  Imports
  *
  * */
+
 
 import type DataEvent from '../DataEvent';
 import type {
@@ -32,11 +35,13 @@ const {
     merge
 } = U;
 
+
 /* *
  *
  *  Class
  *
  * */
+
 
 /**
  * Filters out table rows with a specific value range.
@@ -45,20 +50,22 @@ const {
  */
 class RangeModifier extends DataModifier {
 
+
     /* *
      *
      *  Static Properties
      *
      * */
 
+
     /**
      * Default options for the range modifier.
      */
     public static readonly defaultOptions: RangeModifierOptions = {
-        modifier: 'Range',
-        strict: false,
+        type: 'Range',
         ranges: []
     };
+
 
     /* *
      *
@@ -66,19 +73,21 @@ class RangeModifier extends DataModifier {
      *
      * */
 
+
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {RangeModifier.Options} [options]
+     * @param {Partial<RangeModifier.Options>} [options]
      * Options to configure the range modifier.
      */
     public constructor(
-        options?: DeepPartial<RangeModifierOptions>
+        options?: Partial<RangeModifierOptions>
     ) {
         super();
 
         this.options = merge(RangeModifier.defaultOptions, options);
     }
+
 
     /* *
      *
@@ -86,16 +95,19 @@ class RangeModifier extends DataModifier {
      *
      * */
 
+
     /**
      * Options of the range modifier.
      */
     public readonly options: RangeModifierOptions;
+
 
     /* *
      *
      *  Functions
      *
      * */
+
 
     /**
      * Replaces table rows with filtered rows.
@@ -118,14 +130,16 @@ class RangeModifier extends DataModifier {
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const {
+            additive,
             ranges,
             strict
         } = modifier.options;
 
         if (ranges.length) {
-            const columns = table.getColumns(),
-                rows: Array<DataTable.Row> = [],
-                modified = table.modified;
+            const modified = table.modified;
+
+            let columns = table.getColumns(),
+                rows: Array<DataTable.Row> = [];
 
             for (
                 let i = 0,
@@ -142,6 +156,13 @@ class RangeModifier extends DataModifier {
                     typeof range.minValue !== typeof range.maxValue
                 ) {
                     continue;
+                }
+
+                if (i > 0 && !additive) {
+                    modified.deleteRows();
+                    modified.setRows(rows);
+                    columns = modified.getColumns();
+                    rows = [];
                 }
 
                 rangeColumn = (columns[range.column] || []);
@@ -176,7 +197,11 @@ class RangeModifier extends DataModifier {
                         cell >= range.minValue &&
                         cell <= range.maxValue
                     ) {
-                        row = table.getRow(j);
+                        row = (
+                            additive ?
+                                table.getRow(j) :
+                                modified.getRow(j)
+                        );
 
                         if (row) {
                             rows.push(row);
@@ -194,13 +219,16 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
+
 }
+
 
 /* *
  *
  *  Registry
  *
  * */
+
 
 declare module './DataModifierType' {
     interface DataModifierTypes {
@@ -210,10 +238,12 @@ declare module './DataModifierType' {
 
 DataModifier.registerType('Range', RangeModifier);
 
+
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default RangeModifier;

@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -31,5 +31,11 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
     binWidth?: number;
     states?: SeriesStatesOptions<HistogramSeries>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HistogramSeriesOptions;

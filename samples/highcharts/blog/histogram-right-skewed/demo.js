@@ -3,19 +3,24 @@ const rawData = () => [3.44, 24.06, 15.04, 1.54, 3.72, 13.36, 3.42, 1.22, 2.94, 
 
 //-------------------------------------------------------
 const binData = data => {
-    var hData = [], // the output array
-        size = data.length, // how many data points
-        bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+
+    const hData = [], // the output array
+        size = data.length; // how many data points
+
+    let bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+
     bins = bins > 50 ? 50 : bins; // adjust if more than 50 cells
-    var max = Math.max.apply(null, data), // lowest data value
+
+    const max = Math.max.apply(null, data), // lowest data value
         min = Math.min.apply(null, data), // highest data value
         range = max - min, // total range of the data
-        width = range / bins, // size of the bins
-        binBottom, // place holders for the bounds of each bin
+        width = range / bins; // size of the bins
+
+    let binBottom, // place holders for the bounds of each bin
         binTop;
 
     // loop through the number of cells
-    for (var i = 0; i < bins; i++) {
+    for (let i = 0; i < bins; i++) {
 
         // set the upper and lower limits of the current cell
         binBottom = min + (i * width);
@@ -28,8 +33,8 @@ const binData = data => {
         }
 
         // loop through the data to see if it fits in this bin
-        for (var j = 0; j < size; j++) {
-            var x = data[j];
+        for (let j = 0; j < size; j++) {
+            const x = data[j];
 
             // adjust if it's the first pass
             binBottom = i === 0 && j === 0 ? binBottom -= 1 : binBottom;
@@ -53,8 +58,8 @@ const numSort = (a, b) => a - b;
 // get any percentile from an array
 const getPercentile = (data, percentile) => {
     data.sort(numSort);
-    var index = (percentile / 100) * data.length;
-    var result;
+    const index = (percentile / 100) * data.length;
+    let result;
     if (Math.floor(index) === index) {
         result = (data[(index - 1)] + data[index]) / 2;
     } else {
@@ -64,23 +69,23 @@ const getPercentile = (data, percentile) => {
 };
 // get the median absolute deviation
 const getMad = data => {
-    var median = getPercentile(data, 50);
-    var devs = [];
+    const median = getPercentile(data, 50);
+    const devs = [];
     data.forEach(point => {
         devs.push(Math.abs(point - median));
     });
-    var mad = getPercentile(devs, 50);
-    var output = {};
+    const mad = getPercentile(devs, 50);
+    const output = {};
     output.median = median;
     output.mad = mad;
     return output;
 };
 
 
-var binnedData = binData(rawData());
-var mad = getMad(rawData());
+const binnedData = binData(rawData());
+const mad = getMad(rawData());
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column',
         margin: [100, 25, 50, 50]

@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -18,7 +18,6 @@ import RendererUtilities from '../Core/Renderer/RendererUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
-import HTMLRenderer from '../Core/Renderer/HTML/HTMLRenderer.js';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import LogarithmicAxis from '../Core/Axis/LogarithmicAxis.js';
@@ -29,7 +28,7 @@ import Point from '../Core/Series/Point.js';
 import Pointer from '../Core/Pointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
-import '../Extensions/ScrollablePlotArea.js';
+import ScrollablePlotArea from '../Extensions/ScrollablePlotArea.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import Series from '../Core/Series/Series.js';
@@ -45,8 +44,8 @@ import '../Series/Scatter/ScatterSeries.js';
 import PieSeries from '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import '../Extensions/OverlappingDataLabels.js';
-import '../Extensions/BorderRadius.js';
+import OverlappingDataLabels from '../Extensions/OverlappingDataLabels.js';
+import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
@@ -64,6 +63,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.chart = Chart.chart;
 G.Fx = Fx;
+G.HTMLElement = HTMLElement;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
@@ -80,8 +80,7 @@ G.Tooltip = Tooltip;
 G.Color = Color;
 G.color = Color.parse;
 // Compositions
-HTMLRenderer.compose(SVGRenderer);
-HTMLElement.compose(SVGElement);
+HTMLElement.compose(SVGRenderer);
 Pointer.compose(Chart);
 Legend.compose(Chart);
 // DefaultOptions
@@ -94,60 +93,20 @@ G.dateFormat = Templating.dateFormat;
 G.format = Templating.format;
 G.numberFormat = Templating.numberFormat;
 // Utilities
-G.addEvent = Utilities.addEvent;
-G.arrayMax = Utilities.arrayMax;
-G.arrayMin = Utilities.arrayMin;
-G.attr = Utilities.attr;
-G.clearTimeout = Utilities.clearTimeout;
-G.correctFloat = Utilities.correctFloat;
-G.createElement = Utilities.createElement;
-G.css = Utilities.css;
-G.defined = Utilities.defined;
-G.destroyObjectProperties = Utilities.destroyObjectProperties;
-G.discardElement = Utilities.discardElement;
+Utilities.extend(G, Utilities);
 G.distribute = RendererUtilities.distribute;
-G.erase = Utilities.erase;
-G.error = Utilities.error;
-G.extend = Utilities.extend;
-G.extendClass = Utilities.extendClass;
-G.find = Utilities.find;
-G.fireEvent = Utilities.fireEvent;
-G.getMagnitude = Utilities.getMagnitude;
-G.getStyle = Utilities.getStyle;
-G.inArray = Utilities.inArray;
-G.isArray = Utilities.isArray;
-G.isClass = Utilities.isClass;
-G.isDOMElement = Utilities.isDOMElement;
-G.isFunction = Utilities.isFunction;
-G.isNumber = Utilities.isNumber;
-G.isObject = Utilities.isObject;
-G.isString = Utilities.isString;
-G.keys = Utilities.keys;
-G.merge = Utilities.merge;
-G.normalizeTickInterval = Utilities.normalizeTickInterval;
-G.objectEach = Utilities.objectEach;
-G.offset = Utilities.offset;
-G.pad = Utilities.pad;
-G.pick = Utilities.pick;
-G.pInt = Utilities.pInt;
-G.relativeLength = Utilities.relativeLength;
-G.removeEvent = Utilities.removeEvent;
 G.seriesType = SeriesRegistry.seriesType;
-G.splat = Utilities.splat;
-G.stableSort = Utilities.stableSort;
-G.syncTimeout = Utilities.syncTimeout;
-G.timeUnits = Utilities.timeUnits;
-G.uniqueKey = Utilities.uniqueKey;
-G.useSerialIds = Utilities.useSerialIds;
-G.wrap = Utilities.wrap;
 // Compositions
 ColumnDataLabel.compose(ColumnSeries);
+BorderRadius.compose(Series, PieSeries, SVGElement, SVGRenderer);
 DataLabel.compose(Series);
 DateTimeAxis.compose(Axis);
 LogarithmicAxis.compose(Axis);
+OverlappingDataLabels.compose(Chart);
 PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
+ScrollablePlotArea.compose(Axis, Chart, Series);
 StackingAxis.compose(Axis, Chart, Series);
 Tooltip.compose(Pointer);
 // Default Export

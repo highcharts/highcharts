@@ -10,7 +10,7 @@
                 map: topology
             },
 
-            colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
+            colors: ['rgba(255,0,0,1)', 'rgba(255,0,0,1)', 'rgba(19,64,117,0.4)',
                 'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
             title: {
@@ -70,24 +70,31 @@
 
             colorAxis: {
                 dataClasses: [{
-                    to: 3
+                    to: 3,
+                    color: '#0000ee'
                 }, {
                     from: 3,
-                    to: 10
+                    to: 10,
+                    color: '#00eeee'
                 }, {
                     from: 10,
-                    to: 30
+                    to: 30,
+                    color: '#00ee00'
                 }, {
                     from: 30,
-                    to: 100
+                    to: 100,
+                    color: '#bbee00'
                 }, {
                     from: 100,
-                    to: 300
+                    to: 300,
+                    color: '#eeee00'
                 }, {
                     from: 300,
-                    to: 1000
+                    to: 1000,
+                    color: '#ee6600'
                 }, {
-                    from: 1000
+                    from: 1000,
+                    color: '#bb0000'
                 }]
             },
 

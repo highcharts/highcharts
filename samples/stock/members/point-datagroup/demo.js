@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
 
     const click = e => {
         const point = e.point;
@@ -58,4 +63,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
             }
         }]
     });
-});
+})();

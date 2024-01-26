@@ -76,7 +76,6 @@ function randomNumber(min, max) {
 const arc = {
     chart: {
         backgroundColor: 'transparent',
-        margin: [0, 0, 200, 0],
         // height: 400,
         // width: '100%',
         animation: {
@@ -86,9 +85,7 @@ const arc = {
         events: {
             load: function () {
                 const links = document.querySelectorAll('.highcharts-link');
-                // const chart = this;
-                // console.log(chart.chartWidth);
-                // console.log(chart.chartHeight);
+                const chart = this;
                 setTimeout(function () {
                     changeOpacity(links, 1, 2);
                 }, 700);
@@ -239,55 +236,51 @@ const arc = {
                 ['Catania', 'Milano', 1]
             ]
         }
-    ]
-    // responsive: {
-    //     rules: [
-    //         {
-    //             condition: {
-    //                 maxHeight: 350
-    //             },
-    //             chartOptions: {
-    //                 chart: {
-    //                     // height: 200,
-    //                     margin: [0, 0, 100, 0]
-    //                 }
-    //             }
-    //         },
-    //         {
-    //             condition: {
-    //                 minHeight: 351
-    //             },
-    //             chartOptions: {
-    //                 chart: {
-    //                     // height: 300,
-    //                     margin: [0, 0, 150, 0]
-    //                 }
-    //             }
-    //         },
-    //         {
-    //             condition: {
-    //                 minHeight: 400
-    //             },
-    //             chartOptions: {
-    //                 chart: {
-    //                     // height: 400,
-    //                     margin: [0, 0, 230, 0]
-    //                 }
-    //             }
-    //         },
-    //         {
-    //             condition: {
-    //                 minHeight: 500
-    //             },
-    //             chartOptions: {
-    //                 chart: {
-    //                     // height: 400,
-    //                     margin: [0, 0, 400, 0]
-    //                 }
-    //             }
-    //         }
-    //     ]
-    // }
+    ],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 449
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [0, 0, 200, 0]
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 450
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [100, 0, 100, 0]
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 660
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [0, 0, 100, 0]
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 880
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [0, 0, 50, 0]
+                    }
+                }
+            }
+        ]
+    }
 };
 
 // column range
@@ -380,7 +373,7 @@ const cr = {
             borderRadius: 10,
             borderColor: null,
             dataLabels: {
-                enabled: true,
+                enabled: false,
                 format: '{y}°C',
                 style: {
                     textOutline: 'none',
@@ -425,7 +418,7 @@ const sk = {
             'Sankey chart that shows the total funding for Fintech companies in the internet software & services through 2022.',
         point: {
             descriptionFormatter: function (point) {
-                var nodeFrom = point.fromNode.name,
+                const nodeFrom = point.fromNode.name,
                     nodeTo = point.toNode.name,
                     nodeWeight = point.weight;
                 return (
@@ -608,7 +601,7 @@ const rc = {
         ]
     },
     yAxis: {
-        gridLineColor: 'rgba(255, 255, 255, 0.1)',
+        gridLineColor: 'transparent',
         title: {
             text: ''
         },
@@ -2019,7 +2012,7 @@ const dbColi =  {
 };
 
 // dashboard
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@334004f4167100b9ea770b57786ed736e68bcf69/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
 const db = {
     chart: {
@@ -2329,13 +2322,36 @@ const rb = {
     chart: {
         type: 'column',
         animation: {
-            duration: 2000,
+            duration: 3000,
             easing: 'easeOutQuint'
         },
+        margin: [0, 0, 0, 0],
         inverted: true,
+        spacing: 0,
         polar: true,
-        margin: [10, 0, 0, 0],
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        events: {
+            load: function () {
+                const chart = this;
+
+                setTimeout(function () {
+                    chart.update({
+                        pane: {
+                            size: '100%',
+                            innerSize: '0%',
+                            startAngle: -90,
+                            endAngle: 270
+                        }
+
+
+                    }, false);
+                    chart.series[0].update({
+                        groupPadding: 0.15
+                    }, false);
+                    chart.redraw();
+                }, 0);
+            }
+        }
     },
     colors: colors,
     legend: {
@@ -2346,6 +2362,12 @@ const rb = {
     },
     title: {
         text: ''
+    },
+    pane: {
+        size: '1000%',
+        innerSize: '20%',
+        startAngle: 0,
+        endAngle: 270
     },
     xAxis: {
         tickInterval: 1,
@@ -2370,8 +2392,10 @@ const rb = {
         }
     },
     series: [{
+        animation: false,
         borderWidth: 0,
-        pointWidth: 12,
+        pointPadding: 0,
+        groupPadding: 0,
         borderRadius: 10, // causes a cool animation effect
         colorByPoint: true,
         data: [29, 71, 106, 129, 144, 176, 135, 148, 216, 194, 95, 54]
@@ -2390,7 +2414,7 @@ function makeChart() {
     // }
     const chartNum = Math.round(randomNumber(0, 10));
     const chart = charts[chartNum];
-    // console.log(chartNum);
+    // (chartNum);
     Highcharts.chart('container', chart);
 }
 

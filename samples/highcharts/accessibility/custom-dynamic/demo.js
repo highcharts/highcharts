@@ -1,3 +1,5 @@
+let updateIntervalId;
+
 // Custom announce formatter - only report if there is a new point and it is
 // above 10. Returning empty string stops announcement, returning false uses
 // default announcement.
@@ -29,8 +31,8 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 // Set up the updating of the chart each second
-                var series = this.series[0];
-                setInterval(function () {
+                const series = this.series[0];
+                updateIntervalId = setInterval(function () {
                     series.addPoint(
                         Math.round(Math.random() * 110) / 10,
                         true,
@@ -56,4 +58,9 @@ Highcharts.chart('container', {
         },
         data: [1.1]
     }]
+});
+
+const stopButton = document.getElementById('stop');
+stopButton.addEventListener('click', function () {
+    clearInterval(updateIntervalId);
 });

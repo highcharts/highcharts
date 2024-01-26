@@ -1,11 +1,9 @@
 function generateCloth(rows, columns) {
-    var data = [],
-        i,
-        j;
+    const data = [];
 
     // Each node connects to:
-    for (i = 1; i < rows; i++) {
-        for (j = 1; j < columns; j++) {
+    for (let i = 1; i < rows; i++) {
+        for (let j = 1; j < columns; j++) {
             // a) right node
             if (j + 1 < columns) {
                 data.push([

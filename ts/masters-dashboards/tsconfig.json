@@ -1,0 +1,23 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "composite": false,
+        "declaration": true,
+        "baseUrl": "./",
+        "moduleResolution": "node",
+        "outDir": "../../js/",
+        "rootDir": "../",
+        "paths": {
+            "highcharts": [
+                "../Dashboards/highcharts"
+            ]
+        }
+    },
+    "exclude": [
+        "../masters/**/*.ts",
+        "../masters-es5/**/*.ts"
+    ],
+    "include": [
+        "../**/*.ts"
+    ]
+}

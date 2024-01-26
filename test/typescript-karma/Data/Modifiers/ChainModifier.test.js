@@ -54,7 +54,7 @@ QUnit.test('ChainModifier.modify', function (assert) {
     const done = assert.async(),
         modifier = new ChainModifier({
             chain: [{
-                modifier: 'Range',
+                type: 'Range',
                 ranges: [{
                     column: 'y',
                     minValue: 'A',

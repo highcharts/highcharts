@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,16 +12,18 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
+
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
+
 export interface WindbarbPointOptions extends ColumnPointOptions {
     direction?: number;
     value?: number;
@@ -29,7 +31,8 @@ export interface WindbarbPointOptions extends ColumnPointOptions {
 
 /* *
  *
- * Export default
+ *  Default Export
  *
  * */
+
 export default WindbarbPointOptions;

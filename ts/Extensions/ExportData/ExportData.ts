@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -39,12 +39,6 @@ import type Series from '../../Core/Series/Series.js';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import ExportDataDefaults from './ExportDataDefaults.js';
-import H from '../../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
 import D from '../../Core/Defaults.js';
 const {
     getOptions,
@@ -52,6 +46,13 @@ const {
 } = D;
 import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
+import ExportDataDefaults from './ExportDataDefaults.js';
+import H from '../../Core/Globals.js';
+const {
+    composed,
+    doc,
+    win
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: SeriesClass,
@@ -60,7 +61,8 @@ const {
         gantt: GanttSeries,
         map: MapSeries,
         mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries
+        treemap: TreemapSeries,
+        xrange: XRangeSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -71,7 +73,8 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -127,6 +130,7 @@ interface ExportingCategoryDateTimeMap {
 interface ExportDataPoint {
     series: ExportDataSeries;
     x?: number;
+    x2?: number;
 }
 
 interface ExportDataSeries {
@@ -139,17 +143,38 @@ interface ExportDataSeries {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
+
+/**
+ * Wrapper function for the download functions, which handles showing and hiding
+ * the loading message
+ *
+ * @private
+ *
+ */
+function wrapLoading(
+    this: Exporting.ChartComposition | Chart,
+    fn: Function
+): void {
+    const showMessage = Boolean(this.options.exporting?.showExportInProgress);
+
+    // Prefer requestAnimationFrame if available
+    const timeoutFn = win.requestAnimationFrame || setTimeout;
+
+    // Outer timeout avoids menu freezing on click
+    timeoutFn((): void => {
+        showMessage && this.showLoading(this.options.lang.exportInProgress);
+        timeoutFn((): void => {
+            try {
+                fn.call(this);
+            } finally {
+                showMessage && this.hideLoading();
+            }
+        });
+    });
+}
 
 /**
  * Generates a data URL of CSV for local download in the browser. This is the
@@ -164,14 +189,17 @@ const composedMembers: Array<unknown> = [];
 function chartDownloadCSV(
     this: Exporting.ChartComposition
 ): void {
-    const csv = this.getCSV(true);
+    wrapLoading.call(this, (): void => {
+        const csv = this.getCSV(true);
 
-    downloadURL(
-        getBlobFromContent(csv, 'text/csv') ||
-            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        this.getFilename() + '.csv'
-    );
+        downloadURL(
+            getBlobFromContent(csv, 'text/csv') ||
+                'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+            this.getFilename() + '.csv'
+        );
+    });
 }
+
 
 /**
  * Generates a data URL of an XLS document for local download in the browser.
@@ -186,8 +214,10 @@ function chartDownloadCSV(
 function chartDownloadXLS(
     this: Exporting.ChartComposition
 ): void {
-    const uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    wrapLoading.call(this, (): void => {
+        const uri = 'data:application/vnd.ms-excel;base64,',
+            template =
+            '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
             'xmlns="http://www.w3.org/TR/REC-html40">' +
             '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
@@ -204,15 +234,16 @@ function chartDownloadXLS(
             '</head><body>' +
             this.getTable(true) +
             '</body></html>',
-        base64 = function (s: string): string {
-            return win.btoa(unescape(encodeURIComponent(s))); // #50
-        };
+            base64 = function (s: string): string {
+                return win.btoa(unescape(encodeURIComponent(s))); // #50
+            };
 
-    downloadURL(
-        getBlobFromContent(template, 'application/vnd.ms-excel') ||
-            uri + base64(template),
-        this.getFilename() + '.xls'
-    );
+        downloadURL(
+            getBlobFromContent(template, 'application/vnd.ms-excel') ||
+                uri + base64(template),
+            this.getFilename() + '.xls'
+        );
+    });
 }
 
 /**
@@ -241,7 +272,7 @@ function chartGetCSV(
                 (1.1).toLocaleString()[1] :
                 '.'
         ),
-        // use ';' for direct to Excel
+        // Use ';' for direct to Excel
         itemDelimiter = pick(
             csvOptions.itemDelimiter,
             decimalPoint === ',' ? ';' : ','
@@ -257,7 +288,7 @@ function chartGetCSV(
         while (j--) {
             val = row[j];
             if (typeof val === 'string') {
-                val = '"' + val + '"';
+                val = `"${val}"`;
             }
             if (typeof val === 'number') {
                 if (decimalPoint !== '.') {
@@ -399,27 +430,22 @@ function chartGetDataRows(
             series: Series,
             xAxis: Axis
         ): string[] {
-            const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
-            );
+            const pointArrayMap = series.pointArrayMap || ['y'],
+                namedPoints = series.data.some((d): string | false =>
+                    (typeof d.y !== 'undefined') && d.name
+                );
 
+            // If there are points with a name, we also want the x value in the
+            // table
             if (
-                namedPoints.length &&
+                namedPoints &&
                 xAxis &&
                 !xAxis.categories &&
-                !series.keyToAxis
+                series.exportKey !== 'name'
             ) {
-                if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap
-                        .filter((p): boolean => p === 'x');
-                    if (pointArrayMapCheck.length) {
-                        series.pointArrayMap.unshift('x');
-                        return series.pointArrayMap;
-                    }
-                }
-                return ['x', 'y'];
+                return ['x', ...pointArrayMap];
             }
-            return series.pointArrayMap || ['y'];
+            return pointArrayMap;
         },
         xAxisIndices: Array<Array<number>> = [];
 
@@ -495,6 +521,8 @@ function chartGetDataRows(
                 index: series.index
             };
 
+            const seriesIndex = mockSeries.index;
+
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -521,27 +549,10 @@ function chartGetDataRows(
                     mockPoint,
                     [options]
                 );
-                key = mockPoint.x as any;
-
-                if (defined(rows[key]) &&
-                    rows[key].seriesIndices.includes(mockSeries.index)
-                ) {
-                    // find keys, which belong to actual series
-                    const keysFromActualSeries =
-                        Object.keys(rows).filter((i: string): void =>
-                            rows[i].seriesIndices.includes(mockSeries.index) &&
-                                key
-                        ),
-                        // find all properties, which start with actual key
-                        existingKeys = keysFromActualSeries
-                            .filter((propertyName: string): boolean =>
-                                propertyName.indexOf(String(key)) === 0
-                            );
-
-                    key = key.toString() + ',' + existingKeys.length;
-                }
 
                 const name = series.data[pIdx] && series.data[pIdx].name;
+
+                key = (mockPoint.x ?? '') + ',' + name;
 
                 j = 0;
 
@@ -562,33 +573,54 @@ function chartGetDataRows(
                 }
 
                 if (!rows[key]) {
-                    // Generate the row
                     rows[key] = [];
-                    // Contain the X values from one or more X axes
                     rows[key].xValues = [];
+
+                    // ES5 replacement for Array.from / fill.
+                    const arr = [];
+                    for (let i = 0; i < series.chart.series.length; i++) {
+                        arr[i] = 0;
+                    }
+
+                    // Create poiners array, holding information how many
+                    // duplicates of specific x occurs in each series.
+                    // Used for creating rows with duplicates.
+                    rows[key].pointers = arr;
+                    rows[key].pointers[series.index] = 1;
+                } else {
+                    // Handle duplicates (points with the same x), by creating
+                    // extra rows based on pointers for better performance.
+                    const modifiedKey = `${key},${rows[key].pointers[series.index]}`,
+                        originalKey = key;
+
+                    if (rows[key].pointers[series.index]) {
+                        if (!rows[modifiedKey]) {
+                            rows[modifiedKey] = [];
+                            rows[modifiedKey].xValues = [];
+                            rows[modifiedKey].pointers = [];
+                        }
+
+                        key = modifiedKey;
+                    }
+
+                    rows[originalKey].pointers[series.index] += 1;
                 }
+
                 rows[key].x = mockPoint.x;
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
-                if (!defined(rows[key].seriesIndices)) {
-                    rows[key].seriesIndices = [];
-                }
-                rows[key].seriesIndices = [
-                    ...rows[key].seriesIndices, mockSeries.index
-                ];
-
                 while (j < valueCount) {
-                    prop = pointArrayMap[j]; // y, z etc
+                    prop = pointArrayMap[j]; // `y`, `z` etc
                     val = (mockPoint as any)[prop];
-                    rows[key as any][i + j] = pick(
+                    rows[key][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
-                        // datetime yAxis
+                        // Datetime yAxis
                         categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
                             time.dateFormat(csvOptions.dateFormat as any, val) :
                             null,
-                        // linear/log yAxis
+                        // Linear/log yAxis
                         val
                     );
                     j++;
@@ -996,12 +1028,10 @@ function chartHideData(
  * @private
  */
 function chartToggleDataTable(
-    this: Chart,
+    this: Exporting.ChartComposition,
     show?: boolean
 ): void {
-
     show = pick(show, !this.isDataTableVisible);
-
     // Create the div
     const createContainer = show && !this.dataTableDiv;
     if (createContainer) {
@@ -1030,6 +1060,8 @@ function chartToggleDataTable(
                 element: this.dataTableDiv,
                 wasHidden: createContainer || oldDisplay !== style.display
             });
+        } else {
+            fireEvent(this, 'afterHideData');
         }
     }
 
@@ -1047,12 +1079,12 @@ function chartToggleDataTable(
 
     if (
         options &&
-        options.menuItemDefinitions &&
-        lang &&
-        lang.viewData &&
-        lang.hideData &&
-        menuItems &&
-        exportDivElements
+            options.menuItemDefinitions &&
+            lang &&
+            lang.viewData &&
+            lang.hideData &&
+            menuItems &&
+            exportDivElements
     ) {
         const exportDivElement = exportDivElements[
             menuItems.indexOf('viewData')
@@ -1086,12 +1118,14 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
+        const chartProto = ChartClass.prototype,
+            exportingOptions = getOptions().exporting;
+
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
-
-        const chartProto = ChartClass.prototype;
+        addEvent(ChartClass, 'destroy', onChartDestroy);
 
         chartProto.downloadCSV = chartDownloadCSV;
         chartProto.downloadXLS = chartDownloadXLS;
@@ -1102,10 +1136,6 @@ function compose(
         chartProto.hideData = chartHideData;
         chartProto.toggleDataTable = chartToggleDataTable;
         chartProto.viewData = chartViewData;
-    }
-
-    if (U.pushUnique(composedMembers, setOptions)) {
-        const exportingOptions = getOptions().exporting;
 
         // Add "Download CSV" to the exporting menu.
         // @todo consider move to defaults
@@ -1127,7 +1157,10 @@ function compose(
                 viewData: {
                     textKey: 'viewData',
                     onclick: function (): void {
-                        this.toggleDataTable();
+                        wrapLoading.call(
+                            this,
+                            this.toggleDataTable
+                        );
                     }
                 }
             } as Record<string, Exporting.MenuObject>);
@@ -1146,32 +1179,39 @@ function compose(
         }
 
         setOptions(ExportDataDefaults);
-    }
 
-    if (AreaRangeSeries && U.pushUnique(composedMembers, AreaRangeSeries)) {
-        AreaRangeSeries.prototype.keyToAxis = {
-            low: 'y',
-            high: 'y'
-        };
-    }
+        if (AreaRangeSeries) {
+            AreaRangeSeries.prototype.keyToAxis = {
+                low: 'y',
+                high: 'y'
+            };
+        }
 
-    if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
-        GanttSeries.prototype.keyToAxis = {
-            start: 'x',
-            end: 'x'
-        };
-    }
+        if (GanttSeries) {
+            GanttSeries.prototype.exportKey = 'name';
+            GanttSeries.prototype.keyToAxis = {
+                start: 'x',
+                end: 'x'
+            };
+        }
 
-    if (MapSeries && U.pushUnique(composedMembers, MapSeries)) {
-        MapSeries.prototype.exportKey = 'name';
-    }
+        if (XRangeSeries) {
+            XRangeSeries.prototype.keyToAxis = {
+                x2: 'x'
+            };
+        }
 
-    if (MapBubbleSeries && U.pushUnique(composedMembers, MapBubbleSeries)) {
-        MapBubbleSeries.prototype.exportKey = 'name';
-    }
+        if (MapSeries) {
+            MapSeries.prototype.exportKey = 'name';
+        }
 
-    if (TreemapSeries && U.pushUnique(composedMembers, TreemapSeries)) {
-        TreemapSeries.prototype.exportKey = 'name';
+        if (MapBubbleSeries) {
+            MapBubbleSeries.prototype.exportKey = 'name';
+        }
+
+        if (TreemapSeries) {
+            TreemapSeries.prototype.exportKey = 'name';
+        }
     }
 
 }
@@ -1192,10 +1232,6 @@ function getBlobFromContent(
     type: string
 ): (string|undefined) {
     const nav = win.navigator,
-        webKit = (
-            nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
         domurl = win.URL || win.webkitURL || win;
 
     try {
@@ -1206,14 +1242,10 @@ function getBlobFromContent(
             return blob.getBlob('image/svg+xml') as any;
         }
 
-        // Safari requires data URI since it doesn't allow navigation to blob
-        // URLs.
-        if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        }
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
     } catch (e) {
         // Ignore
     }
@@ -1309,6 +1341,16 @@ function onChartRenderer(
     }
 }
 
+/**
+ * Clean up
+ * @private
+ */
+function onChartDestroy(
+    this: Chart
+): void {
+    this.dataTableDiv?.remove();
+}
+
 /* *
  *
  *  Default Export
@@ -1352,4 +1394,4 @@ export default ExportData;
  * @type {Array<Array<string>>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

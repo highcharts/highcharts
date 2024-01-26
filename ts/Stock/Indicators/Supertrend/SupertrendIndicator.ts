@@ -196,13 +196,13 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<SupertrendPoint> = void 0 as any;
+    public data!: Array<SupertrendPoint>;
 
-    public linkedParent: SupertrendLinkedParentObject = void 0 as any;
+    public linkedParent!: SupertrendLinkedParentObject;
 
-    public options: SupertrendOptions = void 0 as any;
+    public options!: SupertrendOptions;
 
-    public points: Array<SupertrendPoint> = void 0 as any;
+    public points!: Array<SupertrendPoint>;
 
     /* *
      *

@@ -9,7 +9,7 @@ Highcharts.chart('container', {
 
 }, function (chart) {
 
-    var renderer = chart.renderer;
+    const renderer = chart.renderer;
     renderer.rect(10, 10, 100, 50, 5).attr({
         fill: 'blue',
         stroke: 'black',

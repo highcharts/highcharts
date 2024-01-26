@@ -1,4 +1,4 @@
-var gameclock =
+const gameclock =
     [614.93, 614.89, 614.85, 614.81, 614.77, 614.73,
         614.69, 614.65, 614.61, 614.57, 614.53, 614.49, 614.45, 614.41,
         614.37, 614.33, 614.29, 614.25, 614.21, 614.17, 614.13, 614.09,
@@ -8,7 +8,7 @@ var gameclock =
         613.21, 613.17, 613.13, 613.08, 613.05, 613.01, 612.96,
         612.92, 612.88, 612.84, 612.8];
 
-var playDescription = '<p style = \'margin:0px; text-align:center;\'>Golden State Warriors vs. Toronto Raptors</p><p style=\'font-size: 10px; font-weight:bold; text-align:center; background-color: #e8c3ff; padding: 5px;\'>Home: Carroll 25` 3PT Jump Shot (3 PTS) (Lowry 1 AST)</p>';
+const playDescription = '<p style = \'margin:0px; text-align:center;\'>Golden State Warriors vs. Toronto Raptors</p><p style=\'font-size: 10px; font-weight:bold; text-align:center; background-color: #e8c3ff; padding: 5px;\'>Home: Carroll 25` 3PT Jump Shot (3 PTS) (Lowry 1 AST)</p>';
 
 Highcharts.chart('container', {
     series: [{

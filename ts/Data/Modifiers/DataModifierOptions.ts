@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -12,7 +12,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -20,7 +22,9 @@
  *
  * */
 
+
 import type { DataModifierTypes } from './DataModifierType';
+
 
 /* *
  *
@@ -28,22 +32,25 @@ import type { DataModifierTypes } from './DataModifierType';
  *
  * */
 
+
 /**
  * Options to configure the modifier.
  */
 export interface DataModifierOptions {
 
     /**
-     * Name of the related modifier for these options.
+     * Type of the related modifier for these options.
      */
-    modifier: keyof DataModifierTypes;
+    type: keyof DataModifierTypes;
 
 }
+
 
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default DataModifierOptions;

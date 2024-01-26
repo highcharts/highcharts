@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    let data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+    ).then(response => response.json());
 
     // The data point configurations are arrays on the form [x, open, high, low, close].
     // In order to make this understandable for different series types like line, column
@@ -17,8 +22,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
     );
 
     // create the chart
-    var chart = Highcharts.stockChart('container', {
-
+    const chart = Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1
@@ -36,7 +40,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         }]
     });
 
-    var enableMarkers = true,
+    let enableMarkers = true,
         color = false;
 
     // Toggle point markers
@@ -65,4 +69,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             });
         });
     });
-});
+})();

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Paweł Dalek
+ *  (c) 2010-2024 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
@@ -22,6 +22,7 @@ import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -235,16 +236,16 @@ class VBPIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<VBPPoint> = void 0 as any;
-    public negWidths: Array<number> = void 0 as any;
-    public options: VBPOptions = void 0 as any;
-    public points: Array<VBPPoint> = void 0 as any;
-    public posWidths: Array<number> = void 0 as any;
-    public priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = void 0 as any;
-    public rangeStep: number = void 0 as any;
-    public volumeDataArray: Array<number> = void 0 as any;
-    public zoneStarts: Array<number> = void 0 as any;
-    public zoneLinesSVG?: SVGElement = void 0 as any;
+    public data!: Array<VBPPoint>;
+    public negWidths!: Array<number>;
+    public options!: VBPOptions;
+    public points!: Array<VBPPoint>;
+    public posWidths!: Array<number>;
+    public priceZones!: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
+    public rangeStep!: number;
+    public volumeDataArray!: Array<number>;
+    public zoneStarts!: Array<number>;
+    public zoneLinesSVG?: SVGElement;
 
     /* *
      *
@@ -530,6 +531,27 @@ class VBPIndicator extends SMAIndicator {
                 );
             }
         }
+    }
+
+    public getExtremes(): DataExtremesObject {
+        const prevCompare = this.options.compare,
+            prevCumulative = this.options.cumulative;
+        let ret: DataExtremesObject;
+
+        // Temporarily disable cumulative and compare while getting the extremes
+        if (this.options.compare) {
+            this.options.compare = void 0;
+            ret = super.getExtremes();
+            this.options.compare = prevCompare;
+        } else if (this.options.cumulative) {
+            this.options.cumulative = false;
+            ret = super.getExtremes();
+            this.options.cumulative = prevCumulative;
+        } else {
+            ret = super.getExtremes();
+        }
+
+        return ret;
     }
 
     public getValues <TLinkedSeries extends LineSeries>(

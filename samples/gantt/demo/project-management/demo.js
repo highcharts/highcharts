@@ -202,7 +202,7 @@ const options = {
         },
         point: {
             descriptionFormatter: function (point) {
-                var completedValue = point.completed ?
+                const completedValue = point.completed ?
                         point.completed.amount || point.completed : null,
                     completed = completedValue ?
                         ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :

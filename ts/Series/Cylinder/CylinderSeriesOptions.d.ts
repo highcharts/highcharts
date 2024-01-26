@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -31,5 +31,11 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface CylinderSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<CylinderSeries>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default CylinderSeriesOptions;

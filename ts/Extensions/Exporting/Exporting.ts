@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -44,6 +44,7 @@ import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     SVG_NS,
     win
@@ -63,6 +64,7 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     uniqueKey
 } = U;
@@ -255,15 +257,14 @@ namespace Exporting {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     // These CSS properties are not inlined. Remember camelCase.
     const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
-        /^font$/, // more specific props are set
+        /^font$/, // More specific props are set
         /[lL]ogical(Width|Height)$/,
         /^parentRule$/,
+        /^(cssRules|ownerRules)$/, // #19516 read-only properties
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
@@ -304,8 +305,6 @@ namespace Exporting {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Add the export button to the chart, with options.
@@ -372,17 +371,17 @@ namespace Exporting {
                 this: SVGElement,
                 e: (Event|AnyRecord)
             ): void {
-                // consistent with onclick call (#3495)
+                // Consistent with onclick call (#3495)
                 if (e) {
                     e.stopPropagation();
                 }
                 chart.contextMenu(
                     button.menuClassName,
-                    menuItems as any,
-                    button.translateX,
-                    button.translateY,
-                    button.width,
-                    button.height,
+                    menuItems,
+                    button.translateX || 0,
+                    button.translateY || 0,
+                    button.width || 0,
+                    button.height || 0,
                     button
                 );
                 button.setState(2);
@@ -470,7 +469,7 @@ namespace Exporting {
             }), true, 'spacingBox');
 
         (chart.buttonOffset as any) += (
-            (button.width + btnOptions.buttonSpacing) *
+            ((button.width || 0) + (btnOptions as any).buttonSpacing) *
             (btnOptions.align === 'right' ? -1 : 1)
         );
 
@@ -646,7 +645,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.afterPrint = afterPrint;
@@ -673,7 +672,7 @@ namespace Exporting {
             );
 
             if (G.isSafari) {
-                G.win.matchMedia('print').addListener(
+                win.matchMedia('print').addListener(
                     function (
                         this: MediaQueryList,
                         mqlEvent: MediaQueryListEvent
@@ -689,9 +688,7 @@ namespace Exporting {
                     }
                 );
             }
-        }
 
-        if (U.pushUnique(composedMembers, setOptions)) {
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
                 defaultOptions.exporting
@@ -748,14 +745,15 @@ namespace Exporting {
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
             cacheName = 'cache-' + className,
-            menuPadding = Math.max(width, height); // for mouse leave detection
+            // For mouse leave detection
+            menuPadding = Math.max(width, height);
         let innerMenu: HTMLDOMElement,
             menu: Exporting.DivElement = (chart as any)[cacheName];
 
-        // create the menu only the first time
+        // Create the menu only the first time
         if (!menu) {
 
-            // create a HTML element above the SVG
+            // Create a HTML element above the SVG
             chart.exportContextMenu = (chart as any)[cacheName] = menu =
                 createElement(
                     'div', {
@@ -765,9 +763,10 @@ namespace Exporting {
                         position: 'absolute',
                         zIndex: 1000,
                         padding: menuPadding + 'px',
-                        pointerEvents: 'auto'
+                        pointerEvents: 'auto',
+                        ...chart.renderer.style
                     },
-                    chart.fixedDiv || chart.container
+                    chart.scrollablePlotArea?.fixedDiv || chart.container
                 ) as Exporting.DivElement;
 
             innerMenu = createElement(
@@ -866,9 +865,8 @@ namespace Exporting {
                                     e.stopPropagation();
                                 }
                                 menu.hideMenu();
-                                if ((item as any).onclick) {
-                                    (item as any).onclick
-                                        .apply(chart, arguments);
+                                if (typeof item !== 'string' && item.onclick) {
+                                    item.onclick.apply(chart, arguments);
                                 }
                             }
                         }, void 0, innerMenu);
@@ -1054,7 +1052,7 @@ namespace Exporting {
             width: exportingOptions.width,
             scale: exportingOptions.scale,
             svg: svg
-        }, exportingOptions.formAttributes as any);
+        }, exportingOptions.fetchOptions);
     }
 
     /**
@@ -1228,6 +1226,11 @@ namespace Exporting {
                 }));
             }
         });
+
+        // Make sure the `colorAxis` object of the `defaultOptions` isn't used
+        // in the chart copy's user options, because a color axis should only be
+        // added when the user actually applies it.
+        options.colorAxis = chart.userOptions.colorAxis;
 
         // Generate the chart copy
         const chartCopy = new (chart.constructor as typeof Chart)(
@@ -1561,11 +1564,15 @@ namespace Exporting {
      *        Move target
      */
     function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
-        const chart = this;
+        const { scrollablePlotArea } = this;
         (
-            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-                [chart.fixedDiv, chart.scrollingContainer as any] :
-                [chart.container]
+            // When scrollablePlotArea is active (#9533)
+            scrollablePlotArea ?
+                [
+                    scrollablePlotArea.fixedDiv,
+                    scrollablePlotArea.scrollingContainer
+                ] :
+                [this.container]
 
         ).forEach(function (div: HTMLDOMElement): void {
             moveTo.appendChild(div);

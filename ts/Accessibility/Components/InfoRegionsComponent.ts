@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for chart info region and table.
  *
@@ -222,7 +222,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);
@@ -271,6 +271,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
             }
         });
 
+        this.addEvent(chart, 'afterHideData', function (): void {
+            if (component.viewDataTableButton) {
+                component.viewDataTableButton
+                    .setAttribute('aria-expanded', 'false');
+            }
+        });
+
         this.announcer = new Announcer(chart, 'assertive');
     }
 
@@ -279,7 +286,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public initRegionsDefinitions(): void {
-        const component = this;
+        const component = this,
+            accessibilityOptions = this.chart.options.accessibility;
 
         this.screenReaderSections = {
             before: {
@@ -289,8 +297,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 ): string {
                     const formatter: (
                         ScreenReaderFormatterCallbackFunction<Chart>|undefined
-                    ) = chart.options.accessibility
-                        .screenReaderSection.beforeChartFormatter;
+                    ) = accessibilityOptions.screenReaderSection
+                        .beforeChartFormatter;
                     return formatter ? formatter(chart) :
                         (component.defaultBeforeChartFormatter as any)(chart);
                 },
@@ -319,8 +327,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility
-                        .screenReaderSection
+                    const formatter = accessibilityOptions.screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -334,7 +341,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     );
                 },
                 afterInserted: function (): void {
-                    if (component.chart.accessibility) {
+                    if (
+                        component.chart.accessibility &&
+                        accessibilityOptions.keyboardNavigation.enabled
+                    ) {
                         component.chart.accessibility
                             .keyboardNavigation.updateExitAnchor(); // #15986
                     }
@@ -556,7 +566,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
-        return stripHTMLTagsFromString(content);
+        return stripHTMLTagsFromString(content, this.chart.renderer.forExport);
     }
 
 
@@ -636,7 +646,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const subtitle = (
             this.chart.options.subtitle
         );
-        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
+        return stripHTMLTagsFromString(
+            subtitle && subtitle.text || '',
+            this.chart.renderer.forExport
+        );
     }
 
 

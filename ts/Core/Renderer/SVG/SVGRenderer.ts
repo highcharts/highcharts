@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -140,81 +140,30 @@ let hasInternalReferenceBug: (boolean|undefined);
  */
 class SVGRenderer implements SVGRendererLike {
 
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        container: HTMLDOMElement,
-        width: number,
-        height: number,
-        style?: CSSObject,
-        forExport?: boolean,
-        allowHTML?: boolean,
-        styledMode?: boolean
-    ) {
-        this.init(
-            container,
-            width,
-            height,
-            style,
-            forExport,
-            allowHTML,
-            styledMode
-        );
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public alignedObjects: Array<SVGElement> = void 0 as any;
-
-    public allowHTML?: boolean;
-
     /**
      * The root `svg` node of the renderer.
      *
      * @name Highcharts.SVGRenderer#box
      * @type {Highcharts.SVGDOMElement}
      */
-    public box: globalThis.SVGElement = void 0 as any;
-
     /**
      * The wrapper for the root `svg` node of the renderer.
      *
      * @name Highcharts.SVGRenderer#boxWrapper
      * @type {Highcharts.SVGElement}
      */
-    public boxWrapper: SVGElement = void 0 as any;
-
-    public cache: Record<string, BBoxObject> = void 0 as any;
-
-    public cacheKeys: Array<string> = void 0 as any;
-
-    public chartIndex: number = void 0 as any;
-
     /**
      * A pointer to the `defs` node of the root SVG.
      *
      * @name Highcharts.SVGRenderer#defs
      * @type {Highcharts.SVGElement}
      */
-    public defs: SVGElement = void 0 as any;
-    public forExport?: boolean;
-    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
-    public gradients: Record<string, SVGElement> = void 0 as any;
-    public height: number = void 0 as any;
-    public imgCount: number = void 0 as any;
-    public rootFontSize: string|undefined;
-    public style: CSSObject = void 0 as any;
-    public styledMode?: boolean;
-    public unSubPixelFix?: Function;
-
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
     /**
      * Page url used for internal references.
      *
@@ -222,14 +171,6 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#url
      * @type {string}
      */
-    public url: string = void 0 as any;
-    public width: number = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
     /**
      * Initialize the SVGRenderer. Overridable initializer function that takes
@@ -261,7 +202,7 @@ class SVGRenderer implements SVGRendererLike {
      * does, it will avoid setting presentational attributes in some cases, but
      * not when set explicitly through `.attr` and `.css` etc.
      */
-    public init(
+    public constructor(
         container: HTMLDOMElement,
         width: number,
         height: number,
@@ -269,18 +210,18 @@ class SVGRenderer implements SVGRendererLike {
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
-    ): void {
+    ) {
         const renderer = this,
             boxWrapper = renderer
                 .createElement('svg')
                 .attr({
                     version: '1.1',
                     'class': 'highcharts-root'
-                }) as any,
-            element = boxWrapper.element;
+                }),
+            element = boxWrapper.element as SVGDOMElement;
 
         if (!styledMode) {
-            boxWrapper.css(this.getStyle(style as any));
+            boxWrapper.css(this.getStyle(style || {}));
         }
 
         container.appendChild(element);
@@ -294,9 +235,9 @@ class SVGRenderer implements SVGRendererLike {
             attr(element, 'xmlns', this.SVG_NS);
         }
 
-        this.box = element as any;
+        this.box = element;
         this.boxWrapper = boxWrapper;
-        renderer.alignedObjects = [];
+        this.alignedObjects = [];
 
         this.url = this.getReferenceURL();
 
@@ -307,15 +248,15 @@ class SVGRenderer implements SVGRendererLike {
             doc.createTextNode('Created with @product.name@ @product.version@')
         );
 
-        renderer.defs = this.createElement('defs').add();
-        renderer.allowHTML = allowHTML;
-        renderer.forExport = forExport;
-        renderer.styledMode = styledMode;
-        renderer.gradients = {}; // Object where gradient SvgElements are stored
-        renderer.cache = {}; // Cache for numerical bounding boxes
-        renderer.cacheKeys = [];
-        renderer.imgCount = 0;
-        renderer.rootFontSize = boxWrapper.getStyle('font-size');
+        this.defs = this.createElement('defs').add();
+        this.allowHTML = allowHTML;
+        this.forExport = forExport;
+        this.styledMode = styledMode;
+        this.gradients = {}; // Object where gradient SvgElements are stored
+        this.cache = {}; // Cache for numerical bounding boxes
+        this.cacheKeys = [];
+        this.imgCount = 0;
+        this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
 
@@ -346,6 +287,38 @@ class SVGRenderer implements SVGRendererLike {
         }
     }
 
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public alignedObjects: Array<SVGElement>;
+    public allowHTML?: boolean;
+    public box: globalThis.SVGElement;
+    public boxWrapper: SVGElement;
+    public cache: Record<string, BBoxObject>;
+    public cacheKeys: Array<string>;
+    public chartIndex!: number;
+    public defs: SVGElement;
+    public forExport?: boolean;
+    public globalAnimation!: (boolean|Partial<AnimationOptions>);
+    public gradients: Record<string, SVGElement>;
+    public height!: number;
+    public imgCount: number;
+    public rootFontSize: string|undefined;
+    public style!: CSSObject;
+    public styledMode?: boolean;
+    public unSubPixelFix?: Function;
+    public url: string;
+    public width!: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -560,10 +533,7 @@ class SVGRenderer implements SVGRendererLike {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        const wrapper = new this.Element();
-
-        wrapper.init(this as any, nodeName);
-        return wrapper;
+        return new this.Element(this, nodeName);
     }
 
     /**
@@ -603,10 +573,10 @@ class SVGRenderer implements SVGRendererLike {
             id = [
                 `highcharts-drop-shadow-${this.chartIndex}`,
                 ...Object.keys(shadowOptions)
-                    .map((key: string): number|string =>
-                        (shadowOptions as any)[key]
+                    .map((key: string): string =>
+                        `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
@@ -619,7 +589,8 @@ class SVGRenderer implements SVGRendererLike {
             this.definition({
                 tagName: 'filter',
                 attributes: {
-                    id
+                    id,
+                    filterUnits: options.filterUnits
                 },
                 children: [{
                     tagName: 'feDropShadow',
@@ -1491,56 +1462,59 @@ class SVGRenderer implements SVGRendererLike {
              * and the label size into consideration, and translates the image
              * to center within the label.
              */
-            ['width', 'height'].forEach(function (key: string): void {
-                img[key + 'Setter'] = function (value: any, key: string): void {
+            (
+                ['width', 'height'] as Array<'width'|'height'>
+            ).forEach((key): void => {
+                img[`${key}Setter`] = function (
+                    value: number, key: 'width'|'height'
+                ): void {
                     this[key] = value;
 
                     const {
-                        alignByTranslate,
-                        element,
-                        width,
-                        height,
-                        imgwidth,
+                            alignByTranslate,
+                            element,
+                            width,
+                            height,
+                            imgwidth,
+                            imgheight
+                        } = this,
+                        imgSize = key === 'width' ? imgwidth : imgheight;
+
+                    let scale = 1;
+
+                    // Scale and center the image within its container. The name
+                    // `backgroundSize` is taken from the CSS spec, but the
+                    // value `within` is made up. Other possible values in the
+                    // spec, `cover` and `contain`, can be implemented if
+                    // needed.
+                    if (
+                        options &&
+                        options.backgroundSize === 'within' &&
+                        width &&
+                        height &&
+                        imgwidth &&
                         imgheight
-                    } = this;
+                    ) {
+                        scale = Math.min(
+                            width / imgwidth,
+                            height / imgheight
+                        );
 
-                    let imgSize = this['img' + key];
-                    if (defined(imgSize)) {
-                        let scale = 1;
-                        // Scale and center the image within its container.
-                        // The name `backgroundSize` is taken from the CSS spec,
-                        // but the value `within` is made up. Other possible
-                        // values in the spec, `cover` and `contain`, can be
-                        // implemented if needed.
-                        if (
-                            options &&
-                            options.backgroundSize === 'within' &&
-                            width &&
-                            height
-                        ) {
-                            scale = Math.min(
-                                width / imgwidth,
-                                height / imgheight
-                            );
+                        // Update both width and height to keep the ratio
+                        // correct (#17315)
+                        attr(element, {
+                            width: Math.round(imgwidth * scale),
+                            height: Math.round(imgheight * scale)
+                        });
+                    } else if (element && imgSize) {
+                        element.setAttribute(key, imgSize);
+                    }
 
-                            imgSize = Math.round(imgSize * scale);
-
-                            // Update both width and height to keep the ratio
-                            // correct (#17315)
-                            attr(element, {
-                                width: Math.round(imgwidth * scale),
-                                height: Math.round(imgheight * scale)
-                            });
-                        } else if (element) {
-                            element.setAttribute(key, imgSize);
-                        }
-
-                        if (!alignByTranslate) {
-                            this.translate(
-                                ((width || 0) - (imgwidth * scale)) / 2,
-                                ((height || 0) - (imgheight * scale)) / 2
-                            );
-                        }
+                    if (!alignByTranslate && imgwidth && imgheight) {
+                        this.translate(
+                            ((width || 0) - (imgwidth * scale)) / 2,
+                            ((height || 0) - (imgheight * scale)) / 2
+                        );
                     }
                 };
             });
@@ -1623,6 +1597,9 @@ class SVGRenderer implements SVGRendererLike {
      * to {@link SVGElement} objects through the {@link SVGElement#clip}
      * function.
      *
+     * This function is deprecated as of v11.2. Instead, use a regular shape
+     * (`rect`, `path` etc), and the `SVGElement.clipTo` function.
+     *
      * @example
      * let circle = renderer.circle(100, 100, 100)
      *     .attr({ fill: 'red' })
@@ -1631,6 +1608,8 @@ class SVGRenderer implements SVGRendererLike {
      *
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
+     *
+     * @deprecated
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -1651,20 +1630,7 @@ class SVGRenderer implements SVGRendererLike {
         width?: number,
         height?: number
     ): SVGRenderer.ClipRectElement {
-        const
-            // Add a hyphen at the end to avoid confusion in testing indexes
-            // -1 and -10, -11 etc (#6550)
-            id = uniqueKey() + '-',
-            clipPath = (this.createElement('clipPath').attr({
-                id: id
-            }) as any).add(this.defs),
-            wrapper = this.rect(x, y, width, height, 0).add(clipPath);
-
-        wrapper.id = id;
-        wrapper.clipPath = clipPath;
-        wrapper.count = 0;
-
-        return wrapper;
+        return this.rect(x, y, width, height, 0);
     }
 
 
@@ -1817,7 +1783,9 @@ class SVGRenderer implements SVGRendererLike {
      * @private
      * @function Highcharts.SVGRenderer#pathToSegments
      */
-    public pathToSegments(path: Array<string|number>): SVGPath {
+    public pathToSegments(
+        path: (Array<string|number>|SVGPath)
+    ): SVGPath {
 
         const ret: SVGPath = [];
         const segment = [];

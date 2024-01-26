@@ -2,13 +2,13 @@
  * A small Highcharts snippet/plugin for adding images to axis labels
  */
 (function (H) {
-    var iconSize = 32;
+    const iconSize = 32;
 
     H.wrap(H.Tick.prototype, 'renderLabel', function addImages(proceed) {
 
         proceed.apply(this, [].slice.call(arguments, 1));
 
-        var tick = this,
+        const tick = this,
             axis = this.axis,
             image = axis.options.images && axis.options.images[this.pos],
             xy = this.label && this.label.xy;
@@ -20,7 +20,8 @@
             xy.y -= (iconSize + this.label.getBBox().height) / 2;
 
             if (!tick.image) {
-                tick.image = axis.chart.renderer.image(image, xy.x, xy.y, iconSize, iconSize)
+                tick.image = axis.chart.renderer.image(
+                    image, xy.x, xy.y, iconSize, iconSize)
                     .add();
             } else { // Update existing
                 tick.image.animate({

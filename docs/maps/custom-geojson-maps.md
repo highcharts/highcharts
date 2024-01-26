@@ -1,7 +1,7 @@
 Custom GeoJSON maps
 ===================
 
-This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see our article on [creating custom maps](https://www.highcharts.com/docs/maps/create-custom-maps-for-highmaps "Custom maps").
+This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see our article on [creating custom maps](https://www.highcharts.com/docs/maps/create-custom-maps "Custom maps").
 
 We see that many users have map data in ESRI Shapefile format or other common mapping formats. These can easily be converted for use with Highcharts Maps using an editor with GeoJSON exporting capabilities, as Highcharts Maps supports the GeoJSON format natively. Most full-featured GIS editors will be able to perform this conversion. [QGIS](https://qgis.org "QGIS") is a free alternative that supports both Shapefile, KML, and a number of other formats. See [this demo](https://highcharts.com/maps/demo/geojson "GeoJSON demo") for an example of how to load polygonal data from a GeoJSON file, and [this demo](https://highcharts.com/maps/demo/mapline-mappoint "GeoJSON multiple types demo") for a more complex example with line and point data.
 

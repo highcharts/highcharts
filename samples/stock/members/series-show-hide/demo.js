@@ -14,7 +14,7 @@
     });
 
     document.getElementById('button').addEventListener('click', () => {
-        var series = chart.series[0];
+        const series = chart.series[0];
         if (series.visible) {
             series.hide();
         } else {

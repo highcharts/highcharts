@@ -5,7 +5,7 @@
  *
  * Highcharts
  *
- * (c) 2010-2023 Highsoft AS
+ * (c) 2010-2024 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -19,6 +19,7 @@ import DataPool from '../../Data/DataPool.js';
 import DataTable from '../../Data/DataTable.js';
 import Formula from '../../Data/Formula/Formula.js';
 import '../../Data/Connectors/CSVConnector.js';
+import '../../Data/Connectors/JSONConnector.js';
 import '../../Data/Connectors/GoogleSheetsConnector.js';
 import '../../Data/Connectors/HTMLTableConnector.js';
 import '../../Data/Modifiers/ChainModifier.js';

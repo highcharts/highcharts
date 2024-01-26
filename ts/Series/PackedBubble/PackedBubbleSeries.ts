@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -64,11 +64,8 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    syncTimeout
+    pick
 } = U;
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
 
 /* *
  *
@@ -119,15 +116,15 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
-    public chart: PackedBubbleChart = void 0 as any;
+    public chart!: PackedBubbleChart;
 
-    public data: Array<PackedBubblePoint> = void 0 as any;
+    public data!: Array<PackedBubblePoint>;
 
     public hoverPoint?: PackedBubblePoint;
 
-    public layout: PackedBubbleLayout = void 0 as any;
+    public layout!: PackedBubbleLayout;
 
-    public options: PackedBubbleSeriesOptions = void 0 as any;
+    public options!: PackedBubbleSeriesOptions;
 
     public parentNode?: PackedBubblePoint;
 
@@ -139,9 +136,9 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public parentNodeRadius?: number;
 
-    public points: Array<PackedBubblePoint> = void 0 as any;
+    public points!: Array<PackedBubblePoint>;
 
-    public xData: Array<number> = void 0 as any;
+    public xData!: Array<number>;
 
     public deferDataLabels: boolean = true;
 
@@ -164,8 +161,7 @@ class PackedBubbleSeries extends BubbleSeries {
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
-                series.visible ||
-                !chart.options.chart.ignoreHiddenSeries
+                series.reserveSpace()
             ) {
                 const valueData = (
                     series.useDataTable ?
@@ -414,9 +410,7 @@ class PackedBubbleSeries extends BubbleSeries {
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
-                parentNode = (
-                    new PackedBubblePoint()
-                ).init(
+                parentNode = new PackedBubblePoint(
                     this,
                     {
                         mass: (this.parentNodeRadius as any) / 2,
@@ -437,7 +431,7 @@ class PackedBubbleSeries extends BubbleSeries {
                         isParentNode: true,
                         seriesIndex: this.index
                     } as any
-                ) as any;
+                );
             }
             if (this.parentNode) {
                 (parentNode as any).plotX = this.parentNode.plotX;
@@ -548,7 +542,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // Create the group for parent Nodes if doesn't exist
         // If exists it will only be adjusted to the updated plot size (#12063)
         this.parentNodesGroup = this.plotGroup(
-            'parentNodesGroup',
+            'parentNodesGroup' as any,
             'parentNode',
             this.visible ? 'inherit' : 'hidden',
             0.1, chart.seriesGroup
@@ -610,11 +604,7 @@ class PackedBubbleSeries extends BubbleSeries {
             }
 
             dataLabels.forEach((dataLabel): void => {
-                if (dataLabel.div) {
-                    dataLabel.div.point = parentNode;
-                } else {
-                    (dataLabel.element as any).point = parentNode;
-                }
+                (dataLabel.div || dataLabel.element as any).point = parentNode;
             });
         }
     }
@@ -1282,6 +1272,7 @@ extend(PackedBubbleSeries.prototype, {
     directTouch: true,
     forces: ['barycenter', 'repulsive'],
     hasDraggableNodes: true,
+    invertible: false,
     isCartesian: false,
     noSharedTooltip: true,
     pointArrayMap: ['value'],

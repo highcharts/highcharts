@@ -6,7 +6,8 @@
 const gulp = require('gulp');
 const glob = require('glob');
 const log = require('./lib/log');
-const { uploadFiles, getVersionPaths, isDirectoryOrSystemFile, isDirectory } = require('./lib/uploadS3');
+const { isDirectory, isDotEntry } = require('./lib/fs');
+const { uploadFiles, getVersionPaths } = require('./lib/uploadS3');
 
 
 const SOURCE_DIR = '../map-collection/';
@@ -59,7 +60,7 @@ function distUploadMapCollection() {
         throw new Error('No --bucket specified.');
     }
 
-    const sourceFiles = glob.sync(`${sourceDir}/**/*`).filter(file => !isDirectoryOrSystemFile(file));
+    const sourceFiles = glob.sync(`${sourceDir}/**/*`).filter(file => !isDirectory(file) && !isDotEntry(file));
     const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/'));
     rootFiles.push({
         from: rootSourceDir + 'Export/changelog.html',

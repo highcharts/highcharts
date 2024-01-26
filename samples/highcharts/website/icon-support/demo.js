@@ -24,7 +24,7 @@ Math.easeOutBounce = pos => {
 
 const big = window.matchMedia('(min-width: 500px)').matches;
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/';
 
 Highcharts.theme = {
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',

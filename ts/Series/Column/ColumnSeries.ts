@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,10 +35,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -102,7 +99,7 @@ class ColumnSeries extends Series {
      *
      * */
 
-    public borderWidth: number = void 0 as any;
+    public borderWidth!: number;
 
     public columnIndex?: number;
 
@@ -112,15 +109,15 @@ class ColumnSeries extends Series {
 
     public dashStyle?: DashStyleValue;
 
-    public data: Array<ColumnPoint> = void 0 as any;
+    public data!: Array<ColumnPoint>;
 
     public dense?: boolean;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
-    public options: ColumnSeriesOptions = void 0 as any;
+    public options!: ColumnSeriesOptions;
 
-    public points: Array<ColumnPoint> = void 0 as any;
+    public points!: Array<ColumnPoint>;
 
     public pointXOffset?: number;
 
@@ -253,11 +250,9 @@ class ColumnSeries extends Series {
                     otherOptions = otherSeries.options;
                 let columnIndex;
 
-                if (otherSeries.type === series.type &&
-                    (
-                        otherSeries.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries
-                    ) &&
+                if (
+                    otherSeries.type === series.type &&
+                    otherSeries.reserveSpace() &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
@@ -283,11 +278,11 @@ class ColumnSeries extends Series {
 
         const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
-                    (xAxis.ordinal && xAxis.ordinal.slope) ||
-                options.pointRange ||
-                xAxis.closestPointRange ||
-                xAxis.tickInterval ||
-                1
+                    (!xAxis.brokenAxis?.hasBreaks && xAxis.ordinal?.slope) ||
+                    options.pointRange ||
+                    xAxis.closestPointRange ||
+                    xAxis.tickInterval ||
+                    1
                 ), // #2610
                 xAxis.len // #1535
             ),
@@ -399,11 +394,13 @@ class ColumnSeries extends Series {
         point: ColumnPoint,
         metrics: ColumnMetricsObject
     ): number {
-        const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            const reversedStacks = this.yAxis.options.reversedStacks;
+            const visibleSeries = this.xAxis.series
+                .filter((s): boolean => s.visible)
+                .map((s): number => s.index);
+
             let indexInCategory = 0,
-                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
+                totalInCategory = 0;
 
             // Loop over all the stacks on the Y axis. When stacking is enabled,
             // these are real point stacks. When stacking is not enabled, but
@@ -411,7 +408,7 @@ class ColumnSeries extends Series {
             // grouping of points in each category. This is done in the
             // `setGroupedPoints` function.
             objectEach(
-                this.yAxis.stacking && this.yAxis.stacking.stacks,
+                this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
                     if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
@@ -419,25 +416,12 @@ class ColumnSeries extends Series {
                         if (stackItem) {
                             const pointValues = stackItem.points[this.index];
 
-                            // If true `stacking` is enabled, count the total
-                            // number of non-null stacks in the category, and
-                            // note which index this point is within those
-                            // stacks.
-                            if (stacking) {
-                                if (pointValues) {
-                                    indexInCategory = totalInCategory;
-                                }
-                                if (stackItem.hasValidPoints) {
-                                    reversedStacks ? // #16169
-                                        totalInCategory++ : totalInCategory--;
-                                }
-
-                            // If `stacking` is not enabled, look for the index
-                            } else if (isArray(pointValues)) {
+                            // Look for the index
+                            if (isArray(pointValues)) {
                                 // If there are multiple points with the same X
                                 // then gather all series in category, and
                                 // assign index
-                                let seriesIndexes = Object
+                                const seriesIndexes = Object
                                     .keys(stackItem.points)
                                     .filter((pointKey): boolean =>
                                         // Filter out duplicate X's
@@ -447,17 +431,24 @@ class ColumnSeries extends Series {
                                         stackItem.points[pointKey].length > 1
                                     )
                                     .map(parseFloat)
+                                    .filter((index): boolean =>
+                                        visibleSeries.indexOf(index) !== -1
+                                    )
                                     .sort((a, b): number => b - a);
 
                                 indexInCategory = seriesIndexes.indexOf(
                                     this.index
                                 );
                                 totalInCategory = seriesIndexes.length;
+
                             }
                         }
                     }
                 }
             );
+
+            indexInCategory = this.xAxis.reversed ?
+                totalInCategory - 1 - indexInCategory : indexInCategory;
 
             // Compute the adjusted x position
             const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
@@ -581,7 +572,7 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
-            if (options.centerInCategory) {
+            if (options.centerInCategory && !options.stacking) {
                 barX = series.adjustForMissingColumns(
                     barX,
                     pointWidth,
@@ -865,11 +856,7 @@ class ColumnSeries extends Series {
             (dataLabels as any).forEach(function (
                 dataLabel: SVGElement
             ): void {
-                if (dataLabel.div) {
-                    dataLabel.div.point = point;
-                } else {
-                    (dataLabel.element as any).point = point;
-                }
+                (dataLabel.div || dataLabel.element as any).point = point;
             });
         });
 
@@ -883,10 +870,8 @@ class ColumnSeries extends Series {
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
                             pointer.onTrackerMouseOut(e);
-                        });
-                    if (hasTouch) {
-                        (series as any)[key].on('touchstart', onMouseOver);
-                    }
+                        })
+                        .on('touchstart', onMouseOver);
 
                     if (!chart.styledMode && series.options.cursor) {
                         (series as any)[key]
@@ -937,14 +922,12 @@ interface ColumnSeries {
     pointClass: typeof ColumnPoint;
 }
 extend(ColumnSeries.prototype, {
-    cropShoulder: 0,
-
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
     directTouch: true,
     getSymbol: noop,
 
-    // use separate negative stacks, unlike area stacks where a negative
+    // Use separate negative stacks, unlike area stacks where a negative
     // point is substracted from previous (#1910)
     negStacks: true,
 

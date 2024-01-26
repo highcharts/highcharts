@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,12 +20,9 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type ScatterPoint from './../Scatter/ScatterPoint';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const { scatter: ScatterSeries } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -42,21 +39,20 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *  Properties
      *
      * */
+
     public insetIndex?: number;
 
-    public options: MapPointPointOptions = void 0 as any;
+    public options!: MapPointPointOptions;
 
     public properties?: AnyRecord;
 
-    public series: MapPointSeries = void 0 as any;
+    public series!: MapPointSeries;
 
     /* *
      *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     public isValid(): boolean {
         return Boolean(
@@ -65,8 +61,6 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
             (isNumber(this.options.lon) && isNumber(this.options.lat))
         );
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

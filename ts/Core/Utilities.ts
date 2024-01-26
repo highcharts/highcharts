@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -843,11 +843,6 @@ function css(
     el: DOMElementType,
     styles: CSSObject
 ): void {
-    if (H.isMS && !H.svg) { // #2686
-        if (styles && defined(styles.opacity)) {
-            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
-        }
-    }
     extend(el.style, styles as any);
 }
 
@@ -1241,16 +1236,22 @@ function arrayMax(data: Array<any>|TypedArray): number {
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj: any, except?: any): void {
+function destroyObjectProperties(
+    obj: any,
+    except?: any,
+    destructablesOnly?: boolean
+): void {
     objectEach(obj, function (val, n): void {
         // If the object is non-null and destroy is defined
-        if (val && val !== except && val.destroy) {
+        if (val !== except && val?.destroy) {
             // Invoke the destroy
             val.destroy();
         }
 
-        // Delete the property from the object.
-        delete obj[n];
+        // Delete the property from the object
+        if (val?.destroy || !destructablesOnly) {
+            delete obj[n];
+        }
     });
 }
 

@@ -30,7 +30,7 @@ Highcharts.chart('container', {
         }],
         events: {
             setRootNode: function (eventArguments) {
-                var msg = (
+                const msg = (
                     'Root node changed from "' + eventArguments.previousRootId +
                     '" to "' + eventArguments.newRootId + '".\nTriggered' +
                     ' by "' + eventArguments.trigger + '".'

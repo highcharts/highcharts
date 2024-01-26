@@ -3,7 +3,7 @@ const dl = {
     2: {
         enabled: true,
         format: 'Start - Lunde',
-        rotation: 45,
+        rotation: 0,
         align: 'right',
         crop: false
     },
@@ -81,7 +81,13 @@ trackPoints.forEach((trkpt, i) => {
     data.push({
         x: Math.round(totalDistance * 100) / 100,
         y: ele - 15,
-        dataLabels: dl[i]
+        dataLabels: dl[i],
+        marker: dl[i] ? {
+            enabled: true,
+            fillColor: 'white',
+            lineWidth: 2,
+            lineColor: 'black'
+        } : void 0
     });
 
     lastPoint = point;

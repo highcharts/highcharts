@@ -35,8 +35,14 @@ const updateStyle = function (selector, property, value, duration) {
 
 
 const candlestick = function () {
-    Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
-    // create the chart
+    (async () => {
+
+        // Load the dataset
+        const data = await fetch(
+            'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+        ).then(response => response.json());
+
+        // create the chart
         Highcharts.stockChart('hero', {
             chart: {
                 styledMode: true,
@@ -208,9 +214,8 @@ const candlestick = function () {
                 }
             }]
         });
-    });
+    })();
 };
-
 
 // /initial run
 candlestick('static');

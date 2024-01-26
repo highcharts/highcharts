@@ -1,7 +1,7 @@
 // Prepare demo data
 // Data is joined to map using value of 'hc-key' property by default.
 // See API docs for 'joinBy' for more info on linking data and map.
-var data = [
+const data = [
     ['us-ma', 0],
     ['us-wa', 1],
     ['us-ca', 2],

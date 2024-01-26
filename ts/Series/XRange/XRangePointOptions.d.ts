@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *  Declarations
  *
  * */
+
 export interface XRangePointOptions extends ColumnPointOptions {
     partialFill?: XRangePointPartialFillOptions;
     x2?: number;

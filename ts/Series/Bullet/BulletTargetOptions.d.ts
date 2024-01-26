@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 
@@ -33,7 +34,7 @@ export interface BulletTargetOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

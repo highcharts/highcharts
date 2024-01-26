@@ -2,6 +2,12 @@
  * Copyright (C) Highsoft AS
  */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 const gulp = require('gulp');
 
 /* *
@@ -28,7 +34,7 @@ const developerPackageJson = `{
     "name": "highcharts",
     "repository": "https://github.com/highcharts/highcharts.git",
     "types": "highcharts.src.d.ts",
-    "version": "10.0.0+local"
+    "version": "11.0.0+local"
 }\n`;
 
 /* *
@@ -43,7 +49,7 @@ const developerPackageJson = `{
  * @return {Promise<void>}
  * Promise to keep
  */
-function task() {
+function scriptsCode() {
 
     const codeTool = require('../code');
     const fs = require('fs');
@@ -71,7 +77,9 @@ function task() {
 
                     fs.writeFileSync(
                         filePath,
-                        codeTool.processSrcJSFile(fs.readFileSync(filePath))
+                        codeTool.processSrcJSFile(
+                            fs.readFileSync(filePath).toString()
+                        )
                     );
                 });
 
@@ -91,4 +99,4 @@ function task() {
     });
 }
 
-gulp.task('scripts-code', task);
+gulp.task('scripts-code', scriptsCode);

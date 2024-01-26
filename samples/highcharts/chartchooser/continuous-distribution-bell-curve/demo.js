@@ -1,4 +1,4 @@
-var data = [
+const data = [
     111,
     107,
     100,

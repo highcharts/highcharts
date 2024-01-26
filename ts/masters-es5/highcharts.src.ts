@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2023 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -10,6 +10,9 @@
 import Highcharts from '../masters/highcharts.src.js';
 import MSPointer from '../Core/MSPointer.js';
 declare global {
+    interface Math {
+        sign(x: number): number;
+    }
     interface ObjectConstructor {
         setPrototypeOf?<T>(o: T, proto: object | null): T;
     }

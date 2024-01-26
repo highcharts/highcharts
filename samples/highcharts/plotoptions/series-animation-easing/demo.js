@@ -1,7 +1,7 @@
 /**
  * Easing function from https://github.com/danro/easing-js/blob/master/easing.js
  */
-var easeOutBounce = function (pos) {
+const easeOutBounce = function (pos) {
     if ((pos) < (1 / 2.75)) {
         return (7.5625 * pos * pos);
     }

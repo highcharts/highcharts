@@ -18,7 +18,7 @@
     */
 
 
-    var each = H.each,
+    const each = H.each,
         map = H.map,
         filter = H.grep,
         reduce = H.reduce,
@@ -28,7 +28,7 @@
     // Sort array of areas by x or y center value
     // Dimension can be 'x' or 'y'. If unassigned, 'x' is assumed.
     function sortAreasByCenter(areas, dimension) {
-        var d = dimension || 'x';
+        const d = dimension || 'x';
         return areas.sort(function (a, b) {
             return a.center[d] - b.center[d];
         });
@@ -70,9 +70,9 @@
 
     */
     function explodeToGrid(areas, deltaThreshold, dimension) {
-        var grid = [],
-            direction = dimension || 'y',
-            rowIx,
+        const grid = [],
+            direction = dimension || 'y';
+        let rowIx,
             i = areas.length,
             min = Infinity;
 
@@ -115,9 +115,10 @@
     //
     // Dimension can be 'x' or 'y', assumed 'x' if undefined.
     function compressGridColumns(grid, tilesize, dimension) {
-        var tiles = [],
-            tileIx,
-            direction = dimension || 'x',
+        const tiles = [],
+            direction = dimension || 'x';
+
+        let tileIx,
             min = Infinity;
 
         // Find reference minimum in the direction
@@ -138,12 +139,12 @@
         }
 
         // Rows
-        for (var i = 0, len = grid.length; i < len; ++i) {
+        for (let i = 0, len = grid.length; i < len; ++i) {
             // Split columns into tiles
             if (grid[i]) {
                 tiles[i] = [];
                 // Columns
-                for (var j = 0, rowLen = grid[i].length; j < rowLen; ++j) {
+                for (let j = 0, rowLen = grid[i].length; j < rowLen; ++j) {
                     if (!grid[i][j]) {
                         continue;
                     }
@@ -170,39 +171,40 @@
     // of the differences between each area's ideal distance to each area in the
     // grid and its actual distance (euclidean).
     function getGridDeviation(grid, tilesize) {
-        var deviation = 0,
-            getTileDeviation = function (aCoords, bCoords) {
-                var a = grid[aCoords.row][aCoords.col],
-                    b = grid[bCoords.row][bCoords.col],
-                    centerXDistance = (a.center.x - b.center.x) /
+        let deviation = 0;
+
+        const getTileDeviation = function (aCoords, bCoords) {
+            const a = grid[aCoords.row][aCoords.col],
+                b = grid[bCoords.row][bCoords.col],
+                centerXDistance = (a.center.x - b.center.x) /
                         tilesize.width,
-                    centerYDistance = (a.center.y - b.center.y) /
+                centerYDistance = (a.center.y - b.center.y) /
                         tilesize.height,
-                    actualXDistance = aCoords.col - bCoords.col,
-                    actualYDistance = aCoords.row - bCoords.row,
-                    idealEuclidean = centerXDistance * centerXDistance +
+                actualXDistance = aCoords.col - bCoords.col,
+                actualYDistance = aCoords.row - bCoords.row,
+                idealEuclidean = centerXDistance * centerXDistance +
                         centerYDistance * centerYDistance,
-                    actualEuclidean = actualXDistance * actualXDistance +
+                actualEuclidean = actualXDistance * actualXDistance +
                         actualYDistance * actualYDistance;
 
-                return Math.abs(actualEuclidean - idealEuclidean);
-            };
+            return Math.abs(actualEuclidean - idealEuclidean);
+        };
 
         // Loop over all tiles
-        for (var row = 0, rowLen = grid.length; row < rowLen; ++row) {
+        for (let row = 0, rowLen = grid.length; row < rowLen; ++row) {
             if (!grid[row]) {
                 continue;
             }
-            for (var col = 0, colLen = grid[row].length; col < colLen; ++col) {
+            for (let col = 0, colLen = grid[row].length; col < colLen; ++col) {
                 if (!grid[row][col]) {
                     continue;
                 }
                 // Compute deviation against all tiles further up the grid
-                for (var dRow = row; dRow < rowLen; ++dRow) {
+                for (let dRow = row; dRow < rowLen; ++dRow) {
                     if (!grid[dRow]) {
                         continue;
                     }
-                    for (var dCol = dRow === row ? col + 1 : 0,
+                    for (let dCol = dRow === row ? col + 1 : 0,
                         dColLen = grid[dRow].length;
                         dCol < dColLen; ++dCol
                     ) {
@@ -230,7 +232,7 @@
 
     // Get the index of the largest area in an array of areas
     function getLargestAreaIx(areas) {
-        var i = areas.length,
+        let i = areas.length,
             largestIx = 0,
             largestArea = 0;
         while (i--) {
@@ -248,19 +250,19 @@
     // Insert an area into a grid, shifting the existing areas accordingly.
     // Returns new grid with area inserted.
     function insertInGrid(baseGrid, area, position, direction) {
-        var grid = [],
-            shift = false,
+        const grid = [],
             lowerRow = position[0] - 1,
-            upperRow = position[0] + 1,
+            upperRow = position[0] + 1;
+
+        let shift = false,
             row,
-            i,
             newRow;
 
         // Copy baseGrid, avoid altering source
-        for (i = 0; i < baseGrid.length; ++i) {
+        for (let i = 0; i < baseGrid.length; ++i) {
             newRow = [];
             if (baseGrid[i]) {
-                for (var j = 0; j < baseGrid[i].length; ++j) {
+                for (let j = 0; j < baseGrid[i].length; ++j) {
                     newRow.push(baseGrid[i][j]);
                 }
             }
@@ -277,7 +279,7 @@
         if (direction === 'centerBottom') {
             // Copy over the next cell to each position to simulate a vertical
             // shift.
-            for (i = 0; i < lowerRow; ++i) {
+            for (let i = 0; i < lowerRow; ++i) {
                 if (!grid[i]) {
                     grid[i] = [];
                 }
@@ -289,7 +291,7 @@
             grid[lowerRow][position[1]] = area;
         } else if (direction === 'centerTop') {
             // Same as for centerBottom, but start from end of the grid.
-            for (i = grid.length; i > upperRow; --i) {
+            for (let i = grid.length; i > upperRow; --i) {
                 if (!grid[i]) {
                     grid[i] = [];
                 }
@@ -339,7 +341,7 @@
     // each possible position around a point. Assumes the baseGrid has a margin
     // of at least 1 to left and bottom to allow for shifts.
     function getInsertionGrids(baseGrid, overflow) {
-        var insertionGrids = [],
+        const insertionGrids = [],
             baseTile = baseGrid[overflow.row][overflow.col];
         each(filter(['left', 'leftTop', 'centerTop', 'rightTop', 'right',
             'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
@@ -367,11 +369,11 @@
 
     // Remove empty rows and columns at the beginning of a grid
     function trimGrid(grid) {
-        var minRow = Infinity, // Min row ix;
+        let minRow = Infinity, // Min row ix;
             minCol = Infinity;
-        for (var i = 0; i < grid.length; ++i) {
+        for (let i = 0; i < grid.length; ++i) {
             if (grid[i] && grid[i].length) {
-                for (var j = 0; j < grid[i].length; ++j) {
+                for (let j = 0; j < grid[i].length; ++j) {
                     if (grid[i][j]) {
                         minRow = i < minRow ? i : minRow;
                         minCol = j < minCol ? j : minCol;
@@ -392,7 +394,7 @@
     // best position. Returns new grid with overflows inserted or old grid if
     // no overflows.
     function insertOverflows(grid, overflows, tilesize) {
-        var crushed = grid,
+        let crushed = grid,
             optimalGridVal,
             optimalGridIx = 0,
             g,
@@ -403,7 +405,7 @@
             rowShiftIx,
             rowShift;
 
-        for (var i = 0, oLen = overflows.length, of; i < oLen; ++i) {
+        for (let i = 0, oLen = overflows.length, of; i < oLen; ++i) {
             of = overflows[i];
 
             // Always make space for the grid to overflow
@@ -476,7 +478,7 @@
             // which row.
 
             // Loop over all remaining overflows and change them.
-            for (var j = i + 1; j < oLen; ++j) {
+            for (let j = i + 1; j < oLen; ++j) {
                 if (overflows[j].row === rowShiftIx &&
                     ((overflows[j].col < of.col && rowShift < 0) ||
                     (overflows[j].col > of.col && rowShift > 0))
@@ -514,17 +516,18 @@
     //  the possible insertion points, and selecting the insertion with the
     //  smallest deviationValue.
     function crushTileGrid(grid, tilesize, reverseOverflows) {
-        var crushed = [],
-            overflows = [],
-            centerArea;
+        const crushed = [],
+            overflows = [];
+
+        let centerArea;
 
         // First add the simple areas and the center areas of the stacked tiles
-        for (var row = 0, rowLen = grid.length; row < rowLen; ++row) {
+        for (let row = 0, rowLen = grid.length; row < rowLen; ++row) {
             if (!grid[row]) {
                 continue;
             }
             crushed[row] = [];
-            for (var col = 0, colLen = grid[row].length, numAreas;
+            for (let col = 0, colLen = grid[row].length, numAreas;
                 col < colLen; ++col
             ) {
                 if (!grid[row][col]) {
@@ -535,7 +538,7 @@
                     crushed[row][col] = grid[row][col][0];
                 } else if (numAreas > 1) {
                     centerArea = getLargestAreaIx(grid[row][col]);
-                    for (var a = 0; a < numAreas; ++a) {
+                    for (let a = 0; a < numAreas; ++a) {
                         // Insert center area normally
                         if (a === centerArea) {
                             crushed[row][col] = grid[row][col][centerArea];
@@ -564,7 +567,7 @@
     // Get average boundary box size in x and y dimensions
     // Discards outliers using interquartile ranges (Tukey's alg)
     function getAverageAreaSize(areas) {
-        var compareNumbers = function (a, b) {
+        const compareNumbers = function (a, b) {
                 return a - b;
             },
             xSizes = map(areas, function (area) {
@@ -604,7 +607,7 @@
     // Get the extremes and center point of a GeoJSON feature.
     // labelCenter specifies whether to use the data label as center if possible
     function getFeatureMetrics(feature, labelCenter) {
-        var type = feature.geometry.type,
+        const type = feature.geometry.type,
             coords = feature.geometry.coordinates,
             flattened = [],
             extremes = {
@@ -641,7 +644,7 @@
 
         // Find extremes of coordinates
         each(flattened, function (pair) {
-            var x = parseFloat(pair[0]),
+            const x = parseFloat(pair[0]),
                 y = parseFloat(pair[1]);
             if (x < extremes.xMin) {
                 extremes.xMin = x;
@@ -698,11 +701,11 @@
         geojson, xResolutionFactor, yResolutionFactor, reverseAlg,
         useLabelCenter, excludeList
     ) {
-        var areas = sortAreasByCenter(
+        const areas = sortAreasByCenter(
             // Reduce geojson to objects with center, bounding box, and metadata
             // sorted by center X position.
                 filter(map(geojson.features, function (area) {
-                    var metrics = getFeatureMetrics(
+                    const metrics = getFeatureMetrics(
                         area, H.pick(useLabelCenter, true)
                     );
                     return metrics && extend({
@@ -716,7 +719,7 @@
                 }), function (area) {
                     // Remove areas that don't have metrics (line geom etc.),
                     // as well as excluded areas.
-                    var excluded = false,
+                    let excluded = false,
                         i = excludeList.length;
                     while (i--) {
                         if (area.id === excludeList[i]) {
@@ -728,15 +731,14 @@
                 })
             ),
             // Find average tile size to use for creating a grid
-            tilesize = getAverageAreaSize(areas),
-            grid;
+            tilesize = getAverageAreaSize(areas);
 
         // Add resolution factor if present
         tilesize.width /= Math.log(xResolutionFactor || 1) + 1;
         tilesize.height /= Math.log(yResolutionFactor || 1) + 1;
 
         // Create a grid from the areas
-        grid = crushTileGrid(
+        const grid = crushTileGrid(
             compressGridColumns(
                 explodeToGrid(areas, tilesize.height),
                 tilesize.width
@@ -774,10 +776,9 @@
 /* UI below, partially based on all-maps demo */
 
 
-var baseMapPath = 'https://code.highcharts.com/mapdata/',
-    showDataLabels = true,
+const baseMapPath = 'https://code.highcharts.com/mapdata/';
+let showDataLabels = true,
     mapCount = 0,
-    searchText,
     mapOptions = '',
     mapChart,
     tileChart,
@@ -789,21 +790,19 @@ var baseMapPath = 'https://code.highcharts.com/mapdata/',
 
 // Create/update tile chart. Called on changes to alg params or map load.
 function generateTileChart() {
-    var shapeType = $('#shapeType').val(),
+    const shapeType = $('#shapeType').val(),
         xRes = $('#xRes').val(),
         yRes = $('#yRes').val(),
         invert = $('#invert').prop('checked'),
         reverseAlg = $('#reverse').prop('checked'),
-        labelCenter = $('#labelCenter').prop('checked'),
-        excludeList = $('#exclude').val(),
-        data,
-        options,
-        maxY,
-        mapLen = Highcharts.maps[currentMapKey].features.length,
+        labelCenter = $('#labelCenter').prop('checked');
+    let excludeList = $('#exclude').val(),
+        maxY;
+    const mapLen = Highcharts.maps[currentMapKey].features.length,
         outputData = function () {
             $('#outputData').val(JSON.stringify(
                 currentData.map(point => {
-                    var filterProps = ['center', 'extremes', 'hc-middle-y',
+                    const filterProps = ['center', 'extremes', 'hc-middle-y',
                         'hc-middle-x', 'selected', 'color'];
                     filterProps.forEach(prop => delete point[prop]);
                     return point;
@@ -812,9 +811,9 @@ function generateTileChart() {
             ));
         },
         swapPoints = function (a, b) {
-            var bX = b.x,
-                bY = b.y,
-                aChanged = false,
+            const bX = b.x,
+                bY = b.y;
+            let aChanged = false,
                 bChanged = false;
 
             // First change it in output data
@@ -844,7 +843,7 @@ function generateTileChart() {
                 });
             } else {
                 // Should b be a point?
-                for (var i = 0, pLen = a.series.points.length; i < pLen; ++i) {
+                for (let i = 0, pLen = a.series.points.length; i < pLen; ++i) {
                     if (a.series.points[i].x === b.x &&
                         a.series.points[i].y === b.y) {
                         a.series.points[i].update({
@@ -882,7 +881,7 @@ function generateTileChart() {
         return;
     }
 
-    data = Highcharts.geojsonToTilemapData(
+    const data = Highcharts.geojsonToTilemapData(
         Highcharts.maps[currentMapKey],
         xRes, yRes, reverseAlg, labelCenter, excludeList
     );
@@ -891,19 +890,19 @@ function generateTileChart() {
         // Find max Y, since Y axis must be reversed
         maxY = data.reduce((a, b) => Math.max(a && a.y || 0, b && b.y || 0));
         data.forEach(point => {
-            var temp = point.x;
+            const temp = point.x;
             point.x = maxY - point.y;
             point.y = temp;
         });
     }
 
-    options = {
+    const options = {
         chart: {
             type: 'tilemap',
             inverted: invert,
             events: {
                 click: function (e) {
-                    var x = Math.round(e.xAxis[0].value),
+                    const x = Math.round(e.xAxis[0].value),
                         y = Math.round(e.yAxis[0].value);
 
                     if (selectedPoint) {
@@ -945,7 +944,7 @@ function generateTileChart() {
             point: {
                 events: {
                     click: function () {
-                        var point = this;
+                        const point = this;
                         if (selectedPoint) {
                             swapPoints(selectedPoint, point);
                             selectedPoint = null;
@@ -989,14 +988,14 @@ $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
         });
     }
 });
-searchText = 'Search ' + mapCount + ' maps';
+const searchText = 'Search ' + mapCount + ' maps';
 mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
 $('#mapDropdown').append(mapOptions).combobox();
 
 
 // Change map when item selected in dropdown
 $('#mapDropdown').change(function () {
-    var $selectedItem = $('option:selected', this),
+    const $selectedItem = $('option:selected', this),
         mapDesc = $selectedItem.text(),
         mapKey = this.value.slice(0, -3),
         javascriptPath = baseMapPath + this.value,
@@ -1022,7 +1021,7 @@ $('#mapDropdown').change(function () {
 
     // When the map is loaded or ready from cache...
     function mapReady() {
-        var mapGeoJSON = Highcharts.maps[mapKey],
+        const mapGeoJSON = Highcharts.maps[mapKey],
             data = [];
 
         currentMapKey = mapKey;
@@ -1161,7 +1160,7 @@ $('#invert').change(generateTileChart);
 
 // Zoom out tile chart
 $('#zoomOut').click(function () {
-    var xe = tileChart.xAxis[0].getExtremes(),
+    const xe = tileChart.xAxis[0].getExtremes(),
         ye = tileChart.yAxis[0].getExtremes();
     tileChart.xAxis[0].setExtremes(xe.min - 1, xe.max + 1);
     tileChart.yAxis[0].setExtremes(ye.min - 1, ye.max + 1);
@@ -1172,7 +1171,7 @@ $('#zoomOut').click(function () {
 // xResolution change
 $('#xRes').change(generateTileChart);
 $('#xRes').on('input', function () {
-    var val = $('#xRes').val();
+    const val = $('#xRes').val();
     $('#xResLabel').text(val === '1' ? 'X resolution factor' :
         'X resolution factor (' + val + ')');
 });
@@ -1181,7 +1180,7 @@ $('#xRes').on('input', function () {
 // yResolution change
 $('#yRes').change(generateTileChart);
 $('#yRes').on('input', function () {
-    var val = $('#yRes').val();
+    const val = $('#yRes').val();
     $('#yResLabel').text(val === '1' ? 'Y resolution factor' :
         'Y resolution factor (' + val + ')');
 });

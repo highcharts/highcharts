@@ -1,17 +1,18 @@
 function displayData() {
 
-    var iso2 = document.getElementById('Country_Select').value;
+    const iso2 = document.getElementById('Country_Select').value;
     // Get indicator code from SelectList
-    var ind = document.getElementById('Ind_Select').value;
-    var end = document.getElementById('end').value;
-    var start = document.getElementById('start').value;
-    var url = 'https://api.worldbank.org/v2/countries/' + iso2 + '/indicators/' + ind + '?date=' + start + ':' + end + '&format=json';
+    const ind = document.getElementById('Ind_Select').value;
+    const end = document.getElementById('end').value;
+    const start = document.getElementById('start').value;
+    const url = 'https://api.worldbank.org/v2/countries/' + iso2 + '/indicators/' + ind + '?date=' + start + ':' + end + '&format=json';
 
 
-    var arrayString = [],
+    const arrayString = [],
         date = [],
-        arrayFinal = [],
-        indicatorName,
+        arrayFinal = [];
+
+    let indicatorName,
         countryName;
 
     fetch(url).then(function (response) {
@@ -29,7 +30,7 @@ function displayData() {
 
         // querry send string that we need to convert into numbers
 
-        for (var i = 0; i < arrayString.length; i++) {
+        for (let i = 0; i < arrayString.length; i++) {
             if (arrayString[i] !== null) {
                 arrayFinal.push(parseFloat(arrayString[i]));
             } else {

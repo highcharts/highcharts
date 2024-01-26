@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 .chart-container .thick {
     stroke-width: 1;
@@ -16,7 +16,7 @@
 }
 
 .chart-container .transparent {
-    opacity: 100%;
+    opacity: 1;
     stroke-width: 1;
     stroke: white;
     color: white;
@@ -79,11 +79,11 @@
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
