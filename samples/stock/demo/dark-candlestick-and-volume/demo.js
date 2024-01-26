@@ -34,7 +34,7 @@
         },
         title: {
             style: {
-                color: '#ccc'
+                color: '#cccccc'
             }
         },
         xAxis: {
@@ -46,7 +46,7 @@
         tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.4)',
             style: {
-                color: '#CDCDC9'
+                color: '#cdcdc9'
             }
         }
     });
@@ -66,10 +66,10 @@
 
         plotOptions: {
             candlestick: {
-                color: '#EA3D3D',
-                upColor: '#47964E',
-                upLineColor: '#47964E',
-                lineColor: '#EA3D3D'
+                color: '#ea3d3d',
+                upColor: '#47964e',
+                upLineColor: '#47964e',
+                lineColor: '#ea3d3d'
             }
         },
 
@@ -110,9 +110,10 @@
             name: 'AAPL Stock Price',
             data: ohlc,
             tooltip: {
-                pointFormat: '<b>O</b> <span style="color: {point.color}">{point.open}</span><br/>' +
+                valueDecimals: 2,
+                pointFormat: '<b>O</b> <span style="color: {point.color}">{point.open} </span>' +
                     '<b>H</b> <span style="color: {point.color}">{point.high}</span><br/>' +
-                    '<b>L</b> <span style="color: {point.color}">{point.low}</span><br/>' +
+                    '<b>L</b> <span style="color: {point.color}">{point.low} </span>' +
                     '<b>C</b> <span style="color: {point.color}">{point.close}</span><br/>'
             }
         }, {
