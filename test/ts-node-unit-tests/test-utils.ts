@@ -41,33 +41,41 @@ Expected: ${printArrayOrString(expected as any)}
 `);
 }
 
-export function setupDOM( customBody = defaultHTML ){
+export function setupDOM(
+    customHTML = defaultHTML
+){
     const { JSDOM } = require('jsdom');
-    const { window: win } = new JSDOM(customBody);
+    const { window, window: { document } } = new JSDOM(customHTML);
 
-    global.Node = win.Node; // Workaround for issue #1
-    win.Date = Date;
+    if (!global.Node) {
+        global.Node = window.Node;
+    }
+    if (!window.Date) {
+        window.Date = Date;
+    }
 
     // DispatchEvent workaround
-    const originalDispatchEvent = win.dispatchEvent;
-    win.dispatchEvent = function (e: Record<string, any>){
-        const event = new win.Event(e.type, e);
+    const originalDispatchEvent = window.dispatchEvent;
+    window.dispatchEvent = function (e: Record<string, any>){
+        const event = new window.Event(e.type, e);
         return originalDispatchEvent.call(this, event);
     };
     // Do some modifications to the jsdom document in order to get the SVG bounding
     // boxes right.
-    const doc = win.document;
-    let el = doc.createElement('div');
-    doc.body.appendChild(el);
+    let el = document.createElement('div');
+    document.body.appendChild(el);
 
     return {
-        win,
-        doc,
+        win: window,
+        doc: document,
         el
     };
 }
 
-export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
+export function loadHCWithModules(
+    hc = 'highcharts',
+    modules: string[] = []
+){
     const { doc, win } = setupDOM(defaultHTML);
 
     global.window = global.window || win;
@@ -76,12 +84,12 @@ export function loadHCWithModules(hc = 'highcharts', modules: string[] = []){
 
     if (typeof Highcharts === 'function') {
         Highcharts = Highcharts(win); // old UMD pattern
-    } else {
-        Highcharts.doc = Highcharts.doc || doc;
-        Highcharts.win = Highcharts.win || win;
+    } else if (!Highcharts.win) {
+        Highcharts.doc = doc;
+        Highcharts.win = win;
     }
 
-    if (modules.length){
+    if (modules.length) {
         modules.forEach(module => {
             const m = require(`../../code/${module}.src.js`);
             if (typeof m === 'function') {

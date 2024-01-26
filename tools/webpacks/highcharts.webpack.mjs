@@ -186,11 +186,19 @@ const webpacks = FSLib
                 globalObject: 'this',
                 library: {
                     export: 'default',
-                    name: {
-                        amd: `highcharts/${masterName}`,
-                        commonjs: `highcharts/${masterName}`,
-                        root: namespace
-                    },
+                    name: (
+                        productMasters.includes(masterName) ?
+                            {
+                                amd: `highcharts/highcharts`,
+                                commonjs: `highcharts`,
+                                root: namespace
+                            } :
+                            {
+                                amd: `highcharts/${masterName}`,
+                                commonjs: `highcharts/${masterName}`,
+                                root: namespace
+                            }
+                    ),
                     type: 'umd',
                     umdNamedDefine: true
                 },
