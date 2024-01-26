@@ -222,7 +222,7 @@ async function setupDashboard() {
                     }, {
                         // Top right
                         id: 'kpi-layout',
-                        topLevelCellLayout,
+                        ...topLevelCellLayout,
                         layout: {
                             rows: [{
                                 cells: [{
@@ -245,11 +245,11 @@ async function setupDashboard() {
                     cells: [{
                         // Bottom left
                         id: 'selection-grid',
-                        topLevelCellLayout
+                        ...topLevelCellLayout
                     }, {
                         // Bottom right
                         id: 'city-chart',
-                        topLevelCellLayout
+                        ...topLevelCellLayout
                     }]
                 }]
             }]
