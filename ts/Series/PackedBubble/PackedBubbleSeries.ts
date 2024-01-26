@@ -122,8 +122,6 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public hoverPoint?: PackedBubblePoint;
 
-    public invertible = false;
-
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
@@ -600,11 +598,7 @@ class PackedBubbleSeries extends BubbleSeries {
             }
 
             dataLabels.forEach((dataLabel): void => {
-                if (dataLabel.div) {
-                    dataLabel.div.point = parentNode;
-                } else {
-                    (dataLabel.element as any).point = parentNode;
-                }
+                (dataLabel.div || dataLabel.element as any).point = parentNode;
             });
         }
     }
@@ -1272,6 +1266,7 @@ extend(PackedBubbleSeries.prototype, {
     directTouch: true,
     forces: ['barycenter', 'repulsive'],
     hasDraggableNodes: true,
+    invertible: false,
     isCartesian: false,
     noSharedTooltip: true,
     pointArrayMap: ['value'],

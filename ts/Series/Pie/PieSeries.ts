@@ -99,8 +99,6 @@ class PieSeries extends Series {
 
     public endAngleRad?: number;
 
-    public invertible = false;
-
     public options!: PieSeriesOptions;
 
     public points!: Array<PiePoint>;
@@ -528,31 +526,19 @@ interface PieSeries {
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
-
     axisTypes: [],
-
     directTouch: true,
-
     drawGraph: void 0,
-
     drawTracker: ColumnSeries.prototype.drawTracker,
-
     getCenter: CU.getCenter,
-
     getSymbol: noop,
-
+    invertible: false,
     isCartesian: false,
-
     noSharedTooltip: true,
-
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-
     pointClass: PiePoint,
-
     requireSorting: false,
-
     searchPoint: noop as any,
-
     trackerGroups: ['group', 'dataLabelsGroup']
 });
 

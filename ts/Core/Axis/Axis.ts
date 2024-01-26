@@ -1036,13 +1036,13 @@ class Axis {
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
                 y1 = axisTop;
-                y2 = cHeight - axis.bottom;
+                y2 = cHeight - axis.bottom + (chart.scrollablePixelsY || 0);
 
                 x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 
             } else {
                 x1 = axisLeft;
-                x2 = cWidth - axis.right;
+                x2 = cWidth - axis.right + (chart.scrollablePixelsX || 0);
 
                 y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
@@ -3197,7 +3197,6 @@ class Axis {
                         // Reset ellipsis in order to get the correct
                         // bounding box (#4070)
                         if (
-                            label.styles &&
                             label.styles.textOverflow === 'ellipsis'
                         ) {
                             label.css({ textOverflow: 'clip' });
@@ -3277,12 +3276,7 @@ class Axis {
                     label.css(css);
 
                 // Reset previously shortened label (#8210)
-                } else if (
-                    label.styles &&
-                    label.styles.width &&
-                    !css.width &&
-                    !widthOption
-                ) {
+                } else if (label.styles.width && !css.width && !widthOption) {
                     label.css({ width: null as any });
                 }
 
