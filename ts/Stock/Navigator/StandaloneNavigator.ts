@@ -172,7 +172,11 @@ class StandaloneNavigator {
                 axis,
                 'setExtremes',
                 (e: AnyRecord): void => {
-                    if (e.trigger === 'pan' || e.trigger === 'zoom') {
+                    if (
+                        e.trigger === 'pan' ||
+                        e.trigger === 'zoom' ||
+                        e.trigger === 'mouseWheelZoom'
+                    ) {
                         nav.setRange(
                             e.min,
                             e.max,

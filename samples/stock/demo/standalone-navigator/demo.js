@@ -79,6 +79,6 @@
     });
 
     // bind charts to the standalone navigator
-    nav.bind(priceChart, false);
+    nav.bind(priceChart);
     nav.bind(volumeChart);
 })();

@@ -157,7 +157,13 @@ const waitForAutomaticExtremes = function (
             // because it will destroy the ticks and prevent animation.
             const { min, max } = axis.getExtremes();
             axis.forceRedraw = true;
-            axis.setExtremes(min, max);
+            axis.setExtremes(
+                min,
+                max,
+                true,
+                void 0,
+                { trigger: 'mouseWheelZoom' }
+            );
             startOnTick = endOnTick = void 0;
         }
     }, 400);
@@ -258,13 +264,20 @@ const zoomOnDirection = function (
             axis.setExtremes(
                 newExt.rangeStart,
                 newExt.rangeStart + newExt.rangeWidth,
-                false
+                false,
+                void 0,
+                { trigger: 'mouseWheelZoom' }
             );
 
             hasZoomed = true;
         } else { // Reset zoom
-            axis.setExtremes(void 0, void 0, false);
-
+            axis.setExtremes(
+                void 0,
+                void 0,
+                false,
+                void 0,
+                { trigger: 'mouseWheelZoom' }
+            );
         }
     }
 
