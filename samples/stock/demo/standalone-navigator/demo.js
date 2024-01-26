@@ -63,9 +63,6 @@
                 type: 'x'
             }
         },
-        xAxis: {
-            setNavigatorRange: true
-        },
         series: [{
             name: 'AAPL',
             data: price
@@ -82,6 +79,6 @@
     });
 
     // bind charts to the standalone navigator
-    nav.bind(priceChart);
+    nav.bind(priceChart, false);
     nav.bind(volumeChart);
 })();

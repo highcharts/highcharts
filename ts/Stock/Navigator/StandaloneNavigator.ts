@@ -145,8 +145,15 @@ class StandaloneNavigator {
      *
      * @param {Axis | Chart} axisOrChart
      *        The Axis or Chart to bind to the navigator.
+     *
+     * @param {boolean} [twoWay=true]
+     *        Enables two-way binding between the navigator and the axis/chart.
+     *        When true, changes in the navigator's range will update the axis
+     *        and vice versa. When false, changes in the navigator's range will
+     *        be reflected in the axis, but changes in the axis ranges won't be
+     *        reflected on the navigator.
      */
-    public bind(axisOrChart: Axis | Chart): void {
+    public bind(axisOrChart: Axis | Chart, twoWay: boolean = true): void {
         const nav = this;
         // If the chart is passed, bind the first xAxis
         const axis = (axisOrChart instanceof Chart) ?
@@ -159,9 +166,8 @@ class StandaloneNavigator {
 
         const { min, max } = this.navigator.xAxis,
             removeEventCallbacks = [];
-        // For axes with enabled setNavigatorRange, add event to update
-        // navigator range
-        if (axis.setNavigatorRange) {
+
+        if (twoWay) {
             const removeSetExtremesEvent = addEvent(
                 axis,
                 'setExtremes',
