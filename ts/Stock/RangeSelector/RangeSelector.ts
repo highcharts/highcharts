@@ -554,29 +554,15 @@ class RangeSelector {
             }
 
             if (
-                baseAxis.min &&
                 baseAxis.isOrdinal &&
-                baseAxis.series[0]?.points?.length &&
+                baseAxis.ordinal?.positions &&
                 range &&
                 actualRange < range
             ) {
                 // Handle ordinal ranges
-                const series = baseAxis.series;
-                let lastPointX =
-                    series[0].points[series[0].points.length - 1].x;
+                const positions = baseAxis.ordinal.positions;
 
-                // Find the closest point outside the visible range
-                series.forEach((s): void => {
-                    if (s.points?.length) {
-                        lastPointX =
-                        Math.min(
-                            s.points[s.points.length - 1].x,
-                            lastPointX
-                        );
-                    }
-                });
-
-                if (lastPointX - baseAxis.min > range) {
+                if (positions[positions.length - 1] - positions[0] > range) {
                     isSameRange = true;
                 }
             } else if (
