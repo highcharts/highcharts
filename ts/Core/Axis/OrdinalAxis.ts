@@ -458,7 +458,7 @@ namespace OrdinalAxis {
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions.length) {
+        if (positions?.length) {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
@@ -1169,7 +1169,7 @@ namespace OrdinalAxis {
          * it will be regenerated the next time a panning operation starts.
          * @private
          */
-        public getExtendedPositions(): Array<number> {
+        public getExtendedPositions(): Array<number>|undefined {
             const ordinal = this,
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
@@ -1283,7 +1283,9 @@ namespace OrdinalAxis {
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
 
                 // Cache it
-                ordinalIndex[key] = fakeAxis.ordinal.positions as any;
+                if (fakeAxis.ordinal.positions) {
+                    ordinalIndex[key] = fakeAxis.ordinal.positions;
+                }
             }
             return ordinalIndex[key];
         }

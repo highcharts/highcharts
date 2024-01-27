@@ -1931,7 +1931,7 @@ class Series {
         }
         return {
             xData: xData.slice(start, end),
-            yData: yData.slice(start, end),
+            yData: yData?.slice(start, end),
             start,
             end,
             modified: {

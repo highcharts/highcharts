@@ -267,11 +267,11 @@ function anchorPoints(
     ) {
         anchorIndexIterator--;
         const lastGroupStart = series.groupMap[
-            series.groupMap.length - 1
-        ].start,
-        xData = series.useDataTable ?
-                    (series.table.columns.x || []) :
-                    series.xData;
+                series.groupMap.length - 1
+            ].start,
+            xData = series.useDataTable ?
+                (series.table.columns.x || []) :
+                series.xData;
 
         groupedXData[groupedDataLastIndex] = ({
             start: groupedXData[groupedDataLastIndex],
@@ -343,32 +343,30 @@ function applyGrouping(
     }
     series.destroyGroupedData();
 
-	const table = dataGroupingOptions.groupAll ?
-	        series.table :
-	        series.table.modified || series.table,
-	    processedXData = (dataGroupingOptions as any).groupAll ?
-	        series.xData :
-	        series.processedXData,
-	    xData = series.useDataTable ? table.columns.x : processedXData,
+    const table = dataGroupingOptions.groupAll ?
+            series.table :
+            series.table.modified || series.table,
+        processedXData = dataGroupingOptions.groupAll ?
+            series.xData :
+            series.processedXData,
+        xData = series.useDataTable ? table.columns.x : processedXData,
+        processedYData = (dataGroupingOptions as any).groupAll ?
+            series.yData :
+            series.processedYData,
+        plotSizeX = chart.plotSizeX,
+        xAxis = series.xAxis,
+        ordinal = xAxis.options.ordinal,
+        groupPixelWidth = series.groupPixelWidth;
 
-	    processedYData = (dataGroupingOptions as any).groupAll ?
-	        series.yData :
-	        series.processedYData,
-	    plotSizeX = chart.plotSizeX,
-	    xAxis = series.xAxis,
-	    ordinal = xAxis.options.ordinal,
-	    groupPixelWidth = series.groupPixelWidth;
+    let i, hasGroupedData;
 
-	let i,
-	    hasGroupedData;
-
-	// Execute grouping if the amount of points is greater than the limit
-	// defined in groupPixelWidth
-	if (
-	    groupPixelWidth &&
-	    xData &&
-	    (this.useDataTable ? table.rowCount : xData.length) &&
-            plotSizeX
+    // Execute grouping if the amount of points is greater than the limit
+    // defined in groupPixelWidth
+    if (
+        groupPixelWidth &&
+        xData &&
+        (this.useDataTable ? table.rowCount : xData.length) &&
+        plotSizeX
     ) {
         hasGroupedData = true;
 
@@ -392,29 +390,29 @@ function applyGrouping(
                     interval,
                     (dataGroupingOptions as any).units ||
                         DataGroupingDefaults.units
-                    ),
-                    // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, xData[0]),
-                    Math.max(
-                        xMax,
-                        xData[xData.length - 1]
-                    ),
-                    xAxis.options.startOfWeek,
-                    xData,
-                    series.closestPointRange
                 ),
-                groupedData = seriesProto.groupData.apply(
-                    series,
-                    [
-                        xData,
-                        series.useDataTable ?
-                            table.columns.y as any :
-                            processedYData as any,
-                        groupPositions,
-                        (dataGroupingOptions as any).approximation,
-                        table
-                    ]
-                );
+                // Processed data may extend beyond axis (#4907)
+                Math.min(xMin, xData[0]),
+                Math.max(
+                    xMax,
+                    xData[xData.length - 1]
+                ),
+                xAxis.options.startOfWeek,
+                processedXData,
+                series.closestPointRange
+            ),
+            groupedData = seriesProto.groupData.apply(
+                series,
+                [
+                    xData,
+                    series.useDataTable ?
+                        table.columns.y as any :
+                        processedYData as any,
+                    groupPositions,
+                    (dataGroupingOptions as any).approximation,
+                    table
+                ]
+            );
 
         let modified = groupedData.modified,
             groupedXData = series.useDataTable ?
@@ -459,6 +457,7 @@ function applyGrouping(
         (currentDataGrouping as any).gapSize = gapSize;
         series.closestPointRange = (groupPositions.info as any).totalRange;
         series.groupMap = groupedData.groupMap;
+        series.currentDataGrouping = currentDataGrouping;
 
         anchorPoints(series, groupedXData || [], xMax);
 
@@ -466,11 +465,10 @@ function applyGrouping(
             adjustExtremes(xAxis, groupedXData);
         }
 
-        // We calculated all group positions but we should render only the
-        // ones within the visible range
+        // We calculated all group positions but we should render only the ones
+        // within the visible range
         if (dataGroupingOptions.groupAll) {
-            // Keep the reference to all grouped points for further
-            // calculation
+            // Keep the reference to all grouped points for further calculation
             if (series.is('heikinashi') || series.is('hollowcandlestick')) {
                 series.allGroupedData = groupedYData;
                 series.allGroupedTable = modified;
@@ -481,7 +479,7 @@ function applyGrouping(
                 groupedYData as any,
                 xAxis.min as any,
                 xAxis.max as any,
-                1, // Ordinal xAxis will remove left-most points otherwise
+                1,
                 modified
             );
             groupedXData = croppedData.xData;
@@ -495,7 +493,6 @@ function applyGrouping(
         series.processedXData = groupedXData || [];
         series.processedYData = groupedYData as any;
         series.table.modified = modified;
-
     } else {
         series.groupMap = null as any;
     }
