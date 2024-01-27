@@ -1066,8 +1066,19 @@ function seriesGeneratePoints(
         oldMarkerClusterInfo = series.markerClusterInfo;
 
         if (clusteredData) {
-            series.processedXData = clusteredData.groupedXData;
-            series.processedYData = clusteredData.groupedYData;
+
+            if (series.useDataTable) {
+                series.table.modified = {
+                    rowCount: clusteredData.groupedXData.length,
+                    columns: {
+                        x: clusteredData.groupedXData,
+                        y: clusteredData.groupedYData
+                    }
+                };
+            } else {
+                series.processedXData = clusteredData.groupedXData;
+                series.processedYData = clusteredData.groupedYData;
+            }
 
             series.hasGroupedData = true;
             series.markerClusterInfo = clusteredData;
