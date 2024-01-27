@@ -392,14 +392,20 @@ class WGLRenderer {
             yExtremes = series.yAxis.getExtremes(),
             yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
             yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
-            xData =
+            dataColumns = (series.table.modified || series.table).columns,
+            xData = series.useDataTable ?
+                dataColumns.x :
                 series.xData || (options as any).xData || series.processedXData,
-            yData =
+            yData = series.useDataTable ?
+                dataColumns.y :
                 series.yData || (options as any).yData || series.processedYData,
-            zData = (
-                series.zData || (options as any).zData ||
-                (series as any).processedZData
-            ),
+            zData = series.useDataTable ?
+                dataColumns.z :
+                (
+                    series.zData ||
+                    (options as any).zData ||
+                    (series as any).processedZData
+                ),
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -439,13 +445,13 @@ class WGLRenderer {
             hadPoints = false,
             // The following are used in the builder while loop
             x: number,
-            y: number,
+            y: number|undefined|null,
             d: (number|Array<number>|Record<string, number>),
             z: (number|undefined),
             i = -1,
             px: number = false as any,
             nx: number = false as any,
-            low: (number|undefined),
+            low: number|undefined|null,
             nextInside = false,
             prevInside = false,
             pcolor: Color.RGBA = false as any,
@@ -803,7 +809,7 @@ class WGLRenderer {
 
             } else {
                 x = d as any;
-                y = yData[i];
+                y = yData?.[i];
 
                 if (sdata[i + 1]) {
                     nx = sdata[i + 1];
@@ -844,8 +850,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = (y as any)[0];
-                y = (y as any)[1];
+                low = dataColumns.low?.[i];
+                y = dataColumns.high?.[i];
 
             } else if (isStacked) {
                 x = (d as any).x;

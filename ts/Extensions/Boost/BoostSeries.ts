@@ -956,12 +956,12 @@ function scatterProcessData(
         xDataMax = xData[0],
         xDataMin = xData[0],
         y: number,
-        yDataMax = yData[0],
-        yDataMin = yData[0];
+        yDataMax = yData?.[0],
+        yDataMin = yData?.[0];
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
-        y = yData[i];
+        y = yData?.[i];
 
         if (
             x >= xMin && x <= xMax &&
@@ -1014,8 +1014,14 @@ function seriesRenderCanvas(this: Series): void {
         chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
-        xData = options.xData || this.processedXData,
-        yData = options.yData || this.processedYData,
+        dataColumns = (this.table.modified || this.table).columns,
+        useDataTable = this.useDataTable,
+        xData = useDataTable ?
+            dataColumns.x :
+            options.xData || this.processedXData,
+        yData = useDataTable ?
+            dataColumns.y :
+            options.yData || this.processedYData,
         rawData = this.processedData || options.data,
         xExtremes = xAxis.getExtremes(),
         // Taking into account the offset of the min point #19497
@@ -1191,7 +1197,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any;
+                y = yData?.[i] as any;
             }
 
             // Resolve low and high for range series
@@ -1199,8 +1205,9 @@ function seriesRenderCanvas(this: Series): void {
                 if (useRaw) {
                     y = (d as any).slice(1, 3);
                 }
-                low = (y as any)[0];
-                y = (y as any)[1];
+
+                low = useDataTable ? dataColumns.low?.[i] : (y as any)[0];
+                y = useDataTable ? dataColumns.high?.[i] : (y as any)[1];
             } else if (isStacked) {
                 x = (d as any).x;
                 y = (d as any).stackY;
