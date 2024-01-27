@@ -10,7 +10,7 @@
 
 'use strict';
 
-const useDataTable = false;
+const useDataTable = true;
 
 /* *
  *
