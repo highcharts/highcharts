@@ -79,8 +79,18 @@ QUnit.test(
             }
         });
 
+        const getValues = series => (
+            series.useDataTable ?
+                series.table.columns.x.map((x, i) => [
+                    series.table.columns.top[i],
+                    series.table.columns.middle[i],
+                    series.table.columns.bottom[i]
+                ]) :
+                chart.series[1].yData
+        );
+
         assert.deepEqual(
-            arrToPrecision(chart.series[1].yData),
+            arrToPrecision(getValues(chart.series[1])),
             arrToPrecision([
                 [13000 * 1.2, 13000, 13000 * 0.7],
                 [14000 * 1.2, 14000, 14000 * 0.7],
@@ -104,7 +114,7 @@ QUnit.test(
         chart.series[0].points[6].remove();
 
         assert.deepEqual(
-            arrToPrecision(chart.series[1].yData),
+            arrToPrecision(getValues(chart.series[1])),
             arrToPrecision([
                 [13000 * 1.2, 13000, 13000 * 0.7],
                 [14000 * 1.2, 14000, 14000 * 0.7]

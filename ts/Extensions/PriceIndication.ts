@@ -102,7 +102,6 @@ function onSeriesAfterRender(
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
             points = series.points,
-            yLength = (series.yData as any).length,
             pLength = points.length,
             dataLength = series.useDataTable ?
                 series.table.rowCount :
