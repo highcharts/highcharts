@@ -355,10 +355,14 @@ function seriesSetStackedPoints(
     }
 
     const series = this,
-        xData = series.processedXData,
-        yData = series.processedYData,
+        xData = series.useDataTable ?
+            series.table.columns.x :
+            series.processedXData,
+        yData = series.useDataTable ?
+            series.table.columns[series.pointValKey || 'y'] :
+            series.processedYData,
         stackedYData = [],
-        yDataLength = yData.length,
+        yDataLength = yData?.length || 0,
         seriesOptions = series.options,
         threshold = seriesOptions.threshold || 0,
         stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,
@@ -377,17 +381,17 @@ function seriesSetStackedPoints(
         other,
         key: string,
         pointKey: string,
-        i,
-        x,
-        y;
-
+        i;
 
     stacking.stacksTouched += 1;
 
     // Loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
-        x = (xData as any)[i];
-        y = (yData as any)[i];
+        let y = yData?.[i];
+
+        const x = xData?.[i] || 0,
+            yNumber = isNumber(y) && y || 0;
+
         stackIndicator = series.getStackIndicator(
             stackIndicator,
             x,
@@ -397,7 +401,7 @@ function seriesSetStackedPoints(
         // Read stacked values into a stack based on the x value,
         // the sign of y and the stack key. Stacking is also handled for null
         // values (#739)
-        isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
+        isNegative = negStacks && yNumber < (stackThreshold ? 0 : threshold);
         key = isNegative ? negKey : stackKey;
 
         // Create empty object for this stack if it doesn't exist yet
@@ -451,33 +455,31 @@ function seriesSetStackedPoints(
         // Add value to the stack total
         let total = stack.total || 0;
         if (type === 'percent') {
-
             // Percent stacked column, totals are the same for the positive and
             // negative stacks
             other = isNegative ? stackKey : negKey;
             if (negStacks && stacks[other]?.[x]) {
                 other = stacks[other][x];
-                total = other.total =
-                    Math.max(other.total || 0, total) +
-                    Math.abs(y) || 0;
+                total = other.total = Math.max(other.total || 0, total) +
+                    Math.abs(yNumber);
 
             // Percent stacked areas
             } else {
-                total = correctFloat(total + (Math.abs(y) || 0));
+                total = correctFloat(total + Math.abs(yNumber));
             }
 
         } else if (type === 'group') {
-            if (isArray(y)) {
+            if (!series.useDataTable && isArray(y)) {
                 y = y[0];
             }
 
             // In this stack, the total is the number of valid points
-            if (y !== null) {
+            if (isNumber(y)) {
                 total++;
             }
 
         } else {
-            total = correctFloat(total + (y || 0));
+            total = correctFloat(total + yNumber);
         }
 
         if (type === 'group') {
@@ -485,8 +487,7 @@ function seriesSetStackedPoints(
             stack.cumulative = (total || 1) - 1;
         } else {
             stack.cumulative = correctFloat(
-                pick(stack.cumulative, stackThreshold) +
-                (y || 0)
+                pick(stack.cumulative, stackThreshold) + yNumber
             );
         }
         stack.total = total;
