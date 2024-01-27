@@ -50,6 +50,181 @@ declare module './GlobalsLike' {
  *
  * */
 
+const defaultLangOptions: DefaultOptions['lang'] = {
+    /**
+     * The default chart title.
+     *
+     * @since next
+     */
+    chartTitle: 'Chart title',
+
+    /**
+     * The loading text that appears when the chart is set into the loading
+     * state following a call to `chart.showLoading`.
+     */
+    loading: 'Loading...',
+
+    /**
+     * An array containing the months names. Corresponds to the `%B` format
+     * in `Highcharts.dateFormat()`.
+     *
+     * @type    {Array<string>}
+     * @default ["January", "February", "March", "April", "May", "June",
+     *          "July", "August", "September", "October", "November",
+     *          "December"]
+     */
+    months: [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'
+    ],
+
+    /**
+     * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+     *
+     * @since next
+     */
+    seriesName: 'Series {add series.index 1}',
+
+    /**
+     * An array containing the months names in abbreviated form. Corresponds
+     * to the `%b` format in `Highcharts.dateFormat()`.
+     *
+     * @type    {Array<string>}
+     * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+     *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+     */
+    shortMonths: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ],
+
+    /**
+     * An array containing the weekday names.
+     *
+     * @type    {Array<string>}
+     * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+     *          "Friday", "Saturday"]
+     */
+    weekdays: [
+        'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday'
+    ],
+
+    /**
+     * Short week days, starting Sunday. If not specified, Highcharts uses
+     * the first three letters of the `lang.weekdays` option.
+     *
+     * @sample highcharts/lang/shortweekdays/
+     *         Finnish two-letter abbreviations
+     *
+     * @type      {Array<string>}
+     * @since     4.2.4
+     * @apioption lang.shortWeekdays
+     */
+
+    /**
+     * What to show in a date field for invalid dates. Defaults to an empty
+     * string.
+     *
+     * @type      {string}
+     * @since     4.1.8
+     * @product   highcharts highstock
+     * @apioption lang.invalidDate
+     */
+
+    /**
+     * The title appearing on hovering the zoom in button. The text itself
+     * defaults to "+" and can be changed in the button options.
+     *
+     * @type      {string}
+     * @default   Zoom in
+     * @product   highmaps
+     * @apioption lang.zoomIn
+     */
+
+    /**
+     * The title appearing on hovering the zoom out button. The text itself
+     * defaults to "-" and can be changed in the button options.
+     *
+     * @type      {string}
+     * @default   Zoom out
+     * @product   highmaps
+     * @apioption lang.zoomOut
+     */
+
+    /**
+     * The default decimal point used in the `Highcharts.numberFormat`
+     * method unless otherwise specified in the function arguments.
+     *
+     * @since 1.2.2
+     */
+    decimalPoint: '.',
+
+    /**
+     * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
+     * to shorten high numbers in axis labels. Replacing any of the
+     * positions with `null` causes the full number to be written. Setting
+     * `numericSymbols` to `undefined` disables shortening altogether.
+     *
+     * @sample {highcharts} highcharts/lang/numericsymbols/
+     *         Replacing the symbols with text
+     * @sample {highstock} highcharts/lang/numericsymbols/
+     *         Replacing the symbols with text
+     *
+     * @type    {Array<string>}
+     * @default ["k", "M", "G", "T", "P", "E"]
+     * @since   2.3.0
+     */
+    numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
+
+    /**
+     * The default name for a pie slice (point).
+     * @since next
+     */
+
+    pieSliceName: 'Slice',
+
+    /**
+     * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
+     * Use 10000 for Japanese, Korean and various Chinese locales, which
+     * use symbols for 10^4, 10^8 and 10^12.
+     *
+     * @sample highcharts/lang/numericsymbolmagnitude/
+     *         10000 magnitude for Japanese
+     *
+     * @type      {number}
+     * @default   1000
+     * @since     5.0.3
+     * @apioption lang.numericSymbolMagnitude
+     */
+
+    /**
+     * The text for the label appearing when a chart is zoomed.
+     *
+     * @since 1.2.4
+     */
+    resetZoom: 'Reset zoom',
+
+    /**
+     * The tooltip title for the label appearing when a chart is zoomed.
+     *
+     * @since 1.2.4
+     */
+    resetZoomTitle: 'Reset zoom level 1:1',
+
+    /**
+     * The default thousands separator used in the `Highcharts.numberFormat`
+     * method unless otherwise specified in the function arguments. Defaults
+     * to a single space character, which is recommended in
+     * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
+     * across Anglo-American and continental European languages.
+     *
+     * @default \u0020
+     * @since   1.2.2
+     */
+    thousandsSep: ' '
+};
+
 /**
  * Global default settings.
  *
@@ -131,174 +306,7 @@ const defaultOptions: DefaultOptions = {
      * });
      * ```
      */
-    lang: {
-
-        /**
-         * The loading text that appears when the chart is set into the loading
-         * state following a call to `chart.showLoading`.
-         */
-        loading: 'Loading...',
-
-        /**
-         * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`.
-         *
-         * @type    {Array<string>}
-         * @default ["January", "February", "March", "April", "May", "June",
-         *          "July", "August", "September", "October", "November",
-         *          "December"]
-         */
-        months: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
-        ],
-
-        /**
-         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
-         *
-         * @since next
-         */
-        seriesName: 'Series {add series.index 1}',
-
-        /**
-         * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`.
-         *
-         * @type    {Array<string>}
-         * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-         */
-        shortMonths: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
-
-        /**
-         * An array containing the weekday names.
-         *
-         * @type    {Array<string>}
-         * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-         *          "Friday", "Saturday"]
-         */
-        weekdays: [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday'
-        ],
-
-        /**
-         * Short week days, starting Sunday. If not specified, Highcharts uses
-         * the first three letters of the `lang.weekdays` option.
-         *
-         * @sample highcharts/lang/shortweekdays/
-         *         Finnish two-letter abbreviations
-         *
-         * @type      {Array<string>}
-         * @since     4.2.4
-         * @apioption lang.shortWeekdays
-         */
-
-        /**
-         * What to show in a date field for invalid dates. Defaults to an empty
-         * string.
-         *
-         * @type      {string}
-         * @since     4.1.8
-         * @product   highcharts highstock
-         * @apioption lang.invalidDate
-         */
-
-        /**
-         * The title appearing on hovering the zoom in button. The text itself
-         * defaults to "+" and can be changed in the button options.
-         *
-         * @type      {string}
-         * @default   Zoom in
-         * @product   highmaps
-         * @apioption lang.zoomIn
-         */
-
-        /**
-         * The title appearing on hovering the zoom out button. The text itself
-         * defaults to "-" and can be changed in the button options.
-         *
-         * @type      {string}
-         * @default   Zoom out
-         * @product   highmaps
-         * @apioption lang.zoomOut
-         */
-
-        /**
-         * The default decimal point used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments.
-         *
-         * @since 1.2.2
-         */
-        decimalPoint: '.',
-
-        /**
-         * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
-         * to shorten high numbers in axis labels. Replacing any of the
-         * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `undefined` disables shortening altogether.
-         *
-         * @sample {highcharts} highcharts/lang/numericsymbols/
-         *         Replacing the symbols with text
-         * @sample {highstock} highcharts/lang/numericsymbols/
-         *         Replacing the symbols with text
-         *
-         * @type    {Array<string>}
-         * @default ["k", "M", "G", "T", "P", "E"]
-         * @since   2.3.0
-         */
-        numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
-
-        /**
-         * The default name for a pie slice (point).
-         * @since next
-         */
-
-        pieSliceName: 'Slice',
-
-        /**
-         * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
-         * Use 10000 for Japanese, Korean and various Chinese locales, which
-         * use symbols for 10^4, 10^8 and 10^12.
-         *
-         * @sample highcharts/lang/numericsymbolmagnitude/
-         *         10000 magnitude for Japanese
-         *
-         * @type      {number}
-         * @default   1000
-         * @since     5.0.3
-         * @apioption lang.numericSymbolMagnitude
-         */
-
-        /**
-         * The text for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        resetZoom: 'Reset zoom',
-
-        /**
-         * The tooltip title for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        resetZoomTitle: 'Reset zoom level 1:1',
-
-        /**
-         * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to a single space character, which is recommended in
-         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
-         * across Anglo-American and continental European languages.
-         *
-         * @default \u0020
-         * @since   1.2.2
-         */
-        thousandsSep: ' '
-    },
+    lang: defaultLangOptions,
 
     /**
      * Global options that don't apply to each chart. These options, like
@@ -644,7 +652,7 @@ const defaultOptions: DefaultOptions = {
          * @default {highcharts|highmaps} Chart title
          * @default {highstock} undefined
          */
-        text: 'Chart title',
+        text: defaultLangOptions.chartTitle,
 
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"

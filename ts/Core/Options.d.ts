@@ -31,6 +31,7 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions {
+    chartTitle: string;
     decimalPoint: string;
     invalidDate?: string;
     loading: string;
