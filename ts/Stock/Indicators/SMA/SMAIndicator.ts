@@ -523,11 +523,12 @@ class SMAIndicator extends LineSeries {
                 );
 
                 if (indicator.useDataTable) {
-                    if (croppedData.modified) {
-                        table = croppedData.modified;
-                    }
                     const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
-                    for (let i = 0; i < croppedData.xData.length; i++) {
+                    for (
+                        let i = 0;
+                        i < (croppedData.modified?.columns.x?.length || 0);
+                        i++
+                    ) {
                         const values = keys.map((key): number =>
                             table.columns[key]?.[i] || 0
                         );

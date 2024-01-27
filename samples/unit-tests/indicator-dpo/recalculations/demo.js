@@ -47,8 +47,13 @@ QUnit.test(
             period = dpoSeries.options.params.period,
             range = period + Math.floor(period / 2 + 1);
 
-        function toFastDPOWithRound(arr) {
-            return arr.map(point => parseFloat(point.toFixed(4)));
+        function toFastDPOWithRound(series) {
+            if (series.useDataTable) {
+                return series.table.columns.y.map(
+                    y => parseFloat(y.toFixed(4))
+                );
+            }
+            return series.yData.map(point => parseFloat(point.toFixed(4)));
         }
 
         assert.strictEqual(
@@ -131,7 +136,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastDPOWithRound(dpoSeries.yData),
+            toFastDPOWithRound(dpoSeries),
             [
                 405.419,
                 385.8262,
@@ -160,7 +165,7 @@ QUnit.test(
         mainSeries.points[mainSeries.points.length - 1].remove();
 
         assert.deepEqual(
-            toFastDPOWithRound(dpoSeries.yData),
+            toFastDPOWithRound(dpoSeries),
             [
                 405.419,
                 385.8262,
