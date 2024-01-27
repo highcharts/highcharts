@@ -2162,7 +2162,9 @@ class Series {
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
         const { xAxis, yAxis } = this,
-            table = this.table.modified || this.table,
+            table = forceExtremesFromAll && this.cropped ?
+                this.table :
+                (this.table.modified || this.table),
             columns = table.columns,
             customData = yData || this.stackedYData,
             yAxisData = customData ?
