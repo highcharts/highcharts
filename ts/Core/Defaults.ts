@@ -222,7 +222,14 @@ const defaultLangOptions: DefaultOptions['lang'] = {
      * @default \u0020
      * @since   1.2.2
      */
-    thousandsSep: ' '
+    thousandsSep: ' ',
+
+    /**
+     * The default title of the Y axis
+     *
+     * @since next
+     */
+    yAxisTitle: 'Values'
 };
 
 /**
@@ -2856,6 +2863,7 @@ function setOptions(
 
 const DefaultOptions = {
     defaultOptions,
+    defaultLangOptions,
     defaultTime,
     getOptions,
     setOptions

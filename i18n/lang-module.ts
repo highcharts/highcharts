@@ -6,6 +6,11 @@ H.setOptions({
     lang: languageOptions,
     title: {
         text: languageOptions.chartTitle
+    },
+    yAxis: {
+        title: {
+            text: languageOptions.yAxisTitle
+        }
     }
 });
 

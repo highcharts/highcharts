@@ -46,6 +46,7 @@ export interface LangOptions {
     shortWeekdays?: Array<string>;
     thousandsSep: string;
     weekdays: Array<string>;
+    yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
 }
