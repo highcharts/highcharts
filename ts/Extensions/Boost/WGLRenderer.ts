@@ -445,7 +445,7 @@ class WGLRenderer {
             hadPoints = false,
             // The following are used in the builder while loop
             x: number,
-            y: number|undefined|null,
+            y: number,
             d: (number|Array<number>|Record<string, number>),
             z: (number|undefined),
             i = -1,
@@ -851,7 +851,7 @@ class WGLRenderer {
                 }
 
                 low = dataColumns.low?.[i];
-                y = dataColumns.high?.[i];
+                y = dataColumns.high?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;
@@ -1015,7 +1015,7 @@ class WGLRenderer {
             }
 
             if (drawAsBar) {
-                minVal = low;
+                minVal = low || 0;
 
                 if ((low as any) === false || typeof low === 'undefined') {
                     if (y < 0) {

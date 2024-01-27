@@ -832,10 +832,21 @@ test('Data columnAssignment', async function (assert) {
         'OHLC points are created.'
     );
 
-    assert.ok(
-        mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
-        'OHLC point is an array of open/low/high/close'
-    );
+    if (mountedComponents[3].component.chart.series[2].useDataTable) {
+        assert.deepEqual(
+            Object.keys(
+                mountedComponents[3].component.chart.series[2].table.columns
+            ),
+            ['x', 'open', 'high', 'low', 'close'],
+            'OHLC point should be an array of open/low/high/close'
+        )
+    } else {
+        assert.ok(
+            mountedComponents[3].component.chart.series[2]
+                .processedYData[0].length > 0,
+            'OHLC point is an array of open/low/high/close'
+        );
+    }
 
     // Candlestick
     assert.ok(

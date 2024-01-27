@@ -694,12 +694,6 @@ class Series {
                         const column = columns[key];
                         if (column) {
                             column[i] = (point as any)[key];
-                            // @todo: Do this in one operation after the loops?
-                            // Or use DataTable method.
-                            table.rowCount = Math.max(
-                                table.rowCount,
-                                column.length
-                            );
                         }
                     } else {
                         const val = key === 'y' && series.toYData ?
@@ -720,10 +714,6 @@ class Series {
                                 column,
                                 iArgs
                             );
-                            table.rowCount = Math.max(
-                                table.rowCount,
-                                column.length
-                            );
                         }
                     } else {
                         (Array.prototype as any)[i].apply(
@@ -736,6 +726,11 @@ class Series {
         if (this.useDataTable) {
             const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
             dataColumnKeys.forEach(fn);
+            table.rowCount = Math.max.apply(
+                0,
+                (Object as any).values(columns)
+                    .map((col: DataColumn): number => col.length)
+            );
 
         } else {
             series.parallelArrays.forEach(fn);
