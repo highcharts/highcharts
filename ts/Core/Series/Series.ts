@@ -1768,6 +1768,18 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
+                // @todo: Repeated pattern. Consider DataTableLight constructor.
+                const columns: DataColumns = {};
+                objectEach(table.columns, (column, key): void => {
+                    if (column) {
+                        columns[key] = [];
+                    }
+                });
+                modified = {
+                    columns,
+                    rowCount: 0
+                };
+
             // only crop if it's actually spilling out
             } else if (
                 (
