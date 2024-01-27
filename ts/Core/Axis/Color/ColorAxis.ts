@@ -498,7 +498,10 @@ class ColorAxis extends Axis implements AxisLike {
 
             if (cSeries.useDataTable) {
                 const columns = cSeries.table.columns;
-                colorValArray = columns[colorKey] || columns.value || [];
+                colorValArray = columns[colorKey] ||
+                    columns.value ||
+                    columns.y ||
+                    [];
 
             } else if ((cSeries as any)[colorKey + 'Data']) {
                 colorValArray = (cSeries as any)[colorKey + 'Data'];
@@ -524,6 +527,8 @@ class ColorAxis extends Axis implements AxisLike {
                     }
                 }
             }
+
+
             // If color key extremes are already calculated, use them.
             if (calculatedExtremes) {
                 cSeries.minColorValue = (cSeries as any)[colorKey + 'Min'];

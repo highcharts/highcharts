@@ -32,8 +32,13 @@ QUnit.test(
             ]
         });
 
-        function toFastSTWithRound(arr) {
-            return arr.map(point => parseFloat(point.toFixed(4)));
+        function toFastSTWithRound(series) {
+            if (series.useDataTable) {
+                return series.table.columns.y.map(
+                    n => parseFloat(n.toFixed(4))
+                );
+            }
+            return series.yData.map(point => parseFloat(point.toFixed(4)));
         }
 
         assert.strictEqual(
@@ -143,7 +148,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastSTWithRound(chart.series[1].yData),
+            toFastSTWithRound(chart.series[1]),
             [
                 7959.8333,
                 7959.8333,
@@ -195,7 +200,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toFastSTWithRound(chart.series[1].yData),
+            toFastSTWithRound(chart.series[1]),
             [
                 7959.8333,
                 7959.8333,

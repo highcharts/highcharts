@@ -53,15 +53,28 @@ QUnit.test('Test Slow Stochastic calculations on data updates.', assert => {
         'Initial number of Slow Stochastic points is correct'
     );
 
-    assert.deepEqual(
-        series[1].yData,
-        [
-            [87.5, null], // FAST %D/SLOW %K
-            [87.5, null], // FAST %D/SLOW %K
-            [87.5, 87.5] // SLOW %D (period=3)
-        ],
-        'Correctly calculated points for Slow Stochastic'
-    );
+    if (series[1].useDataTable) {
+        assert.deepEqual(
+            series[1].table.columns.y,
+            [87.5, 87.5, 87.5],
+            'Calculated y values for Slow Stochastic'
+        );
+        assert.deepEqual(
+            series[1].table.columns.smoothed,
+            [null, null, 87.5],
+            'Calculated smoothed values for Slow Stochastic'
+        );
+    } else {
+        assert.deepEqual(
+            series[1].yData,
+            [
+                [87.5, null], // FAST %D/SLOW %K
+                [87.5, null], // FAST %D/SLOW %K
+                [87.5, 87.5] // SLOW %D (period=3)
+            ],
+            'Correctly calculated points for Slow Stochastic'
+        );
+    }
 
     series[0].addPoint([100, 100, 60, 95]);
 
