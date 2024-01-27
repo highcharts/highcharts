@@ -290,12 +290,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ]
     });
 
-    secondChart.series[1].points.forEach(function (point) {
-        pointsValue.push(point.y);
-    });
-
     assert.deepEqual(
-        pointsValue,
+        secondChart.series[1].useDataTable ?
+            secondChart.series[1].table.modified.columns.y :
+            secondChart.series[1].processedYData,
         [
             212.074,
             212.23000000000002,
