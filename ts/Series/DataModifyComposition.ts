@@ -397,7 +397,8 @@ namespace DataModifyComposition {
             // find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
                 const compareValue = series.useDataTable ?
-                    series.table.columns[key || 'y']?.[i] :
+                    (series.table.modified || series.table)
+                        .columns[key || 'y']?.[i] :
                     (
                         processedYData[i] && keyIndex > -1 ?
                             (processedYData[i] as any)[keyIndex] :

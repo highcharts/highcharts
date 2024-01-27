@@ -355,11 +355,12 @@ function seriesSetStackedPoints(
     }
 
     const series = this,
+        table = series.table.modified || series.table,
         xData = series.useDataTable ?
-            series.table.columns.x :
+            table.columns.x :
             series.processedXData,
         yData = series.useDataTable ?
-            series.table.columns[series.pointValKey || 'y'] :
+            table.columns[series.pointValKey || 'y'] :
             series.processedYData,
         stackedYData = [],
         yDataLength = yData?.length || 0,
