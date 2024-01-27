@@ -469,10 +469,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     dataPoints[dataPoints.length - 1].remove();
 
+    // @todo: wrong rowCount with useDataTable
+    // console.log('after', dataPoints.length, chart.series[1].table.rowCount, chart.series[1].yData?.length)
     assert.strictEqual(
         dataPoints.length,
-        chart.series[1].yData.length -
-            chart.series[1].options.params.periodSenkouSpanB + 2,
+        (
+            chart.series[1].useDataTable ?
+                chart.series[1].table.rowCount :
+                chart.series[1].yData.length
+        ) - chart.series[1].options.params.periodSenkouSpanB + 2,
         'After removePoint number of Ichimoku points is correct'
     );
 

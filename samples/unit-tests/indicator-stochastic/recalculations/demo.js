@@ -166,7 +166,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
             chart.series[1].table.columns.smoothed.map(
                 n => (typeof n === 'number' ? Number(n.toFixed(5)) : n)
             ) :
-            toFastStochasticWithRound(chart.series[1].yData, 0),
+            toFastStochasticWithRound(chart.series[1].yData, 1),
         [
             null,
             null,

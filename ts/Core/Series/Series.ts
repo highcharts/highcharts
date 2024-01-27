@@ -751,9 +751,12 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            (this.yData as any) &&
-            (this.yData as any).length > 0) // #9758
-        );
+            (
+                this.useDataTable ?
+                    this.table.rowCount > 0 :
+                    (this.yData?.length || 0) > 0 // #9758
+            )
+        ));
     }
 
     /**

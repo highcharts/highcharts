@@ -60,8 +60,18 @@ QUnit.test(
             number of the main series' points plus period.`
         );
 
+        const getValues = indicator => (
+            indicator.useDataTable ?
+                indicator.table.columns.x.map((x, i) => [
+                    indicator.table.columns.y[i],
+                    indicator.table.columns.plusDI[i],
+                    indicator.table.columns.minusDI[i]
+                ]) :
+                indicator.yData
+        );
+
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [43.297380585516, 31.98074277854195, 12.65474552957359],
                 [46.826720017784, 32.94264339151991, 11.930174563590466],
@@ -86,7 +96,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [43.297380585516, 31.98074277854195, 12.65474552957359],
                 [46.826720017784, 32.94264339151991, 11.930174563590466],
@@ -133,7 +143,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [65.536917892157, 6.749418735468388, 32.419560489012234],
                 [68.725990520516, 6.291978073515623, 33.94576680306143],
@@ -224,7 +234,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [76.08491199785, 4.1133243980219065, 30.28608402273882],
                 [79.462994811667, 3.543787173680344, 30.96744892118592],
@@ -249,7 +259,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            chart.series[1].yData,
+            getValues(chart.series[1]),
             [
                 [76.08491199785, 4.1133243980219065, 30.28608402273882],
                 [79.462994811667, 3.543787173680344, 30.96744892118592],

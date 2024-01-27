@@ -221,7 +221,9 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        klingerWithRound(chart.series[2].yData, 0),
+        chart.series[2].useDataTable ?
+            chart.series[2].table.columns.y.map(Math.round) :
+            klingerWithRound(chart.series[2].yData, 0),
         [
             -4895496810,
             -4460879653,
@@ -244,7 +246,11 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        klingerWithRound(chart.series[2].yData, 1),
+        chart.series[2].useDataTable ?
+            chart.series[2].table.columns.signal.map(
+                n => (typeof n === 'number' ? Math.round(n) : n)
+            ) :
+            klingerWithRound(chart.series[2].yData, 1),
         [
             null,
             null,
