@@ -20,6 +20,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type { DataColumn } from '../../Core/Series/Series';
 import type ParallelCoordinates from './ParallelCoordinates';
 
 import H from '../../Core/Globals.js';
@@ -250,15 +251,27 @@ namespace ParallelAxis {
             let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
-                if (
-                    series.yData &&
-                    series.visible &&
-                    isNumber(index)
-                ) {
-                    const y = series.yData[index];
+                if (series.useDataTable) {
+                    if (series.visible && isNumber(index)) {
+                        currentPoints = (series.pointArrayMap || ['y'])
+                            .reduce((currentPoints, key): Array<number|null> =>
+                                [
+                                    ...currentPoints,
+                                    (series.table.columns[key]?.[index] ?? null)
+                                ], currentPoints);
+                    }
+                } else {
+                    if (
+                        series.yData &&
+                        series.visible &&
+                        isNumber(index)
+                    ) {
+                        const y = series.yData[index];
 
-                    // Take into account range series points as well (#15752)
-                    currentPoints.push.apply(currentPoints, splat(y));
+                        // Take into account range series points as well
+                        // (#15752)
+                        currentPoints.push.apply(currentPoints, splat(y));
+                    }
                 }
             });
 
