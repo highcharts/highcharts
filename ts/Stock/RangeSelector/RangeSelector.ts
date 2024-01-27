@@ -38,6 +38,8 @@ import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import T from '../../Core/Templating.js';
+const { format } = T;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -443,7 +445,17 @@ class RangeSelector {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
-        rangeSelector.buttonOptions = buttonOptions;
+        rangeSelector.buttonOptions = buttonOptions
+            .map((opt): RangeSelectorButtonOptions => {
+                opt.text = format(opt.text, {
+                    count: opt.count || 1
+                });
+                opt.title = format(opt.title, {
+                    count: opt.count || 1
+                });
+
+                return opt;
+            });
 
         this.eventsToUnbind = [];
         this.eventsToUnbind.push(addEvent(
@@ -1372,8 +1384,7 @@ class RangeSelector {
             }, void 0, dropdown);
 
             buttons[i] = renderer
-                .button(
-                    rangeOptions.text,
+                .button(rangeOptions.text,
                     0,
                     0,
                     (e: (Event|AnyRecord)): void => {
@@ -2171,31 +2182,31 @@ extend(RangeSelector.prototype, {
     defaultButtons: [{
         type: 'month',
         count: 1,
-        text: '1m',
-        title: 'View 1 month'
+        text: defaultOptions.lang.rangeSelector.monthText,
+        title: defaultOptions.lang.rangeSelector.monthTitle
     }, {
         type: 'month',
         count: 3,
-        text: '3m',
-        title: 'View 3 months'
+        text: defaultOptions.lang.rangeSelector.monthText,
+        title: defaultOptions.lang.rangeSelector.monthTitle
     }, {
         type: 'month',
         count: 6,
-        text: '6m',
-        title: 'View 6 months'
+        text: defaultOptions.lang.rangeSelector.monthText,
+        title: defaultOptions.lang.rangeSelector.monthTitle
     }, {
         type: 'ytd',
-        text: 'YTD',
-        title: 'View year to date'
+        text: defaultOptions.lang.rangeSelector.YTDText,
+        title: defaultOptions.lang.rangeSelector.YTDTitle
     }, {
         type: 'year',
         count: 1,
-        text: '1y',
-        title: 'View 1 year'
+        text: defaultOptions.lang.rangeSelector.yearText,
+        title: defaultOptions.lang.rangeSelector.yearTitle
     }, {
         type: 'all',
         text: 'All',
-        title: 'View all'
+        title: defaultOptions.lang.rangeSelector.allTitle
     }],
     /**
      * The date formats to use when setting min, max and value on date inputs.

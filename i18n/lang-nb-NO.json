@@ -9,10 +9,10 @@
         "yearText": "{count}å",
         "YTDText": "YTD",
         "allText": "Alle",
-        "monthTitle": "Vis {count} {eq count 1}måned{else}måneder{/eq}",
-        "yearTitle": "Vis {count} {eq count 1}år{else}år{/eq}",
+        "monthTitle": "Vis {count} {#eq count 1}måned{else}måneder{/eq}",
+        "yearTitle": "Vis {count} {#eq count 1}år{else}år{/eq}",
         "YTDTitle": "Vis år til dato",
-        "allText": "Vis alle"
+        "allTitle": "Vis alle"
     },
     "viewFullscreen": "Vis i fullskjerm",
     "exitFullscreen": "Avslutt fullskjerm",

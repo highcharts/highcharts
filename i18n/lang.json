@@ -8,10 +8,10 @@
         "yearText": "{count}y",
         "YTDText": "YTD",
         "allText": "All",
-        "monthTitle": "View {count} {eq count 1}month{else}months{/eq}",
-        "yearTitle": "View {count} {eq count 1}year{else}years{/eq}",
+        "monthTitle": "View {count} {#eq count 1}month{else}months{/eq}",
+        "yearTitle": "View {count} {#eq count 1}year{else}years{/eq}",
         "YTDTitle": "View year to date",
-        "allText": "View all"
+        "allTitle": "View all"
     },
     "viewFullscreen": "View in full screen",
     "exitFullscreen": "Exit from full screen",

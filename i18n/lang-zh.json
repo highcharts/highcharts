@@ -9,10 +9,10 @@
         "yearText": "{count}年",
         "YTDText": "年初至今",
         "allText": "全部",
-        "monthTitle": "查看 {count} {eq count 1}个月{else}个月{/eq}",
-        "yearTitle": "查看 {count} {eq count 1}年{else}年{/eq}",
+        "monthTitle": "查看 {count} {#eq count 1}个月{else}个月{/eq}",
+        "yearTitle": "查看 {count} {#eq count 1}年{else}年{/eq}",
         "YTDTitle": "查看年初至今",
-        "allText": "查看全部"
+        "allTitle": "查看全部"
     },
     "viewFullscreen": "全屏查看",
     "exitFullscreen": "退出全屏",

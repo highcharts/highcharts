@@ -39,6 +39,16 @@ export interface LangOptions {
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     pieSliceName: string;
+    rangeSelector: {
+        allText: string;
+        allTitle: string;
+        monthText: string;
+        monthTitle: string;
+        yearText: string;
+        yearTitle: string;
+        YTDText: string;
+        YTDTitle: string;
+    }
     resetZoom: string;
     resetZoomTitle: string;
     seriesName: string;
