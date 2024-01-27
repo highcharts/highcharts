@@ -279,7 +279,7 @@ class PieSeries extends Series {
      */
     public hasData(): boolean {
         if (this.useDataTable) {
-            return !!this.table.columns.rowCount;
+            return !!this.table.rowCount;
         }
         return !!this.processedXData.length; // != 0
     }

@@ -2026,7 +2026,7 @@ class Series {
                 point.dataGroup = (series.groupMap as any)[
                     groupCropStartIndex + i
                 ];
-                if ((point.dataGroup as any).options) {
+                if (point.dataGroup?.options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
                     // Collision of props and options (#9770)
