@@ -48,6 +48,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import DataTable from '../../Data/DataTable.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
@@ -1068,13 +1069,12 @@ function seriesGeneratePoints(
         if (clusteredData) {
 
             if (series.useDataTable) {
-                series.table.modified = {
-                    rowCount: clusteredData.groupedXData.length,
+                series.table.modified = new DataTable({
                     columns: {
                         x: clusteredData.groupedXData,
                         y: clusteredData.groupedYData
                     }
-                };
+                });
             } else {
                 series.processedXData = clusteredData.groupedXData;
                 series.processedYData = clusteredData.groupedYData;

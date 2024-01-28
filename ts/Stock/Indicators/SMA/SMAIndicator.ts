@@ -83,7 +83,7 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 
     for (let i = 0; i < table.rowCount; i++) {
         const values = series.pointArrayMap.map((key): number =>
-            table.columns[key]?.[i] || 0
+            (table.columns[key] as Array<number>|undefined)?.[i] || 0
         );
         yData.push(values);
     }
@@ -420,6 +420,7 @@ class SMAIndicator extends LineSeries {
     public recalculateValues(): void {
         const croppedDataValues = [],
             indicator = this,
+            table = this.table,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
@@ -454,7 +455,9 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
+        const processedData: IndicatorValuesObject<
+            typeof LineSeries.prototype
+        > = indicator.linkedParent.options &&
             (
                 // #18176, #18177 indicators should work with empty dataset
                 this.useDataTable ?
@@ -489,14 +492,6 @@ class SMAIndicator extends LineSeries {
                 });
             });
 
-        let table: DataTableLight = {
-            columns: {
-                x: processedData.xData,
-                ...valueColumns
-            },
-            rowCount: processedData.xData.length
-        };
-
         // We need to update points to reflect changes in all,
         // x and y's, values. However, do it only for non-grouped
         // data - grouping does it for us (#8572)
@@ -526,11 +521,13 @@ class SMAIndicator extends LineSeries {
                     const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
                     for (
                         let i = 0;
-                        i < (croppedData.modified?.columns.x?.length || 0);
+                        i < (croppedData.modified?.rowCount || 0);
                         i++
                     ) {
                         const values = keys.map((key): number =>
-                            table.columns[key]?.[i] || 0
+                            (
+                                table.columns[key] as Array<number>|undefined
+                            )?.[i] || 0
                         );
                         croppedDataValues.push(values);
                     }
@@ -579,14 +576,22 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            indicator.xData = processedData.xData;
             if (this.useDataTable) {
-                indicator.table = table;
-                indicator.yData = table.columns.y;
+                table.setColumns({
+                    x: processedData.xData as Array<number>,
+                    ...valueColumns
+                });
             } else {
+                indicator.xData = processedData.xData;
                 indicator.yData = (processedData.yData as any);
             }
             indicator.options.data = (processedData.values as any);
+        }
+
+        // Primarily for test compliance
+        if (indicator.useDataTable) {
+            indicator.xData = table.columns.x as Array<number>;
+            indicator.yData = table.columns.y as Array<number>;
         }
 
         // Removal of processedXData property is required because on
@@ -600,6 +605,7 @@ class SMAIndicator extends LineSeries {
 
         indicator.isDirtyData = !!indicator.linkedSeries.length;
         fireEvent(indicator, 'updatedData'); // #18689
+
     }
 
     /**

@@ -59,6 +59,7 @@ const {
     animObject,
     setAnimation
 } = A;
+import DataTable from '../../Data/DataTable.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -143,18 +144,18 @@ declare module './SeriesLike' {
 
 export type DataColumn = Array<number|null>|TypedArray;
 
-export interface DataColumns {
-    [key: string]: DataColumn|undefined;
-    x?: Array<number>|TypedArray;
+export interface DataColumns extends DataTable.ColumnCollection{
+    // [key: string]: DataColumn|undefined;
+    // x?: Array<number>|TypedArray;
 }
 
-export interface DataTableLightModified {
-    columns: DataColumns;
-    rowCount: number;
+export interface DataTableLightModified extends DataTable {
+    // columns: DataColumns;
+    // rowCount: number;
 }
 
-export interface DataTableLight extends DataTableLightModified {
-    modified?: DataTableLightModified;
+export interface DataTableLight extends DataTable {
+    // modified?: DataTableLightModified;
 }
 
 interface KDNode {
@@ -381,7 +382,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table: DataTableLight = void 0 as any;
+    public table!: DataTable;
 
     public tooltipOptions!: TooltipOptions;
 
@@ -405,6 +406,11 @@ class Series {
         TypedArray
     );
 
+    /*
+     * Temporary flag to make implementation of data table easier.
+     * @todo Once everything is stable, we remove this and delete the `else`
+     * blocks.
+     */
     public useDataTable = useDataTable;
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
@@ -427,13 +433,9 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table = this.table || {
-            columns: {},
-            rowCount: 0
-        };
+        this.table ??= new DataTable();
 
         const series = this,
-            columns = series.table.columns,
             chartSeries = chart.series;
 
         // The 'eventsToUnbind' property moved from prototype into the
@@ -531,7 +533,8 @@ class Series {
 
         if (this.useDataTable) {
             // Initialize the data table columns
-            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
+                columns = this.table.columns;
             dataColumnKeys.forEach((key): void => {
                 if (!columns[key]) {
                     columns[key] = [];
@@ -1414,10 +1417,15 @@ class Series {
             dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
-            columns = this.table.columns,
-            xData = this.useDataTable ? columns.x : this.xData,
-            yData = this.useDataTable ? columns.y : this.yData,
+            table = this.table,
+            xData = this.useDataTable ?
+                table.columns.x as Array<number|null> :
+                this.xData,
+            yData = this.useDataTable ?
+                table.columns.y as Array<number|null> :
+                this.yData,
             pointArrayMap = series.pointArrayMap || [],
+            pointValKey = series.pointValKey || 'y',
             valueCount = pointArrayMap.length,
             keys = options.keys;
         let i,
@@ -1479,16 +1487,8 @@ class Series {
                 }
             });
 
-            // Update data table
-            objectEach(
-                columns,
-                (column): void => {
-                    if (isArray(column)) { // Not typed array
-                        column.length = 0;
-                    }
-                }
-            );
-            series.table.rowCount = 0;
+            // Clear data table
+            table.deleteRows(0, table.rowCount);
 
             // In turbo mode, only one- or twodimensional arrays of numbers are
             // allowed. The first value is tested, and we assume that all the
@@ -1501,18 +1501,40 @@ class Series {
 
                 // Assume all points are numbers
                 if (isNumber(firstPoint)) {
-                    for (i = 0; i < dataLength; i++) {
-                        (xData as any)[i] = this.autoIncrement();
-                        (yData as any)[i] = data[i];
+                    if (this.useDataTable) {
+                        for (const value of data) {
+                            table.setRow({
+                                x: this.autoIncrement(),
+                                [pointValKey]: value as number
+                            });
+                        }
+                    } else {
+                        for (i = 0; i < dataLength; i++) {
+                            (xData as any)[i] = this.autoIncrement();
+                            (yData as any)[i] = data[i];
+                        }
                     }
 
                 // Assume all points are arrays when first point is
                 } else if (isArray(firstPoint)) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
                         if (firstPoint.length === valueCount) {
-                            for (i = 0; i < dataLength; i++) {
-                                (xData as any)[i] = this.autoIncrement();
-                                (yData as any)[i] = data[i];
+                            if (series.useDataTable) {
+                                for (i = 0; i < dataLength; i++) {
+                                    const row: DataTable.RowObject = {
+                                        x: this.autoIncrement()
+                                    };
+                                    let j = 0;
+                                    for (const key of pointArrayMap) {
+                                        row[key] = (data[i] as any)[j++];
+                                    }
+                                    table.setRow(row);
+                                }
+                            } else {
+                                for (i = 0; i < dataLength; i++) {
+                                    (xData as any)[i] = this.autoIncrement();
+                                    (yData as any)[i] = data[i];
+                                }
                             }
                         } else {
                             for (i = 0; i < dataLength; i++) {
@@ -1520,12 +1542,12 @@ class Series {
                                 (xData as any)[i] = (pt as any)[0];
                                 // Data table
                                 if (series.useDataTable) {
-                                    // @todo: arrayToRow()
                                     let j = 1;
+                                    const row: DataTable.RowObject = {};
                                     for (const key of pointArrayMap) {
-                                        (columns as any)[key][i] =
-                                            (pt as any)[j++];
+                                        row[key] = (data[i] as any)[j++];
                                     }
+                                    table.setRow(row);
                                 // Legacy
                                 } else {
                                     (yData as any)[i] = (pt as any)
@@ -1547,16 +1569,35 @@ class Series {
                         }
 
                         if (indexOfX === indexOfY) {
-                            for (i = 0; i < dataLength; i++) {
-                                (xData as any)[i] = this.autoIncrement();
-                                (yData as any)[i] =
-                                    (data[i] as any)[indexOfY];
+                            if (series.useDataTable) {
+                                for (const pt of data) {
+                                    table.setRow({
+                                        x: this.autoIncrement(),
+                                        [pointValKey]: (pt as any)[indexOfY]
+                                    });
+                                }
+                            } else {
+                                for (i = 0; i < dataLength; i++) {
+                                    (xData as any)[i] = this.autoIncrement();
+                                    (yData as any)[i] =
+                                        (data[i] as any)[indexOfY];
+                                }
                             }
                         } else {
-                            for (i = 0; i < dataLength; i++) {
-                                pt = data[i];
-                                (xData as any)[i] = (pt as any)[indexOfX];
-                                (yData as any)[i] = (pt as any)[indexOfY];
+                            if (series.useDataTable) {
+                                for (const pt of data) {
+                                    table.setRow({
+                                        x: (pt as any)[indexOfX],
+                                        [pointValKey]: (pt as any)[indexOfY]
+                                    });
+                                }
+
+                            } else {
+                                for (i = 0; i < dataLength; i++) {
+                                    pt = data[i];
+                                    (xData as any)[i] = (pt as any)[indexOfX];
+                                    (yData as any)[i] = (pt as any)[indexOfY];
+                                }
                             }
                         }
                     }
@@ -1567,15 +1608,29 @@ class Series {
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
-                    pt = { series: series };
+                    const pt = { series };
                     series.pointClass.prototype.applyOptions.apply(
                         pt,
                         [data[i]]
                     );
-                    series.updateParallelArrays(pt as any, i);
+                    if (series.useDataTable) {
+                        const row = ['x'].concat(series.pointArrayMap || ['y'])
+                            .reduce(
+                                (row, key): any => {
+                                    row[key] = (pt as any)[key];
+                                    return row;
+                                },
+                                {} as Record<string, number>
+                            );
+                        table.setRow(row, i);
+                        // For convenience during the transition to DataTable
+                        series.xData = table.columns.x as Array<number>;
+                        series.yData = table.columns.y as Array<number>;
+                    } else {
+                        series.updateParallelArrays(pt as any, i);
+                    }
                 }
             }
-            this.table.rowCount = dataLength;
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
@@ -1709,7 +1764,6 @@ class Series {
     ): Series.ProcessedDataObject {
         const series = this,
             { table, isCartesian, options, xAxis } = series,
-            columns = table.columns,
             cropThreshold = options.cropThreshold,
             getExtremesFromAll =
                 forceExtremesFromAll ||
@@ -1723,10 +1777,12 @@ class Series {
             min,
             max,
             processedXData = series.useDataTable ?
-                (columns.x || []) : (series.xData || []),
+                (table.columns.x as Array<number> || []) :
+                (series.xData || []),
             processedYData = series.useDataTable ?
-                (columns.y || []) : (series.yData || []),
-            modified: DataTableLightModified|undefined,
+                (table.columns.y as Array<number> || []) :
+                (series.yData || []),
+            modified: DataTable|undefined,
             updatingNames = false;
         const dataLength = series.useDataTable ?
             table.rowCount : processedXData.length;
@@ -1756,24 +1812,18 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
-                // @todo: Repeated pattern. Consider DataTableLight constructor.
-                const columns: DataColumns = {};
-                objectEach(table.columns, (column, key): void => {
-                    if (column) {
-                        columns[key] = [];
-                    }
-                });
-                modified = {
-                    columns,
-                    rowCount: 0
-                };
+                const columns: DataTable.ColumnCollection = {};
+                for (const name of Object.keys(table.columns)) {
+                    columns[name] = [];
+                }
+                modified = new DataTable(columns);
 
             // only crop if it's actually spilling out
             } else if (
                 (
                     // Don't understand why this condition is needed
                     series.useDataTable ?
-                        columns[series.pointValKey || 'y'] :
+                        table.columns[series.pointValKey || 'y'] :
                         series.yData
                 ) && (
                     (processedXData as any)[0] < (min as any) ||
@@ -1781,10 +1831,18 @@ class Series {
                 )
             ) {
                 croppedData = this.cropData(
-                    (series.useDataTable ?
-                        columns.x : series.xData as any),
-                    (series.useDataTable ?
-                        columns.y : series.yData as any),
+                    series.useDataTable ?
+                        // @todo: casting because we don't have a cheap way
+                        // to get the column by reference and trust it is
+                        // numbers. The table.getColumnAsNumbers function loops
+                        // over all values, which is too expensive. We need a
+                        // way to set the type for the whole column so that we
+                        // can trust it when we get it by reference.
+                        table.columns.x as any :
+                        series.xData,
+                    series.useDataTable ?
+                        table.columns.y as any :
+                        series.yData,
                     min as any,
                     max as any,
                     void 0,
@@ -1858,7 +1916,7 @@ class Series {
         const processedData = series.getProcessedData();
 
         // Record the properties
-        table.modified = processedData.modified;
+        table.modified = processedData.modified || table;
         series.cropped = processedData.cropped; // undefined or true
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
@@ -1891,7 +1949,7 @@ class Series {
         table?: DataTableLight
     ): Series.CropDataObject {
         if (table && this.useDataTable) {
-            xData = table.columns.x || [];
+            xData = table.columns.x as any || [];
         }
 
         const dataLength = xData.length;
@@ -1916,11 +1974,11 @@ class Series {
             }
         }
 
-        const columns: DataColumns = {};
+        const columns: DataTable.ColumnCollection = {};
         if (table) {
-            objectEach(table.columns, (column, key): void => {
+            objectEach(table.columns, (column, name): void => {
                 if (column) {
-                    columns[key] = column.slice(start, end);
+                    columns[name] = column.slice(start, end);
                 }
             });
         }
@@ -1929,10 +1987,7 @@ class Series {
             yData: yData?.slice(start, end),
             start,
             end,
-            modified: {
-                columns,
-                rowCount: end - start
-            }
+            modified: new DataTable({ columns })
         };
     }
 
@@ -2152,10 +2207,10 @@ class Series {
             yAxisData = customData ?
                 [customData] :
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
-                    (key): DataColumn => table.columns[key] || []
+                    (key): DataTable.Column => columns[key] || []
                 ) || [],
             xData = this.useDataTable ?
-                columns.x || [] :
+                columns.x as Array<number> || [] :
                 this.processedXData || this.xData,
             activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
@@ -4133,7 +4188,9 @@ class Series {
             xAxis = series.xAxis,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            xData = series.xData as any;
+            xData = series.useDataTable ?
+                series.table.columns.x :
+                series.xData as any;
         let isInTheMiddle,
             i: number;
 
@@ -4485,7 +4542,7 @@ class Series {
                 this.setData(options.data as any, false);
             }
         } else {
-            delete this.table.modified;
+            this.table.modified = this.table;
         }
 
         // Do the merge, with some forced options
@@ -5150,7 +5207,7 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
-        modified?: DataTableLightModified;
+        modified?: DataTable;
         start: number;
         /* @deprecated */
         xData: Array<number>|TypedArray;

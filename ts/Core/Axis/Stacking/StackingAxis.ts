@@ -357,7 +357,7 @@ function seriesSetStackedPoints(
     const series = this,
         table = series.table.modified || series.table,
         xData = series.useDataTable ?
-            table.columns.x :
+            table.columns.x as Array<number> :
             series.processedXData,
         yData = series.useDataTable ?
             table.columns[series.pointValKey || 'y'] :

@@ -201,20 +201,18 @@ class HeikinAshiSeries extends CandlestickSeries {
 
         if (!heikiashiData.length && dataLength) {
 
-            const row2Arr = (row: number): number[] => [
-                columns.open?.[row] || 0,
-                columns.high?.[row] || 0,
-                columns.low?.[row] || 0,
-                columns.close?.[row] || 0
-            ];
-
             if (series.useDataTable) {
                 // Modify the first point.
-                this.modifyFirstPointValue(row2Arr(0));
+                this.modifyFirstPointValue(
+                    table.getRow(0, this.pointArrayMap) as Array<number>
+                );
 
                 // Modify other points.
                 for (let i = 1; i < dataLength; i++) {
-                    this.modifyDataPoint(row2Arr(i), heikiashiData[i - 1]);
+                    this.modifyDataPoint(
+                        table.getRow(i, this.pointArrayMap) as Array<number>,
+                        heikiashiData[i - 1]
+                    );
                 }
             } else {
                 // Cast to `any` in order to avoid checks before calculation.

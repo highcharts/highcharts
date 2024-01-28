@@ -189,18 +189,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
             trendDirection: 'up'
         });
 
-
-        const row2Arr = (row: number): DataArr => [
-            columns.open?.[row] || 0,
-            columns.high?.[row] || 0,
-            columns.low?.[row] || 0,
-            columns.close?.[row] || 0
-        ];
-
         if (series.useDataTable) {
             let previousDataArr: DataArr|undefined;
             for (let i = 1; i < dataLength; i++) {
-                const dataArr = row2Arr(i);
+                const dataArr = table.getRow(
+                    0,
+                    this.pointArrayMap
+                ) as Array<number>;
 
                 hollowCandlestickData.push(series.isBullish(
                     dataArr,

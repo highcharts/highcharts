@@ -39,6 +39,7 @@ import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
+import DataTable from '../../Data/DataTable.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
 import H from '../../Core/Globals.js';
@@ -349,7 +350,9 @@ function applyGrouping(
         processedXData = dataGroupingOptions.groupAll ?
             series.xData :
             series.processedXData,
-        xData = series.useDataTable ? table.columns.x : processedXData,
+        xData = series.useDataTable ?
+            table.columns.x as Array<number> :
+            processedXData,
         processedYData = (dataGroupingOptions as any).groupAll ?
             series.yData :
             series.processedYData,
@@ -416,10 +419,10 @@ function applyGrouping(
 
         let modified = groupedData.modified,
             groupedXData = series.useDataTable ?
-                modified.columns.x :
+                modified.columns.x as Array<number> :
                 groupedData.groupedXData,
             groupedYData = series.useDataTable ?
-                modified.columns.y || [] :
+                modified.columns.y as Array<number> || [] :
                 groupedData.groupedYData,
             gapSize = 0;
 
@@ -640,8 +643,8 @@ function groupData(
     table: DataTableLight
 ): DataGroupingResultObject {
     if (this.useDataTable) {
-        xData = table.columns.x || [];
-        yData = table.columns.y || [];
+        xData = table.columns.x as Array<number> || [];
+        yData = table.columns.y as Array<number> || [];
     }
 
     const series = this,
@@ -649,10 +652,7 @@ function groupData(
         dataOptions = series.options && series.options.data,
         groupedXData = [],
         groupedYData = [],
-        modified: DataTableLightModified = {
-            columns: {},
-            rowCount: 0
-        },
+        modified = new DataTable(),
         groupMap = [],
         dataLength = series.useDataTable ? table.rowCount : xData.length,
         // When grouping the fake extended axis for panning,

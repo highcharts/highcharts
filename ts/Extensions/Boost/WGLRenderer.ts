@@ -849,8 +849,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = dataColumns.low?.[i];
-                y = dataColumns.high?.[i] || 0;
+                low = (dataColumns.low as Array<number>|undefined)?.[i];
+                y = (dataColumns.high as Array<number>|undefined)?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;

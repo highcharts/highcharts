@@ -245,7 +245,8 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly autoId: boolean;
 
-    private columns: Record<string, DataTable.Column>;
+    // @note Made this public because direct access is so handy in Highcharts
+    public columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
 
@@ -253,7 +254,9 @@ class DataTable implements DataEvent.Emitter {
 
     private modifier?: DataModifier;
 
-    private rowCount: number;
+    // @note Made this public because we're using it for quick checks in
+    // Highcharts
+    public rowCount: number;
 
     private versionTag: string;
 

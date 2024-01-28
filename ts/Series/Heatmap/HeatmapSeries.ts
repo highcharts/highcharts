@@ -276,7 +276,7 @@ class HeatmapSeries extends ScatterSeries {
             .call(
                 this,
                 this.useDataTable ?
-                    this.table.columns.value || [] :
+                    this.table.columns.value as Array<number> || [] :
                     this.valueData
             );
 

@@ -257,7 +257,10 @@ namespace ParallelAxis {
                             .reduce((currentPoints, key): Array<number|null> =>
                                 [
                                     ...currentPoints,
-                                    (series.table.columns[key]?.[index] ?? null)
+                                    (
+                                        series.table.columns[key] as
+                                            Array<number>|undefined
+                                    )?.[index] ?? null
                                 ], currentPoints);
                     }
                 } else {

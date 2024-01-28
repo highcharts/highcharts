@@ -914,7 +914,7 @@ namespace OrdinalAxis {
                         (
                             (
                                 series.table.modified || series.table
-                            ).columns.x || []
+                            ).columns.x as Array<number> || []
                         ) :
                         series.processedXData;
 
