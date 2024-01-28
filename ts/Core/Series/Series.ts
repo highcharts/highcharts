@@ -1502,12 +1502,14 @@ class Series {
                 // Assume all points are numbers
                 if (isNumber(firstPoint)) {
                     if (this.useDataTable) {
+                        const xData: Array<number> = [],
+                            valueData: Array<number|null> = [];
                         for (const value of data) {
-                            table.setRow({
-                                x: this.autoIncrement(),
-                                [pointValKey]: value as number
-                            });
+                            xData.push(this.autoIncrement());
+                            valueData.push(value as number|null);
                         }
+                        table.setColumn('x', xData);
+                        table.setColumn(pointValKey, valueData);
                     } else {
                         for (i = 0; i < dataLength; i++) {
                             (xData as any)[i] = this.autoIncrement();
