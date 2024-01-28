@@ -4246,7 +4246,12 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point, 'shift');
+
+                if (series.useDataTable) {
+                    series.table.deleteRows(0);
+                } else {
+                    series.updateParallelArrays(point, 'shift');
+                }
 
                 (dataOptions as any).shift();
             }
@@ -4311,11 +4316,16 @@ class Series {
                 }
                 data.splice(i, 1);
                 (series.options.data as any).splice(i, 1);
-                series.updateParallelArrays(
-                    point || { series: series },
-                    'splice',
-                    [i, 1]
-                );
+
+                if (series.useDataTable) {
+                    series.table.deleteRows(i);
+                } else {
+                    series.updateParallelArrays(
+                        point || { series: series },
+                        'splice',
+                        [i, 1]
+                    );
+                }
 
                 if (point) {
                     point.destroy();
