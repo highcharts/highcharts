@@ -148,13 +148,13 @@
             groupedXData,
             groupedYData,
             groupMap,
-	        modified: {
-	            columns: {
-	                x: groupedXData,
-	                y: groupedYData
-	            },
-	            rowCount: groupedXData.length
-	        }
+            modified: {
+                columns: {
+                    x: groupedXData,
+                    y: groupedYData
+                },
+                rowCount: groupedXData.length
+            }
         };
     }
 
