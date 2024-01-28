@@ -58,12 +58,6 @@ export type TypedArray = (
   Uint32Array|Float32Array|Float64Array
 );
 
-export interface SeriesDataOptionsObject {
-    x?: TypedArray|number[];
-    y?: TypedArray|number[];
-    z?: TypedArray|number[];
-}
-
 export interface SeriesAfterAnimateEvent {
     target: Series;
     type: 'afterAnimate';
@@ -120,7 +114,7 @@ export interface SeriesOptions {
     crisp?: boolean;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
-    data?: Array<(PointOptions|PointShortOptions)>|SeriesDataOptionsObject;
+    data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;

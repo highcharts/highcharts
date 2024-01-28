@@ -30,7 +30,6 @@ import DataTable from '../../Data/DataTable.js';
 import U from '../Utilities.js';
 const {
     defined,
-    isArray,
     uniqueKey
 } = U;
 
@@ -224,7 +223,7 @@ class DataSeriesConverter {
                 pointArrayMapLength = pointArrayMap.length;
                 options = series.options;
                 keys = options.keys;
-                data = isArray(options.data) ? options.data : [];
+                data = options.data || [];
 
                 seriesMeta = {
                     id: series.id,

@@ -1293,7 +1293,7 @@ function seriesGetClusteredData(
             });
 
             // Save cluster data points options.
-            if (isArray(data) && data.length) {
+            if (data?.length) {
                 for (i = 0; i < pointsLen; i++) {
                     if (isObject(data[points[i].dataIndex])) {
                         points[i].options = data[points[i].dataIndex];
@@ -1309,7 +1309,7 @@ function seriesGetClusteredData(
                 point = groupedData[k][i];
                 stateId = getStateId();
                 pointOptions = null;
-                pointUserOptions = isArray(data) && data[point.dataIndex];
+                pointUserOptions = data?.[point.dataIndex];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 

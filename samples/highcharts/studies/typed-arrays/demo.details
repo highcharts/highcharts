@@ -1,6 +1,0 @@
----
- name: Data as Typed Arrays
- authors:
-   - Torstein Hønsi
- js_wrap: b
-...

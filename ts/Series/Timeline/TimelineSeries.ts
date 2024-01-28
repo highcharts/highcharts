@@ -49,7 +49,6 @@ const {
     arrayMin,
     defined,
     extend,
-    isArray,
     merge,
     pick
 } = U;
@@ -240,11 +239,7 @@ class TimelineSeries extends LineSeries {
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
             map = (
-                series.data.length ?
-                    series.data :
-                    isArray(series.options.data) ?
-                        series.options.data :
-                        []
+                (series.data.length ? series.data : series.options.data) || []
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (

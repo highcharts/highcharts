@@ -403,8 +403,8 @@ namespace NodesComposition {
     ): void {
         const nodes = this.series.options.nodes,
             data = this.series.options.data,
-            dataLength = isArray(data) && data.length || 0,
-            linkConfig = isArray(data) && data[this.index];
+            dataLength = data?.length || 0,
+            linkConfig = data?.[this.index];
 
         pointProto.update.call(
             this,
@@ -426,14 +426,14 @@ namespace NodesComposition {
                 // options.data, because of default logic in point.update()
                 nodeConfig = merge(
                     nodes && nodes[nodeIndex] || {},
-                    isArray(data) && data[this.index] || {}
+                    data?.[this.index] || {}
                 );
 
             // Restore link config
             if (data) {
                 if (linkConfig) {
                     data[this.index] = linkConfig;
-                } else if (isArray(data)) {
+                } else {
                     // Remove node from config if there's more nodes than links
                     data.length = dataLength;
                 }

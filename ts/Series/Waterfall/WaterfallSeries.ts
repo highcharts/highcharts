@@ -38,7 +38,6 @@ const {
     arrayMin,
     correctFloat,
     extend,
-    isArray,
     isNumber,
     merge,
     objectEach,
@@ -180,7 +179,7 @@ class WaterfallSeries extends ColumnSeries {
 
         for (let i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = isArray(points) && points[i] ? points[i] : {};
+            point = points?.[i] || {};
 
             if (y === 'sum' || (point as any).isSum) {
                 yData[i] = correctFloat(sum);

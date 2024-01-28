@@ -31,7 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { SeriesDataOptionsObject, TypedArray } from '../../Core/Series/SeriesOptions';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
@@ -1439,12 +1439,8 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure = isArray(this.options.data) ?
-        this.options.data :
-        isObject(this.options.data) ?
-            this.options.data.y :
-            void 0;
-
+    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
+        this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
@@ -1478,7 +1474,7 @@ function wrapSeriesProcessData(
         if (series.boosted) {
             // Force turbo-mode:
             let firstPoint;
-            if (isArray(series.options.data) && series.options.data.length) {
+            if (series.options.data?.length) {
                 firstPoint = series.getFirstValidPoint(
                     series.options.data
                 );

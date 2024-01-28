@@ -124,7 +124,7 @@ class ChartAdditions {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
-                    isArray(series.data) ? series.data.length - 1 : 0
+                    series.data.length - 1
                 );
             }
         }

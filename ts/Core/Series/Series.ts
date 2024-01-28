@@ -37,7 +37,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesLike from './SeriesLike';
 import type {
     NonPlotOptions,
-    SeriesDataOptionsObject,
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
@@ -1402,7 +1401,7 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>|SeriesDataOptionsObject,
+        data: Array<(PointOptions|PointShortOptions)>|undefined,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
@@ -1440,32 +1439,30 @@ class Series {
             copiedData = merge(true, data);
 
         }
-        data = copiedData || data;
+        data = copiedData || data || [];
 
 
-        const dataLength = isArray(data) ? data.length : 0;
+        const dataLength = data.length;
 
-        if (isArray(data)) {
-            if (dataSorting && dataSorting.enabled) {
-                data = this.sortData(data);
-            }
+        if (dataSorting && dataSorting.enabled) {
+            data = this.sortData(data);
+        }
 
-            // First try to run Point.update which is cheaper, allows animation,
-            // and keeps references to points.
-            if (
-                chart.options.chart.allowMutatingData &&
-                updatePoints !== false &&
-                dataLength &&
-                oldDataLength &&
-                !series.cropped &&
-                !series.hasGroupedData &&
-                series.visible &&
-                // Soft updating has no benefit in boost, and causes JS error
-                // (#8355)
-                !series.boosted
-            ) {
-                updatedData = this.updateData(data, animation);
-            }
+        // First try to run Point.update which is cheaper, allows animation, and
+        // keeps references to points.
+        if (
+            chart.options.chart.allowMutatingData &&
+            updatePoints !== false &&
+            dataLength &&
+            oldDataLength &&
+            !series.cropped &&
+            !series.hasGroupedData &&
+            series.visible &&
+            // Soft updating has no benefit in boost, and causes JS error
+            // (#8355)
+            !series.boosted
+        ) {
+            updatedData = this.updateData(data, animation);
         }
 
         if (!updatedData) {
@@ -1475,131 +1472,119 @@ class Series {
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            if (isArray(data)) {
-                // Update parallel arrays
-                this.parallelArrays.forEach(function (key): void {
-                    if ((series as any)[key + 'Data']) {
-                        (series as any)[key + 'Data'].length = 0;
+            // Update parallel arrays
+            this.parallelArrays.forEach(function (key): void {
+                if ((series as any)[key + 'Data']) {
+                    (series as any)[key + 'Data'].length = 0;
+                }
+            });
+
+            // Update data table
+            objectEach(
+                columns,
+                (column): void => {
+                    if (isArray(column)) { // Not typed array
+                        column.length = 0;
                     }
-                });
+                }
+            );
+            series.table.rowCount = 0;
 
-                // Update data table
-                objectEach(
-                    columns,
-                    (column): void => {
-                        if (isArray(column)) { // Not typed array
-                            column.length = 0;
-                        }
+            // In turbo mode, only one- or twodimensional arrays of numbers are
+            // allowed. The first value is tested, and we assume that all the
+            // rest are defined the same way. Although the 'for' loops are
+            // similar, they are repeated inside each if-else conditional for
+            // max performance.
+            if (turboThreshold && dataLength > turboThreshold) {
+
+                firstPoint = series.getFirstValidPoint(data);
+
+                // Assume all points are numbers
+                if (isNumber(firstPoint)) {
+                    for (i = 0; i < dataLength; i++) {
+                        (xData as any)[i] = this.autoIncrement();
+                        (yData as any)[i] = data[i];
                     }
-                );
-                series.table.rowCount = 0;
 
-                // In turbo mode, only one- or twodimensional arrays of numbers
-                // are allowed. The first value is tested, and we assume that
-                // all the rest are defined the same way. Although the 'for'
-                // loops are similar, they are repeated inside each if-else
-                // conditional for max performance.
-                if (turboThreshold && dataLength > turboThreshold) {
-
-                    firstPoint = series.getFirstValidPoint(data);
-
-                    // Assume all points are numbers
-                    if (isNumber(firstPoint)) {
-                        for (i = 0; i < dataLength; i++) {
-                            (xData as any)[i] = this.autoIncrement();
-                            (yData as any)[i] = data[i];
-                        }
-
-                    // Assume all points are arrays when first point is
-                    } else if (isArray(firstPoint)) {
-                        if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-                            if (firstPoint.length === valueCount) {
-                                for (i = 0; i < dataLength; i++) {
-                                    (xData as any)[i] = this.autoIncrement();
-                                    (yData as any)[i] = data[i];
-                                }
-                            } else {
-                                for (i = 0; i < dataLength; i++) {
-                                    pt = data[i];
-                                    (xData as any)[i] = (pt as any)[0];
-                                    // Data table
-                                    if (series.useDataTable) {
-                                        // @todo: arrayToRow()
-                                        let j = 1;
-                                        for (const key of pointArrayMap) {
-                                            (columns as any)[key][i] =
-                                                (pt as any)[j++];
-                                        }
-                                    // Legacy
-                                    } else {
-                                        (yData as any)[i] = (pt as any)
-                                            .slice(1, valueCount + 1);
+                // Assume all points are arrays when first point is
+                } else if (isArray(firstPoint)) {
+                    if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+                        if (firstPoint.length === valueCount) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] = data[i];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[0];
+                                // Data table
+                                if (series.useDataTable) {
+                                    // @todo: arrayToRow()
+                                    let j = 1;
+                                    for (const key of pointArrayMap) {
+                                        (columns as any)[key][i] =
+                                            (pt as any)[j++];
                                     }
-                                }
-                            }
-                        } else { // [x, y]
-                            if (keys) {
-                                indexOfX = keys.indexOf('x');
-                                indexOfY = keys.indexOf('y');
-
-                                indexOfX = indexOfX >= 0 ? indexOfX : 0;
-                                indexOfY = indexOfY >= 0 ? indexOfY : 1;
-                            }
-
-                            if (firstPoint.length === 1) {
-                                indexOfY = 0;
-                            }
-
-                            if (indexOfX === indexOfY) {
-                                for (i = 0; i < dataLength; i++) {
-                                    (xData as any)[i] = this.autoIncrement();
-                                    (yData as any)[i] =
-                                        (data[i] as any)[indexOfY];
-                                }
-                            } else {
-                                for (i = 0; i < dataLength; i++) {
-                                    pt = data[i];
-                                    (xData as any)[i] = (pt as any)[indexOfX];
-                                    (yData as any)[i] = (pt as any)[indexOfY];
+                                // Legacy
+                                } else {
+                                    (yData as any)[i] = (pt as any)
+                                        .slice(1, valueCount + 1);
                                 }
                             }
                         }
-                    } else {
-                        // Highcharts expects configs to be numbers or arrays in
-                        // turbo mode
-                        error(12, false, chart);
+                    } else { // [x, y]
+                        if (keys) {
+                            indexOfX = keys.indexOf('x');
+                            indexOfY = keys.indexOf('y');
+
+                            indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                            indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                        }
+
+                        if (firstPoint.length === 1) {
+                            indexOfY = 0;
+                        }
+
+                        if (indexOfX === indexOfY) {
+                            for (i = 0; i < dataLength; i++) {
+                                (xData as any)[i] = this.autoIncrement();
+                                (yData as any)[i] =
+                                    (data[i] as any)[indexOfY];
+                            }
+                        } else {
+                            for (i = 0; i < dataLength; i++) {
+                                pt = data[i];
+                                (xData as any)[i] = (pt as any)[indexOfX];
+                                (yData as any)[i] = (pt as any)[indexOfY];
+                            }
+                        }
                     }
                 } else {
-                    for (i = 0; i < dataLength; i++) {
-                        pt = { series: series };
-                        series.pointClass.prototype.applyOptions.apply(
-                            pt,
-                            [data[i]]
-                        );
-                        series.updateParallelArrays(pt as any, i);
-                    }
+                    // Highcharts expects configs to be numbers or arrays in
+                    // turbo mode
+                    error(12, false, chart);
                 }
-                this.table.rowCount = dataLength;
-
-                // Forgetting to cast strings to numbers is a common caveat when
-                // handling CSV or JSON
-                if (yData && isString(yData[0])) {
-                    error(14, true, chart);
+            } else {
+                for (i = 0; i < dataLength; i++) {
+                    pt = { series: series };
+                    series.pointClass.prototype.applyOptions.apply(
+                        pt,
+                        [data[i]]
+                    );
+                    series.updateParallelArrays(pt as any, i);
                 }
+            }
+            this.table.rowCount = dataLength;
 
-            } else if (isObject(data)) {
-                columns.x = data.x;
-                columns.y = data.y;
-                columns.z = data.z;
-                series.table.rowCount = Math.max(
-                    data.x?.length || 0,
-                    data.y?.length || 0,
-                    data.z?.length || 0
-                );
+            // Forgetting to cast strings to numbers is a common caveat when
+            // handling CSV or JSON
+            if (yData && isString(yData[0])) {
+                error(14, true, chart);
             }
 
             series.data = [];
-            series.options.data = series.userOptions.data = data || [];
+            series.options.data = series.userOptions.data = data;
 
             // Destroy old points
             i = oldDataLength;
@@ -1961,10 +1946,7 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = (
-                series.processedData ||
-                (isArray(options.data) ? options.data : options.data?.y)
-            ),
+            dataOptions = series.processedData || options.data,
             table = series.table.modified || series.table,
             columns = table.columns,
             processedXData = series.processedXData,
@@ -2001,7 +1983,7 @@ class Series {
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
 
-            arr.length = (dataOptions as any).length;
+            arr.length = dataOptions?.length || 0;
             data = series.data = arr;
         }
 

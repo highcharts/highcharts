@@ -428,9 +428,9 @@ function onBeforeRender(
             if (isDirty) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
-                    if (s.visible && isArray(s.options.data)) {
+                    if (s.visible) {
                         // Push all data to array
-                        s.options.data.forEach((pointOptions): void => {
+                        s.options.data?.forEach((pointOptions): void => {
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
                                 pointOptions = s.pointClass.prototype
@@ -487,7 +487,7 @@ function onBeforeRender(
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series): void {
                     const axisData = (
-                        isArray(series.options.data) ? series.options.data : []
+                        series.options.data || []
                     ).map(function (
                         d: (PointOptions|PointShortOptions)
                     ): (PointOptions|PointShortOptions) {
@@ -963,7 +963,7 @@ class TreeGridAxisAdditions {
 
         axis.series.forEach(function (series): void {
             const data = series.options.data;
-            if (node.id && isArray(data)) {
+            if (node.id && data) {
                 const point = chart.get(node.id),
                     dataPoint = data[series.data.indexOf(
                         point as GanttPoint

@@ -35,7 +35,6 @@ import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
-    isArray,
     isNumber,
     isObject,
     merge,
@@ -384,7 +383,7 @@ class WGLRenderer {
             ),
             { chart, options, sorted, xAxis, yAxis } = series,
             isStacked = !!options.stacking,
-            rawData = isArray(options.data) && options.data,
+            rawData = options.data,
             xExtremes = series.xAxis.getExtremes(),
             // Taking into account the offset of the min point #19497
             xMin = xExtremes.min - (series.xAxis.minPointOffset || 0),

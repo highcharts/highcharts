@@ -1648,11 +1648,8 @@ class Navigator {
                 navigator.hasNavigatorData =
                     navigator.hasNavigatorData || !!navigatorSeriesData;
                 mergedNavSeriesOptions.data = (
-                    navigatorSeriesData || (
-                        isArray(baseOptions.data) ?
-                            baseOptions.data.slice(0) :
-                            baseOptions.data
-                    )
+                    navigatorSeriesData ||
+                    baseOptions.data?.slice(0)
                 );
 
                 // Update or add the series

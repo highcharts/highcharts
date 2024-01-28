@@ -24,7 +24,6 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
-    SeriesDataOptionsObject,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 
@@ -39,10 +38,7 @@ export interface MapSeriesOptions
     extends ColorAxisComposition.SeriesCompositionOptions,
     ScatterSeriesOptions {
     affectsMapView?: boolean;
-    data?: (
-        Array<(PointOptions|PointShortOptions|MapPointOptions)>|
-        SeriesDataOptionsObject
-    );
+    data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
     nullColor?: ColorType;
     nullInteraction?: boolean;
     states?: SeriesStatesOptions<MapSeries>;

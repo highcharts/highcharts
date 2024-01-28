@@ -498,7 +498,7 @@ class BubbleSeries extends ScatterSeries {
 
     public yData!: Array<(number|null)>;
 
-    public zData!: Array<(number|null)>|TypedArray;
+    public zData!: Array<(number|null)>;
 
     public zMax: BubbleSeriesOptions['zMax'];
 

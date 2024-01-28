@@ -764,7 +764,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up numeric values, add index. Convert Array point definitions to
         // objects using pointArrayMap.
-        if (isArray(data)) {
+        if (data) {
             let val: (MapPointOptions|PointOptions|PointShortOptions);
 
             for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
