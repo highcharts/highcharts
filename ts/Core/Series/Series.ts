@@ -1502,14 +1502,16 @@ class Series {
                 // Assume all points are numbers
                 if (isNumber(firstPoint)) {
                     if (this.useDataTable) {
-                        const xData: Array<number> = [],
+                        const x: Array<number> = [],
                             valueData: Array<number|null> = [];
                         for (const value of data) {
-                            xData.push(this.autoIncrement());
+                            x.push(this.autoIncrement());
                             valueData.push(value as number|null);
                         }
-                        table.setColumn('x', xData);
-                        table.setColumn(pointValKey, valueData);
+                        table.setColumns({
+                            x,
+                            [pointValKey]: valueData
+                        });
                     } else {
                         for (i = 0; i < dataLength; i++) {
                             (xData as any)[i] = this.autoIncrement();
@@ -1523,6 +1525,7 @@ class Series {
                         if (firstPoint.length === valueCount) {
                             if (series.useDataTable) {
                                 for (i = 0; i < dataLength; i++) {
+                                    // @todo setColumns
                                     const row: DataTable.RowObject = {
                                         x: this.autoIncrement()
                                     };
@@ -1544,6 +1547,7 @@ class Series {
                                 (xData as any)[i] = (pt as any)[0];
                                 // Data table
                                 if (series.useDataTable) {
+                                    // @todo setColumns
                                     let j = 1;
                                     const row: DataTable.RowObject = {};
                                     for (const key of pointArrayMap) {
@@ -1573,6 +1577,7 @@ class Series {
                         if (indexOfX === indexOfY) {
                             if (series.useDataTable) {
                                 for (const pt of data) {
+                                    // @todo: setColumns
                                     table.setRow({
                                         x: this.autoIncrement(),
                                         [pointValKey]: (pt as any)[indexOfY]
@@ -1587,12 +1592,16 @@ class Series {
                             }
                         } else {
                             if (series.useDataTable) {
+                                const xData: Array<number> = [],
+                                    valueData: Array<number|null> = [];
                                 for (const pt of data) {
-                                    table.setRow({
-                                        x: (pt as any)[indexOfX],
-                                        [pointValKey]: (pt as any)[indexOfY]
-                                    });
+                                    xData.push((pt as any)[indexOfX]);
+                                    valueData.push((pt as any)[indexOfY]);
                                 }
+                                table.setColumns({
+                                    x: xData,
+                                    [pointValKey]: valueData
+                                });
 
                             } else {
                                 for (i = 0; i < dataLength; i++) {
@@ -1625,14 +1634,15 @@ class Series {
                                 {} as Record<string, number>
                             );
                         table.setRow(row, i);
-                        // For convenience during the transition to DataTable
-                        series.xData = table.columns.x as Array<number>;
-                        series.yData = table.columns.y as Array<number>;
                     } else {
                         series.updateParallelArrays(pt as any, i);
                     }
                 }
             }
+
+            // For convenience during the transition to DataTable
+            series.xData = table.columns.x as Array<number>;
+            series.yData = table.columns.y as Array<number>;
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
