@@ -614,6 +614,14 @@ class Axis {
             userOptions
         );
 
+        if (
+            this.options.title &&
+            !Object.hasOwnProperty.call(this.options.title, 'text') &&
+            this.coll === 'yAxis'
+        ) {
+            this.options.title.text = this.chart.options.lang.yAxisTitle;
+        }
+
         fireEvent(this, 'afterSetOptions', { userOptions });
     }
 
@@ -3291,6 +3299,8 @@ class Axis {
                     axisTitleOptions.align as any
                 ];
             }
+
+
             axis.axisTitle = renderer
                 .text(
                     axisTitleOptions.text || '',
