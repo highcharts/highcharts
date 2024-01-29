@@ -30,7 +30,7 @@ import DataCursor from '../Data/DataCursor.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
-import DatagridPlugin from '../Dashboards/Plugins/DataGridPlugin.js';
+import DataGridPlugin from '../Dashboards/Plugins/DataGridPlugin.js';
 import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
@@ -70,7 +70,7 @@ declare global {
         DataModifier: typeof DataModifier;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
-        DatagridPlugin: typeof DatagridPlugin;
+        DataGridPlugin: typeof DataGridPlugin;
         HighchartsPlugin: typeof HighchartsPlugin;
         PluginHandler: typeof PluginHandler;
         Sync: typeof Sync;
@@ -104,7 +104,7 @@ G.DataCursor = DataCursor;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
-G.DatagridPlugin = DatagridPlugin;
+G.DataGridPlugin = DataGridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;
 G.Sync = Sync;
@@ -122,8 +122,8 @@ if (!G.win.Dashboards) {
 }
 
 if (G.win.DataGrid) {
-    DatagridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
-    G.PluginHandler.addPlugin(DatagridPlugin);
+    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+    G.PluginHandler.addPlugin(DataGridPlugin);
 }
 
 if (G.win.Highcharts) {
