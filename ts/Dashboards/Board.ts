@@ -162,7 +162,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.options = merge(Board.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
-        this.guiEnabled = this.options?.gui?.enabled;
+        this.guiEnabled = !options.gui ? false : this.options?.gui?.enabled;
         this.layouts = [];
         this.mountedComponents = [];
 
