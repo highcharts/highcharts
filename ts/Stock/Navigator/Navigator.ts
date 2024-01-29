@@ -35,10 +35,7 @@ import Axis from '../../Core/Axis/Axis.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
@@ -772,22 +769,17 @@ class Navigator {
 
         // Add shades and handles mousedown events
         eventsToUnbind = navigator.getPartsEvents('mousedown');
-        // Add mouse move and mouseup events. These are bind to doc/container,
-        // because Navigator.grabbedSomething flags are stored in mousedown
-        // events
         eventsToUnbind.push(
+            // Add mouse move and mouseup events. These are bind to doc/div,
+            // because Navigator.grabbedSomething flags are stored in mousedown
+            // events
             addEvent(chart.renderTo, 'mousemove', mouseMoveHandler),
-            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
+            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
+            // Touch events
+            addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
         );
-
-        // Touch events
-        if (hasTouch) {
-            eventsToUnbind.push(
-                addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
-                addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
-            );
-            eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
-        }
+        eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 
         navigator.eventsToUnbind = eventsToUnbind;
 
@@ -1666,6 +1658,8 @@ class Navigator {
                     base.navigatorSeries = chart.initSeries(
                         mergedNavSeriesOptions
                     );
+                    // Set data on initial run with dataSorting enabled (#20318)
+                    chart.setSortedData();
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }

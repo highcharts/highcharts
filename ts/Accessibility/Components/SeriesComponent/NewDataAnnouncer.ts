@@ -455,7 +455,8 @@ namespace NewDataAnnouncer {
         e: { point: Accessibility.PointComposition }
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&
@@ -481,7 +482,8 @@ namespace NewDataAnnouncer {
         this: Accessibility.SeriesComposition
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&

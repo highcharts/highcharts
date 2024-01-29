@@ -35,10 +35,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -873,10 +870,8 @@ class ColumnSeries extends Series {
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
                             pointer.onTrackerMouseOut(e);
-                        });
-                    if (hasTouch) {
-                        (series as any)[key].on('touchstart', onMouseOver);
-                    }
+                        })
+                        .on('touchstart', onMouseOver);
 
                     if (!chart.styledMode && series.options.cursor) {
                         (series as any)[key]
