@@ -656,41 +656,43 @@ async function setupDashboard() {
         const url = weatherStationConfig.buildUrl(city);
 
         if (!url) {
-            dataPool.setConnectorOptions({
-                id: city,
-                type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    dataUrl: url,
-                    // Pre-parsing for filtering incoming data
-                    beforeParse: function (data) {
-                        const retData = [];
-                        const forecastData = data.properties.timeseries;
-
-                        for (let i = 0; i < rangeConfig.hours; i++) {
-                            const item = forecastData[i];
-
-                            // Instant data
-                            const instantData = item.data.instant.details;
-
-                            // Data for the next hour
-                            const hourSpan = item.data.next_1_hours.details;
-
-                            // Picks the parameters this application uses
-                            retData.push({
-                                // UTC -> milliseconds
-                                time: new Date(item.time).getTime(),
-                                temperature: instantData.air_temperature,
-                                precipitation: hourSpan.precipitation_amount,
-                                wind: instantData.wind_speed,
-                                windDir: instantData.wind_from_direction
-                            });
-                        }
-                        return retData;
-                    }
-                }
-            });
+            continue;
         }
+
+        dataPool.setConnectorOptions({
+            id: city,
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                dataUrl: url,
+                // Pre-parsing for filtering incoming data
+                beforeParse: function (data) {
+                    const retData = [];
+                    const forecastData = data.properties.timeseries;
+
+                    for (let i = 0; i < rangeConfig.hours; i++) {
+                        const item = forecastData[i];
+
+                        // Instant data
+                        const instantData = item.data.instant.details;
+
+                        // Data for the next hour
+                        const hourSpan = item.data.next_1_hours.details;
+
+                        // Picks the parameters this application uses
+                        retData.push({
+                            // UTC -> milliseconds
+                            time: new Date(item.time).getTime(),
+                            temperature: instantData.air_temperature,
+                            precipitation: hourSpan.precipitation_amount,
+                            wind: instantData.wind_speed,
+                            windDir: instantData.wind_from_direction
+                        });
+                    }
+                    return retData;
+                }
+            }
+        });
     }
 
     // Update map (series 0 is the world map, series 1 the weather data)
