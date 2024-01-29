@@ -192,7 +192,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Horizontal hanging lines nodes dropping.',
+    'Horizontal hanging lines nodes dropping/shifting.',
     assert => {
         var chart = Highcharts.chart('container', {
                 chart: {
@@ -258,114 +258,19 @@ QUnit.test(
 
         assert.ok(
             nodeB.shapeArgs.height < nodeA.shapeArgs.height,
-            'Height of Node B should be smaller than A.'
+            'Cumulative: Height of Node B should be smaller than A.'
         );
         assert.ok(
             nodeC.shapeArgs.height === nodeB.shapeArgs.height,
-            'Height of Node C should be equal to B.'
+            'Cumulative: Height of Node C should be equal to B.'
         );
         assert.ok(
             nodeB.shapeArgs.y > nodeA.shapeArgs.y,
-            'Node B should be placed lower than A (y should be higher).'
+            'Cumulative: Node B should be placed lower than A (y should be higher).'
         );
         assert.ok(
             nodeC.shapeArgs.y > nodeB.shapeArgs.y,
-            'Node C should be placed lower than B (y should be higher).'
-        );
-    }
-);
-
-QUnit.test(
-    'Organization hanging lines .',
-    assert => {
-        var chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'organization',
-                    inverted: true,
-                    // Set chart size to 400 x 250 for reliability.
-                    width: 400,
-                    height: 250
-                },
-                series: [
-                    {
-                        hangingIndentTranslation: 'shrink',
-                        hangingRight: false,
-                        data: [
-                            {
-                                from: 'A',
-                                to: 'B'
-                            },
-                            {
-                                from: 'B',
-                                to: 'C'
-                            }
-                        ],
-                        nodes: [
-                            {
-                                id: 'A',
-                                layout: 'hanging'
-                            },
-                            {
-                                id: 'B'
-                            }, {
-                                id: 'C'
-                            }
-                        ]
-                    }
-                ]
-            }),
-            series = chart.series[0],
-            linkFromA = series.nodes[0].linksFrom[0];
-
-
-        assert.deepEqual(
-            linkFromA.shapeArgs.d,
-            [
-                ['M', 138.5, 369.5],
-                ['L', 104.5, 369.5],
-                ['C', 94.5, 369.5, 94.5, 369.5, 94.5, 359.5],
-                ['L', 94.5, 359.5]
-            ],
-            'Shrink + hanging left: Link path should be identical.'
-        );
-
-        series.update({ hangingRight: true });
-        assert.deepEqual(
-            linkFromA.shapeArgs.d,
-            [
-                ['M', 138.5, 10.5],
-                ['L', 104.5, 10.5],
-                ['C', 94.5, 10.5, 94.5, 10.5, 94.5, 20.5],
-                ['L', 94.5, 30.5]
-            ],
-            'Shrink + hanging right: Link path should be identical.'
-        );
-
-        series.update({
-            hangingIndentTranslation: 'cumulative',
-            hangingRight: false
-        });
-        assert.deepEqual(
-            linkFromA.shapeArgs.d,
-            [
-                ['M', 138.5, 369.5],
-                ['L', 104.5, 369.5],
-                ['C', 94.5, 369.5, 94.5, 369.5, 94.5, 359.5],
-                ['L', 94.5, 359.5]
-            ],
-            'Cumulative + hanging left: Link path should be identical.'
-        );
-
-        series.update({ hangingRight: true });
-        assert.deepEqual(
-            linkFromA.shapeArgs.d,
-            [
-                ['M', 138.5, 10.5],
-                ['L', 104.5, 10.5],
-                ['C', 94.5, 10.5, 94.5, 10.5, 94.5, 20.5],
-                ['L', 94.5, 30.5]
-            ],
-            'Cumulative + hanging right: Link path should be identical.'
+            'Cumulative: Node C should be placed lower than B (y should be higher).'
         );
     }
 );

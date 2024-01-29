@@ -314,15 +314,18 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     hangingIndentTranslation: 'inherit',
     /**
-     * Whether links connecting hanging nodes should be drawn on the right
-     * side. Useful for RTL layouts.
+     * Whether links connecting hanging nodes should be drawn on the left
+     * or right side. Useful for RTL layouts.
      * **Note:** Only effects inverted charts (vertical layout).
      *
-     * @type {boolean}
+     * @sample highcharts/series-organization/hanging-right
+     *         Nodes hanging from right side.
+     *
+     * @type {'left'|'right'}
      * @since 11.3.0
-     * @default false
+     * @default 'left'
      */
-    hangingRight: false,
+    hangingSide: 'left',
     /**
      *
      * The color of the links between nodes. This option is moved to

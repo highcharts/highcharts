@@ -243,7 +243,7 @@ class OrganizationSeries extends SankeySeries {
             );
         if (fromNode.shapeArgs && toNode.shapeArgs) {
             const hangingIndent: number = options.hangingIndent as any,
-                hangingRight = options.hangingRight,
+                hangingRight = options.hangingSide === 'right',
                 toOffset = toNode.options.offset,
                 percentOffset =
                     /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
@@ -376,7 +376,7 @@ class OrganizationSeries extends SankeySeries {
                 Math.round(sum * translationFactor),
                 options.minLinkWidth || 0
             ),
-            hangingRight = options.hangingRight,
+            hangingRight = options.hangingSide === 'right',
             indent = options.hangingIndent || 0,
             indentLogic = options.hangingIndentTranslation,
             minLength = options.minNodeLength || 10,
