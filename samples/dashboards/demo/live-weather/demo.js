@@ -655,7 +655,7 @@ async function setupDashboard() {
         const city = cityRows[i].city;
         const url = weatherStationConfig.buildUrl(city);
 
-        if (url !== null) {
+        if (!url) {
             dataPool.setConnectorOptions({
                 id: city,
                 type: 'JSON',
