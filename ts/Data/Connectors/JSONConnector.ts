@@ -129,7 +129,7 @@ class JSONConnector extends DataConnector {
         });
 
         // If already loaded, clear the current rows
-        table.deleteRows();
+        table.deleteColumns();
 
         return Promise
             .resolve(
