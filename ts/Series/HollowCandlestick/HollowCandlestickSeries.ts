@@ -193,7 +193,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
             let previousDataArr: DataArr|undefined;
             for (let i = 1; i < dataLength; i++) {
                 const dataArr = table.getRow(
-                    0,
+                    i,
                     this.pointArrayMap
                 ) as Array<number>;
 
