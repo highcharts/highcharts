@@ -771,8 +771,19 @@ namespace DataLabel {
                             if (textPathOptions && !labelOptions.useHTML) {
                                 dataLabel.setTextPath(
                                     point.getDataLabelPath?.(dataLabel) ||
-                                        point.graphic,
-                                    textPathOptions
+                                    point.graphic,
+                                    merge(
+                                        textPathOptions,
+                                        {
+                                            attributes:
+                                            {
+                                                textAnchor:
+                                                    labelOptions.allowOverlap ?
+                                                        'middle' :
+                                                        'right'
+                                            }
+                                        }
+                                    )
                                 );
 
                                 if (

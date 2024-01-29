@@ -1896,8 +1896,7 @@ class SVGElement implements SVGElementLike {
             enabled: true,
             attributes: {
                 dy: -5,
-                startOffset: '50%',
-                textAnchor: 'middle'
+                startOffset: '50%'
             }
         }, textPathOptions);
 

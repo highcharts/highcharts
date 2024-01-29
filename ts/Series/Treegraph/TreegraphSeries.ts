@@ -20,7 +20,6 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
@@ -537,6 +536,8 @@ class TreegraphSeries extends TreemapSeries {
 
                 this.chart.hideOverlappingLabels(linkLabels);
             }
+
+            seriesProto.drawDataLabels.call(this, this.links);
         }
     }
 
