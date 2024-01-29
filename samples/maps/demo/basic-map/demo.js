@@ -13,7 +13,6 @@
             text: 'Life expectancy by country (2021)'
         },
 
-
         credits: {
             href: 'https://data.worldbank.org',
             mapText: ' Data source: The World Bank'
@@ -39,7 +38,8 @@
         },
 
         tooltip: {
-            pointFormat: '{point.name}: <b>{point.value:.1f}</b> years'
+            valueDecimals: 1,
+            valueSuffix: ' years'
         },
 
         series: [{
