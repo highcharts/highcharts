@@ -417,8 +417,7 @@ class StandaloneNavigator {
                 max,
                 redraw,
                 animation,
-                trigger: 'navigator',
-                eventArguments
+                eventArguments: merge(eventArguments, { trigger: 'navigator' })
             }
         );
     }
