@@ -1002,3 +1002,143 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
         'Each server instance should be rendered as a column.'
     );
 });
+
+test('Crossfilter with string values', async function (assert) {
+    assert.timeout(1000);
+
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const dashboard = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                id: 'data',
+                type: 'JSON',
+                options: {
+                    data: [
+                        ['Product Name', 'Quantity', 'Revenue', 'Category'],
+                        ['Laptop', 100, 2000, 'Electronics'],
+                        ['Smartphone', 150, 3300, 'Electronics'],
+                        ['Desk Chair', 120, 2160, 'Furniture'],
+                        ['Coffee Maker', 90, 1890, 'Appliances'],
+                        ['Headphones', 200, 3200, 'Electronics'],
+                        ['Dining Table', 130, 2470, 'Furniture'],
+                        ['Refrigerator', 170, 2890, 'Appliances']
+                    ]
+                }
+            }]
+        },
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'top-left'
+                    }, {
+                        id: 'top-middle'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'bottom'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            cell: 'top-left',
+            type: 'Navigator',
+            connector: {
+                id: 'data'
+            },
+            columnAssignments: {
+                Revenue: 'y'
+            },
+            sync: {
+                crossfilter: {
+                    enabled: true,
+                    affectNavigator: true
+                }
+            },
+            chartOptions: {
+                title: {
+                    text: 'Quantity'
+                }
+            }
+        }, {
+            cell: 'top-middle',
+            type: 'Navigator',
+            connector: {
+                id: 'data'
+            },
+            columnAssignments: {
+                Category: 'y'
+            },
+            sync: {
+                crossfilter: {
+                    enabled: true,
+                    affectNavigator: true
+                }
+            },
+            chartOptions: {
+                title: {
+                    text: 'Category'
+                }
+            }
+        }, {
+            cell: 'bottom',
+            type: 'DataGrid',
+            connector: {
+                id: 'data'
+            }
+        }]
+    }, true);
+
+    const numbersNavigator = dashboard.mountedComponents[0].component;
+    const stringsNavigator = dashboard.mountedComponents[1].component;
+    const dataGrid = dashboard.mountedComponents[2].component;
+
+    assert.ok(
+        numbersNavigator.chart.series[0].yData.length === 7,
+        'Numbers navigator should have 7 points.'
+    );
+
+    assert.ok(
+        stringsNavigator.chart.series[0].yData.length === 3,
+        'Strings navigator should have 3 points.'
+    );
+
+    const countPoints = (series) => (
+        series.yData.filter(data => data !== null).length
+    );
+
+    const done = assert.async();
+    dataGrid.on('tableChanged', e => {
+        // Assert only on the last event
+        if (e.modifier.options.ranges.length > 1) {
+
+            assert.equal(
+                countPoints(stringsNavigator.chart.series[0]),
+                2,
+                'Strings navigator should have 2 points after extremes changed.'
+            );
+
+            assert.equal(
+                countPoints(numbersNavigator.chart.series[0]),
+                5,
+                'Numbers navigator should have 2 points after extremes changed.'
+            );
+
+            assert.equal(
+                e.modified.rowCount,
+                1,
+                'DataGrid should have 2 rows after extremes changed.'
+            );
+
+            done();
+        }
+    });
+
+    numbersNavigator.chart.xAxis[0].setExtremes(2300, 3000);
+    stringsNavigator.chart.xAxis[0].setExtremes(0, 1);
+});
