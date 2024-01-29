@@ -318,7 +318,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * or right side. Useful for RTL layouts.
      * **Note:** Only effects inverted charts (vertical layout).
      *
-     * @sample highcharts/series-organization/hanging-right
+     * @sample highcharts/series-organization/hanging-side
      *         Nodes hanging from right side.
      *
      * @type {'left'|'right'}
