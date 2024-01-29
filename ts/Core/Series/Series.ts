@@ -1641,8 +1641,10 @@ class Series {
             }
 
             // For convenience during the transition to DataTable
-            series.xData = table.columns.x as Array<number>;
-            series.yData = table.columns.y as Array<number>;
+            if (series.useDataTable) {
+                series.xData = table.columns.x as Array<number>;
+                series.yData = table.columns.y as Array<number>;
+            }
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON

@@ -578,8 +578,10 @@ class SMAIndicator extends LineSeries {
         if (overwriteData) {
             if (this.useDataTable) {
                 table.setColumns({
-                    x: processedData.xData as Array<number>,
-                    ...valueColumns
+                    ...valueColumns,
+                    // Set `x` last, in the IKH series the x data may be longer
+                    // then the other columns
+                    x: processedData.xData as Array<number>
                 });
             } else {
                 indicator.xData = processedData.xData;
