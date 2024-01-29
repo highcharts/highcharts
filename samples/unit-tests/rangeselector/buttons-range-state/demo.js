@@ -185,4 +185,41 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         chart.xAxis[0].dataMax - chart.xAxis[0].dataMin,
         'chart.fixedRange should be equal to maximum range if the clicked button is outside data range, #20327'
     );
+
+    // #19808
+    const ordinalData = [
+        [1706227200000, 2],    // 26.01
+        [1706592000000, 3],    // 30.01
+        [1706505600000, 1],    // 29.01
+        [1706678400000, 1],    // 31.01
+        [1706764800000, 2],    // 01.02
+        [1706851200000, 1],    // 02.02
+        [1707123200000, 3]     // 05.02
+    ];
+    chart.update({
+        rangeSelector: {
+            buttons: [{
+                type: 'week',
+                count: 1,
+                text: 'Week'
+            }]
+        },
+        series: [{
+            data: ordinalData
+        }],
+        xAxis: {
+            minRange: 1
+        }
+    });
+    chart.xAxis[0].setExtremes(1706592000000, 1706764800000);
+    assert.strictEqual(getStates(), '0', 'Week button should not be selected, #19808.');
+
+    chart.series[0].setData([
+        [1706227200000, 2],    // 26.01
+        [1706505600000, 1],    // 29.01
+        [1706678400000, 1],    // 31.01
+        [1706764800000, 2],    // 01.02
+        [1707123200000, 3]     // 05.02
+    ]);
+    assert.strictEqual(getStates(), '2', 'Week button should be selected, #19808.');
 });
