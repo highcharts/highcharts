@@ -25,7 +25,7 @@ import type StackItem from './Stacking/StackItem';
 import { Palette } from '../Color/Palettes.js';
 
 import D from '../Defaults.js';
-const { defaultLangOptions } = D;
+const { defaultOptions } = D;
 
 /* *
  *
@@ -3040,7 +3040,7 @@ namespace AxisDefaults {
              * @default {highstock} undefined
              * @product highcharts highstock gantt
              */
-            text: defaultLangOptions.yAxisTitle
+            text: defaultOptions.lang.yAxisTitle
         },
 
         /**

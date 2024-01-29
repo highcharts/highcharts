@@ -1186,8 +1186,14 @@ class Chart {
         }
 
         if (options && !elem) {
+            let text = options.text;
+
+            if (name === 'title') {
+                text = text ?? this.options.lang.chartTitle;
+            }
+
             elem = this.renderer.text(
-                options.text as any,
+                text,
                 0,
                 0,
                 options.useHTML
