@@ -3,6 +3,10 @@
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 
+// The current date is used in several charts
+const today = new Date();
+const todayStr = today.toLocaleDateString();
+
 const rangeConfig = {
     first: 0, // 0: current observation
     hours: 24 // max: 19 days
@@ -517,6 +521,10 @@ async function setupDashboard() {
             }, {
                 cell: 'selection-grid',
                 type: 'DataGrid',
+                title: {
+                    enabled: true,
+                    text: 'Weather forecast for ' + todayStr
+                },
                 sync: {
                     highlight: true
                 },
@@ -527,7 +535,7 @@ async function setupDashboard() {
                         time: {
                             headerFormat: 'Time UTC',
                             cellFormatter: function () {
-                                return Highcharts.dateFormat('%d/%m, %H:%M', this.value);
+                                return Highcharts.dateFormat('%H:%M', this.value);
                             }
                         },
                         temperature: {
@@ -600,7 +608,7 @@ async function setupDashboard() {
                         stickOnContact: true,
                         formatter: function () {
                             const point = this.point;
-                            const dateStr = Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x);
+                            const dateStr = todayStr + ' ' + Highcharts.dateFormat('%H:%M<br />', point.x);
 
                             if ('beaufort' in point) {
                                 // Windbarb series
@@ -618,9 +626,7 @@ async function setupDashboard() {
                     xAxis: {
                         type: 'datetime',
                         labels: {
-                            formatter: function () {
-                                return Highcharts.dateFormat('%H:%M', this.value);
-                            },
+                            format: '{value:%H:%M}',
                             accessibility: {
                                 description: 'Hours, minutes'
                             }
@@ -800,7 +806,7 @@ async function updateBoard(board, city, paramName,
 
     const title = isWind ? 'Wind' : paramConfig.getColumnHeader(paramName, false);
     options.title.text = title + ' forecast for ' + city;
-    options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
+    options.subtitle.text = todayStr;
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
     options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
