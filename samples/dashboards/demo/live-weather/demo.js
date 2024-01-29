@@ -3,14 +3,13 @@
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 
-// The current date is used in several charts
-const today = new Date();
-const todayStr = today.toLocaleDateString();
-
 const rangeConfig = {
     first: 0, // 0: current observation
     hours: 24 // max: 19 days
 };
+
+// The current date is used in several charts
+const currentDay = Highcharts.dateFormat('%e %B %Y', Date.now());
 
 // Windbarb series object (deleted when not showing wind)
 let windbarbSeries = null;
@@ -351,11 +350,11 @@ async function setupDashboard() {
                         tooltip: {
                             footerFormat: '',
                             headerFormat: '',
-                            pointFormatter: function () {
-                                return `<b>${this.name}</b><br>` +
-                                    `Elevation: ${this.custom.elevation} m` +
-                                    `<br>${this.y} ${activeParam.unit}`;
-                            }
+                            pointFormat: (
+                                '<b>{point.name}</b><br>' +
+                                'Elevation: {point.custom.elevation} m<br>' +
+                                '{point.y:.1f} {point.custom.unit}'
+                            )
                         }
                     }],
                     tooltip: {
@@ -523,7 +522,7 @@ async function setupDashboard() {
                 type: 'DataGrid',
                 title: {
                     enabled: true,
-                    text: 'Weather forecast for ' + todayStr
+                    text: 'Forecast for ' + currentDay
                 },
                 sync: {
                     highlight: true
@@ -592,6 +591,17 @@ async function setupDashboard() {
                             marker: {
                                 enabled: true,
                                 symbol: 'circle'
+                            },
+                            tooltip: {
+                                pointFormatter: function () {
+                                    return this.y + ' ' + activeParam.unit;
+                                }
+                            }
+                        },
+                        windbarb: {
+                            tooltip: {
+                                pointFormat: '<b>{point.value} m/s</b> ({point.beaufort})<br/>Wind direction: {point.direction} degrees',
+                                pointFormatter: null
                             }
                         }
                     },
@@ -602,26 +612,6 @@ async function setupDashboard() {
                     },
                     subtitle: {
                         text: '----'
-                    },
-                    tooltip: {
-                        enabled: true,
-                        stickOnContact: true,
-                        formatter: function () {
-                            const point = this.point;
-                            const dateStr = todayStr + ' ' + Highcharts.dateFormat('%H:%M<br />', point.x);
-
-                            if ('beaufort' in point) {
-                                // Windbarb series
-                                return dateStr +
-                                    `Beaufort level ${point.beaufortLevel}, ` +
-                                    `${point.beaufort}.<br />` +
-                                    `Wind direction ${point.direction} degrees`;
-                            }
-                            // Regular series
-                            return dateStr +
-                                Highcharts.numberFormat(point.y,
-                                    activeParam.floatRes) + ' ' + activeParam.unit;
-                        }
                     },
                     xAxis: {
                         type: 'datetime',
@@ -752,7 +742,8 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         custom: {
-            elevation: cityInfo.elevation
+            elevation: cityInfo.elevation,
+            unit: paramConfig.temperature.unit
         },
         // First item in current data set
         y: forecastTable.columns.temperature[rangeConfig.first]
@@ -781,6 +772,9 @@ async function updateBoard(board, city, paramName,
     // Data access
     const dataPool = board.dataPool;
 
+    // Geographical information
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+
     const [
         // The order here must be the same as in the component
         // definition in the Dashboard.
@@ -806,7 +800,7 @@ async function updateBoard(board, city, paramName,
 
     const title = isWind ? 'Wind' : paramConfig.getColumnHeader(paramName, false);
     options.title.text = title + ' forecast for ' + city;
-    options.subtitle.text = todayStr;
+    options.subtitle.text = currentDay;
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
     options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
@@ -871,11 +865,17 @@ async function updateBoard(board, city, paramName,
 
         for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
             // Forecast for city
-            const forecastTable = await dataPool.getConnectorTable(
-                mapPoints[i].name);
+            const city = mapPoints[i].name;
+            const forecastTable = await dataPool.getConnectorTable(city);
+            const elevation = citiesTable.getCellAsNumber(
+                'elevation', citiesTable.getRowIndexBy('city', city));
 
             mapPoints[i].update({
-                y: getObservation(forecastTable, paramName)
+                y: getObservation(forecastTable, paramName),
+                custom: {
+                    elevation: elevation,
+                    unit: param.unit
+                }
             }, true);
         }
     }
@@ -898,8 +898,6 @@ async function updateBoard(board, city, paramName,
         });
 
         // Update geo KPI
-        const citiesTable = await dataPool.getConnectorTable('Cities');
-
         await kpiGeoData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
