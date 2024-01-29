@@ -79,18 +79,71 @@ QUnit.test('Point hidden from AT', function (assert) {
     assert.ok(isPointAriaHidden(pointB), 'Point B should be ARIA hidden');
 });
 
-QUnit.test('Keyboard nav disabled', function (assert) {
-    const chart = Highcharts.chart('container', {
+QUnit.test('Keyboard navigation', function (assert) {
+    const
+        chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [0]
+                },
+                {
+                    data: [0]
+                },
+                {
+                    data: [0]
+                }
+            ]
+        }),
+        keyboardNavigation = chart.accessibility.keyboardNavigation,
+        eventDispatcher = keyCode => {
+            const event = new KeyboardEvent('keydown', { keyCode });
+            keyboardNavigation.onKeydown(event);
+        };
+
+    eventDispatcher(9);
+    eventDispatcher(37);
+
+    assert.strictEqual(
+        keyboardNavigation
+            .components
+            .legend
+            .highlightedLegendItemIx, 2,
+        'Last legend item should be highlighted.'
+    );
+
+    eventDispatcher(39);
+
+    assert.strictEqual(
+        keyboardNavigation
+            .components
+            .legend
+            .highlightedLegendItemIx, 0,
+        'First legend item should be highlighted.'
+    );
+
+    assert.ok(
+        chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
+        'The exit anchor element should render.'
+    );
+
+    keyboardNavigation.update({ wrapAround: false });
+
+    eventDispatcher(37);
+
+    assert.strictEqual(
+        keyboardNavigation
+            .components
+            .legend
+            .highlightedLegendItemIx, 0,
+        'First legend item should still be highlighted when wrapAround is off.'
+    );
+
+    chart.update({
         accessibility: {
             keyboardNavigation: {
                 enabled: false
             }
-        },
-        series: [
-            {
-                data: [1]
-            }
-        ]
+        }
     });
 
     assert.notOk(
@@ -99,7 +152,7 @@ QUnit.test('Keyboard nav disabled', function (assert) {
     );
 
     assert.ok(
-        !document.querySelector('.highcharts-exit-anchor'),
+        !chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
         'The exit anchor element shouldn\'t be rendered (#19374).'
     );
 });

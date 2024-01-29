@@ -17,16 +17,6 @@ describe('Component events', () => {
     cy.get('#resize').should('have.value', 'resize');
   });
 
-  // should be uncomment when unmount bug will be fixed
-  it.skip('Unmount event should be triggered when removed component', () => {
-    cy.toggleEditMode();
-    cy.get('.highcharts-dashboards-component').first().click();
-    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
-    cy.contains('Confirm').click();
-
-    cy.get('#unmount').should('have.value', 'unmount');
-  });
-
   it('Resize event should be triggered after resizing', () => {
     cy.get('#resize').clear();
     cy.toggleEditMode();
@@ -50,6 +40,7 @@ describe('Component events', () => {
   });
 
   it('Press ESC should close sidebar popup', () => {
+    cy.get('.highcharts-dashboards-component').first().click({ force: true });
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
     cy.contains('Confirm').should('be.visible');
@@ -65,5 +56,12 @@ describe('Component events', () => {
     cy.get('body').type('{esc}');
 
     cy.contains('Confirm').should('not.be.visible');
+  });
+
+  it('Unmount event should be triggered when removed component', () => {
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
+    cy.contains('Confirm').click();
+
+    cy.get('#unmount').should('have.value', 'unmount');
   });
 });

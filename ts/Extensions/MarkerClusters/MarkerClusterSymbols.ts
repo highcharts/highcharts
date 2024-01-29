@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -104,7 +104,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(modifiedMembers, SVGRendererClass)) {
+    if (pushUnique(modifiedMembers, compose)) {
         symbols = SVGRendererClass.prototype.symbols;
 
         symbols.cluster = cluster;

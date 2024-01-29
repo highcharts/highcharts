@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -62,11 +62,11 @@ class MapLineSeries extends MapSeries {
      *
      * */
 
-    public data: Array<MapLinePoint> = void 0 as any;
+    public data!: Array<MapLinePoint>;
 
-    public options: MapLineSeriesOptions = void 0 as any;
+    public options!: MapLineSeriesOptions;
 
-    public points: Array<MapLinePoint> = void 0 as any;
+    public points!: Array<MapLinePoint>;
 
     /* *
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -26,17 +26,17 @@ import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
-    Options,
+    Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from '../Components/Component.js';
-import Templating from '../../Core/Templating.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
-
+import Templating from '../../Core/Templating.js';
 const {
     format
 } = Templating;
@@ -45,11 +45,10 @@ const {
     createElement,
     css,
     defined,
-    getStyle,
+    diffObjects,
     isArray,
     isNumber,
-    merge,
-    diffObjects
+    merge
 } = U;
 
 /* *
@@ -114,6 +113,7 @@ class KPIComponent extends Component {
 
     /** @internal */
     public static charter?: H;
+
     /**
      * Default options of the KPI component.
      */
@@ -143,7 +143,12 @@ class KPIComponent extends Component {
                         type: 'input',
                         propertyPath: ['valueFormat']
                     }]
-                )
+                ),
+            linkedValueTo: {
+                enabled: true,
+                seriesIndex: 0,
+                pointIndex: 0
+            }
         }
     );
 
@@ -155,8 +160,8 @@ class KPIComponent extends Component {
 
     /**
      * Default options of the KPI component.
-     */
-    public static defaultChartOptions: Types.DeepPartial<Options> = {
+     *
+     * @default {
         chart: {
             type: 'spline',
             styledMode: true,
@@ -171,13 +176,53 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<Options['xAxis']>,
+        },
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<Options['yAxis']>,
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            outside: true
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
+                }
+            }
+        }
+    }
+     */
+    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
+        chart: {
+            type: 'spline',
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: void 0
+        },
+        xAxis: {
+            visible: false
+        } as Types.DeepPartial<ChartOptions['xAxis']>,
+        yAxis: {
+            visible: false,
+            title: {
+                text: null
+            }
+        } as Types.DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },
@@ -205,7 +250,7 @@ class KPIComponent extends Component {
     /**
      * KPI component's options.
      */
-    public options: KPIComponent.ComponentOptions;
+    public options: KPIComponent.Options;
     /**
      * HTML element where the value is created.
      *
@@ -255,7 +300,7 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<KPIComponent.ComponentOptions>
+        options: Partial<KPIComponent.Options>
     ) {
         options = merge(
             KPIComponent.defaultOptions,
@@ -263,7 +308,7 @@ class KPIComponent extends Component {
         );
         super(cell, options);
 
-        this.options = options as KPIComponent.ComponentOptions;
+        this.options = options as KPIComponent.Options;
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(
@@ -287,18 +332,6 @@ class KPIComponent extends Component {
             {},
             this.contentElement
         );
-
-        if (this.options.chartOptions) {
-            this.chartContainer = createElement(
-                'div',
-                {
-                    className: `${options.className}-chart-container`
-                },
-                {},
-                this.contentElement
-            );
-        }
-
     }
 
     /* *
@@ -311,8 +344,7 @@ class KPIComponent extends Component {
     public async load(): Promise<this> {
         await super.load();
 
-        this.contentElement.style.display = 'flex';
-        this.contentElement.style.flexDirection = 'column';
+        this.linkValueToChart();
 
         return this;
     }
@@ -335,18 +367,39 @@ class KPIComponent extends Component {
         super.render();
         this.updateElements();
 
-        const charter = KPIComponent.charter;
+        const charter = KPIComponent.charter?.Chart;
 
         if (
             charter &&
             this.options.chartOptions &&
-            !this.chart &&
-            this.chartContainer
+            !this.chart
         ) {
-            this.chart = charter.chart(this.chartContainer, merge(
-                KPIComponent.defaultChartOptions,
-                this.options.chartOptions
-            ));
+            if (!this.chartContainer) {
+                this.chartContainer = createElement(
+                    'div',
+                    {
+                        className: `${this.options.className}-chart-container`
+                    }, {
+                        height: '100%'
+                    },
+                    this.contentElement
+                );
+
+                if (!this.cell.container.style.height) {
+                    // If the cell height is specified, clear dimensions to make
+                    // the container to adjust to the chart height.
+                    this.contentElement.style.height = '100%';
+                    super.resize(null, null);
+                }
+            }
+
+            this.chart = charter.chart(
+                this.chartContainer,
+                merge(
+                    KPIComponent.defaultChartOptions,
+                    this.options.chartOptions
+                ) as Partial<ChartOptions>
+            );
         } else if (
             this.chart &&
             !this.options.chartOptions &&
@@ -375,7 +428,7 @@ class KPIComponent extends Component {
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.ComponentOptions>,
+        options: Partial<KPIComponent.Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
@@ -401,7 +454,7 @@ class KPIComponent extends Component {
      * The value that should be displayed in the KPI.
      */
     private getValue(): string|number|undefined {
-        if (this.options.value) {
+        if (defined(this.options.value)) {
             return this.options.value;
         }
 
@@ -426,9 +479,9 @@ class KPIComponent extends Component {
         } = this.options;
 
         if (defined(value)) {
-            let prevValue;
-            if (isNumber(value)) {
-                prevValue = value;
+            let prevValue: number | undefined;
+            if (isNumber(+value)) {
+                prevValue = +value;
             }
 
             if (valueFormatter) {
@@ -440,9 +493,54 @@ class KPIComponent extends Component {
             }
 
             AST.setElementHTML(this.value, '' + value);
+            this.linkValueToChart(prevValue);
 
             this.prevValue = prevValue;
         }
+    }
+
+    /**
+     * Handles updating chart point value.
+     *
+     * @internal
+     */
+    public linkValueToChart(
+        value: number|string|undefined = this.getValue()
+    ): void {
+        const chart = this.chart;
+        const linkedValueTo = this.options.linkedValueTo;
+
+        if (
+            !chart || !linkedValueTo.enabled ||
+            !defined(value) || !isNumber(+value)
+        ) {
+            return;
+        }
+
+        value = +value;
+
+        const targetSeries = chart.series[linkedValueTo.seriesIndex ?? 0],
+            targetPoint = targetSeries?.points[linkedValueTo.pointIndex ?? 0];
+
+        if (targetSeries) {
+            if (targetPoint) {
+                targetPoint.update({
+                    y: value
+                });
+                return;
+            }
+
+            targetSeries.addPoint({
+                y: value
+            });
+            return;
+        }
+
+        chart.addSeries({
+            data: [{
+                y: value
+            }]
+        });
     }
 
     /**
@@ -573,6 +671,26 @@ class KPIComponent extends Component {
         return '';
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.Options> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<KPIComponent.Options> = {
+            cell: '',
+            type: 'KPI'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *
@@ -612,7 +730,7 @@ class KPIComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+    public getOptions(): Partial<KPIComponent.Options> {
         return {
             ...diffObjects(this.options, KPIComponent.defaultOptions),
             type: 'KPI'
@@ -651,15 +769,17 @@ namespace KPIComponent {
         subtitle?: string;
         valueFormat?: string;
     }
-    export interface ComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
         columnName: string;
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
          *
+         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
+         *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
-        chartOptions?: Options;
+        chartOptions?: ChartOptions;
         style?: CSSObject;
         /**
          * The threshold declares the value when color is applied
@@ -708,6 +828,26 @@ namespace KPIComponent {
          * Callback function to format the text of the value from scratch.
          */
         valueFormatter?: ValueFormatterCallbackFunction;
+        /**
+         * This option allows user to toggle the KPI value connection with the
+         * chart and set the specific point for the connection.
+         *
+         * Linking is enabled by default for the first point of the first
+         * series.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+         *
+         * @example
+         * ```js
+         * linkedValueTo: {
+         *     seriesIndex: 1,
+         *     pointIndex: 2
+         * }
+         * ```
+         */
+        linkedValueTo: LinkedValueToOptions;
     }
     /** @internal */
     export interface SubtitleOptions extends TextOptions {
@@ -723,17 +863,33 @@ namespace KPIComponent {
             value: (number|string)
         ): string;
     }
-}
 
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        KPI: typeof KPIComponent;
+    /**
+     * Options for linking KPI value to the chart point.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+     */
+    export interface LinkedValueToOptions {
+        /**
+         * Enable or disable linking KPI value to a point on the chart.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+        /**
+         * Index of the point that is to receiving the KPI value as its Y.
+         *
+         * @default 0
+         */
+        pointIndex?: number;
+        /**
+         * Index of the series with the point receiving the KPI value.
+         *
+         * @default 0
+         */
+        seriesIndex?: number;
     }
 }
 

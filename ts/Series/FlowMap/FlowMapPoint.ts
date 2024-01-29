@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -58,9 +58,9 @@ class FlowMapPoint extends MapLinePoint {
 
     public toPos?: PositionObject;
 
-    public options: FlowMapPointOptions = void 0 as any;
+    public options!: FlowMapPointOptions;
 
-    public series: FlowMapSeries = void 0 as any;
+    public series!: FlowMapSeries;
 
     /* *
      *

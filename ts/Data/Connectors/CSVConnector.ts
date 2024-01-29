@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -137,7 +137,7 @@ class CSVConnector extends DataConnector {
         });
 
         // If already loaded, clear the current rows
-        table.deleteRows();
+        table.deleteColumns();
 
         return Promise
             .resolve(
@@ -198,13 +198,6 @@ namespace CSVConnector {
      * Event objects fired from CSVConnector events.
      */
     export type Event = (ErrorEvent|LoadEvent);
-
-    /**
-     * @todo move this to the dataparser?
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
 
     /**
      * The event object that is provided on errors within CSVConnector.

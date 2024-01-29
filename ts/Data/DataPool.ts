@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -92,7 +92,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Internal dictionary with the connectors and their names.
+     * Internal dictionary with the connectors and their IDs.
      * @private
      */
     protected readonly connectors: Record<string, DataConnector>;
@@ -140,44 +140,44 @@ class DataPool implements DataEvent.Emitter {
      *
      * @function Data.DataPool#getConnector
      *
-     * @param {string} name
-     * Name of the connector.
+     * @param {string} connectorId
+     * ID of the connector.
      *
      * @return {Promise<Data.DataConnector>}
      * Returns the connector.
      */
     public getConnector(
-        name: string
+        connectorId: string
     ): Promise<DataConnector> {
-        const connector = this.connectors[name];
+        const connector = this.connectors[connectorId];
 
         // already loaded
         if (connector) {
             return Promise.resolve(connector);
         }
 
-        let waitingList = this.waiting[name];
+        let waitingList = this.waiting[connectorId];
 
         // start loading
         if (!waitingList) {
-            waitingList = this.waiting[name] = [];
+            waitingList = this.waiting[connectorId] = [];
 
-            const connectorOptions = this.getConnectorOptions(name);
+            const connectorOptions = this.getConnectorOptions(connectorId);
 
             if (!connectorOptions) {
-                throw new Error(`Connector not found. (${name})`);
+                throw new Error(`Connector not found. (${connectorId})`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this
                 .loadConnector(connectorOptions)
                 .then((connector): void => {
-                    delete this.waiting[name];
+                    delete this.waiting[connectorId];
                     for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
                         waitingList[i][0](connector);
                     }
                 })['catch']((error): void => {
-                    delete this.waiting[name];
+                    delete this.waiting[connectorId];
                     for (let i = 0, iEnd = waitingList.length; i < iEnd; ++i) {
                         waitingList[i][1](error);
                     }
@@ -192,7 +192,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Returns the names of all connectors.
+     * Returns the IDs of all connectors.
      *
      * @private
      *
@@ -216,19 +216,19 @@ class DataPool implements DataEvent.Emitter {
      *
      * @private
      *
-     * @param {string} id
-     * Name of the connector.
+     * @param {string} connectorId
+     * ID of the connector.
      *
      * @return {DataPoolConnectorOptions|undefined}
      * Returns the options of the connector, or `undefined` if not found.
      */
     protected getConnectorOptions(
-        id: string
+        connectorId: string
     ): (DataPoolConnectorOptions|undefined) {
         const connectors = this.options.connectors;
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].id === id) {
+            if (connectors[i].id === connectorId) {
                 return connectors[i];
             }
         }
@@ -241,7 +241,7 @@ class DataPool implements DataEvent.Emitter {
      * @function Data.DataPool#getConnectorTable
      *
      * @param {string} connectorId
-     * Name of the connector.
+     * ID of the connector.
      *
      * @return {Promise<Data.DataTable>}
      * Returns the connector table.
@@ -254,6 +254,22 @@ class DataPool implements DataEvent.Emitter {
             .then((connector): DataTable => connector.table);
     }
 
+
+    /**
+     * Tests whether the connector has never been requested.
+     *
+     * @param {string} connectorId
+     * Name of the connector.
+     *
+     * @return {boolean}
+     * Returns `true`, if the connector has never been requested, otherwise
+     * `false`.
+     */
+    public isNewConnector(
+        connectorId: string
+    ): boolean {
+        return !this.connectors[connectorId];
+    }
 
     /**
      * Creates and loads the connector.
@@ -324,7 +340,7 @@ class DataPool implements DataEvent.Emitter {
 
 
     /**
-     * Sets connector options with a specific name.
+     * Sets connector options under the specified `options.id`.
      *
      * @param {Data.DataPoolConnectorOptions} options
      * Connector options to set.
@@ -332,7 +348,8 @@ class DataPool implements DataEvent.Emitter {
     public setConnectorOptions(
         options: DataPoolConnectorOptions
     ): void {
-        const connectors = this.options.connectors;
+        const connectors = this.options.connectors,
+            instances = this.connectors;
 
         this.emit<DataPool.Event>({
             type: 'setConnectorOptions',
@@ -344,6 +361,11 @@ class DataPool implements DataEvent.Emitter {
                 connectors.splice(i, 1);
                 break;
             }
+        }
+
+        if (instances[options.id]) {
+            instances[options.id].stopPolling();
+            delete instances[options.id];
         }
 
         connectors.push(options);

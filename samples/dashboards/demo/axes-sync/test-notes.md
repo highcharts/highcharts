@@ -1,0 +1,1 @@
+1. Zoom in each chart and verify that the zoom is synced across the chart- one chart is sync with only one chart.

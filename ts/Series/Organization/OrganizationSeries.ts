@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -78,11 +78,11 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<OrganizationPoint> = void 0 as any;
+    public data!: Array<OrganizationPoint>;
 
-    public options: OrganizationSeriesOptions = void 0 as any;
+    public options!: OrganizationSeriesOptions;
 
-    public points: Array<OrganizationPoint> = void 0 as any;
+    public points!: Array<OrganizationPoint>;
 
     /* *
      *

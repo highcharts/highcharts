@@ -27,7 +27,9 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     chart.setTitle({ text: 'New title' });
 
     assert.ok(
-        chart.fixedRenderer.box.contains(chart.title.element),
+        chart.scrollablePlotArea.fixedRenderer.box.contains(
+            chart.title.element
+        ),
         'Title should be outside the scrollable plot area (#11966)'
     );
 
@@ -38,10 +40,23 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     });
 
     assert.ok(
-        chart.fixedRenderer.box.contains(chart.xAxis[0].axisGroup.element),
+        chart.scrollablePlotArea.fixedRenderer.box.contains(
+            chart.xAxis[0].axisGroup.element
+        ),
         'X-axis should be outside the scrollable plot area (#8862)'
     );
 
+    const scrollLeft = chart.scrollablePlotArea.scrollingContainer.scrollLeft;
+    chart.setSize(chart.chartWidth + 10);
+    assert.close(
+        chart.scrollablePlotArea.scrollingContainer.scrollLeft,
+        scrollLeft,
+        11,
+        'Scrolling position should be retained after resize'
+    );
+
+    /*
+    No longer applicable as of zone refactoring
     chart.series[0].update({
         zones: [{
             value: 0,
@@ -55,18 +70,20 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].clips[0].attr('width'),
+        chart.series[0].zones[0].clip.getBBox().width,
         chart.plotWidth,
-        `When the zones are applied, their' clip width should equal the chart's
+        `When the zones are applied, their clip width should equal the chart's
         plotWidth, #17481.`
     );
+    */
 });
 
 QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
-                minHeight: 400
+                minHeight: 400,
+                scrollPositionY: 1
             },
             height: 300
         },

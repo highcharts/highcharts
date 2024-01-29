@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -68,9 +68,9 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
-    public data: Array<ErrorBarPoint> = void 0 as any;
-    public options: ErrorBarSeriesOptions = void 0 as any;
-    public points: Array<ErrorBarPoint> = void 0 as any;
+    public data!: Array<ErrorBarPoint>;
+    public options!: ErrorBarSeriesOptions;
+    public points!: Array<ErrorBarPoint>;
 
     /* *
      *
@@ -97,7 +97,7 @@ class ErrorBarSeries extends BoxPlotSeries {
             AreaRangeSeries.prototype.drawDataLabels.call(series);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            for (const point of series.data) {
+            for (const point of series.points) {
                 point.y = (point as any)[valKey];
             }
         }

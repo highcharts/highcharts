@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -25,9 +25,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
-    attr
+    attr,
+    pushUnique
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -50,8 +53,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 
 /**
@@ -489,21 +490,9 @@ namespace MenuComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -513,7 +502,7 @@ namespace MenuComponent {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = Chart.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;

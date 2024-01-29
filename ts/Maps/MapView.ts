@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -41,6 +41,8 @@ import type {
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import MapViewDefaults from './MapViewDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
 const { topo2geo } = GeoJSONComposition;
@@ -85,8 +87,6 @@ type SVGTransformType = {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const tileSize = 256;
 
@@ -185,7 +185,7 @@ class MapView {
         MapChartClass: typeof MapChart
     ): void {
 
-        if (pushUnique(composedMembers, MapChartClass)) {
+        if (pushUnique(composed, this.compose)) {
             maps = MapChartClass.maps;
 
             // Initialize MapView after initialization, but before firstRender

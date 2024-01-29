@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,14 +30,15 @@ import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
     seriesTypes: {
-        column: {
-            prototype: columnProto
-        },
+        column: { prototype: columnProto },
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -50,7 +51,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -77,14 +79,6 @@ declare module '../../Core/Series/SeriesLike' {
 type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -475,7 +469,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
         }
 
@@ -487,23 +481,23 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<BubblePoint> = void 0 as any;
+    public data!: Array<BubblePoint>;
 
     public displayNegative: BubbleSeriesOptions['displayNegative'];
 
-    public maxPxSize: number = void 0 as any;
+    public maxPxSize!: number;
 
-    public minPxSize: number = void 0 as any;
+    public minPxSize!: number;
 
-    public options: BubbleSeriesOptions = void 0 as any;
+    public options!: BubbleSeriesOptions;
 
-    public points: Array<BubblePoint> = void 0 as any;
+    public points!: Array<BubblePoint>;
 
-    public radii: Array<(number|null)> = void 0 as any;
+    public radii!: Array<(number|null)>;
 
-    public yData: Array<(number|null)> = void 0 as any;
+    public yData!: Array<(number|null)>;
 
-    public zData: Array<(number|null)> = void 0 as any;
+    public zData!: Array<(number|null)>;
 
     public zMax: BubbleSeriesOptions['zMax'];
 
@@ -817,7 +811,6 @@ interface BubbleSeries {
     isBubble: true;
     pointClass: typeof BubblePoint;
     specialGroup: 'group'|'markerGroup';
-    zoneAxis: string;
 }
 
 extend(BubbleSeries.prototype, {

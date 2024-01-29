@@ -2,7 +2,7 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -76,15 +76,15 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<VectorPoint> = void 0 as any;
+    public data!: Array<VectorPoint>;
 
     public lengthData?: Array<number>;
 
-    public lengthMax: number = void 0 as any;
+    public lengthMax!: number;
 
-    public options: VectorSeriesOptions = void 0 as any;
+    public options!: VectorSeriesOptions;
 
-    public points: Array<VectorPoint> = void 0 as any;
+    public points!: Array<VectorPoint>;
 
     /* *
      *

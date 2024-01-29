@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -71,11 +71,11 @@ class SplineSeries extends LineSeries {
      *
      * */
 
-    public data: Array<SplinePoint> = void 0 as any;
+    public data!: Array<SplinePoint>;
 
-    public options: SplineSeriesOptions = void 0 as any;
+    public options!: SplineSeriesOptions;
 
-    public points: Array<SplinePoint> = void 0 as any;
+    public points!: Array<SplinePoint>;
 
     /* *
      *

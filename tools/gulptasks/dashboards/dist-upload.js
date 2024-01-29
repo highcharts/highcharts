@@ -375,13 +375,24 @@ async function distUpload() {
         logLib.warn('Skipping upload to zips/. (dry run)');
     } else {
         logLib.warn('Uploading products.js...');
-        await uploadFile(
-            path.join(buildFolder, '..'),
-            path.join(buildFolder, '..', 'products.js'),
-            targetStorage,
-            bucket,
-            '.'
+
+        for (const file of ['products.js', 'products.json']) {
+            await uploadFile(
+                path.join(buildFolder, '..'),
+                path.join(buildFolder, '..', file),
+                targetStorage,
+                bucket,
+                '.'
+            );
+        }
+
+
+        const dataGridFolder = path.join(
+            buildFolder,
+            '../js-gzip',
+            'datagrid'
         );
+        const datagridCdnPrefix = 'datagrid';
 
         // Upload versioned paths
         const [major, minor] = release.split('.');
@@ -402,11 +413,28 @@ async function distUpload() {
                 cdnVersionFolder,
                 HTTP_MAX_AGE.fiveYears
             );
+
+            const datagridCdnVersionFolder = path.join(
+                datagridCdnPrefix,
+                version,
+                '/'
+            );
+
+            // Upload datagrid
+            await uploadFolder(
+                dataGridFolder,
+                targetStorage,
+                bucket,
+                datagridCdnVersionFolder,
+                HTTP_MAX_AGE.fiveYears
+            );
         }
 
         // Upload to path without version
         logLib.warn(`Uploading to ${cdnFolder}...`);
         await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
+
+        await uploadFolder(dataGridFolder, targetStorage, bucket, datagridCdnPrefix);
 
         // Upload zip
         logLib.warn('Uploading to zips/...');

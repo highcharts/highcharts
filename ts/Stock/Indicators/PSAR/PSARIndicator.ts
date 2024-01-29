@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highcharts Stock
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -246,10 +246,10 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PSARPoint> = void 0 as any;
-    public nameComponents: Array<string> = void 0 as any;
-    public points: Array<PSARPoint> = void 0 as any;
-    public options: PSAROptions = void 0 as any;
+    public data!: Array<PSARPoint>;
+    public nameComponents: Array<string>|undefined = void 0;
+    public points!: Array<PSARPoint>;
+    public options!: PSAROptions;
 
     /* *
      *
@@ -402,7 +402,7 @@ class PSARIndicator extends SMAIndicator {
 
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
 }
 
 /* *

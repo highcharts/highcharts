@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -95,15 +95,15 @@ class PieSeries extends Series {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<PiePoint> = void 0 as any;
+    public data!: Array<PiePoint>;
 
     public endAngleRad?: number;
 
-    public options: PieSeriesOptions = void 0 as any;
+    public options!: PieSeriesOptions;
 
-    public points: Array<PiePoint> = void 0 as any;
+    public points!: Array<PiePoint>;
 
     public startAngleRad?: number;
 
@@ -528,31 +528,19 @@ interface PieSeries {
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
-
     axisTypes: [],
-
     directTouch: true,
-
     drawGraph: void 0,
-
     drawTracker: ColumnSeries.prototype.drawTracker,
-
     getCenter: CU.getCenter,
-
     getSymbol: noop,
-
+    invertible: false,
     isCartesian: false,
-
     noSharedTooltip: true,
-
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-
     pointClass: PiePoint,
-
     requireSorting: false,
-
     searchPoint: noop as any,
-
     trackerGroups: ['group', 'dataLabelsGroup']
 });
 

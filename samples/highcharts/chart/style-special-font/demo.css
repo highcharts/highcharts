@@ -1,0 +1,20 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+/* Source: www.fonts.googleapis.com
+Original Font Family Name: Gochi Hand */
+
+@font-face {
+    font-family: "1customname";
+    src: url(https://fonts.gstatic.com/s/gochihand/v23/hES06XlsOjtJsgCkx1Pkfon_-w.woff2);
+}

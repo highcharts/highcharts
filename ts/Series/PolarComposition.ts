@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,6 +46,7 @@ import type Tick from '../Core/Axis/Tick';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Core/Globals.js';
+const { composed } = H;
 import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
@@ -57,6 +58,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     splat,
     uniqueKey,
@@ -150,21 +152,13 @@ export declare class PolarSeriesComposition extends Series {
     animate(init?: boolean): void;
     searchPoint: (
         PolarSeriesComposition['kdByAngle'] extends true ?
-            typeof searchPointByAngle :
+            typeof searchPointByAngleOrInverted :
             Series['searchPoint']
     );
     xAxis: RadialAxis.AxisComposition;
     yAxis: RadialAxis.AxisComposition;
     translate(): void;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -671,8 +665,8 @@ function onSeriesAfterTranslate(
         // case of shared tooltip, and by two dimensional distance in case
         // of non-shared.
         series.kdByAngle = chart.tooltip && chart.tooltip.shared;
-        if (series.kdByAngle) {
-            series.searchPoint = searchPointByAngle;
+        if (series.kdByAngle || chart.inverted) {
+            series.searchPoint = searchPointByAngleOrInverted;
         } else {
             series.options.findNearestPointBy = 'xy';
         }
@@ -750,24 +744,31 @@ function onSeriesAfterTranslate(
 }
 
 /**
- * Search a k-d tree by the point angle, used for shared tooltips in polar
+ * Search a k-d tree by the point angle (used for shared tooltips in polar) or
+ * the inverted point.
  * charts
  * @private
  */
-function searchPointByAngle(
+function searchPointByAngleOrInverted(
     this: Series,
     e: PointerEvent
 ): (Point|undefined) {
     const series = this,
         chart = series.chart,
         xAxis = series.xAxis,
+        yAxis = series.yAxis,
         center = xAxis.pane && xAxis.pane.center,
         plotX = e.chartX - (center && center[0] || 0) - chart.plotLeft,
         plotY = e.chartY - (center && center[1] || 0) - chart.plotTop;
 
-    return series.searchKDTree({
+    const searchKDTreePoint = chart.inverted ? {
+        clientX: e.chartX - yAxis.pos,
+        plotY: e.chartY - xAxis.pos
+    } : {
         clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-    });
+    };
+
+    return series.searchKDTree(searchKDTreePoint);
 }
 
 /**
@@ -1413,6 +1414,29 @@ function wrapSplineSeriesGetPointSpline(
     return ret;
 }
 
+/**
+ * Extend the point pos method to calculate point positions for the polar chart.
+ * @private
+ */
+function wrapPointPos(
+    this: PolarPoint,
+    proceed: Function,
+    chartCoordinates?: boolean,
+    plotY: number|undefined = this.plotY
+): [number, number]|undefined {
+    const { plotX, series } = this,
+        { chart } = series;
+
+    if (chart.polar && !this.destroyed && isNumber(plotX) && isNumber(plotY)) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
+    }
+
+    return proceed.call(this, chartCoordinates, plotY);
+}
+
 /* *
  *
  *  Class
@@ -1438,6 +1462,7 @@ class PolarAdditions {
         PointerClass: typeof Pointer,
         SeriesClass: typeof Series,
         TickClass: typeof Tick,
+        PointClass: typeof Point,
         AreaSplineRangeSeriesClass: typeof AreaSplineRangeSeries,
         ColumnSeriesClass: typeof ColumnSeries,
         LineSeriesClass: typeof LineSeries,
@@ -1446,18 +1471,17 @@ class PolarAdditions {
         Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const chartProto = ChartClass.prototype,
+                pointProto = PointClass.prototype,
+                pointerProto = PointerClass.prototype,
+                seriesProto = SeriesClass.prototype;
+
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
 
-            const chartProto = ChartClass.prototype;
-
             wrap(chartProto, 'get', wrapChartGet);
-        }
-
-        if (U.pushUnique(composedMembers, PointerClass)) {
-            const pointerProto = PointerClass.prototype;
 
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
             wrap(pointerProto, 'pinch', wrapPointerPinch);
@@ -1471,9 +1495,7 @@ class PolarAdditions {
                 'getSelectionBox',
                 onPointerGetSelectionBox
             );
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
             addEvent(
                 SeriesClass,
@@ -1489,49 +1511,44 @@ class PolarAdditions {
                 { order: 4 }
             );
 
-            const seriesProto = SeriesClass.prototype;
-
             wrap(seriesProto, 'animate', wrapSeriesAnimate);
-        }
 
-        if (
-            ColumnSeriesClass &&
-            U.pushUnique(composedMembers, ColumnSeriesClass)
-        ) {
-            const columnProto = ColumnSeriesClass.prototype;
 
-            wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
-            wrap(columnProto, 'animate', wrapSeriesAnimate);
-        }
+            wrap(pointProto, 'pos', wrapPointPos);
 
-        if (
-            LineSeriesClass &&
-            U.pushUnique(composedMembers, LineSeriesClass)
-        ) {
-            const lineProto = LineSeriesClass.prototype;
+            if (ColumnSeriesClass) {
+                const columnProto = ColumnSeriesClass.prototype;
 
-            wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
-        }
+                wrap(
+                    columnProto,
+                    'alignDataLabel',
+                    wrapColumnSeriesAlignDataLabel);
+                wrap(columnProto, 'animate', wrapSeriesAnimate);
+            }
 
-        if (
-            SplineSeriesClass &&
-            U.pushUnique(composedMembers, SplineSeriesClass)
-        ) {
-            const splineProto = SplineSeriesClass.prototype;
+            if (LineSeriesClass) {
+                const lineProto = LineSeriesClass.prototype;
 
-            wrap(splineProto, 'getPointSpline', wrapSplineSeriesGetPointSpline);
+                wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
+            }
 
-            if (
-                AreaSplineRangeSeriesClass &&
-                U.pushUnique(composedMembers, AreaSplineRangeSeriesClass)
-            ) {
-                const areaSplineRangeProto =
-                    AreaSplineRangeSeriesClass.prototype;
+            if (SplineSeriesClass) {
+                const splineProto = SplineSeriesClass.prototype;
 
-                // #6430 Areasplinerange series use unwrapped getPointSpline
-                // method, so we need to set this method again.
-                areaSplineRangeProto.getPointSpline =
-                    splineProto.getPointSpline;
+                wrap(
+                    splineProto,
+                    'getPointSpline',
+                    wrapSplineSeriesGetPointSpline);
+
+                if (AreaSplineRangeSeriesClass) {
+                    const areaSplineRangeProto =
+                        AreaSplineRangeSeriesClass.prototype;
+
+                    // #6430 Areasplinerange series use unwrapped getPointSpline
+                    // method, so we need to set this method again.
+                    areaSplineRangeProto.getPointSpline =
+                        splineProto.getPointSpline;
+                }
             }
         }
 

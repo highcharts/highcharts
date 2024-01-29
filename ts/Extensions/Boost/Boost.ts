@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -27,13 +27,15 @@ import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    composed,
+    doc,
+    win
 } = H;
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
-    error
+    error,
+    pushUnique
 } = U;
 
 /* *
@@ -41,8 +43,6 @@ const {
  *  Constants
  *
  * */
-
-const composedClasses: Array<Function> = [];
 
 const contexts = [
     'webgl',
@@ -77,7 +77,7 @@ function compose(
         }
     }
 
-    if (ColorClass && U.pushUnique(composedClasses, ColorClass)) {
+    if (ColorClass && pushUnique(composed, compose)) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -53,7 +53,6 @@ const {
     SVG_NS,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -158,9 +157,9 @@ class SVGElement implements SVGElementLike {
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
-    // @todo public div?: HTMLDOMElement;
+    public div?: HTMLDOMElement;
     public doTransform?: boolean;
-    public element: DOMElementType = void 0 as any;
+    public element: DOMElementType;
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
@@ -178,7 +177,7 @@ class SVGElement implements SVGElementLike {
     public placed?: boolean;
     public r?: number;
     public radAttr?: SVGAttributes;
-    public renderer: SVGRenderer = void 0 as any;
+    public renderer: SVGRenderer;
     public rotation?: number;
     public rotationOriginX?: number;
     public rotationOriginY?: number;
@@ -188,12 +187,12 @@ class SVGElement implements SVGElementLike {
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
     public styledMode?: boolean;
-    public styles?: CSSObject;
+    public styles: CSSObject;
     public SVG_NS = SVG_NS;
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
-    // @todo public textWidth?: number;
+    public textWidth?: number;
     public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
@@ -397,12 +396,17 @@ class SVGElement implements SVGElementLike {
      *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
      *        holds `width`, `height`, `x` and `y` properties.
      *
+     * @param {boolean} [redraw]
+     *        Decide if SVGElement should be redrawed with new alignment or
+     *        just change its attributes.
+     *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public align(
         alignOptions?: AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|BBoxObject)
+        box?: (string|BBoxObject),
+        redraw: boolean = true
     ): this {
         const attribs = {} as SVGAttributes,
             renderer = this.renderer,
@@ -436,8 +440,6 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ?
-                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -475,8 +477,10 @@ class SVGElement implements SVGElementLike {
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
-        this[this.placed ? 'animate' : 'attr'](attribs);
-        this.placed = true;
+        if (redraw) {
+            this[this.placed ? 'animate' : 'attr'](attribs);
+            this.placed = true;
+        }
         this.alignAttr = attribs;
 
         return this;
@@ -836,21 +840,33 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Apply a clipping rectangle to this element.
+     * Apply a clipping shape to this element.
      *
      * @function Highcharts.SVGElement#clip
      *
-     * @param {Highcharts.ClipRectElement} [clipRect]
-     *        The clipping rectangle. If skipped, the current clip is removed.
+     * @param {SVGElement} [clipElem]
+     *        The clipping shape. If skipped, the current clip is removed.
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVG element to allow chaining.
      */
-    public clip(clipRect?: SVGRenderer.ClipRectElement): this {
+    public clip(clipElem?: SVGElement): this {
+        if (clipElem && !clipElem.clipPath) {
+            // Add a hyphen at the end to avoid confusion in testing indexes
+            // -1 and -10, -11 etc (#6550)
+            const id = uniqueKey() + '-',
+                clipPath = this.renderer.createElement('clipPath')
+                    .attr({ id })
+                    .add(this.renderer.defs);
+
+            extend(clipElem, { clipPath, id, count: 0 });
+
+            clipElem.add(clipPath);
+        }
         return this.attr(
             'clip-path',
-            clipRect ?
-                'url(' + this.renderer.url + '#' + clipRect.id + ')' :
+            clipElem ?
+                `url(${this.renderer.url}#${clipElem.id})` :
                 'none'
         );
     }
@@ -1100,8 +1116,8 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
-            // store object
-            this.styles = styles;
+            // Store object
+            extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
@@ -1399,7 +1415,7 @@ class SVGElement implements SVGElementLike {
                 element &&
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
-                styles && styles.fontSize
+                styles.fontSize
             );
 
         let bBox: BBoxObject|undefined,
@@ -1429,8 +1445,8 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
-                styles && styles.textOverflow, // #5968
-                styles && styles.fontWeight // #12163
+                styles.textOverflow, // #5968
+                styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -1528,42 +1544,11 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-
                 const baseline = Number(
-                        element.getAttribute('y') || 0
-                    ) - bBox.y,
-                    alignFactor = ({
-                        'right': 1,
-                        'center': 0.5
-                    } as Record<string, number>)[alignValue || 0] || 0,
-                    rad = rotation * deg2rad,
-                    rad90 = (rotation - 90) * deg2rad,
-                    wCosRad = width * Math.cos(rad),
-                    wSinRad = width * Math.sin(rad),
-                    cosRad90 = Math.cos(rad90),
-                    sinRad90 = Math.sin(rad90),
+                    element.getAttribute('y') || 0
+                ) - bBox.y;
 
-                    // Find the starting point on the left side baseline of
-                    // the text
-                    pX = bBox.x + alignFactor * (width - wCosRad),
-                    pY = bBox.y + baseline - alignFactor * wSinRad,
-
-                    // Find all corners
-                    aX = pX + baseline * cosRad90,
-                    bX = aX + wCosRad,
-                    cX = bX - height * cosRad90,
-                    dX = cX - wCosRad,
-
-                    aY = pY + baseline * sinRad90,
-                    bY = aY + wSinRad,
-                    cY = bY - height * sinRad90,
-                    dY = cY - wSinRad;
-
-                // Deduct the bounding box from the corners
-                bBox.x = Math.min(aX, bX, cX, dX);
-                bBox.y = Math.min(aY, bY, cY, dY);
-                bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
-                bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
+                bBox = this.getRotatedBox(bBox, rotation, baseline);
             }
         }
 
@@ -1582,6 +1567,59 @@ class SVGElement implements SVGElementLike {
             cache[cacheKey] = bBox;
         }
         return bBox;
+    }
+
+    /**
+     * Get the rotated box.
+     * @private
+     */
+    public getRotatedBox(
+        box: BBoxObject,
+        rotation: number,
+        baseline: number
+    ): BBoxObject {
+        const width = box.width,
+            height = box.height,
+            alignValue = this.alignValue,
+            alignFactor = ({
+                'right': 1,
+                'center': 0.5
+            } as Record<string, number>)[alignValue || 0] || 0,
+            rad = rotation * deg2rad,
+            rad90 = (rotation - 90) * deg2rad,
+            wCosRad = width * Math.cos(rad),
+            wSinRad = width * Math.sin(rad),
+            cosRad90 = Math.cos(rad90),
+            sinRad90 = Math.sin(rad90),
+
+            // Find the starting point on the left side baseline of
+            // the text
+            pX = box.x + alignFactor * (width - wCosRad),
+            pY = box.y + baseline - alignFactor * wSinRad,
+
+            // Find all corners
+            aX = pX + baseline * cosRad90,
+            bX = aX + wCosRad,
+            cX = bX - height * cosRad90,
+            dX = cX - wCosRad,
+
+            aY = pY + baseline * sinRad90,
+            bY = aY + wSinRad,
+            cY = bY - height * sinRad90,
+            dY = cY - wSinRad;
+
+        // Deduct the bounding box from the corners
+        const x = Math.min(aX, bX, cX, dX),
+            y = Math.min(aY, bY, cY, dY),
+            boxWidth = Math.max(aX, bX, cX, dX) - x,
+            boxHeight = Math.max(aY, bY, cY, dY) - y;
+
+        return {
+            x,
+            y,
+            width: boxWidth,
+            height: boxHeight
+        };
     }
 
     /**
@@ -1653,10 +1691,10 @@ class SVGElement implements SVGElementLike {
      * @param {string} nodeName
      * The SVG node name.
      */
-    public init(
+    public constructor(
         renderer: SVGRenderer,
         nodeName: string
-    ): void {
+    ) {
 
         /**
          * The primary DOM node. Each `SVGElement` instance wraps a main DOM
@@ -1665,7 +1703,7 @@ class SVGElement implements SVGElementLike {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' ?
+        this.element = nodeName === 'span' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -1676,6 +1714,8 @@ class SVGElement implements SVGElementLike {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        this.styles = {};
 
         fireEvent(this, 'afterInit');
     }
@@ -1724,7 +1764,7 @@ class SVGElement implements SVGElementLike {
     public opacitySetter(
         value: string,
         key: string,
-        element: SVGDOMElement
+        element: SVGDOMElement|HTMLDOMElement
     ): void {
         // Round off to avoid float errors, like tests where opacity lands on
         // 9.86957e-06 instead of 0
@@ -2192,7 +2232,9 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#updateTransform
      */
-    public updateTransform(): void {
+    public updateTransform(
+        attrib: 'transform' | 'patternTransform' = 'transform'
+    ): void {
         const {
             element,
             matrix,
@@ -2233,7 +2275,7 @@ class SVGElement implements SVGElementLike {
         }
 
         if (transform.length && !(this.text || this).textPath) {
-            element.setAttribute('transform', transform.join(' '));
+            element.setAttribute(attrib, transform.join(' '));
         }
     }
 
@@ -2388,7 +2430,7 @@ interface SVGElement extends SVGElementLike {
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationSetter(value: string, key?: string): void;
+    rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
     'stroke-widthSetter'(

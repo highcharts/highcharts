@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -68,11 +68,11 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<BoxPlotPoint> = void 0 as any;
+    public data!: Array<BoxPlotPoint>;
 
-    public options: BoxPlotSeriesOptions = void 0 as any;
+    public options!: BoxPlotSeriesOptions;
 
-    public points: Array<BoxPlotPoint> = void 0 as any;
+    public points!: Array<BoxPlotPoint>;
 
     /* *
      *

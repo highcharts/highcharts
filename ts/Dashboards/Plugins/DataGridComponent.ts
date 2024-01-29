@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,7 @@ import type DataTable from '../../Data/DataTable';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -32,7 +33,6 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-
 const {
     diffObjects,
     merge,
@@ -156,7 +156,7 @@ class DataGridComponent extends Component {
 
         const component = new DataGridComponent(
             cell,
-            merge<DataGridComponent.ComponentOptions>(options as any, {
+            merge<DataGridComponent.Options>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -181,7 +181,7 @@ class DataGridComponent extends Component {
     /** @private */
     public dataGridOptions: Partial<BaseDataGridOptions>;
     /** @private */
-    public options: DataGridComponent.ComponentOptions;
+    public options: DataGridComponent.Options;
     /** @private */
     public sync: Component['sync'];
     /** @private */
@@ -195,14 +195,14 @@ class DataGridComponent extends Component {
 
     constructor(
         cell: Cell,
-        options: Partial<DataGridComponent.ComponentOptions>
+        options: Partial<DataGridComponent.Options>
     ) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(cell, options);
 
         this.connectorListeners = [];
-        this.options = options as DataGridComponent.ComponentOptions;
+        this.options = options as DataGridComponent.Options;
         this.type = 'DataGrid';
 
         if (this.options.dataGridClassName) {
@@ -383,7 +383,7 @@ class DataGridComponent extends Component {
     }
 
     public async update(
-        options: Partial<DataGridComponent.ComponentOptions>
+        options: Partial<DataGridComponent.Options>
     ): Promise<void> {
         if (options.connector?.id !== this.connectorId) {
             const connectorListeners = this.connectorListeners;
@@ -476,6 +476,26 @@ class DataGridComponent extends Component {
         }
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<DataGridComponent.Options> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<DataGridComponent.Options> = {
+            cell: '',
+            type: 'DataGrid'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /** @private */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
@@ -501,7 +521,7 @@ class DataGridComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<DataGridComponent.ComponentOptions> {
+    public getOptions(): Partial<DataGridComponent.Options> {
         return {
             ...diffObjects(this.options, DataGridComponent.defaultOptions),
             type: 'DataGrid'
@@ -548,7 +568,7 @@ namespace DataGridComponent {
     /**
      * Options to control the DataGrid component.
      */
-    export interface ComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
 
         /**
          * The style class to add to the rendered data grid container.

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -241,15 +241,15 @@ class GeoHeatmapSeries extends MapSeries {
      *
      * */
 
-    public options: GeoHeatmapSeriesOptions = void 0 as any;
+    public options!: GeoHeatmapSeriesOptions;
 
-    public data: Array<GeoHeatmapPoint> = void 0 as any;
+    public data!: Array<GeoHeatmapPoint>;
 
-    public points: Array<GeoHeatmapPoint> = void 0 as any;
+    public points!: Array<GeoHeatmapPoint>;
 
-    public canvas?: HTMLCanvasElement = void 0 as any;
+    public canvas?: HTMLCanvasElement;
 
-    public context?: CanvasRenderingContext2D = void 0 as any;
+    public context?: CanvasRenderingContext2D;
 
     public isDirtyCanvas: boolean = true;
 

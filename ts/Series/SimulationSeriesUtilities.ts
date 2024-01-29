@@ -16,7 +16,10 @@ import type PackedBubbleSeries from './PackedBubble/PackedBubbleSeries';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import U from '../Core/Utilities.js';
-const { syncTimeout } = U;
+const {
+    merge,
+    syncTimeout
+} = U;
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -32,7 +35,7 @@ type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);
 function initDataLabelsDefer(this: SimulationSeries): void {
     const dlOptions = this.options.dataLabels;
 
-    // drawDataLabels() fires for the first time after
+    // Method drawDataLabels() fires for the first time after
     // dataLabels.animation.defer time unless
     // the dataLabels.animation = false or dataLabels.defer = false
     // or if the simulation is disabled
@@ -75,7 +78,13 @@ function initDataLabels(this: SimulationSeries): SVGElement {
         return dataLabelsGroup;
     }
 
-    series.dataLabelsGroup.attr({ opacity: 1 });
+    // Place it on first and subsequent (redraw) calls
+    series.dataLabelsGroup.attr(
+        merge(
+            { opacity: 1 },
+            this.getPlotBox('data-labels')
+        )
+    );
     return series.dataLabelsGroup;
 }
 

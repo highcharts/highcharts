@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -79,9 +79,9 @@ class GanttPoint extends XRangePoint {
 
     public milestone?: boolean;
 
-    public options: GanttPointOptions = void 0 as any;
+    public options!: GanttPointOptions;
 
-    public series: GanttSeries = void 0 as any;
+    public series!: GanttSeries;
 
     public start?: number;
 

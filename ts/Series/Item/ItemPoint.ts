@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2021 Torstein Honsi
+ *  (c) 2019-2024 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -45,9 +45,9 @@ class ItemPoint extends PiePoint {
      *
      * */
 
-    public options: ItemPointOptions = void 0 as any;
+    public options!: ItemPointOptions;
 
-    public series: ItemSeries = void 0 as any;
+    public series!: ItemSeries;
 
 }
 

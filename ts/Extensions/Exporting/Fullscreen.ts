@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Rafal Sebestjanski
+ *  (c) 2009-2024 Rafal Sebestjanski
  *
  *  Full screen for Highcharts
  *
@@ -26,10 +26,13 @@
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 /* *
@@ -44,14 +47,6 @@ declare module '../../Core/Chart/ChartLike' {
         fullscreen?: Fullscreen;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -107,7 +102,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }

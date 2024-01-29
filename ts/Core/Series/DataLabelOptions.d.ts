@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -33,7 +33,9 @@ import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
  *
  * */
 
-export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
+export type DataLabelFilterOperatorValue = (
+    '>'|'<'|'>='|'<='|'=='|'==='|'!='|'!=='
+);
 
 export interface TextPathAttributes extends SVGAttributes {
     startOffset?: string;

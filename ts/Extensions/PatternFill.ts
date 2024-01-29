@@ -2,7 +2,7 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -24,6 +24,7 @@ import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart.js';
 import type ColorString from '../Core/Color/ColorString';
 import type Point from '../Core/Series/Point.js';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series.js';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type { SVGDOMElement } from '../Core/Renderer/DOMElementType';
@@ -34,7 +35,11 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
+import H from '../Core/Globals.js';
+const { composed } = H;
+import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
+import { Palette } from '../Core/Color/Palettes';
 const {
     addEvent,
     defined,
@@ -113,8 +118,6 @@ export interface PatternOptionsObject {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 const patterns = createPatterns();
 
 /* *
@@ -131,24 +134,22 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(ChartClass, 'endResize', onChartEndResize);
         addEvent(ChartClass, 'redraw', onChartRedraw);
-    }
 
-    if (pushUnique(composedMembers, PointClass)) {
         extend(PointClass.prototype, {
             calculatePatternDimensions: pointCalculatePatternDimensions
         });
         addEvent(PointClass, 'afterInit', onPointAfterInit);
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'render', onSeriesRender);
         wrap(SeriesClass.prototype, 'getColor', wrapSeriesGetColor);
-    }
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+        // Pattern scale corrections
+        addEvent(SeriesClass, 'afterRender', onPatternScaleCorrection);
+        addEvent(SeriesClass, 'mapZoomComplete', onPatternScaleCorrection);
+
         extend(SVGRendererClass.prototype, {
             addPattern: rendererAddPattern
         });
@@ -395,7 +396,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value = '#343434';
+        value: string = Palette.neutralColor80;
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -640,20 +641,22 @@ function rendererAddPattern(
 ): (SVGElement|undefined) {
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
+        color: ColorString = options.color || Palette.neutralColor80,
         defaultSize = 32,
-        width: number = options.width || (options._width as any) || defaultSize,
-        height: number = (
-            options.height || (options._height as any) || defaultSize
-        ),
-        color: ColorString = options.color || '#343434',
+        height = options.height ||
+            (typeof options._height === 'number' ? options._height : 0) ||
+            defaultSize,
         rect = (fill: ColorString): SVGElement => this
             .rect(0, 0, width, height)
             .attr({ fill })
-            .add(pattern);
+            .add(pattern),
+        width = options.width ||
+            (typeof options._width === 'number' ? options._width : 0) ||
+            defaultSize;
 
-    let path: SVGAttributes,
+    let attribs: SVGAttributes,
         id = options.id,
-        attribs: SVGAttributes;
+        path: SVGAttributes;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -791,6 +794,90 @@ function wrapSeriesGetColor(
     } else {
         // We have a color, no need to do anything special
         proceed.apply(this, [].slice.call(arguments, 1) as any);
+    }
+}
+
+/**
+ * Scale patterns inversly to the series it's used in.
+ * Maintains a visual (1,1) scale regardless of size.
+ * @private
+ */
+function onPatternScaleCorrection(
+    this: Series
+): void {
+    const series = this;
+
+    // If not a series used in a map chart, skip it.
+    if (!series.chart?.mapView) {
+        return;
+    }
+
+    const chart = series.chart,
+        renderer = chart.renderer,
+        patterns = renderer.patternElements;
+
+    // Only scale if we have patterns to scale.
+    if (renderer.defIds?.length && patterns) {
+        // Filter for points which have patterns that don't use images assigned
+        // and has a group scale available.
+        series.points.filter(function (p: Point): boolean {
+            const point: MapPoint = (p as MapPoint);
+
+            // No graphic we can fetch id from, filter out this point.
+            if (!point.graphic) {
+                return false;
+            }
+
+            return (
+                point.graphic.element.hasAttribute('fill') ||
+                point.graphic.element.hasAttribute('color') ||
+                point.graphic.element.hasAttribute('stroke')
+            ) &&
+            !(point.options.color as any)?.pattern?.image &&
+            !!point.group?.scaleX &&
+            !!point.group?.scaleY;
+        })
+            // Map up pattern id's and their scales.
+            .map(function (p: Point): [string, PositionObject] {
+                const point: MapPoint = (p as MapPoint);
+                // Parse the id from the graphic element of the point.
+                const id = (
+                    point.graphic?.element.getAttribute('fill') ||
+                    point.graphic?.element.getAttribute('color') ||
+                    point.graphic?.element.getAttribute('stroke') || ''
+                )
+                    .replace(renderer.url, '')
+                    .replace('url(#', '')
+                    .replace(')', '');
+
+                return [
+                    id,
+                    {
+                        x: point.group?.scaleX || 1,
+                        y: point.group?.scaleY || 1
+                    }
+                ];
+            })
+            // Filter out colors and other non-patterns, as well as duplicates.
+            .filter(function (
+                [id, _]: [string, PositionObject],
+                index: number,
+                arr: [string, PositionObject][]
+            ): boolean {
+                return id !== '' &&
+                id.indexOf('highcharts-pattern-') !== -1 &&
+                !arr.some(function (
+                    [otherID, _]: [string, PositionObject],
+                    otherIndex: number
+                ): boolean {
+                    return otherID === id && otherIndex < index;
+                });
+            })
+            .forEach(function ([id, scale]: [string, PositionObject]): void {
+                patterns[id].scaleX = 1 / scale.x;
+                patterns[id].scaleY = 1 / scale.y;
+                patterns[id].updateTransform('patternTransform');
+            });
     }
 }
 
@@ -934,4 +1021,4 @@ export default PatternFill;
  * @type {number|undefined}
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

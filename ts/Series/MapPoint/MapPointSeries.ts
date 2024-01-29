@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -76,13 +76,13 @@ class MapPointSeries extends ScatterSeries {
      *  Properties
      *
      * */
-    public chart: MapChart = void 0 as any;
+    public chart!: MapChart;
 
-    public data: Array<MapPointPoint> = void 0 as any;
+    public data!: Array<MapPointPoint>;
 
-    public options: MapPointSeriesOptions = void 0 as any;
+    public options!: MapPointSeriesOptions;
 
-    public points: Array<MapPointPoint> = void 0 as any;
+    public points!: Array<MapPointPoint>;
 
     public clearBounds = MapSeries.prototype.clearBounds;
 

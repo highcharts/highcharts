@@ -1,12 +1,11 @@
-const speed = 200,
-    speedLimit = 150;
+const speedLimit = 150;
 
 const board = Dashboards.board('container', {
     components: [{
         cell: 'kpi-00',
         type: 'KPI',
         title: 'Speed',
-        value: speed,
+        value: 200,
         valueFormat: '{value} km/h',
         threshold: speedLimit,
         chartOptions: {
@@ -35,7 +34,6 @@ const board = Dashboards.board('container', {
                 },
                 rounded: true,
                 data: [{
-                    y: speed,
                     innerRadius: '60%',
                     outerRadius: '100%'
                 }]
@@ -56,14 +54,11 @@ const board = Dashboards.board('container', {
 
 function updateSpeed() {
     const element = board.mountedComponents[0],
-        chart = element.component.chart,
-        oldSpeed = chart.series[0].data[0].y;
+        oldSpeed = element.component.prevValue;
     let newSpeed = oldSpeed - 50;
     if (oldSpeed <= 0) {
         newSpeed = 300;
     }
-
-    chart.series[0].setData([newSpeed]);
 
     element.component.update({
         value: newSpeed

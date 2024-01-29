@@ -20,21 +20,21 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'Top-left'
+                    id: 'top-left'
                 }, {
-                    id: 'Top-middle'
+                    id: 'top-middle'
                 }, {
-                    id: 'Top-right'
+                    id: 'top-right'
                 }]
             }, {
                 cells: [{
-                    id: 'Bottom'
+                    id: 'bottom'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'Top-left',
+        cell: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -51,7 +51,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'Top-middle',
+        cell: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -68,7 +68,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'Top-right',
+        cell: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -85,7 +85,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'Bottom',
+        cell: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'

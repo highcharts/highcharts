@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -22,6 +22,8 @@ import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
 
+import H from '../Globals.js';
+const { composed } = H;
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
@@ -29,10 +31,10 @@ import U from '../Utilities.js';
 const {
     addEvent,
     extend,
+    isNumber,
     merge,
     pick,
-    pushUnique,
-    isNumber
+    pushUnique
 } = U;
 
 /* *
@@ -60,14 +62,6 @@ declare module './SeriesLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
@@ -92,12 +86,13 @@ class Series3D extends Series {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();
                 }
             });
+
             extend(SeriesClass.prototype, {
                 translate3dPoints: Series3D.prototype.translate3dPoints
             });
@@ -134,9 +129,7 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
-        for (i = 0; i < series.data.length; i++) {
-            rawPoint = series.data[i];
-
+        series.data.forEach((rawPoint): void => {
             if (zAxis && zAxis.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
@@ -161,20 +154,19 @@ class Series3D extends Series {
             });
 
             rawPointsX.push(rawPoint.plotX || 0);
-        }
+        });
 
         series.rawPointsX = rawPointsX;
 
         const projectedPoints = perspective(rawPoints, chart, true);
 
-        for (i = 0; i < series.data.length; i++) {
-            rawPoint = series.data[i];
+        series.data.forEach((rawPoint, i): void => {
             projectedPoint = projectedPoints[i];
 
             rawPoint.plotX = projectedPoint.x;
             rawPoint.plotY = projectedPoint.y;
             rawPoint.plotZ = projectedPoint.z;
-        }
+        });
     }
 
 }

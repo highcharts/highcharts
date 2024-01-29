@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  3D pie series
  *
@@ -23,7 +23,10 @@ import type Series from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
-const { deg2rad } = H;
+const {
+    composed,
+    deg2rad
+} = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -56,14 +59,6 @@ declare module '../Pie/PieSeriesOptions' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
@@ -80,7 +75,7 @@ class Pie3DSeries extends PieSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, this.compose)) {
             SeriesClass.types.pie = Pie3DSeries;
         }
 
@@ -247,8 +242,7 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        for (const point of series.data) {
-
+        for (const point of series.points) {
             const shapeArgs = point.shapeArgs;
 
             point.shapeType = 'arc3d';

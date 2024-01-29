@@ -88,9 +88,9 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *
      * */
 
-    public data: Array<AroonOscillatorPoint> = void 0 as any;
-    public options: AroonOscillatorOptions = void 0 as any;
-    public points: Array<AroonOscillatorPoint> = void 0 as any;
+    public data!: Array<AroonOscillatorPoint>;
+    public options!: AroonOscillatorOptions;
+    public points!: Array<AroonOscillatorPoint>;
 
     /* *
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,10 @@ import type { ProjectedXY } from './MapViewOptions';
 import type Series from '../Core/Series/Series';
 
 import H from '../Core/Globals.js';
-const { win } = H;
+const {
+    composed,
+    win
+} = H;
 import T from '../Core/Templating.js';
 const { format } = T;
 import U from '../Core/Utilities.js';
@@ -96,14 +99,6 @@ declare module '../Core/Chart/ChartOptions'{
  * */
 
 namespace GeoJSONComposition {
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -302,7 +297,7 @@ namespace GeoJSONComposition {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const proto = ChartClass.prototype;
 
             proto.fromLatLonToPoint = chartFromLatLonToPoint;

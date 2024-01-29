@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -83,15 +83,15 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
     public centerX?: number;
 
-    public data: Array<Funnel3DPoint> = void 0 as any;
+    public data!: Array<Funnel3DPoint>;
 
-    public options: Funnel3DSeriesOptions = void 0 as any;
+    public options!: Funnel3DSeriesOptions;
 
-    public points: Array<Funnel3DPoint> = void 0 as any;
+    public points!: Array<Funnel3DPoint>;
 
     /* *
      *
@@ -209,7 +209,7 @@ class Funnel3DSeries extends ColumnSeries {
                 plotHeight
             ),
             neckY = (centerY - height / 2) + height - neckHeight,
-            data = series.data;
+            points = series.points;
 
         let sum = 0,
             cumulative = 0, // start at top
@@ -259,13 +259,13 @@ class Funnel3DSeries extends ColumnSeries {
             */
 
         // get the total sum
-        for (const point of data) {
+        for (const point of points) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
         }
 
-        for (const point of data) {
+        for (const point of points) {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;

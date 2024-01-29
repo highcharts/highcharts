@@ -1,20 +1,4 @@
 /* eslint-disable jsdoc/require-description */
-
-// left arrow
-Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
-    'M', x + w / 2 - 1, y,
-    'L', x + w / 2 - 1, y + h,
-    x - w / 2 - 1, y + h / 2,
-    'Z'
-];
-// right arrow
-Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
-    'M', x + w / 2 + 1, y,
-    'L', x + w / 2 + 1, y + h,
-    x + w + w / 2 + 1, y + h / 2,
-    'Z'
-];
-
 const MathModifier = Dashboards.DataModifier.types.Math;
 
 const colorStopsDays = [
@@ -29,7 +13,60 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
+const tempRange = {
+    minC: -10,
+    maxC: 50,
+    minF: 14,
+    maxF: 122
+};
+
 setupBoard();
+
+const KPIChartOptions = {
+    chart: {
+        height: 166,
+        margin: [8, 8, 16, 8],
+        spacing: [8, 8, 8, 8],
+        styledMode: true,
+        type: 'solidgauge'
+    },
+    pane: {
+        background: {
+            innerRadius: '90%',
+            outerRadius: '120%',
+            shape: 'arc'
+        },
+        center: ['50%', '70%'],
+        endAngle: 90,
+        startAngle: -90
+    },
+    series: [{
+        data: [0],
+        dataLabels: {
+            format: '{y:.0f}',
+            y: -34
+        },
+        animation: false,
+        animationLimit: 0,
+        enableMouseTracking: false,
+        innerRadius: '90%',
+        radius: '120%'
+    }],
+    yAxis: {
+        labels: {
+            distance: 4,
+            y: 12
+        },
+        max: 10,
+        min: 0,
+        stops: colorStopsDays,
+        tickAmount: 2,
+        visible: true
+    },
+    accessibility: {
+        typeDescription: 'The gauge chart with 1 data point.'
+    }
+};
 
 async function setupBoard() {
     let activeCity = 'New York',
@@ -57,7 +94,7 @@ async function setupBoard() {
                 options: {
                     csvURL: (
                         'https://www.highcharts.com/samples/data/' +
-                        'climate-cities.csv'
+                        'climate-cities-limited.csv'
                     )
                 }
             }]
@@ -133,7 +170,7 @@ async function setupBoard() {
                                     id: 'kpi-data',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -147,7 +184,7 @@ async function setupBoard() {
                                     id: 'kpi-temperature',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -161,7 +198,7 @@ async function setupBoard() {
                                     id: 'kpi-max-temperature',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
+                                            width: '1/2'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -175,35 +212,7 @@ async function setupBoard() {
                                     id: 'kpi-rain',
                                     responsive: {
                                         large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
                                             width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
-                                }, {
-                                    id: 'kpi-ice',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
-                                }, {
-                                    id: 'kpi-frost',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
                                         },
                                         medium: {
                                             width: '1/2'
@@ -256,14 +265,6 @@ async function setupBoard() {
                     height: '80px',
                     type: 'spline'
                 },
-                navigator: {
-                    handles: {
-                        symbols: ['leftarrow', 'rightarrow'],
-                        lineWidth: 0,
-                        width: 8,
-                        height: 14
-                    }
-                },
                 series: [{
                     name: 'Timeline',
                     data: [
@@ -295,6 +296,31 @@ async function setupBoard() {
                                 );
                             }
                         }
+                    },
+                    accessibility: {
+                        description: 'Years'
+                    }
+                },
+                yAxis: {
+                    accessibility: {
+                        description: 'Temperature'
+                    }
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Data range selector. Highcharts Interactive Chart.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is displaying range of dates from
+                    1951-01-01 to 2010-10-25.`,
+                    typeDescription: 'Navigator that selects a range of dates.',
+                    point: {
+                        descriptionFormatter: function (point) {
+                            return 'x, ' +
+                                Highcharts.dateFormat('%Y-%m-%d', point.x) +
+                                ', ' + point.y + '. Timeline.';
+                        }
                     }
                 }
             }
@@ -313,8 +339,8 @@ async function setupBoard() {
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
-                    max: 50,
-                    min: 0,
+                    max: tempRange.maxC,
+                    min: tempRange.minC,
                     stops: colorStopsTemperature
                 },
                 legend: {
@@ -383,7 +409,7 @@ async function setupBoard() {
                             },
                             select: {
                                 lineWidthPlus: 4,
-                                radiusPlus: 0
+                                radiusPlus: 2
                             }
                         },
                         symbol: 'mapmarker'
@@ -404,7 +430,20 @@ async function setupBoard() {
                 tooltip: {
                     shape: 'rect',
                     distance: -60,
-                    useHTML: true
+                    useHTML: true,
+                    stickOnContact: true
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is displaying maximal temperature
+                    in cities.`,
+                    point: {
+                        valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
+                    }
                 }
             }
         }, {
@@ -417,64 +456,23 @@ async function setupBoard() {
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'TN' + activeScale,
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Average Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
                 },
                 yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
+                    accessibility: {
+                        description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'TN';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -488,67 +486,23 @@ async function setupBoard() {
         }, {
             cell: 'kpi-max-temperature',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'TX' + activeScale,
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Maximal Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
                 },
                 yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
+                    accessibility: {
+                        description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'TX';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                },
-                afterLoad: function () {
-                    this.cell.setActiveState();
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -562,205 +516,23 @@ async function setupBoard() {
         }, {
             cell: 'kpi-rain',
             type: 'KPI',
+            connector: {
+                id: 'Range Selection'
+            },
+            columnName: 'RR1',
             chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
+                ...KPIChartOptions,
                 title: {
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
                 },
                 yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
+                    accessibility: {
+                        description: 'Days'
                     },
                     max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'RR1';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
-            cell: 'kpi-ice',
-            type: 'KPI',
-            chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
-                title: {
-                    text: 'Days with Ice',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'ID';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
-                }
-            },
-            states: {
-                active: {
-                    enabled: true
-                },
-                hover: {
-                    enabled: true
-                }
-            }
-        }, {
-            cell: 'kpi-frost',
-            type: 'KPI',
-            chartOptions: {
-                chart: {
-                    height: 166,
-                    margin: [8, 8, 16, 8],
-                    spacing: [8, 8, 8, 8],
-                    styledMode: true,
-                    type: 'solidgauge'
-                },
-                pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                series: [{
-                    data: [0],
-                    dataLabels: {
-                        format: '{y:.0f}',
-                        y: -34
-                    },
-                    animation: false,
-                    animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
-                }],
-                title: {
-                    text: 'Days with Frost',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
-                },
-                yAxis: {
-                    labels: {
-                        distance: 4,
-                        y: 12
-                    },
-                    max: 10,
-                    min: 0,
-                    minorTickInterval: null,
-                    stops: colorStopsDays,
-                    tickAmount: 2,
-                    visible: true
-                }
-            },
-            events: {
-                click: function () {
-                    activeColumn = 'FD';
-                    updateBoard(
-                        board,
-                        activeCity,
-                        activeColumn,
-                        activeScale,
-                        true
-                    );
+                    min: 0
                 }
             },
             states: {
@@ -804,18 +576,20 @@ async function setupBoard() {
                     },
                     TNC: {
                         headerFormat: 'Average Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TNF: {
                         headerFormat: 'Average Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        cellFormat: '{value:.1f}'
                     },
                     TXF: {
                         headerFormat: 'Maximal Temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     }
                 }
@@ -827,7 +601,14 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {},
+            columnAssignment: {
+                time: 'x',
+                RR1: 'y',
+                TNC: activeScale === 'C' ? 'value' : null,
+                TNF: !activeScale === 'C' ? 'value' : null,
+                TXC: activeScale === 'C' ? 'value' : null,
+                TXF: !activeScale === 'C' ? 'value' : null
+            },
             sync: {
                 highlight: true
             },
@@ -842,15 +623,13 @@ async function setupBoard() {
                 credits: {
                     enabled: false
                 },
-                legend: {
-                    enabled: false
-                },
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
                     max: 50,
                     min: 0,
-                    stops: colorStopsTemperature
+                    stops: colorStopsTemperature,
+                    showInLegend: false
                 },
                 plotOptions: {
                     series: {
@@ -860,30 +639,58 @@ async function setupBoard() {
                         }
                     }
                 },
-                series: [{
-                    name: activeCity,
-                    animation: false,
-                    animationLimit: 0
-                }],
                 title: {
                     margin: 20,
-                    text: 'Maximal Temperature',
+                    text: 'Temperature and rain in the city',
                     x: 15,
                     y: 5
                 },
                 tooltip: {
-                    enabled: true
+                    enabled: true,
+                    stickOnContact: true,
+                    formatter: function () {
+                        const point = this.point;
+                        const name = this.series.name;
+
+                        // Date
+                        let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
+
+                        if (name === 'RR1') {
+                            // Rainy days
+                            str += 'Days with rain: ' + point.y;
+                        } else {
+                            // Temperature (names TXC, TNC, TXF, TNF)
+                            const tempStr = (name[1] === 'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
+                            str += tempStr + '˚' + name[2];
+                        }
+                        return str;
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
                     dateTimeLabelFormats: {
                         month: '%e. %b'
+                    },
+                    accessibility: {
+                        description: 'Years'
                     }
                 },
                 yAxis: {
                     title: {
                         text: 'Celsius'
+                    },
+                    accessibility: {
+                        description: 'Celsius'
                     }
+                },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                    }
+                },
+                accessibility: {
+                    description: `The chart is displaying maximal temperature,
+                    average temperature and days of rain.`
                 }
             }
         }]
@@ -903,9 +710,18 @@ async function setupBoard() {
         });
     }
 
-    // Load initial city
+    // Load active city
     await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
+
+    // Select active city on the map
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+    for (let idx = 0; idx < worldMap.data.length; idx++) {
+        if (worldMap.data[idx].name === activeCity) {
+            worldMap.data[idx].select();
+            break;
+        }
+    }
 
     // Load additional cities
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
@@ -919,7 +735,7 @@ async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityTable = await dataPool.getConnectorTable(city);
-    const time = board.mountedComponents[0].component.chart.axes[0].min;
+    const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -954,6 +770,11 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
+    const pointValue = cityTable.modified.getCellAsNumber(
+        column,
+        cityTable.modified.getRowIndexBy('time', latestTime)
+    );
+
     // Add city to world map
     worldMap.addPoint({
         custom: {
@@ -963,17 +784,14 @@ async function setupCity(board, city, column, scale) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        y: cityTable.modified.getCellAsNumber(
-            column,
-            cityTable.getRowIndexBy('time', time)
-        ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+        y: pointValue || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
 }
 
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
@@ -981,15 +799,16 @@ async function updateBoard(board, city, column, scale, newData) {
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const cityTable = await dataPool.getConnectorTable(city);
+    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+
     const [
         timeRangeSelector,
         worldMap,
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        kpiRain,
-        kpiIce,
-        kpiFrost,
+        // eslint-disable-next-line no-unused-vars
+        kpiRain, // No need to update this chart
         selectionGrid,
         cityChart
     ] = board.mountedComponents.map(c => c.component);
@@ -999,7 +818,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
@@ -1034,10 +852,15 @@ async function updateBoard(board, city, column, scale, newData) {
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
+        // Get elevation of city
+        const cityName = mapPoints[i].name;
+        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+
+        const pointTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({
             custom: {
+                elevation: cityInfo.elevation,
                 yScale: scale
             },
             y: pointTable.modified.getCellAsNumber(
@@ -1053,10 +876,15 @@ async function updateBoard(board, city, column, scale, newData) {
             stops: colorStops
         }
     });
+    kpiTemperature.update({
+        columnName: 'TN' + scale
+    });
+    kpiMaxTemperature.update({
+        columnName: 'TX' + scale
+    });
 
-    // Update KPIs
     if (newData) {
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        // Update KPIs
         await kpiData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
@@ -1064,25 +892,11 @@ async function updateBoard(board, city, column, scale, newData) {
                 citiesTable.getRowIndexBy('city', city)
             ) || '--'
         });
-    }
-    kpiTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TN' + scale, rangeEnd) || 0);
-    kpiMaxTemperature.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('TX' + scale, rangeEnd) || 0);
-    kpiRain.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('RR1', rangeEnd) || 0);
-    kpiIce.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('ID', rangeEnd) || 0);
-    kpiFrost.chart.series[0].points[0]
-        .update(rangeTable.getCellAsNumber('FD', rangeEnd) || 0);
 
-    // Update data grid and city chart
-    if (newData) {
+        // Update data grid and city chart
         const showCelsius = scale === 'C';
         const sharedColumnAssignment = {
             time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
             RR1: column === 'RR1' ? 'y' : null,
             TNC: column === 'TNC' ? 'y' : null,
             TNF: column === 'TNF' ? 'y' : null,
@@ -1111,50 +925,23 @@ async function updateBoard(board, city, column, scale, newData) {
             columnAssignment: sharedColumnAssignment
         });
 
-        // Update city chart selection
+        // Update city chart
+        const options = cityChart.chartOptions;
+        options.title.text = 'Temperature and rain in ' + city;
+        options.colorAxis.min = colorMin;
+        options.colorAxis.max = colorMax;
+        options.colorAxis.colorStops = colorStops;
+
         await cityChart.update({
-            columnAssignment: sharedColumnAssignment,
-            chartOptions: {
-                chart: {
-                    type: column[0] === 'T' ? 'spline' : 'column'
-                },
-                chartOptions: {
-                    chart: {
-                        type: column[0] === 'T' ? 'spline' : 'column'
-                    },
-                    colorAxis: {
-                        min: colorMin,
-                        max: colorMax,
-                        stops: colorStops
-                    }
-                }
-            }
+            columnAssignment: {
+                time: 'x',
+                RR1: 'y',
+                TNC: showCelsius ? 'y' : null,
+                TNF: !showCelsius ? 'y' : null,
+                TXC: showCelsius ? 'y' : null,
+                TXF: !showCelsius ? 'y' : null
+            },
+            chartOptions: options
         });
     }
 }
-
-const toggle = document.getElementById('mode-toggle');
-
-toggle.addEventListener('click', () => {
-    changeTheme();
-});
-
-function isDarkModeEnabled() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-toggle.checked = isDarkModeEnabled();
-
-function changeTheme() {
-    const toggleContainer = document.getElementById('toggle-container'),
-        container = document.getElementById('container'),
-        className = toggle.checked ? 'highcharts-dark' : 'highcharts-light';
-
-    container.className = className;
-    toggleContainer.className = className;
-}
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    toggle.checked = isDarkModeEnabled();
-    changeTheme();
-});

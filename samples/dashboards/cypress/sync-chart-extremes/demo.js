@@ -48,6 +48,11 @@ Dashboards.board('container', {
                 },
                 panKey: 'shift'
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             xAxis: [{
                 minRange: 1,
                 startOnTick: false,
@@ -77,6 +82,11 @@ Dashboards.board('container', {
                 zoomType: 'x',
                 zoomBySingleTouch: true
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             xAxis: [{
                 minRange: 1
             }]
@@ -98,6 +108,11 @@ Dashboards.board('container', {
                 animation: false,
                 zoomType: 'x',
                 zoomBySingleTouch: true
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             },
             xAxis: [{
                 minRange: 1

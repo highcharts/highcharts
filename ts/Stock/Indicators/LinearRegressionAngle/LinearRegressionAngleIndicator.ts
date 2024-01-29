@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Kamil Kulig
+ *  (c) 2010-2024 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -85,9 +85,9 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionAnglePoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionAnglePoint> = void 0 as any;
+    public data!: Array<LinearRegressionAnglePoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionAnglePoint>;
 
     /* *
      *

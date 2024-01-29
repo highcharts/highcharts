@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2021 Torstein Honsi
+ *  (c) 2019-2024 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -81,13 +81,13 @@ class ItemSeries extends PieSeries {
 
     public borderWidth?: number;
 
-    public data: Array<ItemPoint> = void 0 as any;
+    public data!: Array<ItemPoint>;
 
     public itemSize?: number;
 
-    public options: ItemSeriesOptions = void 0 as any;
+    public options!: ItemSeriesOptions;
 
-    public points: Array<ItemPoint> = void 0 as any;
+    public points!: Array<ItemPoint>;
 
     public slots?: Array<ItemSeries.GeometryObject>;
 

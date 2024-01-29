@@ -1,7 +1,0 @@
----
- name: Lasso selection demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
- requiresManualTesting: true
-...

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -115,6 +115,7 @@ class MenuItem {
                     options.text,
                 value: !!(options.getValue && options.getValue(item)),
                 lang: this.menu.editMode.lang,
+                langKey: langKey,
                 onchange: options.events?.click?.bind(item)
             });
         }

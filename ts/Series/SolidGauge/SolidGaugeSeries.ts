@@ -2,7 +2,7 @@
  *
  *  Solid angular gauge module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -75,14 +75,14 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-    public data: Array<SolidGaugePoint> = void 0 as any;
-    public points: Array<SolidGaugePoint> = void 0 as any;
-    public options: SolidGaugeSeriesOptions = void 0 as any;
+    public data!: Array<SolidGaugePoint>;
+    public points!: Array<SolidGaugePoint>;
+    public options!: SolidGaugeSeriesOptions;
 
-    public axis: SolidGaugeAxis = void 0 as any;
-    public yAxis: SolidGaugeAxis = void 0 as any;
-    public startAngleRad: SolidGaugeSeries['thresholdAngleRad'] = void 0 as any;
-    public thresholdAngleRad: number = void 0 as any;
+    public axis!: SolidGaugeAxis;
+    public yAxis!: SolidGaugeAxis;
+    public startAngleRad!: SolidGaugeSeries['thresholdAngleRad'];
+    public thresholdAngleRad!: number;
 
     /* *
      *

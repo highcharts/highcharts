@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Kacper Madej
+ *  (c) 2010-2024 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -146,9 +146,9 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<WMAPoint> = void 0 as any;
-    public options: WMAOptions = void 0 as any;
-    public points: Array<WMAPoint> = void 0 as any;
+    public data!: Array<WMAPoint>;
+    public options!: WMAOptions;
+    public points!: Array<WMAPoint>;
 
     /* *
      *

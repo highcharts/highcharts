@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Extension for 3D charts
  *
@@ -368,10 +368,7 @@ namespace Chart3D {
          * Whether it is a 3D chart.
          */
         chartProto.is3d = function (): boolean {
-            return Boolean(
-                this.options.chart.options3d &&
-                this.options.chart.options3d.enabled
-            ); // #4280
+            return !!this.options.chart.options3d?.enabled;
         };
 
         chartProto.propsRequireDirtyBox.push('chart.options3d');
@@ -1488,7 +1485,7 @@ namespace Chart3D {
          * */
 
         public chart: Composition;
-        public frame3d: FrameObject = void 0 as any;
+        public frame3d!: FrameObject;
 
         /* *
          *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -47,9 +47,9 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     public minPointLengthOffset?: number;
 
-    public options: WaterfallPointOptions = void 0 as any;
+    public options!: WaterfallPointOptions;
 
-    public series: WaterfallSeries = void 0 as any;
+    public series!: WaterfallSeries;
 
     /* *
      *

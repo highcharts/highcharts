@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -397,13 +397,13 @@ class VennSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<VennPoint> = void 0 as any;
+    public data!: Array<VennPoint>;
 
-    public mapOfIdToRelation: Record<string, VennRelationObject> = void 0 as any;
+    public mapOfIdToRelation!: Record<string, VennRelationObject>;
 
-    public options: VennSeriesOptions = void 0 as any;
+    public options!: VennSeriesOptions;
 
-    public points: Array<VennPoint> = void 0 as any;
+    public points!: Array<VennPoint>;
 
     /* *
      *

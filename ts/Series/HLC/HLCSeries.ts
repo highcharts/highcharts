@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Pawel Lysy
+ *  (c) 2010-2024 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -68,13 +68,13 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<HLCPoint> = void 0 as any;
+    public data!: Array<HLCPoint>;
 
-    public options: HLCSeriesOptions = void 0 as any;
+    public options!: HLCSeriesOptions;
 
-    public points: Array<HLCPoint> = void 0 as any;
+    public points!: Array<HLCPoint>;
 
-    public yData: Array<Array<number>> = void 0 as any;
+    public yData!: Array<Array<number>>;
 
     /* *
      *

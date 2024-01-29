@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -44,9 +44,9 @@ class CylinderPoint extends ColumnPoint {
      *
      * */
 
-    public options: CylinderPointOptions = void 0 as any;
+    public options!: CylinderPointOptions;
 
-    public series: CylinderSeries = void 0 as any;
+    public series!: CylinderSeries;
 
 }
 

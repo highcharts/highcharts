@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2021 Paweł Fus
+ *  (c) 2009-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -22,6 +22,8 @@ import type AxisType from '../../Core/Axis/AxisType';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
@@ -38,7 +40,8 @@ const {
     correctFloat,
     defined,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -93,14 +96,6 @@ export interface YAxisPositions {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -112,7 +107,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
+    if (pushUnique(composed, compose)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -128,9 +123,7 @@ function compose(
             isPriceIndicatorEnabled,
             manageIndicators: STU.manageIndicators
         };
-    }
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {

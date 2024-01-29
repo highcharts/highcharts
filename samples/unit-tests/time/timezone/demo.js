@@ -70,6 +70,38 @@ QUnit.test('timezone', function (assert) {
         'From October 27, UTC midnight is 01:00 AM in Oslo'
     );
 
+    // This one should fail gracefully
+    chart.update({
+        time: {
+            timezone: 'SomeUnsupported/TimeZone'
+        }
+    });
+
+    // Non full-hour timezones
+    chart.update({
+        time: {
+            timezone: 'Asia/Calcutta'
+        }
+    });
+
+    assert.equal(
+        chart.time.dateFormat('%H:%M', oct27Point.x),
+        '05:30',
+        'Non full-hour timezone - UTC midnight should render 05:00 in Calcutta'
+    );
+
+    chart.update({
+        time: {
+            timezone: 'Asia/Katmandu'
+        }
+    });
+
+    assert.equal(
+        chart.time.dateFormat('%H:%M', oct27Point.x),
+        '05:45',
+        'Non full-hour timezone - UTC midnight should render 05:45 in Katmandu'
+    );
+
     // Tear down
     Highcharts.setOptions({
         time: {
