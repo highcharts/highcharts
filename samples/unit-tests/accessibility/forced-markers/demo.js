@@ -267,3 +267,46 @@ QUnit.test('Hover after disabling a11y', function (assert) {
         'Point should not have marker after hovering series'
     );
 });
+
+QUnit.test(
+    'Update markers when a series is boosted and markers should not be visible (#17320)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                series: {
+                    pointDescriptionEnabledThreshold: 3
+                }
+            },
+            boost: {
+                enabled: true
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            series: [{
+                data: [1, 2, 3],
+                boostThreshold: 3
+            }]
+        });
+        let point = chart.series[0].points[0];
+
+        assert.strictEqual(chart.boosted, true, 'Series is boosted from start');
+        assert.strictEqual(hasMarker(point), false, 'Markers does not exist from start');
+
+        chart.series[0].removePoint(0);
+        point = chart.series[0].points[0];
+
+        assert.strictEqual(!chart.boosted, true, 'Series should not be boosted anymore');
+        assert.strictEqual(hasMarker(point), true, 'Markers should exist when series is not boosted');
+
+        chart.series[0].addPoint(1);
+        point = chart.series[0].points[0];
+
+        assert.strictEqual(chart.boosted, true, 'Series should be boosted again');
+        assert.strictEqual(hasMarker(point), false, 'Markers should not exist again');
+
+    });
