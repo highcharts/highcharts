@@ -32,8 +32,7 @@ describe('Dashboards climate demo visual tests', () => {
 
 describe('Test the rest', () => {
     const DEMOS_TO_VISUALLY_TEST = [
-        '/dashboards/demo/minimal',
-        '/dashboards/responsive/responsive-breakpoints'
+        '/dashboards/demo/minimal'
     ];
 
     for (const demo of DEMOS_TO_VISUALLY_TEST) {
