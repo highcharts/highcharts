@@ -87,6 +87,8 @@ const columnRangeOptions: DeepPartial<ColumnRangeSeriesOptions> = {
 
     pointRange: null,
 
+    legendSymbol: 'rectangle',
+
     /** @ignore-option */
     marker: null as any,
 
