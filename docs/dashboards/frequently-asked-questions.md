@@ -14,7 +14,8 @@ After that, you need to pass the connector to the component config, and that’s
 
 How to connect component to a cell?
 ----------------------------------
-Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
+1. Enabled layout creator (GUI)
+Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
 
 ```js
     gui: {
@@ -30,7 +31,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
@@ -42,6 +43,39 @@ Each cell must have an `id` field. The same id must be passed in the component c
 ```
 
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
+
+2. Disabled default layout creator
+You can create your own HTML structure of a layout, styled by CSS or other CSS framework (i.e Tailwind, Bootstrap).
+Please remember that each container should have an unique `id` for rendered component.
+
+```html
+    <div id="container">
+    <div>
+        <div id="dashboard-col-0"></div>
+    </div>
+    </div>
+```
+
+```js
+    gui: {
+        enabled: false
+    }
+    components: [{
+        renderTo: 'dashboard-col-0',
+        type: 'Highcharts',
+        chartOptions: {
+            chart: {
+                type: 'pie'
+            },
+            series: [{data: [1,2,3]}]
+        },
+    }]
+```
+
+[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
+[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
 
 * * *
 
@@ -61,7 +95,7 @@ Example of synchronized components
             highlight: true,
             extremes: true
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
@@ -73,7 +107,7 @@ Example of synchronized components
             }
         },
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'Vitamin'
         },
@@ -167,6 +201,7 @@ See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliase
 * * *
 How to style the Dashboard?
 -----------------------------------------------------------------------
+1. Enabled layout creator (GUI)
 Dashboards has a default theme, which is applied to all of its components.
 You need to import the default CSS stylesheet to your project, so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
@@ -207,4 +242,13 @@ Example:
 ```
 
 Note that each component which includes chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported, so that the Highcharts displays correctly.
-To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+To customize your chart styles, you can create your own themes, or just add your own individual CSS variables or rules found in our [docs.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+
+2. Disabled default layout creator (GUI)
+You can create your own HTML structure of a layout, styled by CSS or Tailwind.
+Please remember that each container should have an unique `id` for rendered component.
+
+[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
+[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.

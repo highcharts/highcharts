@@ -39,7 +39,7 @@ Dashboards.board('container', {
         title: {
             text: 'visibility: true'
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
             id: 'Vitamin'
@@ -56,7 +56,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         sync: {
             visibility: false
         },
@@ -81,7 +81,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         sync: {
             visibility: true
         },

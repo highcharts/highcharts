@@ -108,7 +108,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'title',
+            renderTo: 'title',
             type: 'HTML',
             elements: [{
                 tagName: 'h1',
@@ -126,7 +126,7 @@ Dashboards.board('container', {
             }]
         },
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
                 id: 'connector-1'
@@ -163,7 +163,7 @@ Dashboards.board('container', {
                 immunization coverage. The values are introduced in percents.`
             }
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
                 id: 'connector-1'
@@ -206,7 +206,7 @@ Dashboards.board('container', {
                 introduced in percents.`
             }
         }, {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
                 id: 'connector-2'
@@ -249,7 +249,7 @@ Dashboards.board('container', {
                 introduced in percents.`
             }
         }, {
-            cell: 'dashboard-col-4',
+            renderTo: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
                 id: 'connector-2'

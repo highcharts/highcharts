@@ -40,11 +40,11 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'CustomHTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         id: 'custom-html-div' // id of the element which already exists in the DOM
     }, {
         type: 'CustomHTML',
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
@@ -52,7 +52,7 @@ Dashboards.board('container', {
             </div>`
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{

@@ -22,6 +22,7 @@
  *
  * */
 
+import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type {
     Chart,
@@ -271,13 +272,14 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Options>
+        options: Partial<Options>,
+        board?: Board
     ) {
         options = merge(
             KPIComponent.defaultOptions,
             options
         );
-        super(cell, options);
+        super(cell, options, board);
 
         this.options = options as Options;
         this.standardizeSyncOptions();

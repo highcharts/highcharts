@@ -81,7 +81,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
             id: 'synchro-data'
@@ -95,7 +95,7 @@ Dashboards.board('container', {
         },
         chartOptions: chartOptions
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'synchro-data'
         },
@@ -124,7 +124,7 @@ Dashboards.board('container', {
             }
         })
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'synchro-data'
         },

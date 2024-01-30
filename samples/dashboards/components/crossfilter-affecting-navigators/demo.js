@@ -34,7 +34,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -54,7 +54,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'top-middle',
+        renderTo: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -74,7 +74,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -94,7 +94,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'

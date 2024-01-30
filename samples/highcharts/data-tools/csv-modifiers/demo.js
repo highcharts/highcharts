@@ -91,7 +91,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'asia-chart',
+        renderTo: 'asia-chart',
         sync: {
             visibility: true,
             extremes: true
@@ -118,7 +118,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'north-america-chart',
+        renderTo: 'north-america-chart',
 
         sync: {
             visibility: true,
@@ -144,7 +144,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'south-america-chart',
+        renderTo: 'south-america-chart',
 
         sync: {
             visibility: true,
@@ -171,7 +171,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'legend',
+        renderTo: 'legend',
 
         connector: {
             id: 'population-growth'

@@ -39,7 +39,7 @@ Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
 ```
 More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-3. After loading the necessary files, define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
+3. After loading the necessary files, define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
 
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
@@ -69,7 +69,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -112,7 +112,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
             id: 'Vitamin'

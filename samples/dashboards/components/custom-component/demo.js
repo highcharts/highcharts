@@ -33,7 +33,7 @@ class YouTubeComponent extends Component {
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
-            cell: '',
+            renderTo: '',
             type: 'YouTube',
             videoId: '115hdz9NsrY'
         };
@@ -66,7 +66,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -74,7 +74,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'yt-highsoft',
+        renderTo: 'yt-highsoft',
         type: 'YouTube',
         videoId: '115hdz9NsrY'
     }]

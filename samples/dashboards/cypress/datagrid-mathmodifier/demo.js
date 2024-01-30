@@ -32,7 +32,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
                 id: 'EUR-USD'
@@ -76,7 +76,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             type: 'DataGrid',
             connector: {
                 id: 'EUR-USD'

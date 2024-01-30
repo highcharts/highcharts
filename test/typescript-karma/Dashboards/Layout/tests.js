@@ -28,7 +28,7 @@ const layouts = [{
 }]
 
 const components = [{
-    cell: 'dashboard-col-0',
+    renderTo: 'dashboard-col-0',
     type: 'Highcharts',
     chartOptions: {
         type: 'pie',
@@ -41,7 +41,7 @@ const components = [{
         }
     }
 }, {
-    cell: 'dashboard-col-1',
+    renderTo: 'dashboard-col-1',
     type: 'HTML',
     elements: [{
         tagName: 'img',
@@ -233,13 +233,13 @@ test('Nested layouts serialization.', function (assert) {
             }]
         },
         components: [{
-            cell: 'dashboard-col-nolayout-0',
+            renderTo: 'dashboard-col-nolayout-0',
             ...chartComponentOptions
         }, {
-            cell: 'dashboard-col-layout-1',
+            renderTo: 'dashboard-col-layout-1',
             ...chartComponentOptions
         }, {
-            cell: 'dashboard-col-layout-4',
+            renderTo: 'dashboard-col-layout-4',
             ...chartComponentOptions
         }]
 
@@ -311,15 +311,15 @@ test('Reserialized cell width', function (assert) {
         },
         components: [
             {
-                cell: 'cell-1',
+                renderTo: 'cell-1',
                 ...chartComponentOptions
             },
             {
-                cell: 'cell-2',
+                renderTo: 'cell-2',
                 ...chartComponentOptions
             },
             {
-                cell: 'cell-3',
+                renderTo: 'cell-3',
                 ...chartComponentOptions
             }
         ]

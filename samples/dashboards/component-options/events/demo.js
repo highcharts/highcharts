@@ -61,7 +61,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
@@ -74,7 +74,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         sync: {
             visibility: true,
             highlight: true,
@@ -99,7 +99,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-12',
+        renderTo: 'dashboard-col-12',
         connector: {
             id: 'Vitamin'
         },
@@ -141,7 +141,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'Vitamin'
         },

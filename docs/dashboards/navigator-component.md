@@ -23,7 +23,7 @@ indicator for the active city.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'time-range-selector'
+      renderTo: 'time-range-selector'
       type: 'Navigator',
       connector: {
         id: 'Range Selection'
@@ -69,7 +69,7 @@ ranges with the help of the NavigatorComponent and a shared DataConnector.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'
@@ -82,7 +82,7 @@ Dashboard.board('container', {
       }
     },
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'

@@ -162,7 +162,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.options = merge(Board.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
-        this.guiEnabled = (this.options.gui || {}).enabled;
+        this.guiEnabled = !options.gui ? false : this.options?.gui?.enabled;
         this.layouts = [];
         this.mountedComponents = [];
 
@@ -177,20 +177,22 @@ class Board implements Serializable<Board, Board.JSON> {
         );
 
         // Init edit mode.
-        if (
-            EditMode && !(
-                this.options.editMode &&
-                !this.options.editMode.enabled
-            )
-        ) {
-            this.editMode = new EditMode(this, this.options.editMode);
+        if (this.guiEnabled) {
+            if (
+                EditMode && !(
+                    this.options.editMode &&
+                    !this.options.editMode.enabled
+                )
+            ) {
+                this.editMode = new EditMode(this, this.options.editMode);
+            }
+
+            // Add fullscreen support.
+            this.fullscreen = new Fullscreen(this);
         }
 
         // Add table cursors support.
         this.dataCursor = new DataCursor();
-
-        // Add fullscreen support.
-        this.fullscreen = new Fullscreen(this);
 
         this.index = Globals.boards.length;
         Globals.boards.push(this);
@@ -393,18 +395,22 @@ class Board implements Serializable<Board, Board.JSON> {
         }
 
         // Clear the container from any content.
-        renderTo.innerHTML = '';
+        if (this.guiEnabled) {
+            renderTo.innerHTML = '';
 
-        // Set the main wrapper container.
-        board.boardWrapper = renderTo;
+            // Set the main wrapper container.
+            board.boardWrapper = renderTo;
 
-        // Add container for the board.
-        board.container = createElement(
-            'div', {
-                className: Globals.classNames.boardContainer
-            }, {},
-            this.boardWrapper
-        );
+            // Add container for the board.
+            board.container = createElement(
+                'div', {
+                    className: Globals.classNames.boardContainer
+                }, {},
+                this.boardWrapper
+            );
+        } else {
+            board.container = renderTo;
+        }
     }
 
     /**
@@ -463,8 +469,9 @@ class Board implements Serializable<Board, Board.JSON> {
         components: Array<Partial<ComponentType['options']>>
     ): Array<Promise<Component|void>> {
         const promises = [];
+        const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i]));
+            promises.push(Bindings.addComponent(components[i], void 0, board));
         }
         return promises;
     }

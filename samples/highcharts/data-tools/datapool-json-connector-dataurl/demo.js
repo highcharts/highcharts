@@ -12,7 +12,7 @@ Dashboards.board('container', {
 
     },
     components: [{
-        cell: 'fetched-columns',
+        renderTo: 'fetched-columns',
         type: 'DataGrid',
         connector: {
             id: 'fetched-data'
