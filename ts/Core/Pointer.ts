@@ -1943,16 +1943,18 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
-        this.eventsToUnbind.push(addEvent(
-            container,
-            'mouseenter',
-            this.onContainerMouseEnter.bind(this)
-        ));
-        this.eventsToUnbind.push(addEvent(
-            container,
-            'mouseleave',
-            this.onContainerMouseLeave.bind(this)
-        ));
+        this.eventsToUnbind.push(
+            addEvent(
+                container,
+                'mouseenter',
+                this.onContainerMouseEnter.bind(this)
+            ),
+            addEvent(
+                container,
+                'mouseleave',
+                this.onContainerMouseLeave.bind(this)
+            )
+        );
         if (!Pointer.unbindDocumentMouseUp) {
             Pointer.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
@@ -1971,27 +1973,27 @@ class Pointer {
             parent = parent.parentElement;
         }
 
-        if (H.hasTouch) {
-            this.eventsToUnbind.push(addEvent(
+        this.eventsToUnbind.push(
+            addEvent(
                 container,
                 'touchstart',
                 this.onContainerTouchStart.bind(this),
                 { passive: false }
-            ));
-            this.eventsToUnbind.push(addEvent(
+            ),
+            addEvent(
                 container,
                 'touchmove',
                 this.onContainerTouchMove.bind(this),
                 { passive: false }
-            ));
-            if (!Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = addEvent(
-                    ownerDoc,
-                    'touchend',
-                    this.onDocumentTouchEnd.bind(this),
-                    { passive: false }
-                );
-            }
+            )
+        );
+        if (!Pointer.unbindDocumentTouchEnd) {
+            Pointer.unbindDocumentTouchEnd = addEvent(
+                ownerDoc,
+                'touchend',
+                this.onDocumentTouchEnd.bind(this),
+                { passive: false }
+            );
         }
     }
 

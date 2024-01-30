@@ -1,6 +1,10 @@
 QUnit.test('Stock chart specific options in setOptions', function (assert) {
-    const yAxis = Highcharts.merge(Highcharts.defaultOptions.yAxis);
+
+    const xAxis = Highcharts.defaultOptions.xAxis;
     let chart;
+
+    Highcharts.defaultOptions.xAxis = Highcharts.merge(xAxis);
+
 
     chart = $('#container')
         .highcharts('StockChart', {
@@ -106,7 +110,8 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
     // Reset to defaults
     delete Highcharts.defaultOptions.scrollbar.enabled;
     delete Highcharts.defaultOptions.navigator.enabled;
-    delete Highcharts.defaultOptions.rangeSelector.enabled;
+    Highcharts.defaultOptions.rangeSelector.enabled = undefined;
     delete Highcharts.defaultOptions.tooltip.split;
-    Highcharts.defaultOptions.yAxis = yAxis;
+    Highcharts.defaultOptions.xAxis = xAxis;
+
 });

@@ -820,8 +820,22 @@ class Tick {
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
-                (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+            axisStart = axis.pos,
+            axisEnd = axisStart + axis.len,
+            reverseCrisp = (
+                (horiz && x === axisEnd) ||
+                (!horiz && y === axisStart)
+            ) ? -1 : 1, // #1480, #1687
+            pxPos = horiz ? x : y;
+
+        // Anything that is not between `axis.pos` and `axis.pos + axis.length`
+        // should not be visible (#20166)
+        if (
+            tick.isNew &&
+            (pxPos < axisStart || pxPos > axisEnd)
+        ) {
+            opacity = 0;
+        }
 
         const labelOpacity = pick(
             opacity,
@@ -834,10 +848,10 @@ class Tick {
         // Create the grid line
         this.renderGridLine(old, opacity, reverseCrisp);
 
-        // create the tick mark
+        // Create the tick mark
         this.renderMark(xy, opacity, reverseCrisp);
 
-        // the label is created on init - now move it into place
+        // The label is created on init - now move it into place
         this.renderLabel(xy, old, labelOpacity, index);
 
         tick.isNew = false;
