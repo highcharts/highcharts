@@ -24,8 +24,6 @@ Highcharts.chart('container', {
                 const { name: nodeTo, level, custom: { info } } = point.toNode,
                     nodeFrom = point.fromNode.id;
 
-                console.log(nodeFrom);
-
                 let relationship = '';
                 if (level === 1) {
                     relationship = `distinct family within the order of ${
@@ -193,9 +191,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         outside: true,
-        formatter: function () {
-            return this.point.custom.info;
-        }
+        format: '{point.custom.info}'
     },
 
     exporting: {
