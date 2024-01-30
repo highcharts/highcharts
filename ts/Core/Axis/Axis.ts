@@ -628,9 +628,7 @@ class Axis {
      * The formatted label content.
      */
     public defaultLabelFormatter(
-        this: AxisLabelFormatterContextObject,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ctx?: AxisLabelFormatterContextObject
+        this: AxisLabelFormatterContextObject
     ): string {
         const axis = this.axis,
             chart = this.chart,

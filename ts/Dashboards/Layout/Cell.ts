@@ -289,7 +289,7 @@ class Cell extends GUIElement {
             json.options.parentElement = cell.id;
         }
 
-        const component = componentFromJSON(json, cellContainer);
+        const component = componentFromJSON(json);
 
         if (component) {
             cell.mountedComponent = component;

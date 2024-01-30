@@ -499,12 +499,11 @@ namespace MenuComponent {
      * @private
      */
     export function compose(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ChartClass: typeof Chart
     ): void {
 
         if (pushUnique(composed, compose)) {
-            const chartProto = Chart.prototype as ChartComposition;
+            const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;
             chartProto.highlightExportItem = chartHighlightExportItem;

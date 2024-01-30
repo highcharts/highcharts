@@ -1417,7 +1417,6 @@ class SVGElement implements SVGElementLike {
             );
 
         let bBox: BBoxObject|undefined,
-            width,
             height,
             toggleTextShadowShim,
             cacheKey;
@@ -1517,7 +1516,6 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            width = bBox.width;
             height = bBox.height;
 
             // Workaround for wrong bounding box in IE, Edge and Chrome on

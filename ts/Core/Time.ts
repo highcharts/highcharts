@@ -410,8 +410,7 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const [date, gmt, hours, colon, minutes = 0] =
+                    const [hours, minutes = 0] =
                         // eslint-disable-next-line new-cap
                         Intl.DateTimeFormat('en', {
                             timeZone: options.timezone,
@@ -419,7 +418,11 @@ class Time {
                         })
                             .format(timestamp)
                             .split(/(GMT|:)/)
-                            .map(Number),
+                            .map(Number)
+                            // Filter NaNs (string values like "GMT" and ":")
+                            .filter(function (predicate): boolean {
+                                return !isNaN(predicate);
+                            }),
                         offset = -(hours + minutes / 60) * 60 * 60000;
 
                     // Possible future NaNs stop here

@@ -409,11 +409,7 @@ class Fx {
          * Copy and append last point until the length matches the end length.
          * @private
          */
-        function append(
-            arr: SVGPath,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            other: SVGPath
-        ): void {
+        function append(arr: SVGPath): void {
             while (arr.length < fullLength) {
 
                 // Pull out the slice that is going to be appended or inserted.
@@ -486,10 +482,10 @@ class Fx {
 
             if (!reverse) {
                 prepend(end, start);
-                append(start, end);
+                append(start);
             } else {
                 prepend(start, end);
-                append(end, start);
+                append(end);
             }
         }
         return [start, end];
