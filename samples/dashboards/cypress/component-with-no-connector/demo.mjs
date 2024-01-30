@@ -4,8 +4,6 @@ import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 
 Highcharts.win.Highcharts = Highcharts;
 
-const { PluginHandler } = Dashboards;
-
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
 

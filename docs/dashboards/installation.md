@@ -28,23 +28,22 @@ In the example above the Javascript files are loaded from [code.highcharts.com](
 ### Load additional modules
 There are some additional modules that you might want to include in your webpage that are not included in the basic `dashboards.js` module. The basic module lets you create the elementary dashboard with `HTMLComponents`, but if you would like to use some predefined component types, you need to add the necessary modules. E.g. to use a Highcharts component, you need to add the following scripts:
 ```html
-../dashboards/dashboards.js
-../dashboards/modules/dashboards-plugin.js
 ../highcharts.js
+../dashboards/dashboards.js
 ```
 
 If you are using npm, you can import the modules as follows:
-```js
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
-import Highcharts from 'highcharts/es-modules/masters/highcharts.src';
-import HighchartsPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin';
+```ts
+import * as Highcharts from 'highcharts';
+import * as Dashboards from '@highcharts/dashboards';
 ```
 
 Then you can use the `HighchartsPlugin` to connect the Highcharts component with the Dashboards.  
 It works similarly for other plugins, e.g. for the DataGrid.
-```js
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+
+```ts
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 ```
 
 ### Get started

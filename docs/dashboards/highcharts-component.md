@@ -8,12 +8,12 @@ The Highcharts Component allows the end-user to define a chart in the dashboard.
 ## How to start
 To get started quickly we need to load the JavaScript and CSS files in the following order.
 
-1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
+1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
+Order of the imports is important, so make sure that the Dashboards module is imported after the Highcharts module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 Alternatively, you can also use the NPM package.
@@ -26,10 +26,10 @@ Then import the package and the dedicated plug to connect it to the Dashboards.
 
 ```typescript
 import * as Highcharts from 'highcharts';
-import HighchartsPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin';
+import * as Dashboards from '@highcharts/dashboards';
 
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 ```
 
 2. The Highcharts Component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.

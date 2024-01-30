@@ -8,21 +8,20 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 ## How to start
 
-1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) of course, but also [Dashboards Plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js) and [Datagrid](https://code.highcharts.com/dashboards/datagrid.js).
+1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/datagrid/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
+The order of the imports is important, so make sure that the Dashboards module is imported after the DataGrid module.
     ```html
+    <script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
 
     Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
-    ```ts
+    ```typescript
     import * as Dashboards from '@highcharts/dashboards';
     import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
-    import DataGridPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin';
 
-    DataGridPlugin.custom.connectDataGrid(DataGrid);
-    Dashboards.PluginHandler.addPlugin(DataGridPlugin);
+    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+    Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
     ```
 
 2. You also need to import the styles in your main CSS file.
