@@ -111,7 +111,7 @@ Highcharts.chart('container', {
             title: null,
             name: 'Panthera pardus',
             color: '#fcc657',
-            image: '../samples/graphics/panthera.png',
+            image: '../samples/graphics/horizontal-organizational-chart/panthera.png',
             custom: {
                 info: 'Panthera is a genus within the Felidae family <br>that was named and described by Lorenz Oken in 1816 <br>who placed all the spotted cats in this group.'
             }
@@ -141,7 +141,7 @@ Highcharts.chart('container', {
             id: 'Taxidea taxus',
             name: 'Taxidea taxus',
             color: '#C4B1A0',
-            image: '../samples/graphics/taxideaTaxus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/taxideaTaxus.png',
             custom: {
                 info: 'Taxidea taxus is a North American badger, <br>somewhat similar in appearance to the European badger, <br>although not closely related. <br>It is found in the western and central United States, <br>northern Mexico, and south-central Canada to certain areas of southwestern British Columbia.'
             }
@@ -149,7 +149,7 @@ Highcharts.chart('container', {
             id: 'Lutra lutra',
             name: 'Lutra lutra',
             color: '#C4B1A0',
-            image: '../samples/graphics/lutra.png',
+            image: '../samples/graphics/horizontal-organizational-chart/lutra.png',
             custom: {
                 info: 'Lutra is a semiaquatic mammal native to Eurasia. <br>The most widely distributed member of the otter subfamily (Lutrinae) of the weasel family (Mustelidae), <br>it is found in the waterways and coasts of Europe, many parts of Asia, <br>and parts of northern Africa.'
             }
@@ -171,7 +171,7 @@ Highcharts.chart('container', {
             id: 'Canis latrans',
             name: 'Canis latrans',
             color: '#B0ACA2',
-            image: '../samples/graphics/canisLatrans.png',
+            image: '../samples/graphics/horizontal-organizational-chart/canisLatrans.png',
             custom: {
                 info: 'Canis latrans, is a canine native to North America.<br> It is smaller than its close relative, the gray wolf, and <br>slightly smaller than the closely related eastern wolf and red wolf.'
             }
@@ -179,7 +179,7 @@ Highcharts.chart('container', {
             id: 'Canis lupus',
             name: 'Canis lupus',
             color: '#B0ACA2',
-            image: '../samples/graphics/canisLupus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/canisLupus.png',
             custom: {
                 info: 'Canis lupus is a canine native to the wilderness and remote areas of Eurasia and North America. <br>It is the largest extant member of its family, with males averaging 43–45 kg (95–99 lb) <br>and females 36–38.5 kg (79–85 lb).'
             }
