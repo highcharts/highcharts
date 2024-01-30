@@ -445,8 +445,40 @@ class RangeSelector {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
+        const buttonOptionBindings: Record<string, {
+            title: string,
+            text: string
+        }> = {
+            month: {
+                title: chart.options.lang.rangeSelector.monthTitle,
+                text: chart.options.lang.rangeSelector.monthText
+            },
+            year: {
+                title: chart.options.lang.rangeSelector.yearTitle,
+                text: chart.options.lang.rangeSelector.yearText
+            },
+            ytd: {
+                title: chart.options.lang.rangeSelector.YTDTitle,
+                text: chart.options.lang.rangeSelector.YTDText
+            },
+            all: {
+                title: chart.options.lang.rangeSelector.allTitle,
+                text: chart.options.lang.rangeSelector.allText
+            }
+        };
+
         rangeSelector.buttonOptions = buttonOptions
             .map((opt): RangeSelectorButtonOptions => {
+                if (opt.type && buttonOptionBindings[opt.type]) {
+                    if (!opt.text) {
+                        opt.text = buttonOptionBindings[opt.type].text;
+                    }
+
+                    if (!opt.title) {
+                        opt.title = buttonOptionBindings[opt.type].title;
+                    }
+                }
+
                 opt.text = format(opt.text, {
                     count: opt.count || 1
                 });
@@ -1384,7 +1416,7 @@ class RangeSelector {
             }, void 0, dropdown);
 
             buttons[i] = renderer
-                .button(rangeOptions.text,
+                .button(rangeOptions.text ?? '',
                     0,
                     0,
                     (e: (Event|AnyRecord)): void => {
@@ -2181,32 +2213,21 @@ extend(RangeSelector.prototype, {
      */
     defaultButtons: [{
         type: 'month',
-        count: 1,
-        text: defaultOptions.lang.rangeSelector.monthText,
-        title: defaultOptions.lang.rangeSelector.monthTitle
+        count: 1
     }, {
         type: 'month',
-        count: 3,
-        text: defaultOptions.lang.rangeSelector.monthText,
-        title: defaultOptions.lang.rangeSelector.monthTitle
+        count: 3
     }, {
         type: 'month',
-        count: 6,
-        text: defaultOptions.lang.rangeSelector.monthText,
-        title: defaultOptions.lang.rangeSelector.monthTitle
+        count: 6
     }, {
-        type: 'ytd',
-        text: defaultOptions.lang.rangeSelector.YTDText,
-        title: defaultOptions.lang.rangeSelector.YTDTitle
+        type: 'ytd'
     }, {
         type: 'year',
-        count: 1,
-        text: defaultOptions.lang.rangeSelector.yearText,
-        title: defaultOptions.lang.rangeSelector.yearTitle
+        count: 1
     }, {
         type: 'all',
-        text: 'All',
-        title: defaultOptions.lang.rangeSelector.allTitle
+        text: 'All'
     }],
     /**
      * The date formats to use when setting min, max and value on date inputs.

@@ -54,7 +54,7 @@ export interface RangeSelectorButtonOptions {
     offsetMax?: number;
     offsetMin?: number;
     preserveDataGrouping?: boolean;
-    text: string;
+    text?: string;
     type?: RangeSelectorButtonTypeValue;
 }
 
