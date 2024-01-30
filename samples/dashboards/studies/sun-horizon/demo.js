@@ -116,7 +116,7 @@ const getTrajectory = (
 
     // Push a null point to represent a gap for midnight, especially for the
     // moon
-    trajectory.push([x + 0.01, null]);
+    trajectory.push({ x: x + 0.01, y: null });
 
     trajectory.sort((a, b) => a.x - b.x);
     return trajectory;
