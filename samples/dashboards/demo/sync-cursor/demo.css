@@ -18,7 +18,7 @@ h3 {
         flex: 1 1 50%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #top-left,
@@ -26,7 +26,7 @@ h3 {
         flex: 1 1 50%;
     }
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #top-left,

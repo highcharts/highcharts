@@ -126,7 +126,7 @@
         flex: 1 1 60%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #dashboard-kpi-1,
@@ -140,7 +140,7 @@
         flex: 1 1 100%;
     }
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #dashboard-kpi-1,
