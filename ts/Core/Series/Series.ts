@@ -1580,35 +1580,36 @@ class Series {
                             indexOfY = 0;
                         }
 
-                        if (indexOfX === indexOfY) {
-                            if (series.useDataTable) {
+                        if (series.useDataTable) {
+
+                            const xData: Array<number> = [],
+                                valueData: Array<number|null> = [];
+
+                            if (indexOfX === indexOfY) {
                                 for (const pt of data) {
-                                    // @todo: setColumns
-                                    table.setRow({
-                                        x: this.autoIncrement(),
-                                        [pointValKey]: (pt as any)[indexOfY]
-                                    });
+                                    xData.push(this.autoIncrement());
+                                    valueData.push((pt as any)[indexOfY]);
                                 }
                             } else {
+                                for (const pt of data) {
+                                    xData.push((pt as any)[indexOfX]);
+                                    valueData.push((pt as any)[indexOfY]);
+                                }
+                            }
+                            table.setColumns({
+                                x: xData,
+                                [pointValKey]: valueData
+                            });
+
+                        // Legacy parallel arrays
+                        } else {
+
+                            if (indexOfX === indexOfY) {
                                 for (i = 0; i < dataLength; i++) {
                                     (xData as any)[i] = this.autoIncrement();
                                     (yData as any)[i] =
                                         (data[i] as any)[indexOfY];
                                 }
-                            }
-                        } else {
-                            if (series.useDataTable) {
-                                const xData: Array<number> = [],
-                                    valueData: Array<number|null> = [];
-                                for (const pt of data) {
-                                    xData.push((pt as any)[indexOfX]);
-                                    valueData.push((pt as any)[indexOfY]);
-                                }
-                                table.setColumns({
-                                    x: xData,
-                                    [pointValKey]: valueData
-                                });
-
                             } else {
                                 for (i = 0; i < dataLength; i++) {
                                     pt = data[i];
@@ -1624,26 +1625,28 @@ class Series {
                     error(12, false, chart);
                 }
             } else {
+                const columns = dataColumnKeys.reduce(
+                    (columns, columnName, i):
+                    DataTable.ColumnCollection => {
+                        columns[columnName] = [];
+                        return columns;
+                    }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
-                    const pt = { series };
-                    series.pointClass.prototype.applyOptions.apply(
-                        pt,
+                    const pt = series.pointClass.prototype.applyOptions.apply(
+                        { series },
                         [data[i]]
                     );
                     if (series.useDataTable) {
-                        const row = dataColumnKeys
-                            .reduce(
-                                (row, key): any => {
-                                    row[key] = (pt as any)[key];
-                                    return row;
-                                },
-                                {} as Record<string, number>
-                            );
-                        // @todo: setColumns
-                        table.setRow(row, i);
+                        for (const key of dataColumnKeys) {
+                            columns[key][i] = (pt as any)[key];
+                        }
                     } else {
                         series.updateParallelArrays(pt as any, i);
                     }
+                }
+
+                if (series.useDataTable) {
+                    table.setColumns(columns);
                 }
             }
 

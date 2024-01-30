@@ -94,9 +94,15 @@ class VariwideSeries extends ColumnSeries {
             force
         );
 
+        const zData = (
+            this.useDataTable ?
+                this.table.getColumn('z', true) as Array<number> :
+                this.zData
+        ) || [];
+
         (this.xAxis.reversed ?
-            (this.zData as any).slice().reverse() :
-            (this.zData as any)
+            zData.slice().reverse() :
+            zData
         ).forEach(
             function (
                 this: VariwideSeries,
