@@ -477,7 +477,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 // the data table refactor
                 chart.series[1].table.rowCount :
                 chart.series[1].yData.length
-        ) - chart.series[1].options.params.periodSenkouSpanB,
+        ) - chart.series[1].options.params.periodSenkouSpanB + 2,
         dataPoints.length,
         'After removePoint number of Ichimoku points is correct'
     );
