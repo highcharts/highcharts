@@ -20,6 +20,16 @@
 import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
 import type { DataGrid as D } from '../Dashboards/Plugins/DataGridTypes';
 
+// Fill registries
+import '../Dashboards/Components/HTMLComponent.js';
+import '../Data/Connectors/CSVConnector.js';
+import '../Data/Connectors/GoogleSheetsConnector.js';
+import '../Data/Connectors/HTMLTableConnector.js';
+import '../Data/Connectors/JSONConnector.js';
+import '../Data/Modifiers/ChainModifier.js';
+import '../Data/Modifiers/InvertModifier.js';
+import '../Data/Modifiers/RangeModifier.js';
+import '../Data/Modifiers/SortModifier.js';
 
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';
@@ -35,17 +45,6 @@ import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
-
-// Fill registries
-import '../Dashboards/Components/HTMLComponent.js';
-import '../Data/Connectors/CSVConnector.js';
-import '../Data/Connectors/GoogleSheetsConnector.js';
-import '../Data/Connectors/HTMLTableConnector.js';
-import '../Data/Connectors/JSONConnector.js';
-import '../Data/Modifiers/ChainModifier.js';
-import '../Data/Modifiers/InvertModifier.js';
-import '../Data/Modifiers/RangeModifier.js';
-import '../Data/Modifiers/SortModifier.js';
 
 
 /* *
