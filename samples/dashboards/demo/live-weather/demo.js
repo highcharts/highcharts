@@ -229,7 +229,7 @@ async function setupDashboard() {
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'html-info',
+                                    id: 'html-geo-info',
                                     responsive: {
                                         large: {
                                             width: '100%'
@@ -389,17 +389,31 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'html-info',
+                cell: 'html-geo-info',
                 type: 'HTML',
                 elements: [{
                     tagName: 'div',
+                    // textContent of children populated dynamically
                     children: [{
-                        tagName: 'h3',
-                        textContent: 'Forecast for xxx'
-                    },
-                    {
-                        tagName: 'h4',
-                        textContent: 'Elevation: xx m'
+                        tagName: 'h2'
+                    }, {
+                        tagName: 'p',
+                        attributes: {
+                            id: 'lon',
+                            name: 'Longitude'
+                        }
+                    }, {
+                        tagName: 'p',
+                        attributes: {
+                            id: 'lat',
+                            name: 'Latitude'
+                        }
+                    }, {
+                        tagName: 'p',
+                        attributes: {
+                            id: 'elevation',
+                            name: 'Elevation'
+                        }
                     }]
                 }]
             },
@@ -919,13 +933,19 @@ async function updateBoard(board, city, paramName,
         });
 
         // Update geo-info HTML
-        const elevation = citiesTable.getCellAsNumber('elevation',
-            citiesTable.getRowIndexBy('city', city));
         const options = htmlGeoInfo.getOptions();
         const html = options.elements[0];
+        const cityRow = citiesTable.getRowIndexBy('city', city);
 
         html.children[0].textContent = 'Forecast for ' + city;
-        html.children[1].textContent = 'Elevation: ' + elevation + ' m';
+
+        for (let i = 1; i < html.children.length; i++) {
+            const attr = html.children[i].attributes;
+            const value = citiesTable.getCellAsNumber(attr.id, cityRow);
+            const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
+
+            html.children[i].textContent = `${attr.name}: ${value} ${unit}`;
+        }
 
         await htmlGeoInfo.update(options);
 

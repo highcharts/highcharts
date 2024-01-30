@@ -117,6 +117,16 @@
 }
 
 /* *
+*
+*  Common
+*
+* */
+
+.highcharts-dashboards-component {
+    border-radius: 5px;
+}
+
+/* *
  *
  *  City Chart
  *
@@ -175,6 +185,7 @@
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
+    border-radius: 10px;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
@@ -251,16 +262,22 @@
 
 /* *
  *
- *  HTML information
+ *  HTML geographical information
  *
  * */
-#html-info .highcharts-dashboards-component-title {
-    color: red;
+
+#html-geo-info .highcharts-dashboards-component {
+    cursor: default;
 }
 
-#html-info .highcharts-dashboards-component-caption {
-    background-color: white;
-    color: blue;
+#html-geo-info .highcharts-dashboards-component h2 {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#html-geo-info .highcharts-dashboards-component p {
+    font-size: 0.7em;
+    text-align: center;
 }
 
 /* *
