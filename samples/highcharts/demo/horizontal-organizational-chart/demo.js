@@ -141,7 +141,7 @@ Highcharts.chart('container', {
             id: 'Taxidea taxus',
             name: 'Taxidea taxus',
             color: '#C4B1A0',
-            image: '../samples/graphics/horizontal-organizational-chart/taxideaTaxus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/taxidea-taxus.png',
             custom: {
                 info: 'Taxidea taxus is a North American badger, <br>somewhat similar in appearance to the European badger, <br>although not closely related. <br>It is found in the western and central United States, <br>northern Mexico, and south-central Canada to certain areas of southwestern British Columbia.'
             }
@@ -171,7 +171,7 @@ Highcharts.chart('container', {
             id: 'Canis latrans',
             name: 'Canis latrans',
             color: '#B0ACA2',
-            image: '../samples/graphics/horizontal-organizational-chart/canisLatrans.png',
+            image: '../samples/graphics/horizontal-organizational-chart/canis-latrans.png',
             custom: {
                 info: 'Canis latrans, is a canine native to North America.<br> It is smaller than its close relative, the gray wolf, and <br>slightly smaller than the closely related eastern wolf and red wolf.'
             }
@@ -179,7 +179,7 @@ Highcharts.chart('container', {
             id: 'Canis lupus',
             name: 'Canis lupus',
             color: '#B0ACA2',
-            image: '../samples/graphics/horizontal-organizational-chart/canisLupus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/canis-lupus.png',
             custom: {
                 info: 'Canis lupus is a canine native to the wilderness and remote areas of Eurasia and North America. <br>It is the largest extant member of its family, with males averaging 43–45 kg (95–99 lb) <br>and females 36–38.5 kg (79–85 lb).'
             }
