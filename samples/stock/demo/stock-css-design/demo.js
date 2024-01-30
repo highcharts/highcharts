@@ -87,11 +87,9 @@
             formatter: function () {
 
                 const point = this.points[0].point;
-                const color = point.open > point.close ? 'red' : 'green';
+                const color = point.open > point.close ? '#ff4242' : '#51af7b';
                 // @eslint-ignore max-len
-                const a = `<span style="font-size: 1.4em">  ${this.series.name}</span> O<span style="color: ${color}";>${point.open}</span> H<span style="color: ${color}";>${point.high}</span> L<span style="color: ${color}";>${point.low}</span> C<span style="color: ${color}";>${point.close}</span> <span style="color: ${color}";>${Math.floor(point.open - point.close)} (${Math.floor((point.open - point.close) / point.close * 100) / 100}%)</span><br>Volume <span style="color: ${color}";>${this.points[1].point.y}</span>`;
-                console.log(this);
-                return a;
+                return `<span style="font-size: 1.4em">  ${this.series.name}</span> O<span style="color: ${color}";>${point.open}</span> H<span style="color: ${color}";>${point.high}</span> L<span style="color: ${color}";>${point.low}</span> C<span style="color: ${color}";>${point.close}</span> <span style="color: ${color}";>${Math.floor(point.open - point.close)} (${Math.floor((point.open - point.close) / point.close * 100) / 100}%)</span><br>Volume <span style="color: ${color}";>${this.points[1].point.y}</span>`;
             },
             positioner: () => ({ x: 60, y: 0 })
         },
