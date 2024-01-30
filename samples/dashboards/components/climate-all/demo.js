@@ -133,7 +133,7 @@ async function setupBoard() {
             }]
         },
         components: [{
-            cell: 'time-range-selector',
+            renderTo: 'time-range-selector',
             type: 'Navigator',
             chartOptions: {
                 chart: {
@@ -183,7 +183,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'world-map',
+            renderTo: 'world-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             chartOptions: {
@@ -292,14 +292,14 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-data',
+            renderTo: 'kpi-data',
             type: 'KPI',
             title: activeCity,
             value: 10,
             valueFormat: '{value:.0f}m',
             subtitle: 'Elevation'
         }, {
-            cell: 'kpi-temperature',
+            renderTo: 'kpi-temperature',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -370,7 +370,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-max-temperature',
+            renderTo: 'kpi-max-temperature',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -444,7 +444,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-rain',
+            renderTo: 'kpi-rain',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -514,7 +514,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-ice',
+            renderTo: 'kpi-ice',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -585,7 +585,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-frost',
+            renderTo: 'kpi-frost',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -656,7 +656,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'selection-grid',
+            renderTo: 'selection-grid',
             type: 'DataGrid',
             connector: {
                 id: 'Range Selection'
@@ -708,7 +708,7 @@ async function setupBoard() {
             },
             editable: true
         }, {
-            cell: 'city-chart',
+            renderTo: 'city-chart',
             type: 'Highcharts',
             connector: {
                 id: 'Range Selection'

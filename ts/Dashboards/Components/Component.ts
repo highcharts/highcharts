@@ -329,10 +329,13 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>
+        options: Partial<Component.Options>,
+        board?: Board
     ) {
-        this.board = cell.row.layout.board;
-        this.parentElement = cell.container;
+        const renderTo = options.renderTo || options.cell;
+        this.board = board || cell?.row?.layout?.board || {};
+        this.parentElement =
+            cell?.container || document.querySelector('#' + renderTo);
         this.cell = cell;
 
         this.options = merge(
@@ -375,21 +378,24 @@ abstract class Component {
 
         this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
-
         this.setupEventListeners();
-        this.attachCellListeneres();
 
-        this.on('tableChanged', (): void => {
-            this.onTableChanged();
-        });
+        if (cell) {
+            
+            this.attachCellListeneres();
 
-        this.on('update', (): void => {
-            this.cell.setLoadingState();
-        });
+            this.on('tableChanged', (): void => {
+                this.onTableChanged();
+            });
 
-        this.on('afterRender', (): void => {
-            this.cell.setLoadingState(false);
-        });
+            this.on('update', (): void => {
+                this.cell.setLoadingState();
+            });
+
+            this.on('afterRender', (): void => {
+                this.cell.setLoadingState(false);
+            });
+        }
     }
 
     /**
@@ -434,10 +440,9 @@ abstract class Component {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            this.cell.setLoadingState();
+            this.cell?.setLoadingState();
 
             const connector = await dataPool.getConnector(connectorId);
-
             this.setConnector(connector);
         }
 
@@ -1067,7 +1072,7 @@ abstract class Component {
         const json: Component.JSON = {
             $class: this.options.type,
             options: {
-                cell: this.options.cell,
+                renderTo: this.options.renderTo,
                 parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
@@ -1207,8 +1212,17 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         *
+         * @deprecated
          */
         cell?: string;
+
+        /**
+         * Cell id, where component is attached.
+         *
+         * @deprecated
+         */
+        renderTo?: string;
 
         /**
          * The name of class that is applied to the component's container.
@@ -1277,7 +1291,7 @@ namespace Component {
     export interface ComponentOptionsJSON extends JSON.Object {
         caption?: string;
         className?: string;
-        cell?: string;
+        renderTo?: string;
         editableOptions?: JSON.Array<string>;
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;

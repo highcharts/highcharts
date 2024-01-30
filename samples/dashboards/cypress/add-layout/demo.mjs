@@ -61,7 +61,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
                 series: [
@@ -81,7 +81,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'HTML',
             elements: [
                 {
@@ -92,7 +92,7 @@ Dashboards.board('container', {
                 }
             ]
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             connector: {
                 id: 'connector-1'
             },

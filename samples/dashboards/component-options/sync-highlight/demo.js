@@ -37,7 +37,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             connector: {
                 id: 'Vitamin'
             },
@@ -54,7 +54,7 @@ Dashboards.board('container', {
             },
             chartOptions
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             connector: {
                 id: 'Vitamin'
             },
@@ -75,7 +75,7 @@ Dashboards.board('container', {
             title: {
                 text: 'sync highlight: true'
             },
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             type: 'DataGrid',
             connector: {
                 id: 'Vitamin'

@@ -19,6 +19,7 @@
  *
  * */
 
+import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type DataGrid from '../../../DataGrid/DataGrid';
 import type DataTable from '../../../Data/DataTable';
@@ -31,7 +32,6 @@ import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../../Components/Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
-import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
@@ -127,10 +127,14 @@ class DataGridComponent extends Component {
      *
      * */
 
-    constructor(cell: Cell, options: Partial<Options>) {
+    constructor(
+        cell: Cell,
+        options: Partial<Options>,
+        board?: Board
+    ) {
         options = merge(DataGridComponent.defaultOptions, options);
 
-        super(cell, options);
+        super(cell, options, board);
 
         this.connectorListeners = [];
         this.options = options as Options;

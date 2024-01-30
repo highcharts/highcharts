@@ -37,7 +37,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             connector: {
                 id: 'connector-1'
             },
@@ -72,7 +72,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'DataGrid',
             connector: {
                 id: 'connector-1'

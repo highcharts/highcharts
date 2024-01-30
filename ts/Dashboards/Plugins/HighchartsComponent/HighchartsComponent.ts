@@ -22,6 +22,8 @@
  *
  * */
 
+
+import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type {
     AxisOptions,
@@ -201,12 +203,18 @@ class HighchartsComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(cell: Cell, options: Partial<Options>) {
+
+    constructor(
+        cell: Cell,
+        options: Partial<Options>,
+        board?: Board
+    ) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
-        super(cell, options);
+
+        super(cell, options, board);
         this.options = options as Options;
 
         this.chartConstructor = this.options.chartConstructor || 'chart';

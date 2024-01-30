@@ -35,7 +35,7 @@ function test_board() {
         },
         components: [{
             type: 'HTML',
-            cell: 'cell1',
+            renderTo: 'cell1',
             title: {
                 className: 'custom-title',
                 text: 'My title',

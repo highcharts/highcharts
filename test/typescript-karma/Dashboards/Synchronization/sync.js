@@ -47,7 +47,7 @@ test('Sync events leak in updated components', async function (assert) {
             }]
         },
         components: [{
-            cell: 'chart',
+            renderTo: 'chart',
             type: 'Highcharts',
             connector: {
                 id: 'micro-element'
@@ -58,7 +58,7 @@ test('Sync events leak in updated components', async function (assert) {
                 extremes: true
             }
         }, {
-            cell: 'datagrid',
+            renderTo: 'datagrid',
             type: 'DataGrid',
             connector: {
                 id: 'micro-element'

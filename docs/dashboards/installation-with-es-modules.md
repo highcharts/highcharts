@@ -34,7 +34,7 @@ production.
             },
             components: [
                 {
-                    cell: 'dashboard-col-0',
+                    renderTo: 'dashboard-col-0',
                     type: 'HTML',
                     elements: [{
                         tagName: 'h1',
@@ -80,7 +80,7 @@ For a board create the JavaScript files as shown below.
         },
         components: [
             {
-                cell: 'dashboard-col-0',
+                renderTo: 'dashboard-col-0',
                 type: 'HTML',
                 elements: [{
                     tagName: 'h1',

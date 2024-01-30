@@ -40,7 +40,7 @@ test('DataGrid component with dataTable', async function (assert) {
         },
         components: [
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 type: 'DataGrid',
                 dataGridOptions: {
                     dataTable: new DataTable({

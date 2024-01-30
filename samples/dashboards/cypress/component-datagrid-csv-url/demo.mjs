@@ -45,7 +45,7 @@ Dashboards.board(
         },
         components: [
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 connector: {
                     id: 'data'
                 },
@@ -62,7 +62,7 @@ Dashboards.board(
                 }
             },
             {
-                cell: 'dashboard-col-2',
+                renderTo: 'dashboard-col-2',
                 connector: {
                     id: 'data'
                 },

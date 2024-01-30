@@ -7712,7 +7712,7 @@ highed.DataTable = function (parent, attributes) {
             value: getVal,
             destroy: destroy,
             addToDOM: addToDOM,
-            selectCell: selectCell,
+            selectrenderTo: selectCell,
             deleteContents: deleteContents,
             deselectCell: deselectCell,
             deselectCopyCell: deselectCopyCell,
