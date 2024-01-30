@@ -1424,8 +1424,9 @@ class Series {
             yData = this.useDataTable ?
                 table.columns.y as Array<number|null> :
                 this.yData,
-            pointArrayMap = series.pointArrayMap || [],
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
             pointValKey = series.pointValKey || 'y',
+            pointArrayMap = series.pointArrayMap || [],
             valueCount = pointArrayMap.length,
             keys = options.keys;
         let i,
@@ -1522,40 +1523,45 @@ class Series {
                 // Assume all points are arrays when first point is
                 } else if (isArray(firstPoint)) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-                        if (firstPoint.length === valueCount) {
-                            if (series.useDataTable) {
-                                for (i = 0; i < dataLength; i++) {
-                                    // @todo setColumns
-                                    const row: DataTable.RowObject = {
-                                        x: this.autoIncrement()
-                                    };
-                                    let j = 0;
-                                    for (const key of pointArrayMap) {
-                                        row[key] = (data[i] as any)[j++];
-                                    }
-                                    table.setRow(row);
+
+                        if (series.useDataTable) {
+                            // When autoX is 1, the x is skipped: [low, high].
+                            // When autoX is 0, the x is included:
+                            // [x, low, high]
+                            const autoX = firstPoint.length === valueCount ?
+                                    1 : 0,
+                                colArray = new Array(dataColumnKeys.length)
+                                    .fill(0).map((): Array<number> => []);
+                            for (const pt of data as number[][]) {
+                                if (autoX) {
+                                    colArray[0].push(this.autoIncrement());
                                 }
-                            } else {
+                                for (let j = autoX; j <= valueCount; j++) {
+                                    colArray[j]?.push(pt[j - autoX]);
+                                }
+                            }
+
+                            table.setColumns(dataColumnKeys.reduce(
+                                (columns, columnName, i):
+                                DataTable.ColumnCollection => {
+                                    columns[columnName] = colArray[i];
+                                    return columns;
+                                }, {} as DataTable.ColumnCollection));
+
+                        // Legacy
+                        } else {
+                            // The x is skipped: [low, high]
+                            if (firstPoint.length === valueCount) {
                                 for (i = 0; i < dataLength; i++) {
                                     (xData as any)[i] = this.autoIncrement();
                                     (yData as any)[i] = data[i];
                                 }
-                            }
-                        } else {
-                            for (i = 0; i < dataLength; i++) {
-                                pt = data[i];
-                                (xData as any)[i] = (pt as any)[0];
-                                // Data table
-                                if (series.useDataTable) {
-                                    // @todo setColumns
-                                    let j = 1;
-                                    const row: DataTable.RowObject = {};
-                                    for (const key of pointArrayMap) {
-                                        row[key] = (data[i] as any)[j++];
-                                    }
-                                    table.setRow(row);
-                                // Legacy
-                                } else {
+
+                            // The x is included: [x, low, high]
+                            } else {
+                                for (i = 0; i < dataLength; i++) {
+                                    pt = data[i];
+                                    (xData as any)[i] = (pt as any)[0];
                                     (yData as any)[i] = (pt as any)
                                         .slice(1, valueCount + 1);
                                 }
@@ -1625,7 +1631,7 @@ class Series {
                         [data[i]]
                     );
                     if (series.useDataTable) {
-                        const row = ['x'].concat(series.pointArrayMap || ['y'])
+                        const row = dataColumnKeys
                             .reduce(
                                 (row, key): any => {
                                     row[key] = (pt as any)[key];
@@ -1633,6 +1639,7 @@ class Series {
                                 },
                                 {} as Record<string, number>
                             );
+                        // @todo: setColumns
                         table.setRow(row, i);
                     } else {
                         series.updateParallelArrays(pt as any, i);
