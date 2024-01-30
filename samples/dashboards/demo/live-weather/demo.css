@@ -243,28 +243,24 @@
     font-size: 1em;
 }
 
-#kpi-data .highcharts-dashboards-component {
-    cursor: default;
-}
-
-#kpi-data .highcharts-dashboards-component-title::before {
-    content: url("https://www.highcharts.com/samples/graphics/dashboards/climate/marker.svg");
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
-#kpi-data .highcharts-dashboards-component-kpi-value::before {
-    content: url("https://www.highcharts.com/samples/graphics/dashboards/climate/triangle.svg");
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
 #kpi-temperature .highcharts-dashboards-component-kpi-value,
 #kpi-wind .highcharts-dashboards-component-kpi-value,
 #kpi-precipitation .highcharts-dashboards-component-kpi-value {
     display: none;
+}
+
+/* *
+ *
+ *  HTML information
+ *
+ * */
+#html-info .highcharts-dashboards-component-title {
+    color: red;
+}
+
+#html-info .highcharts-dashboards-component-caption {
+    background-color: white;
+    color: blue;
 }
 
 /* *
