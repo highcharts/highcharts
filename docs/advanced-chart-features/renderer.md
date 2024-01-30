@@ -7,12 +7,12 @@ chart, or independent from any chart. It represents a JavaScript wrapper object
 for SVG.
 
 Relevant API documentation
-__________________________
+--------------------------
 * [SVGRenderer](https://api.highcharts.com/class-reference/Highcharts.SVGRenderer)
 * [SVGElement](https://api.highcharts.com/class-reference/Highcharts.SVGElement)
 
 Standalone use
-______________
+--------------
 As a standalone API, the Highcharts renderer is a handy abstraction to drawing
 vector graphics in the browser.
 
@@ -46,7 +46,7 @@ renderer.text('Hello world', 200, 100).attr({
 ```
 
 Bringing it to life
-___________________
+-------------------
 All generated elements can be updated dynamically, either immediately through
 the [attr](https://api.highcharts.com/class-reference/Highcharts.SVGElement.html#attr)
 function, or by animation through the [animate](https://api.highcharts.com/class-reference/Highcharts.SVGElement.html#animate) function. Check out this demo for some
@@ -55,7 +55,7 @@ simple elements with animation:
 <iframe style="width: 100%; height: 465px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/members/renderer-basic" allow="fullscreen"></iframe>
 
 Putting it to use on a chart
-____________________________
+----------------------------
 While freeform drawing capabilities are a nice feature, the renderer gets really
 useful when it can be used for custom graphics on top of a chart.
 
@@ -79,7 +79,7 @@ other options, like for example [chart.className](https://api.highcharts.com/hig
 and see the [addEvent and render demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/addevent/).
 
 Adding responsive shapes
-______________________________
+------------------------------
 Let's take a closer look at how we can create a custom annotation, and keep it
 in place as we change the size of the chart.
 
@@ -92,7 +92,7 @@ we want to show a bracket and a text that draw attention to the usually rainful
 autumn months. Moreover, this needs to scale up and down because the chart is
 responsive and reacts to the size of the containing div.
 
-On the _first call_ to the `render` event, we create the element.
+On the -first call- to the `render` event, we create the element.
 
 ```js
 let isNew = false;
@@ -124,7 +124,7 @@ define a flag, `isNew`, that we will use below.
 After doing some math to determine exactly where to put the elements, we do the
 actual placement:
 
-```
+```js
 this.autumnBracket[isNew ? 'attr' : 'animate']({
     d: [
         ['M', left, top + 10],
@@ -153,7 +153,7 @@ viewport size:
 <iframe style="width: 100%; height: 465px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/members/renderer-on-chart" allow="fullscreen"></iframe>
 
 Positioning items on the chart
-______________________________
+------------------------------
 In the demo above we used
 [Point.pos()](https://api.highcharts.com/class-reference/Highcharts.Point#pos)
 to decide where to draw our annotation. Some other positioning properties are

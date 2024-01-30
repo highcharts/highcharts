@@ -123,7 +123,7 @@ interface TextPathObject {
  * and more.
  *
  * See [How to use the SVG Renderer](
- * https://www.highcharts.com/docs/advanced-chart-features/boost-module) for a
+ * https://www.highcharts.com/docs/advanced-chart-features/renderer) for a
  * comprehensive tutorial on how to draw SVG elements on a chart.
  *
  * @class
