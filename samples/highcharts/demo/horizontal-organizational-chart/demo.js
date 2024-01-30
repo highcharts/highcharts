@@ -20,23 +20,10 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                const { name: nodeTo, level, custom: { info } } = point.toNode,
-                    nodeFrom = point.fromNode.id;
-
-                let relationship = '';
-                if (level === 1) {
-                    relationship = `distinct family within the order of ${
-                        nodeFrom}. ${info}`;
-                } else if (level === 2) {
-                    relationship = `genus within the ${nodeFrom}`;
-                } else if  (level === 3) {
-                    relationship = `species within the ${nodeFrom}. ${info}`;
-                }
-                return relationship ?
-                    `${nodeTo} is a ${relationship}` :
-                    undefined;
-            }
+            descriptionFormat: '{toNode.name} ' +
+            '{#if (eq toNode.level 1 )} is a distinct family within the order of {fromNode.id}. {toNode.custom.info}{/if}' +
+            '{#if (eq toNode.level 2 )} is a genus within the {fromNode.id}. {toNode.custom.info} {/if}' +
+            '{#if (eq toNode.level 3 )} is a species within the {fromNode.id}. {toNode.custom.info} {/if}'
         }
     },
 
