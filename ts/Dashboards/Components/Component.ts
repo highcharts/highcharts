@@ -381,8 +381,7 @@ abstract class Component {
         this.setupEventListeners();
 
         if (cell) {
-            
-            this.attachCellListeneres();
+            this.attachCellListeners();
 
             this.on('tableChanged', (): void => {
                 this.onTableChanged();
@@ -503,7 +502,7 @@ abstract class Component {
      *
      * @internal
      */
-    private attachCellListeneres(): void {
+    private attachCellListeners(): void {
         // remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
@@ -555,7 +554,7 @@ abstract class Component {
         if (cell.container) {
             this.parentElement = cell.container;
         }
-        this.attachCellListeneres();
+        this.attachCellListeners();
         if (resize) {
             this.resizeTo(this.parentElement);
         }
