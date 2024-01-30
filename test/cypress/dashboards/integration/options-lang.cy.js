@@ -101,7 +101,7 @@ describe('Editable component options', () => {
     });
 
     it('Lang should be applied on confirmation popup (delete row)', function() {
-        cy.get('.highcharts-dashboards-component').first().click();
+        cy.get('.highcharts-dashboards-component').first().click({ force: true });
 
         // Delete row
         cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
