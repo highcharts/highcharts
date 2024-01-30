@@ -36,7 +36,6 @@
     padding: 0 20px;
 }
 
-
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-col-0,
@@ -45,7 +44,7 @@
         flex: 1 1 33.333%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #dashboard-col-0,
@@ -54,7 +53,7 @@
         flex: 1 1 33.333%;
     }
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #dashboard-col-0,

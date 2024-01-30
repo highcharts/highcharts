@@ -6,7 +6,6 @@
     padding: 0 20px;
 }
 
-
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-col-2,
@@ -14,16 +13,15 @@
         flex: 1 1 50%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #dashboard-col-2,
     #dashboard-col-1 {
         flex: 1 1 50%;
     }
-  
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #dashboard-col-2,
