@@ -945,7 +945,7 @@ abstract class Component {
                 } else {
                     captionElement.replaceWith(newCaption);
                 }
-                this.titleElement = newCaption;
+                this.captionElement = newCaption;
             }
         } else {
             if (captionElement) {
