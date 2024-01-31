@@ -33,7 +33,7 @@ The Standalone Navigator can be included in a project in two ways:
 
 ## Binding Charts to the Navigator
 
-The `bind` method binds chart or axis to the Standalone Navigator. Once a chart is bound, any range adjustments made using the navigator are automatically reflected in the bound chart. See the [bind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.bind) for more details.
+The `bind` method binds a chart or an axis to the Standalone Navigator. Once a chart is bound, any range adjustments made using the navigator are automatically reflected in the bound chart. See the [bind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.bind) for more details.
 
 The `unbind` method is used to detach a chart or axis from the Standalone Navigator. This method can unbind either a single chart or all charts bound to the navigator simultaneously. Detaching charts from the navigator stops it from influencing their range. See the [unbind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.unbind) for additional information.
 
