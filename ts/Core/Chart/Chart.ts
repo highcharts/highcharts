@@ -270,6 +270,7 @@ class Chart {
      *
      * */
 
+    /** definitions */
     public constructor(
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
@@ -279,6 +280,8 @@ class Chart {
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     );
+
+    /** Implementation */
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
         b?: (Chart.CallbackFunction|Partial<Options>),
