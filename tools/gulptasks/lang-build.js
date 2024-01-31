@@ -15,8 +15,25 @@ async function langBuild() {
     const { resolve } = require('node:path');
     const { readdir, writeFile } = require('node:fs/promises');
 
+    const assert = require('node:assert');
+
     const LANG_DIR = 'i18n';
     const TS_FOLDER = 'ts/masters/i18n';
+
+
+    const langBase = require(resolve(LANG_DIR, 'lang.json'));
+    const baseKeys = Object.keys(langBase);
+
+    function getNestedKeys(obj, path = '') {
+        return Object.entries(obj)
+            .flatMap(([key, value]) => {
+                if (typeof value === 'object') {
+                    return getNestedKeys(value, `${path}${key}.`);
+                }
+
+                return `${path}${key}`;
+            });
+    }
 
     const langFiles = (
         await readdir(LANG_DIR, {
@@ -54,12 +71,24 @@ setOptions({
     for (const langFile of langFiles) {
         const jsonContent = require(resolve(LANG_DIR, langFile));
 
+        // Consistency checks
+        assert.equal(
+            baseKeys.length,
+            Object.keys(jsonContent).length,
+            `Keys in ${langFile} do not match keys in lang.json`
+        );
+
+        assert.deepEqual(
+            getNestedKeys(langBase).sort(),
+            getNestedKeys(jsonContent).sort(),
+            `Keys in ${langFile} do not match keys in lang.json`
+        );
+
         const tsContent = template(jsonContent, jsonContent.language);
         const outputFile = resolve(
             TS_FOLDER,
             `${langFile.replace('.json', '')}.src.ts`
         );
-
 
         await writeFile(
             outputFile,
