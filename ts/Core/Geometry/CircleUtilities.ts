@@ -221,7 +221,7 @@ namespace CircleUtilities {
         return circles.reduce((points, c1, i, arr): Array<GeometryObject> => {
             const additional = arr
                 .slice(i + 1)
-                .reduce((points, c2, j, arr): Array<GeometryObject> => {
+                .reduce((points, c2, j): Array<GeometryObject> => {
                     const indexes: [number, number] = [i, j + i + 1];
                     return points.concat(getCircleCircleIntersection(
                         c1,

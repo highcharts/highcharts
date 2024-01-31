@@ -84,13 +84,12 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
-import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
+import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
 const {
     addEvent,
     attr,
     createElement,
-    clamp,
     css,
     defined,
     diffObjects,
@@ -270,6 +269,7 @@ class Chart {
      *
      * */
 
+    /** definitions */
     public constructor(
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
@@ -279,10 +279,14 @@ class Chart {
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     );
+
+    /** Implementation */
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         const args = [
             // ES5 builds fail unless we cast it to an Array

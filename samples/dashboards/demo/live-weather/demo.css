@@ -277,6 +277,12 @@
     background-color: var(--color-background);
 }
 
+#selection-grid .highcharts-dashboards-component-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+    text-align: center;
+}
+
 #selection-grid .highcharts-datagrid-column-header {
     font-size: 12px;
 }

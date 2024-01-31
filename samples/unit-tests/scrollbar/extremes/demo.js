@@ -36,149 +36,137 @@ QUnit.test(
 
 // Highcharts Stock 4.0.1, Issue #3040
 // Scrolling outside data range possible
-QUnit.test('Scrolling outside range (#3040)', function (assert) {
-    TestTemplate.test(
-        'highcharts/line',
-        {
-            legend: {
-                enabled: false
-            },
-
-            scrollbar: {
-                enabled: true
-            },
-
-            xAxis: {
-                type: 'datetime',
-                ordinal: false
-            },
-
-            series: [
-                {
-                    data: [1, 4, 3, 4, 5, 5, 4, 34, 23, 2, 3, 3, 4, 45, 5, 6],
-                    pointStart: Date.UTC(2014, 4, 5),
-                    pointInterval: 24 * 36e5
-                }
-            ]
+QUnit.test('Scrolling outside range (#3040) - chart contructor', function (assert) {
+    const chart = Highcharts.chart('container', {
+        legend: {
+            enabled: false
         },
-        function (template) {
-            var chart = template.chart;
 
-            chart.update({
-                xAxis: {
-                    min: Date.UTC(2014, 4, 1),
-                    max: Date.UTC(2014, 4, 31)
-                }
-            });
+        scrollbar: {
+            enabled: true
+        },
 
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 1),
-                Date.UTC(2014, 4, 4),
-                true,
-                false
-            );
+        xAxis: {
+            type: 'datetime',
+            ordinal: false
+        },
 
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range after a lower out of range.'
-            );
+        series: [{
+            data: [1, 4, 3, 4, 5, 5, 4, 34, 23, 2, 3, 3, 4, 45, 5, 6],
+            pointStart: Date.UTC(2014, 4, 5),
+            pointInterval: 24 * 36e5
+        }]
+    });
 
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 20),
-                Date.UTC(2014, 4, 25),
-                true,
-                false
-            );
-
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range after a higher out of range.'
-            );
-
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 1),
-                Date.UTC(2014, 4, 7),
-                true,
-                false
-            );
-
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range.'
-            );
+    chart.update({
+        xAxis: {
+            min: Date.UTC(2014, 4, 1),
+            max: Date.UTC(2014, 4, 31)
         }
+    });
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 1),
+        Date.UTC(2014, 4, 4),
+        true,
+        false
     );
 
-    TestTemplate.test(
-        'highstock/line',
-        {
-            legend: {
-                enabled: false
-            },
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range after a lower out of range.'
+    );
 
-            navigator: {
-                enabled: false
-            },
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 20),
+        Date.UTC(2014, 4, 25),
+        true,
+        false
+    );
 
-            xAxis: {
-                type: 'datetime',
-                ordinal: false
-            },
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range after a higher out of range.'
+    );
 
-            series: [
-                {
-                    data: [1, 4, 3, 4, 5, 5, 4, 34, 23, 2, 3, 3, 4, 45, 5, 6],
-                    pointStart: Date.UTC(2014, 4, 5),
-                    pointInterval: 24 * 36e5
-                }
-            ]
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 1),
+        Date.UTC(2014, 4, 7),
+        true,
+        false
+    );
+
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range.'
+    );
+});
+
+QUnit.test('Scrolling outside range (#3040) - stockChart contructor', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        legend: {
+            enabled: false
         },
-        function (template) {
-            var chart = template.chart;
 
-            chart.update({
-                xAxis: {
-                    min: Date.UTC(2014, 4, 1),
-                    max: Date.UTC(2014, 4, 31)
-                }
-            });
+        navigator: {
+            enabled: false
+        },
 
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 1),
-                Date.UTC(2014, 4, 4),
-                true,
-                false
-            );
+        xAxis: {
+            type: 'datetime',
+            ordinal: false
+        },
 
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range after a lower out of range.'
-            );
+        series: [
+            {
+                data: [1, 4, 3, 4, 5, 5, 4, 34, 23, 2, 3, 3, 4, 45, 5, 6],
+                pointStart: Date.UTC(2014, 4, 5),
+                pointInterval: 24 * 36e5
+            }
+        ]
+    });
 
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 20),
-                Date.UTC(2014, 4, 25),
-                true,
-                false
-            );
-
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range after a higher out of range.'
-            );
-
-            chart.xAxis[0].setExtremes(
-                Date.UTC(2014, 4, 1),
-                Date.UTC(2014, 4, 7),
-                true,
-                false
-            );
-
-            assert.ok(
-                chart.scroller.range > 0,
-                'There should be a visible range.'
-            );
+    chart.update({
+        xAxis: {
+            min: Date.UTC(2014, 4, 1),
+            max: Date.UTC(2014, 4, 31)
         }
+    });
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 1),
+        Date.UTC(2014, 4, 4),
+        true,
+        false
+    );
+
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range after a lower out of range.'
+    );
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 20),
+        Date.UTC(2014, 4, 25),
+        true,
+        false
+    );
+
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range after a higher out of range.'
+    );
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 4, 1),
+        Date.UTC(2014, 4, 7),
+        true,
+        false
+    );
+
+    assert.ok(
+        chart.scroller.range > 0,
+        'There should be a visible range.'
     );
 });
 
