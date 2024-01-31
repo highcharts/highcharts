@@ -29,7 +29,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'organization',
-        name: 'Highsoft',
+        name: 'Carnivora Phyologeny',
         keys: ['from', 'to'],
         data: [
             ['Carnivora', 'Felidae'],
