@@ -1549,6 +1549,17 @@ class SVGElement implements SVGElementLike {
                 ) - bBox.y;
 
                 bBox = this.getRotatedBox(bBox, rotation, baseline);
+            } else {
+                bBox.poly = {
+                    aX: bBox.x,
+                    bX: bBox.x + bBox.width,
+                    cX: bBox.x,
+                    dX: bBox.x + bBox.width,
+                    aY: bBox.y,
+                    bY: bBox.y + bBox.height,
+                    cY: bBox.y,
+                    dY: bBox.y + bBox.height
+                };
             }
         }
 
@@ -1618,7 +1629,8 @@ class SVGElement implements SVGElementLike {
             x,
             y,
             width: boxWidth,
-            height: boxHeight
+            height: boxHeight,
+            poly: { aX, bX, cX, dX, aY, bY, cY, dY }
         };
     }
 
@@ -1896,7 +1908,8 @@ class SVGElement implements SVGElementLike {
             enabled: true,
             attributes: {
                 dy: -5,
-                startOffset: '50%'
+                startOffset: '50%',
+                textAnchor: 'middle'
             }
         }, textPathOptions);
 
