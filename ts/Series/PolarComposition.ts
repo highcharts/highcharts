@@ -493,7 +493,6 @@ function onPointerGetSelectionMarkerAttrs(
                 (linearAxis as any).options.gridLineInterpolation === 'polygon'
             ) {
                 const radialAxis = chart.hoverPane.axis,
-                    tickInterval = radialAxis.tickInterval,
                     min = start - radialAxis.startAngleRad + radialAxis.pos,
                     max = end - start;
 

@@ -1351,7 +1351,6 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            tableRowCount = table.rowCount,
             reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 

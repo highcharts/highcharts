@@ -176,8 +176,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const chart = this.chart,
-            itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = pick(legend.options.itemDistance, 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =

@@ -494,7 +494,12 @@ class Axis {
         // Alternate bands
         axis.alternateBands = {};
 
-        // Axis metrics
+        /**
+         * The length of the axis in terms of pixels.
+         *
+         * @name Highcharts.Axis#len
+         * @type {number}
+         */
         axis.len = 0;
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
@@ -629,8 +634,7 @@ class Axis {
      * The formatted label content.
      */
     public defaultLabelFormatter(
-        this: AxisLabelFormatterContextObject,
-        ctx?: AxisLabelFormatterContextObject
+        this: AxisLabelFormatterContextObject
     ): string {
         const axis = this.axis,
             chart = this.chart,
@@ -2798,6 +2802,16 @@ class Axis {
 
         // Direction agnostic properties
         this.len = Math.max(horiz ? width : height, 0); // Math.max fixes #905
+
+        /**
+         * The position of the axis in terms of pixels, compared to the chart
+         * edge. In a horizontal axis it is the same as `chart.plotLeft` unless
+         * the axis is explicitly positioned, and in a default vertical axis it
+         * is the same as `chart.plotTop`.
+         *
+         * @name Highcharts.Axis#pos
+         * @type {number}
+         */
         this.pos = horiz ? left : top; // Distance from SVG origin
     }
 

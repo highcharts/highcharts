@@ -455,7 +455,7 @@ class EditMode {
             addEvent(
                 row.container,
                 'mouseleave',
-                function (e: PointerEvent): void {
+                function (): void {
                     if (dragDrop.isActive && dragDrop.mouseRowContext === row) {
                         dragDrop.mouseRowContext = void 0;
                     }
@@ -487,7 +487,7 @@ class EditMode {
                 addEvent(
                     cell.container,
                     'mouseenter',
-                    function (e: PointerEvent): void {
+                    function (): void {
                         if (editMode.isContextDetectionActive) {
                             editMode.mouseCellContext = cell;
                         }

@@ -14,6 +14,8 @@
 
 'use strict';
 
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
 /* *
  *
  *  Imports

@@ -19,7 +19,6 @@
 import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
-import type { AnnotationPointType } from './AnnotationSeries';
 import type {
     ControllableLabelType,
     ControllableShapeType
@@ -353,7 +352,7 @@ abstract class EventEmitter {
         emitter.removeMouseUp = addEvent(
             doc,
             isTouchDevice || firesTouchEvents ? 'touchend' : 'mouseup',
-            function (e: AnnotationEventObject): void {
+            function (): void {
                 // Sometimes the target is the annotation and sometimes its the
                 // controllable
                 const annotation = pick(
@@ -373,7 +372,7 @@ abstract class EventEmitter {
                     annotation, // #15952
                     emitter
                 ), 'afterUpdate');
-                emitter.onMouseUp(e);
+                emitter.onMouseUp();
             },
             isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
@@ -382,9 +381,7 @@ abstract class EventEmitter {
     /**
      * Mouse up handler.
      */
-    public onMouseUp(
-        _e: AnnotationEventObject
-    ): void {
+    public onMouseUp(): void {
         const chart = this.chart,
             annotation = this.target as Annotation || this,
             annotationsOptions = chart.options.annotations,
