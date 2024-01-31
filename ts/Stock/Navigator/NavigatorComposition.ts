@@ -21,7 +21,8 @@ import type Series from '../../Core/Series/Series';
 
 import D from '../../Core/Defaults.js';
 const {
-    defaultOptions
+    defaultOptions,
+    setOptions
 } = D;
 import H from '../../Core/Globals.js';
 const {
