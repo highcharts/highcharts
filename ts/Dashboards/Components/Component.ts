@@ -574,7 +574,6 @@ abstract class Component {
                             clearTimeout(this.tableEventTimeout);
                             this.tableEventTimeout = Globals.win.setTimeout(
                                 (): void => {
-                                    console.log('event emitted', e.type);
                                     this.emit({
                                         ...e,
                                         type: 'tableChanged'
@@ -587,13 +586,14 @@ abstract class Component {
 
             this.tableEvents.push(connector.on('afterLoad', (): void => {
                 clearTimeout(this.tableEventTimeout);
-                this.tableEventTimeout = Globals.win.setTimeout(() => {
-                    this.emit({
-                        target: this,
-                        type: 'tableChanged'
-                    });
+                this.tableEventTimeout = Globals.win.setTimeout(
+                    (): void => {
+                        this.emit({
+                            target: this,
+                            type: 'tableChanged'
+                        });
 
-                    this.tableEventTimeout = void 0;
+                        this.tableEventTimeout = void 0;
                 });
             }));
         }
@@ -619,13 +619,13 @@ abstract class Component {
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
-                        this.tableEventTimeout = Globals.win.setTimeout((): void => {
-                            console.log('event emitted', e.type);
-                            this.emit({
-                                ...e,
-                                type: 'tableChanged'
-                            });
-                            this.tableEventTimeout = void 0;
+                        this.tableEventTimeout = Globals.win.setTimeout(
+                            (): void => {
+                                this.emit({
+                                    ...e,
+                                    type: 'tableChanged'
+                                });
+                                this.tableEventTimeout = void 0;
                         });
 
                     }
