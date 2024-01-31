@@ -65,6 +65,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-websearch',
     'jsdoc-wrappers',
     'jsdoc-zips',
+    'lang-build',
     'lint',
     'lint-dts',
     'lint-samples',
