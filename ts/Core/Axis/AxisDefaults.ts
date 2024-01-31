@@ -24,9 +24,6 @@ import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
-import D from '../Defaults.js';
-const { getOptions } = D;
-
 /* *
  *
  *  Namespace
