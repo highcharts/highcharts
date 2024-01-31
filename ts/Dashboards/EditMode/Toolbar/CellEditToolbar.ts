@@ -18,7 +18,6 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
 import EditGlobals from '../EditGlobals.js';
-import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
@@ -82,7 +81,7 @@ class CellEditToolbar extends EditToolbar {
                 type: 'icon',
                 icon: iconURLPrefix + 'settings.svg',
                 events: {
-                    click: function (this: MenuItem, e: any): void {
+                    click: function (this: MenuItem): void {
                         this.menu.parent.editMode.setEditOverlay();
 
                         (this.menu.parent as CellEditToolbar).onCellOptions();
@@ -97,7 +96,7 @@ class CellEditToolbar extends EditToolbar {
             className: EditGlobals.classNames.menuDestroy,
             icon: iconURLPrefix + 'destroy.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {
+                click: function (this: MenuItem): void {
                     const parentNode = this.menu.parent as CellEditToolbar,
                         editMode = this.menu.parent.editMode,
                         popup = editMode.confirmationPopup;

@@ -16,8 +16,6 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -193,7 +191,6 @@ class ColumnRangeSeries extends AreaRangeSeries {
         let height: number,
             heightDifference: number,
             start: number,
-            plotHigh: number,
             y: number;
 
         // eslint-disable-next-line valid-jsdoc

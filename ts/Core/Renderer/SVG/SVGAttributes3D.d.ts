@@ -14,7 +14,6 @@
  *
  * */
 
-import type ColorType from '../../Color/ColorType';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type SVGAttributes from './SVGAttributes';
 

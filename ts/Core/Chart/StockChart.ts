@@ -302,8 +302,7 @@ class StockChart extends Chart {
 
         // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
-            xAxisOptions: AxisOptions,
-            i: number
+            xAxisOptions: AxisOptions
         ): AxisOptions => merge(
             getDefaultAxisOptions(
                 'xAxis',
@@ -317,8 +316,7 @@ class StockChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
-            yAxisOptions: YAxisOptions,
-            i: number
+            yAxisOptions: YAxisOptions
         ): YAxisOptions => merge(
             getDefaultAxisOptions(
                 'yAxis',

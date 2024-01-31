@@ -1303,7 +1303,6 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
                 processedXData = series.processedXData,
                 len = (processedXData as any).length,
                 distances = [];

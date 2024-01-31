@@ -701,7 +701,7 @@ namespace RangeSelectorComponent {
             );
 
             addEvent(
-                RangeSelector,
+                RangeSelectorClass,
                 'afterBtnClick',
                 rangeSelectorAfterBtnClick
             );

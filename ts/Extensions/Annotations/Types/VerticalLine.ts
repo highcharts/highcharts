@@ -12,7 +12,6 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions

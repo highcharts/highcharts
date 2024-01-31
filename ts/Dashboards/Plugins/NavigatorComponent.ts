@@ -898,7 +898,10 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
+    public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        sidebar: SidebarPopup
+    ): Partial<Options> {
         return {};
     }
 }

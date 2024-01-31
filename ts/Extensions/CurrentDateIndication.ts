@@ -57,9 +57,6 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-interface CurrentDateIndicatorLabelFormatterCallbackFunction {
-    (value: number, format: string): string;
-}
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
     format?: string;

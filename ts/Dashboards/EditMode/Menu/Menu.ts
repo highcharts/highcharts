@@ -14,7 +14,6 @@
  *
  * */
 
-import type CSSJSONObject from '../../CSSJSONObject';
 import type EditMode from '../EditMode';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';

@@ -35,7 +35,6 @@ import type {
     SeriesEventsOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 /* *
  *
