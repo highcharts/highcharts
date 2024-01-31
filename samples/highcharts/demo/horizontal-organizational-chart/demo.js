@@ -178,7 +178,10 @@ Highcharts.chart('container', {
 
     tooltip: {
         outside: true,
-        format: '{point.custom.info}'
+        format: '{point.custom.info}',
+        style: {
+            width: '320px'
+        }
     },
 
     exporting: {
