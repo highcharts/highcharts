@@ -7,7 +7,7 @@
     "rangeSelector": {
         "monthText": "{count}m",
         "yearText": "{count}a",
-        "YTDText": "ACD (Année Courante Début)",
+        "YTDText": "ACD",
         "allText": "Tout",
         "monthTitle": "Voir {count} mois",
         "yearTitle": "Voir {count} {#eq count 1}an{else}ans{/eq}",
@@ -69,7 +69,7 @@
         "P",
         "E"
     ],
-        "resetZoom": "Réinitialiser le zoom",
+    "resetZoom": "Réinitialiser le zoom",
     "resetZoomTitle": "Réinitialiser le niveau de zoom 1:1",
     "thousandsSep": " ",
     "rangeSelectorZoom": "Zoom",

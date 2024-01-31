@@ -24,7 +24,7 @@ const languageOptions = {
     "rangeSelector": {
         "monthText": "{count}m",
         "yearText": "{count}a",
-        "YTDText": "ACD (Année Courante Début)",
+        "YTDText": "ACD",
         "allText": "Tout",
         "monthTitle": "Voir {count} mois",
         "yearTitle": "Voir {count} {#eq count 1}an{else}ans{/eq}",
