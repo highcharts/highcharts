@@ -3545,90 +3545,6 @@ class Chart {
     }
 
     /**
-     * Zoom into a given portion of the chart given by axis coordinates.
-     *
-     * @private
-     * @function Highcharts.Chart#zoom
-     * @param {Highcharts.SelectEventObject} event
-     * /
-    public zoom(event: Pointer.SelectEventObject): void {
-        const chart = this,
-            pointer = chart.pointer;
-
-        let displayButton: boolean|undefined,
-            hasZoomed: boolean|undefined;
-
-        // If zoom is called with no arguments, reset the axes
-        if (!event || event.resetSelection) {
-            chart.axes.forEach((axis): void => {
-                hasZoomed = axis.zoom();
-            });
-            pointer.initiated = false; // #6804
-
-        } else { // Else, zoom in on all axes
-            event.xAxis.concat(event.yAxis).forEach(function (
-                axisData: Pointer.SelectDataObject
-            ): void {
-                const axis = axisData.axis,
-                    isXAxis = axis.isXAxis,
-                    { hasPinched, mouseDownX, mouseDownY } = pointer;
-
-
-                // Don't zoom more than minRange
-                if (
-                    pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
-                    (
-                        defined(mouseDownX) &&
-                        defined(mouseDownY) &&
-                        chart.isInsidePlot(
-                            mouseDownX - chart.plotLeft,
-                            mouseDownY - chart.plotTop,
-                            {
-                                axis,
-                                // Ignore touch positions if pinched on mobile
-                                // #18062
-                                ignoreX: hasPinched,
-                                ignoreY: hasPinched
-                            }
-                        )
-                    ) || !defined(
-                        chart.inverted ? mouseDownX : mouseDownY
-                    )
-                ) {
-                    hasZoomed = axis.zoom(
-                        axisData.min,
-                        axisData.max
-                    );
-                    if (axis.displayBtn) {
-                        displayButton = true;
-                    }
-                }
-            });
-        }
-
-        // Show or hide the Reset zoom button
-        const resetZoomButton = chart.resetZoomButton;
-        if (displayButton && !resetZoomButton) {
-            chart.showResetZoom();
-        } else if (!displayButton && isObject(resetZoomButton)) {
-            chart.resetZoomButton = resetZoomButton.destroy();
-        }
-
-
-        // Redraw
-        if (hasZoomed) {
-            chart.redraw(
-                pick(
-                    chart.options.chart.animation,
-                    event?.animation,
-                    chart.pointCount < 100
-                )
-            );
-        }
-    }
-    */
-
-    /**
      * Pan the chart by dragging the mouse across the pane. This function is
      * called on mouse move, and the distance to pan is computed from chartX
      * compared to the first chartX position in the dragging operation.
@@ -3686,10 +3602,13 @@ class Chart {
      *
      * The main positioning logic is created around two imaginary boxes. What is
      * currently within the `from` rectangle, should be transformed to fill up
-     * the `to` rectangle. In a mouse zoom, the `from` rectangle is the selection,
-     * while the `to` rectangle is the full plot area. In a touch zoom, the
-     * `from` rectangle is made up of the last two-finger touch, while the `to``
-     * rectangle is the current touch.
+     * the `to` rectangle.
+     * - In a mouse zoom, the `from` rectangle is the selection, while the `to`
+     *   rectangle is the full plot area.
+     * - In a touch zoom, the `from` rectangle is made up of the last two-finger
+     *   touch, while the `to`` rectangle is the current touch.
+     * - In a mousewheel zoom, the the `to` rectangle is a 10x10 px square,
+     *   while the `to` rectangle reflects the scale around that.
      *
      * @private
      * @function Highcharts.Chart#transform
