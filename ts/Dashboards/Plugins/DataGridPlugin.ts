@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -73,10 +73,9 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e Plugin context provided by the Dashboard.
  */
 function onUnregister(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     e: PluginHandler.Event
-): void {
-    const { Sync } = e;
-}
+): void {}
 
 /* *
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -139,8 +139,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public static compose(
         SeriesClass: typeof Series,
-        AxisClass: typeof Axis,
-        ..._args: Array<never>
+        AxisClass: typeof Axis
     ): void {
         CandlestickSeries.compose(SeriesClass);
 

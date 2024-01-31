@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2024 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,7 @@
  * */
 
 import '../Column/ColumnSeries.js';
-import '../../Extensions/PatternFill.js';
+import PatternFill from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
 import type ColumnSeriesType from '../Column/ColumnSeries';
@@ -28,14 +28,17 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
 import PictorialUtilities from './PictorialUtilities.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
+PatternFill.compose(Chart, Series, SVGRenderer);
 const {
     animObject
 } = A;
@@ -522,11 +525,11 @@ function destroyAllStackShadows(chart: Chart): void {
 }
 
 // This is a workaround due to no implementation of the animation drilldown.
-addEvent(Chart, 'afterDrilldown', function (e): void {
+addEvent(Chart, 'afterDrilldown', function (): void {
     destroyAllStackShadows(this);
 });
 
-addEvent(Chart, 'afterDrillUp', function (e): void {
+addEvent(Chart, 'afterDrillUp', function (): void {
     destroyAllStackShadows(this);
 });
 

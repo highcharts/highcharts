@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -520,8 +520,6 @@ function chartGetDataRows(
                 pointArrayMap: series.pointArrayMap,
                 index: series.index
             };
-
-            const seriesIndex = mockSeries.index;
 
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
@@ -1125,6 +1123,7 @@ function compose(
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
+        addEvent(ChartClass, 'destroy', onChartDestroy);
 
         chartProto.downloadCSV = chartDownloadCSV;
         chartProto.downloadXLS = chartDownloadXLS;
@@ -1338,6 +1337,16 @@ function onChartRenderer(
     ) {
         this.viewData();
     }
+}
+
+/**
+ * Clean up
+ * @private
+ */
+function onChartDestroy(
+    this: Chart
+): void {
+    this.dataTableDiv?.remove();
 }
 
 /* *

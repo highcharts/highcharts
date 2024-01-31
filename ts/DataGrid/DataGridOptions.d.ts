@@ -2,7 +2,7 @@
  *
  *  Data Grid options
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -91,6 +91,10 @@ export interface ColumnHeaderOptions {
 
     /**
      * Switch to turn the column header on (`true`) or off (`false`).
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/options/disable-column-headers/ | Column headers disabled}
      *
      * @default true
      */

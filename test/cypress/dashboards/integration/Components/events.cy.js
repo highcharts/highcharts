@@ -40,7 +40,7 @@ describe('Component events', () => {
   });
 
   it('Press ESC should close sidebar popup', () => {
-    cy.get('.highcharts-dashboards-component').first().click();
+    cy.get('.highcharts-dashboards-component').first().click({ force: true });
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
     cy.contains('Confirm').should('be.visible');

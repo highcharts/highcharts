@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -184,9 +184,11 @@ function wrapTickGetLabelPosition(
     _y: number,
     _label: SVGElement,
     horiz: boolean,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     _labelOptions: DataLabelOptions,
     _tickmarkOffset: number,
     _index: number
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';

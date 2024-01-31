@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -559,6 +559,7 @@ function processFormula(
 function processFunction(
     formulaFunction: Function,
     table?: DataTable,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reference?: Reference // @todo
 ): (Value|Array<Value>) {
     const processor = processorFunctions[formulaFunction.name];

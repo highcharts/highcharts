@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -212,7 +212,7 @@ const exporting: ExportingOptions = {
      *
      * The message can be altered by changing [](#lang.exporting.exportInProgress)
      *
-     * @since next
+     * @since 11.3.0
      * @requires modules/export-data
      */
     showExportInProgress: true
@@ -280,7 +280,7 @@ const lang: LangOptions = {
     /**
      * Text to show when export is in progress.
      *
-     * @since next
+     * @since 11.3.0
      * @requires modules/export-data
      */
     exportInProgress: 'Exporting...'

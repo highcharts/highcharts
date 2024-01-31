@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -93,7 +93,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
     this.zAxis = [];
 
-    zAxisOptions.forEach((axisOptions, i): void => {
+    zAxisOptions.forEach((axisOptions): void => {
         this.addZAxis(axisOptions).setScale();
     });
 }
@@ -170,8 +170,6 @@ class ZAxis extends Axis implements AxisLike {
      * */
 
     public getSeriesExtremes(): void {
-        const chart = this.chart;
-
         this.hasVisibleSeries = false;
 
         // Reset properties in case we're redrawing (#3353)

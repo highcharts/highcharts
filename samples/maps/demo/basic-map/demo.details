@@ -1,0 +1,11 @@
+---
+name: Basic world map
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - General:
+      priority: 1
+...

@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -275,24 +275,59 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     nodeAlignment: 'center',
 
     /**
-     * The pixel width of each node in a sankey diagram or dependency wheel,
-     * or the height in case the chart is inverted.
+     * The pixel width of each node in a sankey diagram or dependency wheel, or
+     * the height in case the chart is inverted.
      *
-     * @private
+     * Can be a number or a percentage string.
+     *
+     * Sankey series also support setting it to `auto`. With this setting, the
+     * nodes are sized to fill up the plot area in the longitudinal direction,
+     * regardless of the number of levels.
+     *
+     * @see    [sankey.nodeDistance](#nodeDistance)
+     * @sample highcharts/series-sankey/node-distance
+     *         Sankey with auto node width combined with node distance
+     * @sample highcharts/series-organization/node-distance
+     *         Organization chart with node distance of 50%
+     *
+     * @type {number|string}
      */
     nodeWidth: 20,
 
     /**
      * The padding between nodes in a sankey diagram or dependency wheel, in
-     * pixels.
+     * pixels. For sankey charts, this applies to the nodes of the same column,
+     * so vertical distance by default, or horizontal distance in an inverted
+     * (vertical) sankey.
      *
-     * If the number of nodes is so great that it is possible to lay them
-     * out within the plot area with the given `nodePadding`, they will be
-     * rendered with a smaller padding as a strategy to avoid overflow.
-     *
-     * @private
+     * If the number of nodes is so great that it is impossible to lay them out
+     * within the plot area with the given `nodePadding`, they will be rendered
+     * with a smaller padding as a strategy to avoid overflow.
      */
     nodePadding: 10,
+
+    /**
+     * The distance between nodes in a sankey diagram in the longitudinal
+     * direction. The longitudinal direction means the direction that the chart
+     * flows - in a horizontal chart the distance is horizontal, in an inverted
+     * chart (vertical), the distance is vertical.
+     *
+     * If a number is given, it denotes pixels. If a percentage string is given,
+     * the distance is a percentage of the rendered node width. A `nodeDistance`
+     * of `100%` will render equal widths for the nodes and the gaps between
+     * them.
+     *
+     * This option applies only when the `nodeWidth` option is `auto`, making
+     * the node width respond to the number of columns.
+     *
+     * @since next
+     * @sample highcharts/series-sankey/node-distance
+     *         Sankey with dnode distance of 100% means equal to node width
+     * @sample highcharts/series-organization/node-distance
+     *         Organization chart with node distance of 50%
+     * @type   {number|string}
+     */
+    nodeDistance: 30,
 
     showInLegend: false,
 
@@ -446,6 +481,17 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *
  * @extends   plotOptions.sankey.dataLabels
  * @apioption series.sankey.nodes.dataLabels
+ */
+
+/**
+ * The height of the node.
+ *
+ * @sample highcharts/series-sankey/height/
+ *         Sankey diagram with height options
+ *
+ * @type      {number}
+ * @since     11.3.0
+ * @apioption series.sankey.nodes.height
  */
 
 /**

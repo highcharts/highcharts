@@ -1,0 +1,46 @@
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/windbarb.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+
+<div id="container">Loading...</div>
+
+<div id="description">
+    <h1>Live Weather Demo</h1>
+    <p>The demo shows weather forecasts from the <a
+            href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank">Norwegian
+            Meteorological Institute</a> in four Dashboards components. The first data row shows the latest 
+            observation, the rest the forecast for the upcoming 24 hours.
+    </p>
+    <h2>Dashboards components</h2>
+    <ul>
+        <li><b>Highcharts Maps</b> markers and tooltip show the selected parameter.</li>
+        <li><b>Dashboards KPI</b> shows info from the selected station: current temperature, current wind speed
+            and expected precipitation over the next 24 hours.</li>
+        <li><b>Dashboards Datagrid</b> shows all the parameters of the selected station for the next 24 hours.</li>
+        <li><b>Highcharts Chart (spline, column, area/windbarb)</b> shows the selected parameter of the selected station
+            for the next 24 hours.</li>
+    </ul>
+    <h2>Data set</h2>
+    <p>The data shown in this demo are weather forecasts containing temperature, wind strength and precipitation for a
+        selection of weather stations in North America.</p>
+    <ul>
+        <li>The station is selected by clicking on the map.</li>
+        <li>The weather parameter (e.g. wind) by clicking on a gauge in the KPI component.</li>
+        <li>All date/time indications are UTC.</li>
+    </ul>
+    </p>
+    <h2>Customizing the demo</h2>
+    <p>The demo offers limited customization possibilities directly in the code:</p>
+    <ul>
+        <li>New weather stations can be added (and existing deleted).</li>
+        <li>Alternative sets of weather stations can be used.</li>
+        <li>The range of the data set is configurable. By default the sample start from the latest
+            observation and 24 hours into the future. Note that the entire data set covers 19 days.</li>
+    </ul>
+</div>

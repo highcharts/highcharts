@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -57,9 +57,6 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-interface CurrentDateIndicatorLabelFormatterCallbackFunction {
-    (value: number, format: string): string;
-}
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
     format?: string;

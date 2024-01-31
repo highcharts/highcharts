@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -118,8 +118,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
     }
 
     public firePointEvent(): void {
-        const point = this,
-            series = this.series,
+        const series = this.series,
             seriesOptions = series.options;
 
         if (this.isParentNode && seriesOptions.parentNode) {

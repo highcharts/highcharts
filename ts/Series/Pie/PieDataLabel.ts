@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -344,7 +344,7 @@ namespace ColumnDataLabel {
                 );
                 points.forEach((point): void => {
                     // Check if specific points' label is outside the pie
-                    (point.dataLabels || []).forEach((dataLabel, i): void => {
+                    (point.dataLabels || []).forEach((dataLabel): void => {
                         const labelPosition = dataLabel.dataLabelPosition;
                         if (
                             labelPosition &&

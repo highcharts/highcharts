@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,6 @@
  *
  * */
 
-import EditGlobals from '../EditGlobals.js';
 import MenuItem from './MenuItem.js';
 
 const MenuItemBindings: Record<string, MenuItem.Options> = {
@@ -28,7 +27,7 @@ const MenuItemBindings: Record<string, MenuItem.Options> = {
         type: 'button',
         langKey: 'viewFullscreen',
         events: {
-            click: function (this: MenuItem, e: PointerEvent): void {
+            click: function (this: MenuItem): void {
                 const fullScreen = this.menu.editMode.board.fullscreen;
                 if (fullScreen) {
                     fullScreen.toggle();

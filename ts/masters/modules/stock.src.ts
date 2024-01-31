@@ -5,7 +5,7 @@
  *
  * Highcharts Stock as a plugin for Highcharts
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -24,6 +24,8 @@ import OHLCSeries from '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import FlagsSeries from '../../Series/Flags/FlagsSeries.js';
 import StockChart from '../../Core/Chart/StockChart.js';
+import ChartNavigatorComposition from '../../Stock/Navigator/ChartNavigatorComposition.js';
+import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Navigator = Navigator;
@@ -33,9 +35,10 @@ G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);
-Navigator.compose(G.Axis, G.Chart, G.Series);
+NavigatorComposition.compose(G.Axis, G.Series);
+ChartNavigatorComposition.compose(G.Chart, G.Navigator);
 OHLCSeries.compose(G.Series);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
-StockChart.compose(G.Axis, G.Series, G.SVGRenderer);
+StockChart.compose(G.Chart, G.Axis, G.Series, G.SVGRenderer);

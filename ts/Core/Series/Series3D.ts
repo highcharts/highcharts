@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -18,7 +18,6 @@
  *
  * */
 
-import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
 
@@ -121,10 +120,8 @@ class Series3D extends Series {
                 (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
                 series.index || 0;
 
-        let rawPoint: Point,
-            projectedPoint: Position3DObject,
-            zValue: (number|null|undefined),
-            i: number;
+        let projectedPoint: Position3DObject,
+            zValue: (number|null|undefined);
 
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));

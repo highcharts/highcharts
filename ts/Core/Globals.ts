@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -213,7 +213,6 @@ namespace Globals {
             isFirefox &&
             parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
         ),
-        hasTouch = !!win.TouchEvent,
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',

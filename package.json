@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.2.0",
+  "version": "11.3.0",
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -19,7 +19,7 @@
     "webpack"
   ],
   "scripts": {
-    "dapi": "gulp --series dashboards/api-docs dashboards/api-server",
+    "dapi": "gulp dashboards/api",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
@@ -28,7 +28,7 @@
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
-    "test-tskarma": "npx karma start test/typescript-karma/karma-conf.js",
+    "test-tskarma": "gulp test-karma",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
@@ -48,7 +48,7 @@
     "@babel/preset-env": "^7.20.2",
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.4",
-    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.27",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
@@ -64,7 +64,7 @@
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
-    "cypress-visual-regression": "^2.1.1",
+    "cypress-visual-regression": "^3.0.0",
     "dtslint": "^4.2.1",
     "eslint": "^8.33.0",
     "eslint-config-eslint": "^7.0.0",

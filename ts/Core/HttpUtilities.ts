@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2024 Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,16 +16,13 @@
  *
  * */
 
-import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type JSON from './JSON';
 
 import G from '../Core/Globals.js';
-const { doc, win } = G;
+const { win } = G;
 import U from '../Core/Utilities.js';
 const {
-    createElement,
     discardElement,
-    merge,
     objectEach
 } = U;
 

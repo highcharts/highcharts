@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1048,7 +1048,6 @@ namespace RadialAxis {
         e: { userOptions: Options }
     ): void {
         const chart = this.chart,
-            inverted = chart.inverted,
             angular = chart.angular,
             polar = chart.polar,
             isX = this.isXAxis,

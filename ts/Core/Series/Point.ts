@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -28,7 +28,6 @@ import type {
 } from './PointOptions';
 import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
-import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -46,7 +45,6 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     erase,
     extend,
     fireEvent,

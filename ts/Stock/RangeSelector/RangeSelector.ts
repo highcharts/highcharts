@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -253,9 +253,6 @@ class RangeSelector {
             return;
         }
 
-        // Set the fixed range before range is altered
-        chart.fixedRange = range;
-
         rangeSelector.setSelected(i);
 
         // Apply dataGrouping associated to button
@@ -375,6 +372,7 @@ class RangeSelector {
             minSetting = baseXAxisOptions.min;
             baseXAxisOptions.min = rangeMin;
             addEvent(chart, 'load', function resetMinAndRange(): void {
+                chart.setFixedRange(rangeOptions._range);
                 baseXAxisOptions.range = rangeSetting;
                 baseXAxisOptions.min = minSetting;
             });
@@ -390,6 +388,7 @@ class RangeSelector {
                     rangeSelectorButton: rangeOptions
                 }
             );
+            chart.setFixedRange(rangeOptions._range);
         }
 
         fireEvent(this, 'afterBtnClick');
@@ -1629,7 +1628,7 @@ class RangeSelector {
         xOffsetForExportButton: number,
         width?: number
     ): void {
-        const { chart, options, buttonGroup, buttons } = this;
+        const { chart, options, buttonGroup } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
         let translateX = buttonPosition.x - chart.spacing[3];

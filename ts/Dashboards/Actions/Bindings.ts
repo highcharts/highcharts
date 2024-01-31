@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -58,7 +58,7 @@ namespace Bindings {
     export interface MountedComponent {
         cell: Cell;
         component: ComponentType;
-        options: Partial<Component.ComponentOptions>;
+        options: Partial<Component.Options>;
     }
 
     /* *
@@ -182,8 +182,7 @@ namespace Bindings {
 
     /** @internal */
     export function componentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLElement|undefined) // @todo
+        json: Component.JSON
     ): (Component|undefined) {
         let componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry

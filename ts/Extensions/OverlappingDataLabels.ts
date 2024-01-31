@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,10 +19,8 @@
  *
  * */
 
-import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
@@ -32,7 +30,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     objectEach,
     pick,
     pushUnique
@@ -80,7 +77,6 @@ function chartHideOverlappingLabels(
 ): void {
     const chart = this,
         len = labels.length,
-        ren = chart.renderer,
         isIntersectRect = (
             box1: BBoxObject,
             box2: BBoxObject
@@ -89,70 +85,32 @@ function chartHideOverlappingLabels(
             box2.x + box2.width <= box1.x ||
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
-        ),
+        );
 
-        // Get the box with its position inside the chart, as opposed to getBBox
-        // that only reports the position relative to the parent.
-        getAbsoluteBox = (label: SVGElement): (BBoxObject|undefined) => {
-            const padding = label.box ? 0 : (label.padding || 0);
-
-            let pos: PositionObject,
-                parent: SVGElement,
-                bBox: BBoxObject,
-                // Substract the padding if no background or border (#4333)
-                lineHeightCorrection = 0,
-                xOffset = 0,
-                boxWidth,
-                alignValue;
-
-            if (
-                label &&
-                (!label.alignAttr || label.placed)
-            ) {
+    /**
+     * Get the box with its position inside the chart, as opposed to getBBox
+     * that only reports the position relative to the parent.
+     */
+    function getAbsoluteBox(label: SVGElement): (BBoxObject|undefined) {
+        if (label && (!label.alignAttr || label.placed)) {
+            const padding = label.box ? 0 : (label.padding || 0),
                 pos = label.alignAttr || {
                     x: label.attr('x'),
                     y: label.attr('y')
-                };
-                parent = label.parentGroup as any;
+                },
+                bBox = label.getBBox();
 
-                // Get width and height if pure text nodes (stack labels)
-                if (!label.width) {
-                    bBox = label.getBBox();
-                    label.width = bBox.width;
-                    label.height = bBox.height;
+            label.width = bBox.width;
+            label.height = bBox.height;
 
-                    // Labels positions are computed from top left corner, so we
-                    // need to substract the text height from text nodes too.
-                    lineHeightCorrection = ren.fontMetrics(label.element).h;
-                }
-
-                boxWidth = label.width - 2 * padding;
-                alignValue = {
-                    left: '0',
-                    center: '0.5',
-                    right: '1'
-                }[label.alignValue as AlignValue];
-
-                if (alignValue) {
-                    xOffset = +alignValue * boxWidth;
-                } else if (
-                    isNumber(label.x) &&
-                    Math.round(label.x) !== label.translateX
-                ) {
-                    xOffset = label.x - (label.translateX || 0);
-                }
-
-                return {
-                    x: pos.x + (parent.translateX || 0) + padding -
-                        (xOffset || 0),
-                    y: pos.y + (parent.translateY || 0) + padding -
-                        lineHeightCorrection,
-                    width: label.width - 2 * padding,
-                    height: (label.height || 0) - 2 * padding
-                };
-
-            }
-        };
+            return {
+                x: pos.x + (label.parentGroup?.translateX || 0) + padding,
+                y: pos.y + (label.parentGroup?.translateY || 0) + padding,
+                width: (label.width || 0) - 2 * padding,
+                height: (label.height || 0) - 2 * padding
+            };
+        }
+    }
 
 
     let label: SVGElement,
@@ -171,7 +129,6 @@ function chartHideOverlappingLabels(
             label.newOpacity = 1;
 
             label.absoluteBox = getAbsoluteBox(label);
-
         }
     }
 
