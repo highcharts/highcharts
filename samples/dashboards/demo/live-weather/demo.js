@@ -396,24 +396,31 @@ async function setupDashboard() {
                     // textContent of children populated dynamically
                     children: [{
                         tagName: 'h2'
-                    }, {
-                        tagName: 'p',
+                    },
+                    {
+                        tagName: 'div',
                         attributes: {
-                            id: 'lon',
-                            name: 'Longitude'
-                        }
-                    }, {
-                        tagName: 'p',
-                        attributes: {
-                            id: 'lat',
-                            name: 'Latitude'
-                        }
-                    }, {
-                        tagName: 'p',
-                        attributes: {
-                            id: 'elevation',
-                            name: 'Elevation'
-                        }
+                            id: 'geo-info'
+                        },
+                        children: [{
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lon',
+                                name: 'Longitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lat',
+                                name: 'Latitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'elevation',
+                                name: 'Elevation'
+                            }
+                        }]
                     }]
                 }]
             },
@@ -939,12 +946,13 @@ async function updateBoard(board, city, paramName,
 
         html.children[0].textContent = 'Forecast for ' + city;
 
-        for (let i = 1; i < html.children.length; i++) {
-            const attr = html.children[i].attributes;
+        const geoInfo = html.children[1].children;
+        for (let i = 0; i < geoInfo.length; i++) {
+            const attr = geoInfo[i].attributes;
             const value = citiesTable.getCellAsNumber(attr.id, cityRow);
             const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
 
-            html.children[i].textContent = `${attr.name}: ${value} ${unit}`;
+            geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;
         }
 
         await htmlGeoInfo.update(options);
