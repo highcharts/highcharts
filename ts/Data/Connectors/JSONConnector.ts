@@ -128,8 +128,6 @@ class JSONConnector extends DataConnector {
             table
         });
 
-        // If already loaded, clear the current rows
-        table.deleteColumns();
 
         return Promise
             .resolve(
@@ -139,14 +137,15 @@ class JSONConnector extends DataConnector {
                     ) :
                     data || []
             )
-            .then((data): Promise<Array<Array<number|string>>> => {
+            .then(async (data): Promise<Array<Array<number|string>>> => {
                 if (data) {
+                    // If already loaded, clear the current rows
+                    table.deleteColumns();
                     converter.parse({ data });
                     table.setColumns(converter.getTable().getColumns());
                 }
-                return connector
-                    .setModifierOptions(dataModifier)
-                    .then((): Array<Array<number|string>> => data);
+                await connector.setModifierOptions(dataModifier);
+                return data;
             })
             .then((data): this => {
                 connector.emit<JSONConnector.Event>({
