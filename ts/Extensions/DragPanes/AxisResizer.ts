@@ -204,9 +204,8 @@ class AxisResizer {
             resizer.onMouseUp(e)
         );
         resizer.mouseDownHandler = mouseDownHandler = (
-            e: PointerEvent
         ): void => (
-            resizer.onMouseDown(e)
+            resizer.onMouseDown()
         );
 
         eventsToUnbind.push(
@@ -277,7 +276,7 @@ class AxisResizer {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    public onMouseDown(e: PointerEvent): void {
+    public onMouseDown(): void {
         // Clear all hover effects.
         this.axis.chart.pointer.reset(false, 0);
 

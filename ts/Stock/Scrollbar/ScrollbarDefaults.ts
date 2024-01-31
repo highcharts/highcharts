@@ -18,8 +18,6 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *

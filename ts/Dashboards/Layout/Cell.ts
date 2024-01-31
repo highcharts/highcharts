@@ -24,7 +24,7 @@
 
 import type Component from '../Components/Component.js';
 import type CSSJSONObject from '../CSSJSONObject';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
@@ -161,10 +161,7 @@ class Cell extends GUIElement {
 
         // Mount component from JSON.
         if (this.options.mountedComponentJSON) {
-            this.mountComponentFromJSON(
-                this.options.mountedComponentJSON,
-                this.container
-            );
+            this.mountComponentFromJSON(this.options.mountedComponentJSON);
         }
 
         // nested layout
@@ -268,16 +265,12 @@ class Cell extends GUIElement {
      * @param {Component.JSON} [json]
      * Component JSON.
      *
-     * @param {HTMLDOMElement} [cellContainer]
-     * Cell container
-     *
      * @return {boolean}
      * Returns true, if the component created from JSON is mounted,
      * otherwise false.
      */
     public mountComponentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLDOMElement|undefined) // @todo
+        json: Component.JSON
     ): boolean {
         const cell = this;
 
@@ -285,7 +278,7 @@ class Cell extends GUIElement {
             json.options.parentElement = cell.id;
         }
 
-        const component = componentFromJSON(json, cellContainer);
+        const component = componentFromJSON(json);
 
         if (component) {
             cell.mountedComponent = component;

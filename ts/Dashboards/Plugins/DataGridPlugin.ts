@@ -73,10 +73,9 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e Plugin context provided by the Dashboard.
  */
 function onUnregister(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     e: PluginHandler.Event
-): void {
-    const { Sync } = e;
-}
+): void {}
 
 /* *
  *

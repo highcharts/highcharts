@@ -53,7 +53,6 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -269,7 +268,7 @@ class MapSeries extends ScatterSeries {
             // Individual point actions.
             this.points.forEach((point): void => {
 
-                const { graphic, shapeArgs } = point;
+                const { graphic } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[

@@ -25,7 +25,11 @@
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
-import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
+import type {
+    ComponentType,
+    ComponentTypeRegistry
+} from './ComponentType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -411,6 +415,7 @@ abstract class Component {
      * The sidebar popup.
      */
     public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         sidebar: SidebarPopup
     ): Partial<ComponentType['options']> {
         return {};

@@ -71,8 +71,7 @@ class EditContextMenu extends Menu {
     constructor(
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
-        editMode: EditMode,
-        parent?: HTMLElement
+        editMode: EditMode
     ) {
         super(
             editMode.board.container,

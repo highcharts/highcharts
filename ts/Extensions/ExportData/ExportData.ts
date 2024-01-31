@@ -521,8 +521,6 @@ function chartGetDataRows(
                 index: series.index
             };
 
-            const seriesIndex = mockSeries.index;
-
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
