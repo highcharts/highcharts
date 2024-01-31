@@ -445,7 +445,10 @@ class NavigatorComponent extends Component {
             isObject(crossfilterOptions) && crossfilterOptions.enabled
         )) {
             this.chart.update(
-                { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                merge(
+                    { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                    this.options.chartOptions || {}
+                ),
                 false
             );
         }
