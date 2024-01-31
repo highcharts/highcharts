@@ -916,8 +916,6 @@ class IKHIndicator extends SMAIndicator {
             xData.push((date as any) + i * closestPointRange);
         }
 
-        IKH.length = xData.length;
-
         return {
             values: IKH,
             xData: xData,
