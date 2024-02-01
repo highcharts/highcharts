@@ -594,7 +594,7 @@ abstract class Component {
                         });
 
                         this.tableEventTimeout = void 0;
-                });
+                    });
             }));
         }
     }
@@ -626,7 +626,7 @@ abstract class Component {
                                     type: 'tableChanged'
                                 });
                                 this.tableEventTimeout = void 0;
-                        });
+                            });
 
                     }
                 }
