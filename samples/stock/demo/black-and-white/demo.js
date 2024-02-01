@@ -104,7 +104,24 @@
             selected: 4,
             inputEnabled: false
         },
-
+        navigator: {
+            maskInside: false,
+            maskFill: 'rgba(0, 0, 0, 0.3)',
+            height: 30,
+            margin: 10,
+            handles: {
+                backgroundColor: '#000000'
+            },
+            xAxis: {
+                labels: {
+                    enabled: false
+                },
+                gridLineWidth: 0
+            }
+        },
+        scrollbar: {
+            height: 0
+        },
         series: [{
             name: 'AAPL',
             type: 'candlestick',
@@ -125,7 +142,6 @@
                 }
             }
         }],
-
         tooltip: {
             positioner: function () {
                 return {
@@ -138,7 +154,6 @@
             backgroundColor: 'transparent',
             format: '{series.name} {point.open:.2f} {point.high:.2f} {point.low:.2f} {point.close:.2f}'
         },
-
         xAxis: {
             gridLineWidth: 1,
             gridLineColor: '#c0c0c0',
