@@ -115,6 +115,15 @@
         --color-title: #dadae2;
         --color-text: #dadae2;
     }
+
+    div#description {
+        background: #20202c;
+        color: #dadae2;
+    }
+
+    div#description a {
+        color: #fff;
+    }
 }
 
 /* *
