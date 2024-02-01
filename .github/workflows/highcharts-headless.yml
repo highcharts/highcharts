@@ -106,7 +106,8 @@ jobs:
         run: |
           export DISPLAY=:99
           npx gulp test --single-run --splitbrowsers ChromeHeadless
-          cat ./test/console.log
+      - name: Output logged errors
+        run: cat ./test/console.log
       - name: Check Firefox
         run: |
           firefox --version
@@ -115,8 +116,8 @@ jobs:
         run: |
           export DISPLAY=:99
           npx gulp test --single-run --splitbrowsers Firefox --force
-          cat ./test/console.log
-
+      - name: Output logged errors
+        run: cat ./test/console.log
       - name: Run timezone tests
         if: ${{ inputs.testTimezones }}
         run: |
