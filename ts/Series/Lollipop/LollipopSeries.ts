@@ -29,6 +29,7 @@ const {
         dumbbell: {
             prototype: dumbbellProto
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         scatter: ScatterSeries
     }
 } = SeriesRegistry;

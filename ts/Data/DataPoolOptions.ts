@@ -20,9 +20,11 @@
  * */
 
 import type { DataConnectorTypes } from './Connectors/DataConnectorType';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
 import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
 import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 /* *
  *

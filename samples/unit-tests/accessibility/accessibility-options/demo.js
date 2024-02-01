@@ -121,6 +121,11 @@ QUnit.test('Keyboard navigation', function (assert) {
         'First legend item should be highlighted.'
     );
 
+    assert.ok(
+        chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
+        'The exit anchor element should render.'
+    );
+
     keyboardNavigation.update({ wrapAround: false });
 
     eventDispatcher(37);
@@ -147,7 +152,7 @@ QUnit.test('Keyboard navigation', function (assert) {
     );
 
     assert.ok(
-        !document.querySelector('.highcharts-exit-anchor'),
+        !chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
         'The exit anchor element shouldn\'t be rendered (#19374).'
     );
 });

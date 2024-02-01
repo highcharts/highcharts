@@ -23,8 +23,7 @@
 
 
 import type {
-    Arguments,
-    Value
+    Arguments
 } from '../FormulaTypes';
 import type DataTable from '../../DataTable';
 

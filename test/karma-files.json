@@ -75,6 +75,7 @@
 	"code/modules/hollowcandlestick.src.js",
 	"code/modules/heikinashi.src.js",
 	"code/modules/flowmap.src.js",
+	"code/modules/navigator.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

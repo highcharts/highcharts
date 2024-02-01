@@ -34,7 +34,6 @@ const {
     defined,
     extend,
     isNumber,
-    isString,
     pick,
     relativeLength
 } = U;
