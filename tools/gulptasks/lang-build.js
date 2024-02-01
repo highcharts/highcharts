@@ -40,7 +40,11 @@ async function langBuild() {
             withFileTypes: true
         })
     )
-        .filter(dirent => dirent.isFile() && /lang-.*.json/u.test(dirent.name))
+        .filter(
+            dirent => dirent.isFile() &&
+            dirent.name !== 'lang.json' &&
+            dirent.name.endsWith('.json')
+        )
         .map(dirent => dirent.name);
 
     // eslint-disable-next-line
