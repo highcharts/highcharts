@@ -17,7 +17,9 @@
         }
     },
     "exclude": [
+        "../Dashboards/**/*.ts",
         "../masters/**/*.ts",
+        "../masters-dashboards/**/*.ts",
         "../masters-es5/**/*.ts"
     ],
     "include": [

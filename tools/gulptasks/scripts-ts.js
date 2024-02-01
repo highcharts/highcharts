@@ -68,7 +68,7 @@ async function scriptsTS(argv) {
 
         if (argv.dashboards) {
             fsLib.deleteDirectory(bundleTargetFolder, true);
-            fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
+            // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
         }
 
         fsLib.deleteDirectory('js/', true);

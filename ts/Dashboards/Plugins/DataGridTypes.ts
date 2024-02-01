@@ -24,7 +24,9 @@
 
 import type * as D from 'datagrid';
 
-export type DataGrid = typeof D;
+export type DataGrid = typeof D.DataGrid;
+
+export type DataGridNamespace = typeof D;
 
 
 /* *

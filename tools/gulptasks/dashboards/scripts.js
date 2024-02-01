@@ -127,10 +127,10 @@ const { scriptCSS } = require('../scripts-css');
 require('./scripts-dts');
 
 gulp.task('dashboards/scripts', gulp.series(
-    () => scriptsTS({ dashboards: true }),
-    dashboardsScripts,
     () => scriptsTS({ datagrid: true }),
     dataGridScripts,
+    () => scriptsTS({ dashboards: true }),
+    dashboardsScripts,
     () => scriptCSS({ dashboards: true }),
     'dashboards/scripts-dts'
 ));

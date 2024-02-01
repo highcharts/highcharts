@@ -18,7 +18,7 @@
  * */
 
 import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
-import type { DataGrid as D } from '../Dashboards/Plugins/DataGridTypes';
+import type { DataGridNamespace as D } from '../Dashboards/Plugins/DataGridTypes';
 
 // Fill registries
 import '../Dashboards/Components/HTMLComponent.js';
@@ -121,7 +121,7 @@ if (!G.win.Dashboards) {
 }
 
 if (G.win.DataGrid) {
-    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid);
     G.PluginHandler.addPlugin(DataGridPlugin);
 }
 
