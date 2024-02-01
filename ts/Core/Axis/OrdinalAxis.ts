@@ -24,6 +24,7 @@ import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
+import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const { composed } = H;
 import Point from '../Series/Point.js';
@@ -35,7 +36,6 @@ const {
     css,
     defined,
     error,
-    isArray,
     pick,
     pushUnique,
     timeUnits
@@ -1223,21 +1223,27 @@ namespace OrdinalAxis {
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
-                        getColumn: series.getColumn,
+                        getColumn: Series.prototype.getColumn,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
-                        table: {
-                            columns: [],
-                            rowCount: 0
-                        },
                         reserveSpace: Series.prototype.reserveSpace,
+                        useDataTable: series.useDataTable,
                         visible: series.visible
                     } as any;
 
-                    fakeSeries.xData = [
+                    const xData = [
                         ...series.getColumn('x'),
                         ...ordinal.getOverscrollPositions()
                     ];
+                    if (series.useDataTable) {
+                        fakeSeries.table = new DataTable({
+                            columns: {
+                                x: xData
+                            }
+                        });
+                    } else {
+                        fakeSeries.xData = xData;
+                    }
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
