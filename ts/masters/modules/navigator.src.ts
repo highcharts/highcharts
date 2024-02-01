@@ -16,6 +16,6 @@ import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js'
 
 const G: AnyRecord = Highcharts;
 G.StandaloneNavigator = StandaloneNavigator;
-NavigatorComposition.compose(G.Axis, G.Series);
+NavigatorComposition.compose(G.Chart, G.Axis, G.Series);
 
 G.navigator = StandaloneNavigator.navigator;
