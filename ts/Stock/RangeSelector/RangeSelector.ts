@@ -424,6 +424,7 @@ class RangeSelector {
             options = (
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
+            langOptions = chart.options.lang,
             buttonOptions = (
                 options.buttons || rangeSelector.defaultButtons.slice()
             ),
@@ -445,38 +446,11 @@ class RangeSelector {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
-        const buttonOptionBindings: Record<string, {
-            title: string,
-            text: string
-        }> = {
-            month: {
-                title: chart.options.lang.rangeSelector.monthTitle,
-                text: chart.options.lang.rangeSelector.monthText
-            },
-            year: {
-                title: chart.options.lang.rangeSelector.yearTitle,
-                text: chart.options.lang.rangeSelector.yearText
-            },
-            ytd: {
-                title: chart.options.lang.rangeSelector.YTDTitle,
-                text: chart.options.lang.rangeSelector.YTDText
-            },
-            all: {
-                title: chart.options.lang.rangeSelector.allTitle,
-                text: chart.options.lang.rangeSelector.allText
-            }
-        };
-
         rangeSelector.buttonOptions = buttonOptions
             .map((opt): RangeSelectorButtonOptions => {
-                if (opt.type && buttonOptionBindings[opt.type]) {
-                    if (!opt.text) {
-                        opt.text = buttonOptionBindings[opt.type].text;
-                    }
-
-                    if (!opt.title) {
-                        opt.title = buttonOptionBindings[opt.type].title;
-                    }
+                if (opt.type) {
+                    opt.text ??= langOptions.rangeSelector[`${opt.type}Text`];
+                    opt.title ??= langOptions.rangeSelector[`${opt.type}Title`];
                 }
 
                 opt.text = format(opt.text, {
@@ -2226,8 +2200,7 @@ extend(RangeSelector.prototype, {
         type: 'year',
         count: 1
     }, {
-        type: 'all',
-        text: 'All'
+        type: 'all'
     }],
     /**
      * The date formats to use when setting min, max and value on date inputs.

@@ -278,8 +278,8 @@ const defaultOptions: DefaultOptions = {
             monthTitle: 'View {count} {#eq count 1}month{else}months{/eq}',
             yearText: '{count}y',
             yearTitle: 'View {count} {#eq count 1}year{else}years{/eq}',
-            YTDText: 'YTD',
-            YTDTitle: 'View year to date'
+            ytdText: 'YTD',
+            ytdTitle: 'View year to date'
         },
 
         /**

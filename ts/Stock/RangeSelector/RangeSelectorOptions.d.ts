@@ -63,6 +63,11 @@ export type RangeSelectorButtonTypeValue = (
     'year'|'ytd'
 );
 
+export type RangeSelectorButtonLangKey = (
+    `${RangeSelectorButtonTypeValue}Text` |
+        `${RangeSelectorButtonTypeValue}Title`
+);
+
 export interface RangeSelectorClickCallbackFunction {
     (e: Event): (boolean|undefined);
 }

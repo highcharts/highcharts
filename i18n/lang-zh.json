@@ -11,8 +11,8 @@
         "monthTitle": "查看 {count} 个月",
         "yearText": "{count}年",
         "yearTitle": "查看 {count} 年",
-        "YTDText": "年初至今",
-        "YTDTitle": "查看年初至今"
+        "ytdText": "年初至今",
+        "ytdTitle": "查看年初至今"
     },
     "viewFullscreen": "全屏查看",
     "exitFullscreen": "退出全屏",

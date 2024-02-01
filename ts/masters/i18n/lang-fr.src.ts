@@ -22,14 +22,14 @@ const languageOptions = {
     "seriesName": "Série {add series.index 1}",
     "yAxisTitle": "Valeurs",
     "rangeSelector": {
-        "monthText": "{count}m",
-        "yearText": "{count}a",
-        "YTDText": "ACD",
         "allText": "Tout",
+        "allTitle": "Voir tout",
+        "monthText": "{count}m",
         "monthTitle": "Voir {count} mois",
+        "yearText": "{count}a",
         "yearTitle": "Voir {count} {#eq count 1}an{else}ans{/eq}",
-        "YTDTitle": "Voir depuis le début de l'année",
-        "allTitle": "Voir tout"
+        "ytdText": "ACD",
+        "ytdTitle": "Voir depuis le début de l'année"
     },
     "viewFullscreen": "Voir en plein écran",
     "exitFullscreen": "Quitter le plein écran",

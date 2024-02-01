@@ -5,14 +5,14 @@
     "seriesName": "Series {add series.index 1}",
     "yAxisTitle": "Values",
     "rangeSelector": {
-        "monthText": "{count}m",
-        "yearText": "{count}y",
-        "YTDText": "YTD",
         "allText": "All",
+        "allTitle": "View all",
+        "monthText": "{count}m",
         "monthTitle": "View {count} {#eq count 1}month{else}months{/eq}",
+        "yearText": "{count}y",
         "yearTitle": "View {count} {#eq count 1}year{else}years{/eq}",
-        "YTDTitle": "View year to date",
-        "allTitle": "View all"
+        "ytdText": "YTD",
+        "ytdTitle": "View year to date"
     },
     "viewFullscreen": "View in full screen",
     "exitFullscreen": "Exit from full screen",
