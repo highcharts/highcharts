@@ -67,6 +67,7 @@
     --color-background: #3c7496;
     --color-map: #dddbef;
     --color-marker-border: #fff;
+    --color-title-text: #fff;
     --color-marker-border-active: #336;
     --color-marker-border-hover: #5352be;
     --color-marker-text: #fff;
@@ -309,15 +310,24 @@
  *
  * */
 
+#world-map .highcharts-dashboards-component {
+    border-radius: 10px;
+}
+
 #world-map .highcharts-dashboards-component-content {
     background: var(--color-background);
+    border-radius: 5px;
 }
 
 #world-map .highcharts-background {
     fill: var(--color-background);
 }
 
-#world-map .highcharts-credits {
+#world-map text.highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map text.highcharts-credits a {
     fill: var(--color-map);
 }
 
@@ -393,7 +403,7 @@
 }
 
 #world-map text.highcharts-title {
-    fill: var(--color-map);
+    fill: var(--color-title-text);
 }
 
 #world-map .highcharts-tooltip-box {
