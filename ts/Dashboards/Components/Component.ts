@@ -359,9 +359,8 @@ abstract class Component {
         this.contentElement = createElement(
             'div', {
                 className: `${this.options.className}-content`
-            }, {
-                height: '100%'
             },
+            {},
             this.element,
             true
         );
