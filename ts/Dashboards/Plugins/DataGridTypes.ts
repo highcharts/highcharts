@@ -22,7 +22,7 @@
  *
  * */
 
-const D: any = {};
+import type * as D from 'datagrid';
 
 export type DataGrid = typeof D;
 
