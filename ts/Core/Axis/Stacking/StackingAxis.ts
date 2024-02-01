@@ -242,7 +242,9 @@ function seriesModifyStacks(
         yAxis = series.yAxis as StackingAxis,
         stackKey = series.stackKey || '',
         stacks = yAxis.stacking.stacks,
-        processedXData = series.processedXData,
+        processedXData = series.useDataTable ?
+            (series.table.modified.getColumn('x', true) as Array<number>) :
+            series.processedXData,
         stacking = series.options.stacking,
         stacker: (StackerFunction|undefined) =
             (series as AnyRecord)[stacking + 'Stacker'];

@@ -449,8 +449,8 @@ QUnit.test('Missing points using navigator (#5699, #17212)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].processedXData[0],
-        chart.series[1].processedXData[0],
+        chart.series[0].getColumn('x', true)[0],
+        chart.series[1].getColumn('x', true)[0],
         'Navigator by default should start at the parent series starting point, #17212.'
     );
 

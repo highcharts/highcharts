@@ -14,8 +14,8 @@ function getMinMax(chart) {
 
 
     minMax = {
-        xMin: chart.series[0].processedXData[minIndex],
-        xMax: chart.series[0].processedXData[maxIndex],
+        xMin: chart.series[0].getColumn('x', true)[minIndex],
+        xMax: chart.series[0].getColumn('x', true)[maxIndex],
         yMin,
         yMax
     };

@@ -309,14 +309,14 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         secondChart.series[1].points[0].x,
-        secondChart.series[1].processedXData[0],
+        secondChart.series[1].getColumn('x', true)[0],
         'Correct first point position after addPoint() with shift parameter and cropped data (#8572)'
     );
 
     assert.strictEqual(
         secondChart.series[1].points[secondChart.series[1].points.length - 1].x,
-        secondChart.series[1].processedXData[
-            secondChart.series[1].processedXData.length - 1
+        secondChart.series[1].getColumn('x', true)[
+            secondChart.series[1].getColumn('x', true).length - 1
         ],
         'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
     );
@@ -377,7 +377,7 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         both should be initialized.`
     );
     assert.ok(
-        chart.series[0].processedXData.length,
+        chart.series[0].getColumn('x', true).length,
         `When an indicator is declared before the main series,
         indicator data should be procesed.`
     );

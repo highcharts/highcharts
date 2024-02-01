@@ -377,7 +377,13 @@ namespace DataModifyComposition {
             series.processedYData &&
             series.dataModify
         ) {
-            const processedXData = series.processedXData,
+            const processedXData = series.useDataTable ?
+                    (
+                        series.table.modified
+                            .getColumn('x', true) as Array<number> ||
+                        []
+                    ) :
+                    series.processedXData,
                 processedYData = series.processedYData,
                 length = series.useDataTable ?
                     series.table.rowCount :

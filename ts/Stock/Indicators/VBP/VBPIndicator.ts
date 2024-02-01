@@ -559,7 +559,7 @@ class VBPIndicator extends SMAIndicator {
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,
-            xValues = series.processedXData,
+            xValues = series.getColumn('x', true),
             yValues: Array<Array<number>> = (series.processedYData as any),
             chart = indicator.chart,
             ranges: number = (params.ranges as any),
@@ -584,10 +584,11 @@ class VBPIndicator extends SMAIndicator {
         // Checks if volume series exists and if it has data
         if (
             !volumeSeries ||
-            !volumeSeries.processedXData.length
+            !volumeSeries.getColumn('x', true).length
         ) {
             const errorMessage =
-                volumeSeries && !volumeSeries.processedXData.length ?
+                volumeSeries &&
+                !volumeSeries.getColumn('x', true).length ?
                     ' does not contain any data.' :
                     ' not found! Check `volumeSeriesID`.';
 
@@ -728,7 +729,7 @@ class VBPIndicator extends SMAIndicator {
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,
-            volumeXData = volumeSeries.processedXData,
+            volumeXData = volumeSeries.getColumn('x', true),
             volumeYData: Array<number> = (
                 volumeSeries.processedYData as any
             ),

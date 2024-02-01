@@ -27,7 +27,7 @@ function getSum(xData, yData) {
 Highcharts.seriesType('customIndicator', 'sma', {}, {
     getValues: function (series) {
         return this.getSum(
-            series.processedXData || series.xData,
+            series.getColumn('x', true) || series.xData,
             series.processedYData || series.yData
         );
     },

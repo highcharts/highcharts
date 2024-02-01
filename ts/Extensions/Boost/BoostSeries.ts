@@ -60,7 +60,6 @@ const {
     fireEvent,
     isArray,
     isNumber,
-    isObject,
     pick,
     pushUnique,
     wrap,
@@ -841,7 +840,7 @@ function getPoint(
     const xData = (
             series.xData ||
             seriesOptions.xData ||
-            series.processedXData ||
+            series.getColumn('x', true) ||
             false
         ),
         point = new PointClass(
@@ -1463,7 +1462,7 @@ function wrapSeriesProcessData(
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
             }
-            dataToMeasure = series.processedXData;
+            dataToMeasure = series.getColumn('x', true);
         }
 
         // Set the isBoosting flag, second pass with processedXData to

@@ -203,7 +203,7 @@
 
             assert.deepEqual(
                 [
-                    series.processedXData.length,
+                    series.getColumn('x', true).length,
                     series.processedYData.length
                 ],
                 [16, 16],

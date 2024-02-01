@@ -391,7 +391,7 @@
         });
 
         assert.strictEqual(
-            chart.series[0].processedXData.join(','),
+            chart.series[0].getColumn('x', true).join(','),
             '80,85,90',
             'Preserve X positions for shoulder points' // keyword: cropShoulder
         );
@@ -997,7 +997,7 @@
             chart.xAxis[0].ordinal.index[
                 Object.keys(chart.xAxis[0].ordinal.index)[1]],
             `After updating data grouping units to an equally spaced
-             (like weeks), the ordinal positions should be recalculated- 
+             (like weeks), the ordinal positions should be recalculated-
              allows panning.`
         );
     });
@@ -1027,7 +1027,7 @@
 
         // Grouping each series when the only one requires that, #6765.
         assert.strictEqual(
-            chart.series[0].processedXData.length,
+            chart.series[0].getColumn('x', true).length,
             2,
             `Even if the first series doesn't require grouping,
         It should be grouped the same as the second one is.
@@ -1080,12 +1080,12 @@
         chart.xAxis[0].setExtremes(200, 220);
         assert.notOk(
             chart.series[0].hasGroupedData,
-            `After zooming to a point where groupinng is no longer needed, it 
+            `After zooming to a point where groupinng is no longer needed, it
             should not be applied.`
         );
         assert.notOk(
             chart.series[1].hasGroupedData,
-            `After zooming to a point where groupinng is no longer needed, it 
+            `After zooming to a point where groupinng is no longer needed, it
             should not be applied.`
         );
     });

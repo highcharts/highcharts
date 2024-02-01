@@ -97,7 +97,6 @@ const {
     insertItem,
     isArray,
     isNumber,
-    isObject,
     isString,
     merge,
     objectEach,
@@ -1109,6 +1108,58 @@ class Series {
         );
     }
 
+    public getColumn(
+        columnName: string,
+        modified?: boolean
+    ): Array<number> {
+        // Transitional code for legacy parallel arrays
+        if (!this.useDataTable) {
+            return (
+                modified ?
+                    (this as any)[
+                        `processed${columnName.toUpperCase()}Data`
+                    ] as Array<number> :
+                    (this as any)[`${columnName}Data]`] as Array<number>
+            ) || [];
+        }
+
+        return (
+            (modified ? this.table.modified : this.table)
+                .getColumn(columnName, true) as Array<number>
+        ) || [];
+    }
+
+    /**
+     * Shorthand to get the series' data columns from `Series.table`.
+     *
+     * @private
+     * @function Highcharts.Series#getColumns
+     */
+    public getColumns(
+        columnNames: Array<string>,
+        modified?: boolean
+    ): Record<string, Array<number>> {
+        // Transitional code for legacy parallel arrays
+        if (!this.useDataTable) {
+            return columnNames.reduce(
+                (columns, key): Record<string, Array<number>> => {
+                    columns[key] = (
+                        modified ?
+                            (this as any)[
+                                `processed${key.toUpperCase()}Data`
+                            ] as Array<number> :
+                            (this as any)[`${key}Data]`] as Array<number>
+                    ) || [];
+                    return columns;
+                },
+                {} as Record<string, Array<number>>
+            );
+        }
+
+        return (modified ? this.table.modified : this.table)
+            .getColumns(columnNames, true) as Record<string, Array<number>>;
+    }
+
     /**
      * Finds the index of an existing point that matches the given point
      * options.
@@ -1625,7 +1676,7 @@ class Series {
                 }
             } else {
                 const columns = dataColumnKeys.reduce(
-                    (columns, columnName, i):
+                    (columns, columnName):
                     DataTable.ColumnCollection => {
                         columns[columnName] = [];
                         return columns;

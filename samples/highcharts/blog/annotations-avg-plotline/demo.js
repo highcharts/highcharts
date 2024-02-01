@@ -19,8 +19,8 @@
             minIndex = chart.series[0].processedYData.indexOf(yMin);
 
         minMax = {
-            xMin: chart.series[0].processedXData[minIndex],
-            xMax: chart.series[0].processedXData[maxIndex],
+            xMin: chart.series[0].getColumn('x', true)[minIndex],
+            xMax: chart.series[0].getColumn('x', true)[maxIndex],
             yMin,
             yMax
         };

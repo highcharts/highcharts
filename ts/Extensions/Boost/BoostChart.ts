@@ -216,7 +216,7 @@ function isChartSeriesBoosting(
         }
 
         if (patientMax(
-            series.processedXData,
+            series.getColumn('x', true),
             seriesOptions.data as any,
             // series.xData,
             series.points

@@ -1235,6 +1235,6 @@ QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
 
     chart.update({ series: data.reverse() });
 
-    const length = chart.series[0].processedXData.length;
+    const length = chart.series[0].getColumn('x', true).length;
     assert.notEqual(length, 0, 'The processedXData should be calculated.');
 });
