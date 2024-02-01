@@ -90,7 +90,7 @@ function chartHideOverlappingLabels(
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
         ),
-        vDiff = (v1:Vec, v2:Vec):Vec => ({ x: v2.x - v1.x, y: v2.y - v1.y }),
+        vDiff = (v1:Vec, v2:Vec): Vec => ({ x: v2.x - v1.x, y: v2.y - v1.y }),
         determinant = (
             v1:Vec,
             v2:Vec
@@ -244,9 +244,7 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                if (
-                    isIntersectRect(box1, box2)
-                ) {
+                if (polygonIntersection(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }
