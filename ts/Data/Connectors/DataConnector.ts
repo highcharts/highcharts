@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -165,6 +165,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Order of columns.
      */
     public getColumnOrder(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
         const connector = this,

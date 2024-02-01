@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -105,7 +105,7 @@ function getListOfParents(
             if ((node !== root) && (ids.indexOf(node) === -1)) {
                 const adoptedByRoot = listOfParents[node].map(
                     function (orphan): TreePointOptionsObject {
-                        const { parent, ...parentExcluded } = orphan; // #15196
+                        const { ...parentExcluded } = orphan; // #15196
                         return parentExcluded;
                     }
                 );

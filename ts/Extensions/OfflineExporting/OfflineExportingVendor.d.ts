@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type G from '../../Core/Globals';
 
 /* *

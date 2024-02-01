@@ -1,3 +1,12 @@
+const navigatorOptions = {
+    xAxis: {
+        labels: {
+            format: '{value}%'
+        },
+        tickInterval: 10
+    }
+};
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -51,7 +60,8 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Agriculture'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
         cell: 'top-middle',
@@ -71,7 +81,8 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Industry'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
         cell: 'top-right',
@@ -91,7 +102,8 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Services'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
         cell: 'bottom',

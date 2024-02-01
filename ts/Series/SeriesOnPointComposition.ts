@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Rafal Sebestjanski, Piotr Madej
+ *  (c) 2010-2024 Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,7 @@ const { composed } = H;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
+const { bubble } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';

@@ -17,7 +17,7 @@ const SOURCE_GLOBS = [
     'js/Core/Animation/*.js',
     'js/Core/Axis/Axis.js',
     'js/Core/Axis/Color/ColorAxis.js',
-    'js/Core/Axis/PlotLineOrBand/PlotLineOrBand.js',
+    'js/Core/Axis/PlotLineOrBand/PlotLineOrBandAxis.js',
     'js/Core/Axis/Tick.js',
     'js/Core/Axis/TreeGrid/TreeGridAxis.js',
     'js/Core/Axis/TreeGrid/TreeGridTick.js',
@@ -69,9 +69,11 @@ const SOURCE_GLOBS = [
     'js/Series/Networkgraph/NetworkgraphSeries.js',
     'js/Series/Organization/OrganizationSeries.js',
     'js/Series/PackedBubble/PackedBubbleSeries.js',
+    'js/Series/Pie/PieSeries.js',
     'js/Series/Sankey/SankeySeries.js',
     'js/Series/Timeline/TimelineSeries.js',
-    'js/Series/GeoHeatmap/GeoHeatmapSeries.js'
+    'js/Series/GeoHeatmap/GeoHeatmapSeries.js',
+    'js/Stock/Navigator/StandaloneNavigator.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

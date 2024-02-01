@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -493,7 +493,6 @@ function onPointerGetSelectionMarkerAttrs(
                 (linearAxis as any).options.gridLineInterpolation === 'polygon'
             ) {
                 const radialAxis = chart.hoverPane.axis,
-                    tickInterval = radialAxis.tickInterval,
                     min = start - radialAxis.startAngleRad + radialAxis.pos,
                     max = end - start;
 

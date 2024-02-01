@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -485,7 +485,7 @@ class TextBuilder {
         getString: Function
     ): void {
         const svgElement = this.svgElement;
-        const { renderer, rotation } = svgElement;
+        const { rotation } = svgElement;
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 

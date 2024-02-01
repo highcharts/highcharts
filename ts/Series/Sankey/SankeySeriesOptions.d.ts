@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -65,8 +65,9 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     minLinkWidth?: number;
     nodeAlignment?: ('top'|'center'|'bottom')
     nodePadding?: number;
+    nodeDistance?: number|string;
     nodes?: Array<SankeySeriesNodeOptions>;
-    nodeWidth?: number;
+    nodeWidth?: number|string;
     states?: SeriesStatesOptions<SankeySeries>;
     tooltip?: SankeySeriesTooltipOptions;
     width?: number;

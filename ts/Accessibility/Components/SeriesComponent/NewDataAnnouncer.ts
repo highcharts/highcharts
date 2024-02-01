@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -455,7 +455,8 @@ namespace NewDataAnnouncer {
         e: { point: Accessibility.PointComposition }
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&
@@ -481,7 +482,8 @@ namespace NewDataAnnouncer {
         this: Accessibility.SeriesComposition
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&

@@ -92,7 +92,10 @@ abstract class Controllable implements ControlTarget {
      * Redirect attr usage on the controllable graphic element.
      * @private
      */
-    public attr<T>(..._args: Array<T>): void {
+    public attr<T>(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ..._args: Array<T>
+    ): void {
         this.graphic.attr.apply(this.graphic, arguments);
     }
 
@@ -184,6 +187,7 @@ abstract class Controllable implements ControlTarget {
      * @private
      */
     public render(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _parentGroup?: SVGElement
     ): void {
         this.renderControlPoints();

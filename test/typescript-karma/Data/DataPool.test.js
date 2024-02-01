@@ -27,31 +27,6 @@ QUnit.test('DataPool', function (assert) {
     );
 });
 
-QUnit.test('DataPool options', async function (assert) {
-    const pool = new DataPool({
-        connectors: [{
-            id: 'CSV Test',
-            type: 'CSV',
-            options: {
-                csv: 'y,z\n4,5\n6,7\n8,9',
-                dataTable: {
-                    columns: {
-                        x: [1, 2, 3]
-                    }
-                }
-            }
-        }]
-    });
-
-    const csvTable = await pool.getConnectorTable('CSV Test');
-
-    assert.deepEqual(
-        csvTable.getColumnNames(),
-        ['x', 'y', 'z'],
-        'Table columns should be merged.'
-    );
-});
-
 QUnit.test('DataPool events', async function (assert) {
     const connectorOptions = {
         type: 'CSV',
@@ -147,4 +122,57 @@ QUnit.test('DataPool promises', async function (assert) {
         firstLoadingDone,
         'DataPool should resolve second connector request after first one.'
     );
+
+});
+
+QUnit.test('DataPool replacement', async function (assert) {
+    const dataPool = new DataPool({
+        connectors: [{
+            id: 'My Data',
+            type: 'CSV',
+            options: {
+                csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9'
+            }
+        }]
+    });
+
+    assert.ok(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be new.'
+    );
+
+    const firstConnector = await dataPool.getConnector('My Data');
+
+    assert.notOk(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be not new anymore.'
+    );
+
+    dataPool.setConnectorOptions({
+        id: 'My Data',
+        type: 'JSON',
+        options: {
+            columns: ['a', 'b', 'c'],
+            data: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        }
+    });
+
+    assert.ok(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be new again.'
+    );
+
+    const secondConnector = await dataPool.getConnector('My Data');
+
+    assert.notOk(
+        dataPool.isNewConnector('My Data'),
+        'DataPool connector should be not new anymore.'
+    );
+
+    assert.notEqual(
+        firstConnector,
+        secondConnector,
+        'DataPool connectors should not be equal.'
+    );
+
 });

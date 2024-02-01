@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,8 +36,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    isNumber,
-    merge
+    isNumber
 } = U;
 
 /* *
@@ -121,9 +120,7 @@ class AreaRangePoint extends AreaPoint {
     public setState(): void {
         const prevState = this.state,
             series = this.series,
-            isPolar = series.chart.polar,
-            seriesOptionsMarker = series.options.marker,
-            seriesDefaultSymbol = series.symbol;
+            isPolar = series.chart.polar;
 
 
         if (!defined(this.plotHigh)) {

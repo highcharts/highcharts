@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -467,8 +467,10 @@ class DataConverter implements DataEvent.Emitter {
      * Options for the export.
      */
     public export(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         connector: DataConnector,
         options?: DataConverter.Options
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): string {
         this.emit<DataConverter.Event>({
             type: 'exportError',
@@ -564,7 +566,10 @@ class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.UserOptions} options
      * Options of the DataConverter.
      */
-    public parse(options: DataConverter.UserOptions): void {
+    public parse(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        options: DataConverter.UserOptions
+    ): void {
         this.emit<DataConverter.Event>({
             type: 'parseError',
             columns: [],

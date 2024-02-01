@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -42,7 +42,6 @@ export interface GlobalsLike {
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;
-    readonly hasTouch: boolean;
     readonly isChrome: boolean;
     readonly isFirefox: boolean;
     readonly isMS: boolean;

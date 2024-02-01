@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2021 Highsoft AS
+ *  (c) 2014-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -76,16 +76,6 @@ const {
     pushUnique,
     stableSort
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
-    (this: TContext, item: TItem): (boolean|TItem);
-}
 
 /* *
  *
@@ -971,6 +961,7 @@ class TreemapSeries extends ScatterSeries {
                 addEvent(
                     series,
                     'update',
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     function (e: any, redraw?: boolean): void {
                         const breadcrumbs = this.chart.breadcrumbs;
 

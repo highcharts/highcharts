@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -410,6 +410,7 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const [date, gmt, hours, colon, minutes = 0] =
                         // eslint-disable-next-line new-cap
                         Intl.DateTimeFormat('en', {

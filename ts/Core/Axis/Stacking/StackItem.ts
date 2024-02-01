@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -267,7 +267,7 @@ class StackItem {
             { verticalAlign } = alignOptions;
 
         if (label && stackBox) {
-            const labelBox = label.getBBox(),
+            const labelBox = label.getBBox(void 0, 0),
                 padding = label.padding;
             let isJustify = pick(options.overflow, 'justify') === 'justify',
                 visible;

@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -240,8 +240,7 @@ function onMouseMove(
  */
 function onMouseUp(
     this: DragNodesSeries,
-    point: DragNodesPoint,
-    _event?: PointerEvent
+    point: DragNodesPoint
 ): void {
     if (point.fixedPosition) {
         if (point.hasDragged) {

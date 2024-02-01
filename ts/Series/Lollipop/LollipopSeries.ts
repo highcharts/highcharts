@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -29,6 +29,7 @@ const {
         dumbbell: {
             prototype: dumbbellProto
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         scatter: ScatterSeries
     }
 } = SeriesRegistry;

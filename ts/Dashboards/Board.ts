@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -557,8 +557,6 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this,
             cntSize = board.getLayoutContainerSize();
 
-        let layout;
-
         if (board.editMode) {
             const editModeTools = board.editMode.tools;
 
@@ -609,7 +607,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 options.containerId,
                 {
                     componentOptions: options.componentOptions as
-                        Partial<Component.ComponentOptions>,
+                        Partial<Component.Options>,
                     responsiveBreakpoints: options.responsiveBreakpoints,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
@@ -739,7 +737,7 @@ namespace Board {
         /**
          * General options for the components.
          **/
-        componentOptions?: Partial<Component.ComponentOptions>;
+        componentOptions?: Partial<Component.Options>;
         /**
          * A list of serialized layouts to add to the board.
          * @internal

@@ -1,4 +1,5 @@
 (function () {
+
     function assertNonBoosted(assert, s) {
         assert.ok(
             !(s.boost && s.boost.target) ||
@@ -136,4 +137,91 @@
             );
         }
     );
+
+    QUnit.test(
+        'Boost module should zoom scatter without min/max',
+        function (assert) {
+            var chart = Highcharts.chart('container', {
+                    chart: {
+                        height: 450,
+                        width: 450,
+                        zoomType: 'xy'
+                    },
+                    boost: {
+                        useGPUTranslations: true,
+                        usePreAllocated: true
+                    },
+                    xAxis: {
+                        min: 0,
+                        max: 5,
+                        gridLineWidth: 1
+                    },
+                    yAxis: {
+                        minPadding: 0,
+                        maxPadding: 0,
+                        title: {
+                            text: null
+                        }
+                    },
+                    title: {
+                        text: 'Scatter chart with 16 points'
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [{
+                        type: 'scatter',
+                        boostThreshold: 16,
+                        color: 'rgb(152, 0, 67)',
+                        fillOpacity: 0.1,
+                        data: [
+                            [4, 4], [4, 3], [4, 1], [4, 2],
+                            [3, 4], [3, 3], [3, 1], [3, 2],
+                            [1, 4], [1, 3], [1, 1], [1, 2],
+                            [2, 4], [2, 3], [2, 1], [2, 2]
+                        ],
+                        marker: {
+                            radius: 1
+                        },
+                        tooltip: {
+                            followPointer: false,
+                            pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+                        }
+                    }]
+                }),
+                controller = new TestController(chart),
+                series = chart.series[0];
+
+            assert.deepEqual(
+                [
+                    series.yAxis.min,
+                    series.yAxis.max
+                ],
+                [1, 4],
+                'Scatter yAxis should have min/max. (#20433)'
+            );
+
+            assert.deepEqual(
+                [
+                    series.processedXData.length,
+                    series.processedYData.length
+                ],
+                [16, 16],
+                'Scatter should have 16 boosted points. (#20433)'
+            );
+
+            controller.pan([150, 150], [300, 300]);
+
+            assert.deepEqual(
+                [
+                    series.yAxis.min,
+                    series.yAxis.max
+                ],
+                [1.75, 3.25],
+                'Scatter yAxis should have zoomed min/max.'
+            );
+
+        }
+    );
+
 }());
