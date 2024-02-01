@@ -160,9 +160,6 @@
             type: 'candlestick',
             data: data,
             color: '#000000',
-            tooltip: {
-                valueDecimals: 2
-            },
             lastPrice: {
                 enabled: true,
                 color: '#c0c0c0',
