@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
+const path = require('node:path');
 
 /* *
  *
@@ -41,7 +41,8 @@ const TARGET_DIRECTORIES = [
  */
 function jsDocNamespace() {
 
-    const fs = require('fs');
+    const argv = require('yargs').argv;
+    const fs = require('node:fs');
     const fsLib = require('./lib/fs');
     const gulpLib = require('./lib/gulp');
     const jsdoc = require('gulp-jsdoc3');
@@ -49,18 +50,18 @@ function jsDocNamespace() {
 
     return new Promise((resolve, reject) => {
 
-        const codeFiles = JSON
-            .parse(fs.readFileSync(TSCONFIG_FILE)).files
-            .map(file => path.normalize(
-                path.join(path.dirname(TSCONFIG_FILE), file)
-            ))
-            .filter(file => (
-                file.indexOf('global.d.ts') === -1 &&
-                file.indexOf('.src.d.ts') === -1
-            ))
-            .map(file => file.replace(
-                /.d.ts$/, '.src.js'
-            ));
+        const codeFiles = (
+            argv.custom ?
+                ['code/custom.src.js'] :
+                JSON.parse(fs.readFileSync(TSCONFIG_FILE)).files
+                    .map(file => path.normalize(
+                        path.join(path.dirname(TSCONFIG_FILE), file)
+                    ))
+                    .filter(file => !file.includes('.src.d.ts'))
+                    .map(file => file.replace(
+                        /.d.ts$/u, '.src.js'
+                    ))
+        ).filter(file => !file.includes('global.src.js'));
 
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {

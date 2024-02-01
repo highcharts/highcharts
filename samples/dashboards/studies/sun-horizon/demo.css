@@ -1,0 +1,30 @@
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+h1#title {
+    padding: 10px;
+    margin: 0;
+    text-align: center;
+}
+
+p {
+    padding: 0 10px;
+}
+
+#controls .component-padding {
+    padding: 10px;
+}
+
+#controls label {
+    display: inline-block;
+    text-align: right;
+    width: 7em;
+}
+
+#controls input {
+    width: calc(100% - 10em);
+}
+
+pre#data {
+    display: none;
+}

@@ -42,18 +42,15 @@ const {
     animObject,
     stop
 } = A;
-import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    noop,
     svg,
     SVG_NS,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -123,6 +120,10 @@ interface TextPathObject {
  * {@link Highcharts.SVGRenderer#g|g}
  * and more.
  *
+ * See [How to use the SVG Renderer](
+ * https://www.highcharts.com/docs/advanced-chart-features/renderer) for a
+ * comprehensive tutorial on how to draw SVG elements on a chart.
+ *
  * @class
  * @name Highcharts.SVGElement
  */
@@ -158,7 +159,7 @@ class SVGElement implements SVGElementLike {
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
-    // @todo public div?: HTMLDOMElement;
+    public div?: HTMLDOMElement;
     public doTransform?: boolean;
     public element: DOMElementType;
     public fakeTS?: boolean;
@@ -188,7 +189,7 @@ class SVGElement implements SVGElementLike {
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
     public styledMode?: boolean;
-    public styles?: CSSObject;
+    public styles: CSSObject;
     public SVG_NS = SVG_NS;
     public symbolName?: string;
     public text?: SVGElement;
@@ -397,12 +398,17 @@ class SVGElement implements SVGElementLike {
      *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
      *        holds `width`, `height`, `x` and `y` properties.
      *
+     * @param {boolean} [redraw]
+     *        Decide if SVGElement should be redrawed with new alignment or
+     *        just change its attributes.
+     *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public align(
         alignOptions?: AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|BBoxObject)
+        box?: (string|BBoxObject),
+        redraw: boolean = true
     ): this {
         const attribs = {} as SVGAttributes,
             renderer = this.renderer,
@@ -436,8 +442,6 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ?
-                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -475,8 +479,10 @@ class SVGElement implements SVGElementLike {
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
-        this[this.placed ? 'animate' : 'attr'](attribs);
-        this.placed = true;
+        if (redraw) {
+            this[this.placed ? 'animate' : 'attr'](attribs);
+            this.placed = true;
+        }
         this.alignAttr = attribs;
 
         return this;
@@ -1112,8 +1118,8 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
-            // store object
-            this.styles = styles;
+            // Store object
+            extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
@@ -1411,11 +1417,10 @@ class SVGElement implements SVGElementLike {
                 element &&
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
-                styles && styles.fontSize
+                styles.fontSize
             );
 
         let bBox: BBoxObject|undefined,
-            width,
             height,
             toggleTextShadowShim,
             cacheKey;
@@ -1441,8 +1446,8 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
-                styles && styles.textOverflow, // #5968
-                styles && styles.fontWeight // #12163
+                styles.textOverflow, // #5968
+                styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -1515,7 +1520,6 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            width = bBox.width;
             height = bBox.height;
 
             // Workaround for wrong bounding box in IE, Edge and Chrome on
@@ -1540,42 +1544,11 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-
                 const baseline = Number(
-                        element.getAttribute('y') || 0
-                    ) - bBox.y,
-                    alignFactor = ({
-                        'right': 1,
-                        'center': 0.5
-                    } as Record<string, number>)[alignValue || 0] || 0,
-                    rad = rotation * deg2rad,
-                    rad90 = (rotation - 90) * deg2rad,
-                    wCosRad = width * Math.cos(rad),
-                    wSinRad = width * Math.sin(rad),
-                    cosRad90 = Math.cos(rad90),
-                    sinRad90 = Math.sin(rad90),
+                    element.getAttribute('y') || 0
+                ) - bBox.y;
 
-                    // Find the starting point on the left side baseline of
-                    // the text
-                    pX = bBox.x + alignFactor * (width - wCosRad),
-                    pY = bBox.y + baseline - alignFactor * wSinRad,
-
-                    // Find all corners
-                    aX = pX + baseline * cosRad90,
-                    bX = aX + wCosRad,
-                    cX = bX - height * cosRad90,
-                    dX = cX - wCosRad,
-
-                    aY = pY + baseline * sinRad90,
-                    bY = aY + wSinRad,
-                    cY = bY - height * sinRad90,
-                    dY = cY - wSinRad;
-
-                // Deduct the bounding box from the corners
-                bBox.x = Math.min(aX, bX, cX, dX);
-                bBox.y = Math.min(aY, bY, cY, dY);
-                bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
-                bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
+                bBox = this.getRotatedBox(bBox, rotation, baseline);
             }
         }
 
@@ -1594,6 +1567,59 @@ class SVGElement implements SVGElementLike {
             cache[cacheKey] = bBox;
         }
         return bBox;
+    }
+
+    /**
+     * Get the rotated box.
+     * @private
+     */
+    public getRotatedBox(
+        box: BBoxObject,
+        rotation: number,
+        baseline: number
+    ): BBoxObject {
+        const width = box.width,
+            height = box.height,
+            alignValue = this.alignValue,
+            alignFactor = ({
+                'right': 1,
+                'center': 0.5
+            } as Record<string, number>)[alignValue || 0] || 0,
+            rad = rotation * deg2rad,
+            rad90 = (rotation - 90) * deg2rad,
+            wCosRad = width * Math.cos(rad),
+            wSinRad = width * Math.sin(rad),
+            cosRad90 = Math.cos(rad90),
+            sinRad90 = Math.sin(rad90),
+
+            // Find the starting point on the left side baseline of
+            // the text
+            pX = box.x + alignFactor * (width - wCosRad),
+            pY = box.y + baseline - alignFactor * wSinRad,
+
+            // Find all corners
+            aX = pX + baseline * cosRad90,
+            bX = aX + wCosRad,
+            cX = bX - height * cosRad90,
+            dX = cX - wCosRad,
+
+            aY = pY + baseline * sinRad90,
+            bY = aY + wSinRad,
+            cY = bY - height * sinRad90,
+            dY = cY - wSinRad;
+
+        // Deduct the bounding box from the corners
+        const x = Math.min(aX, bX, cX, dX),
+            y = Math.min(aY, bY, cY, dY),
+            boxWidth = Math.max(aX, bX, cX, dX) - x,
+            boxHeight = Math.max(aY, bY, cY, dY) - y;
+
+        return {
+            x,
+            y,
+            width: boxWidth,
+            height: boxHeight
+        };
     }
 
     /**
@@ -1677,7 +1703,7 @@ class SVGElement implements SVGElementLike {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' ?
+        this.element = nodeName === 'span' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -1688,6 +1714,8 @@ class SVGElement implements SVGElementLike {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        this.styles = {};
 
         fireEvent(this, 'afterInit');
     }
@@ -1736,7 +1764,7 @@ class SVGElement implements SVGElementLike {
     public opacitySetter(
         value: string,
         key: string,
-        element: SVGDOMElement
+        element: SVGDOMElement|HTMLDOMElement
     ): void {
         // Round off to avoid float errors, like tests where opacity lands on
         // 9.86957e-06 instead of 0
@@ -2402,7 +2430,7 @@ interface SVGElement extends SVGElementLike {
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationSetter(value: string, key?: string): void;
+    rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
     'stroke-widthSetter'(

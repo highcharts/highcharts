@@ -32,8 +32,6 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import NU from '../NavigationBindingsUtilities.js';
-const { annotationsFieldsTypes } = NU;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -518,13 +516,6 @@ function addParamInputs(
     const addInput = this.addInput;
 
     objectEach(fields, (value, fieldName): void => {
-        const predefinedType = annotationsFieldsTypes[fieldName];
-        let fieldType = type;
-
-        if (predefinedType) {
-            fieldType = predefinedType;
-        }
-
         // create name like params.styles.fontSize
         const parentFullName = parentNode + '.' + fieldName;
 
@@ -661,7 +652,7 @@ function addSearchBox(
     button.classList.add('clear-filter-button');
 
     // Add input change events.
-    addEvent(input, 'input', function (e): void {
+    addEvent(input, 'input', function (): void {
         handleInputChange(this.value);
 
         // Show clear filter button.
@@ -854,7 +845,6 @@ function filterSeries(
     filter?: string
 ): Array<FilteredSeries> {
     const popup = this,
-        indicators = popup.indicators,
         lang = popup.chart && popup.chart.options.lang,
         indicatorAliases = lang &&
             lang.navigation &&
@@ -1034,8 +1024,7 @@ function listAllSeries(
     currentSeries: SMAIndicator,
     selectedOption?: string
 ): void {
-    const popup = this,
-        indicators = popup.indicators;
+    const popup = this;
 
     // Won't work without the chart.
     if (!chart) {

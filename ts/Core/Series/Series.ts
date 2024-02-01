@@ -62,7 +62,6 @@ import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
-    hasTouch,
     svg,
     win
 } = H;
@@ -312,8 +311,6 @@ class Series {
     public index!: number;
 
     public initialType?: string;
-
-    public invertible: boolean = true;
 
     public isDirty?: boolean;
 
@@ -681,8 +678,7 @@ class Series {
         options: DeepPartial<SeriesOptions>,
         oldOptions: DeepPartial<SeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            marker = options.marker,
+        const marker = options.marker,
             oldMarker = oldOptions.marker || {};
 
         return marker && (
@@ -2516,9 +2512,7 @@ class Series {
             }
 
             group.clip(animationClipRect);
-            if (markerGroup) {
-                markerGroup.clip(markerAnimationClipRect);
-            }
+            markerGroup?.clip(markerAnimationClipRect);
 
 
         // Run the animation
@@ -2530,8 +2524,12 @@ class Series {
             const finalBox = this.getClipBox(),
                 step = animation.step;
 
-            // Only do this when there are actually markers
-            if (markerGroup && markerGroup.element.childNodes.length) {
+            // Only do this when there are actually markers, or we have multiple
+            // series (#20473)
+            if (
+                markerGroup?.element.childNodes.length ||
+                chart.series.length > 1
+            ) {
 
                 // To provide as smooth animation as possible, update the marker
                 // group clipping in steps of the main group animation
@@ -2541,8 +2539,7 @@ class Series {
                     }
                     if (
                         fx.prop === 'width' &&
-                        markerAnimationClipRect &&
-                        markerAnimationClipRect.element
+                        markerAnimationClipRect?.element
                     ) {
                         markerAnimationClipRect.attr(
                             inverted ? 'height' : 'width',
@@ -2945,13 +2942,13 @@ class Series {
             point,
             axis;
 
-        // add event hook
+        // Add event hook
         fireEvent(series, 'destroy', { keepEventsForUpdate });
 
-        // remove events
+        // Remove events
         this.removeEvents(keepEventsForUpdate);
 
-        // erase from axes
+        // Erase from axes
         (series.axisTypes || []).forEach(function (AXIS: string): void {
             axis = (series as any)[AXIS];
             if (axis && axis.series) {
@@ -2960,12 +2957,12 @@ class Series {
             }
         });
 
-        // remove legend items
+        // Remove legend items
         if (series.legendItem) {
             series.chart.legend.destroyItem(series);
         }
 
-        // destroy all points with their elements
+        // Destroy all points with their elements
         i = data.length;
         while (i--) {
             point = data[i];
@@ -2974,7 +2971,10 @@ class Series {
             }
         }
 
-        series.zones.forEach(destroyObjectProperties);
+        for (const zone of series.zones) {
+            // Destroy SVGElement's but preserve primitive props (#20426)
+            destroyObjectProperties(zone, void 0, true);
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -2985,7 +2985,7 @@ class Series {
             // Survive provides a hook for not destroying
             if (val instanceof SVGElement && !val.survive) {
 
-                // issue 134 workaround
+                // Issue 134 workaround
                 destroy = issue134 && prop === 'group' ?
                     'hide' :
                     'destroy';
@@ -2994,14 +2994,14 @@ class Series {
             }
         });
 
-        // remove from hoverSeries
+        // Remove from hoverSeries
         if (chart.hoverSeries === series) {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderItems('series');
 
-        // clear all members
+        // Clear all members
         objectEach(series, function (val: any, prop: string): void {
             if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete (series as any)[prop];
@@ -3076,7 +3076,7 @@ class Series {
                 };
 
             // Reset
-            zones.forEach((zone, i): void => {
+            zones.forEach((zone): void => {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(
@@ -3830,9 +3830,7 @@ class Series {
                         tracker.css({ cursor: options.cursor });
                     }
 
-                    if (hasTouch) {
-                        tracker.on('touchstart', onMouseOver);
-                    }
+                    tracker.on('touchstart', onMouseOver);
                 }
             });
         }
@@ -4172,7 +4170,6 @@ class Series {
             preserve = [
                 'colorIndex',
                 'eventOptions',
-                'invertible',
                 'navigatorSeries',
                 'symbolIndex',
                 'baseSeries'
@@ -4234,7 +4231,8 @@ class Series {
                 'minY',
                 'maxY',
                 'minX',
-                'maxX'
+                'maxX',
+                'transformGroups' // #18857
             );
             if (options.visible !== false) {
                 preserve.push('area', 'graph');
@@ -4871,6 +4869,7 @@ interface Series extends SeriesLike {
     colorCounter: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    invertible: boolean;
     isCartesian: boolean;
     kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
@@ -4884,6 +4883,7 @@ extend(Series.prototype, {
     coll: 'series',
     colorCounter: 0,
     directTouch: false,
+    invertible: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // Each point's x and y values are stored in this.xData and this.yData:

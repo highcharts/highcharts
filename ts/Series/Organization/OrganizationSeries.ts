@@ -243,6 +243,7 @@ class OrganizationSeries extends SankeySeries {
             );
         if (fromNode.shapeArgs && toNode.shapeArgs) {
             const hangingIndent: number = options.hangingIndent as any,
+                hangingRight = options.hangingSide === 'right',
                 toOffset = toNode.options.offset,
                 percentOffset =
                     /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
@@ -294,15 +295,18 @@ class OrganizationSeries extends SankeySeries {
 
             if (toNode.hangsFrom === fromNode) {
                 if (chart.inverted) {
-                    y1 = Math.floor(
-                        (fromNode.shapeArgs.y || 0) +
-                        (fromNode.shapeArgs.height || 0) -
-                        hangingIndent / 2
-                    ) + crisp;
-                    y2 = (
+                    y1 = !hangingRight ?
+                        Math.floor(
+                            (fromNode.shapeArgs.y || 0) +
+                            (fromNode.shapeArgs.height || 0) -
+                            hangingIndent / 2
+                        ) + crisp :
+                        Math.floor((fromNode.shapeArgs.y || 0) +
+                        hangingIndent / 2) + crisp;
+                    y2 = !hangingRight ? (
                         (toNode.shapeArgs.y || 0) +
                         (toNode.shapeArgs.height || 0)
-                    );
+                    ) : (toNode.shapeArgs.y || 0) + hangingIndent / 2;
                 } else {
                     y1 = Math.floor(
                         (fromNode.shapeArgs.y || 0) +
@@ -366,18 +370,19 @@ class OrganizationSeries extends SankeySeries {
 
         const chart = this.chart,
             options = this.options,
-            translationFactor = this.translationFactor,
             sum = node.getSum(),
+            translationFactor = this.translationFactor,
             nodeHeight = Math.max(
                 Math.round(sum * translationFactor),
-                this.options.minLinkWidth || 0
+                options.minLinkWidth || 0
             ),
-            nodeWidth = Math.round(this.nodeWidth),
+            hangingRight = options.hangingSide === 'right',
             indent = options.hangingIndent || 0,
-            sign = chart.inverted ? -1 : 1,
-            shapeArgs = (node.shapeArgs as any),
             indentLogic = options.hangingIndentTranslation,
-            minLength = options.minNodeLength || 10;
+            minLength = options.minNodeLength || 10,
+            nodeWidth = Math.round(this.nodeWidth),
+            shapeArgs = (node.shapeArgs as any),
+            sign = chart.inverted ? -1 : 1;
 
         let parentNode = node.hangsFrom;
 
@@ -385,9 +390,14 @@ class OrganizationSeries extends SankeySeries {
             if (indentLogic === 'cumulative') {
                 // Move to the right:
                 shapeArgs.height -= indent;
-                shapeArgs.y -= sign * indent;
+
+                // If hanging right, first indent is handled by shrinking.
+                if (chart.inverted && !hangingRight) {
+                    shapeArgs.y -= sign * indent;
+                }
                 while (parentNode) {
-                    shapeArgs.y += sign * indent;
+                    // Hanging right is the same direction as non-inverted.
+                    shapeArgs.y += (hangingRight ? 1 : sign) * indent;
                     parentNode = parentNode.hangsFrom;
                 }
             } else if (indentLogic === 'shrink') {
@@ -397,13 +407,19 @@ class OrganizationSeries extends SankeySeries {
                     shapeArgs.height > indent + minLength
                 ) {
                     shapeArgs.height -= indent;
+
+                    // Fixes nodes not dropping in non-inverted charts.
+                    // Hanging right is the same as non-inverted.
+                    if (!chart.inverted || hangingRight) {
+                        shapeArgs.y += indent;
+                    }
                     parentNode = parentNode.hangsFrom;
                 }
             } else {
                 // Option indentLogic === "inherit"
                 // Do nothing (v9.3.2 and prev versions):
                 shapeArgs.height -= indent;
-                if (!chart.inverted) {
+                if (!chart.inverted || hangingRight) {
                     shapeArgs.y += indent;
                 }
             }

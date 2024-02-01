@@ -1,0 +1,8 @@
+#navigator-container {
+    min-width: 600px;
+}
+
+#chart-container {
+    height: 400px;
+    min-width: 600px;
+}

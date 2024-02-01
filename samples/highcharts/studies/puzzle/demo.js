@@ -1,19 +1,10 @@
 (function (H) {
-    const addEvent = H.addEvent,
-        Chart = H.Chart,
-        each = H.each,
-        seriesTypes = H.seriesTypes,
-        SVGElement = H.SVGElement;
-
-    if (!SVGElement.prototype.removeClass) {
-        SVGElement.prototype.removeClass = function (className) {
-            this.element.setAttribute(
-                'class',
-                this.element.getAttribute('class').replace(className, '')
-            );
-            return this;
-        };
-    }
+    const {
+        addEvent,
+        Chart,
+        each,
+        seriesTypes
+    } = H;
 
     Chart.prototype.presentNext = function presentNext() {
         let point;
@@ -177,9 +168,12 @@
 
         if (this.options.puzzle) {
 
+            const seriesScale = this.transformGroups[0].scaleX;
+
             each(this.points, function (point) {
                 const bBox = point.graphic.getBBox(),
-                    scale = Math.min(100 / bBox.width, 100 / bBox.height);
+                    scale = Math.min(100 / bBox.width, 100 / bBox.height) /
+                        seriesScale;
 
                 // Small items are hard to place
                 if (bBox.width > 5 && bBox.height > 5) {
@@ -214,7 +208,7 @@ const data = [],
 
 for (const n in maps) {
     if (Object.hasOwnProperty.call(maps, n)) {
-        mapData = maps[n];
+        mapData = maps[n].features;
         break;
     }
 }
@@ -273,5 +267,9 @@ Highcharts.mapChart('container', {
                 color: Highcharts.getOptions().colors[2]
             }
         }
-    }]
+    }],
+
+    accessibility: {
+        enabled: false
+    }
 });

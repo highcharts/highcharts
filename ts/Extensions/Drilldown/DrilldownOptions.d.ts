@@ -22,15 +22,9 @@ import type {
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type {
-    BreadcrumbOptions,
-    BreadcrumbsOptions
-} from '../Breadcrumbs/BreadcrumbsOptions';
+import type { BreadcrumbsOptions } from '../Breadcrumbs/BreadcrumbsOptions';
 import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions';
-import type {
-    CSSObject,
-    CursorValue
-} from '../../Core/Renderer/CSSObject';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 
 /* *

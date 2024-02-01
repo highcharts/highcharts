@@ -222,7 +222,7 @@ function createBreadcrumbsList(
             });
         }
 
-        drilldownLevels.forEach(function (level, i): void {
+        drilldownLevels.forEach(function (level): void {
             const lastBreadcrumb = list[list.length - 1];
 
             // If level is already added to breadcrumbs list,
