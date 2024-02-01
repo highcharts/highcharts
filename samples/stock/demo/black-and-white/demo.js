@@ -6,15 +6,66 @@
     Highcharts.setOptions({
         lang: {
             rangeSelectorZoom: ''
-        }
-    });
-
-    Highcharts.stockChart('container', {
+        },
         chart: {
             plotBorderWidth: 1,
             plotBorderColor: '#000000',
             marginRight: 30
         },
+        navigator: {
+            maskInside: false,
+            maskFill: 'rgba(0, 0, 0, 0.3)',
+            height: 30,
+            margin: 10,
+            handles: {
+                backgroundColor: '#000000'
+            },
+            xAxis: {
+                labels: {
+                    enabled: false
+                },
+                gridLineWidth: 0
+            }
+        },
+        scrollbar: {
+            height: 0
+        },
+        tooltip: {
+            shadow: false,
+            borderWidth: 0,
+            backgroundColor: 'transparent'
+        },
+        xAxis: {
+            gridLineWidth: 1,
+            gridLineColor: '#c0c0c0',
+            gridLineDashStyle: 'Dash',
+            tickLength: 5,
+            crosshair: {
+                label: {
+                    backgroundColor: '#000000',
+                    padding: 2,
+                    shape: 'rect',
+                    borderRadius: 0
+                }
+            }
+        },
+        yAxis: {
+            gridLineWidth: 1,
+            gridLineColor: '#c0c0c0',
+            gridLineDashStyle: 'Dash',
+            tickInterval: 5,
+            crosshair: {
+                label: {
+                    backgroundColor: '#000000',
+                    padding: 2,
+                    shape: 'rect',
+                    borderRadius: 0
+                }
+            }
+        }
+    });
+
+    Highcharts.stockChart('container', {
         title: {
             text: ''
         },
@@ -104,24 +155,6 @@
             selected: 4,
             inputEnabled: false
         },
-        navigator: {
-            maskInside: false,
-            maskFill: 'rgba(0, 0, 0, 0.3)',
-            height: 30,
-            margin: 10,
-            handles: {
-                backgroundColor: '#000000'
-            },
-            xAxis: {
-                labels: {
-                    enabled: false
-                },
-                gridLineWidth: 0
-            }
-        },
-        scrollbar: {
-            height: 0
-        },
         series: [{
             name: 'AAPL',
             type: 'candlestick',
@@ -149,28 +182,17 @@
                     y: 0
                 };
             },
-            shadow: false,
-            borderWidth: 0,
-            backgroundColor: 'transparent',
             format: '{series.name} {point.open:.2f} {point.high:.2f} {point.low:.2f} {point.close:.2f}'
         },
         xAxis: {
-            gridLineWidth: 1,
-            gridLineColor: '#c0c0c0',
-            gridLineDashStyle: 'Dash',
             crosshair: {
                 snap: false,
                 label: {
                     enabled: true,
-                    format: '{value:%d %b %k:%M}',
-                    backgroundColor: '#000000',
-                    padding: 2,
-                    shape: 'rect',
-                    borderRadius: 0
+                    format: '{value:%d %b %k:%M}'
                 }
             },
             startOnTick: true,
-            tickLength: 5,
             labels: {
                 distance: 4,
                 formatter() {
@@ -186,19 +208,11 @@
             }
         },
         yAxis: {
-            gridLineWidth: 1,
-            gridLineColor: '#c0c0c0',
-            gridLineDashStyle: 'Dash',
-            tickInterval: 5,
             crosshair: {
                 snap: false,
                 label: {
                     enabled: true,
-                    format: '{value:.2f}',
-                    backgroundColor: '#000000',
-                    padding: 2,
-                    shape: 'rect',
-                    borderRadius: 0
+                    format: '{value:.2f}'
                 }
             },
             left: 35
