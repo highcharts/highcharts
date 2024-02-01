@@ -910,13 +910,7 @@ namespace OrdinalAxis {
 
                 axis.series.forEach(function (series, i): void {
 
-                    const xData = series.useDataTable ?
-                        (
-                            (
-                                series.table.modified || series.table
-                            ).columns.x as Array<number> || []
-                        ) :
-                        series.processedXData;
+                    const xData = series.getColumn('x', true);
 
                     uniqueOrdinalPositions = [];
 
@@ -1226,10 +1220,10 @@ namespace OrdinalAxis {
                 axis.series.forEach(function (series): void {
                     fakeSeries = {
                         xAxis: fakeAxis,
-                        xData: (series.xData as any).slice(),
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
+                        getColumn: series.getColumn,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
                         table: {
@@ -1240,9 +1234,10 @@ namespace OrdinalAxis {
                         visible: series.visible
                     } as any;
 
-                    fakeSeries.xData = (fakeSeries.xData as any).concat(
-                        ordinal.getOverscrollPositions()
-                    );
+                    fakeSeries.xData = [
+                        ...series.getColumn('x'),
+                        ...ordinal.getOverscrollPositions()
+                    ];
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
@@ -1319,7 +1314,7 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                processedXData = series.processedXData || [],
+                processedXData = series.getColumn('x', true),
                 len = processedXData.length,
                 distances = [];
             let median,
