@@ -120,6 +120,7 @@ class Point {
     public formatPrefix: string = 'point';
     public graphic?: SVGElement;
     public graphics?: Array<SVGElement|undefined>;
+    public hiddenInDataClass?: boolean;
     public id!: string;
     public isNew?: boolean;
     public isNull?: boolean;

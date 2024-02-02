@@ -813,6 +813,7 @@ class ColorAxis extends Axis implements AxisLike {
                             const affectedSeries: SeriesClass[] = [];
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
+                                point.hiddenInDataClass = !vis; // #20441
                                 if (
                                     affectedSeries.indexOf(point.series) === -1
                                 ) {
