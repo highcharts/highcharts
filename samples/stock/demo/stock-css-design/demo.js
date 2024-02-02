@@ -56,13 +56,7 @@
                 snap: false,
                 enabled: true,
                 label: {
-                    formatter: function (value) {
-                        return value > 10e6 ?
-                            (value / 10e6).toFixed(2) + 'M' :
-                            value > 10e3 ?
-                                (value / 10e3).toFixed(2) + 'k' :
-                                value;
-                    },
+                    format: '{#if value ge 1000000} {(divide value 1000000):.2f} M {else} {value} {/if}',
                     className: 'highcharts-crosshair-custom-label',
                     enabled: true
                 }
@@ -111,13 +105,7 @@
             lastPrice: {
                 enabled: true,
                 label: {
-                    formatter: function (value) {
-                        return value > 10e6 ?
-                            (value / 10e6).toFixed(2) + 'M' :
-                            value > 10e3 ?
-                                (value / 10e3).toFixed(2) + 'k' :
-                                value;
-                    },
+                    format: '{#if value ge 1000000} {(divide value 1000000):.2f} M {else} {value} {/if}',
                     enabled: true,
                     align: 'left',
                     x: 8
