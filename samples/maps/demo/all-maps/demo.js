@@ -327,6 +327,24 @@ function resetDrilldown(chart) {
 
         title: {
             text: null
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    callback() {
+                        return document.body.offsetWidth < 753;
+                    }
+                },
+                chartOptions: {
+                    colorAxis: {
+                        layout: 'horizontal'
+                    },
+                    legend: {
+                        align: 'center'
+                    }
+                }
+            }]
         }
     });
     console.timeEnd('map');
