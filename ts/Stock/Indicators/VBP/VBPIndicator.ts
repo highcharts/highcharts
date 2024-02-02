@@ -730,9 +730,7 @@ class VBPIndicator extends SMAIndicator {
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,
             volumeXData = volumeSeries.getColumn('x', true),
-            volumeYData: Array<number> = (
-                volumeSeries.processedYData as any
-            ),
+            volumeYData = volumeSeries.getColumn('y', true),
             lastZoneIndex: number = priceZones.length - 1,
             baseSeriesLength: number = yValues.length,
             volumeSeriesLength: number = volumeYData.length;

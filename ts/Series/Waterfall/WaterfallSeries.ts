@@ -143,9 +143,11 @@ class WaterfallSeries extends ColumnSeries {
         // Parent call:
         ColumnSeries.prototype.generatePoints.apply(this);
 
+        const processedYData = this.getColumn('y', true);
+
         for (let i = 0, len = this.points.length; i < len; i++) {
             const point = this.points[i],
-                y = this.processedYData[i];
+                y = processedYData[i];
 
             // Override point value for sums. #3710 Update point does not
             // propagate to sum
@@ -626,7 +628,8 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,
-        actualStack = yAxis.waterfall.stacks[series.stackKey];
+        actualStack = yAxis.waterfall.stacks[series.stackKey],
+        processedYData = series.getColumn('y', true);
 
     let previousIntermediate = threshold,
         previousY = threshold,
@@ -637,7 +640,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
-            yValue = series.processedYData[i] as number,
+            yValue = processedYData[i],
             shapeArgs = point.shapeArgs,
             box: BBoxObject = extend({
                 x: 0,

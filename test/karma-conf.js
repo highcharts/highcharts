@@ -367,13 +367,15 @@ module.exports = function (config) {
         },
 
         formatError: function (s) {
-            let ret = s.replace(
-                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
-                (a, b, c) => (
-                    `http://localhost:3030/samples/#test/${c}`.cyan + '\n\t' +
-                    a.replace(/^@/, '@ ')
+            let ret = s
+                .replace(
+                    /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                    (a, b, c) => (
+                        `http://localhost:3030/samples/#test/${c}`.cyan + '\n\t' +
+                        a.replace(/^@/, '@ ')
+                    )
                 )
-            );
+                .replace(/\@code\//g, '@ code/');
 
             // Insert link to utils
             /*

@@ -370,46 +370,27 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#processData
      */
     function afterProcessData(this: Series): void {
-        const series = this;
-
-        if (
-            series.xAxis && // not pies
-            series.processedYData &&
-            series.dataModify
-        ) {
-            const processedXData = series.useDataTable ?
-                    (
-                        series.table.modified
-                            .getColumn('x', true) as Array<number> ||
-                        []
-                    ) :
-                    series.processedXData,
-                processedYData = series.processedYData,
-                length = series.useDataTable ?
-                    series.table.rowCount :
-                    processedYData.length,
-                compareStart = series.options.compareStart === true ? 0 : 1;
-            let key: string|undefined,
-                keyIndex = -1,
-                i;
+        const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
             // against close or the pointValKey (#4922, #3112, #9854)
-            if (series.pointArrayMap) {
-                key = series.options.pointValKey || series.pointValKey || 'y';
-                keyIndex = series.pointArrayMap.indexOf(key);
-            }
+            compareColumn = this.getColumn((
+                series.pointArrayMap &&
+                (series.options.pointValKey || series.pointValKey)
+            ) || 'y', true);
 
-            // find the first value for comparison
-            for (i = 0; i < length - compareStart; i++) {
-                const compareValue = series.useDataTable ?
-                    (series.table.modified || series.table)
-                        .columns[key || 'y']?.[i] :
-                    (
-                        processedYData[i] && keyIndex > -1 ?
-                            (processedYData[i] as any)[keyIndex] :
-                            processedYData[i]
-                    );
+        if (
+            series.xAxis && // Not pies
+            compareColumn.length &&
+            series.dataModify
+        ) {
+            const processedXData = series.getColumn('x', true),
+                length = series.table.rowCount,
+                compareStart = series.options.compareStart === true ? 0 : 1;
+
+            // Find the first value for comparison
+            for (let i = 0; i < length - compareStart; i++) {
+                const compareValue = compareColumn[i];
 
                 if (
                     isNumber(compareValue) &&

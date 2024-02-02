@@ -1996,8 +1996,8 @@ class Series {
         if (!series.useDataTable) {
             series.processedXData = processedData.xData;
         }
-
         series.processedYData = processedData.yData;
+
         series.closestPointRange = (
             series.basePointRange = processedData.closestPointRange
         );
