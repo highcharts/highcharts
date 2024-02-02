@@ -93,7 +93,7 @@ async function scriptsDTS() {
     for (const bundleDtsFile of bundleDtsFiles) {
         fs.writeFileSync(
             path.join(
-                bundleDtsFile.indexOf('datagrid') > -1 ? bundleTargetFolderDataGrid : bundleTargetFolder,
+                bundleDtsFile.includes('datagrid') ? bundleTargetFolderDataGrid : bundleTargetFolder,
                 path
                     .relative(bundleDtsFolder, bundleDtsFile)
                     .replace(/\.src\.d\.ts$/u, '.d.ts')

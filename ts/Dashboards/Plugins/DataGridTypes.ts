@@ -22,7 +22,7 @@
  *
  * */
 
-import type * as D from 'datagrid';
+import type * as D from '@highcharts/datagrid';
 
 export type DataGrid = D.DataGrid;
 
