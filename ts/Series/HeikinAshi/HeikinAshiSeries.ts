@@ -74,7 +74,11 @@ function onHeikinAshiSeriesAfterTranslate(
         cropStart = series.cropStart || 0;
 
     // Reset the proccesed data.
-    series.processedYData.length = 0;
+    // Note: Don't know why this is needed. All tests pass when using data
+    // table, without resetting.
+    if (!series.useDataTable) {
+        series.processedYData.length = 0;
+    }
 
     // Modify points.
     for (let i = 0; i < points.length; i++) {
@@ -86,10 +90,13 @@ function onHeikinAshiSeriesAfterTranslate(
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
 
-        series.processedYData.push(
-            [point.open, point.high, point.low, point.close]
-        );
+        if (!series.useDataTable) {
+            series.processedYData.push(
+                [point.open, point.high, point.low, point.close]
+            );
+        }
     }
+
 }
 
 /**
@@ -190,9 +197,10 @@ class HeikinAshiSeries extends CandlestickSeries {
      */
     public getHeikinashiData(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData,
             table = series.allGroupedTable || series.table,
-            columns = table.columns,
+            processedYData = series.useDataTable ?
+                table.getColumn('y') || [] :
+                series.allGroupedData || series.yData,
             dataLength = series.useDataTable ?
                 table.rowCount :
                 processedYData?.length,
