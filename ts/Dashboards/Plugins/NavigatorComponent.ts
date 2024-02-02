@@ -86,45 +86,45 @@ function crossfilterEmitter(
     const afterSetExtremes = async (
         extremes: Axis.ExtremesObject
     ): Promise<void> => {
-        if (component.connector) {
-            const table = component.connector.table,
-                dataCursor = component.board.dataCursor,
-                filterColumn = component.getColumnAssignment()[0],
-                [min, max] = component.getAxisExtremes();
+        // if (component.connector) {
+        //     const table = component.connector.table,
+        //         dataCursor = component.board.dataCursor,
+        //         filterColumn = component.getColumnAssignment()[0],
+        //         [min, max] = component.getAxisExtremes();
 
-            let modifier = table.getModifier();
+        //     let modifier = table.getModifier();
 
-            if (modifier instanceof RangeModifier) {
-                setRangeOptions(
-                    modifier.options.ranges,
-                    filterColumn,
-                    min,
-                    max
-                );
-            } else {
-                modifier = new RangeModifier({
-                    ranges: [{
-                        column: filterColumn,
-                        maxValue: max,
-                        minValue: min
-                    }]
-                });
-            }
+        //     if (modifier instanceof RangeModifier) {
+        //         setRangeOptions(
+        //             modifier.options.ranges,
+        //             filterColumn,
+        //             min,
+        //             max
+        //         );
+        //     } else {
+        //         modifier = new RangeModifier({
+        //             ranges: [{
+        //                 column: filterColumn,
+        //                 maxValue: max,
+        //                 minValue: min
+        //             }]
+        //         });
+        //     }
 
-            await table.setModifier(modifier);
+        //     await table.setModifier(modifier);
 
-            dataCursor.emitCursor(
-                table,
-                {
-                    type: 'range',
-                    columns: [filterColumn],
-                    firstRow: 0,
-                    lastRow: table.getRowCount() - 1,
-                    state: 'crossfilter'
-                },
-                extremes as unknown as Event
-            );
-        }
+        //     dataCursor.emitCursor(
+        //         table,
+        //         {
+        //             type: 'range',
+        //             columns: [filterColumn],
+        //             firstRow: 0,
+        //             lastRow: table.getRowCount() - 1,
+        //             state: 'crossfilter'
+        //         },
+        //         extremes as unknown as Event
+        //     );
+        // }
     };
 
     let delay: number;
@@ -149,34 +149,34 @@ function extremesEmitter(
     const afterSetExtremes = (
         extremes: Axis.ExtremesObject
     ): void => {
-        if (component.connector) {
-            const table = component.connector.table,
-                dataCursor = component.board.dataCursor,
-                filterColumn = component.getColumnAssignment()[0],
-                [min, max] = component.getAxisExtremes();
+        // if (component.connector) {
+        //     const table = component.connector.table,
+        //         dataCursor = component.board.dataCursor,
+        //         filterColumn = component.getColumnAssignment()[0],
+        //         [min, max] = component.getAxisExtremes();
 
-            dataCursor.emitCursor(
-                table,
-                {
-                    type: 'position',
-                    column: filterColumn,
-                    row: table.getRowIndexBy(filterColumn, min),
-                    state: 'xAxis.extremes.min'
-                },
-                extremes as unknown as Event
-            );
+        //     dataCursor.emitCursor(
+        //         table,
+        //         {
+        //             type: 'position',
+        //             column: filterColumn,
+        //             row: table.getRowIndexBy(filterColumn, min),
+        //             state: 'xAxis.extremes.min'
+        //         },
+        //         extremes as unknown as Event
+        //     );
 
-            dataCursor.emitCursor(
-                table,
-                {
-                    type: 'position',
-                    column: filterColumn,
-                    row: table.getRowIndexBy(filterColumn, max),
-                    state: 'xAxis.extremes.max'
-                },
-                extremes as unknown as Event
-            );
-        }
+        //     dataCursor.emitCursor(
+        //         table,
+        //         {
+        //             type: 'position',
+        //             column: filterColumn,
+        //             row: table.getRowIndexBy(filterColumn, max),
+        //             state: 'xAxis.extremes.max'
+        //         },
+        //         extremes as unknown as Event
+        //     );
+        // }
     };
 
     let delay: number;
@@ -200,101 +200,101 @@ function extremesReceiver(
         dataCursor = component.board.dataCursor;
 
     const extremesListener = (e: DataCursor.Event): void => {
-        const cursor = e.cursor;
+        // const cursor = e.cursor;
 
-        if (!component.connector) {
-            return;
-        }
+        // if (!component.connector) {
+        //     return;
+        // }
 
-        const table = component.connector.table;
+        // const table = component.connector.table;
 
-        // assume first column with unique keys as fallback
-        let extremesColumn = table.getColumnNames()[0],
-            maxIndex = table.getRowCount(),
-            minIndex = 0;
+        // // assume first column with unique keys as fallback
+        // let extremesColumn = table.getColumnNames()[0],
+        //     maxIndex = table.getRowCount(),
+        //     minIndex = 0;
 
-        if (cursor.type === 'range') {
-            maxIndex = cursor.lastRow;
-            minIndex = cursor.firstRow;
+        // if (cursor.type === 'range') {
+        //     maxIndex = cursor.lastRow;
+        //     minIndex = cursor.firstRow;
 
-            if (cursor.columns) {
-                extremesColumn = pick(cursor.columns[0], extremesColumn);
-            }
-        } else if (cursor.state === 'xAxis.extremes.max') {
-            extremesColumn = pick(cursor.column, extremesColumn);
-            maxIndex = pick(cursor.row, maxIndex);
-        } else {
-            extremesColumn = pick(cursor.column, extremesColumn);
-            minIndex = pick(cursor.row, minIndex);
-        }
+        //     if (cursor.columns) {
+        //         extremesColumn = pick(cursor.columns[0], extremesColumn);
+        //     }
+        // } else if (cursor.state === 'xAxis.extremes.max') {
+        //     extremesColumn = pick(cursor.column, extremesColumn);
+        //     maxIndex = pick(cursor.row, maxIndex);
+        // } else {
+        //     extremesColumn = pick(cursor.column, extremesColumn);
+        //     minIndex = pick(cursor.row, minIndex);
+        // }
 
-        const modifier = table.getModifier();
+        // const modifier = table.getModifier();
 
-        if (
-            typeof extremesColumn === 'string' &&
-            modifier instanceof RangeModifier
-        ) {
-            const ranges = modifier.options.ranges,
-                min = table.getCell(extremesColumn, minIndex),
-                max = table.getCell(extremesColumn, maxIndex);
+        // if (
+        //     typeof extremesColumn === 'string' &&
+        //     modifier instanceof RangeModifier
+        // ) {
+        //     const ranges = modifier.options.ranges,
+        //         min = table.getCell(extremesColumn, minIndex),
+        //         max = table.getCell(extremesColumn, maxIndex);
 
-            if (
-                max !== null && typeof max !== 'undefined' &&
-                min !== null && typeof min !== 'undefined'
-            ) {
-                unsetRangeOptions(ranges, extremesColumn);
-                ranges.unshift({
-                    column: extremesColumn,
-                    maxValue: max,
-                    minValue: min
-                });
-                table.setModifier(modifier);
-            }
-        }
+        //     if (
+        //         max !== null && typeof max !== 'undefined' &&
+        //         min !== null && typeof min !== 'undefined'
+        //     ) {
+        //         unsetRangeOptions(ranges, extremesColumn);
+        //         ranges.unshift({
+        //             column: extremesColumn,
+        //             maxValue: max,
+        //             minValue: min
+        //         });
+        //         table.setModifier(modifier);
+        //     }
+        // }
     };
 
     const registerCursorListeners = (): void => {
-        const table = component.connector && component.connector.table;
+        // const table = component.connector && component.connector.table;
 
-        if (table) {
-            dataCursor.addListener(
-                table.id,
-                'xAxis.extremes',
-                extremesListener
-            );
-            dataCursor.addListener(
-                table.id,
-                'xAxis.extremes.max',
-                extremesListener
-            );
-            dataCursor.addListener(
-                table.id,
-                'xAxis.extremes.min',
-                extremesListener
-            );
-        }
+        // if (table) {
+        //     dataCursor.addListener(
+        //         table.id,
+        //         'xAxis.extremes',
+        //         extremesListener
+        //     );
+        //     dataCursor.addListener(
+        //         table.id,
+        //         'xAxis.extremes.max',
+        //         extremesListener
+        //     );
+        //     dataCursor.addListener(
+        //         table.id,
+        //         'xAxis.extremes.min',
+        //         extremesListener
+        //     );
+        // }
     };
 
     const unregisterCursorListeners = (): void => {
-        const table = component.connector && component.connector.table;
+        // const table = component.connector && component.connector.table;
 
-        if (table) {
-            dataCursor.removeListener(
-                table.id,
-                'xAxis.extremes',
-                extremesListener
-            );
-            dataCursor.removeListener(
-                table.id,
-                'xAxis.extremes.max',
-                extremesListener
-            );
-            dataCursor.removeListener(
-                table.id,
-                'xAxis.extremes.min',
-                extremesListener
-            );
-        }
+        // if (table) {
+        //     dataCursor.removeListener(
+        //         table.id,
+        //         'xAxis.extremes',
+        //         extremesListener
+        //     );
+        //     dataCursor.removeListener(
+        //         table.id,
+        //         'xAxis.extremes.max',
+        //         extremesListener
+        //     );
+        //     dataCursor.removeListener(
+        //         table.id,
+        //         'xAxis.extremes.min',
+        //         extremesListener
+        //     );
+        // }
     };
 
     registerCursorListeners();
@@ -577,13 +577,13 @@ class NavigatorComponent extends Component {
             }
         }
 
-        if (this.connector) {
-            const columns = this.connector.table.getColumnNames();
+        // if (this.connector) {
+        //     const columns = this.connector.table.getColumnNames();
 
-            if (columns.length) {
-                return [columns[0], 'y'];
-            }
-        }
+        //     if (columns.length) {
+        //         return [columns[0], 'y'];
+        //     }
+        // }
 
         return ['', 'y'];
     }
@@ -688,30 +688,30 @@ class NavigatorComponent extends Component {
         const chart = this.chart;
 
         if (this.connector) {
-            const table = this.connector.table,
-                options = this.options,
-                column = this.getColumnAssignment(),
-                columnValues = table.getColumn(column[0], true) || [],
-                crossfilterOptions = options.sync?.crossfilter;
+            // const table = this.connector.table,
+            //     options = this.options,
+            //     column = this.getColumnAssignment(),
+            //     columnValues = table.getColumn(column[0], true) || [],
+            //     crossfilterOptions = options.sync?.crossfilter;
 
-            let data: (
-                Array<(number|string|null)>|
-                Array<[number|string, number|null]>
-            );
+            // let data: (
+            //     Array<(number|string|null)>|
+            //     Array<[number|string, number|null]>
+            // );
 
-            if (crossfilterOptions === true || (
-                isObject(crossfilterOptions) && crossfilterOptions.enabled
-            )) {
-                data = this.generateCrossfilterData();
-            } else {
-                data = columnValues.slice() as Array<string|number|null>;
-            }
+            // if (crossfilterOptions === true || (
+            //     isObject(crossfilterOptions) && crossfilterOptions.enabled
+            // )) {
+            //     data = this.generateCrossfilterData();
+            // } else {
+            //     data = columnValues.slice() as Array<string|number|null>;
+            // }
 
-            if (!chart.series[0]) {
-                chart.addSeries({ id: table.id, data }, false);
-            } else {
-                chart.series[0].setData(data, false);
-            }
+            // if (!chart.series[0]) {
+            //     chart.addSeries({ id: table.id, data }, false);
+            // } else {
+            //     chart.series[0].setData(data, false);
+            // }
         }
 
         this.redrawNavigator();
@@ -721,121 +721,123 @@ class NavigatorComponent extends Component {
     /**
      * Generates the data for the crossfilter navigator.
      */
-    private generateCrossfilterData(): [number, number | null][] {
+    private generateCrossfilterData(): any {
         let crossfilterOptions = this.options.sync?.crossfilter;
-        const table = this.connector?.table;
-        const columnValues = table?.getColumn(
-            this.getColumnAssignment()[0], true
-        ) || [];
+        // const table = this.connector?.table;
+        // const columnValues = table?.getColumn(
+        //     this.getColumnAssignment()[0], true
+        // ) || [];
+        // const table = void 0;
+        // const columnValues = [];
 
-        // TODO: Remove this when merging to v2.
-        if (crossfilterOptions === true) {
-            crossfilterOptions = {
-                affectNavigator: false
-            };
-        }
+        // // TODO: Remove this when merging to v2.
+        // if (crossfilterOptions === true) {
+        //     crossfilterOptions = {
+        //         affectNavigator: false
+        //     };
+        // }
 
-        if (
-            !table ||
-            columnValues.length < 1 ||
-            !isObject(crossfilterOptions)
-        ) {
-            return [];
-        }
+        // if (
+        //     !table ||
+        //     columnValues.length < 1 ||
+        //     !isObject(crossfilterOptions)
+        // ) {
+        //     return [];
+        // }
 
-        const values: (number | string)[] = [];
-        const uniqueXValues: (number | string)[] = [];
-        for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
-            let value = columnValues[i];
+        // const values: (number | string)[] = [];
+        // const uniqueXValues: (number | string)[] = [];
+        // for (let i = 0, iEnd = columnValues.length; i < iEnd; i++) {
+        //     let value = columnValues[i];
 
-            if (value === null) {
-                continue;
-            } else if (!isNumber(value)) {
-                value = `${value}`;
-            }
+        //     if (value === null) {
+        //         continue;
+        //     } else if (!isNumber(value)) {
+        //         value = `${value}`;
+        //     }
 
-            // Check if the x-axis data is not of mixed type.
-            if (this.stringData === void 0) {
-                this.stringData = isString(value);
-            } else if (this.stringData !== isString(value)) {
-                throw new Error(
-                    'Mixed data types in crossfilter navigator are ' +
-                    'not supported.'
-                );
-            }
+        //     // Check if the x-axis data is not of mixed type.
+        //     if (this.stringData === void 0) {
+        //         this.stringData = isString(value);
+        //     } else if (this.stringData !== isString(value)) {
+        //         throw new Error(
+        //             'Mixed data types in crossfilter navigator are ' +
+        //             'not supported.'
+        //         );
+        //     }
 
-            values.push(value);
-            if (uniqueXValues.indexOf(value) === -1) {
-                uniqueXValues.push(value);
-            }
-        }
+        //     values.push(value);
+        //     if (uniqueXValues.indexOf(value) === -1) {
+        //         uniqueXValues.push(value);
+        //     }
+        // }
 
-        uniqueXValues.sort((a, b): number => (
-            pick(a, NaN) < pick(b, NaN) ? -1 : a === b ? 0 : 1
-        ));
+        // uniqueXValues.sort((a, b): number => (
+        //     pick(a, NaN) < pick(b, NaN) ? -1 : a === b ? 0 : 1
+        // ));
 
-        let filteredValues: (number | string)[];
+        // let filteredValues: (number | string)[];
 
-        const modifierOptions = table.getModifier()?.options;
-        if (crossfilterOptions.affectNavigator && modifierOptions) {
-            const appliedRanges: RangeModifierRangeOptions[] = [],
-                rangedColumns: DataTable.Column[] = [],
-                { ranges } = (modifierOptions as RangeModifierOptions);
+        // const modifierOptions = table.getModifier()?.options;
+        // if (crossfilterOptions.affectNavigator && modifierOptions) {
+        //     const appliedRanges: RangeModifierRangeOptions[] = [],
+        //         rangedColumns: DataTable.Column[] = [],
+        //         { ranges } = (modifierOptions as RangeModifierOptions);
 
-            for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
-                if (ranges[i].column !== this.getColumnAssignment()[0]) {
-                    appliedRanges.push(ranges[i]);
-                    rangedColumns.push(table.getColumn(
-                        ranges[i].column, true
-                    ) || []);
-                }
-            }
+        //     for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
+        //         if (ranges[i].column !== this.getColumnAssignment()[0]) {
+        //             appliedRanges.push(ranges[i]);
+        //             rangedColumns.push(table.getColumn(
+        //                 ranges[i].column, true
+        //             ) || []);
+        //         }
+        //     }
 
-            filteredValues = [];
-            const appliedRagesLength = appliedRanges.length;
-            for (let i = 0, iEnd = values.length; i < iEnd; i++) {
-                const value = values[i];
+        //     filteredValues = [];
+        //     const appliedRagesLength = appliedRanges.length;
+        //     for (let i = 0, iEnd = values.length; i < iEnd; i++) {
+        //         const value = values[i];
 
-                let allConditionsMet = true;
-                for (let j = 0; j < appliedRagesLength; j++) {
-                    const range = appliedRanges[j];
-                    if (!(
-                        rangedColumns[j][i] as string|number|boolean >=
-                            (range.minValue ?? -Infinity) &&
-                        rangedColumns[j][i] as string|number|boolean <=
-                            (range.maxValue ?? Infinity)
-                    )) {
-                        allConditionsMet = false;
-                        break;
-                    }
-                }
+        //         let allConditionsMet = true;
+        //         for (let j = 0; j < appliedRagesLength; j++) {
+        //             const range = appliedRanges[j];
+        //             if (!(
+        //                 rangedColumns[j][i] as string|number|boolean >=
+        //                     (range.minValue ?? -Infinity) &&
+        //                 rangedColumns[j][i] as string|number|boolean <=
+        //                     (range.maxValue ?? Infinity)
+        //             )) {
+        //                 allConditionsMet = false;
+        //                 break;
+        //             }
+        //         }
 
-                if (allConditionsMet) {
-                    filteredValues.push(value);
-                }
-            }
-        } else {
-            filteredValues = values;
-        }
+        //         if (allConditionsMet) {
+        //             filteredValues.push(value);
+        //         }
+        //     }
+        // } else {
+        //     filteredValues = values;
+        // }
 
-        const seriesData: [number, number | null][] = [];
-        if (this.stringData) {
-            this.categories = uniqueXValues as string[];
-            for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
-                seriesData.push([i, null]);
-            }
-        } else {
-            for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
-                seriesData.push([uniqueXValues[i] as number, null]);
-            }
-        }
+        // const seriesData: [number, number | null][] = [];
+        // if (this.stringData) {
+        //     this.categories = uniqueXValues as string[];
+        //     for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
+        //         seriesData.push([i, null]);
+        //     }
+        // } else {
+        //     for (let i = 0, iEnd = uniqueXValues.length; i < iEnd; i++) {
+        //         seriesData.push([uniqueXValues[i] as number, null]);
+        //     }
+        // }
 
-        for (let i = 0, iEnd = filteredValues.length; i < iEnd; i++) {
-            const index = uniqueXValues.indexOf(filteredValues[i]);
-            seriesData[index][1] = (seriesData[index][1] || 0) + 1;
-        }
+        // for (let i = 0, iEnd = filteredValues.length; i < iEnd; i++) {
+        //     const index = uniqueXValues.indexOf(filteredValues[i]);
+        //     seriesData[index][1] = (seriesData[index][1] || 0) + 1;
+        // }
 
-        return seriesData;
+        // return seriesData;
     }
 
 

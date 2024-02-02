@@ -57,34 +57,34 @@ const configs: {
                             return;
                         }
 
-                        callbacks.push(
-                            addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
-                                const table = this.connector && this.connector.table;
-                                if (table) {
-                                    const row = e.row;
-                                    const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
+                        // callbacks.push(
+                        //     addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
+                        //         const table = this.connector && this.connector.table;
+                        //         if (table) {
+                        //             const row = e.row;
+                        //             const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
 
-                                    cursor.emitCursor(table, {
-                                        type: 'position',
-                                        row: parseInt(row.dataset.rowIndex, 10),
-                                        column: cell ? cell.dataset.columnName : void 0,
-                                        state: 'dataGrid.hoverRow'
-                                    });
-                                }
-                            })
-                        );
+                        //             cursor.emitCursor(table, {
+                        //                 type: 'position',
+                        //                 row: parseInt(row.dataset.rowIndex, 10),
+                        //                 column: cell ? cell.dataset.columnName : void 0,
+                        //                 state: 'dataGrid.hoverRow'
+                        //             });
+                        //         }
+                        //     })
+                        // );
 
-                        callbacks.push(
-                            addEvent(dataGrid.container, 'mouseout', (): void => {
-                                const table = this.connector && this.connector.table;
-                                if (table) {
-                                    cursor.emitCursor(table, {
-                                        type: 'position',
-                                        state: 'dataGrid.hoverOut'
-                                    });
-                                }
-                            })
-                        );
+                        // callbacks.push(
+                        //     addEvent(dataGrid.container, 'mouseout', (): void => {
+                        //         const table = this.connector && this.connector.table;
+                        //         if (table) {
+                        //             cursor.emitCursor(table, {
+                        //                 type: 'position',
+                        //                 state: 'dataGrid.hoverOut'
+                        //             });
+                        //         }
+                        //     })
+                        // );
 
                         // Return a function that calls the callbacks
                         return function (): void {
@@ -133,23 +133,23 @@ const configs: {
                     if (!cursor) {
                         return;
                     }
-                    const table = this.connector && this.connector.table;
-                    if (!table) {
-                        return;
-                    }
+                    // const table = this.connector && this.connector.table;
+                    // if (!table) {
+                    //     return;
+                    // }
 
-                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
-                    cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+                    // cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    // cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
                 };
 
                 const unregisterCursorListeners = (): void => {
                     const cursor = board.dataCursor;
-                    const table = this.connector && this.connector.table;
-                    if (!table) {
-                        return;
-                    }
-                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
-                    cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+                    // const table = this.connector && this.connector.table;
+                    // if (!table) {
+                    //     return;
+                    // }
+                    // cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    // cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
 
                 };
 
@@ -183,24 +183,24 @@ const configs: {
                 if (!cursor) {
                     return;
                 }
-                const table = this.connector && this.connector.table;
+                // const table = this.connector && this.connector.table;
 
-                if (!table) {
-                    return;
-                }
+                // if (!table) {
+                //     return;
+                // }
 
-                cursor.addListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
+                // cursor.addListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
             };
 
             const unregisterCursorListeners = (): void => {
-                const table = this.connector && this.connector.table;
-                const { dataCursor: cursor } = board;
+                // const table = this.connector && this.connector.table;
+                // const { dataCursor: cursor } = board;
 
-                if (!table) {
-                    return;
-                }
+                // if (!table) {
+                //     return;
+                // }
 
-                cursor.removeListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
+                // cursor.removeListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
             };
 
 
@@ -238,26 +238,26 @@ const configs: {
                 if (!cursor) {
                     return;
                 }
-                const table = this.connector && this.connector.table;
+                // const table = this.connector && this.connector.table;
 
-                if (!table) {
-                    return;
-                }
+                // if (!table) {
+                //     return;
+                // }
 
-                cursor.addListener(table.id, 'series.show', handleVisibilityChange);
-                cursor.addListener(table.id, 'series.hide', handleVisibilityChange);
+                // cursor.addListener(table.id, 'series.show', handleVisibilityChange);
+                // cursor.addListener(table.id, 'series.hide', handleVisibilityChange);
             };
 
             const unregisterCursorListeners = (): void => {
-                const table = this.connector && this.connector.table;
-                const { dataCursor: cursor } = board;
+                // const table = this.connector && this.connector.table;
+                // const { dataCursor: cursor } = board;
 
-                if (!table) {
-                    return;
-                }
+                // if (!table) {
+                //     return;
+                // }
 
-                cursor.removeListener(table.id, 'series.show', handleVisibilityChange);
-                cursor.removeListener(table.id, 'series.hide', handleVisibilityChange);
+                // cursor.removeListener(table.id, 'series.show', handleVisibilityChange);
+                // cursor.removeListener(table.id, 'series.hide', handleVisibilityChange);
             };
 
 

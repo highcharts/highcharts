@@ -458,13 +458,13 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        if (this.connector && this.options.columnName) {
-            const table = this.connector?.table.modified,
-                column = table.getColumn(this.options.columnName),
-                length = column?.length || 0;
+        // if (this.connector && this.options.columnName) {
+        //     const table = this.connector?.table.modified,
+        //         column = table.getColumn(this.options.columnName),
+        //         length = column?.length || 0;
 
-            return table.getCellAsString(this.options.columnName, length - 1);
-        }
+        //     return table.getCellAsString(this.options.columnName, length - 1);
+        // }
     }
 
     /**
@@ -682,9 +682,9 @@ class KPIComponent extends Component {
         if (connectorsIds.length) {
             options = {
                 ...options,
-                connector: {
+                connector: [{
                     id: connectorsIds[0]
-                }
+                }]
             };
         }
 

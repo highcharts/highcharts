@@ -46,20 +46,20 @@ const configs: {
 
                 const handleChangeExtremes = (e: DataCursor.Event): void => {
                     const cursor = e.cursor;
-                    if (
-                        cursor.type === 'position' &&
-                        typeof cursor?.row === 'number' &&
-                        defined(cursor.column) &&
-                        this.connector &&
-                        !defined(this.options.value)
-                    ) {
-                        const value =
-                            this.connector.table.modified.getCellAsString(
-                                cursor.column,
-                                cursor.row
-                            );
-                        this.setValue(value);
-                    }
+                    // if (
+                    //     cursor.type === 'position' &&
+                    //     typeof cursor?.row === 'number' &&
+                    //     defined(cursor.column) &&
+                    //     this.connector &&
+                    //     !defined(this.options.value)
+                    // ) {
+                    //     const value =
+                    //         this.connector.table.modified.getCellAsString(
+                    //             cursor.column,
+                    //             cursor.row
+                    //         );
+                    //     this.setValue(value);
+                    // }
 
                 };
 
@@ -69,32 +69,32 @@ const configs: {
                     if (!cursor) {
                         return;
                     }
-                    const table = this.connector && this.connector.table;
+                    // const table = this.connector && this.connector.table;
 
-                    if (!table) {
-                        return;
-                    }
+                    // if (!table) {
+                    //     return;
+                    // }
 
-                    cursor.addListener(
-                        table.id,
-                        'xAxis.extremes.max',
-                        handleChangeExtremes
-                    );
+                    // cursor.addListener(
+                    //     table.id,
+                    //     'xAxis.extremes.max',
+                    //     handleChangeExtremes
+                    // );
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connector && this.connector.table;
-                    const { dataCursor: cursor } = board;
+                    // const table = this.connector && this.connector.table;
+                    // const { dataCursor: cursor } = board;
 
-                    if (!table) {
-                        return;
-                    }
+                    // if (!table) {
+                    //     return;
+                    // }
 
-                    cursor.removeListener(
-                        table.id,
-                        'xAxis.extremes.max',
-                        handleChangeExtremes
-                    );
+                    // cursor.removeListener(
+                    //     table.id,
+                    //     'xAxis.extremes.max',
+                    //     handleChangeExtremes
+                    // );
                 };
 
 
