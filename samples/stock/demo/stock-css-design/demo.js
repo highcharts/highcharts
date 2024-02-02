@@ -1,5 +1,4 @@
 (async () => {
-
     // Load the dataset
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
@@ -28,8 +27,6 @@
 
     Highcharts.stockChart('container', {
         xAxis: {
-            gridLineWidth: 1,
-            gridLineColor: 'black',
             crosshair: {
                 className: 'highcharts-crosshair-custom',
                 enabled: true
@@ -76,10 +73,8 @@
             split: false,
             shared: true,
             headerShape: 'callout',
-            borderWidth: 0,
             shadow: false,
             formatter: function () {
-
                 const point = this.points[0].point;
                 const color = point.open > point.close ? '#ff4242' : '#51af7b';
                 // @eslint-ignore max-len
