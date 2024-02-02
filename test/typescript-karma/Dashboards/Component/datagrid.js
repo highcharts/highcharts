@@ -5,10 +5,9 @@ import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
-
-skip('DataGrid component with dataTable', async function (assert) {
+test('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
