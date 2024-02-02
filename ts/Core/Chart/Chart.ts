@@ -1555,8 +1555,8 @@ class Chart {
 
         // get the width and height
         chart.getChartSize();
-        const chartWidth = chart.chartWidth;
         const chartHeight = chart.chartHeight;
+        let chartWidth = chart.chartWidth;
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
@@ -1599,6 +1599,18 @@ class Chart {
         );
         chart.container = container;
 
+        // Adjust width if setting height affected it (#20334)
+        chart.getChartSize();
+        if (chartWidth !== chart.chartWidth) {
+            chartWidth = chart.chartWidth;
+            if (!chart.styledMode) {
+                css(container, {
+                    width: pick(optionsChart.style?.width, chartWidth + 'px')
+                });
+            }
+        }
+        chart.containerBox = chart.getContainerBox();
+
         // cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
 
@@ -1623,8 +1635,6 @@ class Chart {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
-
-        chart.containerBox = chart.getContainerBox();
 
         // Set the initial animation from the options
         setAnimation(void 0, chart);
