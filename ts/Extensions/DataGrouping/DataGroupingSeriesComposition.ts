@@ -347,15 +347,9 @@ function applyGrouping(
     const table = dataGroupingOptions.groupAll ?
             series.table :
             series.table.modified || series.table,
-        processedXData = dataGroupingOptions.groupAll ?
-            series.xData :
-            series.processedXData,
-        xData = series.useDataTable ?
-            table.columns.x as Array<number> :
-            processedXData,
-        processedYData = (dataGroupingOptions as any).groupAll ?
-            series.yData :
-            series.processedYData,
+        processedXData = series.getColumn('x', !dataGroupingOptions.groupAll),
+        processedYData = series.getColumn('y', !dataGroupingOptions.groupAll),
+        xData = processedXData,
         plotSizeX = chart.plotSizeX,
         xAxis = series.xAxis,
         ordinal = xAxis.options.ordinal,

@@ -268,7 +268,7 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].x,
         0.2 * hour,
-        `When the smoothed enabled, the first point 
+        `When the smoothed enabled, the first point
         should be placed where the first group point is.`
     );
     assert.strictEqual(

@@ -1993,7 +1993,9 @@ class Series {
         table.modified = processedData.modified || table;
         series.cropped = processedData.cropped; // undefined or true
         series.cropStart = processedData.cropStart;
+        // if (!series.useDataTable)
         series.processedXData = processedData.xData;
+
         series.processedYData = processedData.yData;
         series.closestPointRange = (
             series.basePointRange = processedData.closestPointRange
