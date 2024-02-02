@@ -184,13 +184,13 @@ const topLevelCellLayout = {
 const kpiCellLayout = {
     responsive: {
         large: {
-            width: '1/2'
+            width: '1/3'
         },
         medium: {
-            width: '1/2'
+            width: '1/3'
         },
         small: {
-            width: '1/2'
+            width: '100%'
         }
     },
     height: '204px'
@@ -229,9 +229,22 @@ async function setupDashboard() {
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-data',
-                                    ...kpiCellLayout
-                                }, {
+                                    id: 'html-geo-info',
+                                    responsive: {
+                                        large: {
+                                            width: '100%'
+                                        },
+                                        medium: {
+                                            width: '100%'
+                                        },
+                                        small: {
+                                            width: '100%'
+                                        }
+                                    },
+                                    height: '204px'
+                                }]
+                            }, {
+                                cells: [{
                                     id: 'kpi-temperature',
                                     ...kpiCellLayout
                                 }, {
@@ -376,13 +389,42 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'kpi-data',
-                type: 'KPI',
-                title: activeCity,
-                value: 10,
-                valueFormat: '{value:.0f} m',
-                subtitle: 'Elevation'
-            }, {
+                cell: 'html-geo-info',
+                type: 'HTML',
+                elements: [{
+                    tagName: 'div',
+                    // textContent of children populated dynamically
+                    children: [{
+                        tagName: 'h2'
+                    },
+                    {
+                        tagName: 'div',
+                        attributes: {
+                            id: 'geo-info'
+                        },
+                        children: [{
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lon',
+                                name: 'Longitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lat',
+                                name: 'Latitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'elevation',
+                                name: 'Elevation'
+                            }
+                        }]
+                    }]
+                }]
+            },
+            {
                 cell: 'kpi-temperature',
                 type: 'KPI',
                 columnName: 'temperature',
@@ -779,7 +821,7 @@ async function updateBoard(board, city, paramName,
         // The order here must be the same as in the component
         // definition in the Dashboard.
         worldMap,
-        kpiGeoData,
+        htmlGeoInfo,
         kpiTemperature,
         kpiWind,
         kpiRain,
@@ -897,14 +939,23 @@ async function updateBoard(board, city, paramName,
             value: getObservation(forecastTable, 'precipitation')
         });
 
-        // Update geo KPI
-        await kpiGeoData.update({
-            title: city,
-            value: citiesTable.getCellAsNumber(
-                'elevation',
-                citiesTable.getRowIndexBy('city', city)
-            )
-        });
+        // Update geo-info HTML
+        const options = htmlGeoInfo.getOptions();
+        const html = options.elements[0];
+        const cityRow = citiesTable.getRowIndexBy('city', city);
+
+        html.children[0].textContent = 'Forecast for ' + city;
+
+        const geoInfo = html.children[1].children;
+        for (let i = 0; i < geoInfo.length; i++) {
+            const attr = geoInfo[i].attributes;
+            const value = citiesTable.getCellAsNumber(attr.id, cityRow);
+            const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
+
+            geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;
+        }
+
+        await htmlGeoInfo.update(options);
 
         // Update grid
         await selectionGrid.update({
