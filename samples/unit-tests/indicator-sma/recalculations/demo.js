@@ -266,7 +266,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         pointsValue,
-        secondChart.series[1].processedYData,
+        secondChart.series[1].getColumn('y', true),
         'Correct points after setData() (#9493)'
     );
 
@@ -291,9 +291,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        secondChart.series[1].useDataTable ?
-            secondChart.series[1].table.modified.columns.y :
-            secondChart.series[1].processedYData,
+        secondChart.series[1].getColumn('y', true),
         [
             212.074,
             212.23000000000002,

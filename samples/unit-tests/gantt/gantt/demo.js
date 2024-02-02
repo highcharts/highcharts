@@ -767,7 +767,7 @@
             'The processedXData should be applied by using the keys feature #13768'
         );
         assert.strictEqual(
-            chart.series[0].processedYData[0] !== undefined,
+            chart.series[0].getColumn('y', true)[0] !== undefined,
             true,
             'The processedYData should be applied by using the keys feature #13768'
         );

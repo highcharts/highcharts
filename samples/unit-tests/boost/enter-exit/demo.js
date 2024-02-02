@@ -204,7 +204,7 @@
             assert.deepEqual(
                 [
                     series.getColumn('x', true).length,
-                    series.processedYData.length
+                    series.getColumn('y', true).length
                 ],
                 [16, 16],
                 'Scatter should have 16 boosted points. (#20433)'
