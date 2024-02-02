@@ -13,7 +13,6 @@
  *  Imports
  *
  * */
-import type { DataColumn, DataColumns, DataTableLight } from '../../../Core/Series/Series';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
@@ -594,11 +593,10 @@ class SMAIndicator extends LineSeries {
             indicator.yData = table.columns.y as Array<number>;
         }
 
-        // Removal of processedXData property is required because on
-        // first translate processedXData array is empty
-        if (indicator.calculateOn.xAxis && indicator.processedXData) {
-            delete (indicator as Partial<typeof indicator>).processedXData;
-
+        if (
+            indicator.calculateOn.xAxis &&
+            indicator.getColumn('x', true).length
+        ) {
             indicator.isDirty = true;
             indicator.redraw();
         }
