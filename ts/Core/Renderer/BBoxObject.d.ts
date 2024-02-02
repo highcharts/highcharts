@@ -28,7 +28,7 @@ export interface BBoxObject extends PositionObject, SizeObject {
     width: number;
     x: number;
     y: number;
-    poly?: { x1: number, y1: number, x2: number, y2: number }[]
+    poly?: { x: number, y: number }[]
 }
 
 /* *

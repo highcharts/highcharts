@@ -279,7 +279,7 @@ class SVGLabel extends SVGElement {
             width = this.width || 0,
             height = this.height || 0;
 
-        let bBox = {
+        let bBox: BBoxObject = {
             width,
             height,
             x: this.bBox.x - paddingLeft,
@@ -292,6 +292,16 @@ class SVGLabel extends SVGElement {
             ) - bBox.y;
 
             bBox = this.getRotatedBox(bBox, rotation, baseline);
+        } else {
+            const { x, y, width, height } = bBox;
+            const right = x + width;
+            const bottom = y + height;
+            bBox.poly = [
+                { x: x, y: y },
+                { x: right, y: y },
+                { x: x, y: bottom },
+                { x: right, y: bottom }
+            ];
         }
 
         return bBox;

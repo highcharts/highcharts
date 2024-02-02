@@ -1549,17 +1549,6 @@ class SVGElement implements SVGElementLike {
                 ) - bBox.y;
 
                 bBox = this.getRotatedBox(bBox, rotation, baseline);
-            } else {
-                const { x, y, width, height } = bBox;
-                const right = x + width;
-                const bottom = y + height;
-
-                bBox.poly = [
-                    { x1: x, x2: right, y1: y, y2: y }, // Top line
-                    { x1: x, x2: right, y1: bottom, y2: bottom }, // bottom line
-                    { x1: right, y1: y, x2: right, y2: bottom }, // right line
-                    { x1: x, y1: y, x2: x, y2: bottom } // left line
-                ];
             }
         }
 
@@ -1576,6 +1565,19 @@ class SVGElement implements SVGElementLike {
                 cacheKeys.push(cacheKey);
             }
             cache[cacheKey] = bBox;
+        }
+
+        if (!bBox.poly) {
+            const { x, y, width, height } = bBox;
+            const right = x + width;
+            const bottom = y + height;
+
+            bBox.poly = [
+                { x: x, y: y },
+                { x: right, y: y },
+                { x: x, y: bottom },
+                { x: right, y: bottom }
+            ];
         }
         return bBox;
     }
@@ -1631,10 +1633,10 @@ class SVGElement implements SVGElementLike {
             width: boxWidth,
             height: boxHeight,
             poly: [
-                { x1: aX, y1: aY, x2: bX, y2: bY },
-                { x1: cX, y1: cY, x2: dX, y2: dY },
-                { x1: aX, y1: aY, x2: cX, y2: cY },
-                { x1: bX, y1: bY, x2: dX, y2: dY }
+                { x: aX, y: aY },
+                { x: bX, y: bY },
+                { x: cX, y: cY },
+                { x: dX, y: dY }
             ]
         };
     }

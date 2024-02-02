@@ -90,61 +90,34 @@ function chartHideOverlappingLabels(
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
         ),
-        vDiff = (v1:Vec, v2:Vec): Vec => ({ x: v2.x - v1.x, y: v2.y - v1.y }),
-        determinant = (
-            v1:Vec,
-            v2:Vec
-        ): number => {
-            const { x: x1, y: y1 } = v1;
-            const { x: x2, y: y2 } = v2;
-            return x1 * y2 - x2 * y1;
+        pointIsInPolygon = (p: Vec, polygon: Vec[]): boolean => {
+            const len = polygon.length,
+                { x: checkpointX, y: checkpointY } = p;
+            let inside = false;
+
+            for (let i = 0, j = len - 1; i < len; j = i++) {
+                const { x: x1, y: y1 } = polygon[i],
+                    { x: x2, y: y2 } = polygon[j];
+
+                if (
+                    (y1 > checkpointY) !== (y2 > checkpointY) && (
+                        checkpointX < (x2 - x1) *
+                        (checkpointY - y1) / (y2 - y1) +
+                        x1
+                    )
+                ) {
+                    inside = !inside;
+                }
+            }
+            return inside;
         },
-        checkEdges = (
-            v1: Vec,
-            v2: Vec,
-            v3: Vec,
-            v4: Vec
-        ): boolean => {
-            const d = determinant(vDiff(v1, v2), vDiff(v4, v3));
-            const t = determinant(vDiff(v1, v3), vDiff(v4, v3)) / d;
-            const u = determinant(vDiff(v1, v2), vDiff(v1, v3)) / d;
-            return ((t < 0) || (u < 0) || (t > 1) || (u > 1));
-        },
-        polygonIntersection = (
-            box1: BBoxObject,
-            box2: BBoxObject
-        ): boolean => {
-            const polygon1 = box1.poly;
-            const polygon2 = box2.poly;
-
-            if (polygon1 && polygon2) {
-
-                for (const subjectLine of polygon1) {
-                    const {
-                        x1: v1x1,
-                        y1: v1y1,
-                        x2: v1x2,
-                        y2: v1y2
-                    } = subjectLine;
-
-                    for (const line of polygon2) {
-                        const {
-                            x1: v2x1,
-                            y1: v2y1,
-                            x2: v2x2,
-                            y2: v2y2
-                        } = line;
-
-                        if (
-                            checkEdges(
-                                { x: v1x1, y: v1y1 },
-                                { x: v1x2, y: v1y2 },
-                                { x: v2x1, y: v2y1 },
-                                { x: v2x2, y: v2y2 }
-                            )
-                        ) {
-                            return true;
-                        }
+        boxCheck = (box1: BBoxObject, box2: BBoxObject): boolean => {
+            const box1Poly = box1.poly,
+                box2Poly = box2.poly;
+            if (box1Poly && box2Poly) {
+                for (const p of box1Poly) {
+                    if (pointIsInPolygon(p, box2Poly)) {
+                        return true;
                     }
                 }
             }
@@ -168,35 +141,38 @@ function chartHideOverlappingLabels(
                 ) + padding,
                 yOffset: number = (
                     label.parentGroup?.translateY || 0
-                ) + padding,
-                poly = (bBox.poly || [
-                    { x1: 0, y1: 0, x2: 0, y2: 0 },
-                    { x1: 0, y1: 0, x2: 0, y2: 0 },
-                    { x1: 0, y1: 0, x2: 0, y2: 0 },
-                    { x1: 0, y1: 0, x2: 0, y2: 0 }
-                ]).map((line): {
-                    x1: number,
-                    y1: number,
-                    x2: number,
-                    y2: number
-                } => (
-                    {
-                        x1: line.x1 + xOffset,
-                        y1: line.y1 + yOffset,
-                        x2: line.x2 + xOffset,
-                        y2: line.y2 + yOffset
-                    }
-                ));
+                ) + padding;
 
             label.width = bBox.width;
             label.height = bBox.height;
+
+            const computedWidth = (label.width || 0) - 2 * padding;
+            const computedHeight = (label.height || 0) - 2 * padding;
+            const left = pos.x + xOffset;
+            const right = left + computedWidth;
+            const top = pos.y + yOffset;
+            const bottom = top + computedHeight;
 
             return {
                 x: pos.x + xOffset,
                 y: pos.y + yOffset,
                 width: (label.width || 0) - 2 * padding,
                 height: (label.height || 0) - 2 * padding,
-                poly: poly
+                poly: [
+                    {
+                        x: left,
+                        y: top
+                    }, {
+                        x: right,
+                        y: top
+                    }, {
+                        x: left,
+                        y: bottom
+                    }, {
+                        x: right,
+                        y: bottom
+                    }
+                ]
             };
         }
     }
@@ -244,7 +220,7 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                if (polygonIntersection(box1, box2)) {
+                if (isIntersectRect(box1, box2) || boxCheck(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }
