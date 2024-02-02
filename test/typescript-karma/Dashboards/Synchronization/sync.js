@@ -4,7 +4,7 @@ import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboard
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);

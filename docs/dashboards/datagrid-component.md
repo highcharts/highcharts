@@ -20,7 +20,7 @@ The order of the imports is important, so make sure that the Dashboards module i
     import * as Dashboards from '@highcharts/dashboards';
     import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
 
-    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
     Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
     ```
 

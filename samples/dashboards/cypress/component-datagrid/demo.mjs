@@ -7,7 +7,7 @@ Highcharts.win.Highcharts = Highcharts;
 
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);

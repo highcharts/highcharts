@@ -2,8 +2,9 @@
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
