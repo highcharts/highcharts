@@ -35,7 +35,7 @@ G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);
-NavigatorComposition.compose(G.Axis, G.Series);
+NavigatorComposition.compose(G.Chart, G.Axis, G.Series);
 ChartNavigatorComposition.compose(G.Chart, G.Navigator);
 OHLCSeries.compose(G.Series);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
