@@ -138,7 +138,7 @@ describe('Stock Tools annotation popup, #15725', () => {
 
         cy.get('input[name="highcharts-annotation-0"]').should('value', '(X)');
 
-        cy.get('div.highcharts-popup-close').click();
+        cy.get('button.highcharts-popup-close').click();
     });
 });
 

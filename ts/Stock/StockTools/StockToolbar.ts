@@ -328,7 +328,7 @@ class Toolbar {
     }
 
     /**
-     * Create single button. Consist of HTML elements `li`, `span`, and (if
+     * Create single button. Consist of HTML elements `li`, `button`, and (if
      * exists) submenu container.
      *
      * @private
@@ -370,7 +370,8 @@ class Toolbar {
         }, void 0, target);
 
         // single button
-        const mainButton = createElement('span', {
+        const elementType = (btnOptions.elementType || 'button') as string;
+        const mainButton = createElement(elementType, {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
@@ -378,7 +379,7 @@ class Toolbar {
         if (items && items.length) {
 
             // arrow is a hook to show / hide submenu
-            const submenuArrow = createElement('span', {
+            const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right'
             }, void 0, buttonWrapper);
