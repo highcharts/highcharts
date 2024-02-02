@@ -78,6 +78,15 @@ async function resolveExternals(info) {
                 return createUMDConfig(name);
             }
             break;
+        case 'Extensions/Annotations/NavigationBindings':
+            if (
+                masterName !== 'annotations' &&
+                masterName !== 'annotations-advanced' &&
+                masterName !== 'stock-tools'
+            ) {
+                return createUMDConfig(name);
+            }
+            break;
         case 'Extensions/DataGrouping/ApproximationRegistry':
             if (
                 masterName !== 'datagrouping' &&

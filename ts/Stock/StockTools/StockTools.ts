@@ -112,13 +112,12 @@ function compose(
         navigationProto.recalculateYAxisPositions =
             navigationRecalculateYAxisPositions;
         navigationProto.resizeYAxes = navigationResizeYAxes;
-        navigationProto.utils = {
-            indicatorsWithAxes: STU.indicatorsWithAxes,
-            indicatorsWithVolume: STU.indicatorsWithVolume,
-            getAssignedAxis,
-            isPriceIndicatorEnabled,
-            manageIndicators: STU.manageIndicators
-        };
+        navigationProto.utils = navigationProto.utils || {};
+        navigationProto.utils.indicatorsWithAxes = STU.indicatorsWithAxes;
+        navigationProto.utils.indicatorsWithVolume = STU.indicatorsWithVolume;
+        navigationProto.utils.getAssignedAxis = getAssignedAxis;
+        navigationProto.utils.isPriceIndicatorEnabled = isPriceIndicatorEnabled;
+        navigationProto.utils.manageIndicators = STU.manageIndicators;
 
         setOptions(StockToolsDefaults);
         setOptions({
