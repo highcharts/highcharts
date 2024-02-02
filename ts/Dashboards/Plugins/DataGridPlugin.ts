@@ -50,7 +50,7 @@ declare module '../Components/ComponentType' {
 function connectDataGrid(
     DataGridNS: DataGridNamespace
 ): void {
-    DataGridComponent.DataGridConstructor = DataGridNS.DataGrid;
+    DataGridComponent.DataGridNamespace = DataGridNS;
 }
 
 /**

@@ -21,7 +21,7 @@
 
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
-import type DataGrid from '../../../DataGrid/DataGrid';
+import type { DataGrid, DataGridNamespace } from '../DataGridTypes';
 import type DataTable from '../../../Data/DataTable';
 import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../../DataGrid/DataGridOptions';
@@ -62,7 +62,7 @@ class DataGridComponent extends Component {
     public static syncHandlers = DataGridSyncHandlers;
 
     /** @private */
-    public static DataGridConstructor?: typeof DataGrid;
+    public static DataGridNamespace?: DataGridNamespace;
 
     /** @private */
     public static defaultOptions = merge(
@@ -333,14 +333,16 @@ class DataGridComponent extends Component {
 
     /** @private */
     private constructDataGrid(): DataGrid {
-        if (DataGridComponent.DataGridConstructor) {
+        if (DataGridComponent.DataGridNamespace) {
+            const DataGrid = DataGridComponent.DataGridNamespace.DataGrid;
+
             const columnOptions = this.connector ?
                 this.getColumnOptions(
                     this.connector as DataConnectorType
                 ) :
                 {};
 
-            this.dataGrid = new DataGridComponent.DataGridConstructor(
+            this.dataGrid = new DataGrid(
                 this.contentElement,
                 {
                     ...this.options.dataGridOptions,
@@ -363,11 +365,11 @@ class DataGridComponent extends Component {
         const { connector, dataGrid } = this;
 
         if (connector && dataGrid) {
-            dataGrid.on<DataGrid.Event>('cellClick', (e): void => {
+            dataGrid.on('cellClick', (e: any): void => {
                 if ('input' in e) {
                     e.input.addEventListener(
                         'keyup',
-                        (keyEvent): void =>
+                        (keyEvent: any): void =>
                             this.options.onUpdate(keyEvent, connector)
                     );
                 }
