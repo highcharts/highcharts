@@ -183,6 +183,11 @@ function resetDrilldown(chart) {
                 },
                 topology.objects.default['hc-recommended-mapview'])
             );
+            console.log(Highcharts.merge({
+                insets: undefined,
+                padding: 0
+            },
+            topology.objects.default['hc-recommended-mapview']));
             // Hide loading and add series
             chart.hideLoading();
             clearTimeout(fail);
@@ -270,6 +275,11 @@ function resetDrilldown(chart) {
         },
 
         drilldown: {
+            activeDataLabelStyle: {
+                color: '#fff',
+                fontWeight: 'normal',
+                textDecoration: 'none'
+            },
             breadcrumbs: {
                 floating: true
             }
