@@ -167,7 +167,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     lastPoint.update({ y: 434.31 });
 
     assert.strictEqual(
-        chart.series[1].MACDData.some(function (elem) {
+        chart.series[1].getColumn('MACD').some(function (elem) {
             return !Highcharts.isNumber(elem) || !Highcharts.defined(elem);
         }),
         false,
@@ -175,7 +175,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].signalData.some(function (elem) {
+        chart.series[1].getColumn('signal').some(function (elem) {
             return Highcharts.isArray(elem);
         }),
         false,

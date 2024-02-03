@@ -530,21 +530,7 @@ class Series {
         series.getColor();
         series.getSymbol();
 
-        if (this.useDataTable) {
-            // Initialize the data table columns
-            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
-                columns = this.table.columns;
-            dataColumnKeys.forEach((key): void => {
-                if (!columns[key]) {
-                    columns[key] = [];
-                }
-                // Legacy parallel arrays are references to data table columns
-                if ((series as any)[key + 'Data'] !== columns[key]) {
-                    (series as any)[key + 'Data'] = columns[key];
-                }
-            });
-
-        } else {
+        if (!this.useDataTable) {
             // Initialize the parallel data arrays
             series.parallelArrays.forEach(function (key: string): void {
                 if (!(series as any)[key + 'Data']) {

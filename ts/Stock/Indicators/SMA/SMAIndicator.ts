@@ -376,6 +376,20 @@ class SMAIndicator extends LineSeries {
 
                     // Most indicators are being calculated on chart's init.
                     if (indicator.calculateOn.chart === 'init') {
+
+                        /*
+                        Trying to find a DataTable equivalent to checking for
+                        processedYData existense. Processed y data gets deleted
+                        in Series.update. Series.init creates new DataTable, so
+                        trying to check if that has been modified, but it fails
+                        in 3 tests. Continue after Series.init to see where
+                        processedYData is applied in these cases.
+                        console.log(
+                            '@linkedSeriesUnbiner',
+                            !indicator.processedYData,
+                            indicator.table === indicator.table.modified
+                        );
+                        */
                         if (!indicator.processedYData) {
                             indicator.recalculateValues();
                         }
