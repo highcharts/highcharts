@@ -1214,7 +1214,7 @@ class Series {
 
         // Search for the same X in the existing data set
         if (typeof pointIndex === 'undefined' && isNumber(x)) {
-            pointIndex = (this.xData as any).indexOf(x as any, fromIndex);
+            pointIndex = this.getColumn('x').indexOf(x as any, fromIndex);
         }
 
         // Reduce pointIndex if data is cropped
@@ -1380,12 +1380,12 @@ class Series {
             this.addPoint(point, false, null as any, null as any, false);
         }, this);
 
+        const xData = this.getColumn('x');
         if (
             this.xIncrement === null &&
-            this.xData &&
-            this.xData.length
+            xData.length
         ) {
-            this.xIncrement = arrayMax(this.xData);
+            this.xIncrement = arrayMax(xData);
             this.autoIncrement();
         }
 
@@ -1454,9 +1454,7 @@ class Series {
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
             table = this.table,
-            xData = this.useDataTable ?
-                table.columns.x as Array<number|null> :
-                this.xData,
+            xData = this.getColumn('x'),
             yData = this.useDataTable ?
                 table.columns.y as Array<number|null> :
                 this.yData,
@@ -1891,15 +1889,7 @@ class Series {
                 )
             ) {
                 croppedData = this.cropData(
-                    series.useDataTable ?
-                        // @todo: casting because we don't have a cheap way
-                        // to get the column by reference and trust it is
-                        // numbers. The table.getColumnAsNumbers function loops
-                        // over all values, which is too expensive. We need a
-                        // way to set the type for the whole column so that we
-                        // can trust it when we get it by reference.
-                        table.columns.x as any :
-                        series.xData,
+                    series.getColumn('x'),
                     series.useDataTable ?
                         table.columns.y as any :
                         series.yData,
@@ -2272,9 +2262,7 @@ class Series {
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
                     (key): DataTable.Column => columns[key] || []
                 ) || [],
-            xData = this.useDataTable ?
-                columns.x as Array<number> || [] :
-                this.processedXData || this.xData,
+            xData = this.getColumn('x'),
             activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
@@ -4251,9 +4239,7 @@ class Series {
             xAxis = series.xAxis,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            xData = series.useDataTable ?
-                series.table.columns.x :
-                series.xData as any;
+            xData = series.getColumn('x');
         let isInTheMiddle,
             i: number;
 
@@ -4631,9 +4617,7 @@ class Series {
                     plotOptions?.series?.pointStart,
                     oldOptions.pointStart,
                     // When updating after addPoint
-                    series.useDataTable ?
-                        series.table.columns.x?.[0] :
-                        series.xData?.[0]
+                    series.getColumn('x')[0]
                 )
             },
             !keepPoints && { data: series.options.data },
