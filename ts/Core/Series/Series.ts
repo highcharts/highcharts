@@ -1981,8 +1981,8 @@ class Series {
         series.cropStart = processedData.cropStart;
         if (!series.useDataTable) {
             series.processedXData = processedData.xData;
+            series.processedYData = processedData.yData;
         }
-        series.processedYData = processedData.yData;
 
         series.closestPointRange = (
             series.basePointRange = processedData.closestPointRange
