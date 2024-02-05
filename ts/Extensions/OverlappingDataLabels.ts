@@ -96,8 +96,10 @@ function chartHideOverlappingLabels(
             let inside = false;
 
             for (let i = 0, j = len - 1; i < len; j = i++) {
-                const { x: x1, y: y1 } = polygon[i],
-                    { x: x2, y: y2 } = polygon[j];
+                const x1 = ~~polygon[i].x;
+                const y1 = ~~polygon[i].y;
+                const x2 = ~~polygon[j].x;
+                const y2 = ~~polygon[j].y;
 
                 if (
                     (y1 > checkpointY) !== (y2 > checkpointY) && (
