@@ -137,15 +137,14 @@ class JSONConnector extends DataConnector {
                     ) :
                     data || []
             )
-            .then(async (data): Promise<Array<Array<number|string>>> => {
+            .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
                     // If already loaded, clear the current rows
                     table.deleteColumns();
                     converter.parse({ data });
                     table.setColumns(converter.getTable().getColumns());
                 }
-                await connector.setModifierOptions(dataModifier);
-                return data;
+                return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })
             .then((data): this => {
                 connector.emit<JSONConnector.Event>({
