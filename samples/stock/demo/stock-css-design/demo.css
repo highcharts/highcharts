@@ -77,6 +77,10 @@
     color: var(--highcharts-neutral-color-80);
 }
 
+.highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn {
+    background-color: var(--highcharts-neutral-color-40);
+}
+
 .highcharts-popup > .highcharts-popup-close:hover,
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover,
