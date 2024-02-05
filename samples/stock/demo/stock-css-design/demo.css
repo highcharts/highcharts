@@ -87,7 +87,9 @@
 
 .highcharts-popup > .highcharts-popup-close,
 div.highcharts-popup-bottom-row > button {
+    margin-right: 3px;
     background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1);
 }
 
 button.highcharts-indicator-list-item {
