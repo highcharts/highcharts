@@ -182,8 +182,7 @@ namespace Bindings {
 
     /** @internal */
     export function componentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLElement|undefined) // @todo
+        json: Component.JSON
     ): (Component|undefined) {
         let componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry

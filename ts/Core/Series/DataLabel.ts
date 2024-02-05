@@ -41,12 +41,10 @@ import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
 const {
-    clamp,
     defined,
     extend,
     fireEvent,
     isArray,
-    isNumber,
     isString,
     merge,
     objectEach,

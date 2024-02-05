@@ -18,15 +18,12 @@
 
 import type AreaPoint from './AreaPoint';
 import type AreaSeriesOptions from './AreaSeriesOptions';
-import type ColorType from './../../Core/Color/ColorType';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
