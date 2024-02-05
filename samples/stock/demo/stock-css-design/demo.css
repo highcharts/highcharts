@@ -67,6 +67,10 @@
     background-color: #19191b;
 }
 
+.highcharts-bindings-wrapper li > span.highcharts-menu-item-btn:hover {
+    background-color: var(--highcharts-neutral-color-60);
+}
+
 .highcharts-popup select,
 .highcharts-popup input {
     background-color: #1e222d;
