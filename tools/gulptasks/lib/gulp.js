@@ -35,9 +35,10 @@ function requires(globPatterns, taskNames) {
                     glob(globPattern, { allowEmpty: true }).length === 0)
             ) {
                 taskNames.forEach(taskName => require('../' + taskName));
-                return run(...taskNames);
+                run(...taskNames).then(resolve);
+            } else {
+                resolve();
             }
-            resolve();
         } catch (catchedError) {
             reject(catchedError);
         }
