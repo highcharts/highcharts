@@ -18,7 +18,6 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
-import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
@@ -81,10 +80,10 @@ class RowEditToolbar extends EditToolbar {
                 type: 'icon' as const,
                 icon: iconURLPrefix + 'settings.svg',
                 events: {
-                    click: function (this: MenuItem, e: any): void {
+                    click: function (this: MenuItem): void {
                         this.menu.parent.editMode.setEditOverlay();
 
-                        (this.menu.parent as RowEditToolbar).onRowOptions(e);
+                        (this.menu.parent as RowEditToolbar).onRowOptions();
                     }
                 }
             });
@@ -96,7 +95,7 @@ class RowEditToolbar extends EditToolbar {
             className: EditGlobals.classNames.menuDestroy,
             icon: iconURLPrefix + 'destroy.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {
+                click: function (this: MenuItem): void {
                     const parentNode = this.menu.parent as RowEditToolbar,
                         editMode = this.menu.parent.editMode,
                         popup = editMode.confirmationPopup;
@@ -202,7 +201,7 @@ class RowEditToolbar extends EditToolbar {
         }
     }
 
-    public onRowOptions(e: any): void {
+    public onRowOptions(): void {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
@@ -220,7 +219,7 @@ class RowEditToolbar extends EditToolbar {
         }
     }
 
-    public onRowDestroy(e: any): void {
+    public onRowDestroy(): void {
         const toolbar = this;
 
         if (toolbar.row) {

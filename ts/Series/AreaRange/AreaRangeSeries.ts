@@ -690,8 +690,7 @@ class AreaRangeSeries extends AreaSeries {
         options: DeepPartial<AreaRangeSeriesOptions>,
         oldOptions: DeepPartial<AreaRangeSeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            lowMarker = options.lowMarker,
+        const lowMarker = options.lowMarker,
             oldMarker = oldOptions.lowMarker || {};
 
         return (lowMarker && (
@@ -738,7 +737,6 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
 }, { order: 0 });
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
-    const inverted = this.chart.inverted;
     this.points.forEach((point): void => {
         // Postprocessing after the PolarComposition's afterTranslate
         if (this.chart.polar) {

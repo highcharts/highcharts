@@ -29,6 +29,7 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -358,9 +359,8 @@ abstract class Component {
         this.contentElement = createElement(
             'div', {
                 className: `${this.options.className}-content`
-            }, {
-                height: '100%'
             },
+            {},
             this.element,
             true
         );
@@ -395,7 +395,10 @@ abstract class Component {
      * @param sidebar
      * The sidebar popup.
      */
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<ComponentType['options']> {
+    public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        sidebar: SidebarPopup
+    ): Partial<ComponentType['options']> {
         return {};
     }
 
@@ -941,7 +944,7 @@ abstract class Component {
                 } else {
                     captionElement.replaceWith(newCaption);
                 }
-                this.titleElement = newCaption;
+                this.captionElement = newCaption;
             }
         } else {
             if (captionElement) {

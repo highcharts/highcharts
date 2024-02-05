@@ -21,7 +21,6 @@
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Chart from '../Core/Chart/Chart';
-import type ChartOptions from '../Core/Chart/ChartOptions';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
@@ -43,9 +42,7 @@ const {
     createElement,
     css,
     defined,
-    extend,
     merge,
-    pick,
     pushUnique
 } = U;
 

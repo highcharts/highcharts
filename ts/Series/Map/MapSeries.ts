@@ -53,7 +53,6 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -269,7 +268,7 @@ class MapSeries extends ScatterSeries {
             // Individual point actions.
             this.points.forEach((point): void => {
 
-                const { graphic, shapeArgs } = point;
+                const { graphic } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -318,6 +317,16 @@ class MapSeries extends ScatterSeries {
                             ) as CSSObject
                         );
                     }
+
+                    // If the map point is not visible and is not null (e.g.
+                    // hidden by data classes), then the point should be
+                    // visible, but without value
+                    graphic.attr({
+                        visibility: (
+                            point.visible ||
+                            (!point.visible && !point.isNull)
+                        ) ? 'inherit' : 'hidden'
+                    });
 
                     graphic.animate = function (params,
                         options, complete): SVGElement {
@@ -977,10 +986,12 @@ class MapSeries extends ScatterSeries {
                     };
                 }
 
-                if (point.projectedPath && !point.projectedPath.length) {
-                    point.setVisible(false);
-                } else if (!point.visible) {
-                    point.setVisible(true);
+                if (!point.hiddenInDataClass) { // #20441
+                    if (point.projectedPath && !point.projectedPath.length) {
+                        point.setVisible(false);
+                    } else if (!point.visible) {
+                        point.setVisible(true);
+                    }
                 }
             });
         }
