@@ -32,15 +32,12 @@ const {
     unhideChartElementFromAT,
     getAxisRangeDescription
 } = ChartUtilities;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr,
-    pushUnique
+    attr
 } = U;
 
 
@@ -700,7 +697,7 @@ namespace RangeSelectorComponent {
             );
 
             addEvent(
-                RangeSelector,
+                RangeSelectorClass,
                 'afterBtnClick',
                 rangeSelectorAfterBtnClick
             );

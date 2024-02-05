@@ -36,7 +36,7 @@ G.ganttChart = G.GanttChart.ganttChart;
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
-G.Navigator.compose(G.Axis, G.Chart, G.Series);
+G.Navigator.compose(G.Chart, G.Axis, G.Series);
 G.RangeSelector.compose(G.Axis, G.Chart);
 G.Scrollbar.compose(G.Axis);
 export default Highcharts;

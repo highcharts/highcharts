@@ -39,14 +39,6 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const modifiedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Variables
  *
  * */

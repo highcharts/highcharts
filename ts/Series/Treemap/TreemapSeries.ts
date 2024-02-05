@@ -79,16 +79,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
-    (this: TContext, item: TItem): (boolean|TItem);
-}
-
-/* *
- *
  *  Constants
  *
  * */
@@ -971,6 +961,7 @@ class TreemapSeries extends ScatterSeries {
                 addEvent(
                     series,
                     'update',
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     function (e: any, redraw?: boolean): void {
                         const breadcrumbs = this.chart.breadcrumbs;
 

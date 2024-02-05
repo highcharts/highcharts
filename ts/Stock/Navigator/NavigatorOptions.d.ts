@@ -66,25 +66,30 @@ export interface NavigatorHandlesOptions {
     width?: number;
 }
 
-export interface NavigatorOptions {
-    adaptToUpdatedData?: boolean;
-    baseSeries?: (number|string);
-    enabled?: boolean;
-    handles?: NavigatorHandlesOptions;
-    height?: number;
-    isInternal?: boolean;
-    margin?: number;
+export interface BaseNavigatorOptions {
     maskFill?: ColorType;
     maskInside?: boolean;
-    opposite?: boolean;
+    handles?: NavigatorHandlesOptions;
+    height?: number;
     outlineColor?: ColorType;
     outlineWidth?: number;
     series?: SeriesTypeOptions;
-    stickToMax?: boolean;
-    top?: number;
     xAxis?: DeepPartial<AxisOptions>;
     yAxis?: DeepPartial<YAxisOptions>;
 }
+
+export interface NavigatorOptions extends BaseNavigatorOptions {
+    adaptToUpdatedData?: boolean;
+    baseSeries?: (number|string);
+    enabled?: boolean;
+    isInternal?: boolean;
+    margin?: number;
+    opposite?: boolean;
+    stickToMax?: boolean;
+    top?: number;
+}
+
+export interface StandaloneNavigatorOptions extends BaseNavigatorOptions { }
 
 /* *
  *

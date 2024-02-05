@@ -165,6 +165,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Order of columns.
      */
     public getColumnOrder(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
         const connector = this,

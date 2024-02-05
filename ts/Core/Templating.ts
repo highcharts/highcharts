@@ -30,7 +30,6 @@ const {
     isArray,
     isNumber,
     isObject,
-    isString,
     pick,
     pInt
 } = U;

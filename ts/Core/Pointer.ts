@@ -1181,7 +1181,7 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onContainerMouseEnter
      */
-    public onContainerMouseEnter(e: MouseEvent): void {
+    public onContainerMouseEnter(): void {
         delete this.chartPosition;
     }
 
@@ -2106,7 +2106,6 @@ class Pointer {
      */
     public zoomOption(e: Event): void {
         const chart = this.chart,
-            options = chart.options.chart,
             inverted = chart.inverted;
 
         let zoomType = chart.zooming.type || '',

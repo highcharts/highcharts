@@ -359,16 +359,12 @@ class CSVConverter extends DataConverter {
 
         let i = 0,
             c = '',
-            cl = '',
-            cn = '',
             token: (number|string) = '',
             actualColumn = 0,
             column = 0;
 
         const read = (j: number): void => {
             c = columnStr[j];
-            cl = columnStr[j - 1];
-            cn = columnStr[j + 1];
         };
 
         const pushType = (type: string): void => {

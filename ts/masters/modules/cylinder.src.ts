@@ -14,6 +14,5 @@
 import Highcharts from '../../Core/Globals.js';
 import CylinderSeries from '../../Series/Cylinder/CylinderSeries.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-const G: AnyRecord = Highcharts;
 CylinderSeries.compose(RendererRegistry.getRendererType());
 export default Highcharts;

@@ -1048,7 +1048,6 @@ namespace RadialAxis {
         e: { userOptions: Options }
     ): void {
         const chart = this.chart,
-            inverted = chart.inverted,
             angular = chart.angular,
             polar = chart.polar,
             isX = this.isXAxis,

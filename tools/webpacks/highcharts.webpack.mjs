@@ -24,7 +24,8 @@ const productMasters = [
     'highcharts',
     'highcharts-gantt',
     'highmaps',
-    'highstock'
+    'highstock',
+    'standalone-navigator'
 ];
 
 /* *

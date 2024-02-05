@@ -179,7 +179,7 @@ async function compare (base: BenchResults, actual: BenchResults){
     const markdownTableRows = actual.map((entry, i) =>{
         const diff = entry.avg - base[i].avg;
 
-        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / base[i].avg)}%`;
+        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / base[i].avg) / 100}%`;
     });
 
     const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff | Percent diff |

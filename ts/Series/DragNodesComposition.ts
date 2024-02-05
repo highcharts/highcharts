@@ -240,8 +240,7 @@ function onMouseMove(
  */
 function onMouseUp(
     this: DragNodesSeries,
-    point: DragNodesPoint,
-    _event?: PointerEvent
+    point: DragNodesPoint
 ): void {
     if (point.fixedPosition) {
         if (point.hasDragged) {

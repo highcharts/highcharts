@@ -38,7 +38,7 @@ G.extend(G.StockChart, StockChart);
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);
 OHLCSeries.compose(G.Series);
-G.Navigator.compose(G.Axis, G.Chart, G.Series);
+G.Navigator.compose(G.Chart, G.Axis, G.Series);
 G.OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
 G.RangeSelector.compose(G.Axis, G.Chart);
 G.Scrollbar.compose(G.Axis);

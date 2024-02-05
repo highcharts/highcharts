@@ -496,7 +496,7 @@ namespace MenuComponent {
     export function compose(
         ChartClass: typeof Chart
     ): void {
-        const chartProto = Chart.prototype as ChartComposition;
+        const chartProto = ChartClass.prototype as ChartComposition;
 
         if (!chartProto.hideExportMenu) {
             chartProto.hideExportMenu = chartHideExportMenu;

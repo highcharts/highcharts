@@ -139,8 +139,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public static compose(
         SeriesClass: typeof Series,
-        AxisClass: typeof Axis,
-        ..._args: Array<never>
+        AxisClass: typeof Axis
     ): void {
         CandlestickSeries.compose(SeriesClass);
 

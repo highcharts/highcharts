@@ -25,14 +25,12 @@ import Controllable from './Controllable.js';
 import ControllableDefaults from './ControllableDefaults.js';
 const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
-const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     defined,
     extend,
     merge,
-    pushUnique,
     uniqueKey
 } = U;
 

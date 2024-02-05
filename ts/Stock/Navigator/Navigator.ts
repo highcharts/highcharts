@@ -32,6 +32,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
@@ -81,6 +82,18 @@ function numExt(
     }
 }
 
+export interface SetRangeEvent {
+    min: number;
+    max: number;
+    redraw: boolean;
+    animation?: boolean;
+    eventArguments: {
+        trigger: 'navigator' | 'scrollbar' | Axis;
+        triggerOp: string;
+        DOMEvent: any;
+    }
+}
+
 /* *
  *
  *  Class
@@ -101,21 +114,17 @@ class Navigator {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
     public static compose(
-        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
+        AxisClass: typeof Axis,
         SeriesClass: typeof Series
     ): void {
-        NavigatorComposition.compose(
-            AxisClass,
-            ChartClass,
-            Navigator,
-            SeriesClass
-        );
+        ChartNavigatorComposition.compose(ChartClass, Navigator);
+        NavigatorComposition.compose(ChartClass, AxisClass, SeriesClass);
     }
 
     /* *
@@ -908,13 +917,15 @@ class Navigator {
                     fixedMax
                 );
                 if (defined(ext.min)) { // #7411
-                    chart.xAxis[0].setExtremes(
-                        Math.min(ext.min, ext.max),
-                        Math.max(ext.min, ext.max),
-                        true,
-                        null as any, // auto animation
-                        { trigger: 'navigator' }
-                    );
+                    fireEvent(this, 'setRange', {
+                        min: Math.min(ext.min, ext.max),
+                        max: Math.max(ext.min, ext.max),
+                        redraw: true,
+                        eventArguments: {
+                            trigger: 'navigator'
+                        }
+
+                    } as SetRangeEvent);
                 }
             }
         }
@@ -1111,19 +1122,17 @@ class Navigator {
             );
 
             if (defined(ext.min)) {
-                chart.xAxis[0].setExtremes(
-                    Math.min(ext.min, ext.max),
-                    Math.max(ext.min, ext.max),
-                    true,
-                    // Run animation when clicking buttons, scrollbar track etc,
-                    // but not when dragging handles or scrollbar
-                    navigator.hasDragged ? false : (null as any),
-                    {
+                fireEvent(this, 'setRange', {
+                    min: Math.min(ext.min, ext.max),
+                    max: Math.max(ext.min, ext.max),
+                    redraw: true,
+                    animation: navigator.hasDragged ? false : (null as any),
+                    eventArguments: {
                         trigger: 'navigator',
                         triggerOp: 'navigator-drag',
                         DOMEvent: DOMEvent // #1838
                     }
-                );
+                } as SetRangeEvent);
             }
         }
 
@@ -2029,6 +2038,19 @@ class Navigator {
                                 navigator.height + navigator.scrollbarHeight :
                                 0
                         ) + navigator.navigatorOptions.margin;
+                }
+            ),
+            addEvent(
+                Navigator,
+                'setRange',
+                function (this: Navigator, e: SetRangeEvent):void {
+                    this.chart.xAxis[0].setExtremes(
+                        e.min,
+                        e.max,
+                        e.redraw,
+                        e.animation,
+                        e.eventArguments
+                    );
                 }
             )
         );
