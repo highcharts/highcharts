@@ -32,7 +32,7 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
 
     Highcharts.chart('container', {
         chart: {
-            zoomType: 'x',
+            zoomType: 'xy',
             panning: {
                 enabled: true,
                 type: 'x'
@@ -81,7 +81,7 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
         },
         plotOptions: {
             series: {
-                boostThreshold: 1
+                // boostThreshold: 1
             }
         },
 

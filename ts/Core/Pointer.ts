@@ -1905,7 +1905,7 @@ class Pointer {
                 // however, the touchmove doesn't fire unless the finger moves
                 // more than ~4px. So we emulate this behaviour in Android by
                 // checking how much it moved, and cancelling on small
-                // distances. #3450. Tested and still relevant as of 2023.
+                // distances. #3450. Tested and still relevant as of 2024.
                 if (e.type === 'touchmove') {
                     hasMoved = pinchDown[0] ? // #5266
                         (
