@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -65,11 +65,11 @@ class AccessibilityComponent {
      *
      * */
 
-    public chart: Accessibility.ChartComposition = void 0 as any;
-    public domElementProvider: DOMElementProvider = void 0 as any;
-    public eventProvider: EventProvider = void 0 as any;
-    public keyCodes: Record<string, number> = void 0 as any;
-    public proxyProvider: ProxyProvider = void 0 as any;
+    public chart!: Accessibility.ChartComposition;
+    public domElementProvider!: DOMElementProvider;
+    public eventProvider!: EventProvider;
+    public keyCodes!: Record<string, number>;
+    public proxyProvider!: ProxyProvider;
 
     /* *
      *
@@ -77,7 +77,6 @@ class AccessibilityComponent {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the class

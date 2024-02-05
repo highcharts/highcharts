@@ -114,9 +114,9 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<CCIPoint> = void 0 as any;
-    public points: Array<CCIPoint> = void 0 as any;
-    public options: CCIOptions = void 0 as any;
+    public data!: Array<CCIPoint>;
+    public points!: Array<CCIPoint>;
+    public options!: CCIOptions;
 
     /* *
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -169,7 +169,9 @@ class RangeSelector {
      *
      * */
 
-    public buttons: Array<SVGElement> = void 0 as any;
+
+    public buttons!: Array<SVGElement>;
+    public isCollapsed?: boolean;
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
@@ -191,7 +193,7 @@ class RangeSelector {
     public minDateBox?: SVGElement;
     public minInput?: HTMLInputElement;
     public minLabel?: SVGElement;
-    public options: RangeSelectorOptions = void 0 as any;
+    public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
     public zoomText?: SVGElement;
@@ -247,9 +249,6 @@ class RangeSelector {
         if (dataMin === null || dataMax === null) {
             return;
         }
-
-        // Set the fixed range before range is altered
-        chart.fixedRange = range;
 
         rangeSelector.setSelected(i);
 
@@ -370,6 +369,7 @@ class RangeSelector {
             minSetting = baseXAxisOptions.min;
             baseXAxisOptions.min = rangeMin;
             addEvent(chart, 'load', function resetMinAndRange(): void {
+                chart.setFixedRange(rangeOptions._range);
                 baseXAxisOptions.range = rangeSetting;
                 baseXAxisOptions.min = minSetting;
             });
@@ -385,6 +385,7 @@ class RangeSelector {
                     rangeSelectorButton: rangeOptions
                 }
             );
+            chart.setFixedRange(rangeOptions._range);
         }
 
         fireEvent(this, 'afterBtnClick');
@@ -552,8 +553,20 @@ class RangeSelector {
                 isSelectedTooGreat = true;
             }
 
-            // Months and years have a variable range so we check the extremes
             if (
+                baseAxis.isOrdinal &&
+                baseAxis.ordinal?.positions &&
+                range &&
+                actualRange < range
+            ) {
+                // Handle ordinal ranges
+                const positions = baseAxis.ordinal.positions;
+
+                if (positions[positions.length - 1] - positions[0] > range) {
+                    isSameRange = true;
+                }
+            } else if (
+                // Months and years have variable range so we check the extremes
                 (type === 'month' || type === 'year') &&
                 (
                     actualRange + 36e5 >=
@@ -1623,7 +1636,7 @@ class RangeSelector {
         xOffsetForExportButton: number,
         width?: number
     ): void {
-        const { chart, options, buttonGroup, buttons } = this;
+        const { chart, options, buttonGroup } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
         let translateX = buttonPosition.x - chart.spacing[3];
@@ -1826,6 +1839,13 @@ class RangeSelector {
             zoomText
         } = this;
 
+        // If the buttons are already collapsed do nothing.
+        if (this.isCollapsed === true) {
+            return;
+
+        }
+        this.isCollapsed = true;
+
         const userButtonTheme = (
             chart.userOptions.rangeSelector &&
             chart.userOptions.rangeSelector.buttonTheme
@@ -1906,6 +1926,12 @@ class RangeSelector {
 
         this.hideDropdown();
 
+        // If buttons are already not collapsed, do nothing.
+        if (this.isCollapsed === false) {
+            return;
+
+        }
+        this.isCollapsed = false;
         if (zoomText) {
             zoomText.show();
         }

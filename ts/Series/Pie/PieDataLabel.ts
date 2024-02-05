@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,10 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -36,6 +39,7 @@ const {
     clamp,
     defined,
     pick,
+    pushUnique,
     relativeLength
 } = U;
 
@@ -65,8 +69,6 @@ namespace ColumnDataLabel {
      *  Constants
      *
      * */
-
-    const composedMembers: Array<unknown> = [];
 
     const dataLabelPositioners = {
 
@@ -158,14 +160,12 @@ namespace ColumnDataLabel {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /** @private */
     export function compose(PieSeriesClass: typeof PieSeries): void {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, PieSeriesClass)) {
+        if (pushUnique(composed, compose)) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;
@@ -344,7 +344,7 @@ namespace ColumnDataLabel {
                 );
                 points.forEach((point): void => {
                     // Check if specific points' label is outside the pie
-                    (point.dataLabels || []).forEach((dataLabel, i): void => {
+                    (point.dataLabels || []).forEach((dataLabel): void => {
                         const labelPosition = dataLabel.dataLabelPosition;
                         if (
                             labelPosition &&

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -111,11 +111,11 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
-    public data: Array<GanttPoint> = void 0 as any;
+    public data!: Array<GanttPoint>;
 
-    public options: GanttSeriesOptions = void 0 as any;
+    public options!: GanttSeriesOptions;
 
-    public points: Array<GanttPoint> = void 0 as any;
+    public points!: Array<GanttPoint>;
 
     /* *
      *
@@ -197,8 +197,6 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        const series = this;
-
         let shapeArgs: SVGAttributes,
             size: number;
 

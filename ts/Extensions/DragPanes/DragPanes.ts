@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -27,11 +27,13 @@ import type Pointer from '../../Core/Pointer';
 import AxisResizer from './AxisResizer.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -61,14 +63,6 @@ declare module '../../Core/Chart/ChartLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -81,7 +75,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, compose)) {
         merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
@@ -89,9 +83,7 @@ function compose(
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',

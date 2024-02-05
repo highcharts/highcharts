@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,8 @@ import type { YAxisOptions } from '../AxisOptions';
 import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Axis from '../Axis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
@@ -38,7 +40,8 @@ const {
     isArray,
     isNumber,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -676,14 +679,6 @@ namespace StackingAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -698,19 +693,14 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
+            const chartProto = ChartClass.prototype,
+                seriesProto = SeriesClass.prototype;
+
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
-        }
-
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype;
 
             chartProto.getStacks = chartGetStacks;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
             seriesProto.modifyStacks = seriesModifyStacks;

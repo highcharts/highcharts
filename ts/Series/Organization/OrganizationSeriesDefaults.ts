@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -314,6 +314,19 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     hangingIndentTranslation: 'inherit',
     /**
+     * Whether links connecting hanging nodes should be drawn on the left
+     * or right side. Useful for RTL layouts.
+     * **Note:** Only effects inverted charts (vertical layout).
+     *
+     * @sample highcharts/series-organization/hanging-side
+     *         Nodes hanging from right side.
+     *
+     * @type {'left'|'right'}
+     * @since 11.3.0
+     * @default 'left'
+     */
+    hangingSide: 'left',
+    /**
      *
      * The color of the links between nodes. This option is moved to
      * [link.color](#plotOptions.organization.link.color).
@@ -353,8 +366,8 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     minNodeLength: 10,
     /**
      * In a horizontal chart, the width of the nodes in pixels. Note that
-     * most organization charts are vertical, so the name of this option
-     * is counterintuitive.
+     * most organization charts are inverted (vertical), so the name of this
+     * option is counterintuitive.
      *
      * @see [minNodeLength](#plotOptions.organization.minNodeLength)
      *

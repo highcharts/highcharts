@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -42,11 +42,11 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
     public insetIndex?: number;
 
-    public options: MapPointPointOptions = void 0 as any;
+    public options!: MapPointPointOptions;
 
     public properties?: AnyRecord;
 
-    public series: MapPointSeries = void 0 as any;
+    public series!: MapPointSeries;
 
     /* *
      *

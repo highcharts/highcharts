@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan
+ *  (c) 2010-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -67,9 +67,9 @@ class ParetoSeries extends LineSeries {
      *
      * */
 
-    public data: Array<ParetoPoint> = void 0 as any;
-    public points: Array<ParetoPoint> = void 0 as any;
-    public options: ParetoSeriesOptions = void 0 as any;
+    public data!: Array<ParetoPoint>;
+    public points!: Array<ParetoPoint>;
+    public options!: ParetoSeriesOptions;
 
     /* *
      *

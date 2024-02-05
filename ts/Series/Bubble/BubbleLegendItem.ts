@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -121,15 +121,15 @@ class BubbleLegendItem {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public legend: Legend = void 0 as any;
-    public maxLabel: BBoxObject = void 0 as any;
-    public movementX: number = void 0 as any;
-    public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
-    public selected: undefined = void 0 as any;
-    public visible: boolean = void 0 as any;
-    public symbols: Record<string, Array<SVGElement>> = void 0 as any;
-    public options: BubbleLegendItem.Options = void 0 as any;
+    public chart!: Chart;
+    public legend!: Legend;
+    public maxLabel!: BBoxObject;
+    public movementX!: number;
+    public ranges!: Array<BubbleLegendItem.RangesOptions>;
+    public selected!: undefined;
+    public visible!: boolean;
+    public symbols!: Record<string, Array<SVGElement>>;
+    public options!: BubbleLegendItem.Options;
 
     /* *
      *
@@ -176,8 +176,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const chart = this.chart,
-            itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = pick(legend.options.itemDistance, 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =

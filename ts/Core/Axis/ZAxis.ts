@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,11 +25,14 @@ import AxisDefaults from './AxisDefaults.js';
 const { xAxis } = AxisDefaults;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     merge,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -63,14 +66,6 @@ declare module '../Options' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -98,7 +93,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
     this.zAxis = [];
 
-    zAxisOptions.forEach((axisOptions, i): void => {
+    zAxisOptions.forEach((axisOptions): void => {
         this.addZAxis(axisOptions).setScale();
     });
 }
@@ -124,7 +119,8 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const chartProto = ChartClass.prototype;
 
             defaultOptions.zAxis = merge(xAxis, {
                 offset: 0,
@@ -132,8 +128,6 @@ class ZAxis extends Axis implements AxisLike {
             });
 
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
-
-            const chartProto = ChartClass.prototype;
 
             chartProto.addZAxis = chartAddZAxis;
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
@@ -176,8 +170,6 @@ class ZAxis extends Axis implements AxisLike {
      * */
 
     public getSeriesExtremes(): void {
-        const chart = this.chart;
-
         this.hasVisibleSeries = false;
 
         // Reset properties in case we're redrawing (#3353)

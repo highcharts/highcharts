@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -41,12 +41,16 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
+import H from '../Globals.js';
+const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 import RangeSelectorDefaults from
     '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
+import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
+const { setFixedRange } = StockUtilities;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -79,6 +83,8 @@ declare module '../Axis/AxisLike' {
 declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+        fixedRange?: number;
+        setFixedRange(range: number|undefined): void;
     }
 }
 
@@ -298,8 +304,7 @@ class StockChart extends Chart {
 
         // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
-            xAxisOptions: AxisOptions,
-            i: number
+            xAxisOptions: AxisOptions
         ): AxisOptions => merge(
             getDefaultAxisOptions(
                 'xAxis',
@@ -313,8 +318,7 @@ class StockChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
-            yAxisOptions: YAxisOptions,
-            i: number
+            yAxisOptions: YAxisOptions
         ): YAxisOptions => merge(
             getDefaultAxisOptions(
                 'yAxis',
@@ -384,39 +388,30 @@ namespace StockChart {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
 
     /** @private */
     export function compose(
+        ChartClass: typeof Chart,
         AxisClass: typeof Axis,
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
-        }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+            ChartClass.prototype.setFixedRange = setFixedRange;
+
             SeriesClass.prototype.forceCropping = seriesForceCropping;
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
-        }
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
         }
 

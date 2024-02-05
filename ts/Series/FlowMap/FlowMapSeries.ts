@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -341,12 +341,12 @@ class FlowMapSeries extends MapLineSeries {
      *
      * */
 
-    public data: Array<FlowMapPoint> = void 0 as any;
-    public options: FlowMapSeriesOptions = void 0 as any;
-    public points: Array<FlowMapPoint> = void 0 as any;
-    public smallestWeight?: number = void 0 as any;
-    public greatestWeight?: number = void 0 as any;
-    public centerOfPoints: PositionObject = void 0 as any;
+    public data!: Array<FlowMapPoint>;
+    public options!: FlowMapSeriesOptions;
+    public points!: Array<FlowMapPoint>;
+    public smallestWeight?: number;
+    public greatestWeight?: number;
+    public centerOfPoints!: PositionObject;
 
     /**
      *

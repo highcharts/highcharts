@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,7 +31,11 @@ import type TooltipOptions from './TooltipOptions';
 import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
-const { doc, isSafari } = H;
+const {
+    composed,
+    doc,
+    isSafari
+} = H;
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -49,6 +53,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     splat,
     syncTimeout
 } = U;
@@ -1175,10 +1180,6 @@ class Tooltip {
                 pointer,
                 scrollablePixelsY = 0,
                 scrollablePixelsX,
-                scrollingContainer: {
-                    scrollLeft,
-                    scrollTop
-                } = { scrollLeft: 0, scrollTop: 0 },
                 styledMode
             },
             distance,
@@ -1187,6 +1188,11 @@ class Tooltip {
                 positioner
             }
         } = tooltip;
+        const {
+            scrollLeft = 0,
+            scrollTop = 0
+        } = chart.scrollablePlotArea?.scrollingContainer || {};
+
 
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If
@@ -1887,14 +1893,6 @@ namespace Tooltip {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1906,7 +1904,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (U.pushUnique(composedMembers, PointerClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 

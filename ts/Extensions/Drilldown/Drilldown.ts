@@ -49,7 +49,10 @@ const { animObject } = A;
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
 import DrilldownSeries from './DrilldownSeries.js';
 import U from '../../Core/Utilities.js';
@@ -219,7 +222,7 @@ function createBreadcrumbsList(
             });
         }
 
-        drilldownLevels.forEach(function (level, i): void {
+        drilldownLevels.forEach(function (level): void {
             const lastBreadcrumb = list[list.length - 1];
 
             // If level is already added to breadcrumbs list,
@@ -994,14 +997,6 @@ namespace Drilldown {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -1016,27 +1011,23 @@ namespace Drilldown {
         SVGRendererClass: typeof SVGRenderer,
         TickClass: typeof Tick
     ): void {
-        const SVGElementClass = SVGRendererClass.prototype.Element;
-
         DrilldownSeries.compose(SeriesClass, seriesTypes);
 
-        if (pushUnique(composedMembers, AxisClass)) {
-            const axisProto = AxisClass.prototype;
+        if (pushUnique(composed, compose)) {
+            const DrilldownChart = ChartClass as typeof ChartComposition,
+                SVGElementClass = SVGRendererClass.prototype.Element,
+                addonProto = ChartAdditions.prototype,
+                axisProto = AxisClass.prototype,
+                chartProto = DrilldownChart.prototype,
+                elementProto = SVGElementClass.prototype,
+                tickProto = TickClass.prototype;
 
             axisProto.drilldownCategory = axisDrilldownCategory;
             axisProto.getDDPoints = axisGetDDPoints;
-        }
 
-        if (pushUnique(composedMembers, Breadcrumbs)) {
             Breadcrumbs.compose(ChartClass, highchartsDefaultOptions);
 
             addEvent(Breadcrumbs, 'up', onBreadcrumbsUp);
-        }
-
-        if (pushUnique(composedMembers, ChartClass)) {
-            const DrilldownChart = ChartClass as typeof ChartComposition;
-            const addonProto = ChartAdditions.prototype;
-            const chartProto = DrilldownChart.prototype;
 
             chartProto.addSeriesAsDrilldown = addonProto.addSeriesAsDrilldown;
             chartProto.addSingleSeriesAsDrilldown =
@@ -1051,20 +1042,10 @@ namespace Drilldown {
             addEvent(DrilldownChart, 'drillupall', onChartDrillupall);
             addEvent(DrilldownChart, 'render', onChartRender);
             addEvent(DrilldownChart, 'update', onChartUpdate);
-        }
 
-        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
             highchartsDefaultOptions.drilldown = DrilldownDefaults;
-        }
-
-        if (pushUnique(composedMembers, SVGElementClass)) {
-            const elementProto = SVGElementClass.prototype;
 
             elementProto.fadeIn = svgElementFadeIn;
-        }
-
-        if (pushUnique(composedMembers, TickClass)) {
-            const tickProto = TickClass.prototype;
 
             tickProto.drillable = tickDrillable;
         }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -47,17 +47,17 @@ class HeatmapPoint extends ScatterPoint {
      *
      * */
 
-    public options: HeatmapPointOptions = void 0 as any;
+    public options!: HeatmapPointOptions;
 
     public pointPadding?: number;
 
-    public series: HeatmapSeries = void 0 as any;
+    public series!: HeatmapSeries;
 
-    public value: (number|null) = void 0 as any;
+    public value!: (number|null);
 
-    public x: number = void 0 as any;
+    public x!: number;
 
-    public y: number = void 0 as any;
+    public y!: number;
 
     /* *
      *

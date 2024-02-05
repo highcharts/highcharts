@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -71,11 +71,11 @@ class LineSeries extends Series {
      *
      * */
 
-    public data: Array<LinePoint> = void 0 as any;
+    public data!: Array<LinePoint>;
 
-    public options: LineSeriesOptions = void 0 as any;
+    public options!: LineSeriesOptions;
 
-    public points: Array<LinePoint> = void 0 as any;
+    public points!: Array<LinePoint>;
 
     /* *
      *

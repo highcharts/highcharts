@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -130,37 +130,6 @@ class Color implements ColorLike {
             return new GlobalColor(input);
         }
 
-        this.init(input);
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public input: ColorType;
-    public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
-    public stops?: Array<Color>;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Parse the input color to rgba array
-     *
-     * @private
-     * @function Highcharts.Color#init
-     *
-     * @param {Highcharts.ColorType} input
-     * The input color in either rbga or hex format
-     */
-    private init(
-        input: ColorType
-    ): void {
         let result: (RegExpExecArray|null),
             rgba: (Color.RGBA|undefined),
             i: number,
@@ -231,6 +200,22 @@ class Color implements ColorLike {
             this.rgba = rgba;
         }
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public input: ColorType;
+    public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
+    public stops?: Array<Color>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Return the color or gradient stops in the specified format

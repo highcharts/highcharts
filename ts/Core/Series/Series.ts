@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -62,7 +62,6 @@ import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
-    hasTouch,
     svg,
     win
 } = H;
@@ -131,7 +130,6 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
-        invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
         toYData?(point: Point): Array<number>;
@@ -256,7 +254,7 @@ class Series {
 
     public _hasTracking?: boolean;
 
-    public _i: number = void 0 as any;
+    public _i!: number;
 
     public animationTimeout?: number;
 
@@ -266,7 +264,7 @@ class Series {
 
     public buildingKdTree?: boolean;
 
-    public chart: Chart = void 0 as any;
+    public chart!: Chart;
 
     public closestPointRange?: number;
 
@@ -278,7 +276,7 @@ class Series {
 
     public cropped?: boolean;
 
-    public data: Array<Point> = void 0 as any;
+    public data!: Array<Point>;
 
     public dataMax?: number;
 
@@ -298,9 +296,9 @@ class Series {
 
     public group?: SVGElement;
 
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
-    public eventsToUnbind: Array<Function> = void 0 as any;
+    public eventsToUnbind!: Array<Function>;
 
     public halo?: SVGElement;
 
@@ -310,7 +308,7 @@ class Series {
 
     public id?: string;
 
-    public index: number = void 0 as any;
+    public index!: number;
 
     public initialType?: string;
 
@@ -324,9 +322,9 @@ class Series {
 
     public linkedParent?: Series;
 
-    public linkedSeries: Array<Series> = void 0 as any;
+    public linkedSeries!: Array<Series>;
 
-    public options: SeriesOptions = void 0 as any;
+    public options!: SeriesOptions;
 
     public markerGroup?: SVGElement;
 
@@ -336,13 +334,13 @@ class Series {
 
     public pointInterval?: number;
 
-    public points: Array<Point> = void 0 as any;
+    public points!: Array<Point>;
 
     public pointValKey?: string;
 
-    public processedXData: Array<number> = void 0 as any;
+    public processedXData!: Array<number>;
 
-    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
+    public processedYData!: (Array<(number|null)>|Array<Array<(number|null)>>);
 
     public selected?: boolean;
 
@@ -356,21 +354,21 @@ class Series {
 
     public symbolIndex?: number;
 
-    public tooltipOptions: TooltipOptions = void 0 as any;
+    public tooltipOptions!: TooltipOptions;
 
     public tracker?: SVGElement;
 
     public trackerGroups?: Array<string>;
 
-    public userOptions: DeepPartial<SeriesTypeOptions> = void 0 as any;
+    public userOptions!: DeepPartial<SeriesTypeOptions>;
 
-    public xAxis: AxisType = void 0 as any;
+    public xAxis!: AxisType;
 
     public xData?: Array<number>;
 
     public xIncrement?: (number|null);
 
-    public yAxis: AxisType = void 0 as any;
+    public yAxis!: AxisType;
 
     public yData?: (
         Array<(number|null)>|
@@ -379,7 +377,7 @@ class Series {
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
-    public zones: Array<Series.ZoneObject> = void 0 as any;
+    public zones!: Array<Series.ZoneObject>;
 
     /* *
      *
@@ -432,8 +430,17 @@ class Series {
         const options = series.options,
             visible = options.visible !== false;
 
+        /**
+         * All child series that are linked to the current series through the
+         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+         * option.
+         *
+         * @name Highcharts.Series#linkedSeries
+         * @type {Array<Highcharts.Series>}
+         * @readonly
+         */
         series.linkedSeries = [];
-        // bind the axes
+        // Bind the axes
         series.bindAxes();
 
         extend<Series>(series, {
@@ -454,7 +461,7 @@ class Series {
              * @name Highcharts.Series#visible
              * @type {boolean}
              */
-            visible, // true by default
+            visible, // True by default
             /**
              * Read only. The series' selected state as set by {@link
              * Highcharts.Series#select}.
@@ -462,7 +469,7 @@ class Series {
              * @name Highcharts.Series#selected
              * @type {boolean}
              */
-            selected: options.selected === true // false by default
+            selected: options.selected === true // False by default
         });
 
         registerEventOptions(this, options);
@@ -671,8 +678,7 @@ class Series {
         options: DeepPartial<SeriesOptions>,
         oldOptions: DeepPartial<SeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            marker = options.marker,
+        const marker = options.marker,
             oldMarker = oldOptions.marker || {};
 
         return marker && (
@@ -1817,15 +1823,15 @@ class Series {
                     !point &&
                     typeof (dataOptions as any)[cursor] !== 'undefined'
                 ) {
-                    data[cursor] = point = (new PointClass()).init(
+                    data[cursor] = point = new PointClass(
                         series,
                         (dataOptions as any)[cursor],
                         (processedXData as any)[i]
                     );
                 }
             } else {
-                // splat the y data in case of ohlc data array
-                point = (new PointClass()).init(
+                // Splat the y data in case of ohlc data array
+                point = new PointClass(
                     series,
                     [(processedXData as any)[i]].concat(
                         splat((processedYData as any)[i])
@@ -2373,19 +2379,25 @@ class Series {
         const { chart, xAxis, yAxis } = this;
 
         // If no axes on the series, use global clipBox
-        const seriesBox = merge(chart.clipBox);
+        let { x, y, width, height } = merge(chart.clipBox);
 
         // Otherwise, use clipBox.width which is corrected for plotBorderWidth
         // and clipOffset
         if (xAxis && xAxis.len !== chart.plotSizeX) {
-            seriesBox.width = xAxis.len;
+            width = xAxis.len;
         }
 
         if (yAxis && yAxis.len !== chart.plotSizeY) {
-            seriesBox.height = yAxis.len;
+            height = yAxis.len;
         }
 
-        return seriesBox;
+        // If the chart is inverted and the series is not invertible, the chart
+        // clip box should be inverted, but not the series clip box (#20264)
+        if (chart.inverted && !this.invertible) {
+            [width, height] = [height, width];
+        }
+
+        return { x, y, width, height };
     }
 
     /**
@@ -2500,9 +2512,7 @@ class Series {
             }
 
             group.clip(animationClipRect);
-            if (markerGroup) {
-                markerGroup.clip(markerAnimationClipRect);
-            }
+            markerGroup?.clip(markerAnimationClipRect);
 
 
         // Run the animation
@@ -2514,8 +2524,12 @@ class Series {
             const finalBox = this.getClipBox(),
                 step = animation.step;
 
-            // Only do this when there are actually markers
-            if (markerGroup && markerGroup.element.childNodes.length) {
+            // Only do this when there are actually markers, or we have multiple
+            // series (#20473)
+            if (
+                markerGroup?.element.childNodes.length ||
+                chart.series.length > 1
+            ) {
 
                 // To provide as smooth animation as possible, update the marker
                 // group clipping in steps of the main group animation
@@ -2525,8 +2539,7 @@ class Series {
                     }
                     if (
                         fx.prop === 'width' &&
-                        markerAnimationClipRect &&
-                        markerAnimationClipRect.element
+                        markerAnimationClipRect?.element
                     ) {
                         markerAnimationClipRect.attr(
                             inverted ? 'height' : 'width',
@@ -2929,13 +2942,13 @@ class Series {
             point,
             axis;
 
-        // add event hook
+        // Add event hook
         fireEvent(series, 'destroy', { keepEventsForUpdate });
 
-        // remove events
+        // Remove events
         this.removeEvents(keepEventsForUpdate);
 
-        // erase from axes
+        // Erase from axes
         (series.axisTypes || []).forEach(function (AXIS: string): void {
             axis = (series as any)[AXIS];
             if (axis && axis.series) {
@@ -2944,12 +2957,12 @@ class Series {
             }
         });
 
-        // remove legend items
+        // Remove legend items
         if (series.legendItem) {
             series.chart.legend.destroyItem(series);
         }
 
-        // destroy all points with their elements
+        // Destroy all points with their elements
         i = data.length;
         while (i--) {
             point = data[i];
@@ -2958,7 +2971,10 @@ class Series {
             }
         }
 
-        series.zones.forEach(destroyObjectProperties);
+        for (const zone of series.zones) {
+            // Destroy SVGElement's but preserve primitive props (#20426)
+            destroyObjectProperties(zone, void 0, true);
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -2969,7 +2985,7 @@ class Series {
             // Survive provides a hook for not destroying
             if (val instanceof SVGElement && !val.survive) {
 
-                // issue 134 workaround
+                // Issue 134 workaround
                 destroy = issue134 && prop === 'group' ?
                     'hide' :
                     'destroy';
@@ -2978,14 +2994,14 @@ class Series {
             }
         });
 
-        // remove from hoverSeries
+        // Remove from hoverSeries
         if (chart.hoverSeries === series) {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderItems('series');
 
-        // clear all members
+        // Clear all members
         objectEach(series, function (val: any, prop: string): void {
             if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete (series as any)[prop];
@@ -3060,7 +3076,7 @@ class Series {
                 };
 
             // Reset
-            zones.forEach((zone, i): void => {
+            zones.forEach((zone): void => {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(
@@ -3288,7 +3304,7 @@ class Series {
                 chart.inverted &&
                 !chart.polar &&
                 horAxis &&
-                this.invertible !== false &&
+                this.invertible &&
                 name === 'series'
             );
 
@@ -3814,9 +3830,7 @@ class Series {
                         tracker.css({ cursor: options.cursor });
                     }
 
-                    if (hasTouch) {
-                        tracker.on('touchstart', onMouseOver);
-                    }
+                    tracker.on('touchstart', onMouseOver);
                 }
             });
         }
@@ -4217,7 +4231,8 @@ class Series {
                 'minY',
                 'maxY',
                 'minX',
-                'maxX'
+                'maxX',
+                'transformGroups' // #18857
             );
             if (options.visible !== false) {
                 preserve.push('area', 'graph');
@@ -4237,19 +4252,24 @@ class Series {
         }
 
         // Do the merge, with some forced options
-        options = merge(oldOptions, animation as any, {
-            // When oldOptions.index is null it should't be cleared.
-            // Otherwise navigator series will have wrong indexes (#10193).
-            index: typeof oldOptions.index === 'undefined' ?
-                series.index : oldOptions.index,
-            pointStart: pick(
-                // When updating from blank (#7933)
-                plotOptions?.series?.pointStart,
-                oldOptions.pointStart,
-                // When updating after addPoint
-                (series.xData as any)[0]
-            )
-        }, (!keepPoints && { data: series.options.data }) as any, options);
+        options = merge(
+            oldOptions,
+            {
+                // When oldOptions.index is null it should't be cleared.
+                // Otherwise navigator series will have wrong indexes (#10193).
+                index: oldOptions.index === void 0 ?
+                    series.index : oldOptions.index,
+                pointStart:
+                    // When updating from blank (#7933)
+                    plotOptions?.series?.pointStart ??
+                    oldOptions.pointStart ??
+                    // When updating after addPoint
+                    series.xData?.[0]
+            },
+            !keepPoints && { data: series.options.data },
+            options,
+            animation
+        );
 
         // Merge does not merge arrays, but replaces them. Since points were
         // updated, `series.options.data` has correct merged options, use it:
@@ -4275,6 +4295,9 @@ class Series {
             series.remove(false, false, false, true);
 
             if (casting) {
+                // #20264: Re-detect a certain chart properties from new series
+                chart.propFromSeries();
+
                 // Modern browsers including IE11
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
@@ -4366,6 +4389,8 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+        // Set data for series with sorting enabled if it isn't set yet (#19715)
+        chart.setSortedData();
 
         // #15383: Fire updatedData if the type has changed to keep linked
         // series such as indicators updated
@@ -4844,6 +4869,7 @@ interface Series extends SeriesLike {
     colorCounter: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    invertible: boolean;
     isCartesian: boolean;
     kdAxisArray: Array<keyof KDPointSearchObject>;
     parallelArrays: Array<string>;
@@ -4857,6 +4883,7 @@ extend(Series.prototype, {
     coll: 'series',
     colorCounter: 0,
     directTouch: false,
+    invertible: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // Each point's x and y values are stored in this.xData and this.yData:

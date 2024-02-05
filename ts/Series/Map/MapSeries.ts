@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -53,7 +53,6 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -134,13 +133,13 @@ class MapSeries extends ScatterSeries {
 
     public bounds?: MapBounds;
 
-    public chart: MapChart = void 0 as any;
+    public chart!: MapChart;
 
-    public data: Array<MapPoint> = void 0 as any;
+    public data!: Array<MapPoint>;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
-    public joinBy: Array<string> = void 0 as any;
+    public joinBy!: Array<string>;
 
     public mapData?: unknown;
 
@@ -148,11 +147,11 @@ class MapSeries extends ScatterSeries {
 
     public mapTitle?: string;
 
-    public options: MapSeriesOptions = void 0 as any;
+    public options!: MapSeriesOptions;
 
     public pointAttrToOptions?: Record<string, string>;
 
-    public points: Array<MapPoint> = void 0 as any;
+    public points!: Array<MapPoint>;
 
     public processedData: Array<(
         MapPointOptions|PointOptions|PointShortOptions
@@ -269,7 +268,7 @@ class MapSeries extends ScatterSeries {
             // Individual point actions.
             this.points.forEach((point): void => {
 
-                const { graphic, shapeArgs } = point;
+                const { graphic } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -318,6 +317,16 @@ class MapSeries extends ScatterSeries {
                             ) as CSSObject
                         );
                     }
+
+                    // If the map point is not visible and is not null (e.g.
+                    // hidden by data classes), then the point should be
+                    // visible, but without value
+                    graphic.attr({
+                        visibility: (
+                            point.visible ||
+                            (!point.visible && !point.isNull)
+                        ) ? 'inherit' : 'hidden'
+                    });
 
                     graphic.animate = function (params,
                         options, complete): SVGElement {
@@ -461,17 +470,23 @@ class MapSeries extends ScatterSeries {
 
                 transformGroup
                     .attr({ animator: 0 })
-                    .animate({ animator: 1 }, animOptions, function (): void {
-                        if (
-                            typeof renderer.globalAnimation !== 'boolean' &&
-                            renderer.globalAnimation.complete
-                        ) {
-                            // fire complete only from this place
-                            renderer.globalAnimation.complete({
-                                applyDrilldown: true
-                            });
-                        }
-                    });
+                    .animate(
+                        { animator: 1 },
+                        animOptions,
+                        function (this: MapSeries): void {
+                            if (
+                                typeof renderer.globalAnimation !== 'boolean' &&
+                                renderer.globalAnimation.complete
+                            ) {
+                                // fire complete only from this place
+                                renderer.globalAnimation.complete({
+                                    applyDrilldown: true
+                                });
+                            }
+
+                            fireEvent(this, 'mapZoomComplete');
+                        }.bind(this)
+                    );
 
             // When dragging or first rendering, animation is off
             } else {
@@ -971,10 +986,12 @@ class MapSeries extends ScatterSeries {
                     };
                 }
 
-                if (point.projectedPath && !point.projectedPath.length) {
-                    point.setVisible(false);
-                } else if (!point.visible) {
-                    point.setVisible(true);
+                if (!point.hiddenInDataClass) { // #20441
+                    if (point.projectedPath && !point.projectedPath.length) {
+                        point.setVisible(false);
+                    } else if (!point.visible) {
+                        point.setVisible(true);
+                    }
                 }
             });
         }

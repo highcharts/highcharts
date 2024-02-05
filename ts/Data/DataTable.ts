@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -1348,7 +1348,6 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            tableRowCount = table.rowCount,
             reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 

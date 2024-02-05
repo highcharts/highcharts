@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -38,6 +38,7 @@ const { parse: color } = Color;
 import H from '../../Globals.js';
 const {
     charts,
+    composed,
     deg2rad
 } = H;
 import Math3D from '../../Math3D.js';
@@ -95,8 +96,7 @@ declare module './SVGRendererLike' {
  *
  * */
 
-const composedMembers: Array<unknown> = [],
-    cos = Math.cos,
+const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,
     dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
@@ -205,7 +205,7 @@ namespace SVGRenderer3D {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composed, compose)) {
             extend(SVGRendererClass.prototype, {
                 Element3D: SVGElement3D,
                 arc3d,
@@ -219,7 +219,6 @@ namespace SVGRenderer3D {
                 toLineSegments
             });
         }
-
 
     }
 

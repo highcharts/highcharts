@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,15 +19,13 @@
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
-
 const {
-    prototype: {
-        tooltipFormatter: pointTooltipFormatter
-    }
-} = Point;
-
+    tooltipFormatter: pointTooltipFormatter
+} = Point.prototype;
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -38,7 +36,8 @@ const {
     isArray,
     isNumber,
     isString,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -136,19 +135,9 @@ namespace DataModifyComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extends the series, axis and point classes with
@@ -171,8 +160,10 @@ namespace DataModifyComposition {
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
+        if (pushUnique(composed, compose)) {
+            const axisProto = AxisClass.prototype as AxisComposition,
+                pointProto = PointClass.prototype as PointComposition,
+                seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
@@ -180,18 +171,10 @@ namespace DataModifyComposition {
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
-        }
-
-        if (U.pushUnique(composedMembers, AxisClass)) {
-            const axisProto = AxisClass.prototype as AxisComposition;
 
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
-        }
-
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.tooltipFormatter = tooltipFormatter;
         }

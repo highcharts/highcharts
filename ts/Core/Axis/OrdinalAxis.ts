@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,13 +17,14 @@
  * */
 
 import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
-import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
+const { composed } = H;
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -34,6 +35,7 @@ const {
     defined,
     error,
     pick,
+    pushUnique,
     timeUnits
 } = U;
 
@@ -80,16 +82,6 @@ declare module './AxisType' {
         OrdinalAxis: OrdinalAxis.Composition;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* eslint-disable valid-jsdoc */
 
 /* *
  *
@@ -154,7 +146,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -176,12 +168,9 @@ namespace OrdinalAxis {
                 'initialAxisTranslation',
                 onAxisInitialAxisTranslation
             );
-        }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
-        }
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
 
@@ -467,7 +456,7 @@ namespace OrdinalAxis {
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions.length) {
+        if (positions && positions.length) {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
@@ -671,7 +660,7 @@ namespace OrdinalAxis {
                 // translate back to values. This happens on the extended
                 // ordinal positions if the new position is out of range, else
                 // it happens on the current x axis which is smaller and faster.
-                chart.fixedRange = max - min;
+                chart.setFixedRange(max - min);
 
                 trimmedRange = (xAxis as NavigatorAxisComposition).navigatorAxis
                     .toFixedRange(
@@ -941,7 +930,7 @@ namespace OrdinalAxis {
                     if (
                         series.reserveSpace() &&
                         (
-                            (series as ScatterSeries)
+                            (series as FlagSeries)
                                 .takeOrdinalPosition !== false || hasBreaks
                         )
                     ) {
@@ -1314,7 +1303,6 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
                 processedXData = series.processedXData,
                 len = (processedXData as any).length,
                 distances = [];

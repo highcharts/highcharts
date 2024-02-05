@@ -29,12 +29,15 @@ import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
 import Controllable from './Controllable.js';
 import F from '../../../Core/Templating.js';
 const { format } = F;
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -54,14 +57,6 @@ interface ControllableAlignObject extends AlignObject {
     height?: number;
     width?: number;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -231,7 +226,7 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        if (pushUnique(composed, this.compose)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.symbols.connector = symbolConnector;
@@ -476,6 +471,7 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
     ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),

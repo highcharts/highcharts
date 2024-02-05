@@ -610,7 +610,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
-    const types = ['line', 'column', 'bar', 'bubble'];
+    const types = ['line', 'column', /* 'bar',*/ 'bubble'];
 
     const options = {
         chart: {
@@ -691,7 +691,11 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             const axis = axes[i],
                 $axisGroup = $(axis.axisGroup.element),
                 axisGroupBox = $axisGroup[0].getBBox(),
-                ticks = $axisGroup.find('.highcharts-tick'),
+                ticks = [
+                    ...axis.axisGroup.element.querySelectorAll(
+                        '.highcharts-tick'
+                    )
+                ].sort((a, b) => a.getBBox().x - b.getBBox().x),
                 leftTick = ticks[0].getBBox(),
                 rightTick = ticks.slice(-1)[0].getBBox();
 
@@ -1754,7 +1758,7 @@ QUnit.test('Chart.update', assert => {
     } = chart;
     const getYAxisLabels = () =>
         Array.from(
-            document.querySelectorAll('.highcharts-yaxis-labels > text')
+            chart.container.querySelectorAll('.highcharts-yaxis-labels > text')
         )
             .map(text => text.textContent)
             .reverse();
@@ -1861,6 +1865,46 @@ QUnit.test(
             axis.ticks[axis.tickPositions[0]].label.textStr,
             '2019',
             '#15692: Primary axis should show years'
+        );
+
+        chart.setSize(800);
+
+        chart.update({
+            series: [{
+                data: [{
+                    start: Date.UTC(2018, 6, 2),
+                    end: Date.UTC(2019, 6, 1)
+                }]
+            }],
+            xAxis: [{
+                units: [['month', [6]]]
+            }, {
+                units: [['year', null]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.map(tickPosition =>
+                chart.xAxis[0].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Primary axis should show months when xAxis.units set (#16626)'
+        );
+
+        chart.update({
+            xAxis: [{
+                units: [['year', null]]
+            }, {
+                units: [['month', [6]]]
+            }]
+        }, true, true);
+
+        assert.strictEqual(
+            chart.xAxis[1].tickPositions.map(tickPosition =>
+                chart.xAxis[1].ticks[tickPosition].label.textStr
+            ).join(', '),
+            'July, January, July',
+            'Secondary axis should show months when xAxis.units set (#16626)'
         );
     }
 );

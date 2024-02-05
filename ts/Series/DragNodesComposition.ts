@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -25,9 +25,12 @@ import type ReingoldFruchtermanLayout from './Networkgraph/ReingoldFruchtermanLa
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    pushUnique
 } = U;
 
 /* *
@@ -82,14 +85,6 @@ export interface DragNodesSeriesOptions extends SeriesOptions {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -101,7 +96,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         addEvent(ChartClass, 'load', onChartLoad);
     }
 
@@ -245,8 +240,7 @@ function onMouseMove(
  */
 function onMouseUp(
     this: DragNodesSeries,
-    point: DragNodesPoint,
-    _event?: PointerEvent
+    point: DragNodesPoint
 ): void {
     if (point.fixedPosition) {
         if (point.hasDragged) {

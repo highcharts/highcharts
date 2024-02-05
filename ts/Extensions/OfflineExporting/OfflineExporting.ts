@@ -10,8 +10,6 @@
  *
  * */
 
-/* global MSBlobBuilder */
-
 'use strict';
 
 /* *
@@ -37,13 +35,12 @@ const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    composed,
+    doc,
+    win
 } = H;
 import HU from '../../Core/HttpUtilities.js';
-const {
-    ajax
-} = HU;
+const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -51,7 +48,8 @@ const {
     error,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 AST.allowedAttributes.push(
@@ -98,14 +96,6 @@ declare module '../../Core/Chart/ChartLike' {
         ): void;
     }
 }
-
-/* *
- *
- * Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -167,7 +157,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
@@ -180,7 +170,6 @@ namespace OfflineExporting {
         return ChartClass as (typeof Composition&T);
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Get data URL to an image of an SVG and call download on it options
      * object:

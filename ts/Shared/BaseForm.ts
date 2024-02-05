@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -106,7 +106,7 @@ abstract class BaseForm {
 
         // Create close popup button.
         const closeButton = createElement(
-            'div',
+            'button',
             { className },
             void 0,
             this.container

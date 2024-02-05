@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -697,6 +697,7 @@ const stockTools: StockToolsOptions = {
          */
         definitions: {
             separator: {
+                elementType: 'span',
                 /**
                  * A predefined background symbol for the button.
                  */

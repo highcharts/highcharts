@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -81,7 +81,7 @@ function addMenuItem(
 
     // tab 1
     const menuItem = createElement(
-        'span',
+        'button',
         {
             className
         },

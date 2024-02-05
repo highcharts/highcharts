@@ -97,6 +97,7 @@ class ADIndicator extends SMAIndicator {
         yVal: Array<Array<number>>,
         yValVolume: Array<number>,
         i: number,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _period: number
     ): Array<number> {
         const high = yVal[i][1],
@@ -117,9 +118,9 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ADPoint> = void 0 as any;
-    public options: ADOptions = void 0 as any;
-    public points: Array<ADPoint> = void 0 as any;
+    public data!: Array<ADPoint>;
+    public options!: ADOptions;
+    public points!: Array<ADPoint>;
 
     /* *
      *

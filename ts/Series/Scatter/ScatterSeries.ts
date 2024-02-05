@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -62,11 +62,11 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    public data: Array<ScatterPoint> = void 0 as any;
+    public data!: Array<ScatterPoint>;
 
-    public options: ScatterSeriesOptions = void 0 as any;
+    public options!: ScatterSeriesOptions;
 
-    public points: Array<ScatterPoint> = void 0 as any;
+    public points!: Array<ScatterPoint>;
 
     /* *
      *
@@ -157,16 +157,13 @@ class ScatterSeries extends LineSeries {
 
 interface ScatterSeries {
     pointClass: typeof ScatterPoint;
-    takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false // #2342
-
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
 /* *

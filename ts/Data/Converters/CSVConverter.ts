@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type { BeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -358,16 +359,12 @@ class CSVConverter extends DataConverter {
 
         let i = 0,
             c = '',
-            cl = '',
-            cn = '',
             token: (number|string) = '',
             actualColumn = 0,
             column = 0;
 
         const read = (j: number): void => {
             c = columnStr[j];
-            cl = columnStr[j - 1];
-            cn = columnStr[j + 1];
         };
 
         const pushType = (type: string): void => {
@@ -614,13 +611,6 @@ namespace CSVConverter {
      * */
 
     /**
-     * Interface for the BeforeParse callback function
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -636,12 +626,12 @@ namespace CSVConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: DataBeforeParseCallbackFunction;
+        beforeParse?: BeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
 
     /**
-     * Avaliable options of the CSVConverter.
+     * Available options of the CSVConverter.
      */
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -27,10 +27,6 @@ import type {
 } from './DragDropOptions';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
 import type {
     PointDropEventObject,
@@ -50,7 +46,10 @@ const {
 } = DDU;
 import DragDropDefaults from './DragDropDefaults.js';
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const {
+    composed,
+    doc
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -128,14 +127,6 @@ interface DragHandlesObject {
     group: SVGElement;
     point: string;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -291,7 +282,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.hideDragHandles = chartHideDragHandles;
@@ -404,7 +395,7 @@ function getGroupedPoints(point: Point): Array<Point> {
     if (series.boosted) { // #11156
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             points.push(
-                (new series.pointClass()).init( // eslint-disable-line new-cap
+                new series.pointClass( // eslint-disable-line new-cap
                     series,
                     data[i]
                 )

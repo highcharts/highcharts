@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,8 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
+
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -465,8 +467,10 @@ class DataConverter implements DataEvent.Emitter {
      * Options for the export.
      */
     public export(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         connector: DataConnector,
         options?: DataConverter.Options
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): string {
         this.emit<DataConverter.Event>({
             type: 'exportError',
@@ -562,7 +566,10 @@ class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.UserOptions} options
      * Options of the DataConverter.
      */
-    public parse(options: DataConverter.UserOptions): void {
+    public parse(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        options: DataConverter.UserOptions
+    ): void {
         this.emit<DataConverter.Event>({
             type: 'parseError',
             columns: [],
@@ -717,7 +724,7 @@ namespace DataConverter {
         );
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
-        readonly headers: string[];
+        readonly headers: string[]|ColumnNamesOptions;
     }
 
     export interface DateFormatCallbackFunction {

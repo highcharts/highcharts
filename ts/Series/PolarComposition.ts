@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,6 +46,7 @@ import type Tick from '../Core/Axis/Tick';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Core/Globals.js';
+const { composed } = H;
 import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
@@ -57,6 +58,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     relativeLength,
     splat,
     uniqueKey,
@@ -157,14 +159,6 @@ export declare class PolarSeriesComposition extends Series {
     yAxis: RadialAxis.AxisComposition;
     translate(): void;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -499,7 +493,6 @@ function onPointerGetSelectionMarkerAttrs(
                 (linearAxis as any).options.gridLineInterpolation === 'polygon'
             ) {
                 const radialAxis = chart.hoverPane.axis,
-                    tickInterval = radialAxis.tickInterval,
                     min = start - radialAxis.startAngleRad + radialAxis.pos,
                     max = end - start;
 
@@ -1477,18 +1470,17 @@ class PolarAdditions {
         Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, this.compose)) {
+            const chartProto = ChartClass.prototype,
+                pointProto = PointClass.prototype,
+                pointerProto = PointerClass.prototype,
+                seriesProto = SeriesClass.prototype;
+
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
 
-            const chartProto = ChartClass.prototype;
-
             wrap(chartProto, 'get', wrapChartGet);
-        }
-
-        if (U.pushUnique(composedMembers, PointerClass)) {
-            const pointerProto = PointerClass.prototype;
 
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
             wrap(pointerProto, 'pinch', wrapPointerPinch);
@@ -1502,9 +1494,7 @@ class PolarAdditions {
                 'getSelectionBox',
                 onPointerGetSelectionBox
             );
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
             addEvent(
                 SeriesClass,
@@ -1520,55 +1510,44 @@ class PolarAdditions {
                 { order: 4 }
             );
 
-            const seriesProto = SeriesClass.prototype;
-
             wrap(seriesProto, 'animate', wrapSeriesAnimate);
-        }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype;
 
             wrap(pointProto, 'pos', wrapPointPos);
-        }
 
-        if (
-            ColumnSeriesClass &&
-            U.pushUnique(composedMembers, ColumnSeriesClass)
-        ) {
-            const columnProto = ColumnSeriesClass.prototype;
+            if (ColumnSeriesClass) {
+                const columnProto = ColumnSeriesClass.prototype;
 
-            wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
-            wrap(columnProto, 'animate', wrapSeriesAnimate);
-        }
+                wrap(
+                    columnProto,
+                    'alignDataLabel',
+                    wrapColumnSeriesAlignDataLabel);
+                wrap(columnProto, 'animate', wrapSeriesAnimate);
+            }
 
-        if (
-            LineSeriesClass &&
-            U.pushUnique(composedMembers, LineSeriesClass)
-        ) {
-            const lineProto = LineSeriesClass.prototype;
+            if (LineSeriesClass) {
+                const lineProto = LineSeriesClass.prototype;
 
-            wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
-        }
+                wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
+            }
 
-        if (
-            SplineSeriesClass &&
-            U.pushUnique(composedMembers, SplineSeriesClass)
-        ) {
-            const splineProto = SplineSeriesClass.prototype;
+            if (SplineSeriesClass) {
+                const splineProto = SplineSeriesClass.prototype;
 
-            wrap(splineProto, 'getPointSpline', wrapSplineSeriesGetPointSpline);
+                wrap(
+                    splineProto,
+                    'getPointSpline',
+                    wrapSplineSeriesGetPointSpline);
 
-            if (
-                AreaSplineRangeSeriesClass &&
-                U.pushUnique(composedMembers, AreaSplineRangeSeriesClass)
-            ) {
-                const areaSplineRangeProto =
-                    AreaSplineRangeSeriesClass.prototype;
+                if (AreaSplineRangeSeriesClass) {
+                    const areaSplineRangeProto =
+                        AreaSplineRangeSeriesClass.prototype;
 
-                // #6430 Areasplinerange series use unwrapped getPointSpline
-                // method, so we need to set this method again.
-                areaSplineRangeProto.getPointSpline =
-                    splineProto.getPointSpline;
+                    // #6430 Areasplinerange series use unwrapped getPointSpline
+                    // method, so we need to set this method again.
+                    areaSplineRangeProto.getPointSpline =
+                        splineProto.getPointSpline;
+                }
             }
         }
 

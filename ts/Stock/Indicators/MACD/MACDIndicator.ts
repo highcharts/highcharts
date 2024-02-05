@@ -186,13 +186,13 @@ class MACDIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<MACDPoint> = void 0 as any;
+    public data!: Array<MACDPoint>;
     public graphmacd?: SVGElement;
     public graphsignal?: SVGElement;
-    public macdZones: MACDZonesObject = void 0 as any;
-    public options: MACDOptions = void 0 as any;
-    public points: Array<MACDPoint> = void 0 as any;
-    public signalZones: MACDZonesObject = void 0 as any;
+    public macdZones!: MACDZonesObject;
+    public options!: MACDOptions;
+    public points!: Array<MACDPoint>;
+    public signalZones!: MACDZonesObject;
 
     /* *
      *

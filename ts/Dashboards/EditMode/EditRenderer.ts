@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -367,10 +367,8 @@ function renderSelectElement(
         selectOption
     );
 
-    let icon: HTMLElement|undefined;
-
     if (option.iconURL) {
-        icon = createElement(
+        createElement(
             'img',
             {
                 src: iconURL

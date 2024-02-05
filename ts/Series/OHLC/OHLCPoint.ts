@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -42,13 +42,13 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      *
      * */
 
-    public open: number = void 0 as any;
+    public open!: number;
 
-    public options: OHLCPointOptions = void 0 as any;
+    public options!: OHLCPointOptions;
 
-    public plotOpen: number = void 0 as any;
+    public plotOpen!: number;
 
-    public series: OHLCSeries = void 0 as any;
+    public series!: OHLCSeries;
 
     /* *
      *
@@ -92,7 +92,9 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      */
     public resolveColor(): void {
         super.resolveColor();
-        this.resolveUpColor();
+        if (!this.series.is('heikinashi')) {
+            this.resolveUpColor();
+        }
     }
 
     /**

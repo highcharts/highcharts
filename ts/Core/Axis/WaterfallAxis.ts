@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,8 @@ import type Chart from '../Chart/Chart.js';
 import type StackingAxis from './Stacking/StackingAxis';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
@@ -86,14 +88,6 @@ namespace WaterfallAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -106,13 +100,11 @@ namespace WaterfallAxis {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-        }
 
-        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         }
 

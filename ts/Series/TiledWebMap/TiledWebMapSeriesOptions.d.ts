@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022
+ *  (c) 2010-2024
  *
  *  License: www.highcharts.com/license
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -94,12 +94,12 @@ class CMFIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<CMFPoint> = void 0 as any;
-    public options: CMFOptions = void 0 as any;
-    public points: Array<CMFPoint> = void 0 as any;
-    public volumeSeries: LineSeries = void 0 as any;
-    public linkedParent: LineSeries = void 0 as any;
-    public yData: Array<Array<number>> = void 0 as any;
+    public data!: Array<CMFPoint>;
+    public options!: CMFOptions;
+    public points!: Array<CMFPoint>;
+    public volumeSeries!: LineSeries;
+    public linkedParent!: LineSeries;
+    public yData!: Array<Array<number>>;
     public nameBase: string = 'Chaikin Money Flow';
 
     /* *

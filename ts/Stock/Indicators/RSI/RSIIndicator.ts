@@ -94,9 +94,9 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<RSIPoint> = void 0 as any;
-    public points: Array<RSIPoint> = void 0 as any;
-    public options: RSIOptions = void 0 as any;
+    public data!: Array<RSIPoint>;
+    public points!: Array<RSIPoint>;
+    public options!: RSIOptions;
 
     /* *
      *

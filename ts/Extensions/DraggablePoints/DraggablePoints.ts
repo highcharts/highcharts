@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -44,6 +44,8 @@ import DraggableChart from './DraggableChart.js';
 const { initDragDrop } = DraggableChart;
 import DragDropDefaults from './DragDropDefaults.js';
 import DragDropProps from './DragDropProps.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -156,14 +158,6 @@ interface SeriesDragDropPropsResizeSideFunction {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -216,13 +210,13 @@ function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass,
-        seriesTypes = SeriesClass.types;
-
     DraggableChart.compose(ChartClass);
 
-    if (pushUnique(composedMembers, PointClass)) {
-        const pointProto = PointClass.prototype;
+    if (pushUnique(composed, compose)) {
+        const PointClass = SeriesClass.prototype.pointClass,
+            seriesTypes = SeriesClass.types,
+            seriesProto = SeriesClass.prototype,
+            pointProto = PointClass.prototype;
 
         pointProto.getDropValues = pointGetDropValues;
         pointProto.showDragHandles = pointShowDragHandles;
@@ -230,60 +224,53 @@ function compose(
         addEvent(PointClass, 'mouseOut', onPointMouseOut);
         addEvent(PointClass, 'mouseOver', onPointMouseOver);
         addEvent(PointClass, 'remove', onPointRemove);
-    }
-
-    if (pushUnique(composedMembers, SeriesClass)) {
-        const seriesProto = SeriesClass.prototype;
 
         seriesProto.dragDropProps = DragDropProps.line;
         seriesProto.getGuideBox = seriesGetGuideBox;
-    }
 
-    // Custom props for certain series types
-    const seriesWithDragDropProps = [
-        'arearange',
-        'boxplot',
-        'bullet',
-        'column',
-        'columnrange',
-        'flags',
-        'gantt',
-        'ohlc',
-        'waterfall',
-        'xrange'
-    ];
+        // Custom props for certain series types
+        const seriesWithDragDropProps = [
+            'arearange',
+            'boxplot',
+            'bullet',
+            'column',
+            'columnrange',
+            'flags',
+            'gantt',
+            'ohlc',
+            'waterfall',
+            'xrange'
+        ];
 
-    for (const seriesType of seriesWithDragDropProps) {
-        if (
-            seriesTypes[seriesType] &&
-            pushUnique(composedMembers, seriesTypes[seriesType])
-        ) {
-            seriesTypes[seriesType].prototype.dragDropProps =
-                (DragDropProps as AnyRecord)[seriesType];
+        for (const seriesType of seriesWithDragDropProps) {
+            if (seriesTypes[seriesType]) {
+                seriesTypes[seriesType].prototype.dragDropProps =
+                    (DragDropProps as AnyRecord)[seriesType];
+            }
         }
-    }
 
-    // Don't support certain series types
-    const seriesWithoutDragDropProps = [
-        'bellcurve',
-        'gauge',
-        'histogram',
-        'map',
-        'mapline',
-        'pareto',
-        'pie',
-        'sankey',
-        'sma',
-        'sunburst',
-        'treemap',
-        'vector',
-        'windbarb',
-        'wordcloud'
-    ];
+        // Don't support certain series types
+        const seriesWithoutDragDropProps = [
+            'bellcurve',
+            'gauge',
+            'histogram',
+            'map',
+            'mapline',
+            'pareto',
+            'pie',
+            'sankey',
+            'sma',
+            'sunburst',
+            'treemap',
+            'vector',
+            'windbarb',
+            'wordcloud'
+        ];
 
-    for (const seriesType of seriesWithoutDragDropProps) {
-        if (seriesTypes[seriesType]) {
-            seriesTypes[seriesType].prototype.dragDropProps = null;
+        for (const seriesType of seriesWithoutDragDropProps) {
+            if (seriesTypes[seriesType]) {
+                seriesTypes[seriesType].prototype.dragDropProps = null;
+            }
         }
     }
 

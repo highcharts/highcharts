@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -26,9 +26,10 @@ import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     Chart,
-    Options,
+    Options as ChartOptions,
     Highcharts as H
 } from './HighchartsTypes';
+import type SidebarPopup from '../EditMode/SidebarPopup';
 import type TextOptions from '../Components/TextOptions';
 import type Types from '../../Shared/Types';
 
@@ -112,6 +113,7 @@ class KPIComponent extends Component {
 
     /** @internal */
     public static charter?: H;
+
     /**
      * Default options of the KPI component.
      */
@@ -158,8 +160,8 @@ class KPIComponent extends Component {
 
     /**
      * Default options of the KPI component.
-     */
-    public static defaultChartOptions: Types.DeepPartial<Options> = {
+     *
+     * @default {
         chart: {
             type: 'spline',
             styledMode: true,
@@ -174,13 +176,53 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<Options['xAxis']>,
+        },
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<Options['yAxis']>,
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            outside: true
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
+                }
+            }
+        }
+    }
+     */
+    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
+        chart: {
+            type: 'spline',
+            styledMode: true,
+            zooming: {
+                mouseWheel: {
+                    enabled: false
+                }
+            }
+        },
+        title: {
+            text: void 0
+        },
+        xAxis: {
+            visible: false
+        } as Types.DeepPartial<ChartOptions['xAxis']>,
+        yAxis: {
+            visible: false,
+            title: {
+                text: null
+            }
+        } as Types.DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },
@@ -208,7 +250,7 @@ class KPIComponent extends Component {
     /**
      * KPI component's options.
      */
-    public options: KPIComponent.ComponentOptions;
+    public options: KPIComponent.Options;
     /**
      * HTML element where the value is created.
      *
@@ -258,7 +300,7 @@ class KPIComponent extends Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<KPIComponent.ComponentOptions>
+        options: Partial<KPIComponent.Options>
     ) {
         options = merge(
             KPIComponent.defaultOptions,
@@ -266,7 +308,7 @@ class KPIComponent extends Component {
         );
         super(cell, options);
 
-        this.options = options as KPIComponent.ComponentOptions;
+        this.options = options as KPIComponent.Options;
 
         this.type = 'KPI';
         this.sync = new KPIComponent.Sync(
@@ -290,18 +332,6 @@ class KPIComponent extends Component {
             {},
             this.contentElement
         );
-
-        if (this.options.chartOptions) {
-            this.chartContainer = createElement(
-                'div',
-                {
-                    className: `${options.className}-chart-container`
-                },
-                {},
-                this.contentElement
-            );
-        }
-
     }
 
     /* *
@@ -313,9 +343,6 @@ class KPIComponent extends Component {
     /** @internal */
     public async load(): Promise<this> {
         await super.load();
-
-        this.contentElement.style.display = 'flex';
-        this.contentElement.style.flexDirection = 'column';
 
         this.linkValueToChart();
 
@@ -345,13 +372,34 @@ class KPIComponent extends Component {
         if (
             charter &&
             this.options.chartOptions &&
-            !this.chart &&
-            this.chartContainer
+            !this.chart
         ) {
-            this.chart = charter.chart(this.chartContainer, merge(
-                KPIComponent.defaultChartOptions,
-                this.options.chartOptions
-            ));
+            if (!this.chartContainer) {
+                this.chartContainer = createElement(
+                    'div',
+                    {
+                        className: `${this.options.className}-chart-container`
+                    }, {
+                        height: '100%'
+                    },
+                    this.contentElement
+                );
+
+                if (!this.cell.container.style.height) {
+                    // If the cell height is specified, clear dimensions to make
+                    // the container to adjust to the chart height.
+                    this.contentElement.style.height = '100%';
+                    super.resize(null, null);
+                }
+            }
+
+            this.chart = charter.chart(
+                this.chartContainer,
+                merge(
+                    KPIComponent.defaultChartOptions,
+                    this.options.chartOptions
+                ) as Partial<ChartOptions>
+            );
         } else if (
             this.chart &&
             !this.options.chartOptions &&
@@ -380,7 +428,7 @@ class KPIComponent extends Component {
      * The options to apply.
      */
     public async update(
-        options: Partial<KPIComponent.ComponentOptions>,
+        options: Partial<KPIComponent.Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
@@ -623,6 +671,26 @@ class KPIComponent extends Component {
         return '';
     }
 
+    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<KPIComponent.Options> {
+        const connectorsIds =
+            sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<KPIComponent.Options> = {
+            cell: '',
+            type: 'KPI'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Converts the class instance to a class JSON.
      *
@@ -662,7 +730,7 @@ class KPIComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+    public getOptions(): Partial<KPIComponent.Options> {
         return {
             ...diffObjects(this.options, KPIComponent.defaultOptions),
             type: 'KPI'
@@ -701,15 +769,17 @@ namespace KPIComponent {
         subtitle?: string;
         valueFormat?: string;
     }
-    export interface ComponentOptions extends Component.ComponentOptions {
+    export interface Options extends Component.Options {
         columnName: string;
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
          *
+         * Some of the chart options are already set, you can find them in {@link KPIComponent.defaultChartOptions}
+         *
          * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
-        chartOptions?: Options;
+        chartOptions?: ChartOptions;
         style?: CSSObject;
         /**
          * The threshold declares the value when color is applied
@@ -820,18 +890,6 @@ namespace KPIComponent {
          * @default 0
          */
         seriesIndex?: number;
-    }
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        KPI: typeof KPIComponent;
     }
 }
 

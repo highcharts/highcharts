@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2024 Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,8 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -52,14 +54,6 @@ declare module '../Core/Chart/ChartLike'{
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Composition
  *
  * */
@@ -70,12 +64,10 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composedMembers, AxisClass)) {
-        addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-    }
-
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, compose)) {
         const chartProto = ChartClass.prototype;
+
+        addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
 
         chartProto.adjustHeight = chartAdjustHeight;
 

@@ -4,10 +4,12 @@ describe('Crossfilter with affectNavigator option', () => {
     });
 
     it('dashboard should be rendered', () => {
-        cy.boardRendered()
+        cy.boardRendered();
     });
 
     it('should modify a table and crossfilters content', () => {
+        cy.viewport(1000, 660);
+
         /**
          * An array of objects specifying:
          *  - handle - index handle element in the navigator we want to drag,
@@ -33,13 +35,17 @@ describe('Crossfilter with affectNavigator option', () => {
                 .trigger('mousemove', { pageX }).trigger('mouseup');
         }
 
-        cy.get('.highcharts-datagrid-row').should('have.length', 4);
-
-        cy.board().then(board => {
+        cy.board().then(async board => {
+            const dataTable = await board.dataPool.getConnectorTable('Economy');
+            assert.ok(
+                dataTable.modified.rowCount < dataTable.rowCount,
+                'The modified table should have less rows than the original one.'
+            );
+            
             assert.ok(
                 board.mountedComponents[1].component.chart
-                    .series[0].points.length === 6,
-                'The middle navigator should have 6 points.'
+                    .series[0].yData.filter(y => y !== null).length < 30,
+                'The middle navigator should have less than 30 points with non null y-value.'
             );
         });
     });

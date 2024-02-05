@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@
 
 import type Globals from '../Globals';
 import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import InvertModifier from '../../Data/Modifiers/InvertModifier';

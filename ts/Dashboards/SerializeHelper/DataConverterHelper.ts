@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,6 +19,7 @@
  *
  * */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import JSON from '../JSON';
 
 import DataConverter from '../../Data/Converters/DataConverter.js';

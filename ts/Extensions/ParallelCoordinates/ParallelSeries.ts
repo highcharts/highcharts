@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2021 Pawel Fus
+ *  (c) 2010-2024 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,8 @@ import type Point from '../../Core/Series/Point';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type Series from '../../Core/Series/Series';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
 import U from '../../Core/Utilities.js';
@@ -60,14 +62,6 @@ namespace ParallelSeries {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -76,26 +70,13 @@ namespace ParallelSeries {
     export function compose(
         SeriesClass: typeof Series
     ): void {
-        const {
-            line: { prototype: { pointClass: LinePointClass } },
-            spline: { prototype: { pointClass: SplinePointClass } }
-        } = SeriesClass.types;
 
-        if (
-            LinePointClass &&
-            pushUnique(composedMembers, LinePointClass)
-        ) {
-            const linePointProto = LinePointClass.prototype;
-
-            wrap(
-                linePointProto,
-                'getLabelConfig',
-                wrapSeriesGetLabelConfig
-            );
-        }
-
-        if (pushUnique(composedMembers, SeriesClass)) {
-            const CompoClass = SeriesClass as typeof Composition;
+        if (pushUnique(composed, compose)) {
+            const CompoClass = SeriesClass as typeof Composition,
+                {
+                    line: { prototype: { pointClass: LinePointClass } },
+                    spline: { prototype: { pointClass: SplinePointClass } }
+                } = SeriesClass.types;
 
             addEvent(
                 CompoClass,
@@ -105,19 +86,22 @@ namespace ParallelSeries {
             );
             addEvent(CompoClass, 'bindAxes', onSeriesBindAxes);
             addEvent(CompoClass, 'destroy', onSeriesDestroy);
-        }
 
-        if (
-            SplinePointClass &&
-            pushUnique(composedMembers, SplinePointClass)
-        ) {
-            const splinePointProto = SplinePointClass.prototype;
+            if (LinePointClass) {
+                wrap(
+                    LinePointClass.prototype,
+                    'getLabelConfig',
+                    wrapSeriesGetLabelConfig
+                );
+            }
 
-            wrap(
-                splinePointProto,
-                'getLabelConfig',
-                wrapSeriesGetLabelConfig
-            );
+            if (SplinePointClass) {
+                wrap(
+                    SplinePointClass.prototype,
+                    'getLabelConfig',
+                    wrapSeriesGetLabelConfig
+                );
+            }
         }
 
     }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,8 +36,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    isNumber,
-    merge
+    isNumber
 } = U;
 
 /* *
@@ -77,21 +76,11 @@ class AreaRangePoint extends AreaPoint {
 
     public isTopInside?: boolean;
 
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-    public high: number = void 0 as any;
+    public high!: number;
 
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-    public low: number = void 0 as any;
+    public low!: number;
 
-    public options: AreaRangePointOptions = void 0 as any;
+    public options!: AreaRangePointOptions;
 
     public origProps?: Partial<AreaRangePoint>;
 
@@ -103,9 +92,21 @@ class AreaRangePoint extends AreaPoint {
 
     public plotLowX?: number;
 
-    public plotX: number = void 0 as any;
+    public plotX!: number;
 
-    public series: AreaRangeSeries = void 0 as any;
+    public series!: AreaRangeSeries;
+
+    /**
+     * Range series only. The high or maximum value for each data point.
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
 
     /* *
      *
@@ -119,9 +120,7 @@ class AreaRangePoint extends AreaPoint {
     public setState(): void {
         const prevState = this.state,
             series = this.series,
-            isPolar = series.chart.polar,
-            seriesOptionsMarker = series.options.marker,
-            seriesDefaultSymbol = series.symbol;
+            isPolar = series.chart.polar;
 
 
         if (!defined(this.plotHigh)) {

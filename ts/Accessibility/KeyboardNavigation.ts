@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -28,6 +28,7 @@ import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
+    composed,
     doc,
     win
 } = H;
@@ -35,7 +36,8 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 import EventProvider from './Utils/EventProvider.js';
@@ -83,16 +85,16 @@ class KeyboardNavigation {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
+    public chart!: Chart;
+    public components!: Accessibility.ComponentsObject;
     public currentModuleIx: number = NaN;
-    public eventProvider: EventProvider = void 0 as any;
-    public exitAnchor?: DOMElementType = void 0 as any;
+    public eventProvider!: EventProvider;
+    public exitAnchor?: DOMElementType;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public tabindexContainer: HTMLDOMElement = void 0 as any;
+    public tabindexContainer!: HTMLDOMElement;
     public tabbingInBackwards?: boolean;
 
     /* *
@@ -100,8 +102,6 @@ class KeyboardNavigation {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -568,19 +568,9 @@ namespace KeyboardNavigation {
 
     /* *
      *
-     *  Construction
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Composition function.
@@ -591,13 +581,11 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
-        }
 
-        if (U.pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 

@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -98,9 +98,9 @@ class WordcloudSeries extends ColumnSeries {
      * Properties
      *
      * */
-    public data: Array<WordcloudPoint> = void 0 as any;
-    public options: WordcloudSeriesOptions = void 0 as any;
-    public points: Array<WordcloudPoint> = void 0 as any;
+    public data!: Array<WordcloudPoint>;
+    public options!: WordcloudSeriesOptions;
+    public points!: Array<WordcloudPoint>;
 
     /**
      *

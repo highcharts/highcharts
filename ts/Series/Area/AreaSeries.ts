@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,11 +23,7 @@ import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type Legend from '../../Core/Legend/Legend';
-import type Series from '../../Core/Series/Series';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -107,8 +103,8 @@ class AreaSeries extends LineSeries {
          */
 
         /**
-         * Fill color or gradient for the area. When `null`, the series' `color`
-         * is used with the series' `fillOpacity`.
+         * Fill color or gradient for the area. When `undefined`, the series'
+         * `color` is used with the series' `fillOpacity`.
          *
          * In styled mode, the fill color can be set with the `.highcharts-area`
          * class name.
@@ -117,7 +113,7 @@ class AreaSeries extends LineSeries {
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
-         *         Null by default
+         *         Undefined by default
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
          *         Gradient
          *
@@ -218,7 +214,7 @@ class AreaSeries extends LineSeries {
          */
         threshold: 0,
 
-        legendSymbol: 'rectangle'
+        legendSymbol: 'areaMarker'
 
     });
 
@@ -230,11 +226,11 @@ class AreaSeries extends LineSeries {
 
     public areaPath?: SVGPath;
 
-    public data: Array<AreaPoint> = void 0 as any;
+    public data!: Array<AreaPoint>;
 
-    public options: AreaSeriesOptions = void 0 as any;
+    public options!: AreaSeriesOptions;
 
-    public points: Array<AreaPoint> = void 0 as any;
+    public points!: Array<AreaPoint>;
 
     /* *
      *
@@ -301,15 +297,18 @@ class AreaSeries extends LineSeries {
             }
 
             if (!this.chart.styledMode) {
-                // If there is fillColor defined for the area, set it
-                if (fillColor) {
-                    attribs.fill = fillColor;
-                } else {
-                    // Otherwise, we set it to the zone/series color and add
-                    // fill-opacity (#18939)
-                    attribs.fill = owner.color || this.color;
-                    attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
-                }
+                // If there is fillColor defined for the area, set it.
+                // Otherwise, we set it to the zone/series color and add
+                // fill-opacity (#18939).
+                attribs.fill = fillColor || owner.color || this.color;
+                attribs['fill-opacity'] = fillColor ?
+                    1 : (options.fillOpacity ?? 0.75);
+
+                // Allow clicking through the area if sticky tracking is true
+                // (#18744)
+                area.css({
+                    pointerEvents: this.stickyTracking ? 'none' : 'auto'
+                });
             }
 
             area[verb](attribs);

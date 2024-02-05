@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -83,15 +83,15 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
     public centerX?: number;
 
-    public data: Array<Funnel3DPoint> = void 0 as any;
+    public data!: Array<Funnel3DPoint>;
 
-    public options: Funnel3DSeriesOptions = void 0 as any;
+    public options!: Funnel3DSeriesOptions;
 
-    public points: Array<Funnel3DPoint> = void 0 as any;
+    public points!: Array<Funnel3DPoint>;
 
     /* *
      *

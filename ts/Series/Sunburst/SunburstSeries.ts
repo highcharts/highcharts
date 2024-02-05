@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -293,11 +293,6 @@ function getDlOptions(
                 2 * (options.padding || 0), 1);
         }
     }
-    // NOTE: alignDataLabel positions the data label differntly when rotation is
-    // 0. Avoiding this by setting rotation to a small number.
-    if (options.rotation === 0) {
-        options.rotation = 0.001;
-    }
     return options;
 }
 
@@ -464,23 +459,23 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<SunburstPoint> = void 0 as any;
+    public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel: Record<string, SunburstSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
 
-    public nodeMap: Record<string, SunburstNode> = void 0 as any;
+    public nodeMap!: Record<string, SunburstNode>;
 
-    public options: SunburstSeriesOptions = void 0 as any;
+    public options!: SunburstSeriesOptions;
 
-    public points: Array<SunburstPoint> = void 0 as any;
+    public points!: Array<SunburstPoint>;
 
-    public shapeRoot?: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeRoot?: SunburstNode.NodeValuesObject;
 
-    public startAndEndRadians: CU.RadianAngles = void 0 as any;
+    public startAndEndRadians!: CU.RadianAngles;
 
-    public tree: SunburstNode = void 0 as any;
+    public tree!: SunburstNode;
 
     /* *
      *
@@ -497,7 +492,7 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return super.alignDataLabel(point, dataLabel, labelOptions);
+        return super.alignDataLabel.apply(this, arguments);
     }
 
     /**
@@ -830,7 +825,7 @@ class SunburstSeries extends TreemapSeries {
 
             child.shapeArgs = merge(values, {
                 plotX: center.x,
-                plotY: center.y + 4 * Math.abs(Math.cos(angle))
+                plotY: center.y
             });
             child.values = merge(values, {
                 val: val

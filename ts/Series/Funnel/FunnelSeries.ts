@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,7 +30,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import FunnelSeriesDefaults from './FunnelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import BorderRadius from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -40,6 +43,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    correctFloat,
     extend,
     fireEvent,
     isArray,
@@ -131,11 +135,11 @@ class FunnelSeries extends PieSeries {
 
     public centerX?: number;
 
-    public data: Array<FunnelPoint> = void 0 as any;
+    public data!: Array<FunnelPoint>;
 
-    public options: FunnelSeriesOptions = void 0 as any;
+    public options!: FunnelSeriesOptions;
 
-    public points: Array<FunnelPoint> = void 0 as any;
+    public points!: Array<FunnelPoint>;
 
     /* *
      *
@@ -400,19 +404,19 @@ class FunnelSeries extends PieSeries {
         Individual point coordinate naming:
 
         x1,y1 _________________ x2,y1
-            \                         /
-            \                       /
-            \                     /
-            \                   /
-                \                 /
-            x3,y3 _________ x4,y3
+        \                         /
+         \                       /
+          \                     /
+           \                   /
+            \                 /
+           x3,y3 _________ x4,y3
 
         Additional for the base of the neck:
 
-                |               |
-                |               |
-                |               |
-            x3,y5 _________ x4,y5
+             |               |
+             |               |
+             |               |
+           x3,y5 _________ x4,y5
 
         */
 
@@ -439,7 +443,7 @@ class FunnelSeries extends PieSeries {
             x4 = x3 + tempWidth;
 
             // the entire point is within the neck
-            if (y1 > neckY) {
+            if (correctFloat(y1) >= neckY) {
                 x1 = x3 = centerX - neckWidth / 2;
                 x2 = x4 = centerX + neckWidth / 2;
 
@@ -475,7 +479,9 @@ class FunnelSeries extends PieSeries {
                     lBase = x4 - x3,
                     lSide = Math.sqrt(xSide * xSide + h * h);
 
-                alpha = Math.atan(h / xSide);
+                // If xSide equals zero, return Infinity to avoid dividing
+                // by zero (#20319)
+                alpha = Math.atan(xSide !== 0 ? h / xSide : Infinity);
                 maxT = lSide / 2;
                 if (y5 !== null) {
                     maxT = Math.min(maxT, Math.abs(y5 - y3) / 2);
@@ -682,14 +688,6 @@ namespace FunnelSeries {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -699,7 +697,7 @@ namespace FunnelSeries {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, compose)) {
             addEvent(
                 ChartClass,
                 'afterHideAllOverlappingLabels',

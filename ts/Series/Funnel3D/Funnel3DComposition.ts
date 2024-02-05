@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -21,7 +21,6 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGAttributes3D from '../../Core/Renderer/SVG/SVGAttributes3D';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -32,7 +31,10 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
-const { charts } = H;
+const {
+    charts,
+    composed
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -65,19 +67,6 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-interface Funnel3DMethodsObject {
-    parts: Array<string>;
-    mainParts: Array<string>;
-    sideGroups: Array<string>;
-    sideParts: Record<string, Array<string>>;
-    pathType: string;
-    opacitySetter(opacity: number): SVGElement;
-    fillSetter(this: SVGElement, fill: ColorType): SVGElement;
-    adjustForGradient(this: SVGElement): void;
-    zIndexSetter(this: SVGElement): boolean;
-    onAdd(this: SVGElement): void;
-}
-
 interface Funnel3DPathsObject extends SVGPath3D {
     backLower: SVGPath;
     backUpper: SVGPath;
@@ -86,14 +75,6 @@ interface Funnel3DPathsObject extends SVGPath3D {
     rightLower: SVGPath;
     rightUpper: SVGPath;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -106,7 +87,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (pushUnique(composed, compose)) {
         const rendererProto =
             SVGRendererClass.prototype as SVGRenderer3D.Composition;
 

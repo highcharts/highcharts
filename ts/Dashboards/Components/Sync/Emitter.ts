@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -53,10 +53,12 @@ class SyncEmitter {
      * @remark Can be any string, but should be unique.
      */
     public id: string;
+
     /**
      * The function to be called when the emitter is activated.
      */
     public func: EmitterFunction;
+
     /**
      * Callback function that is called when the emitter is removed.
      * Normally provided as the return value of {@link func}.

@@ -82,13 +82,13 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[0].dataLabels[0].textPath),
+        Highcharts.defined(points[0].dataLabels[0].text.textPath),
         false,
         'Text path should not exist for the center label'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[7].dataLabels[0].textPath),
+        Highcharts.defined(points[7].dataLabels[0].text.textPath),
         true,
         'Text path should exist for this data label'
     );
@@ -126,7 +126,7 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPath),
+        Highcharts.defined(points[2].dataLabels[0].text.textPath),
         false,
         'Text path should not exist for the center label'
     );
@@ -151,7 +151,7 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPath),
+        Highcharts.defined(points[2].dataLabels[0].text.textPath),
         true,
         'Text path should exist for this data label'
     );

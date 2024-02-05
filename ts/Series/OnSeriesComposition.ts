@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,8 @@ import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 import type Point from '../Core/Series/Point';
 
 import ColumnSeries from './Column/ColumnSeries.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import SplinePoint from './Spline/SplinePoint';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
@@ -27,6 +29,7 @@ const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
 const {
     defined,
+    pushUnique,
     stableSort
 } = U;
 
@@ -60,19 +63,9 @@ namespace OnSeriesComposition {
 
     /* *
      *
-     *  Properties
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -81,7 +74,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, compose)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;

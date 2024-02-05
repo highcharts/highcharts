@@ -210,15 +210,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<ArcDiagramPoint> = void 0 as any;
+    public data!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramSeriesOptions = void 0 as any;
+    public options!: ArcDiagramSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
-    public nodes: Array<ArcDiagramPoint> = void 0 as any;
+    public nodes!: Array<ArcDiagramPoint>;
 
-    public points: Array<ArcDiagramPoint> = void 0 as any;
+    public points!: Array<ArcDiagramPoint>;
 
     /* *
      *
@@ -407,8 +407,7 @@ class ArcDiagramSeries extends SankeySeries {
             toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
-            bottom = nodeTop,
-            linkWidth = linkWeight;
+            bottom = nodeTop;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -417,7 +416,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
-            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -636,10 +634,11 @@ class ArcDiagramSeries extends SankeySeries {
 
     public pointAttribs(
         point?: ArcDiagramPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs
+            const { ...attrs } = Series.prototype.pointAttribs
                 .apply(this, arguments);
             return attrs;
         }

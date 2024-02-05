@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -71,8 +71,7 @@ class EditContextMenu extends Menu {
     constructor(
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
-        editMode: EditMode,
-        parent?: HTMLElement
+        editMode: EditMode
     ) {
         super(
             editMode.board.container,
