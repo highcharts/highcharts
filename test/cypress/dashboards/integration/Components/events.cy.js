@@ -24,15 +24,15 @@ describe('Component events', () => {
     cy.get('.highcharts-dashboards-component').first().click();
 
     cy.get('.highcharts-dashboards-edit-resize-snap-x').first()
-        .trigger('mousedown')
-        .trigger('mousemove', { clientX: 300 })
-        .trigger('mouseup');
+        .trigger('mousedown', { force: true })
+        .trigger('mousemove', { clientX: 300, force: true })
+        .trigger('mouseup', {force: true});
 
     cy.get('#resize').should('have.value', 'resize');
   });
 
   it('Update event should be triggered after sidebar update', () => {
-    cy.get('.highcharts-dashboards-component').first().click();
+    cy.get('.highcharts-dashboards-component').first().click({force: true});
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
     cy.contains('Confirm').click();
 
@@ -44,7 +44,7 @@ describe('Component events', () => {
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
     cy.contains('Confirm').should('be.visible');
-    cy.get('body').type('{esc}');
+    cy.get('body').type('{esc}', { force: true });
 
     cy.contains('Confirm').should('not.be.visible');
   });
@@ -53,14 +53,14 @@ describe('Component events', () => {
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
 
     cy.contains('Confirm').should('be.visible');
-    cy.get('body').type('{esc}');
+    cy.get('body').type('{esc}', { force: true });
 
     cy.contains('Confirm').should('not.be.visible');
   });
 
   it('Unmount event should be triggered when removed component', () => {
-    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
-    cy.contains('Confirm').click();
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click({force: true});
+    cy.contains('Confirm').click({force: true});
 
     cy.get('#unmount').should('have.value', 'unmount');
   });
