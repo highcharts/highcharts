@@ -1,97 +1,194 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'spline',
-        events: {
-            // Add colorful backgrounds and labels
-            load() {
-                const {
-                    renderer,
-                    plotLeft,
-                    plotTop,
-                    plotHeight,
-                    plotWidth
-                } = this;
-
-                // Lagging
-                renderer.rect(
-                    plotLeft,
-                    plotTop + plotHeight / 2,
-                    plotWidth / 2,
-                    plotHeight / 2
-                ).attr({
-                    fill: 'rgba(255, 0, 0, 0.1)',
-                    zIndex: 0
-                }).add();
-                renderer.text(
-                    'Lagging',
-                    plotLeft,
-                    plotTop + plotHeight - 5
-                ).attr({
-                    fill: '#ff0000'
-                }).add();
-
-                // Improving
-                renderer.rect(
-                    plotLeft,
-                    plotTop,
-                    plotWidth / 2,
-                    plotHeight / 2
-                ).attr({
-                    fill: 'rgba(0, 0, 255, 0.1)',
-                    zIndex: 0
-                }).add();
-                renderer.text(
-                    'Improving',
-                    plotLeft,
-                    plotTop + 14
-                ).attr({
-                    fill: '#0000ff'
-                }).add();
-
-                // Leading
-                renderer.rect(
-                    plotLeft + plotWidth / 2,
-                    plotTop,
-                    plotWidth / 2,
-                    plotHeight / 2
-                ).attr({
-                    fill: 'rgba(0, 255, 0, 0.1)',
-                    zIndex: 0
-                }).add();
-                renderer.text(
-                    'Leading',
-                    plotWidth + 14,
-                    plotTop + 14
-                ).attr({
-                    fill: '#00ff00'
-                }).add();
-
-                // Weakening
-                renderer.rect(
-                    plotLeft + (plotWidth / 2),
-                    plotTop + plotHeight / 2,
-                    plotWidth / 2,
-                    plotHeight / 2
-                ).attr({
-                    fill: 'rgba(255, 255, 0, 0.1)',
-                    zIndex: 0
-                }).add();
-                renderer.text(
-                    'Weakening',
-                    plotWidth - 9,
-                    plotTop + plotHeight - 5
-                ).attr({
-                    fill: '#ffc600'
-                }).add();
-            }
-        }
+        type: 'scatter',
+        height: '100%'
     },
+    annotations: [{
+        draggable: false,
+        zIndex: 0,
+        shapes: [{
+            fill: 'rgba(255, 0, 0, 0.1)',
+            type: 'path',
+            points: [{
+                x: 96,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 96,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }],
+        labels: [{
+            text: 'Lagging',
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+            y: 0,
+            style: {
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: '#ff0000'
+            },
+            point: {
+                x: 96,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }
+        }]
+    }, {
+        draggable: false,
+        zIndex: 0,
+        shapes: [{
+            fill: 'rgba(0, 0, 255, 0.1)',
+            type: 'path',
+            points: [{
+                x: 96,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 96,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }],
+        labels: [{
+            text: 'Improving',
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+            y: 0,
+            style: {
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: '#0000ff'
+            },
+            point: {
+                x: 96,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }
+        }]
+    }, {
+        draggable: false,
+        zIndex: 0,
+        shapes: [{
+            fill: 'rgba(0, 255, 0, 0.1)',
+            type: 'path',
+            points: [{
+                x: 100,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }],
+        labels: [{
+            text: 'Leading',
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+            y: 0,
+            style: {
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: '#00ff00'
+            },
+            point: {
+                x: 104,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }
+        }]
+    }, {
+        draggable: false,
+        zIndex: 0,
+        shapes: [{
+            fill: 'rgba(255, 255, 0, 0.1)',
+            type: 'path',
+            points: [{
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }],
+        labels: [{
+            text: 'Weakening',
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+            y: 0,
+            style: {
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: '#ffc600'
+            },
+            point: {
+                x: 104,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }
+        }]
+    }],
     title: {
         text: 'Relative Rotational Graph'
     },
     plotOptions: {
         series: {
-            findNearestPointBy: 'xy',
             lineWidth: 2,
             marker: {
                 enabled: true,
@@ -99,6 +196,9 @@ Highcharts.chart('container', {
                 symbol: 'circle'
             }
         }
+    },
+    tooltip: {
+        pointFormat: 'RS-Ratio: <b>{point.x}</b></br> RS-Momentum: <b>{point.y}</b>'
     },
     xAxis: {
         min: 96,

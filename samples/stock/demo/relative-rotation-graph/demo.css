@@ -1,5 +1,3 @@
 #container {
-    height: 600px;
-    width: 600px;
-    margin: 0 auto;
+    min-width: 310px;
 }
