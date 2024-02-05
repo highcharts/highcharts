@@ -448,7 +448,7 @@ function drawSeriesLabels(chart: Chart): void {
             points = series.interpolatedPoints,
             onArea = pick(labelOptions.onArea, !!series.area),
             results: Array<LabelClearPointObject> = [],
-            xData = series.xData || [];
+            xData = series.getColumn('x');
 
         let bBox: (BBoxObject|undefined),
             x: (number|undefined),

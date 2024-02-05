@@ -229,12 +229,13 @@ class TimelineSeries extends LineSeries {
         super.generatePoints();
 
         const series = this,
-            points = series.points;
+            points = series.points,
+            xData = series.getColumn('x');
 
         for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
             points[i].applyOptions({
-                x: (series.xData as any)[i]
-            }, (series.xData as any)[i]);
+                x: xData[i]
+            }, xData[i]);
         }
     }
 
@@ -436,7 +437,8 @@ class TimelineSeries extends LineSeries {
     }
 
     public processData(): undefined {
-        const series = this;
+        const series = this,
+            xData = series.getColumn('x');
 
         let visiblePoints = 0,
             i: (number|undefined);
@@ -452,7 +454,7 @@ class TimelineSeries extends LineSeries {
 
         series.visiblePointsCount = visiblePoints;
 
-        for (i = 0; i < (series.xData as any).length; i++) {
+        for (i = 0; i < xData.length; i++) {
             (series.yData as any)[i] = 1;
         }
 

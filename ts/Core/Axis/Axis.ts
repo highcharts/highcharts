@@ -746,10 +746,8 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.useDataTable ?
-                            series.table.columns.x as Array<number> :
-                            series.xData;
-                        if (xData && xData.length) {
+                        xData = series.getColumn('x');
+                        if (xData.length) {
                             xData = axis.logarithmic ?
                                 xData.filter((x): boolean => x > 0) :
                                 xData;
@@ -1285,11 +1283,12 @@ class Axis {
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[]|TypedArray =>
+                    axis.series.map((s): number[]|TypedArray => {
+                        const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
-                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
-                    )
+                        return s.xIncrement ? xData.slice(0, 2) : xData;
+                    })
                 ) || 0;
 
                 minRange = Math.min(
@@ -1368,10 +1367,11 @@ class Axis {
         } else {
             const singleXs: number[] = [];
             this.series.forEach(function (series): void {
-                const seriesClosest = series.closestPointRange;
+                const seriesClosest = series.closestPointRange,
+                    xData = series.getColumn('x');
 
-                if (series.xData?.length === 1) {
-                    singleXs.push(series.xData[0]);
+                if (xData.length === 1) {
+                    singleXs.push(xData[0]);
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
@@ -1501,7 +1501,7 @@ class Axis {
                         x = axis.nameToX(point);
                         if (typeof x !== 'undefined' && x !== point.x) {
                             point.x = x;
-                            (series.xData as any)[i] = x;
+                            series.table.setCell('x', i, x);
                         }
                     }
                 });

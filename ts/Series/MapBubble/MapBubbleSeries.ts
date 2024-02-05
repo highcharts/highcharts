@@ -300,7 +300,7 @@ class MapBubbleSeries extends BubbleSeries {
         );
 
         let processedXData = this.processedXData,
-            xData = this.xData;
+            xData = this.getColumn('x');
 
         if (isArray(processedXData) && xData) {
             processedXData.length = xData.length;

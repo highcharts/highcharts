@@ -218,11 +218,12 @@ function anchorPoints(
         dataGroupingOptions = options.dataGrouping,
         totalRange = (
             series.currentDataGrouping && series.currentDataGrouping.gapSize
-        );
+        ),
+        xData = series.getColumn('x');
 
     if (!(
         dataGroupingOptions &&
-        series.xData &&
+        xData.length &&
         totalRange &&
         series.groupMap
     )) {
@@ -238,7 +239,7 @@ function anchorPoints(
 
     // Change the first point position, but only when it is
     // the first point in the data set not in the current zoom.
-    if (firstAnchor && series.xData[0] >= groupedXData[0]) {
+    if (firstAnchor && xData[0] >= groupedXData[0]) {
         anchorFirstIndex++;
         const groupStart = series.groupMap[0].start,
             groupLength = series.groupMap[0].length;
@@ -252,8 +253,8 @@ function anchorPoints(
             start: groupedXData[0],
             middle: groupedXData[0] + 0.5 * totalRange,
             end: groupedXData[0] + totalRange,
-            firstPoint: series.xData[0],
-            lastPoint: firstGroupEnd && series.xData[firstGroupEnd]
+            firstPoint: xData[0],
+            lastPoint: firstGroupEnd && xData[firstGroupEnd]
         } as AnchorChoiceType)[firstAnchor];
     }
 
@@ -268,17 +269,14 @@ function anchorPoints(
     ) {
         anchorIndexIterator--;
         const lastGroupStart = series.groupMap[
-                series.groupMap.length - 1
-            ].start,
-            xData = series.useDataTable ?
-                (series.table.columns.x || []) :
-                series.xData;
+            series.groupMap.length - 1
+        ].start;
 
         groupedXData[groupedDataLastIndex] = ({
             start: groupedXData[groupedDataLastIndex],
             middle: groupedXData[groupedDataLastIndex] + 0.5 * totalRange,
             end: groupedXData[groupedDataLastIndex] + totalRange,
-            firstPoint: lastGroupStart && series.xData[lastGroupStart],
+            firstPoint: lastGroupStart && xData[lastGroupStart],
             lastPoint: xData[xData.length - 1]
         } as AnchorChoiceType)[lastAnchor];
     }

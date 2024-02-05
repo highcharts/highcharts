@@ -1834,9 +1834,7 @@ class Series {
             xExtremes,
             min,
             max,
-            processedXData = series.useDataTable ?
-                (table.columns.x as Array<number> || []) :
-                (series.xData || []),
+            processedXData: Array<number>|TypedArray = series.getColumn('x'),
             processedYData = series.useDataTable ?
                 (table.columns.y as Array<number> || []) :
                 (series.yData || []),

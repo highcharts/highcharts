@@ -198,9 +198,13 @@ class WGLRenderer {
         if (series.boosted) {
             isStacked = !!series.options.stacking;
             xData = (
-                series.xData ||
+                (
+                    series.getColumn('x').length ?
+                        series.getColumn('x') :
+                        void 0
+                ) ||
                 (series.options as any).xData ||
-                series.processedXData
+                series.getColumn('x', true)
             );
             s = (isStacked ? series.data : (xData || series.options.data))
                 .length;
@@ -392,19 +396,15 @@ class WGLRenderer {
             yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
             yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
             dataColumns = (series.table.modified || series.table).columns,
-            xData = series.useDataTable ?
-                dataColumns.x :
-                series.xData || (options as any).xData || series.processedXData,
-            yData = series.useDataTable ?
-                dataColumns.y :
-                series.yData || (options as any).yData || series.processedYData,
-            zData = series.useDataTable ?
-                dataColumns.z :
-                (
-                    series.zData ||
-                    (options as any).zData ||
-                    (series as any).processedZData
-                ),
+            xData = (
+                series.getColumn('x').length ? series.getColumn('x') : void 0
+            ) || (options as any).xData || series.getColumn('x', true),
+            yData = (
+                series.getColumn('y').length ? series.getColumn('y') : void 0
+            ) || (options as any).yData || series.getColumn('y', true),
+            zData = (
+                series.getColumn('z').length ? series.getColumn('z') : void 0
+            ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),

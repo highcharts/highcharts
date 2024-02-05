@@ -310,9 +310,9 @@ class RangeSelector {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
                     chart.series.forEach((series): void => {
-                        // reassign it to the last item
-                        const xData = series.xData;
-                        if (xData) {
+                        // Reassign it to the last item
+                        const xData = series.getColumn('x');
+                        if (xData.length) {
                             dataMin = Math.min(xData[0], dataMin as any);
                             dataMax = Math.max(
                                 xData[xData.length - 1],

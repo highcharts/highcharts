@@ -1235,15 +1235,11 @@ namespace OrdinalAxis {
                         ...series.getColumn('x'),
                         ...ordinal.getOverscrollPositions()
                     ];
-                    if (series.useDataTable) {
-                        fakeSeries.table = new DataTable({
-                            columns: {
-                                x: xData
-                            }
-                        });
-                    } else {
-                        fakeSeries.xData = xData;
-                    }
+                    fakeSeries.table = new DataTable({
+                        columns: {
+                            x: xData
+                        }
+                    });
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {

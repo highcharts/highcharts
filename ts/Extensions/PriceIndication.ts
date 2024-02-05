@@ -26,7 +26,6 @@ const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    isArray,
     merge,
     pushUnique
 } = U;
@@ -106,16 +105,11 @@ function onSeriesAfterRender(
             dataLength = series.useDataTable ?
                 series.table.rowCount :
                 (series.yData as any).length,
-            x = series.useDataTable ?
-                series.table.columns.x?.[dataLength - 1] :
-                (series.xData as any)[(series.xData as any).length - 1],
-            y = series.useDataTable ?
-                (
-                    series.table.columns.y || series.table.columns.close
-                )?.[dataLength - 1] :
-                (series.yData as any)[dataLength - 1];
+            x = series.getColumn('x')[dataLength - 1],
+            y = series.getColumn('y')[dataLength - 1] ??
+                series.getColumn('close')[dataLength - 1];
 
-        let yValue;
+        let yValue: number;
 
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
@@ -131,7 +125,7 @@ function onSeriesAfterRender(
             }
 
             yAxis.cross = series.lastPrice;
-            yValue = isArray(y) ? y[3] : y;
+            yValue = y;
 
             if (series.lastPriceLabel) {
                 series.lastPriceLabel.destroy();

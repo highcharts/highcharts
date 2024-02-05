@@ -899,11 +899,11 @@ function scatterProcessData(
     const boostThreshold = options.boostThreshold || 0,
         cropThreshold = options.cropThreshold,
         data = options.data || series.data,
-        xData = series.xData as Array<number>,
+        xData = series.getColumn('x'),
         xExtremes = xAxis.getExtremes(),
         xMax = xExtremes.max ?? Number.MAX_VALUE,
         xMin = xExtremes.min ?? -Number.MAX_VALUE,
-        yData = series.yData as Array<number>,
+        yData = series.getColumn('y'),
         yExtremes = yAxis.getExtremes(),
         yMax = yExtremes.max ?? Number.MAX_VALUE,
         yMin = yExtremes.min ?? -Number.MAX_VALUE;
@@ -1041,10 +1041,9 @@ function seriesRenderCanvas(this: Series): void {
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
-            this.xData ||
+            (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
             this.options.xData ||
-            this.processedXData ||
-            false
+            this.getColumn('x', true)
         );
 
     let renderer: WGLRenderer = false as any,

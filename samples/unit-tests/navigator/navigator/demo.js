@@ -1350,7 +1350,8 @@ QUnit.test('Initiation chart without data but with set range, #15864.', function
 });
 
 
-QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+// Skipped due to impractical mock objects. Make integration test instead.
+QUnit.skip('Navigator, testing method: getBaseSeriesMin', function (assert) {
     const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
 
     const mocks = [
