@@ -383,16 +383,13 @@ abstract class EventEmitter {
      */
     public onMouseUp(): void {
         const chart = this.chart,
-            annotation = this.target?.annotation as Annotation || this;
+            annotation = this.target as Annotation || this,
+            annotationsOptions = chart.options.annotations,
+            index = chart.annotations.indexOf(annotation);
 
         this.removeDocEvents();
 
-        if (annotation) {
-            const annotationsOptions = chart.options.annotations,
-                index = chart.annotations.indexOf(annotation);
-
-            annotationsOptions[index] = annotation.options;
-        }
+        annotationsOptions[index] = annotation.options;
     }
 
     abstract redraw(animation?: boolean): void;
