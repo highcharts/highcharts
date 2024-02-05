@@ -11,7 +11,6 @@
  *  Imports
  *
  * */
-import type { DataTableLight } from '../../Core/Series/Series';
 import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *

@@ -390,7 +390,7 @@ class WaterfallSeries extends ColumnSeries {
             waterfallStacks = axis.waterfall?.stacks,
             seriesThreshold = options.threshold || 0,
             stackKey = series.stackKey,
-            xData = series.xData,
+            xData = series.getColumn('x'),
             xLength = xData.length;
 
         let stackThreshold = seriesThreshold,

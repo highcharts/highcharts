@@ -838,7 +838,7 @@ function getPoint(
     }
 
     const xData = (
-            series.xData ||
+            (series.getColumn('x').length ? series.getColumn('x') : void 0) ||
             seriesOptions.xData ||
             series.getColumn('x', true) ||
             false

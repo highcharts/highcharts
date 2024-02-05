@@ -24,7 +24,6 @@ import type Point from '../../Core/Series/Point';
 import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
@@ -97,7 +96,6 @@ function onAxisFoundExtremes(
 
     const axisLength = this.len,
         { coll, isXAxis, min } = this,
-        dataKey = isXAxis ? 'xData' : 'yData',
         range = (this.max || 0) - (min || 0);
 
     let pxMin = 0,
@@ -118,7 +116,7 @@ function onAxisFoundExtremes(
 
             hasActiveSeries = true;
 
-            const data = (series as any)[dataKey];
+            const data = series.getColumn(isXAxis ? 'x' : 'y');
 
             if (isXAxis) {
                 (series.onPoint || (series as any)).getRadii(0, 0, series);

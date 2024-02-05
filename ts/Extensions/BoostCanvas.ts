@@ -693,7 +693,7 @@ namespace BoostCanvas {
                 };
             },
             xDataFull: Array<number> = (
-                this.xData ||
+                (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
                 (this.options as any).xData ||
                 this.processedXData ||
                 false
