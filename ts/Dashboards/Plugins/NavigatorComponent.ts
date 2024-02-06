@@ -445,7 +445,10 @@ class NavigatorComponent extends Component {
             isObject(crossfilterOptions) && crossfilterOptions.enabled
         )) {
             this.chart.update(
-                { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                merge(
+                    { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                    this.options.chartOptions || {}
+                ),
                 false
             );
         }
@@ -898,7 +901,10 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
+    public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        sidebar: SidebarPopup
+    ): Partial<Options> {
         return {};
     }
 }

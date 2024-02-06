@@ -485,7 +485,7 @@ class TextBuilder {
         getString: Function
     ): void {
         const svgElement = this.svgElement;
-        const { renderer, rotation } = svgElement;
+        const { rotation } = svgElement;
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 

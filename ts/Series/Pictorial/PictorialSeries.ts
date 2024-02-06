@@ -525,11 +525,11 @@ function destroyAllStackShadows(chart: Chart): void {
 }
 
 // This is a workaround due to no implementation of the animation drilldown.
-addEvent(Chart, 'afterDrilldown', function (e): void {
+addEvent(Chart, 'afterDrilldown', function (): void {
     destroyAllStackShadows(this);
 });
 
-addEvent(Chart, 'afterDrillUp', function (e): void {
+addEvent(Chart, 'afterDrillUp', function (): void {
     destroyAllStackShadows(this);
 });
 

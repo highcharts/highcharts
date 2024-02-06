@@ -24,7 +24,6 @@ import type SankeyPoint from './SankeyPoint';
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    pushUnique,
     relativeLength
 } = U;
 

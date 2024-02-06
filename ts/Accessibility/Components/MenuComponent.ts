@@ -503,7 +503,7 @@ namespace MenuComponent {
     ): void {
 
         if (pushUnique(composed, compose)) {
-            const chartProto = Chart.prototype as ChartComposition;
+            const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;
             chartProto.highlightExportItem = chartHighlightExportItem;

@@ -47,8 +47,6 @@ class TreegraphLayout {
      *        Child node, which should be connected to dummyNode.
      * @param {number} gapSize
      *        Remainig gap size.
-     * @param {number} index
-     *        The index of the link.
      *
      * @return {TreegraphNode}
      *         DummyNode as a parent of nodes, which column changes.
@@ -56,8 +54,7 @@ class TreegraphLayout {
     public static createDummyNode(
         parent: TreegraphNode,
         child: TreegraphNode,
-        gapSize: number,
-        index: number
+        gapSize: number
     ): TreegraphNode {
         // Initialise dummy node.
         const dummyNode = new TreegraphNode();
@@ -118,8 +115,6 @@ class TreegraphLayout {
      */
     public beforeLayout(nodes: TreegraphNode[]): void {
         for (const node of nodes) {
-            let index = 0;
-
             for (let child of node.children) {
                 // Support for children placed in distant columns.
                 if (child && child.level - node.level > 1) {
@@ -132,13 +127,11 @@ class TreegraphLayout {
                         child = TreegraphLayout.createDummyNode(
                             node,
                             child,
-                            gapSize,
-                            index
+                            gapSize
                         );
                         gapSize--;
                     }
                 }
-                ++index;
             }
         }
     }

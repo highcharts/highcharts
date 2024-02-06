@@ -1260,7 +1260,6 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  */
 function onTrimTicks(this: Axis): void {
     const axis = this,
-        chart = axis.chart,
         options = axis.options,
         gridOptions = options.grid || {},
         categoryAxis = axis.categories,
