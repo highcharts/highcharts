@@ -31,6 +31,7 @@ import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';
 import Component from '../Dashboards/Components/Component.js';
@@ -61,6 +62,7 @@ declare global {
         merge: typeof Utilities.merge;
         uniqueKey: typeof Utilities.uniqueKey;
         win: typeof Globals.win;
+        AST: typeof AST;
         Board: typeof Board;
         Component: typeof Component;
         ComponentRegistry: typeof ComponentRegistry;
@@ -95,6 +97,7 @@ const G = Globals as unknown as Dashboards;
 G.board = Board.board;
 G.merge = Utilities.merge;
 G.uniqueKey = Utilities.uniqueKey;
+G.AST = AST;
 G.Board = Board;
 G.Component = Component;
 G.ComponentRegistry = ComponentRegistry;
