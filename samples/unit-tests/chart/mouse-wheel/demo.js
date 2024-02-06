@@ -1,4 +1,6 @@
-QUnit.test('Mouse wheel zoom on chart(#19976)', function (assert) {
+QUnit.test('Mouse wheel zoom on chart', function (assert) {
+
+    const clock = TestUtilities.lolexInstall();
 
     const chart = Highcharts.stockChart('container', {
         chart: {
@@ -16,16 +18,39 @@ QUnit.test('Mouse wheel zoom on chart(#19976)', function (assert) {
         }]
     });
 
+    const { min, max } = chart.series[0].xAxis;
     const controller = new TestController(chart);
 
     controller.mouseWheel(200, 100, -1000);
-    const min = chart.series[0].xAxis.min;
 
     assert.close(
+        chart.xAxis[0].min,
+        5386,
+        10,
+        'Should zoom to retract xAxis to this on column chart (#19976)'
+    );
+    assert.strictEqual(
+        typeof chart.resetZoomButton,
+        'undefined',
+        'Reset zoom button should not display'
+    );
+
+    controller.mouseWheel(200, 100, 1001);
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
         min,
-        5112,
-        1,
-        'Should zoom to retract xAxis to this extreme.'
+        'Min should be back to start after wheeling out'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        max,
+        'Max should be back to start after wheeling out'
+    );
+    assert.strictEqual(
+        typeof chart.resetZoomButton,
+        'undefined',
+        'Reset zoom button should be removed'
     );
 
     // Recreate #20430
@@ -52,4 +77,6 @@ QUnit.test('Mouse wheel zoom on chart(#19976)', function (assert) {
         min,
         'Should zoom with overscroll (#20430).'
     );
+
+    TestUtilities.lolexRunAndUninstall(clock);
 });
