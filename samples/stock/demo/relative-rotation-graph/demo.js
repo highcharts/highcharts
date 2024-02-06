@@ -1,14 +1,19 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        height: '100%'
+        height: '100%',
+        plotBorderWidth: 1,
+        plotBorderColor: '#000000'
     },
+
     annotations: [{
         draggable: false,
-        zIndex: 0,
+        shapeOptions: {
+            type: 'path',
+            strokeWidth: 0
+        },
         shapes: [{
             fill: 'rgba(255, 0, 0, 0.1)',
-            type: 'path',
             points: [{
                 x: 96,
                 y: 100,
@@ -30,15 +35,88 @@ Highcharts.chart('container', {
                 xAxis: 0,
                 yAxis: 0
             }]
+        }, {
+            fill: 'rgba(0, 0, 255, 0.1)',
+            points: [{
+                x: 96,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 96,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }, {
+            fill: 'rgba(0, 255, 0, 0.1)',
+            points: [{
+                x: 100,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 104,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }, {
+            fill: 'rgba(255, 255, 0, 0.1)',
+            points: [{
+                x: 100,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 100,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 104,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }, {
+                x: 100,
+                y: 96,
+                xAxis: 0,
+                yAxis: 0
+            }]
         }],
-        labels: [{
-            text: 'Lagging',
+        labelOptions: {
             backgroundColor: 'transparent',
             borderWidth: 0,
             y: 0,
             style: {
                 fontSize: '16px',
-                fontWeight: 'bold',
+                fontWeight: 'bold'
+            }
+        },
+        labels: [{
+            text: 'Lagging',
+            style: {
                 color: '#ff0000'
             },
             point: {
@@ -47,43 +125,9 @@ Highcharts.chart('container', {
                 xAxis: 0,
                 yAxis: 0
             }
-        }]
-    }, {
-        draggable: false,
-        zIndex: 0,
-        shapes: [{
-            fill: 'rgba(0, 0, 255, 0.1)',
-            type: 'path',
-            points: [{
-                x: 96,
-                y: 104,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 100,
-                y: 104,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 100,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 96,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }]
-        }],
-        labels: [{
+        }, {
             text: 'Improving',
-            backgroundColor: 'transparent',
-            borderWidth: 0,
-            y: 0,
             style: {
-                fontSize: '16px',
-                fontWeight: 'bold',
                 color: '#0000ff'
             },
             point: {
@@ -92,43 +136,9 @@ Highcharts.chart('container', {
                 xAxis: 0,
                 yAxis: 0
             }
-        }]
-    }, {
-        draggable: false,
-        zIndex: 0,
-        shapes: [{
-            fill: 'rgba(0, 255, 0, 0.1)',
-            type: 'path',
-            points: [{
-                x: 100,
-                y: 104,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 104,
-                y: 104,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 104,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 100,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }]
-        }],
-        labels: [{
+        }, {
             text: 'Leading',
-            backgroundColor: 'transparent',
-            borderWidth: 0,
-            y: 0,
             style: {
-                fontSize: '16px',
-                fontWeight: 'bold',
                 color: '#00ff00'
             },
             point: {
@@ -137,43 +147,9 @@ Highcharts.chart('container', {
                 xAxis: 0,
                 yAxis: 0
             }
-        }]
-    }, {
-        draggable: false,
-        zIndex: 0,
-        shapes: [{
-            fill: 'rgba(255, 255, 0, 0.1)',
-            type: 'path',
-            points: [{
-                x: 100,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 104,
-                y: 100,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 104,
-                y: 96,
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                x: 100,
-                y: 96,
-                xAxis: 0,
-                yAxis: 0
-            }]
-        }],
-        labels: [{
+        }, {
             text: 'Weakening',
-            backgroundColor: 'transparent',
-            borderWidth: 0,
-            y: 0,
             style: {
-                fontSize: '16px',
-                fontWeight: 'bold',
                 color: '#ffc600'
             },
             point: {
@@ -206,7 +182,8 @@ Highcharts.chart('container', {
         plotLines: [{
             value: 100,
             width: 2,
-            color: '#000000'
+            color: '#000000',
+            zIndex: 1
         }],
         title: {
             text: 'JdK RS-Ratio'
@@ -219,7 +196,8 @@ Highcharts.chart('container', {
         plotLines: [{
             value: 100,
             width: 2,
-            color: '#000000'
+            color: '#000000',
+            zIndex: 1
         }],
         title: {
             text: 'JdK RS-Momentum'
