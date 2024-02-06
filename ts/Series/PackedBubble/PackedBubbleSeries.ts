@@ -163,17 +163,13 @@ class PackedBubbleSeries extends BubbleSeries {
                 series.is('packedbubble') && // #13574
                 series.reserveSpace()
             ) {
-                const valueData = (
-                    series.useDataTable ?
-                        series.table.columns.value :
-                        series.yData
-                ) || [];
+                const valueData = series.getColumn('value');
 
                 // add data to array only if series is visible
                 for (let j = 0; j < valueData.length; j++) {
                     allDataPoints.push([
                         null, null,
-                        valueData[j] as (number|null),
+                        valueData[j],
                         series.index,
                         j,
                         {

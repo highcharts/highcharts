@@ -102,9 +102,7 @@ function onSeriesAfterRender(
             origLabel = yAxis.crossLabel,
             points = series.points,
             pLength = points.length,
-            dataLength = series.useDataTable ?
-                series.table.rowCount :
-                (series.yData as any).length,
+            dataLength = series.table.rowCount,
             x = series.getColumn('x')[dataLength - 1],
             y = series.getColumn('y')[dataLength - 1] ??
                 series.getColumn('close')[dataLength - 1];

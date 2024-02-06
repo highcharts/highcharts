@@ -471,13 +471,9 @@ class ColorAxis extends Axis implements AxisLike {
 
         let colorValArray,
             colorKey,
-            colorValIndex,
-            pointArrayMap,
             calculatedExtremes,
             cSeries,
-            i = series.length,
-            yData,
-            j;
+            i = series.length;
 
         this.dataMin = Infinity;
         this.dataMax = -Infinity;
@@ -492,39 +488,14 @@ class ColorAxis extends Axis implements AxisLike {
                 'y'
             );
 
-            pointArrayMap = cSeries.pointArrayMap;
             calculatedExtremes = (cSeries as any)[colorKey + 'Min'] &&
                 (cSeries as any)[colorKey + 'Max'];
 
-            if (cSeries.useDataTable) {
-                const columns = cSeries.table.columns;
-                colorValArray = columns[colorKey] ||
-                    columns.value ||
-                    columns.y ||
-                    [];
-
-            } else if ((cSeries as any)[colorKey + 'Data']) {
-                colorValArray = (cSeries as any)[colorKey + 'Data'];
-
-            } else {
-                if (!pointArrayMap) {
-                    colorValArray = cSeries.yData;
-
-                } else {
-                    colorValArray = [];
-                    colorValIndex = pointArrayMap.indexOf(colorKey);
-                    yData = cSeries.yData;
-
-                    if (colorValIndex >= 0 && yData) {
-                        for (j = 0; j < yData.length; j++) {
-                            colorValArray.push(
-                                pick(
-                                    (yData[j] as any)[colorValIndex],
-                                    yData[j]
-                                )
-                            );
-                        }
-                    }
+            // Find the first column that has values
+            for (const key of [colorKey, 'value', 'y']) {
+                colorValArray = cSeries.getColumn(key);
+                if (colorValArray.length) {
+                    break;
                 }
             }
 
