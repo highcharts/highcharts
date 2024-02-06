@@ -35,7 +35,7 @@ import type DataTable from '../../../Data/DataTable';
 import ComponentType from '../../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../../Core/Utilities.js';
-const { addEvent, isObject } = U;
+const { addEvent } = U;
 
 
 /**
@@ -92,21 +92,17 @@ const configs: {
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
     emitters: {
-        highlightEmitter: [
-            'highlightEmitter',
+        highlightEmitter:
             function (this: ComponentType): (() => void) | void {
                 if (this.type !== 'Highcharts') {
                     return;
                 }
 
                 const { chart, board } = this as HighchartsComponent;
-                const highlightOptions = this.options.sync?.highlight;
+                const highlightOptions =
+                    this.sync.syncConfig.highlight as Sync.HighlightSyncOptions;
 
-                if (
-                    !board ||
-                    !isObject(highlightOptions) ||
-                    !highlightOptions.enabled
-                ) {
+                if (!highlightOptions.enabled) {
                     return;
                 }
 
@@ -173,8 +169,7 @@ const configs: {
                         chart.redraw();
                     }
                 };
-            }
-        ],
+            },
         seriesVisibilityEmitter:
             function (this: ComponentType): Function | void {
                 if (this.type !== 'Highcharts') {
@@ -492,10 +487,10 @@ const configs: {
                 };
 
                 const handleCursor = (e: DataCursor.Event): void => {
-                    const highlightOptions = this.options.sync?.highlight;
-                    if (
-                        !isObject(highlightOptions) || !highlightOptions.enabled
-                    ) {
+                    const highlightOptions =
+                        this.sync.syncConfig.highlight as Sync.HighlightSyncOptions;
+
+                    if (!highlightOptions.enabled) {
                         return;
                     }
 
@@ -545,10 +540,10 @@ const configs: {
                 };
 
                 const handleCursorOut = (e: DataCursor.Event): void => {
-                    const highlightOptions = this.options.sync?.highlight;
+                    const highlightOptions =
+                        this.sync.syncConfig.highlight as Sync.HighlightSyncOptions;
                     if (
                         !chart || !chart.series.length ||
-                        !isObject(highlightOptions) ||
                         !highlightOptions.enabled
                     ) {
                         return;
@@ -629,8 +624,6 @@ const configs: {
                 const registerCursorListeners = (): void => {
                     const { dataCursor: cursor } = board;
 
-                    // @todo wrap in a listener on component.update with
-                    // connector change
                     if (cursor) {
                         const table = this.connector && this.connector.table;
                         if (table) {
