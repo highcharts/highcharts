@@ -738,11 +738,7 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            (
-                this.useDataTable ?
-                    this.table.rowCount > 0 :
-                    (this.yData?.length || 0) > 0 // #9758
-            )
+            this.table.getRowCount() > 0 // #9758
         ));
     }
 
@@ -1455,9 +1451,7 @@ class Series {
             turboThreshold = options.turboThreshold,
             table = this.table,
             xData = this.getColumn('x'),
-            yData = this.useDataTable ?
-                table.columns.y as Array<number|null> :
-                this.yData,
+            yData = table.getColumn('y'),
             dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
             pointValKey = series.pointValKey || 'y',
             pointArrayMap = series.pointArrayMap || [],
@@ -1514,13 +1508,6 @@ class Series {
             series.xIncrement = null;
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
-
-            // Update parallel arrays
-            this.parallelArrays.forEach(function (key): void {
-                if ((series as any)[key + 'Data']) {
-                    (series as any)[key + 'Data'].length = 0;
-                }
-            });
 
             // Clear data table
             table.deleteRows(0, table.rowCount);
@@ -1835,9 +1822,7 @@ class Series {
             min,
             max,
             processedXData: Array<number>|TypedArray = series.getColumn('x'),
-            processedYData = series.useDataTable ?
-                (table.columns.y as Array<number> || []) :
-                (series.yData || []),
+            processedYData = series.getColumn('y'),
             modified: DataTable|undefined,
             updatingNames = false;
         const dataLength = series.useDataTable ?
@@ -1876,21 +1861,15 @@ class Series {
 
             // only crop if it's actually spilling out
             } else if (
-                (
-                    // Don't understand why this condition is needed
-                    series.useDataTable ?
-                        table.columns[series.pointValKey || 'y'] :
-                        series.yData
-                ) && (
+                // Don't understand why this condition is needed
+                series.getColumn(series.pointValKey || 'y').length && (
                     (processedXData as any)[0] < (min as any) ||
                     (processedXData as any)[dataLength - 1] > (max as any)
                 )
             ) {
                 croppedData = this.cropData(
                     series.getColumn('x'),
-                    series.useDataTable ?
-                        table.columns.y as any :
-                        series.yData,
+                    series.getColumn('y'),
                     min as any,
                     max as any,
                     void 0,
