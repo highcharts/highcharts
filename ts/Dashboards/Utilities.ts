@@ -24,6 +24,7 @@
 
 import U from '../Core/Utilities.js';
 const {
+    error: coreError,
     isClass,
     isDOMElement,
     isObject,
@@ -149,6 +150,30 @@ function uniqueKey(): string {
     return `dashboard-${coreUniqueKey().replace('highcharts-', '')}`;
 }
 
+/**
+ * Provide error messages for debugging, with links to online explanation. This
+ * function can be overridden to provide custom error handling.
+ *
+ * @sample highcharts/chart/highcharts-error/
+ *         Custom error handler
+ *
+ * @function Dashboards.error
+ *
+ * @param {number|string} code
+ *        The error code. See
+ *        [errors.xml](https://github.com/highcharts/highcharts/blob/master/errors/errors.xml)
+ *        for available codes. If it is a string, the error message is printed
+ *        directly in the console.
+ *
+ * @param {boolean} [stop=false]
+ *        Whether to throw an error or just log a warning in the console.
+ *
+ * @return {void}
+ */
+function error(code: string, stop?: boolean): void {
+    coreError(code, stop);
+}
+
 /* *
  *
  *  Default Export
@@ -156,6 +181,7 @@ function uniqueKey(): string {
  * */
 
 const Utilities = {
+    error,
     merge,
     uniqueKey
 };

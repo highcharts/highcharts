@@ -58,6 +58,7 @@ declare global {
     interface Dashboards {
         board: typeof Board.board;
         boards: typeof Globals.boards;
+        error: typeof Utilities.error;
         merge: typeof Utilities.merge;
         uniqueKey: typeof Utilities.uniqueKey;
         win: typeof Globals.win;
@@ -93,6 +94,7 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
+G.error = Utilities.error;
 G.merge = Utilities.merge;
 G.uniqueKey = Utilities.uniqueKey;
 G.Board = Board;
