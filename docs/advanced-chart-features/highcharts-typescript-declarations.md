@@ -13,16 +13,19 @@ Installation
 ------------
 
 You need a TypeScript-capable Editor, like Microsoft's Visual Studio Code, for
-getting autocompletion and hints for Highcharts. Please note that Highcharts
-contains comprehensive declarations, which makes increased memory usage in a few
-editors like Webstorm necessary. The declarations are part of the Highcharts NPM
-package. The Highcharts NPM package can be installed in your project folder with
-`npm install highcharts`.
+getting autocompletion and hints for Highcharts. The declarations are part of
+the Highcharts NPM package. The Highcharts NPM package can be installed in your
+project folder with the command `npm install highcharts`.
+
+**Note:** Highcharts contains comprehensive declarations, which makes increased
+memory usage in a few editors like IntelliJ and Webstorm necessary. Consult the
+documentation of your editor for memory settings, if it needs manual adjustment.
 
 
 
 Configuration
 -------------
+
 
 ### TypeScript
 
@@ -33,11 +36,12 @@ platform. The `tsconfig.json` below, covers a typical use case of Highcharts:
 ```json
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "strict": true,
         "target": "es2020",
         "module": "es6",
         "moduleResolution": "node",
-        "outDir": "mychart/",
+        "outDir": "mychart/"
     },
     "exclude": [
         "node_modules"
@@ -91,6 +95,26 @@ Details about the configuration options can be found in the
 [RequireJS documentation](https://requirejs.org/docs/api.html#config).
 
 
+### Webpack
+
+With webpack and additional plugins you can bundle Highcharts and your chart
+solution into one single browser script. Just run the command `npx webpack-cli`
+inside your new project folder to setup the necessary configuration with
+TypeScript support. Since TypeScript v5 you have to also set the resolution
+strategy to `bundler`, so that TypeScript takes all declarations into account:
+
+```json
+{ // tsconfig.json snippet
+    "compilerOptions": {
+        "moduleResolution": "bundler",
+    }
+}
+```
+
+When everything is set up, you can bundle it with the command `npm run build` or
+test it in the web browser with the command `npm run serve`.
+
+
 
 Using Highcharts Typing
 -----------------------
@@ -103,23 +127,27 @@ projects.
 ### Highcharts Bundles
 
 Starting point is one of the product bundles in the Highcharts NPM package. Best
-practice is to always use the default product bundle in TypeScript projects.
-This avoids conflicts between competing product bundles.
+practice is to stick to one product bundle in all related TypeScript projects
+and add additional functionality with Highcharts modules. This avoids conflicts
+between competing product bundles.
 
-- For classic projects use:
+- For browser-side (target: ES6) projects use:
+  ```ts
+  import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+  ```
+  Other possible product bundles are:
+  - `..masters/highcharts-gantt.src.js`
+  - `..masters/highmaps.src.js`
+  - `..masters/highstock.src.js`
+
+- For server-side (target: Node.js) projects use:
   ```ts
   import Highcharts from 'highcharts';
   ```
-
-- For ES module projects use:
-  ```ts
-  import Highcharts from 'highcharts/es-modules/masters/highcharts';
-  ```
-
-Other possible product bundles are:
-- `../highcharts-gantt`
-- `../highmaps`
-- `../highstock`
+  Other possible product bundles are:
+  - `highcharts/highcharts-gantt`
+  - `highcharts/highmaps`
+  - `highcharts/highstock`
 
 
 ### Highcharts Modules
@@ -127,15 +155,15 @@ Other possible product bundles are:
 With the help of Highcharts modules you can extend a Highcharts bundle with
 additional functionality, for example to provide A11y controls. 
 
-- For classic projects use:
+- For browser-side (target: ES6) projects use:
+  ```ts
+  import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+  ```
+
+- For server-side (target: Node.js) projects use:
   ```ts
   import Accessibility from 'highcharts/modules/accessibility';
   Accessibility(Highcharts);
-  ```
-
-- For ES module projects use:
-  ```ts
-  import Accessibility from 'highcharts/es-modules/masters/modules/accessibility';
   ```
 
 
@@ -147,6 +175,7 @@ The Highcharts libraries come with a huge amount of possibilities right out of
 the box, but for a special use case you might need to extend default behavior of
 Highcharts. Extending Highcharts in TypeScript follows a straightforward pattern
 as illustrated with the below example.
+
 
 ### Steps
 
@@ -167,7 +196,7 @@ actually not real TypeScript and instead is just common ECMAScript, widely known
 as JavaScript:
 
 ```ts
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 
 Highcharts.Point.prototype.highlight = function (event) {
     event = this.series.chart.pointer.normalize(event);
@@ -233,6 +262,7 @@ avoid many unintended side effects.
 Project Migration
 -----------------
 
+
 ### Migration from JavaScript
 
 For full fail-proofed development you may convert your project's source code to
@@ -260,6 +290,7 @@ npm uninstall @types/highcharts
 
 Solving Problems
 ----------------
+
 
 ### Debugging
 
