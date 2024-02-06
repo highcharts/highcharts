@@ -25,6 +25,7 @@ import type {
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
     AxisOptions,
+    AxisSetExtremesEventObject,
     AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
@@ -200,6 +201,7 @@ class Axis {
      * */
 
     public _addedPlotLB?: boolean;
+    public allExtremes?: Axis.AllExtremes;
     public allowZoomOutside?: boolean;
     public alternateBands!: Record<string, PlotLineOrBand>;
     public autoRotation?: Array<number>;
@@ -218,8 +220,7 @@ class Axis {
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: number;
     public dataMin?: number;
-    public displayBtn?: boolean;
-    public eventArgs?: any;
+    public eventArgs?: AxisSetExtremesEventObject;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public expectedSpace: number|undefined;
     public finalTickAmt?: number;
@@ -233,6 +234,7 @@ class Axis {
     public isDirty?: boolean;
     public isLinked!: boolean;
     public isOrdinal?: boolean;
+    public isPanning?: boolean;
     public isRadial?: boolean;
     public isXAxis?: boolean;
     public isZAxis?: boolean;
@@ -272,7 +274,6 @@ class Axis {
     public ordinal?: AxisComposition['ordinal'];
     public overlap!: boolean;
     public paddedTicks!: Array<number>;
-    public panningState?: Axis.PanningState;
     public plotLinesAndBands!: Array<PlotLineOrBand>;
     public plotLinesAndBandsGroups!: Record<string, SVGElement>;
     public pointRange!: number;
@@ -1962,14 +1963,9 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
-            hasVerticalPanning = this.hasVerticalPanning(),
-            isColorAxis = this.coll === 'colorAxis',
-            startOnTick = (
-                (isColorAxis || !hasVerticalPanning) && options.startOnTick
-            ),
-            endOnTick = (
-                (isColorAxis || !hasVerticalPanning) && options.endOnTick
-            );
+            allowEndOnTick = !this.isPanning,
+            startOnTick = allowEndOnTick && options.startOnTick,
+            endOnTick = allowEndOnTick && options.endOnTick;
 
         let tickPositions: TickPositionsArray = [],
             tickPositionerResult: TickPositionsArray|undefined;
@@ -2209,9 +2205,10 @@ class Axis {
      */
     public alignToOthers(): (boolean|undefined) {
         const axis = this,
+            chart = axis.chart,
             alignedAxes: Axis[] = [this],
             options = axis.options,
-            chartOptions = this.chart.options.chart,
+            chartOptions = chart.options.chart,
             alignThresholds = (
                 this.coll === 'yAxis' &&
                 chartOptions.alignThresholds
@@ -2248,7 +2245,7 @@ class Axis {
             };
 
             const thisKey = getKey(this);
-            this.chart[this.coll as 'xAxis'|'yAxis'].forEach(function (
+            chart[this.coll as 'xAxis'|'yAxis'].forEach(function (
                 otherAxis: Axis
             ): void {
                 const { series } = otherAxis;
@@ -2602,10 +2599,10 @@ class Axis {
             stacking.cleanStacks();
         }
 
-        // Recalculate panning state object, when the data
-        // has changed. It is required when vertical panning is enabled.
-        if (isDirtyData && axis.panningState) {
-            axis.panningState.isDirty = true;
+        // Recalculate all extremes object when the data has changed. It is
+        // required when vertical panning is enabled.
+        if (isDirtyData) {
+            delete axis.allExtremes;
         }
 
         fireEvent(this, 'afterSetScale');
@@ -2649,108 +2646,38 @@ class Axis {
      * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
-        newMin?: number,
-        newMax?: number,
+        min?: number,
+        max?: number,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
-        eventArguments?: any
+        eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
-        const axis = this,
-            chart = axis.chart;
-
-        axis.series.forEach((serie): void => {
+        this.series.forEach((serie): void => {
             delete serie.kdTree;
         });
 
         // Extend the arguments with min and max
-        eventArguments = extend(eventArguments, {
-            min: newMin,
-            max: newMax
-        });
+        eventArguments = extend(
+            eventArguments,
+            { min, max }
+        );
 
         // Fire the event
-        fireEvent(axis, 'setExtremes', eventArguments, (): void => {
+        fireEvent(
+            this,
+            'setExtremes',
+            eventArguments,
+            (e: AxisSetExtremesEventObject): void => {
 
-            axis.userMin = newMin;
-            axis.userMax = newMax;
-            axis.eventArgs = eventArguments;
+                this.userMin = e.min;
+                this.userMax = e.max;
+                this.eventArgs = e;
 
-            if (redraw) {
-                chart.redraw(animation);
-            }
-        });
-    }
-
-    /**
-     * Overridable method for zooming chart. Pulled out in a separate method to
-     * allow overriding in stock charts.
-     *
-     * @private
-     * @function Highcharts.Axis#zoom
-     */
-    public zoom(newMin: number, newMax: number): void {
-        const axis = this,
-            dataMin = this.dataMin,
-            dataMax = this.dataMax,
-            options = this.options,
-            min = Math.min(dataMin as any, pick(options.min, dataMin as any)),
-            max = Math.max(dataMax as any, pick(options.max, dataMax as any)),
-            evt = {
-                newMin: newMin,
-                newMax: newMax
-            } as AnyRecord;
-
-        fireEvent(this, 'zoom', evt, function (e: AnyRecord): void {
-
-            // Use e.newMin and e.newMax - event handlers may have altered them
-            let newMin = e.newMin,
-                newMax = e.newMax;
-
-            if (newMin !== axis.min || newMax !== axis.max) { // #5790
-
-                // Prevent pinch zooming out of range. Check for defined is for
-                // #1946. #1734.
-                if (!axis.allowZoomOutside) {
-                    // #6014, sometimes newMax will be smaller than min (or
-                    // newMin will be larger than max).
-                    if (defined(dataMin)) {
-                        if (newMin < min) {
-                            newMin = min;
-                        }
-                        if (newMin > max) {
-                            newMin = max;
-                        }
-                    }
-                    if (defined(dataMax)) {
-                        if (newMax < min) {
-                            newMax = min;
-                        }
-                        if (newMax > max) {
-                            newMax = max;
-                        }
-                    }
+                if (redraw) {
+                    this.chart.redraw(animation);
                 }
-
-                // In full view, displaying the reset zoom button is not
-                // required
-                axis.displayBtn = (
-                    typeof newMin !== 'undefined' ||
-                    typeof newMax !== 'undefined'
-                );
-
-                // Do it
-                axis.setExtremes(
-                    newMin,
-                    newMax,
-                    false,
-                    void 0,
-                    { trigger: 'zoom' }
-                );
             }
-            e.zoomed = true;
-        });
-
-        return evt.zoomed;
+        );
     }
 
     /**
@@ -4074,7 +4001,8 @@ class Axis {
         }
         // End stacked totals
 
-        // Record old scaling for updating/animation
+        // Record old scaling for updating/animation. Pinch base must be
+        // preserved until the pinch ends.
         axis.old = {
             len: axis.len,
             max: axis.max,
@@ -4351,21 +4279,6 @@ class Axis {
     }
 
     /**
-     * Check whether the chart has vertical panning ('y' or 'xy' type).
-     *
-     * @private
-     * @function Highcharts.Axis#hasVerticalPanning
-     */
-    public hasVerticalPanning(): boolean {
-        const panningOptions = this.chart.options.chart.panning;
-        return Boolean(
-            panningOptions &&
-            panningOptions.enabled && // #14624
-            /y/.test(panningOptions.type)
-        );
-    }
-
-    /**
      * Update an axis object with a new set of options. The options are merged
      * with the existing options, so only new or altered options need to be
      * specified.
@@ -4507,10 +4420,9 @@ namespace Axis {
         userMax?: number;
         userMin?: number;
     }
-    export interface PanningState {
-        startMin: number;
-        startMax: number;
-        isDirty?: boolean;
+    export interface AllExtremes {
+        dataMin: number;
+        dataMax: number;
     }
     export interface PlotLinePathOptions {
         acrossPanes?: boolean;
