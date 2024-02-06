@@ -1770,9 +1770,6 @@ class Tooltip {
     public update(options: TooltipOptions): void {
         this.destroy();
         this.init(this.chart, merge(true, this.options, options));
-
-        // Update pointer capture
-        this.chart.pointer.setPointerCapture();
     }
 
     /**

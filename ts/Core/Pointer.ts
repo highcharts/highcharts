@@ -2002,11 +2002,13 @@ class Pointer {
         }
 
         this.setPointerCapture();
+        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
     }
 
     /**
      * Sets, or removes on update, pointer events using pointer capture for
-     * tooltip.followTouchMove.
+     * tooltip.followTouchMove if any series has findNearestPointBy that
+     * includes the y dimension.
      * @private
      * @function Highcharts.Pointer#setPointerCapture
     */
@@ -2023,9 +2025,13 @@ class Pointer {
             followTouchMove = pick(
                 chart.options.tooltip?.followTouchMove,
                 true
+            ),
+            shouldHave = followTouchMove && chart.series.some(
+                (series): boolean => (series.options.findNearestPointBy as any)
+                    .indexOf('y') > -1
             );
 
-        if (!pointer.hasPointerCapture && followTouchMove) {
+        if (!pointer.hasPointerCapture && shouldHave) {
             // Add
 
             // Bind
@@ -2059,7 +2065,7 @@ class Pointer {
             container.className += ' highcharts-no-touch-action';
 
             pointer.hasPointerCapture = true;
-        } else if (pointer.hasPointerCapture && !followTouchMove) {
+        } else if (pointer.hasPointerCapture && !shouldHave) {
             // Remove
 
             // Unbind
