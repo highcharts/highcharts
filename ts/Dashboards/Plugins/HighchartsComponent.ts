@@ -418,11 +418,14 @@ class HighchartsComponent extends Component {
         });
 
         if (this.connector) {
-            // reload the store when polling
-            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
-                if (e.table && this.connector) {
-                    this.connector.table.setColumns(e.table.getColumns());
-                }
+            console.log('HC connectors', this.connector);
+            (this.connector || []).forEach(con => {
+                // reload the store when polling
+                con.on('afterLoad', (e: DataConnector.Event): void => {
+                    if (e.table && this.connector) {
+                        con.table.setColumns(e.table.getColumns());
+                    }
+                });
             });
         }
 
@@ -497,15 +500,15 @@ class HighchartsComponent extends Component {
     private setupConnectorUpdate(): void {
         const { connector: store, chart } = this;
 
-        if (store && chart && this.options.allowConnectorUpdate) {
-            chart.series.forEach((series): void => {
-                series.points.forEach((point): void => {
-                    addEvent(point, 'drag', (): void => {
-                        this.onChartUpdate(point, store);
-                    });
-                });
-            });
-        }
+        // if (store && chart && this.options.allowConnectorUpdate) {
+        //     chart.series.forEach((series): void => {
+        //         series.points.forEach((point): void => {
+        //             addEvent(point, 'drag', (): void => {
+        //                 this.onChartUpdate(point, store);
+        //             });
+        //         });
+        //     });
+        // }
     }
 
     /**
@@ -569,166 +572,176 @@ class HighchartsComponent extends Component {
      */
     public updateSeries(): void {
 
+        const connectors = this.connector;
+        const _self = this;
+
+        console.log(connectors);
         // Heuristically create series from the connector dataTable
-        if (this.chart && this.connector) {
-            this.presentationTable = this.presentationModifier ?
-                this.connector.table.modified.clone() :
-                this.connector.table;
+        if (_self.chart) {
+            (connectors || []).forEach(connector => {
+                _self.presentationTable = _self.presentationModifier ?
+                    connector.table.modified.clone() :
+                    connector.table;
 
-            const { id: storeTableID } = this.connector.table;
-            const { chart } = this;
+                const { id: storeTableID } = connector.table;
+                const { chart } = _self;
 
-            if (this.presentationModifier) {
-                this.presentationTable = this.presentationModifier
-                    .modifyTable(this.presentationTable).modified;
-            }
-
-            const table = this.presentationTable,
-                modifierOptions = table.getModifier()?.options;
-
-            // Names/aliases that should be mapped to xAxis values
-            const columnNames = table.modified.getColumnNames();
-            const columnAssignment = this.options.columnAssignment ||
-                this.getDefaultColumnAssignment(columnNames);
-            const xKeyMap: Record<string, string> = {};
-
-            this.emit({ type: 'afterPresentationModifier', table: table });
-
-            // Remove series names that match the xKeys
-            const seriesNames = table.modified.getColumnNames()
-                .filter((name): boolean => {
-                    const isVisible = this.activeGroup ?
-                        this.activeGroup
-                            .getSharedState()
-                            .getColumnVisibility(name) !== false :
-                        true;
-
-                    if (!isVisible || !columnAssignment[name]) {
-                        return false;
-                    }
-
-                    if (columnAssignment[name] === 'x') {
-                        xKeyMap[name] = name;
-                        return false;
-                    }
-
-                    return true;
-                });
-
-            // create empty series for mapping custom props of data
-            Object.keys(columnAssignment).forEach(
-                function (key):void {
-                    if (isObject(columnAssignment[key])) {
-                        seriesNames.push(key);
-                    }
-                }
-            );
-
-            // Create the series or get the already added series
-            const seriesList = seriesNames.map((seriesName, index): Series => {
-                let i = 0;
-
-                while (i < chart.series.length) {
-                    const series = chart.series[i];
-                    const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
-                    const existingSeries =
-                        seriesNames.indexOf(series.name) !== -1;
-                    i++;
-
-                    if (existingSeries && seriesFromConnector) {
-                        return series;
-                    }
-
-                    if (
-                        !existingSeries &&
-                        seriesFromConnector
-                    ) {
-                        series.destroy();
-                    }
+                if (!chart) {
+                    return;
                 }
 
-                // Disable dragging on series, which were created out of a
-                // columns which are created by MathModifier.
-                const shouldBeDraggable = !(
-                    modifierOptions?.type === 'Math' &&
-                    (modifierOptions as MathModifierOptions)
-                        .columnFormulas?.some(
-                            (formula): boolean => formula.column === seriesName
-                        )
+                if (_self.presentationModifier) {
+                    _self.presentationTable = _self.presentationModifier
+                        .modifyTable(_self.presentationTable).modified;
+                }
+
+                const table = _self.presentationTable,
+                    modifierOptions = table.getModifier()?.options;
+
+                // Names/aliases that should be mapped to xAxis values
+                const columnNames = table.modified.getColumnNames();
+                const columnAssignment = _self.options.columnAssignment ||
+                _self.getDefaultColumnAssignment(columnNames);
+                const xKeyMap: Record<string, string> = {};
+
+                _self.emit({ type: 'afterPresentationModifier', table: table });
+
+                // Remove series names that match the xKeys
+                const seriesNames = table.modified.getColumnNames()
+                    .filter((name): boolean => {
+                        const isVisible = _self.activeGroup ?
+                            _self.activeGroup
+                                .getSharedState()
+                                .getColumnVisibility(name) !== false :
+                            true;
+
+                        if (!isVisible || !columnAssignment[name]) {
+                            return false;
+                        }
+
+                        if (columnAssignment[name] === 'x') {
+                            xKeyMap[name] = name;
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                // create empty series for mapping custom props of data
+                Object.keys(columnAssignment).forEach(
+                    function (key):void {
+                        if (isObject(columnAssignment[key])) {
+                            seriesNames.push(key);
+                        }
+                    }
                 );
 
-                const seriesOptions = {
-                    name: seriesName,
-                    id: `${storeTableID}-series-${index}`,
-                    dragDrop: {
-                        draggableY: shouldBeDraggable
-                    }
-                };
+                // Create the series or get the already added series
+                const seriesList = seriesNames.map((seriesName, index): Series => {
+                    let i = 0;
 
-                const relatedSeries =
-                    chart.series.find(
-                        (series):boolean => series.name === seriesName
+                    while (i < chart.series.length) {
+                        const series = chart.series[i];
+                        const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
+                        const existingSeries =
+                            seriesNames.indexOf(series.name) !== -1;
+                        i++;
+
+                        if (existingSeries && seriesFromConnector) {
+                            return series;
+                        }
+
+                        if (
+                            !existingSeries &&
+                            seriesFromConnector
+                        ) {
+                            series.destroy();
+                        }
+                    }
+
+                    // Disable dragging on series, which were created out of a
+                    // columns which are created by MathModifier.
+                    const shouldBeDraggable = !(
+                        modifierOptions?.type === 'Math' &&
+                        (modifierOptions as MathModifierOptions)
+                            .columnFormulas?.some(
+                                (formula): boolean => formula.column === seriesName
+                            )
                     );
 
-                if (relatedSeries) {
-                    relatedSeries.update(seriesOptions, false);
-                    return relatedSeries;
-                }
+                    const seriesOptions = {
+                        name: seriesName,
+                        id: `${storeTableID}-series-${index}`,
+                        dragDrop: {
+                            draggableY: shouldBeDraggable
+                        }
+                    };
 
-                return chart.addSeries(seriesOptions, false);
-            });
+                    const relatedSeries =
+                        chart.series.find(
+                            (series):boolean => series.name === seriesName
+                        );
 
-            // Insert the data
-            seriesList.forEach((series): void => {
-                const xKey = Object.keys(xKeyMap)[0],
-                    isSeriesColumnMap =
-                        isObject(columnAssignment[series.name]),
-                    pointColumnMapValues:Array<string> = [];
+                    if (relatedSeries) {
+                        relatedSeries.update(seriesOptions, false);
+                        return relatedSeries;
+                    }
 
-                if (isSeriesColumnMap) {
-                    const pointColumns =
-                        columnAssignment[series.name] as Record<string, string>;
-
-                    Object.keys(pointColumns).forEach((key):void => {
-                        pointColumnMapValues.push(pointColumns[key]);
-                    });
-                }
-
-                const columnKeys = isSeriesColumnMap ?
-                    [xKey].concat(pointColumnMapValues) : [xKey, series.name];
-
-                const seriesTable = new DataTable({
-                    columns: table.modified.getColumns(columnKeys)
+                    return chart.addSeries(seriesOptions, false);
                 });
 
-                if (!isSeriesColumnMap) {
-                    seriesTable.renameColumn(series.name, 'y');
-                }
+                // Insert the data
+                seriesList.forEach((series): void => {
+                    const xKey = Object.keys(xKeyMap)[0],
+                        isSeriesColumnMap =
+                            isObject(columnAssignment[series.name]),
+                        pointColumnMapValues:Array<string> = [];
 
-                if (xKey) {
-                    seriesTable.renameColumn(xKey, 'x');
-                }
-                const seriesData = seriesTable.getRowObjects().reduce((
-                    arr: (number | {})[],
-                    row: Record<string, any>
-                ): (number | {})[] => {
                     if (isSeriesColumnMap) {
-                        arr.push(
-                            [row.x].concat(
-                                pointColumnMapValues.map(
-                                    function (value: string):number|undefined {
-                                        return row[value];
-                                    }
-                                )
-                            )
-                        );
-                    } else {
-                        arr.push([row.x, row.y]);
-                    }
-                    return arr;
-                }, []);
+                        const pointColumns =
+                            columnAssignment[series.name] as Record<string, string>;
 
-                series.setData(seriesData);
+                        Object.keys(pointColumns).forEach((key):void => {
+                            pointColumnMapValues.push(pointColumns[key]);
+                        });
+                    }
+
+                    const columnKeys = isSeriesColumnMap ?
+                        [xKey].concat(pointColumnMapValues) : [xKey, series.name];
+
+                    const seriesTable = new DataTable({
+                        columns: table.modified.getColumns(columnKeys)
+                    });
+
+                    if (!isSeriesColumnMap) {
+                        seriesTable.renameColumn(series.name, 'y');
+                    }
+
+                    if (xKey) {
+                        seriesTable.renameColumn(xKey, 'x');
+                    }
+                    const seriesData = seriesTable.getRowObjects().reduce((
+                        arr: (number | {})[],
+                        row: Record<string, any>
+                    ): (number | {})[] => {
+                        if (isSeriesColumnMap) {
+                            arr.push(
+                                [row.x].concat(
+                                    pointColumnMapValues.map(
+                                        function (value: string):number|undefined {
+                                            return row[value];
+                                        }
+                                    )
+                                )
+                            );
+                        } else {
+                            arr.push([row.x, row.y]);
+                        }
+                        return arr;
+                    }, []);
+
+                    series.setData(seriesData);
+                });
             });
         }
     }
@@ -880,21 +893,21 @@ class HighchartsComponent extends Component {
     }
     public setConnector(connector: DataConnector | undefined): this {
         const chart = this.chart;
-        if (
-            this.connector &&
-            chart &&
-            chart.series &&
-            this.connector.table.id !== connector?.table.id
-        ) {
-            const storeTableID = this.connector.table.id;
-            for (let i = chart.series.length - 1; i >= 0; i--) {
-                const series = chart.series[i];
+        // if (
+        //     this.connector &&
+        //     chart &&
+        //     chart.series // &&
+        //     this.connector.table.id !== connector?.table.id
+        // ) {
+        //     const storeTableID = this.connector.table.id;
+        //     for (let i = chart.series.length - 1; i >= 0; i--) {
+        //         const series = chart.series[i];
 
-                if (series.options.id?.indexOf(storeTableID) !== -1) {
-                    series.remove(false);
-                }
-            }
-        }
+        //         if (series.options.id?.indexOf(storeTableID) !== -1) {
+        //             series.remove(false);
+        //         }
+        //     }
+        // }
         super.setConnector(connector);
 
 
@@ -920,9 +933,9 @@ class HighchartsComponent extends Component {
         if (connectorsIds.length) {
             options = {
                 ...options,
-                connector: {
+                connector: [{
                     id: connectorsIds[0]
-                }
+                }]
             };
         }
 

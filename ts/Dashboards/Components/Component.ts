@@ -188,7 +188,7 @@ abstract class Component {
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
-    public connector?: Component.ConnectorTypes;
+    public connector?: Array<Component.ConnectorTypes>;
     /**
      * The id of the connector in the data pool to use.
      */
@@ -327,6 +327,7 @@ abstract class Component {
         this.board = cell.row.layout.board;
         this.parentElement = cell.container;
         this.cell = cell;
+        this.connector = [];
 
         this.options = merge(
             Component.defaultOptions as Required<Component.Options>,
@@ -415,22 +416,43 @@ abstract class Component {
      * Promise resolving to the component.
      */
     public async initConnector(): Promise<this> {
-        const connectorId = this.options.connector?.id,
-            dataPool = this.board.dataPool;
+        // const connectorId = this.options.connector?.id,
+        //     dataPool = this.board.dataPool;
+
+        // if (
+        //     connectorId &&
+        //     (
+        //         this.connectorId !== connectorId ||
+        //         dataPool.isNewConnector(connectorId)
+        //     )
+        // ) {
+        //     this.cell.setLoadingState();
+
+        //     const connector = await dataPool.getConnector(connectorId);
+
+        //     this.setConnector(connector);
+        // }
+
+        const connectors = this.options.connector,
+                dataPool = this.board.dataPool;
 
         if (
-            connectorId &&
-            (
-                this.connectorId !== connectorId ||
-                dataPool.isNewConnector(connectorId)
-            )
-        ) {
-            this.cell.setLoadingState();
+                connectors &&
+                connectors.length > 0
+                // (
+                //     this.connectorId !== connectorId ||
+                //     dataPool.isNewConnector(connectorId)
+                // )
+            ) {
+                this.cell.setLoadingState();
+    
+                // LOOP
+                const connector = await dataPool.getConnector(connectors[0].id);
+                this.setConnector(connector);
 
-            const connector = await dataPool.getConnector(connectorId);
-
-            this.setConnector(connector);
-        }
+                const connector2 = await dataPool.getConnector(connectors[1].id);
+                this.setConnector(connector2);
+            }
 
         return this;
     }
@@ -560,9 +582,10 @@ abstract class Component {
      * @internal
      */
     private setupTableListeners(table: DataTable): void {
-        const connector = this.connector;
+        const connectors = this.connector;
 
-        if (connector) {
+        // if (connector) {
+        (connectors || []).forEach(connector => {
             if (table) {
                 [
                     'afterDeleteColumns',
@@ -595,7 +618,8 @@ abstract class Component {
                     type: 'tableChanged'
                 });
             }));
-        }
+        });
+        // }
     }
 
     /**
@@ -612,7 +636,10 @@ abstract class Component {
             );
         }
 
-        if (connector) {
+        const connectors = this.connector;
+
+        // if (connector) {
+        (connectors || []).forEach(connector => {
             tableEvents.push(connector.table.on(
                 'afterSetModifier',
                 (e): void => {
@@ -624,7 +651,7 @@ abstract class Component {
                     }
                 }
             ));
-        }
+        });
     }
 
     /**
@@ -649,9 +676,10 @@ abstract class Component {
             }
         }
 
-        this.connector = connector;
-
         if (connector) {
+console.log('push', connector);
+            this.connector?.push(connector);
+console.log('push', connector);
             // Set up event listeners
             this.clearTableListeners();
             this.setupTableListeners(connector.table);
@@ -827,15 +855,15 @@ abstract class Component {
 
         this.options = merge(this.options, newOptions);
 
-        if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
-        ) {
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+        // if (
+        //     this.options.connector?.id &&
+        //     this.connectorId !== this.options.connector.id
+        // ) {
+        //     const connector = await this.board.dataPool
+        //         .getConnector(this.options.connector.id);
 
-            this.setConnector(connector);
-        }
+        //     this.setConnector(connector);
+        // }
 
         this.options = merge(this.options, newOptions);
 
@@ -1348,7 +1376,7 @@ namespace Component {
         /**
          * Connector options
          */
-        connector?: ComponentConnectorOptions;
+        connector?: Array<ComponentConnectorOptions>;
         /**
          * Sets an ID for the component's container.
          */
