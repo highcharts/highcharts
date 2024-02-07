@@ -1,0 +1,393 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+/* *
+ *
+ *  Colors
+ *
+ * */
+
+#election-chart {
+    --color-axis: #333;
+    --color-axis-labels: #333;
+    --color-background: #fff;
+    --color-title: #2f2b38;
+    --color-text: #2f2b38;
+    --color-tooltip-background: #5352be;
+    --color-tooltip-text: #d9d8e8;
+}
+
+#selection-grid {
+    --color-background: #fff;
+    --color-hover-background: #5352be;
+    --color-hover-border: #e7e7ec;
+    --color-hover-text: #e7e7ec;
+}
+
+#container.highcharts-dark #selection-grid {
+    --color-background: #20202c;
+}
+
+#container.highcharts-dark {
+    --color-axis-labels: #e7e7ec;
+    --color-background: #0d0d0d;
+    --color-grid: #838394;
+    --color-handle: #838394;
+    --color-mask: #dddbef66;
+    --color-mask-line: #838394;
+    --color-scroll: #20202c;
+    --color-scroll-line: #646479;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #838394;
+}
+
+#us-map {
+    --color-background: #7fc0e6;
+    --color-map: #333;
+    --color-marker-border: #fff;
+    --color-title-text: #000;
+    --color-marker-border-active: #336;
+    --color-marker-border-hover: #084ee3;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-navigation: #f7f7f7;
+    --color-navigation-line: #838393;
+    --color-navigation-text: #20202b;
+    --color-text: #000;
+    --color-text-border: #fff;
+    --color-tooltip-background: #5352be;
+    --color-tooltip-text: #fff;
+}
+
+#container.highcharts-dark #us-map {
+    --color-navigation: #20202b;
+    --color-navigation-line: #646478;
+    --color-navigation-text: #838393;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+
+    #selection-grid {
+        --color-background: #20202c;
+    }
+
+    #us-map {
+        --color-navigation: #20202b;
+        --color-navigation-line: #646478;
+        --color-navigation-text: #838393;
+    }
+
+    #election-chart {
+        --color-axis: #ccc;
+        --color-axis-labels: #ccc;
+        --color-background: #20202c;
+        --color-title: #dadae2;
+        --color-text: #dadae2;
+    }
+
+    div#description {
+        background: #20202c;
+        color: #dadae2;
+    }
+
+    div#description a {
+        color: #fff;
+    }
+}
+
+/* *
+ *
+ *  City Chart
+ *
+ * */
+
+#election-chart .highcharts-dashboards-component-content {
+    background: var(--color-background);
+}
+
+#election-chart .highcharts-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+}
+
+#election-chart .highcharts-axis {
+    fill: var(--color-axis);
+}
+
+#election-chart .highcharts-axis-line,
+#election-chart .highcharts-tick {
+    stroke: var(--color-axis);
+}
+
+#election-chart .highcharts-axis-labels,
+#election-chart .highcharts-axis-title {
+    fill: var(--color-axis-labels);
+}
+
+#election-chart .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#election-chart .highcharts-tooltip text {
+    fill: var(--color-tooltip-text);
+}
+
+#election-chart .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+.highcharts-legend-item > text {
+    fill: #333;
+}
+
+/* *
+ *
+ *  HTML geographical information
+ *
+ * */
+
+#html-control .highcharts-dashboards-component {
+    cursor: default;
+}
+
+#html-control .highcharts-dashboards-component div#geo-info {
+    border: 1px dotted #ccc;
+    max-width: 200px;
+    border-radius: 10px;
+    text-align: center;
+    margin: auto;
+}
+
+#html-control .highcharts-dashboards-component h2 {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#html-control .highcharts-dashboards-component div#geo-info p {
+    font-size: 0.7em;
+}
+
+/* *
+ *
+ *  Selection Grid
+ *
+ * */
+
+#selection-grid .highcharts-dashboards-component {
+    background-color: var(--color-background);
+}
+
+#selection-grid .highcharts-dashboards-component-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+    text-align: center;
+}
+
+#selection-grid .highcharts-datagrid-column-header {
+    font-size: 12px;
+}
+
+#selection-grid .highcharts-datagrid-row.hovered {
+    background-color: var(--color-hover-background);
+    border-color: var(--color-hover-border);
+    color: var(--color-hover-text);
+}
+
+/* *
+ *
+ *  US Map
+ *
+ * */
+
+#us-map .highcharts-dashboards-component {
+    border-radius: 10px;
+}
+
+#us-map .highcharts-dashboards-component-content {
+    background: var(--color-background);
+    border-radius: 5px;
+}
+
+#us-map .highcharts-background {
+    fill: var(--color-background);
+}
+
+#us-map text.highcharts-credits {
+    fill: var(--color-map);
+}
+
+#us-map text.highcharts-credits a {
+    fill: var(--color-map);
+}
+
+#us-map .highcharts-halo {
+    display: none;
+}
+
+#us-map .highcharts-map-navigation {
+    fill: var(--highcharts-neutral-color-5);
+    font-size: 20px;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+#us-map .highcharts-map-navigation text {
+    fill: var(--color-navigation-text);
+}
+
+#us-map .highcharts-series-0 .highcharts-point {
+    fill: var(--color-map);
+    stroke: var(--color-background);
+}
+
+#us-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.6;
+}
+
+#us-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
+    font-size: 12px;
+}
+
+#us-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
+    paint-order: stroke;
+    stroke: var(--color-text-border);
+    stroke-width: 2px;
+}
+
+#us-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
+    pointer-events: none;
+}
+
+#us-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
+    fill: var(--color-marker-text);
+    stroke: var(--color-marker-text-border);
+    stroke-width: 1.5px;
+}
+
+#us-map .highcharts-series-1 .highcharts-point {
+    paint-order: stroke;
+    stroke: var(--color-marker-border);
+    stroke-width: 2;
+    cursor: pointer;
+}
+
+#us-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 8;
+    stroke: var(--color-marker-border-active);
+}
+
+#us-map .highcharts-series-1 .highcharts-point:hover {
+    stroke-width: 4;
+    stroke: var(--color-marker-border-hover);
+}
+
+#us-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#us-map div.highcharts-tooltip {
+    color: var(--color-tooltip-text);
+}
+
+#us-map text.highcharts-title {
+    fill: var(--color-title-text);
+}
+
+#us-map .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+#us-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#us-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
+}
+
+/* Safari fix for manual dark mode */
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dark #us-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke-width: 2px;
+}
+
+#kpi-result,
+#us-map {
+    flex: 1 1 65%;
+}
+
+#html-control,
+#election-chart {
+    flex: 1 1 35%;
+}
+
+#selection-grid {
+    flex: 1 1 100%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #kpi-result,
+    #us-map {
+        background-color: #abc;
+    }
+
+    #html-control,
+    #election-chart {
+        background-color: #cba;
+    }
+
+    #selection-grid {
+        background-color: #fcc;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #kpi-result,
+    #html-control {
+        background-color: red;
+        flex: 1 1 50%;
+    }
+
+    #us-map,
+    #election-chart,
+    #selection-grid {
+        background-color: red;
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #kpi-result,
+    #us-map,
+    #html-control,
+    #election-chart,
+    #selection-grid {
+        background-color: blue;
+        flex: 1 1 100%;
+    }
+}
+
+/* *
+ *
+ *  Demo description
+ *
+ * */
+
+div#description {
+    padding: 15px;
+}
