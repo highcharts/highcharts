@@ -23,9 +23,9 @@
     --dashboard-bck-gray: #e4eaf1;
 }
 
-/* body {
+body {
     background-color: var(--bck-gray);
-} */
+}
 
 .highcharts-dashboards-wrapper {
     background-color: var(--dashboard-bck-gray);
@@ -80,11 +80,6 @@
 #instances-table .highcharts-datagrid-container {
     border: none;
     font-weight: 100;
-}
-
-.highcharts-light #instances-table .highcharts-datagrid-column-header,
-.highcharts-light #instances-table .highcharts-datagrid-row {
-    background-color: var(--highcharts-neutral-color-0);
 }
 
 #instances-table .highcharts-datagrid-row {
@@ -155,5 +150,12 @@
 
     .cloud-monitoring-data-controls {
         color: #fff;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    #instances-table .highcharts-datagrid-column-header,
+    #instances-table .highcharts-datagrid-row {
+        background-color: var(--highcharts-neutral-color-0);
     }
 }
