@@ -9,6 +9,9 @@
 // ! Data grid            !
 // ! -------------------- !
 
+const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
+const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
+const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 // Launches the Dashboards application
 async function setupDashboard() {
@@ -16,11 +19,16 @@ async function setupDashboard() {
         dataPool: {
             connectors: [
                 {
-                    id: 'States',
+                    id: 'Votes',
                     type: 'CSV',
                     options: {
                         firstRowAsNames: true,
-                        data: [] // TBD
+                        csvURL: elVoteUrl
+                        /*
+                        beforeParse: function (data) {
+                            console.log(data);
+                        }
+                        */
                     }
                 }
             ]
@@ -58,7 +66,7 @@ async function setupDashboard() {
                 chartConstructor: 'mapChart',
                 chartOptions: {
                     chart: {
-                        map: await fetch('https://code.highcharts.com/mapdata/countries/us/us-all.topo.json')
+                        map: await fetch(mapUrl)
                             .then(response => response.json())
                     },
                     title: {
@@ -82,7 +90,7 @@ async function setupDashboard() {
                         name: 'US map'
                     }, {
                         type: 'mappoint',
-                        name: 'Cities',
+                        name: 'Votes',
                         data: [],
                         allowPointSelect: true,
                         dataLabels: [{
@@ -105,7 +113,7 @@ async function setupDashboard() {
                         }],
                         events: {
                             click: function (e) {
-                                const city = e.point.name;
+                                const state = e.point.name;
                                 /*
                                 if (city !== activeCity) {
                                     // New city
@@ -122,17 +130,6 @@ async function setupDashboard() {
                                     selectActiveCity();
                                 }
                                 */
-                            }
-                        },
-                        marker: {
-                            enabled: true,
-                            lineWidth: 2,
-                            radius: 12,
-                            symbol: 'mapmarker',
-                            states: {
-                                select: {
-                                    radiusPlus: 4
-                                }
                             }
                         },
                         tooltip: {
@@ -153,14 +150,11 @@ async function setupDashboard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Weather stations. Highcharts Interactive Map.'
+                            chartContainerLabel: 'US presidential elections. Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature.',
-                        point: {
-                            valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Location'
-                        }
+                        description: 'The map is displaying US presidential elections results.'
                     }
                 }
             }, {
@@ -177,44 +171,14 @@ async function setupDashboard() {
                     enabled: true,
                     text: 'Election year'
                 },
-
-                type: 'HTML',
-                elements: [{
-                    tagName: 'div',
-                    // textContent of children populated dynamically
-                    children: [{
-                        tagName: 'h2'
-                    },
-                    {
-                        tagName: 'div',
-                        attributes: {
-                            id: 'geo-info'
-                        },
-                        children: [{
-                            tagName: 'p',
-                            attributes: {
-                                id: 'lon',
-                                name: 'Longitude'
-                            }
-                        }, {
-                            tagName: 'p',
-                            attributes: {
-                                id: 'lat',
-                                name: 'Latitude'
-                            }
-                        }, {
-                            tagName: 'p',
-                            attributes: {
-                                id: 'elevation',
-                                name: 'Elevation'
-                            }
-                        }]
-                    }]
-                }]
+                type: 'HTML'
             },
             {
                 renderTo: 'selection-grid',
                 type: 'DataGrid',
+                connector: {
+                    id: 'Votes'
+                },
                 title: {
                     enabled: true,
                     text: 'Presidential election results by state'
@@ -226,11 +190,8 @@ async function setupDashboard() {
                     cellHeight: 38,
                     editable: false,
                     columns: {
-                        time: {
-                            headerFormat: 'Time UTC',
-                            cellFormatter: function () {
-                                return Highcharts.dateFormat('%H:%M', this.value);
-                            }
+                        year: {
+                            headerFormat: 'Election year'
                         }
                     }
                 }
@@ -243,8 +204,8 @@ async function setupDashboard() {
 
                 type: 'Highcharts',
                 columnAssignment: {
-                    time: 'x',
-                    temperature: 'y'
+                    year: 'x',
+                    data: 'y' // TBD
                 },
                 sync: {
                     highlight: true
@@ -257,8 +218,8 @@ async function setupDashboard() {
                     },
                     credits: {
                         enabled: true,
-                        href: 'https://api.met.no/weatherapi/locationforecast/2.0/documentation',
-                        text: 'MET Norway'
+                        href: 'https://www.archives.gov/electoral-college/allocation',
+                        text: 'National Archives'
                     },
                     legend: {
                         enabled: false
@@ -286,11 +247,9 @@ async function setupDashboard() {
                         text: ''
                     },
                     xAxis: {
-                        type: 'datetime',
                         labels: {
-                            format: '{value:%H:%M}',
                             accessibility: {
-                                description: 'Hours, minutes'
+                                description: 'Election year'
                             }
                         }
                     },
@@ -299,7 +258,7 @@ async function setupDashboard() {
                             enabled: false
                         },
                         accessibility: {
-                            description: 'TBD'
+                            description: 'Vote in per cent'
                         }
                     },
                     lang: {
@@ -308,21 +267,21 @@ async function setupDashboard() {
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature, wind or precipitation.'
+                        description: 'The chart displays historical election results.'
                     }
                 }
             }]
     }, true);
 
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-    const cityRows = citiesTable.getRowObjects();
+    const votesTable = await dataPool.getConnectorTable('Votes');
+    const stateRows = votesTable.getRowObjects();
 
-    // Update map (series 0 is the world map, series 1 the weather data)
+    // Update map (series 0 is the world map, series 1 the election date)
     const mapChart = getMapChart(board);
 
-    // Load active city
-    // await updateBoard(board, activeCity, '');
+    // Load active state
+    // await updateBoard(board, activeState, activeYear);
 
     // HELPER functions
 
@@ -334,39 +293,35 @@ async function setupDashboard() {
 }
 
 
-// Update board after changing data set (city) or parameter (measurement type)
-async function updateBoard(board, city, paramName,
-    paramUpdated = true, cityUpdated = true) {
-
-    // Parameter info
-    // const param = paramConfig[paramName];
+// Update board after changing data set (state or election year)
+async function updateBoard(board, state, year) {
 
     // Data access
     const dataPool = board.dataPool;
 
     // Geographical information
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const votesTable = await dataPool.getConnectorTable('Votes');
 
     const [
-        // The order here must be the same as in the component
-        // definition in the Dashboard.
-        worldMap
+        // The order here must be the same as in the component definition in the Dashboard.
+        usMap
     ] = board.mountedComponents.map(c => c.component);
 
-    if (paramUpdated) {
-        // Parameters update: e.g. temperature -> precipitation.
-        // Affects: map
+    // 1. Update KPI (if state or year changes)
 
-        // Update map properties
-        await worldMap.chart.update({
-            title: {
-                // text: paramConfig.getColumnHeader(paramName)
-            }
-        });
+    // 2. Update map (if year changes)
+    await usMap.chart.update({
+        title: {
+            text: 'Election year'
+        }
+    });
 
-        // Update all map points (series 1: weather data)
-        const mapPoints = worldMap.chart.series[1].data;
-    }
+    const mapPoints = usMap.chart.series[1].data;
+
+    // 2. Update grid (only if year changes)
+
+    // 3. Update chart (if state clicked)
+
 }
 
 // Launch the application
