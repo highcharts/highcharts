@@ -162,7 +162,6 @@ class RangeSelector {
      * */
 
     public constructor(chart: Chart) {
-        this.chart = chart;
         this.init(chart);
     }
 
@@ -178,7 +177,7 @@ class RangeSelector {
     public buttonGroup?: SVGElement;
     public buttonOptions: Array<RangeSelectorButtonOptions> =
         RangeSelector.prototype.defaultButtons;
-    public chart: Chart;
+    public chart!: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
     public dropdown?: HTMLSelectElement;
@@ -487,6 +486,7 @@ class RangeSelector {
                 );
             }
         }));
+        this.createElements();
     }
 
     /**
@@ -923,22 +923,19 @@ class RangeSelector {
         /**
          * @private
          */
-        function updateExtremes(): void {
+        function updateExtremes(name: 'min'| 'max'): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
                 unionExtremes = (
                     chart.scroller && chart.scroller.getUnionExtremes()
                 ) || chartAxis,
                 dataMin = unionExtremes.dataMin,
-                dataMax = unionExtremes.dataMax;
+                dataMax = unionExtremes.dataMax,
+                currentExtreme = chart.xAxis[0].getExtremes()[name];
 
             let value: number | undefined = rangeSelector.getInputValue(name);
 
-            if (
-                value !== Number(input.getAttribute('data-hc-time-previous')) &&
-                isNumber(value)
-            ) {
-                input.setAttribute('data-hc-time-previous', value);
+            if (isNumber(value) && value !== currentExtreme) {
 
                 // Validate the extremes. If it goes beyound the data min or
                 // max, use the actual data extreme (#2438).
@@ -1057,7 +1054,7 @@ class RangeSelector {
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
                 // clicking inside the SVG (#4710)
-                updateExtremes();
+                updateExtremes(name);
             }
             // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
@@ -1071,7 +1068,7 @@ class RangeSelector {
         input.onchange = (): void => {
             // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
-                updateExtremes();
+                updateExtremes(name);
                 rangeSelector.hideInput(name);
                 input.blur();
             }
@@ -1080,7 +1077,7 @@ class RangeSelector {
         input.onkeypress = (event: KeyboardEvent): void => {
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
-                updateExtremes();
+                updateExtremes(name);
             }
         };
 
@@ -1089,7 +1086,7 @@ class RangeSelector {
 
             // Arrow keys
             if (event.keyCode === 38 || event.keyCode === 40) {
-                updateExtremes();
+                updateExtremes(name);
             }
         };
 
@@ -1150,6 +1147,56 @@ class RangeSelector {
         };
     }
 
+    public createElements(): void {
+        const chart = this.chart,
+            renderer = chart.renderer,
+            container = chart.container,
+            chartOptions = chart.options,
+            options =
+                chartOptions.rangeSelector as RangeSelectorOptions,
+            inputEnabled = options.inputEnabled,
+            inputsZIndex = pick(
+                (chartOptions.chart as any).style &&
+                (chartOptions.chart as any).style.zIndex,
+                0
+            ) + 1;
+        this.group = renderer.g('range-selector-group')
+            .attr({
+                zIndex: 7
+            })
+            .add();
+
+        this.div = createElement('div', void 0, {
+            position: 'relative',
+            height: 0,
+            zIndex: inputsZIndex
+        });
+
+        if (this.buttonOptions.length) {
+            this.renderButtons();
+        }
+
+        // First create a wrapper outside the container in order to make
+        // the inputs work and make export correct
+        if (container.parentNode) {
+            container.parentNode.insertBefore(this.div, container);
+        }
+        if (inputEnabled) {
+            // Create the group to keep the inputs
+            this.inputGroup = renderer.g('input-group').add(this.group);
+
+            const minElems = this.drawInput('min');
+            this.minDateBox = minElems.dateBox;
+            this.minLabel = minElems.label;
+            this.minInput = minElems.input;
+
+            const maxElems = this.drawInput('max');
+            this.maxDateBox = maxElems.dateBox;
+            this.maxLabel = maxElems.label;
+            this.maxInput = maxElems.input;
+        }
+
+    }
     /**
      * Render the range selector including the buttons and the inputs. The first
      * time render is called, the elements are created and positioned. On
@@ -1168,62 +1215,14 @@ class RangeSelector {
     ): void {
 
         const chart = this.chart,
-            renderer = chart.renderer,
-            container = chart.container,
             chartOptions = chart.options,
             options =
                 chartOptions.rangeSelector as RangeSelectorOptions,
             // Place inputs above the container
-            inputsZIndex = pick(
-                (chartOptions.chart as any).style &&
-                (chartOptions.chart as any).style.zIndex,
-                0
-            ) + 1,
-            inputEnabled = options.inputEnabled,
-            rendered = this.rendered;
+            inputEnabled = options.inputEnabled;
 
         if (options.enabled === false) {
             return;
-        }
-
-        // create the elements
-        if (!rendered) {
-
-            this.group = renderer.g('range-selector-group')
-                .attr({
-                    zIndex: 7
-                })
-                .add();
-
-            this.div = createElement('div', void 0, {
-                position: 'relative',
-                height: 0,
-                zIndex: inputsZIndex
-            });
-
-            if (this.buttonOptions.length) {
-                this.renderButtons();
-            }
-
-            // First create a wrapper outside the container in order to make
-            // the inputs work and make export correct
-            if (container.parentNode) {
-                container.parentNode.insertBefore(this.div, container);
-            }
-            if (inputEnabled) {
-                // Create the group to keep the inputs
-                this.inputGroup = renderer.g('input-group').add(this.group);
-
-                const minElems = this.drawInput('min');
-                this.minDateBox = minElems.dateBox;
-                this.minLabel = minElems.label;
-                this.minInput = minElems.input;
-
-                const maxElems = this.drawInput('max');
-                this.maxDateBox = maxElems.dateBox;
-                this.maxLabel = maxElems.label;
-                this.maxInput = maxElems.input;
-            }
         }
 
         if (inputEnabled) {
@@ -1280,8 +1279,6 @@ class RangeSelector {
         }
 
         this.alignElements();
-
-        this.rendered = true;
     }
 
     /**
@@ -2091,7 +2088,8 @@ class RangeSelector {
      * @param {Highcharts.RangeSelectorOptions} options
      */
     public update(
-        options: RangeSelectorOptions
+        options: RangeSelectorOptions,
+        redraw: boolean = true
     ): void {
         const chart = this.chart;
         merge(true, chart.options.rangeSelector, options);
@@ -2099,7 +2097,10 @@ class RangeSelector {
         this.destroy();
         this.init(chart);
 
-        this.render();
+        if (redraw) {
+
+            this.render();
+        }
     }
 
     /**

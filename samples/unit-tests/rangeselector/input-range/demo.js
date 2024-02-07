@@ -67,7 +67,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.xAxis[0].min,
-            Date.UTC(2000, 0, 1),
+            startDate,
             'xAxis minimum correct'
         );
 
