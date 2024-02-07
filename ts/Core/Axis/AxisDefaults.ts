@@ -17,7 +17,6 @@
  * */
 
 import type {
-    AxisOptions,
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';

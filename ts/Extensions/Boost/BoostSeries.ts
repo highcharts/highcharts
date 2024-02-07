@@ -460,8 +460,7 @@ function createAndAttachRenderer(
                 // it will cover the most common use case of one or more
                 // successive boosted or non-boosted series (#9819).
                 zIndex: series.options.zIndex
-            })
-            .clip(boost.clipRect);
+            });
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
@@ -475,7 +474,19 @@ function createAndAttachRenderer(
     boost.canvas.height = height;
 
     if (boost.clipRect) {
-        boost.clipRect.attr(getBoostClipRect(chart, target));
+        const box = getBoostClipRect(chart, target),
+
+            // When using panes, the image itself must be clipped. When not
+            // using panes, it is better to clip the target group, because then
+            // we preserve clipping on touch- and mousewheel zoom preview.
+            clippedElement = (
+                box.width === chart.clipBox.width &&
+                box.height === chart.clipBox.height
+            ) ? targetGroup :
+                (boost.targetFo || boost.target);
+
+        boost.clipRect.attr(box);
+        clippedElement?.clip(boost.clipRect);
     }
 
     boost.resize();
@@ -547,7 +558,10 @@ function destroyGraphics(
         }
     });
 
-    series.zones.forEach(destroyObjectProperties);
+    for (const zone of series.zones) {
+        destroyObjectProperties(zone, void 0, true);
+    }
+
 }
 
 /**
@@ -895,12 +909,12 @@ function scatterProcessData(
         data = options.data || series.data,
         xData = series.xData as Array<number>,
         xExtremes = xAxis.getExtremes(),
-        xMax = xExtremes.max,
-        xMin = xExtremes.min,
+        xMax = xExtremes.max ?? Number.MAX_VALUE,
+        xMin = xExtremes.min ?? -Number.MAX_VALUE,
         yData = series.yData as Array<number>,
         yExtremes = yAxis.getExtremes(),
-        yMax = yExtremes.max,
-        yMin = yExtremes.min;
+        yMax = yExtremes.max ?? Number.MAX_VALUE,
+        yMin = yExtremes.min ?? -Number.MAX_VALUE;
 
     // Skip processing in non-boost zoom
     if (
@@ -937,11 +951,17 @@ function scatterProcessData(
     // Filter unsorted scatter data for ranges
     const processedData: Array<PointOptions> = [],
         processedXData: Array<number> = [],
-        processedYData: Array<number> = [];
+        processedYData: Array<number> = [],
+        xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
+        yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
 
     let cropped = false,
         x: number,
-        y: number;
+        xDataMax = xData[0],
+        xDataMin = xData[0],
+        y: number,
+        yDataMax = yData[0],
+        yDataMin = yData[0];
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
@@ -954,9 +974,26 @@ function scatterProcessData(
             processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
+            if (xRangeNeeded) {
+                xDataMax = Math.max(xDataMax, x);
+                xDataMin = Math.min(xDataMin, x);
+            }
+            if (yRangeNeeded) {
+                yDataMax = Math.max(yDataMax, y);
+                yDataMin = Math.min(yDataMin, y);
+            }
         } else {
             cropped = true;
         }
+    }
+
+    if (xRangeNeeded) {
+        xAxis.options.max ??= xDataMax;
+        xAxis.options.min ??= xDataMin;
+    }
+    if (yRangeNeeded) {
+        yAxis.options.max ??= yDataMax;
+        yAxis.options.min ??= yDataMin;
     }
 
     // Set properties as base processData
@@ -1016,6 +1053,15 @@ function seriesRenderCanvas(this: Series): void {
         maxVal: (number|undefined),
         minI: (number|undefined),
         maxI: (number|undefined);
+
+
+    // When touch-zooming or mouse-panning, re-rendering the canvas would not
+    // perform fast enough. Instead, let the axes redraw, but not the series.
+    // The series is scale-translated in an event handler for an approximate
+    // preview.
+    if (xAxis.isPanning || yAxis.isPanning) {
+        return;
+    }
 
     // Get or create the renderer
     renderer = createAndAttachRenderer(chart, this);
@@ -1120,6 +1166,8 @@ function seriesRenderCanvas(this: Series): void {
 
     // Do not start building while drawing
     this.buildKDTree = noop;
+
+    fireEvent(this, 'renderCanvas');
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
@@ -1376,11 +1424,17 @@ function wrapSeriesGetExtremes(
     this: Series,
     proceed: Function
 ): DataExtremesObject {
-    if (
-        this.boosted &&
-        hasExtremes(this)
-    ) {
-        return {};
+
+    if (this.boosted) {
+        if (hasExtremes(this)) {
+            return {};
+        }
+        if (this.xAxis.isPanning || this.yAxis.isPanning) {
+            // Do not re-compute the extremes during panning, because looping
+            // the data is expensive. The `this` contains the `dataMin` and
+            // `dataMax` to use.
+            return this;
+        }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
 }
@@ -1412,6 +1466,15 @@ function wrapSeriesProcessData(
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
+            // Do nothing until the panning stops
+            if (
+                series.boosted && (
+                    series.xAxis?.isPanning || series.yAxis?.isPanning
+                )
+            ) {
+                return;
+            }
+
             // Extra check for zoomed scatter data
             if (isScatter && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);

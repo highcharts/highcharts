@@ -294,14 +294,9 @@ class HTMLTableConverter extends DataConverter {
         options: HTMLTableConverter.Options = this.options
     ): string {
         const {
-                useMultiLevelHeaders,
-                useRowspanHeaders
-            } = options,
-            decimalPoint = (
-                options.useLocalDecimalPoint ?
-                    (1.1).toLocaleString()[1] :
-                    '.'
-            );
+            useMultiLevelHeaders,
+            useRowspanHeaders
+        } = options;
 
         let html = '<thead>',
             i = 0,

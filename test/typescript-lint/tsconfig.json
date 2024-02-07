@@ -150,6 +150,9 @@
         "../../code/modules/networkgraph.d.ts",
         "../../code/modules/networkgraph.src.d.ts",
 
+        "../../code/modules/navigator.d.ts",
+        "../../code/modules/navigator.src.d.ts",
+
         "../../code/modules/no-data-to-display.d.ts",
         "../../code/modules/no-data-to-display.src.d.ts",
 

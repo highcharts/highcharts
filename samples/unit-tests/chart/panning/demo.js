@@ -221,14 +221,14 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
     assert.strictEqual(
-        chart.yAxis[0].panningState.startMin,
+        chart.yAxis[0].allExtremes.dataMin,
         20,
-        '#15022: panningState should have the correct startMin'
+        '#15022: allExtremes should have the correct dataMin'
     );
     assert.strictEqual(
-        chart.yAxis[0].panningState.startMax,
+        chart.yAxis[0].allExtremes.dataMax,
         300,
-        '#15022: panningState should have the correct startMax'
+        '#15022: allExtremes should have the correct dataMax'
     );
 });
 
@@ -374,7 +374,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
         chart: {
             type: 'area',
             panning: true,
-            width: 800
+            width: 600
         },
         plotOptions: {
             area: {
@@ -527,15 +527,15 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
         '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
-        'Right ticks'
+        'Panned all the way to the left of the axis, first category should show'
     );
 
     // Pan
     controller.pan([300, 200], [200, 200]);
     assert.strictEqual(
         chart.xAxis[0].tickPositions.toString(),
-        '1945,1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
-        'Right ticks'
+        '1950,1955,1960,1965,1970,1975,1980,1985,1990,1995',
+        'Panned all the way to the right of the axis, last category should show'
     );
 });
 
@@ -548,6 +548,10 @@ QUnit.test(
                 panning: {
                     type: 'y'
                 }
+            },
+            yAxis: {
+                startOnTick: false,
+                endOnTick: false
             },
             title: {
                 text: 'AAPL stock price by minute'

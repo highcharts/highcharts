@@ -210,6 +210,7 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
 });
 
 QUnit.test('Solid gauge updates', function (assert) {
+    const resetTo = Highcharts.defaultOptions.yAxis.labels.style.color;
     Highcharts.setOptions({
         yAxis: {
             labels: {
@@ -273,4 +274,7 @@ QUnit.test('Solid gauge updates', function (assert) {
         (point.y - yAxis.min) / (yAxis.max - yAxis.min) * 100,
         'percentage should be correctly calculated (#18448)'
     );
+
+    // Reset
+    Highcharts.defaultOptions.yAxis.labels.style.color = resetTo;
 });

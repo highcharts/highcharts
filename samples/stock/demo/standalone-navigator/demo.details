@@ -1,0 +1,11 @@
+---
+name: Standalone Navigator
+authors:
+  - Mateusz Bernacik
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Various features:
+      priority: 1
+...

@@ -201,10 +201,12 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyCell<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }
@@ -230,9 +232,11 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyColumns<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }
@@ -258,9 +262,11 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyRows<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }

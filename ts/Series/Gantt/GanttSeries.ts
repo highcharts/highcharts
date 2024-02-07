@@ -197,8 +197,6 @@ class GanttSeries extends XRangeSeries {
      * @private
      */
     public translatePoint(point: GanttPoint): void {
-        const series = this;
-
         let shapeArgs: SVGAttributes,
             size: number;
 

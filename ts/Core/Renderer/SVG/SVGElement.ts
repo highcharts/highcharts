@@ -42,18 +42,15 @@ const {
     animObject,
     stop
 } = A;
-import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    noop,
     svg,
     SVG_NS,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
@@ -123,6 +120,10 @@ interface TextPathObject {
  * {@link Highcharts.SVGRenderer#g|g}
  * and more.
  *
+ * See [How to use the SVG Renderer](
+ * https://www.highcharts.com/docs/advanced-chart-features/renderer) for a
+ * comprehensive tutorial on how to draw SVG elements on a chart.
+ *
  * @class
  * @name Highcharts.SVGElement
  */
@@ -158,7 +159,7 @@ class SVGElement implements SVGElementLike {
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
-    // @todo public div?: HTMLDOMElement;
+    public div?: HTMLDOMElement;
     public doTransform?: boolean;
     public element: DOMElementType;
     public fakeTS?: boolean;
@@ -188,7 +189,7 @@ class SVGElement implements SVGElementLike {
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
     public styledMode?: boolean;
-    public styles?: CSSObject;
+    public styles: CSSObject;
     public SVG_NS = SVG_NS;
     public symbolName?: string;
     public text?: SVGElement;
@@ -1117,8 +1118,8 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
-            // store object
-            this.styles = styles;
+            // Store object
+            extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
@@ -1416,11 +1417,10 @@ class SVGElement implements SVGElementLike {
                 element &&
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
-                styles && styles.fontSize
+                styles.fontSize
             );
 
         let bBox: BBoxObject|undefined,
-            width,
             height,
             toggleTextShadowShim,
             cacheKey;
@@ -1446,8 +1446,8 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
-                styles && styles.textOverflow, // #5968
-                styles && styles.fontWeight // #12163
+                styles.textOverflow, // #5968
+                styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -1520,7 +1520,6 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            width = bBox.width;
             height = bBox.height;
 
             // Workaround for wrong bounding box in IE, Edge and Chrome on
@@ -1704,7 +1703,7 @@ class SVGElement implements SVGElementLike {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' ?
+        this.element = nodeName === 'span' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -1715,6 +1714,8 @@ class SVGElement implements SVGElementLike {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        this.styles = {};
 
         fireEvent(this, 'afterInit');
     }
@@ -1763,7 +1764,7 @@ class SVGElement implements SVGElementLike {
     public opacitySetter(
         value: string,
         key: string,
-        element: SVGDOMElement
+        element: SVGDOMElement|HTMLDOMElement
     ): void {
         // Round off to avoid float errors, like tests where opacity lands on
         // 9.86957e-06 instead of 0
@@ -2429,7 +2430,7 @@ interface SVGElement extends SVGElementLike {
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationSetter(value: string, key?: string): void;
+    rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
     'stroke-widthSetter'(

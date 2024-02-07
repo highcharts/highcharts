@@ -28,7 +28,6 @@ import type {
 } from './PointOptions';
 import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
-import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -46,7 +45,6 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     erase,
     extend,
     fireEvent,
@@ -122,6 +120,7 @@ class Point {
     public formatPrefix: string = 'point';
     public graphic?: SVGElement;
     public graphics?: Array<SVGElement|undefined>;
+    public hiddenInDataClass?: boolean;
     public id!: string;
     public isNew?: boolean;
     public isNull?: boolean;
