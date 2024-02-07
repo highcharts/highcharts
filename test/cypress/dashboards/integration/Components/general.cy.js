@@ -27,3 +27,14 @@ describe('Component loading', () => {
     });
   });
 });
+
+describe('Caption', () => {
+  before(() => {
+    cy.visit('/dashboards/component-options/caption/');
+  });
+
+  it ('Caption should be visible when title exists (#20557).', () => {
+    cy.get('#dashboard-col-0 .highcharts-dashboards-component-caption')
+      .should('be.visible');
+  });
+});

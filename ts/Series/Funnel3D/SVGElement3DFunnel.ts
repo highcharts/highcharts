@@ -24,7 +24,6 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../../Core/Color/GradientColor';
-import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
@@ -80,9 +79,7 @@ class SVGElement3DFunnel extends SVGElement3D {
 
     // override opacity and color setters to control opacity
     public opacitySetter(
-        value: string,
-        _key: string,
-        _element: SVGDOMElement
+        value: string
     ): this {
         const funnel3d = this,
             opacity = parseFloat(value),

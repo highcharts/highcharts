@@ -678,8 +678,7 @@ class Series {
         options: DeepPartial<SeriesOptions>,
         oldOptions: DeepPartial<SeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            marker = options.marker,
+        const marker = options.marker,
             oldMarker = oldOptions.marker || {};
 
         return marker && (
@@ -868,7 +867,8 @@ class Series {
 
         // Handle color zones
         this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = (options.zones || []).slice();
+        const zones = this.zones = // #20440, create deep copy of zones options
+            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
         if (
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
@@ -3077,7 +3077,7 @@ class Series {
                 };
 
             // Reset
-            zones.forEach((zone, i): void => {
+            zones.forEach((zone): void => {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(

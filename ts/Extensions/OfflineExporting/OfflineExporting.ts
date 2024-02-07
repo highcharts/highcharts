@@ -10,8 +10,6 @@
  *
  * */
 
-/* global MSBlobBuilder */
-
 'use strict';
 
 /* *

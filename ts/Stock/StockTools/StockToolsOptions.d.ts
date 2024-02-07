@@ -36,6 +36,7 @@ export interface LangStockToolsOptions {
 }
 
 export interface StockToolsGuiDefinitionsButtonOptions {
+    elementType?: 'span'|'button';
     symbol?: string;
 }
 

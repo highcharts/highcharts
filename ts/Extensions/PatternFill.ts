@@ -838,7 +838,7 @@ function onPatternScaleCorrection(
             !!point.group?.scaleY;
         })
             // Map up pattern id's and their scales.
-            .map(function (p: Point): [string, PositionObject] {
+            .map(function (p: Point): PositionObject & { id: string } {
                 const point: MapPoint = (p as MapPoint);
                 // Parse the id from the graphic element of the point.
                 const id = (
@@ -850,32 +850,33 @@ function onPatternScaleCorrection(
                     .replace('url(#', '')
                     .replace(')', '');
 
-                return [
+                return {
                     id,
-                    {
-                        x: point.group?.scaleX || 1,
-                        y: point.group?.scaleY || 1
-                    }
-                ];
+                    x: point.group?.scaleX || 1,
+                    y: point.group?.scaleY || 1
+                };
             })
             // Filter out colors and other non-patterns, as well as duplicates.
             .filter(function (
-                [id, _]: [string, PositionObject],
+                pointInfo: PositionObject & { id: string },
                 index: number,
-                arr: [string, PositionObject][]
+                arr: (PositionObject & { id: string })[]
             ): boolean {
-                return id !== '' &&
-                id.indexOf('highcharts-pattern-') !== -1 &&
+                return pointInfo.id !== '' &&
+                pointInfo.id.indexOf('highcharts-pattern-') !== -1 &&
                 !arr.some(function (
-                    [otherID, _]: [string, PositionObject],
+                    otherInfo: PositionObject & { id: string },
                     otherIndex: number
                 ): boolean {
-                    return otherID === id && otherIndex < index;
+                    return otherInfo.id === pointInfo.id && otherIndex < index;
                 });
             })
-            .forEach(function ([id, scale]: [string, PositionObject]): void {
-                patterns[id].scaleX = 1 / scale.x;
-                patterns[id].scaleY = 1 / scale.y;
+            .forEach(function (
+                pointInfo: PositionObject & { id: string }
+            ): void {
+                const id = pointInfo.id;
+                patterns[id].scaleX = 1 / pointInfo.x;
+                patterns[id].scaleY = 1 / pointInfo.y;
                 patterns[id].updateTransform('patternTransform');
             });
     }

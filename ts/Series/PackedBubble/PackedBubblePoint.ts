@@ -118,8 +118,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
     }
 
     public firePointEvent(): void {
-        const point = this,
-            series = this.series,
+        const series = this.series,
             seriesOptions = series.options;
 
         if (this.isParentNode && seriesOptions.parentNode) {

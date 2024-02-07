@@ -557,8 +557,6 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this,
             cntSize = board.getLayoutContainerSize();
 
-        let layout;
-
         if (board.editMode) {
             const editModeTools = board.editMode.tools;
 

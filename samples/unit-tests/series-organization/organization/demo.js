@@ -190,3 +190,87 @@ QUnit.test(
         TestUtilities.lolexRunAndUninstall(clock);
     }
 );
+
+QUnit.test(
+    'Horizontal hanging lines nodes dropping/shifting.',
+    assert => {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'organization'
+                },
+                plotOptions: {
+                    series: {
+                        // Removing borders to simplify calculations.
+                        borderWidth: 0
+                    }
+                },
+                series: [
+                    {
+                        hangingIndentTranslation: 'shrink',
+                        data: [
+                            {
+                                from: 'A',
+                                to: 'B'
+                            },
+                            {
+                                from: 'B',
+                                to: 'C'
+                            }
+                        ],
+                        nodes: [
+                            {
+                                id: 'A',
+                                layout: 'hanging'
+                            },
+                            {
+                                id: 'B'
+                            },
+                            {
+                                id: 'C'
+                            }
+                        ]
+                    }
+                ]
+            }),
+            series = chart.series[0],
+            nodeA = series.nodes[0],
+            nodeB = series.nodes[1],
+            nodeC = series.nodes[2];
+
+        assert.ok(
+            nodeB.shapeArgs.height < nodeA.shapeArgs.height,
+            'Shrink: Height of Node B should be smaller than A.'
+        );
+        assert.ok(
+            nodeC.shapeArgs.height < nodeB.shapeArgs.height,
+            'Shrink: Height of Node C should be smaller than B.'
+        );
+        assert.ok(
+            nodeB.shapeArgs.y > nodeA.shapeArgs.y,
+            'Shrink: Node B should be placed lower than A (y should be higher).'
+        );
+        assert.ok(
+            nodeC.shapeArgs.y > nodeB.shapeArgs.y,
+            'Shrink: Node C should be placed lower than B (y should be higher).'
+        );
+
+        chart.series[0].update({ hangingIndentTranslation: 'cumulative' });
+
+        assert.ok(
+            nodeB.shapeArgs.height < nodeA.shapeArgs.height,
+            'Cumulative: Height of Node B should be smaller than A.'
+        );
+        assert.ok(
+            nodeC.shapeArgs.height === nodeB.shapeArgs.height,
+            'Cumulative: Height of Node C should be equal to B.'
+        );
+        assert.ok(
+            nodeB.shapeArgs.y > nodeA.shapeArgs.y,
+            'Cumulative: Node B should be placed lower than A (y should be higher).'
+        );
+        assert.ok(
+            nodeC.shapeArgs.y > nodeB.shapeArgs.y,
+            'Cumulative: Node C should be placed lower than B (y should be higher).'
+        );
+    }
+);

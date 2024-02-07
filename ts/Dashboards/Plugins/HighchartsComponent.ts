@@ -728,8 +728,10 @@ class HighchartsComponent extends Component {
                     return arr;
                 }, []);
 
-                series.setData(seriesData);
+                series.setData(seriesData, false);
             });
+
+            this.chart.redraw();
         }
     }
 
