@@ -1138,13 +1138,13 @@ namespace Exporting {
      */
     function getSVG(
         this: ChartComposition,
-        chartOptions?: DeepPartial<Options>
+        chartOptions?: Partial<Options>
     ): string {
         const chart = this;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
             // Copy the options and add extra options
-            options = merge(chart.options, chartOptions);
+            options = merge<Options>(chart.options, chartOptions);
 
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(

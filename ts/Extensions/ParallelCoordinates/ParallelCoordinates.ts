@@ -193,7 +193,7 @@ namespace ParallelCoordinates {
      */
     function onChartInit(
         this: ChartComposition,
-        e: { args: { 0: DeepPartial<Options> } }
+        e: { args: { 0: Partial<Options> } }
     ): void {
         const chart = this,
             options = e.args[0],
@@ -227,9 +227,12 @@ namespace ParallelCoordinates {
             }
 
             if (!options.legend) {
-                options.legend = {};
+                options.legend = {} as typeof options['legend'];
             }
-            if (typeof options.legend.enabled === 'undefined') {
+            if (
+                options.legend &&
+                typeof options.legend.enabled === 'undefined'
+            ) {
                 options.legend.enabled = false;
             }
             merge(
