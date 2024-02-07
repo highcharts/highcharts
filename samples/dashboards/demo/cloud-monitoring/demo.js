@@ -28,45 +28,6 @@ const KPIOptions = {
         typeDescription: 'The gauge chart with 1 data point.'
     }
 };
-const chartConnectorOptions = {
-    firstRowAsNames: false,
-    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
-    beforeParse: function (data) {
-        const currentInstance = data.find(
-            instance => instance.InstanceId === currentInstanceId
-        ) || data;
-
-        return currentInstance.Details.map(
-            el => el
-        );
-    }
-};
-
-const instancesDetailsConnectorOptions = {
-    firstRowAsNames: false,
-    orientantion: 'columns',
-    columnNames: ['index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
-    beforeParse: function (data) {
-        const currentInstance = data.find(
-            instance => instance.InstanceId === currentInstanceId
-        ) || data;
-        const diskSpace = currentInstance.DiskSpace.RootDisk;
-        return [
-            [
-                0, // display one record on chart KPI / disk
-                currentInstance.CPUUtilization,
-                currentInstance.MemoryUsage,
-                diskSpace.SizeGB,
-                diskSpace.UsedGB,
-                diskSpace.FreeGB,
-                diskSpace.MediaGB,
-                diskSpace.RootGB,
-                diskSpace.Documents,
-                diskSpace.Downloads
-            ]
-        ];
-    }
-};
 
 Highcharts.setOptions({
     credits: {
@@ -78,49 +39,17 @@ Highcharts.setOptions({
 });
 
 pollingCheckbox.onchange = async e => {
-
-    // charts data
-    board.dataPool.setConnectorOptions({
-        id: 'charts',
-        type: 'JSON',
-        options: {
-            ...chartConnectorOptions,
-            enablePolling: e.target.checked,
-            dataRefreshRate: 2,
-            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json'
-        }
-    });
-
-    // KPI instances data
-    board.dataPool.setConnectorOptions({
-        id: 'instanceDetails',
-        type: 'JSON',
-        options: {
-            ...instancesDetailsConnectorOptions,
-            enablePolling: e.target.checked,
-            dataRefreshRate: 2,
-            dataUrl: 'https://demo-live-data.highcharts.com/instances.json'
-        }
-    });
-
-    const chartConnector = await board.dataPool.getConnector('charts');
-    const instanceDetailsConnector = await board.dataPool.getConnector('instanceDetails');
-
-    // update connector and rerender component
-    board.mountedComponents.forEach(mComp => {
-        const connectorId = mComp.component.options?.connector?.id;
-        if (connectorId) {
-            if (connectorId === 'charts') {
-                mComp.component.setConnector(chartConnector);
-            } else if (
-                connectorId === 'instanceDetails' &&
-                mComp.cell.id !== 'disk-usage'
-            ) {
-                mComp.component.setConnector(instanceDetailsConnector);
-            }
-            mComp.component.render();
-        }
-    });
+    if (e.target.checked) {
+        // charts data
+        (await board.dataPool.getConnector('charts')).startPolling();
+        // KPI instances data
+        (await board.dataPool.getConnector('instanceDetails')).startPolling();
+    } else {
+        // charts data
+        (await board.dataPool.getConnector('charts')).stopPolling();
+        // KPI instances data
+        (await board.dataPool.getConnector('instanceDetails')).stopPolling();
+    }
 };
 
 const setupDashboard = instanceId => {
@@ -134,18 +63,49 @@ const setupDashboard = instanceId => {
     board = Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                id: 'instanceDetails',
-                type: 'JSON',
-                options: {
-                    ...instancesDetailsConnectorOptions,
-                    data: instance
-                }
-            }, {
                 id: 'charts',
                 type: 'JSON',
                 options: {
-                    ...chartConnectorOptions,
-                    data: instance
+                    firstRowAsNames: false,
+                    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
+                    dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
+                    beforeParse: function (data) {
+                        const currentInstance = data.find(
+                            inst => inst.InstanceId === currentInstanceId
+                        ) || data;
+                        return currentInstance.Details.map(
+                            el => el
+                        );
+                    }
+                }
+            }, {
+                id: 'instanceDetails',
+                type: 'JSON',
+                options: {
+                    firstRowAsNames: false,
+                    orientantion: 'columns',
+                    columnNames: ['index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+                    dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
+                    beforeParse: function (data) {
+                        const currentInstance = data.find(
+                            inst => inst.InstanceId === currentInstanceId
+                        ) || data;
+                        const diskSpace = currentInstance.DiskSpace.RootDisk;
+                        return [
+                            [
+                                0, // display one record on chart KPI / disk
+                                currentInstance.CPUUtilization,
+                                currentInstance.MemoryUsage,
+                                diskSpace.SizeGB,
+                                diskSpace.UsedGB,
+                                diskSpace.FreeGB,
+                                diskSpace.MediaGB,
+                                diskSpace.RootGB,
+                                diskSpace.Documents,
+                                diskSpace.Downloads
+                            ]
+                        ];
+                    }
                 }
             }, {
                 id: 'instances',
@@ -219,15 +179,19 @@ const setupDashboard = instanceId => {
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'cpu'
+                                    id: 'cpu',
+                                    height: 200
                                 }, {
-                                    id: 'memory'
+                                    id: 'memory',
+                                    height: 200
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'health'
+                                    id: 'health',
+                                    height: 195
                                 }, {
-                                    id: 'disk'
+                                    id: 'disk',
+                                    height: 195
                                 }]
                             }]
                         },
@@ -720,7 +684,11 @@ const setupDashboard = instanceId => {
                 },
                 events: {
                     row: {
-                        click: function (e) {
+                        click: async function (e) {
+                            if (pollingCheckbox.checked) {
+                                // stop polling when is enabled
+                                await pollingCheckbox.click();
+                            }
                             board.destroy();
                             setupDashboard(
                                 e.target.parentNode.childNodes[0].innerText

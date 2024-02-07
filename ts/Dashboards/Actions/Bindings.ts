@@ -134,7 +134,7 @@ namespace Bindings {
                 },
                 title: {
                     text:
-                        cell?.row.layout.board?.editMode?.lang.errorMessage,
+                        cell?.row?.layout?.board?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
