@@ -496,7 +496,9 @@ const configs: {
 
                     const point = getHoveredPoint(e);
 
-                    if (!chart || !point?.isInside ||
+                    if (!point || !chart ||
+                        // Pie series points do not use the 'isInside' parameter
+                        (!point.isInside && !point.series.is('pie')) ||
                         // Abort if the affected chart is the same as the one
                         // that is currently affected manually.
                         point === chart.hoverPoint
