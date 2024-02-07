@@ -867,7 +867,8 @@ class Series {
 
         // Handle color zones
         this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = (options.zones || []).slice();
+        const zones = this.zones = // #20440, create deep copy of zones options
+            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
         if (
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
