@@ -264,14 +264,14 @@ function attractToPoint(
     e: PointerEvent,
     chart: Chart
 ): NavigationBindingsAttractionObject | void {
-    const coords = chart.pointer.getCoordinates(e);
+    const coords = chart.pointer?.getCoordinates(e);
 
     let coordsX: (Pointer.AxisCoordinateObject|undefined),
         coordsY: (Pointer.AxisCoordinateObject|undefined),
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined);
 
-    if (chart.navigationBindings) {
+    if (chart.navigationBindings && coords) {
         coordsX = getAssignedAxis(coords.xAxis);
         coordsY = getAssignedAxis(coords.yAxis);
     }

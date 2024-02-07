@@ -576,7 +576,7 @@ class ChartAdditions {
                                         delete chart.resetZoomButton;
                                     }
 
-                                    chart.pointer.reset();
+                                    chart.pointer?.reset();
 
                                     fireEvent(chart, 'afterDrilldown');
 
@@ -605,7 +605,7 @@ class ChartAdditions {
                 delete chart.resetZoomButton;
             }
 
-            chart.pointer.reset();
+            chart.pointer?.reset();
 
             fireEvent(chart, 'afterDrilldown');
 

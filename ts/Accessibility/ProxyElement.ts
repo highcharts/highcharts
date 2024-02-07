@@ -305,11 +305,12 @@ class ProxyElement {
             (clickTarget as SVGElement).element :
             clickTarget as SVGDOMElement;
         const posElement = this.target.visual || clickTargetElement;
-        const chartDiv: HTMLDOMElement = this.chart.renderTo;
+        const chartDiv: HTMLDOMElement = this.chart.renderTo,
+            pointer = this.chart.pointer;
 
-        if (chartDiv && posElement && posElement.getBoundingClientRect) {
+        if (chartDiv && posElement?.getBoundingClientRect && pointer) {
             const rectEl = posElement.getBoundingClientRect(),
-                chartPos = this.chart.pointer.getChartPosition();
+                chartPos = pointer.getChartPosition();
 
             return {
                 x: (rectEl.left - chartPos.left) / chartPos.scaleX,

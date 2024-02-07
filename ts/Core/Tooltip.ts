@@ -131,10 +131,12 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options: TooltipOptions
+        options: TooltipOptions,
+        pointer: Pointer
     ) {
         this.chart = chart;
         this.init(chart, options);
+        this.pointer = pointer;
     }
 
     /* *
@@ -169,6 +171,8 @@ class Tooltip {
     public options: TooltipOptions = {} as any;
 
     public outside: boolean = false;
+
+    public pointer: Pointer;
 
     public renderer?: SVGRenderer;
 
@@ -304,8 +308,7 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        const chart = this.chart,
-            pointer = chart.pointer,
+        const { chart, pointer } = this,
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
@@ -607,14 +610,14 @@ class Tooltip {
         point: Point
     ): PositionObject {
 
-        const { distance, chart, outside } = this,
+        const { distance, chart, outside, pointer } = this,
             { inverted, plotLeft, plotTop, polar } = chart,
             { plotX = 0, plotY = 0 } = point,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (inverted && (point as any).h) || 0, // #4117 ???
             { height: outerHeight, width: outerWidth } = this.getPlayingField(),
-            chartPosition = chart.pointer.getChartPosition(),
+            chartPosition = pointer.getChartPosition(),
             scaleX = (val: number): number => (
                 val * chartPosition.scaleX
             ),
@@ -929,7 +932,7 @@ class Tooltip {
             !this.followPointer &&
             this.options.stickOnContact &&
             (
-                !pointerEvent || this.chart.pointer.inClass(
+                !pointerEvent || this.pointer.inClass(
                     pointerEvent.target as any, 'highcharts-tooltip'
                 )
             )
@@ -1011,15 +1014,12 @@ class Tooltip {
         mouseEvent?: PointerEvent
     ): void {
         const tooltip = this,
-            chart = this.chart,
-            options = tooltip.options,
-            pointer = chart.pointer,
+            { chart, options, pointer, shared } = this,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
             formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
-            shared = tooltip.shared,
             styledMode = chart.styledMode;
         let formatterContext = {} as Tooltip.FormatterContextObject;
 
@@ -1177,7 +1177,6 @@ class Tooltip {
                 plotHeight,
                 plotLeft,
                 plotTop,
-                pointer,
                 scrollablePixelsY = 0,
                 scrollablePixelsX,
                 styledMode
@@ -1186,7 +1185,8 @@ class Tooltip {
             options,
             options: {
                 positioner
-            }
+            },
+            pointer
         } = tooltip;
         const {
             scrollLeft = 0,
@@ -1786,13 +1786,13 @@ class Tooltip {
                 container,
                 distance,
                 options,
+                pointer,
                 renderer
             } = this,
             {
                 height = 0,
                 width = 0
             } = this.getLabel(),
-            pointer = chart.pointer,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
@@ -1915,7 +1915,11 @@ namespace Tooltip {
                      * @name Highcharts.Chart#tooltip
                      * @type {Highcharts.Tooltip}
                      */
-                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                    chart.tooltip = new Tooltip(
+                        chart,
+                        chart.options.tooltip,
+                        this
+                    );
                 }
             });
         }

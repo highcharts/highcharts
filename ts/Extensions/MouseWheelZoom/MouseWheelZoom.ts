@@ -139,40 +139,41 @@ const zoomBy = function (
  * @private
  */
 function onAfterGetContainer(this: Chart): void {
-    const chart = this,
-        wheelZoomOptions = optionsToObject(chart.zooming.mouseWheel);
+    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
-            e = this.pointer.normalize(e);
-            const allowZoom = !chart.pointer.inClass(
-                e.target as DOMElementType,
-                'highcharts-no-mousewheel'
-            );
+            e = this.pointer?.normalize(e) || e;
+
+            const { pointer } = this,
+                allowZoom = pointer && !pointer.inClass(
+                    e.target as DOMElementType,
+                    'highcharts-no-mousewheel'
+                );
 
             // Firefox uses e.detail, WebKit and IE uses deltaX, deltaY, deltaZ.
-            if (chart.isInsidePlot(
-                e.chartX - chart.plotLeft,
-                e.chartY - chart.plotTop
+            if (this.isInsidePlot(
+                e.chartX - this.plotLeft,
+                e.chartY - this.plotTop
             ) && allowZoom) {
 
                 const wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
                     delta = e.detail || ((e.deltaY || 0) / 120),
                     xAxisCoords = getAssignedAxis(
-                        this.pointer.getCoordinates(e).xAxis
+                        pointer.getCoordinates(e).xAxis
                     ),
                     yAxisCoords = getAssignedAxis(
-                        this.pointer.getCoordinates(e).yAxis
+                        pointer.getCoordinates(e).yAxis
                     );
 
                 const hasZoomed = zoomBy(
-                    chart,
+                    this,
                     Math.pow(
                         wheelSensitivity,
                         delta
                     ),
-                    xAxisCoords ? [xAxisCoords.axis] : chart.xAxis,
-                    yAxisCoords ? [yAxisCoords.axis] : chart.yAxis,
+                    xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
+                    yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
                     e.chartX,
                     e.chartY,
                     wheelZoomOptions

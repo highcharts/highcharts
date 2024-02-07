@@ -351,7 +351,7 @@ class Chart {
     public plotTop!: number;
     public plotWidth!: number;
     public pointCount!: number;
-    public pointer!: Pointer;
+    public pointer?: Pointer;
     public reflowTimeout?: number;
     public renderer!: Chart.Renderer;
     public renderTo!: globalThis.HTMLElement;
@@ -1756,7 +1756,7 @@ class Chart {
             oldBox = chart.containerBox,
             containerBox = chart.getContainerBox();
 
-        delete chart.pointer.chartPosition;
+        delete chart.pointer?.chartPosition;
 
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
@@ -2714,7 +2714,7 @@ class Chart {
         fireEvent(chart, 'beforeRender');
 
         chart.render();
-        chart.pointer.getChartPosition(); // #14973
+        chart.pointer?.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
