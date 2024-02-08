@@ -136,8 +136,6 @@ class CSVConnector extends DataConnector {
             table
         });
 
-        // If already loaded, clear the current rows
-        table.deleteColumns();
 
         return Promise
             .resolve(
@@ -149,6 +147,8 @@ class CSVConnector extends DataConnector {
             )
             .then((csv): Promise<string> => {
                 if (csv) {
+                    // If already loaded, clear the current rows
+                    table.deleteColumns();
                     converter.parse({ csv });
                     table.setColumns(converter.getTable().getColumns());
                 }
