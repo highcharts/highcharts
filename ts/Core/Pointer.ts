@@ -131,7 +131,7 @@ class Pointer {
 
     public hasPinched?: boolean;
 
-    public hasPointerCapture: boolean = false;
+    public hasPointerCapture?: boolean;
 
     public hasZoom?: boolean;
 
