@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsdoc/require-description */
 
 // Layout
@@ -13,22 +14,76 @@ const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.jso
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
+const activeYear = '2020';
+const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+
 // Launches the Dashboards application
 async function setupDashboard() {
+    // Load the dataset and convert to JSON data.
+    // Some items are filtered out.
+
+    const electionData = await fetch(elVoteUrl)
+        .then(response => response.text()).then(function (csv) {
+            // Split lines
+            const lines = csv.split('\n');
+
+            const tidyCol = /[,"]/g;
+
+            // Create JSON data, one object for each year
+            const data = {};
+            const header = ['Year', 'State', 'Candidate', 'Party', 'Votes', 'Percentage', 'Total votes'];
+
+            lines.forEach(function (line) {
+                const match = line.match(csvSplit);
+
+                const key = match[0]; // Year
+
+                // Only two elections for proof of concept. TBD: expand
+                if (Number(key) >= 2016) {
+                    // The first record is the header
+                    if (!(key in data)) {
+                        data[key] = [header];
+                    }
+
+                    // Create processed data record
+                    const state = match[1].replace(tidyCol, '');
+                    const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
+                    const party = match[8].replace(tidyCol, '');
+                    const vote = match[10].replace(tidyCol, '');
+                    const total = match[11].replace(tidyCol, '');
+                    const percent = ((vote / total) * 100).toFixed(1);
+
+                    // Add to JSON data
+                    data[key].push(
+                        [key, state, candidate, party, vote, percent, total]
+                    );
+                }
+            });
+            return data;
+        });
+
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
+                // TBD: eventually to be populated dynamically
                 {
-                    id: 'Votes',
+                    id: 'votes_2020',
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        // columnNames: ['year', 'test'],
+                        data: electionData['2020']
+                    }
+                },
+                {
+                    id: 'votes_2016',
                     type: 'CSV',
                     options: {
                         firstRowAsNames: true,
-                        csvURL: elVoteUrl
-                        /*
-                        beforeParse: function (data) {
-                            console.log(data);
+                        options: {
+                            firstRowAsNames: true,
+                            data: electionData['2016']
                         }
-                        */
                     }
                 }
             ]
@@ -70,7 +125,7 @@ async function setupDashboard() {
                             .then(response => response.json())
                     },
                     title: {
-                        text: 'Presidential election results by state'
+                        text: 'Presidential election results by state, ' + activeYear
                     },
                     legend: {
                         enabled: false
@@ -154,7 +209,7 @@ async function setupDashboard() {
                         }
                     },
                     accessibility: {
-                        description: 'The map is displaying US presidential elections results.'
+                        description: 'The map is displaying US presidential elections results for ' + activeYear
                     }
                 }
             }, {
@@ -163,13 +218,13 @@ async function setupDashboard() {
                 columnName: 'result',
                 title: {
                     enabled: true,
-                    text: 'National presidential election results'
+                    text: 'National presidential election results, ' + activeYear
                 }
             }, {
                 renderTo: 'html-control',
                 title: {
                     enabled: true,
-                    text: 'Election year'
+                    text: 'Choose election (year)'
                 },
                 type: 'HTML'
             },
@@ -177,11 +232,11 @@ async function setupDashboard() {
                 renderTo: 'selection-grid',
                 type: 'DataGrid',
                 connector: {
-                    id: 'Votes'
+                    id: 'votes_2020'
                 },
                 title: {
                     enabled: true,
-                    text: 'Presidential election results by state'
+                    text: 'Presidential election results by state, ' + activeYear
                 },
                 sync: {
                     highlight: true
@@ -274,7 +329,7 @@ async function setupDashboard() {
     }, true);
 
     const dataPool = board.dataPool;
-    const votesTable = await dataPool.getConnectorTable('Votes');
+    const votesTable = await dataPool.getConnectorTable('votes_2020');
     const stateRows = votesTable.getRowObjects();
 
     // Update map (series 0 is the world map, series 1 the election date)
@@ -290,6 +345,8 @@ async function setupDashboard() {
         // Update map (series 0 is the world map, series 1 the weather data)
         return board.mountedComponents[0].component.chart.series[1];
     }
+
+    updateBoard(board, 'Alaska', 2020);
 }
 
 
@@ -300,10 +357,11 @@ async function updateBoard(board, state, year) {
     const dataPool = board.dataPool;
 
     // Geographical information
-    const votesTable = await dataPool.getConnectorTable('Votes');
+    const votesTable1 = await dataPool.getConnectorTable('votes_' + year);
 
     const [
-        // The order here must be the same as in the component definition in the Dashboard.
+        // The order here must be the same as
+        // in the component definition in the Dashboard.
         usMap
     ] = board.mountedComponents.map(c => c.component);
 
@@ -312,7 +370,7 @@ async function updateBoard(board, state, year) {
     // 2. Update map (if year changes)
     await usMap.chart.update({
         title: {
-            text: 'Election year'
+            text: 'Presidential election ' + year
         }
     });
 
