@@ -14,7 +14,7 @@ const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.jso
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
-const activeYear = '2020';
+const activeYear = '2016';
 const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
 
 // Launches the Dashboards application
@@ -36,11 +36,12 @@ async function setupDashboard() {
             lines.forEach(function (line) {
                 const match = line.match(csvSplit);
 
-                const key = match[0]; // Year
+                const year = match[0]; // Year
 
                 // Only two elections for proof of concept. TBD: expand
-                if (Number(key) >= 2016) {
+                if (Number(year) >= 2016) {
                     // The first record is the header
+                    const key = 'y' + match[0];
                     if (!(key in data)) {
                         data[key] = [header];
                     }
@@ -55,7 +56,7 @@ async function setupDashboard() {
 
                     // Add to JSON data
                     data[key].push(
-                        [key, state, candidate, party, vote, percent, total]
+                        [year, state, candidate, party, vote, percent, total]
                     );
                 }
             });
@@ -67,22 +68,38 @@ async function setupDashboard() {
             connectors: [
                 // TBD: eventually to be populated dynamically
                 {
-                    id: 'votes_2020',
+                    id: 'votes2016',
                     type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        // columnNames: ['year', 'test'],
-                        data: electionData['2020']
-                    }
-                },
-                {
-                    id: 'votes_2016',
-                    type: 'CSV',
                     options: {
                         firstRowAsNames: true,
                         options: {
                             firstRowAsNames: true,
-                            data: electionData['2016']
+                            data: electionData.y2016,
+                            beforeParse: function (data) {
+                                console.log('2016 before');
+                                return data;
+                            },
+                            parsed: function (data) {
+                                console.log('2016 parsed');
+                                return data;
+                            }
+                        }
+                    }
+                },
+                {
+                    id: 'votes2020',
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        // columnNames: ['year', 'test'],
+                        data: electionData.y2020,
+                        beforeParse: function (data) {
+                            console.log('2020 before');
+                            return data;
+                        },
+                        parsed: function (data) {
+                            console.log('2020 parsed');
+                            return data;
                         }
                     }
                 }
@@ -115,6 +132,19 @@ async function setupDashboard() {
             }]
         },
         components: [
+            {
+                renderTo: 'kpi-result',
+                type: 'KPI',
+                columnName: 'result',
+                title: {
+                    enabled: true,
+                    text: 'National presidential election results, ' + activeYear
+                }
+            }, {
+                renderTo: 'html-control',
+                type: 'CustomHTML',
+                id: 'custom-html-div'
+            },
             {
                 renderTo: 'us-map',
                 type: 'Highcharts',
@@ -212,45 +242,8 @@ async function setupDashboard() {
                         description: 'The map is displaying US presidential elections results for ' + activeYear
                     }
                 }
-            }, {
-                renderTo: 'kpi-result',
-                type: 'KPI',
-                columnName: 'result',
-                title: {
-                    enabled: true,
-                    text: 'National presidential election results, ' + activeYear
-                }
-            }, {
-                renderTo: 'html-control',
-                title: {
-                    enabled: true,
-                    text: 'Choose election (year)'
-                },
-                type: 'HTML'
             },
             {
-                renderTo: 'selection-grid',
-                type: 'DataGrid',
-                connector: {
-                    id: 'votes_2020'
-                },
-                title: {
-                    enabled: true,
-                    text: 'Presidential election results by state, ' + activeYear
-                },
-                sync: {
-                    highlight: true
-                },
-                dataGridOptions: {
-                    cellHeight: 38,
-                    editable: false,
-                    columns: {
-                        year: {
-                            headerFormat: 'Election year'
-                        }
-                    }
-                }
-            }, {
                 renderTo: 'election-chart',
                 title: {
                     enabled: true,
@@ -325,12 +318,33 @@ async function setupDashboard() {
                         description: 'The chart displays historical election results.'
                     }
                 }
-            }]
+            }, {
+                renderTo: 'selection-grid',
+                type: 'DataGrid',
+                connector: {
+                    id: 'votes' + activeYear
+                },
+                title: {
+                    enabled: true,
+                    text: 'Presidential election results by state, ' + activeYear
+                },
+                dataGridOptions: {
+                    cellHeight: 38,
+                    editable: false,
+                    columns: {
+                        year: {
+                            headerFormat: 'Election year'
+                        }
+                    }
+                }
+            }
+        ]
     }, true);
 
     const dataPool = board.dataPool;
-    const votesTable = await dataPool.getConnectorTable('votes_2020');
-    const stateRows = votesTable.getRowObjects();
+    const votesTable = await dataPool.getConnectorTable('votes2020');
+    const votesTable2 = await dataPool.getConnectorTable('votes2016');
+    // const stateRows = votesTable.getRowObjects();
 
     // Update map (series 0 is the world map, series 1 the election date)
     const mapChart = getMapChart(board);
@@ -343,10 +357,20 @@ async function setupDashboard() {
     // Get map chart
     function getMapChart(board) {
         // Update map (series 0 is the world map, series 1 the weather data)
-        return board.mountedComponents[0].component.chart.series[1];
+        return board.mountedComponents[2].component.chart.series[1];
     }
 
-    updateBoard(board, 'Alaska', 2020);
+    await updateBoard(board, 'Alaska', activeYear);
+
+    // Handle change year events
+    Highcharts.addEvent(
+        document.getElementById('election_year'),
+        'change',
+        async function () {
+            const selectedOption = this.options[this.selectedIndex];
+            await updateBoard(board, 'Alabama', selectedOption.text);
+        }
+    );
 }
 
 
@@ -356,31 +380,85 @@ async function updateBoard(board, state, year) {
     // Data access
     const dataPool = board.dataPool;
 
-    // Geographical information
-    const votesTable1 = await dataPool.getConnectorTable('votes_' + year);
+    // Connector ID
+    const connId = 'votes' + year;
+
+    // Geographical information (TBD)
+    const votesTable = await dataPool.getConnectorTable(connId);
+    const stateRows = votesTable.getRowObjects();
 
     const [
         // The order here must be the same as
         // in the component definition in the Dashboard.
-        usMap
+        resultKpi,
+        controlHtml,
+        usMap,
+        historyChart,
+        selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
     // 1. Update KPI (if state or year changes)
-
-    // 2. Update map (if year changes)
-    await usMap.chart.update({
+    await resultKpi.update({
         title: {
             text: 'Presidential election ' + year
         }
     });
 
+    // 2. Update control (if state changes)
+
+    // 3. Update map (if year changes)
+    await usMap.chart.update({
+        title: {
+            text: 'Presidential election ' + year
+        }
+    });
+    // TBD: Map update
     const mapPoints = usMap.chart.series[1].data;
 
-    // 2. Update grid (only if year changes)
+    // 4. Update chart (if state clicked)
 
-    // 3. Update chart (if state clicked)
-
+    // 5. Update grid (if year changes)
+    await selectionGrid.update({
+        title: {
+            text: 'Presidential election ' + year
+        },
+        connector: {
+            id: connId
+        }
+    });
 }
+
+// Create custom HTML component
+const { ComponentRegistry } = Dashboards,
+    HTMLComponent = ComponentRegistry.types.HTML,
+    AST = Highcharts.AST;
+
+class CustomHTML extends HTMLComponent {
+    constructor(cell, options) {
+        super(cell, options);
+        this.type = 'CustomHTML';
+        this.getCustomHTML();
+
+        return this;
+    }
+
+    getCustomHTML() {
+        const options = this.options;
+        if (options.id) {
+            const domEl = document.getElementById(options.id);
+            const customHTML = domEl.outerHTML;
+
+            // Copy custom HTML into Dashboards component
+            this.options.elements = new AST(customHTML).nodes;
+
+            // Remove original
+            domEl.remove();
+        }
+    }
+}
+
+ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
+
 
 // Launch the application
 setupDashboard();

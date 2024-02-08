@@ -6,8 +6,10 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 
+<!-- Dashboards container -->
 <div id="container">Loading...</div>
 
+<!-- Demop description -->
 <div id="description">
     <h1>Election demo</h1>
     <p>The demo shows the results from US presidential elections.</p>
@@ -24,3 +26,14 @@
     <h2>Data set</h2>
     <p>The data used in this demo are provided by ....</p>
 </div>
+
+<!-- This element gets moved into the Dashboard custom HTML components on load. -->
+<div id="custom-html-div">
+    <h1>Presidential election year</h1>
+    <label for="cars">Choose an election:</label>
+    <select name="cars" id="election_year">
+        <option value="2016">2016</option>
+        <option value="2020">2020</option>
+    </select>
+</div>
+

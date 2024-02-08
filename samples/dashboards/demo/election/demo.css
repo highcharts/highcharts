@@ -384,6 +384,21 @@
 
 /* *
  *
+ *  Custom HTML for choosing election year
+ *
+ * */
+
+#custom-html-div {
+    text-align: center;
+}
+
+#custom-html-div h1 {
+    font-size: 20px;
+    color: #336;
+}
+
+/* *
+ *
  *  Demo description
  *
  * */
