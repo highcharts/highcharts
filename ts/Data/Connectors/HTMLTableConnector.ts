@@ -132,8 +132,6 @@ class HTMLTableConnector extends DataConnector {
             tableElement: connector.tableElement
         });
 
-        // If already loaded, clear the current rows
-        table.deleteColumns();
 
         let tableElement: (HTMLElement|null);
 
@@ -166,6 +164,8 @@ class HTMLTableConnector extends DataConnector {
             eventDetail
         );
 
+        // If already loaded, clear the current rows
+        table.deleteColumns();
         table.setColumns(converter.getTable().getColumns());
 
         return connector

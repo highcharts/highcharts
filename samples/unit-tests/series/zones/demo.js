@@ -376,4 +376,22 @@ QUnit.test('#9198 setData and zones', function (assert) {
         'red',
         'Points color is correctly updated when series is updated.'
     );
+
+    chart.series[0].update({
+        zones: [{
+            color: 'red'
+        }]
+    }, false);
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.series[0].zones[0].graph !== chart.series[1].zones[0].graph,
+        `Zones graphs should be differents between original series and
+        navigator series (#20440).`
+    );
 });
