@@ -281,7 +281,7 @@ class HighchartsComponent extends Component {
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
-        if (!hcComponent.cell.container.style.height) {
+        if (!hcComponent.cell.container?.style.height) {
             // If the cell height is specified, clear dimensions to make
             // the container to adjust to the chart height.
             hcComponent.contentElement.style.height = '100%';
