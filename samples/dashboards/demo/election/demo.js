@@ -10,11 +10,17 @@
 // ! Data grid            !
 // ! -------------------- !
 
+// PoC, possible ideas
+// * Bar race https://www.highcharts.com/demo/highcharts/bar-race
+// * KPI? https://www.highcharts.com/demo/highcharts/column-stacked-percent
+// * KPI? https://www.highcharts.com/demo/highcharts/pie-semi-circle (picture on both sides)
+// * Map: https://www.highcharts.com/demo/maps/data-class-two-ranges
+
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
-const activeYear = '2016';
+const activeYear = '2020';
 const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
 
 // Launches the Dashboards application
@@ -23,7 +29,7 @@ async function setupDashboard() {
     // Some items are filtered out.
 
     const electionData = await fetch(elVoteUrl)
-        .then(response => response.text()).then(function (csv) {
+        .then(response => response.text()).then(async function (csv) {
             // Split lines
             const lines = csv.split('\n');
 
@@ -31,15 +37,13 @@ async function setupDashboard() {
 
             // Create JSON data, one object for each year
             const data = {};
-            const header = ['Year', 'State', 'Candidate', 'Party', 'Votes', 'Percentage', 'Total votes'];
+            const header = ['State', 'Candidate', 'Party', 'Votes', 'Percentage', 'Total votes'];
 
-            lines.forEach(function (line) {
+            lines.forEach(async function (line) {
                 const match = line.match(csvSplit);
-
                 const year = match[0]; // Year
 
-                // Only two elections for proof of concept. TBD: expand
-                if (Number(year) >= 2016) {
+                if (Number(year) >= 2008) {
                     // The first record is the header
                     const key = 'y' + match[0];
                     if (!(key in data)) {
@@ -47,17 +51,21 @@ async function setupDashboard() {
                     }
 
                     // Create processed data record
-                    const state = match[1].replace(tidyCol, '');
-                    const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
                     const party = match[8].replace(tidyCol, '');
-                    const vote = match[10].replace(tidyCol, '');
-                    const total = match[11].replace(tidyCol, '');
-                    const percent = ((vote / total) * 100).toFixed(1);
+                    const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
 
-                    // Add to JSON data
-                    data[key].push(
-                        [year, state, candidate, party, vote, percent, total]
-                    );
+                    // Ignore other candidates and empty candidate names
+                    if ((party === 'REPUBLICAN' || party === 'DEMOCRAT') && candidate.length > 0) {
+                        const state = match[1].replace(tidyCol, '');
+                        const vote = match[10].replace(tidyCol, '');
+                        const total = match[11].replace(tidyCol, '');
+                        const percent = ((vote / total) * 100).toFixed(1);
+
+                        // Add to JSON data
+                        data[key].push(
+                            [state, candidate, party, vote, percent, total]
+                        );
+                    }
                 }
             });
             return data;
@@ -66,41 +74,35 @@ async function setupDashboard() {
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
-                // TBD: eventually to be populated dynamically
-                {
-                    id: 'votes2016',
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        options: {
-                            firstRowAsNames: true,
-                            data: electionData.y2016,
-                            beforeParse: function (data) {
-                                console.log('2016 before');
-                                return data;
-                            },
-                            parsed: function (data) {
-                                console.log('2016 parsed');
-                                return data;
-                            }
-                        }
-                    }
-                },
+                // TBD: to be populated dynamically if
+                // the number of elections increases.
                 {
                     id: 'votes2020',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        // columnNames: ['year', 'test'],
-                        data: electionData.y2020,
-                        beforeParse: function (data) {
-                            console.log('2020 before');
-                            return data;
-                        },
-                        parsed: function (data) {
-                            console.log('2020 parsed');
-                            return data;
-                        }
+                        data: electionData.y2020
+                    }
+                }, {
+                    id: 'votes2016',
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        data: electionData.y2016
+                    }
+                }, {
+                    id: 'votes2012',
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        data: electionData.y2012
+                    }
+                }, {
+                    id: 'votes2008',
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        data: electionData.y2008
                     }
                 }
             ]
@@ -368,7 +370,7 @@ async function setupDashboard() {
         'change',
         async function () {
             const selectedOption = this.options[this.selectedIndex];
-            await updateBoard(board, 'Alabama', selectedOption.text);
+            await updateBoard(board, 'Alabama', selectedOption.value);
         }
     );
 }

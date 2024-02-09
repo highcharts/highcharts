@@ -149,7 +149,7 @@
 
 /* *
  *
- *  HTML geographical information
+ *  HTML application control
  *
  * */
 
@@ -341,16 +341,16 @@
 @media (max-width: 1200px) {
     #kpi-result,
     #us-map {
-        background-color: #abc;
+        background-color: yellow;
     }
 
     #html-control,
     #election-chart {
-        background-color: #cba;
+        background-color: yellow;
     }
 
     #selection-grid {
-        background-color: #fcc;
+        background-color: yellow;
     }
 }
 
