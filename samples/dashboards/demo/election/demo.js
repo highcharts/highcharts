@@ -1,16 +1,27 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsdoc/require-description */
 
 // Layout
 // ! -------------------- !
-// ! KPI          ! HTML  !
-// ! -------------!------ !
-// ! Map          ! Chart !
+// ! KPI          | HTML  !
+// ! -------------|------ !
+// ! Map          | Chart !
 // ! -------------------- !
 // ! Data grid            !
 // ! -------------------- !
 
+// Data grid contents (proposed for PoC) - mandates to be added
+
+// State    | Rep. cand | Dem. cand. | Total votes | Rep % | Dem % | Postal code (hidden)
+// ---------|-----------|------------|-------------|-------|-------|----
+// National | rep. vote | dem. vote  | int         | float | float | -
+// Alabama  | rep. vote | dem. vote  | int         | float | float | AL
+// ........ | ......... | .........  | ...         | ..... | ....  |
+// Wyoming  | rep. vote | dem. vote  | int         | float | float | WY
+
 // PoC, possible ideas
+// -----------------------------------------------------------------------------
 // * Bar race https://www.highcharts.com/demo/highcharts/bar-race
 // * KPI? https://www.highcharts.com/demo/highcharts/column-stacked-percent
 // * KPI? https://www.highcharts.com/demo/highcharts/pie-semi-circle (picture on both sides)
@@ -20,56 +31,113 @@ const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.jso
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
-const activeYear = '2020';
-const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+const commonTitle = 'U.S. presidential election';
+const electionYears = ['2020', '2016', '2012', '2008'];
+const selectedYear = electionYears[0];
 
 // Launches the Dashboards application
 async function setupDashboard() {
-    // Load the dataset and convert to JSON data.
-    // Some items are filtered out.
+    // Load the dataset and convert to JSON data that are suitable for this application.
 
     const electionData = await fetch(elVoteUrl)
-        .then(response => response.text()).then(async function (csv) {
-            // Split lines
-            const lines = csv.split('\n');
-
+        .then(response => response.text()).then(function (csv) {
+            // TBD: Add mandates
+            const header = ['State', 'Rep. cand.', 'Dem. cand', 'Votes', 'Percent rep.', 'Percent dem.', 'pc'];
+            // eslint-disable-next-line max-len
+            const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
             const tidyCol = /[,"]/g;
 
-            // Create JSON data, one object for each year
-            const data = {};
-            const header = ['State', 'Candidate', 'Party', 'Votes', 'Percentage', 'Total votes'];
+            // Create JSON data, one array for each year
+            const jsonData = {};
+            const lines = csv.split('\n');
 
-            lines.forEach(async function (line) {
+            const national = {
+                totalVotes: 0,
+                repVotes: 0,
+                demVotes: 0,
+                candRep: '',
+                candDem: '',
+                repMandates: 0, // TBD
+                demMandates: 0 // TBD
+            };
+            let key = null;
+            const row = ['', 0, 0, 0, 0.0, 0.0];
+
+            lines.forEach(function (line) {
                 const match = line.match(csvSplit);
                 const year = match[0]; // Year
 
-                if (Number(year) >= 2008) {
+                if (electionYears.includes(year)) {
                     // The first record is the header
-                    const key = 'y' + match[0];
-                    if (!(key in data)) {
-                        data[key] = [header];
+                    key = 'y' + year;
+                    if (!(key in jsonData)) {
+                        // First record for a new election year
+                        jsonData[key] = [header];
+
+                        // Need to wrap up the election that is
+                        // currently being processed?
+                        if (national.totalVotes > 0) {
+                            const prevKey = 'y' + (year - 4);
+                            addNationalSummary(jsonData[prevKey], national);
+                            // Reset counting
+                            national.totalVotes = 0;
+                            national.repVotes = 0;
+                            national.demVotes = 0;
+                        }
                     }
 
                     // Create processed data record
                     const party = match[8].replace(tidyCol, '');
                     const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
 
-                    // Ignore other candidates and empty candidate names
+                    // Ignore "other" candidates and empty candidate names
                     if ((party === 'REPUBLICAN' || party === 'DEMOCRAT') && candidate.length > 0) {
                         const state = match[1].replace(tidyCol, '');
-                        const vote = match[10].replace(tidyCol, '');
-                        const total = match[11].replace(tidyCol, '');
+                        const pc = match[2].replace(tidyCol, '');
+                        const vote = Number(match[10].replace(tidyCol, ''));
+                        const total = Number(match[11].replace(tidyCol, ''));
                         const percent = ((vote / total) * 100).toFixed(1);
 
-                        // Add to JSON data
-                        data[key].push(
-                            [state, candidate, party, vote, percent, total]
-                        );
+                        // Accumulate nationwide data
+                        row[0] = state;
+                        row[6] = pc;
+                        if (party === 'REPUBLICAN') {
+                            header[1] = candidate;
+                            row[1] = vote;
+                            row[4] = percent;
+                            national.candRep = candidate;
+                            national.totalVotes += total;
+                            national.repVotes += vote;
+                        } else { // 'DEMOCRAT'
+                            header[2] = candidate;
+                            row[2] = vote;
+                            row[3] = total;
+                            row[5] = percent;
+                            national.candDem = candidate;
+                            national.demVotes += Number(vote);
+                        }
+
+                        // Merge rows
+                        if (row[1] > 0 && row[2] > 0) {
+                            jsonData[key].push([...row]);
+                            row[1] = 0;
+                            row[2] = 0;
+                        }
                     }
                 }
             });
-            return data;
+            addNationalSummary(jsonData[key], national);
+
+            return jsonData;
         });
+
+    function addNationalSummary(jsonData, totals) {
+        // Insert row with national results
+        const percentRep = ((totals.repVotes / totals.totalVotes) * 100).toFixed(1);
+        const percentDem = ((totals.demVotes / totals.totalVotes) * 100).toFixed(1);
+        const row = ['Federal', totals.repVotes, totals.demVotes, totals.totalVotes, percentRep, percentDem, 'US'];
+        jsonData.splice(1, 0, row);
+    }
 
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -140,7 +208,7 @@ async function setupDashboard() {
                 columnName: 'result',
                 title: {
                     enabled: true,
-                    text: 'National presidential election results, ' + activeYear
+                    text: '' // Populated later
                 }
             }, {
                 renderTo: 'html-control',
@@ -157,7 +225,7 @@ async function setupDashboard() {
                             .then(response => response.json())
                     },
                     title: {
-                        text: 'Presidential election results by state, ' + activeYear
+                        text: '' // Populated later
                     },
                     legend: {
                         enabled: false
@@ -201,31 +269,14 @@ async function setupDashboard() {
                         events: {
                             click: function (e) {
                                 const state = e.point.name;
-                                /*
-                                if (city !== activeCity) {
-                                    // New city
-                                    activeCity = city;
-                                    updateBoard(
-                                        board,
-                                        activeCity,
-                                        '',
-                                        false, // No parameter update
-                                        true // Data set update
-                                    );
-                                } else {
-                                    // Re-select (otherwise marker is reset)
-                                    selectActiveCity();
-                                }
-                                */
+                                // TBD: change data filter
                             }
                         },
                         tooltip: {
                             footerFormat: '',
                             headerFormat: '',
                             pointFormat: (
-                                '<b>{point.name}</b><br>' +
-                                'Elevation: {point.custom.elevation} m<br>' +
-                                '{point.y:.1f} {point.custom.unit}'
+                                '<b>{point.name}</b>'
                             )
                         }
                     }],
@@ -237,11 +288,11 @@ async function setupDashboard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'US presidential elections. Highcharts Interactive Map.'
+                            chartContainerLabel: commonTitle + '. Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The map is displaying US presidential elections results for ' + activeYear
+                        description: 'The map is displaying ' + commonTitle + ' for year TBD' // TBD: Update dynamically
                     }
                 }
             },
@@ -249,7 +300,7 @@ async function setupDashboard() {
                 renderTo: 'election-chart',
                 title: {
                     enabled: true,
-                    text: 'Historical presidential election results'
+                    text: 'Historical ' + commonTitle + ' results'
                 },
 
                 type: 'Highcharts',
@@ -313,7 +364,7 @@ async function setupDashboard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Presidential election results.'
+                            chartContainerLabel: commonTitle + ' results.'
                         }
                     },
                     accessibility: {
@@ -324,18 +375,18 @@ async function setupDashboard() {
                 renderTo: 'selection-grid',
                 type: 'DataGrid',
                 connector: {
-                    id: 'votes' + activeYear
+                    id: 'votes' + selectedYear
                 },
                 title: {
                     enabled: true,
-                    text: 'Presidential election results by state, ' + activeYear
+                    text: '' // Populated later
                 },
                 dataGridOptions: {
                     cellHeight: 38,
                     editable: false,
                     columns: {
-                        year: {
-                            headerFormat: 'Election year'
+                        pc: {
+                            show: false
                         }
                     }
                 }
@@ -352,7 +403,7 @@ async function setupDashboard() {
     const mapChart = getMapChart(board);
 
     // Load active state
-    // await updateBoard(board, activeState, activeYear);
+    // await updateBoard(board, activeState, selectedYear);
 
     // HELPER functions
 
@@ -362,7 +413,7 @@ async function setupDashboard() {
         return board.mountedComponents[2].component.chart.series[1];
     }
 
-    await updateBoard(board, 'Alaska', activeYear);
+    await updateBoard(board, 'Alaska', selectedYear);
 
     // Handle change year events
     Highcharts.addEvent(
@@ -385,6 +436,8 @@ async function updateBoard(board, state, year) {
     // Connector ID
     const connId = 'votes' + year;
 
+    // Common title
+    const title = commonTitle + ' ' + year;
     // Geographical information (TBD)
     const votesTable = await dataPool.getConnectorTable(connId);
     const stateRows = votesTable.getRowObjects();
@@ -402,7 +455,7 @@ async function updateBoard(board, state, year) {
     // 1. Update KPI (if state or year changes)
     await resultKpi.update({
         title: {
-            text: 'Presidential election ' + year
+            text: title
         }
     });
 
@@ -411,7 +464,7 @@ async function updateBoard(board, state, year) {
     // 3. Update map (if year changes)
     await usMap.chart.update({
         title: {
-            text: 'Presidential election ' + year
+            text: title
         }
     });
     // TBD: Map update
@@ -422,7 +475,7 @@ async function updateBoard(board, state, year) {
     // 5. Update grid (if year changes)
     await selectionGrid.update({
         title: {
-            text: 'Presidential election ' + year
+            text: title
         },
         connector: {
             id: connId
