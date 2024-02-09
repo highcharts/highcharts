@@ -19,6 +19,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Series from '../../Core/Series/Series';
 
+import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const {
     defaultOptions,
@@ -33,6 +34,8 @@ import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
+import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
+const { setFixedRange } = StockUtilities;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -76,10 +79,15 @@ declare module '../../Core/Series/SeriesLike' {
  * @private
  */
 function compose(
+    ChartClass: typeof Chart,
     AxisClass: typeof Axis,
     SeriesClass: typeof Series
 ): void {
     NavigatorAxisAdditions.compose(AxisClass);
+
+    if (pushUnique(composed, ChartClass)) {
+        ChartClass.prototype.setFixedRange = setFixedRange;
+    }
 
     if (pushUnique(composed, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
