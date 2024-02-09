@@ -1186,17 +1186,13 @@ class Chart {
         }
 
         if (options && !elem) {
-            let text = options.text;
-
             // If title text is unset, and not explicitly unset,
             // default to lang option
-            if (
-                name === 'title' &&
-                chart.userOptions.title !== null &&
-                !Object.hasOwnProperty.call(options, 'text')
-            ) {
-                text = chart.options.lang.chartTitle;
-            }
+            const text = options.text ?? (
+                name === 'title' && !('text' in options) ?
+                    chart.options.lang.chartTitle :
+                    void 0
+            );
 
             elem = this.renderer.text(
                 text,
