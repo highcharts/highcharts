@@ -614,14 +614,6 @@ class Axis {
             userOptions
         );
 
-        if (
-            this.options.title &&
-            !Object.hasOwnProperty.call(this.options.title, 'text') &&
-            this.coll === 'yAxis'
-        ) {
-            this.options.title.text = this.chart.options.lang.yAxisTitle;
-        }
-
         fireEvent(this, 'afterSetOptions', { userOptions });
     }
 
@@ -3284,6 +3276,7 @@ class Axis {
 
         let textAlign: (AlignValue|undefined);
 
+
         if (!axis.axisTitle) {
             textAlign = axisTitleOptions.textAlign;
             if (!textAlign) {
@@ -3300,10 +3293,15 @@ class Axis {
                 ];
             }
 
+            const text = axisTitleOptions.text ?? (
+                axis.coll === 'yAxis' && !('text' in axisTitleOptions) ?
+                    axis.chart.options.lang.yAxisTitle :
+                    ''
+            );
 
             axis.axisTitle = renderer
                 .text(
-                    axisTitleOptions.text || '',
+                    text,
                     0,
                     0,
                     axisTitleOptions.useHTML
