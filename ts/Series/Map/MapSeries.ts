@@ -318,6 +318,16 @@ class MapSeries extends ScatterSeries {
                         );
                     }
 
+                    // If the map point is not visible and is not null (e.g.
+                    // hidden by data classes), then the point should be
+                    // visible, but without value
+                    graphic.attr({
+                        visibility: (
+                            point.visible ||
+                            (!point.visible && !point.isNull)
+                        ) ? 'inherit' : 'hidden'
+                    });
+
                     graphic.animate = function (params,
                         options, complete): SVGElement {
 
@@ -976,10 +986,12 @@ class MapSeries extends ScatterSeries {
                     };
                 }
 
-                if (point.projectedPath && !point.projectedPath.length) {
-                    point.setVisible(false);
-                } else if (!point.visible) {
-                    point.setVisible(true);
+                if (!point.hiddenInDataClass) { // #20441
+                    if (point.projectedPath && !point.projectedPath.length) {
+                        point.setVisible(false);
+                    } else if (!point.visible) {
+                        point.setVisible(true);
+                    }
                 }
             });
         }

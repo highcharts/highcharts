@@ -96,15 +96,22 @@ namespace Bindings {
         const optionsEvents = options.events;
         const renderTo = options.renderTo || options.cell;
 
-        cell = cell || Bindings.getCell(renderTo || '');
+        if (!renderTo) {
+            error(
+                'The `renderTo` option is required to render the component.'
+            );
+            return;
+        }
+
+        cell = cell || Bindings.getCell(renderTo);
 
         const componentContainer =
             cell?.container || document.querySelector('#' + renderTo);
 
         if (!componentContainer || !options.type) {
             error(
-                `The component is misconfigured and is unable to find the
-                HTML cell element ${renderTo} to render the content.`
+                'The component is misconfigured and is unable to find the' +
+                'HTML cell element ${renderTo} to render the content.'
             );
             return;
         }
@@ -140,8 +147,7 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text:
-                        cell?.row.layout.board?.editMode?.lang.errorMessage,
+                    text: cell?.row?.layout.board?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'

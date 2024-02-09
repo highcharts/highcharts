@@ -633,7 +633,7 @@ class GeoHeatmapSeries extends MapSeries {
         ) {
             if (
                 // If user drags map do not build k-d-tree
-                chart.pointer.hasDragged === false &&
+                !chart.pointer.hasDragged &&
                 // If user zooms in/out map do not build k-d-tree
                 (
                     +series.image.attr('animator') <= 0.01 ||
