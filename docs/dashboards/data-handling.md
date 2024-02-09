@@ -21,7 +21,7 @@ via `Board.dataPool.getConnector`.
 
 ## DataConnector
 
-**The `DataConnector` serves as a delivery service that brings products from external suppliers to the warehouse (`DataPool`).**
+**The `DataConnector` serves as a delivery service that brings data from external suppliers to the `DataPool`.**
 It retrieves data from external sources and creates new `DataTables` within the `DataPool` to store this imported data, similar to how the
 delivery service brings new products to the warehouse for storage.
 
