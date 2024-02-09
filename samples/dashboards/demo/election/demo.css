@@ -9,13 +9,9 @@
  * */
 
 #election-chart {
-    --color-axis: #333;
     --color-axis-labels: #333;
-    --color-background: #fff;
-    --color-title: #2f2b38;
-    --color-text: #2f2b38;
-    --color-tooltip-background: #5352be;
-    --color-tooltip-text: #d9d8e8;
+    --color-tooltip-background: #ccd;
+    --color-tooltip-text: #333;
 }
 
 #selection-grid {
@@ -69,6 +65,11 @@
 
 @media (prefers-color-scheme: dark) {
     /* dark mode */
+    #election-chart {
+        --color-axis-labels: #ccf;
+        --color-tooltip-background: #336;
+        --color-tooltip-text: #ccc;
+    }
 
     #selection-grid {
         --color-background: #20202c;
@@ -78,14 +79,6 @@
         --color-navigation: #20202b;
         --color-navigation-line: #646478;
         --color-navigation-text: #838393;
-    }
-
-    #election-chart {
-        --color-axis: #ccc;
-        --color-axis-labels: #ccc;
-        --color-background: #20202c;
-        --color-title: #dadae2;
-        --color-text: #dadae2;
     }
 
     div#description {
@@ -326,6 +319,7 @@
 #kpi-result,
 #us-map {
     flex: 1 1 65%;
+    max-width: 1000px;
 }
 
 #html-control,
@@ -388,11 +382,11 @@
  *
  * */
 
-#custom-html-div {
+#html-control-div {
     text-align: center;
 }
 
-#custom-html-div h1 {
+#html-control-div h1 {
     font-size: 20px;
     color: #336;
 }

@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsdoc/require-description */
 
+
 // Layout
 // ! -------------------- !
 // ! KPI          | HTML  !
@@ -34,6 +35,9 @@ const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_vote
 const commonTitle = 'U.S. presidential election';
 const electionYears = ['2020', '2016', '2012', '2008'];
 const selectedYear = electionYears[0];
+const repColor = '#C40401';
+const demColor = '#0200D0';
+
 
 // Launches the Dashboards application
 async function setupDashboard() {
@@ -42,7 +46,7 @@ async function setupDashboard() {
     const electionData = await fetch(elVoteUrl)
         .then(response => response.text()).then(function (csv) {
             // TBD: Add mandates
-            const header = ['State', 'Rep. cand.', 'Dem. cand', 'Votes', 'Percent rep.', 'Percent dem.', 'pc'];
+            const header = ['state', 'repCand', 'demCand', 'totalVotes', 'repPercent', 'demPercent', 'pc'];
             // eslint-disable-next-line max-len
             const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
             const tidyCol = /[,"]/g;
@@ -139,6 +143,28 @@ async function setupDashboard() {
         jsonData.splice(1, 0, row);
     }
 
+    function getElectionSummary() {
+        const ret = [
+            {
+                name: 'Republican',
+                color: repColor,
+                data: []
+            }, {
+                name: 'Democrat',
+                color: demColor,
+                data: []
+            }
+        ];
+
+        Object.values(electionData).reverse().forEach(function (item) {
+            const row = item[1];
+
+            ret[0].data.push(Number(row[4])); // Percentage, Republican party
+            ret[1].data.push(Number(row[5])); // Percentage, Democrat party
+        });
+        return ret;
+    }
+
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
@@ -205,15 +231,29 @@ async function setupDashboard() {
             {
                 renderTo: 'kpi-result',
                 type: 'KPI',
-                columnName: 'result',
-                title: {
-                    enabled: true,
-                    text: '' // Populated later
+                title: commonTitle,
+                valueFormat: '{value} per cent',
+                chartOptions: {
+                    chart: {
+                        styledMode: false,
+                        height: 166
+                    },
+                    series: [{
+                        type: 'pie',
+                        keys: ['repPercent', 'y'],
+                        innerSize: '50%',
+                        size: '110%',
+                        showInLegend: true,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}: {point.percentage:,.1f}%'
+                        }
+                    }]
                 }
             }, {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
-                id: 'custom-html-div'
+                id: 'html-control-div'
             },
             {
                 renderTo: 'us-map',
@@ -298,23 +338,10 @@ async function setupDashboard() {
             },
             {
                 renderTo: 'election-chart',
-                title: {
-                    enabled: true,
-                    text: 'Historical ' + commonTitle + ' results'
-                },
-
                 type: 'Highcharts',
-                columnAssignment: {
-                    year: 'x',
-                    data: 'y' // TBD
-                },
-                sync: {
-                    highlight: true
-                },
                 chartOptions: {
                     chart: {
-                        spacing: [40, 40, 40, 10],
-                        styledMode: true,
+                        styledMode: false,
                         type: 'column'
                     },
                     credits: {
@@ -323,31 +350,14 @@ async function setupDashboard() {
                         text: 'National Archives'
                     },
                     legend: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            marker: {
-                                enabled: true,
-                                symbol: 'circle'
-                            },
-                            tooltip: {
-                                pointFormatter: function () {
-                                    return this.y;
-                                }
-                            }
-                        }
+                        enabled: true
                     },
                     title: {
-                        margin: 20,
-                        x: 15,
-                        y: 5,
-                        text: ''
-                    },
-                    subtitle: {
-                        text: ''
+                        text: 'Historical ' + commonTitle + ' results'
                     },
                     xAxis: {
+                        type: 'category',
+                        categories: electionYears,
                         labels: {
                             accessibility: {
                                 description: 'Election year'
@@ -356,12 +366,13 @@ async function setupDashboard() {
                     },
                     yAxis: {
                         title: {
-                            enabled: false
+                            text: 'Percentage of votes'
                         },
                         accessibility: {
-                            description: 'Vote in per cent'
+                            description: 'Percentage of votes'
                         }
                     },
+                    series: getElectionSummary(),
                     lang: {
                         accessibility: {
                             chartContainerLabel: commonTitle + ' results.'
@@ -383,8 +394,20 @@ async function setupDashboard() {
                 },
                 dataGridOptions: {
                     cellHeight: 38,
-                    editable: false,
+                    editable: false, // TBD: enable
                     columns: {
+                        state: {
+                            headerFormat: 'State'
+                        },
+                        totalVotes: {
+                            headerFormat: 'Total votes'
+                        },
+                        repPercent: {
+                            headerFormat: 'Rep. percent.'
+                        },
+                        demPercent: {
+                            headerFormat: 'Dem. percent.'
+                        },
                         pc: {
                             show: false
                         }
@@ -394,25 +417,7 @@ async function setupDashboard() {
         ]
     }, true);
 
-    const dataPool = board.dataPool;
-    const votesTable = await dataPool.getConnectorTable('votes2020');
-    const votesTable2 = await dataPool.getConnectorTable('votes2016');
-    // const stateRows = votesTable.getRowObjects();
-
-    // Update map (series 0 is the world map, series 1 the election date)
-    const mapChart = getMapChart(board);
-
-    // Load active state
-    // await updateBoard(board, activeState, selectedYear);
-
-    // HELPER functions
-
-    // Get map chart
-    function getMapChart(board) {
-        // Update map (series 0 is the world map, series 1 the weather data)
-        return board.mountedComponents[2].component.chart.series[1];
-    }
-
+    // Initialize data
     await updateBoard(board, 'Alaska', selectedYear);
 
     // Handle change year events
@@ -453,12 +458,21 @@ async function updateBoard(board, state, year) {
     ] = board.mountedComponents.map(c => c.component);
 
     // 1. Update KPI (if state or year changes)
+    const row = votesTable.getRowIndexBy('state', 'Federal');
+    const repVal = votesTable.getCellAsNumber('repPercent', row);
+    const demVal = votesTable.getCellAsNumber('demPercent', row);
+
     await resultKpi.update({
         title: {
             text: title
         }
     });
-
+    await resultKpi.chart.series[0].update({
+        data: [
+            ['repPercent', repVal],
+            ['demPercent', demVal]
+        ]
+    });
     // 2. Update control (if state changes)
 
     // 3. Update map (if year changes)
