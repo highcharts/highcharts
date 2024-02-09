@@ -2,6 +2,7 @@
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/editmode.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
