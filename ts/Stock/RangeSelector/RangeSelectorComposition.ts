@@ -211,8 +211,7 @@ function onChartBeforeRender(
             axis.setScale();
         });
 
-        chart.getAxisMargins();
-
+        // chart.getAxisMargins();
         // rangeSelector.render();
 
         const verticalAlign = rangeSelector.options.verticalAlign;
