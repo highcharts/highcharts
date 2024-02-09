@@ -1160,6 +1160,11 @@ class RangeSelector {
                 (chartOptions.chart as any).style.zIndex,
                 0
             ) + 1;
+
+        if (options.enabled === false) {
+            return;
+        }
+
         this.group = renderer.g('range-selector-group')
             .attr({
                 zIndex: 7
