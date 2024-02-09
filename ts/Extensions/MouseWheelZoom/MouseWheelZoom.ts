@@ -29,8 +29,7 @@ const {
     isObject,
     pick,
     defined,
-    merge,
-    isNumber
+    merge
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
@@ -48,6 +47,8 @@ const composedClasses: Array<(Function|GlobalsLike)> = [],
         sensitivity: 1.1
     };
 
+let wheelTimer: number;
+
 
 /* *
  *
@@ -62,227 +63,13 @@ const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
     if (!isObject(options)) {
-        return merge(defaultOptions,
-            { enabled: defined(options) ? options : true }
-        );
+        options = {
+            enabled: options ?? true
+        };
     }
     return merge(defaultOptions, options);
 };
 
-/**
- * Fit a segment inside a range.
- * @private
- * @param {number} outerStart
- * Beginning of the range.
- * @param {number} outerWidth
- * Width of the range.
- * @param {number} innerStart
- * Beginning of the segment.
- * @param {number} innerWidth
- * Width of the segment.
- * @return {Object}
- * Object containing rangeStart and rangeWidth.
- */
-const fitToRange = (
-    outerStart: number,
-    outerWidth: number,
-    innerStart: number,
-    innerWidth: number
-): {
-    rangeStart: number,
-    rangeWidth: number
-} => {
-    if (innerStart + innerWidth > outerStart + outerWidth) {
-        if (innerWidth > outerWidth) {
-            innerWidth = outerWidth;
-            innerStart = outerStart;
-        } else {
-            innerStart = outerStart + outerWidth - innerWidth;
-        }
-    }
-    if (innerWidth > outerWidth) {
-        innerWidth = outerWidth;
-    }
-    if (innerStart < outerStart) {
-        innerStart = outerStart;
-    }
-
-    return {
-        rangeStart: innerStart,
-        rangeWidth: innerWidth
-    };
-};
-
-let wheelTimer: number,
-    startOnTick: boolean|undefined,
-    endOnTick: boolean|undefined;
-
-/**
- * Temporarly disable `axis.startOnTick` and `axis.endOnTick` to allow zooming
- * for small values.
- * @private
-*/
-const waitForAutomaticExtremes = function (
-    axis: Axis
-) : void {
-    const axisOptions = axis.options;
-
-    // Options interfering with yAxis zoom by setExtremes() returning
-    // integers by default.
-    if (defined(wheelTimer)) {
-        clearTimeout(wheelTimer);
-    }
-
-    if (!defined(startOnTick)) {
-        startOnTick = axisOptions.startOnTick;
-        endOnTick = axisOptions.endOnTick;
-    }
-
-    // Temporarily disable start and end on tick, because they would
-    // prevent small increments of zooming.
-    if (startOnTick || endOnTick) {
-        axisOptions.startOnTick = false;
-        axisOptions.endOnTick = false;
-    }
-    wheelTimer = setTimeout((): void => {
-        if (defined(startOnTick) && defined(endOnTick)) {
-            // Repeat merge after the wheel zoom is finished, #19178
-            axisOptions.startOnTick = startOnTick;
-            axisOptions.endOnTick = endOnTick;
-
-            // Set the extremes to the same as they already are, but now
-            // with the original startOnTick and endOnTick. We need
-            // `forceRedraw` otherwise it will detect that the values
-            // haven't changed. We do not use a simple yAxis.update()
-            // because it will destroy the ticks and prevent animation.
-            const { min, max } = axis.getExtremes();
-            axis.forceRedraw = true;
-            axis.setExtremes(
-                min,
-                max,
-                true,
-                void 0,
-                { trigger: 'mouseWheelZoom' }
-            );
-            startOnTick = endOnTick = void 0;
-        }
-    }, 400);
-};
-
-/**
-* Calculate the ratio of mouse position on the axis to its length. If mousePos
-* doesn't exist, returns 0.5;
-* @private
-*/
-const getMouseAxisRatio = function (
-    chart: Chart,
-    axis: Axis,
-    mousePos: number | undefined
-) : number {
-    if (!defined(mousePos)) {
-        return 0.5;
-    }
-
-    const mouseAxisRatio = (mousePos - axis.minPixelPadding - axis.pos) /
-            (axis.len - 2 * axis.minPixelPadding), // Prevent sticking (#19976)
-        isXAxis = axis.isXAxis;
-
-    if (isXAxis && (!axis.reversed !== !chart.inverted) ||
-            !isXAxis && axis.reversed) {
-        // We are taking into account that xAxis automatically gets
-        // reversed when chart.inverted
-        return 1 - mouseAxisRatio;
-    }
-
-    return mouseAxisRatio;
-};
-
-/**
-* Perform zooming on the passed axis.
-* @private
-* @param {Highcharts.Chart} chart
-* Chart object.
-* @param {Highcharts.Axis} axis
-* Axis to zoom.
-* @param {number} mousePos
-* Mouse position on the plot.
-* @param {number} howMuch
-* Amount of zoom to apply.
-* @param {number} centerArg
-* Mouse position in axis units.
-* @return {boolean}
-* True if axis extremes were changed.
-*/
-const zoomOnDirection = function (
-    chart: Chart,
-    axis: Axis,
-    mousePos: number,
-    howMuch: number,
-    centerArg: number
-) : boolean {
-    const isXAxis = axis.isXAxis;
-
-    let hasZoomed = false;
-
-    if (defined(axis.max) && defined(axis.min) &&
-        defined(axis.dataMax) && defined(axis.dataMin)) {
-
-        if (!isXAxis) {
-            waitForAutomaticExtremes(axis);
-        }
-
-        const range = axis.max - axis.min,
-            center = isNumber(centerArg) ? centerArg :
-                axis.min + range / 2,
-            mouseAxisRatio = getMouseAxisRatio(chart, axis, mousePos),
-            newRange = range * howMuch,
-            newMin = center - newRange * mouseAxisRatio,
-            dataRange = pick(axis.options.max, axis.dataMax) -
-                pick(axis.options.min, axis.dataMin),
-            minPaddingOffset = axis.options.min ? 0 :
-                dataRange * axis.options.minPadding,
-            maxPaddingOffset = axis.options.max ? 0 :
-                dataRange * axis.options.maxPadding,
-            outerMin = pick(axis.options.min, axis.dataMin) - minPaddingOffset,
-            outerRange = dataRange + maxPaddingOffset + minPaddingOffset,
-            newExt = fitToRange(
-                outerMin,
-                outerRange,
-                newMin,
-                newRange
-            ),
-            zoomOut = (
-                newExt.rangeStart < pick(axis.options.min, outerMin) ||
-                newExt.rangeStart === axis.min &&
-                (newExt.rangeWidth > outerRange &&
-                newExt.rangeStart + newExt.rangeWidth <
-                pick(axis.options.max, Number.MIN_VALUE)) ||
-                newExt.rangeWidth === axis.max - axis.min
-            );
-
-        if (defined(howMuch) && !zoomOut) { // Zoom
-            axis.setExtremes(
-                newExt.rangeStart,
-                newExt.rangeStart + newExt.rangeWidth,
-                false,
-                void 0,
-                { trigger: 'mouseWheelZoom' }
-            );
-
-            hasZoomed = true;
-        } else { // Reset zoom
-            axis.setExtremes(
-                void 0,
-                void 0,
-                false,
-                void 0,
-                { trigger: 'mouseWheelZoom' }
-            );
-        }
-    }
-
-    return hasZoomed;
-};
 
 /**
  * @private
@@ -290,54 +77,59 @@ const zoomOnDirection = function (
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
-    xAxis: Axis,
-    yAxis: Axis,
+    xAxis: Array<Axis>,
+    yAxis: Array<Axis>,
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
 ): boolean {
     const type = pick(
-            options.type,
-            chart.zooming.type,
-            ''
-        ),
-        zoomX = /x/.test(type),
-        zoomY = /y/.test(type);
+        options.type,
+        chart.zooming.type,
+        ''
+    );
 
-    let centerXArg = xAxis.toValue(mouseX),
-        centerYArg = yAxis.toValue(mouseY);
-
-    if (chart.inverted) {
-        const emulateRoof = yAxis.pos + yAxis.len;
-
-        // Get the correct values
-        centerXArg = xAxis.toValue(mouseY);
-        centerYArg = yAxis.toValue(mouseX);
-
-        // Swapping x and y for simplicity when chart is inverted.
-        const tmp = mouseX;
-        mouseX = mouseY;
-        mouseY = emulateRoof - tmp + yAxis.pos;
+    let axes: Array<Axis> = [];
+    if (type === 'x') {
+        axes = xAxis;
+    } else if (type === 'y') {
+        axes = yAxis;
+    } else if (type === 'xy') {
+        axes = chart.axes;
     }
 
-    const hasZoomedX = zoomX && zoomOnDirection(
-            chart,
-            xAxis,
-            mouseX,
-            howMuch,
-            centerXArg
-        ),
-        hasZoomedY = zoomY && zoomOnDirection(
-            chart,
-            yAxis,
-            mouseY,
-            howMuch,
-            centerYArg
-        ),
-        hasZoomed = hasZoomedX || hasZoomedY;
+    const hasZoomed = chart.transform({
+        axes,
+        // Create imaginary reference and target rectangles around the mouse
+        // point that scales up or down with `howMuch`;
+        to: {
+            x: mouseX - 5,
+            y: mouseY - 5,
+            // Must use 10 to get passed the limit for too small reference.
+            // Below this, the transform will default to a pan.
+            width: 10,
+            height: 10
+        },
+        from: {
+            x: mouseX - 5 * howMuch,
+            y: mouseY - 5 * howMuch,
+            width: 10 * howMuch,
+            height: 10 * howMuch
+        },
+        trigger: 'mousewheel'
+    });
 
     if (hasZoomed) {
-        chart.redraw(false);
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
+
+        // Some time after the last mousewheel event, run drop. In case any of
+        // the affected axes had `startOnTick` or `endOnTick`, they will be
+        // re-adjusted now.
+        wheelTimer = setTimeout((): void => {
+            chart.pointer?.drop();
+        }, 400);
     }
 
     return hasZoomed;
@@ -379,16 +171,16 @@ function onAfterGetContainer(this: Chart): void {
                         wheelSensitivity,
                         delta
                     ),
-                    xAxisCoords ? xAxisCoords.axis : chart.xAxis[0],
-                    yAxisCoords ? yAxisCoords.axis : chart.yAxis[0],
+                    xAxisCoords ? [xAxisCoords.axis] : chart.xAxis,
+                    yAxisCoords ? [yAxisCoords.axis] : chart.yAxis,
                     e.chartX,
                     e.chartY,
                     wheelZoomOptions
                 );
 
                 // Prevent page scroll
-                if (hasZoomed && e.preventDefault) {
-                    e.preventDefault();
+                if (hasZoomed) {
+                    e.preventDefault?.();
                 }
             }
 

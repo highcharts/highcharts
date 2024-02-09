@@ -194,11 +194,7 @@ class StandaloneNavigator {
             this.navigator,
             'setRange',
             (e: SetRangeEvent): void => {
-                const { min, max, redraw, animation, eventArguments } = e;
-
-                if (eventArguments.trigger !== axis) {
-                    axis.setExtremes(min, max, redraw, animation);
-                }
+                axis.setExtremes(e.min, e.max, e.redraw, e.animation);
             }
         );
         removeEventCallbacks.push(removeSetRangeEvent);

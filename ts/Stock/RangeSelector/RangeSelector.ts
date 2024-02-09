@@ -16,7 +16,10 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type {
+    AxisOptions,
+    AxisSetExtremesEventObject
+} from '../../Core/Axis/AxisOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
@@ -453,7 +456,7 @@ class RangeSelector {
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
 
-        // zoomed range based on a pre-selected button index
+        // Zoomed range based on a pre-selected button index
         if (
             typeof selectedOption !== 'undefined' &&
             buttonOptions[selectedOption]
@@ -468,10 +471,11 @@ class RangeSelector {
                 addEvent(
                     chart.xAxis[0],
                     'setExtremes',
-                    function (e: any): void {
+                    function (e: AxisSetExtremesEventObject): void {
                         if (
-                            (this.max as any) - (this.min as any) !==
-                                chart.fixedRange &&
+                            isNumber(this.max) &&
+                            isNumber(this.min) &&
+                            this.max - this.min !== chart.fixedRange &&
                             e.trigger !== 'rangeSelectorButton' &&
                             e.trigger !== 'updatedData' &&
                             rangeSelector.forcedDataGrouping &&
