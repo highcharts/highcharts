@@ -15,6 +15,12 @@ After that, you need to pass the connector to the component config, and that’s
 How to connect component to a cell?
 ----------------------------------
 1. Enabled layout creator (GUI)
+To be able to use Dashboards with layout system and editmode you first have to load the editmode module.
+
+```html
+<script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
+```
+
 Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
 
 ```js
@@ -43,6 +49,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
 ```
 
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
+
 
 2. Disabled default layout creator
 You can create your own HTML structure of a layout, styled by CSS or other CSS framework (i.e Tailwind, Bootstrap).

@@ -15,6 +15,7 @@ Thus, we have to import the Highcharts library and the Dashboards library to bin
     ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
     ```
     However, this is not the only way to import Dashboards packages. See other ways, e.g. install via npm, [here](https://www.highcharts.com/docs/dashboards/installation).
 

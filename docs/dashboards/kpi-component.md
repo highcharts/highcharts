@@ -42,6 +42,7 @@ KPIComponent allows end-user including the extra chart.
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
 ```
 
 Alternatively, you can also use the NPM package.
