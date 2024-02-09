@@ -208,7 +208,7 @@ function onChartBeforeRender(
 
         axes.forEach((axis): void => {
             axis.updateNames();
-            axis.setScale();
+            // axis.setScale();
         });
 
         // chart.getAxisMargins();
