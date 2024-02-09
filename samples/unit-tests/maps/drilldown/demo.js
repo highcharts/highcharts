@@ -78,6 +78,11 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
                 chart: {
                     width: 200
                 },
+                mapView: {
+                    projection: {
+                        name: 'EqualEarth'
+                    }
+                },
                 series: [{
                     mapData: world,
                     data: [{

@@ -441,8 +441,11 @@ namespace GeoJSONComposition {
         }
         const obj = topology.objects[objectName];
 
-        // Already decoded => return cache
-        if (obj['hc-decoded-geojson']) {
+        // Already decoded with the same title => return cache
+        if (
+            obj['hc-decoded-geojson'] &&
+            obj['hc-decoded-geojson'].title === topology.title
+        ) {
             return obj['hc-decoded-geojson'];
         }
 

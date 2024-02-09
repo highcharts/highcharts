@@ -308,6 +308,8 @@ class ChartAdditions {
             (this as Drilldown.ChartComposition)
         );
 
+        fireEvent(this, 'addSeriesAsDrilldown', { seriesOptions: options });
+
         if (chart.mapView) {
             // stop hovering while drilling down
             point.series.isDrilling = true;

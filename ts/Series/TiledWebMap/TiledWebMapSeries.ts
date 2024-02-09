@@ -16,11 +16,19 @@
  * */
 
 import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
+import type {
+    MapLonLatObject,
+    GeoJSON,
+    MapDataType
+} from '../../Maps/GeoJSON';
+import type {
+    MapBounds,
+    MapViewOptions
+} from '../../Maps/MapViewOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
+import type MapChart from '../../Core/Chart/MapChart';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -28,9 +36,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
+import MapView from '../../Maps/MapView.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     defined,
     error,
     merge,
@@ -67,14 +75,40 @@ interface TilesItem {
  * */
 
 /** @private */
-function onChartBeforeMapViewInit(
-    this: Chart,
-    e: { geoBounds: Record<string, number> }
-): boolean {
+function recommendMapViewForTWM(
+    this: MapView,
+    chart: MapChart,
+    mapDatas: Array<MapDataType | undefined>
+): DeepPartial<MapViewOptions>|undefined {
+    let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
+
+    // Handle the global map and series-level mapData
+    const geoMaps = mapDatas.map((mapData): GeoJSON|undefined =>
+        this.getGeoMap(mapData));
+
+    const allGeoBounds: MapBounds[] = [];
+    geoMaps.forEach((geoMap): void => {
+        if (geoMap) {
+            // Use the first geo map as main
+            recommendedMapView = geoMap['hc-recommended-mapview'];
+
+            // Combine the bounding boxes of all loaded maps
+            if (geoMap.bbox) {
+                const [x1, y1, x2, y2] = geoMap.bbox;
+                allGeoBounds.push({ x1, y1, x2, y2 });
+            }
+        }
+    });
+
+    // Get the composite bounds
+    const geoBounds = (
+        allGeoBounds.length &&
+        MapView.compositeBounds(allGeoBounds)
+    );
+
     const twm: TiledWebMapSeriesOptions =
-        (this.options.series || []).filter(
-            (s: any): boolean => s.type === 'tiledwebmap')[0],
-        { geoBounds } = e;
+        (chart.options.series || []).filter(
+            (s: any): boolean => s.type === 'tiledwebmap')[0];
 
     if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
@@ -90,31 +124,29 @@ function onChartBeforeMapViewInit(
             const def = new ProviderDefinition(),
                 { initialProjectionName: providerProjectionName } = def;
 
-            if (this.options.mapView) {
-                if (geoBounds) {
-                    const { x1, y1, x2, y2 } = geoBounds;
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName,
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        }
-                    };
-                } else {
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName
-                        },
-                        minZoom: 0
-                    };
-                }
+            if (geoBounds) {
+                const { x1, y1, x2, y2 } = geoBounds;
+                recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName,
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    }
+                };
+            } else {
+                recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName
+                    },
+                    minZoom: 0
+                };
             }
-
-            return false;
         }
     }
+    // Register the main geo map (from options.chart.map) if set
+    this.geoMap = geoMaps[0];
 
-    return true;
+    return recommendedMapView;
 }
 
 /* *
@@ -152,11 +184,10 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public static compose(
-        ChartClass: typeof Chart
+        MapViewClass: typeof MapView
     ): void {
-
         if (pushUnique(composed, this.compose)) {
-            addEvent(ChartClass, 'beforeMapViewInit', onChartBeforeMapViewInit);
+            MapViewClass.prototype.recommendMapView = recommendMapViewForTWM;
         }
     }
 
@@ -792,7 +823,7 @@ class TiledWebMapSeries extends MapSeries {
 
         if (
             mapView &&
-            !defined(mapView.options.projection) &&
+            !defined(chart.userOptions.mapView?.projection) &&
             provider &&
             provider.type
         ) {
