@@ -3,11 +3,42 @@
         'https://www.highcharts.com/samples/data/new-intraday.json'
     ).then(response => response.json());
 
+    // Define a custom symbol path
+    Highcharts.SVGRenderer.prototype.symbols.oval = function (x, y, w, h) {
+        const r = w / 2;
+
+        return [
+            'M', x, y,
+            'A', r, r, 0, 1, 1, x + w, y,
+            'L', x + w, y + h,
+            'A', r, r, 0, 1, 1, x, y + h,
+            'L', x, y,
+            'Z'
+        ];
+    };
+
     Highcharts.setOptions({
         chart: {
             backgroundColor: '#202d3b'
         },
+        navigation: {
+            buttonOptions: {
+                theme: {
+                    fill: '#333333',
+                    stroke: '#c5c7c9'
+                }
+            }
+        },
         navigator: {
+            handles: {
+                symbols: ['oval', 'oval'],
+                width: 8,
+                height: 24,
+                backgroundColor: '#0190b7',
+                lineWidth: 0
+            },
+            maskInside: false,
+            maskFill: '#eeeeee44',
             xAxis: {
                 labels: {
                     style: {
@@ -18,7 +49,13 @@
                 }
             },
             series: {
-                lineColor: '#FFF'
+                type: 'candlestick',
+                dataGrouping: {
+                    approximation: 'ohlc',
+                    units: [
+                        ['minute', [30]]
+                    ]
+                }
             }
         },
         plotOptions: {
@@ -28,7 +65,6 @@
                 lineColor: '#ccc'
             },
             series: {
-
                 lastPrice: {
                     color: '#c0c0c0',
                     enabled: true,
@@ -46,8 +82,21 @@
         },
         rangeSelector: {
             buttonTheme: {
-                r: 0,
-                padding: 1
+                fill: '#333333',
+                padding: 1,
+                r: 2,
+                stroke: '#c5c7c9',
+                'stroke-width': 1,
+                states: {
+                    hover: {
+                        style: {
+                            color: '#333333'
+                        }
+                    }
+                },
+                style: {
+                    color: '#c5c7c9'
+                }
             },
             inputStyle: {
                 color: '#c5c7c9'
@@ -55,6 +104,9 @@
             labelStyle: {
                 color: '#c5c7c9'
             }
+        },
+        scrollbar: {
+            enabled: false
         },
         tooltip: {
             backgroundColor: '#fbfbfb',
