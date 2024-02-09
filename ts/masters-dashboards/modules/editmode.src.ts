@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards Math @product.version@ (@product.date@)
+ * @license Highcharts Dashboards EditMode @product.version@ (@product.date@)
  * @module dashboards/modules/math-modifier
  * @requires dashboards
  *

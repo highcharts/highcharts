@@ -178,15 +178,14 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // Init edit mode.
         if (this.guiEnabled) {
-            if (
-                Dashboards.EditMode && !(
-                    this.options.editMode &&
-                    !this.options.editMode.enabled
-                )
-            ) {
-                this.editMode = new Dashboards.EditMode(this, this.options.editMode);
-                // Add fullscreen support.
-                this.fullscreen = new Dashboards.FullScreen(this);
+            if (!Dashboards.EditMode) {
+                throw new Error('Missing editmode.js module');
+            } else {
+                if (!(this.options.editMode && !this.options.editMode.enabled)) {
+                    this.editMode = new Dashboards.EditMode(this, this.options.editMode);
+                    // Add fullscreen support.
+                    this.fullscreen = new Dashboards.FullScreen(this);
+                }
             }
         }
 
