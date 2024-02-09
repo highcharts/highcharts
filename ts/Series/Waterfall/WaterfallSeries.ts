@@ -164,7 +164,7 @@ class WaterfallSeries extends ColumnSeries {
     ): undefined {
         const series = this,
             options = series.options,
-            yData = series.yData,
+            yData = series.getColumn('y'),
             // #3710 Update point does not propagate to sum
             points = options.data,
             dataLength = yData.length,
@@ -183,10 +183,10 @@ class WaterfallSeries extends ColumnSeries {
             y = yData[i];
             point = points?.[i] || {};
 
-            if (y === 'sum' || (point as any).isSum) {
+            if ((y as any) === 'sum' || (point as any).isSum) {
                 yData[i] = correctFloat(sum);
             } else if (
-                y === 'intermediateSum' ||
+                (y as any) === 'intermediateSum' ||
                 (point as any).isIntermediateSum
             ) {
                 yData[i] = correctFloat(subSum);
@@ -391,6 +391,7 @@ class WaterfallSeries extends ColumnSeries {
             seriesThreshold = options.threshold || 0,
             stackKey = series.stackKey,
             xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
             xLength = xData.length;
 
         let stackThreshold = seriesThreshold,
@@ -478,7 +479,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         actualStackX = actualStack[x];
-                        yVal = series.yData[i];
+                        yVal = yData[i];
 
                         if (yVal >= 0) {
                             actualStackX.posTotal += yVal;
