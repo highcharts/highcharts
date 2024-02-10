@@ -74,15 +74,20 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
     }
 
     const yData = [],
+        pointArrayMap = series.pointArrayMap,
         table = processed && series.table.modified || series.table;
 
-    if (!series.pointArrayMap) {
-        return (table.columns.y || []) as any;
+    if (!pointArrayMap) {
+        return series.getColumn('y', processed);
     }
 
+    const columns = pointArrayMap.map((key): Array<number> =>
+        series.getColumn(key, processed)
+    );
+
     for (let i = 0; i < table.rowCount; i++) {
-        const values = series.pointArrayMap.map((key): number =>
-            (table.columns[key] as Array<number>|undefined)?.[i] || 0
+        const values = pointArrayMap.map((key, colIndex): number =>
+            columns[colIndex]?.[i] || 0
         );
         yData.push(values);
     }
@@ -528,7 +533,8 @@ class SMAIndicator extends LineSeries {
                     ) {
                         const values = keys.map((key): number =>
                             (
-                                table.columns[key] as Array<number>|undefined
+                                table.getColumn(key, true) as
+                                    Array<number>|undefined
                             )?.[i] || 0
                         );
                         croppedDataValues.push(values);
@@ -592,8 +598,8 @@ class SMAIndicator extends LineSeries {
 
         // Primarily for test compliance
         if (indicator.useDataTable) {
-            indicator.xData = table.columns.x as Array<number>;
-            indicator.yData = table.columns.y as Array<number>;
+            indicator.xData = table.getColumn('x', true) as Array<number>;
+            indicator.yData = table.getColumn('y', true) as Array<number>;
         }
 
         if (

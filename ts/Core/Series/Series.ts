@@ -1090,6 +1090,12 @@ class Series {
         );
     }
 
+    /**
+     * Shorthand to get one of the series' data columns from `Series.table`.
+     *
+     * @private
+     * @function Highcharts.Series#getColumn
+     */
     public getColumn(
         columnName: string,
         modified?: boolean
@@ -1116,7 +1122,7 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getColumns
-     */
+     * /
     public getColumns(
         columnNames: Array<string>,
         modified?: boolean
@@ -1141,6 +1147,7 @@ class Series {
         return (modified ? this.table.modified : this.table)
             .getColumns(columnNames, true) as Record<string, Array<number>>;
     }
+    */
 
     /**
      * Finds the index of an existing point that matches the given point
@@ -1673,8 +1680,8 @@ class Series {
 
             // For convenience during the transition to DataTable
             if (series.useDataTable) {
-                series.xData = table.columns.x as Array<number>;
-                series.yData = table.columns.y as Array<number>;
+                series.xData = this.getColumn('x');
+                series.yData = this.getColumn('y');
             }
 
             // Forgetting to cast strings to numbers is a common caveat when
@@ -1979,7 +1986,7 @@ class Series {
         table?: DataTableLight
     ): Series.CropDataObject {
         if (table && this.useDataTable) {
-            xData = table.columns.x as any || [];
+            xData = table.getColumn('x', true) as Array<number> || [];
         }
 
         const dataLength = xData.length;

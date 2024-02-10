@@ -183,9 +183,11 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
             (
                 series[i].useDataTable ?
                     (
-                        series[i].table.columns.z ||
-                        series[i].table.columns.value ||
-                        []
+                        (
+                            series[i].getColumn('z').length &&
+                            series[i].getColumn('z')
+                        ) ||
+                        series[i].getColumn('value')
                     ).length :
                     (series[i] as any).zData.length
             )

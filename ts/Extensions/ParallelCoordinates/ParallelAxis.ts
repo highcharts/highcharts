@@ -20,7 +20,6 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type { DataColumn } from '../../Core/Series/Series';
 import type ParallelCoordinates from './ParallelCoordinates';
 
 import H from '../../Core/Globals.js';
@@ -257,10 +256,7 @@ namespace ParallelAxis {
                             .reduce((currentPoints, key): Array<number|null> =>
                                 [
                                     ...currentPoints,
-                                    (
-                                        series.table.columns[key] as
-                                            Array<number>|undefined
-                                    )?.[index] ?? null
+                                    series.getColumn(key)?.[index] ?? null
                                 ], currentPoints);
                     }
                 } else {

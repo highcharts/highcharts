@@ -323,11 +323,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
         // It is needed to deal with null and undefined values
         allSeries.forEach((series): void => {
-            const values = series.useDataTable ?
-                series.table.columns.value as Array<number>|undefined || [] :
-                series.yData;
-
-            values.forEach((y): void => {
+            series.getColumn('value').forEach((y): void => {
                 if (defined(y)) {
                     if (y > valMax) {
                         valMax = y;

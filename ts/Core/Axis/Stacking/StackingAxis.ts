@@ -37,7 +37,6 @@ const {
     defined,
     destroyObjectProperties,
     fireEvent,
-    isArray,
     isNumber,
     objectEach,
     pick,
@@ -357,13 +356,8 @@ function seriesSetStackedPoints(
     }
 
     const series = this,
-        table = series.table.modified || series.table,
-        xData = series.useDataTable ?
-            table.columns.x as Array<number> :
-            series.processedXData,
-        yData = series.useDataTable ?
-            table.columns[series.pointValKey || 'y'] :
-            series.processedYData,
+        xData = series.getColumn('x', true),
+        yData = series.getColumn(series.pointValKey || 'y', true),
         stackedYData = [],
         yDataLength = yData?.length || 0,
         seriesOptions = series.options,
@@ -390,9 +384,9 @@ function seriesSetStackedPoints(
 
     // Loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
-        let y = yData?.[i];
+        let y = yData[i];
 
-        const x = xData?.[i] || 0,
+        const x = xData[i] || 0,
             yNumber = isNumber(y) && y || 0;
 
         stackIndicator = series.getStackIndicator(
@@ -472,10 +466,6 @@ function seriesSetStackedPoints(
             }
 
         } else if (type === 'group') {
-            if (!series.useDataTable && isArray(y)) {
-                y = y[0];
-            }
-
             // In this stack, the total is the number of valid points
             if (isNumber(y)) {
                 total++;

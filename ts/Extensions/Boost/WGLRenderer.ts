@@ -395,7 +395,6 @@ class WGLRenderer {
             yExtremes = series.yAxis.getExtremes(),
             yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
             yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
-            dataColumns = (series.table.modified || series.table).columns,
             xData = (
                 series.getColumn('x').length ? series.getColumn('x') : void 0
             ) || (options as any).xData || series.getColumn('x', true),
@@ -849,8 +848,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = (dataColumns.low as Array<number>|undefined)?.[i];
-                y = (dataColumns.high as Array<number>|undefined)?.[i] || 0;
+                low = series.getColumn('low', true)?.[i];
+                y = series.getColumn('high', true)?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;

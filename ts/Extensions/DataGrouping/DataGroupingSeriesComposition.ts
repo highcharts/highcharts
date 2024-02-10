@@ -400,9 +400,7 @@ function applyGrouping(
                 series,
                 [
                     xData,
-                    series.useDataTable ?
-                        table.columns.y as any :
-                        processedYData as any,
+                    processedYData,
                     groupPositions,
                     (dataGroupingOptions as any).approximation,
                     table
@@ -410,12 +408,10 @@ function applyGrouping(
             );
 
         let modified = groupedData.modified,
-            groupedXData = series.useDataTable ?
-                modified.columns.x as Array<number> :
-                groupedData.groupedXData,
-            groupedYData = series.useDataTable ?
-                modified.columns.y as Array<number> || [] :
-                groupedData.groupedYData,
+            groupedXData = modified.getColumn('x', true) as
+                Array<number>|TypedArray,
+            groupedYData = modified.getColumn('y', true) as
+                Array<number>|TypedArray,
             gapSize = 0;
 
         // The smoothed option is deprecated, instead, there is a fallback
@@ -478,7 +474,7 @@ function applyGrouping(
                 modified
             );
             groupedXData = croppedData.xData;
-            groupedYData = croppedData.yData;
+            groupedYData = croppedData.yData as any;
             if (croppedData.modified) {
                 modified = croppedData.modified;
             }
@@ -635,8 +631,8 @@ function groupData(
     table: DataTableLight
 ): DataGroupingResultObject {
     if (this.useDataTable) {
-        xData = table.columns.x as Array<number> || [];
-        yData = table.columns.y as Array<number> || [];
+        xData = table.getColumn('x', true) as Array<number> || [];
+        yData = table.getColumn('y', true) as Array<number> || [];
     }
 
     const series = this,
@@ -813,7 +809,7 @@ function groupData(
         }
     }
 
-    modified.columns.x = groupedXData;
+    modified.setColumn('x', groupedXData);
     modified.rowCount = groupedXData.length;
 
     return {

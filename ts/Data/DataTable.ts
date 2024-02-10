@@ -245,7 +245,7 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly autoId: boolean;
 
-    // @note Made this public because direct access is so handy in Highcharts
+    /* @todo: Make protected again */
     public columns: Record<string, DataTable.Column>;
 
     public readonly id: string;

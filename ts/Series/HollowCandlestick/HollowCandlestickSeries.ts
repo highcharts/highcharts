@@ -175,7 +175,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
             // Processed and grouped data
             processedYData = series.allGroupedData || series.yData,
             table = series.allGroupedTable || series.table,
-            columns = table.columns,
             dataLength = series.useDataTable ?
                 table.rowCount :
                 processedYData?.length,

@@ -273,12 +273,7 @@ class HeatmapSeries extends ScatterSeries {
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
         const { dataMin, dataMax } = Series.prototype.getExtremes
-            .call(
-                this,
-                this.useDataTable ?
-                    this.table.columns.value as Array<number> || [] :
-                    this.valueData
-            );
+            .call(this, this.getColumn('value'));
 
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;

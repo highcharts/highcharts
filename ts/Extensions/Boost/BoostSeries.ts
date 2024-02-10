@@ -1013,14 +1013,10 @@ function seriesRenderCanvas(this: Series): void {
         chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
-        dataColumns = (this.table.modified || this.table).columns,
-        useDataTable = this.useDataTable,
-        xData = useDataTable ?
-            dataColumns.x :
-            options.xData || this.processedXData,
-        yData = useDataTable ?
-            dataColumns.y :
-            options.yData || this.processedYData,
+        xData = options.xData || this.getColumn('x', true),
+        yData = options.yData || this.getColumn('y', true),
+        lowData = this.getColumn('low', true),
+        highData = this.getColumn('high', true),
         rawData = this.processedData || options.data,
         xExtremes = xAxis.getExtremes(),
         // Taking into account the offset of the min point #19497
@@ -1041,7 +1037,11 @@ function seriesRenderCanvas(this: Series): void {
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
-            (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
+            (
+                this.getColumn('x', true).length ?
+                    this.getColumn('x', true) :
+                    void 0
+            ) ||
             this.options.xData ||
             this.getColumn('x', true)
         );
@@ -1204,8 +1204,8 @@ function seriesRenderCanvas(this: Series): void {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = useDataTable ? dataColumns.low?.[i] : (y as any)[0];
-                y = useDataTable ? dataColumns.high?.[i] : (y as any)[1];
+                low = lowData[i];
+                y = highData[i];
             } else if (isStacked) {
                 x = (d as any).x;
                 y = (d as any).stackY;
