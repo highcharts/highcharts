@@ -650,6 +650,8 @@ function groupData(
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
+        // Data columns to be applied to the modified data table at the end
+        valueColumns = (pointArrayMap || ['y']).map((): Array<number> => []),
         groupAll = (
             this.options.dataGrouping &&
             this.options.dataGrouping.groupAll
@@ -739,16 +741,10 @@ function groupData(
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
 
-                // Apply the grouped values to the row
+                // Push the grouped values to the parallel columns
                 const groupedValuesArr = splat(groupedY);
                 for (let j = 0; j < groupedValuesArr.length; j++) {
-                    const key = pointArrayMap?.[j] || 'y',
-                        val = groupedValuesArr[j],
-                        column = modified.columns[key] || [];
-                    (column as any).push(val);
-                    if (!modified.columns[key]) {
-                        modified.columns[key] = column;
-                    }
+                    valueColumns[j].push(groupedValuesArr[j]);
                 }
                 groupMap.push(series.dataGroupInfo);
             }
@@ -810,7 +806,9 @@ function groupData(
     }
 
     modified.setColumn('x', groupedXData);
-    modified.rowCount = groupedXData.length;
+    (pointArrayMap || ['y']).forEach((key, i): void =>
+        modified.setColumn(key, valueColumns[i])
+    );
 
     return {
         groupedXData,
