@@ -36,7 +36,6 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    isArray,
     merge
 } = U;
 
@@ -287,25 +286,6 @@ class MapBubbleSeries extends BubbleSeries {
         this.translateBubble();
     }
 
-    updateParallelArrays(
-        point: Point,
-        i: (number|string),
-        iArgs?: Array<any>
-    ): void {
-        super.updateParallelArrays.call(
-            this,
-            point,
-            i,
-            iArgs
-        );
-
-        let processedXData = this.processedXData,
-            xData = this.getColumn('x');
-
-        if (isArray(processedXData) && xData) {
-            processedXData.length = xData.length;
-        }
-    }
 }
 
 /* *

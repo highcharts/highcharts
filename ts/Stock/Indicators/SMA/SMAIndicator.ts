@@ -443,10 +443,13 @@ class SMAIndicator extends LineSeries {
             i;
 
         // For the newer data table, temporarily set the parent series `yData`
-        // to the legacy format that is documented for custom indicators.
+        // to the legacy format that is documented for custom indicators, and
+        // get the xData from the data table
         const yData = indicator.linkedParent.yData,
             processedYData = indicator.linkedParent.processedYData;
         if (indicator.useDataTable) {
+            indicator.linkedParent.xData = indicator.linkedParent
+                .getColumn('x');
             indicator.linkedParent.yData = tableToMultiYData(
                 indicator.linkedParent
             ) as any;
@@ -480,6 +483,7 @@ class SMAIndicator extends LineSeries {
 
         // Reset
         if (indicator.useDataTable) {
+            delete indicator.linkedParent.xData;
             indicator.linkedParent.yData = yData;
             indicator.linkedParent.processedYData = processedYData;
         }

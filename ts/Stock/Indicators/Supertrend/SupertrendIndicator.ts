@@ -242,6 +242,7 @@ class SupertrendIndicator extends SMAIndicator {
 
             // Series that indicator is linked to
             mainSeries = indicator.linkedParent,
+            mainXData = mainSeries.getColumn('x'),
             mainLinePoints: Array<(SupertrendLinkedParentPointObject)> =
                 (mainSeries ? mainSeries.points : []),
             indicPoints: Array<SupertrendPoint> = indicator.points,
@@ -334,7 +335,7 @@ class SupertrendIndicator extends SMAIndicator {
             if (
                 !nextMainPoint &&
                 mainPoint &&
-                isNumber(mainSeries.xData[mainPoint.index - 1])
+                isNumber(mainXData[mainPoint.index - 1])
             ) {
                 nextMainPoint = createPointObj(
                     mainSeries, mainPoint.index - 1
@@ -346,7 +347,7 @@ class SupertrendIndicator extends SMAIndicator {
             if (
                 !prevPrevMainPoint &&
                 prevMainPoint &&
-                isNumber(mainSeries.xData[prevMainPoint.index + 1])
+                isNumber(mainXData[prevMainPoint.index + 1])
             ) {
                 prevPrevMainPoint = createPointObj(
                     mainSeries, prevMainPoint.index + 1
@@ -357,7 +358,7 @@ class SupertrendIndicator extends SMAIndicator {
             if (
                 !mainPoint &&
                 nextMainPoint &&
-                isNumber(mainSeries.xData[nextMainPoint.index + 1])
+                isNumber(mainXData[nextMainPoint.index + 1])
             ) {
                 mainPoint = createPointObj(
                     mainSeries, nextMainPoint.index + 1
@@ -365,7 +366,7 @@ class SupertrendIndicator extends SMAIndicator {
             } else if (
                 !mainPoint &&
                 prevMainPoint &&
-                isNumber(mainSeries.xData[prevMainPoint.index - 1])
+                isNumber(mainXData[prevMainPoint.index - 1])
             ) {
                 mainPoint = createPointObj(
                     mainSeries, prevMainPoint.index - 1
@@ -389,7 +390,7 @@ class SupertrendIndicator extends SMAIndicator {
                         close: mainSeries.getColumn('close')[
                             mainPoint.index - 1
                         ],
-                        x: mainSeries.xData[mainPoint.index - 1]
+                        x: mainXData[mainPoint.index - 1]
                     } as any);
                 } else if (
                     prevPrevMainPoint && point.x === prevPrevMainPoint.x

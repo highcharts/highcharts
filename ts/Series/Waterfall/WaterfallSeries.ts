@@ -25,7 +25,6 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -220,21 +219,6 @@ class WaterfallSeries extends ColumnSeries {
             return 'intermediateSum';
         }
         return pt.y;
-    }
-
-    public updateParallelArrays(
-        point: Point,
-        i: (number|string)
-    ): void {
-        super.updateParallelArrays.call(
-            this,
-            point,
-            i
-        );
-        // Prevent initial sums from triggering an error (#3245, #7559)
-        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
-            this.yData[0] = null;
-        }
     }
 
     // Postprocess mapping between options and SVG attributes

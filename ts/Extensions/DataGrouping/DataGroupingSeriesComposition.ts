@@ -805,10 +805,13 @@ function groupData(
         }
     }
 
-    modified.setColumn('x', groupedXData);
-    (pointArrayMap || ['y']).forEach((key, i): void =>
-        modified.setColumn(key, valueColumns[i])
-    );
+    const columns: DataTable.ColumnCollection = {
+        x: groupedXData
+    };
+    (pointArrayMap || ['y']).forEach((key, i): void => {
+        columns[key] = valueColumns[i];
+    });
+    modified.setColumns(columns);
 
     return {
         groupedXData,

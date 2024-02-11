@@ -75,7 +75,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     }
 
     assert.strictEqual(
-        mainSeries.xData.length,
+        mainSeries.getColumn('x').length,
         awesomeSeries.xData.length + longerPeriod - 1,
         'Initial number of Awesome points is correct'
     );
@@ -90,7 +90,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     ]);
 
     assert.strictEqual(
-        mainSeries.xData.length,
+        mainSeries.getColumn('x').length,
         awesomeSeries.xData.length + longerPeriod - 1,
         'After addPoint number of Awesome points is correct'
     );
@@ -163,7 +163,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        mainSeries.xData.length,
+        mainSeries.getColumn('x').length,
         awesomeSeries.xData.length + longerPeriod - 1,
         'After setData number of Awesome points is correct'
     );

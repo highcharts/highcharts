@@ -656,75 +656,6 @@ class Series {
     }
 
     /**
-     * For simple series types like line and column, the data values are
-     * held in arrays like xData and yData for quick lookup to find extremes
-     * and more. For multidimensional series like bubble and map, this can
-     * be extended with arrays like zData and valueData by adding to the
-     * `series.parallelArrays` array.
-     *
-     * @private
-     * @function Highcharts.Series#updateParallelArrays
-     */
-    public updateParallelArrays(
-        point: Point,
-        i: (number|string),
-        iArgs?: Array<any>
-    ): void {
-        const series = point.series,
-            table = series.table,
-            columns = table.columns,
-            fn = isNumber(i) ?
-                // Insert the value in the given position
-                function (key: string): void {
-                    if (series.useDataTable) {
-                        // Data table
-                        const column = columns[key];
-                        if (column) {
-                            column[i] = (point as any)[key];
-                        }
-                    } else {
-                        const val = key === 'y' && series.toYData ?
-                            series.toYData(point) :
-                            (point as any)[key];
-                        (series as any)[key + 'Data'][i] = val;
-                    }
-
-                } :
-                // Apply the method specified in i with the following
-                // arguments as arguments
-                function (key: string): void {
-                    if (series.useDataTable) {
-                        // Data table
-                        const column = columns[key];
-                        if (column) {
-                            (Array.prototype as any)[i].apply(
-                                column,
-                                iArgs
-                            );
-                        }
-                    } else {
-                        (Array.prototype as any)[i].apply(
-                            (series as any)[key + 'Data'],
-                            iArgs
-                        );
-                    }
-                };
-
-        if (this.useDataTable) {
-            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
-            dataColumnKeys.forEach(fn);
-            table.rowCount = Math.max.apply(
-                0,
-                (Object as any).values(columns)
-                    .map((col: DataColumn): number => col.length)
-            );
-
-        } else {
-            series.parallelArrays.forEach(fn);
-        }
-    }
-
-    /**
      * Define hasData functions for series. These return true if there
      * are data points on this series within the plot area.
      *
@@ -1664,18 +1595,12 @@ class Series {
                         { series },
                         [data[i]]
                     );
-                    if (series.useDataTable) {
-                        for (const key of dataColumnKeys) {
-                            columns[key][i] = (pt as any)[key];
-                        }
-                    } else {
-                        series.updateParallelArrays(pt as any, i);
+                    for (const key of dataColumnKeys) {
+                        columns[key][i] = (pt as any)[key];
                     }
                 }
 
-                if (series.useDataTable) {
-                    table.setColumns(columns);
-                }
+                table.setColumns(columns);
             }
 
             // For convenience during the transition to DataTable
@@ -4218,12 +4143,11 @@ class Series {
     ): void {
         const series = this,
             seriesOptions = series.options,
-            data = series.data,
-            chart = series.chart,
-            xAxis = series.xAxis,
+            { chart, data, table, xAxis } = series,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            xData = series.getColumn('x');
+            xData = series.getColumn('x'),
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
         let isInTheMiddle,
             i: number;
 
@@ -4246,15 +4170,27 @@ class Series {
             }
         }
 
-        // Insert undefined item
-        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
-        // Update it
-        series.updateParallelArrays(point, i);
+        if (isInTheMiddle) {
+            // @todo The DataTable currently doesn't have an `insertRow` method
+            // or other capabilites of splicing the rows (except `deleteRow`).
+            // If we get that, we can probably combine this with the below.
+            const columns = table.getColumns(dataColumnKeys);
+            objectEach(columns, (column, key): void => {
+                column.splice(i, 0, point[key]);
+            });
+            table.setColumns(columns);
+        } else {
+            const row: DataTable.RowObject = {};
+            for (const key of dataColumnKeys) {
+                row[key] = point[key];
+            }
+            table.setRow(row);
+        }
 
         if (names && point.name) {
             names[x as any] = point.name;
         }
-        (dataOptions as any).splice(i, 0, options);
+        dataOptions?.splice(i, 0, options);
 
         if (
             isInTheMiddle ||
@@ -4277,14 +4213,8 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-
-                if (series.useDataTable) {
-                    series.table.deleteRows(0);
-                } else {
-                    series.updateParallelArrays(point, 'shift');
-                }
-
-                (dataOptions as any).shift();
+                series.table.deleteRows(0);
+                dataOptions?.shift();
             }
         }
 
@@ -4346,21 +4276,11 @@ class Series {
                     points.splice(i, 1);
                 }
                 data.splice(i, 1);
-                (series.options.data as any).splice(i, 1);
+                series.options.data?.splice(i, 1);
 
-                if (series.useDataTable) {
-                    series.table.deleteRows(i);
-                } else {
-                    series.updateParallelArrays(
-                        point || { series: series },
-                        'splice',
-                        [i, 1]
-                    );
-                }
+                series.table.deleteRows(i);
 
-                if (point) {
-                    point.destroy();
-                }
+                point?.destroy();
 
                 // redraw
                 series.isDirty = true;
