@@ -102,7 +102,6 @@ const {
     objectEach,
     pick,
     removeEvent,
-    splat,
     syncTimeout
 } = U;
 
@@ -1785,11 +1784,7 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
-                const columns: DataTable.ColumnCollection = {};
-                for (const name of Object.keys(table.columns)) {
-                    columns[name] = [];
-                }
-                modified = new DataTable(columns);
+                modified = new DataTable();
 
             // only crop if it's actually spilling out
             } else if (
@@ -1936,13 +1931,15 @@ class Series {
             }
         }
 
-        const columns: DataTable.ColumnCollection = {};
+        const dataColumnKeys = ['x', ...(this.pointArrayMap || ['y'])],
+            columns: DataTable.ColumnCollection = {};
         if (table) {
-            objectEach(table.columns, (column, name): void => {
+            for (const key of dataColumnKeys) {
+                const column = table.getColumn(key, true);
                 if (column) {
-                    columns[name] = column.slice(start, end);
+                    columns[key] = column.slice(start, end);
                 }
-            });
+            }
         }
         return {
             xData: xData.slice(start, end),
@@ -1965,9 +1962,8 @@ class Series {
             options = series.options,
             dataOptions = series.processedData || options.data,
             table = series.table.modified || series.table,
-            columns = table.columns,
+            xData = table.getColumn('x', true) as Array<number> || [],
             processedXData = series.processedXData,
-            processedYData = series.processedYData,
             PointClass = series.pointClass,
             processedDataLength = series.useDataTable ?
                 table.rowCount : (processedXData as any).length,
@@ -1982,14 +1978,7 @@ class Series {
                     0
             ),
             // Create a configuration object out of a data row
-            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
-            row2Object = (i: number): PointOptions => dataColumnKeys.reduce(
-                (pointOptions, key): PointOptions => {
-                    (pointOptions as any)[key] = columns[key]?.[i];
-                    return pointOptions;
-                },
-                {} as PointOptions
-            );
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
         let dataLength,
             cursor,
             point,
@@ -2021,20 +2010,14 @@ class Series {
                     data[cursor] = point = new PointClass(
                         series,
                         (dataOptions as any)[cursor],
-                        series.useDataTable ?
-                            columns.x?.[i] :
-                            (processedXData as any)[i]
+                        xData[i]
                     );
                 }
             } else {
                 // Splat the y data in case of ohlc data array
                 point = new PointClass(
                     series,
-                    series.useDataTable ?
-                        row2Object(i) :
-                        [(processedXData as any)[i]].concat(
-                            splat((processedYData as any)[i])
-                        )
+                    table.getRow(i, dataColumnKeys) as Array<number> || []
                 );
 
                 point.dataGroup = (series.groupMap as any)[
@@ -2164,12 +2147,11 @@ class Series {
             table = forceExtremesFromAll && this.cropped ?
                 this.table :
                 (this.table.modified || this.table),
-            columns = table.columns,
             customData = yData || this.stackedYData,
             yAxisData = customData ?
                 [customData] :
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
-                    (key): DataTable.Column => columns[key] || []
+                    (key): DataTable.Column => table.getColumn(key, true) || []
                 ) || [],
             xData = this.getColumn('x'),
             activeYData: number[] = [],

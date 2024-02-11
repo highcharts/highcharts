@@ -245,8 +245,7 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly autoId: boolean;
 
-    /* @todo: Make protected again */
-    public columns: Record<string, DataTable.Column>;
+    protected columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
 
