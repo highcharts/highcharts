@@ -8,7 +8,7 @@ An essential part of any dashboard is the positioning of its components. The lay
 * Red boxes: individual cells
 * Blue boxes: nested layout inside a cell
 
-To be able to use Dashboards with layout system and editmode you first have to load the editmode module.
+To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
