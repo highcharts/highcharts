@@ -1,5 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/editmode.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';

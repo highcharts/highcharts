@@ -20,7 +20,7 @@ The order of the imports is important, so make sure that the EditMode module is 
 
 ```html
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:

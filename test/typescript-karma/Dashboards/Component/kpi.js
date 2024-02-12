@@ -1,6 +1,6 @@
 //@ts-check
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/editmode.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 const { test } = QUnit;
 

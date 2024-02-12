@@ -7,7 +7,7 @@ The order of the imports is important, so make sure that the EditMode module is 
 
 ```html
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 

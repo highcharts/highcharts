@@ -1,5 +1,5 @@
 import DashboardGlobals from '/base/code/dashboards/es-modules/Dashboards/Globals.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/editmode.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 const { test, skip } = QUnit;
 
 function setupContainer() {
