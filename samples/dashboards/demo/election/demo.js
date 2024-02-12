@@ -36,14 +36,16 @@ const commonTitle = 'U.S. presidential election';
 const electionYears = ['2020', '2016', '2012', '2008'];
 const selectedYear = electionYears[0];
 
+let electionData = null;
+
 // Launches the Dashboards application
 async function setupDashboard() {
     // Load the dataset and convert to JSON data that are suitable for this application.
 
-    const elections = await fetch(elVoteUrl)
+    electionData = await fetch(elVoteUrl)
         .then(response => response.text()).then(function (csv) {
             // TBD: Add mandates
-            const header = ['state', 'repCand', 'demCand', 'totalVotes', 'repPercent', 'demPercent', 'pc'];
+            const header = ['state', 'candRep', 'canDem', 'totalVotes', 'repPercent', 'demPercent', 'pc'];
             // eslint-disable-next-line max-len
             const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
             const tidyCol = /[,"]/g;
@@ -73,7 +75,9 @@ async function setupDashboard() {
                     key = 'y' + year;
                     if (!(key in jsonData)) {
                         // First record for a new election year
-                        jsonData[key] = [header];
+                        jsonData[key] = {
+                            data: [header]
+                        };
 
                         // Need to wrap up the election that is
                         // currently being processed?
@@ -118,7 +122,7 @@ async function setupDashboard() {
 
                         // Merge rows
                         if (row[1] > 0 && row[2] > 0) {
-                            jsonData[key].push([...row]);
+                            jsonData[key].data.push([...row]);
                             row[1] = 0;
                             row[2] = 0;
                         }
@@ -135,10 +139,12 @@ async function setupDashboard() {
         const percentRep = ((totals.repVotes / totals.totalVotes) * 100).toFixed(1);
         const percentDem = ((totals.demVotes / totals.totalVotes) * 100).toFixed(1);
         const row = ['Federal', totals.repVotes, totals.demVotes, totals.totalVotes, percentRep, percentDem, 'US'];
-        jsonData.splice(1, 0, row);
+        jsonData.data.splice(1, 0, row);
+        jsonData.candRep = totals.candRep;
+        jsonData.candDem = totals.candDem;
     }
 
-    function getElectionSummary() {
+    function getelectionDataummary() {
         const ret = [
             {
                 name: 'Republican',
@@ -149,8 +155,8 @@ async function setupDashboard() {
             }
         ];
 
-        Object.values(elections).reverse().forEach(function (item) {
-            const row = item[1];
+        Object.values(electionData).reverse().forEach(function (item) {
+            const row = item.data[1];
 
             ret[0].data.push(Number(row[4])); // Percentage, Republican party
             ret[1].data.push(Number(row[5])); // Percentage, Democrat party
@@ -162,34 +168,34 @@ async function setupDashboard() {
         dataPool: {
             connectors: [
                 // TBD: to be populated dynamically if
-                // the number of elections increases.
+                // the number of electionData increases.
                 {
                     id: 'votes2020',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: elections.y2020
+                        data: electionData.y2020.data
                     }
                 }, {
                     id: 'votes2016',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: elections.y2016
+                        data: electionData.y2016.data
                     }
                 }, {
                     id: 'votes2012',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: elections.y2012
+                        data: electionData.y2012.data
                     }
                 }, {
                     id: 'votes2008',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: elections.y2008
+                        data: electionData.y2008.data
                     }
                 }
             ]
@@ -375,7 +381,7 @@ async function setupDashboard() {
                             description: 'Percentage of votes'
                         }
                     },
-                    series: getElectionSummary(),
+                    series: getelectionDataummary(),
                     lang: {
                         accessibility: {
                             chartContainerLabel: commonTitle + ' results.'
@@ -402,10 +408,10 @@ async function setupDashboard() {
                         state: {
                             headerFormat: 'State'
                         },
-                        repCand: {
+                        candRep: {
                             headerFormat: 'Rep. votes'
                         },
-                        demCand: {
+                        canDem: {
                             headerFormat: 'Dem. votes'
                         },
                         totalVotes: {
@@ -478,10 +484,13 @@ async function updateBoard(board, state, year) {
         }
     });
 
+    const canDem = electionData['y' + year].candDem;
+    const candRep = electionData['y' + year].candRep;
+
     await resultKpi.chart.series[0].update({
         data: [
-            { name: 'Rep.', y: repVal },
-            { name: 'Dem.', y: demVal },
+            { name: candRep, y: repVal },
+            { name: canDem, y: demVal },
             { name: 'Others', y: otherVal }
         ]
     });
@@ -506,6 +515,16 @@ async function updateBoard(board, state, year) {
         },
         connector: {
             id: connId
+        },
+        dataGridOptions: {
+            columns: {
+                candRep: {
+                    headerFormat: candRep
+                },
+                canDem: {
+                    headerFormat: canDem
+                }
+            }
         }
     });
 }
