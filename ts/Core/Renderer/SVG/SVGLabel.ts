@@ -293,17 +293,42 @@ class SVGLabel extends SVGElement {
 
             bBox = this.getRotatedBox(bBox, rotation, baseline);
         } else {
-            const { x, y, width, height } = bBox;
-            const right = x + width;
-            const bottom = y + height;
-            bBox.poly = [
-                { x: x, y: y },
-                { x: right, y: y },
-                { x: x, y: bottom },
-                { x: right, y: bottom }
-            ];
-        }
+            const tp = this.element
+                .querySelector('textPath')
+                ?.querySelector('tspan');
 
+            if (tp) {
+                const polygon = [],
+                    len = tp.getNumberOfChars();
+
+                for (let n = 0; n < len; n++) {
+                    const {
+                            x: x1,
+                            y: y1,
+                            width,
+                            height
+                        } = tp.getExtentOfChar(n),
+                        [x2, y2] = [x1 + width, y1 + height];
+
+                    polygon.push([x1, y1]);
+                    polygon.push([x2, y1]);
+                    polygon.push([x2, y2]);
+                    polygon.push([x1, y2]);
+                }
+
+                bBox.poly = polygon as [number, number][];
+            } else {
+                const { x, y, width, height } = bBox;
+                const right = x + width;
+                const bottom = y + height;
+                bBox.poly = [
+                    [x, y],
+                    [right, y],
+                    [x, bottom],
+                    [right, bottom]
+                ];
+            }
+        }
         return bBox;
     }
 

@@ -771,7 +771,7 @@ namespace DataLabel {
                             if (textPathOptions && !labelOptions.useHTML) {
                                 dataLabel.setTextPath(
                                     point.getDataLabelPath?.(dataLabel) ||
-                                    point.graphic,
+                                        point.graphic,
                                     textPathOptions
                                 );
 

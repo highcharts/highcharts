@@ -1568,17 +1568,37 @@ class SVGElement implements SVGElementLike {
         }
 
         if (!bBox.poly) {
-            const { x, y, width, height } = bBox;
-            const right = x + width;
-            const bottom = y + height;
+            const tp = this.element.querySelector('textPath');
+            if (tp) {
+                const polygon = [],
+                    len = tp.getNumberOfChars();
 
-            bBox.poly = [
-                { x: x, y: y },
-                { x: right, y: y },
-                { x: x, y: bottom },
-                { x: right, y: bottom }
-            ];
+                for (let n = 0; n < len; n++) {
+                    const { x: x1, y: y1 } = tp.getStartPositionOfChar(n),
+                        { x: x2, y: y2 } = tp.getEndPositionOfChar(n),
+                        { width, height } = tp.getExtentOfChar(n),
+                        halfW = width / 2,
+                        halfH = height / 2;
+
+                    polygon.push([x1 - halfW, y1 - halfH]);
+                    polygon.push([x2 + halfW, y2 + halfH]);
+                }
+
+                bBox.poly = polygon as [number, number][];
+            } else {
+                const { x, y, width, height } = bBox,
+                    right = x + width,
+                    bottom = y + height;
+
+                bBox.poly = [
+                    [x, y],
+                    [right, y],
+                    [right, bottom],
+                    [x, bottom]
+                ];
+            }
         }
+
         return bBox;
     }
 
@@ -1633,10 +1653,10 @@ class SVGElement implements SVGElementLike {
             width: boxWidth,
             height: boxHeight,
             poly: [
-                { x: aX, y: aY },
-                { x: bX, y: bY },
-                { x: cX, y: cY },
-                { x: dX, y: dY }
+                [aX, aY],
+                [bX, bY],
+                [cX, cY],
+                [dX, dY]
             ]
         };
     }

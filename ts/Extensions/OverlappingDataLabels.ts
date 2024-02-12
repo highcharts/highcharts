@@ -77,7 +77,6 @@ function chartHideOverlappingLabels(
     this: Chart,
     labels: Array<SVGElement>
 ): void {
-    type Vec = { x: number, y: number };
     const chart = this,
         len = labels.length,
         ren = chart.renderer,
@@ -90,16 +89,19 @@ function chartHideOverlappingLabels(
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
         ),
-        pointIsInPolygon = (p: Vec, polygon: Vec[]): boolean => {
+        pointIsInPolygon = (
+            p: [number, number],
+            polygon: [number, number][]
+        ): boolean => {
             const len = polygon.length,
-                { x: checkpointX, y: checkpointY } = p;
+                [checkpointX, checkpointY] = p;
             let inside = false;
 
             for (let i = 0, j = len - 1; i < len; j = i++) {
-                const x1 = ~~polygon[i].x;
-                const y1 = ~~polygon[i].y;
-                const x2 = ~~polygon[j].x;
-                const y2 = ~~polygon[j].y;
+                const x1 = ~~polygon[i][0];
+                const y1 = ~~polygon[i][1];
+                const x2 = ~~polygon[j][0];
+                const y2 = ~~polygon[j][1];
 
                 if (
                     (y1 > checkpointY) !== (y2 > checkpointY) && (
@@ -154,26 +156,16 @@ function chartHideOverlappingLabels(
             const right = left + computedWidth;
             const top = pos.y + yOffset;
             const bottom = top + computedHeight;
-
             return {
                 x: pos.x + xOffset,
                 y: pos.y + yOffset,
-                width: (label.width || 0) - 2 * padding,
-                height: (label.height || 0) - 2 * padding,
-                poly: [
-                    {
-                        x: left,
-                        y: top
-                    }, {
-                        x: right,
-                        y: top
-                    }, {
-                        x: left,
-                        y: bottom
-                    }, {
-                        x: right,
-                        y: bottom
-                    }
+                width: xOffset,
+                height: yOffset,
+                poly: bBox.poly || [
+                    [left, top],
+                    [right, top],
+                    [right, bottom],
+                    [left, bottom]
                 ]
             };
         }
@@ -222,7 +214,10 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                if (isIntersectRect(box1, box2) || boxCheck(box1, box2)) {
+                if (
+                    !isIntersectRect(box1, box2) ||
+                    boxCheck(box1, box2)
+                ) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }
