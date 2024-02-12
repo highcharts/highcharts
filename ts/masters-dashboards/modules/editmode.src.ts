@@ -1,6 +1,6 @@
 /**
  * @license Highcharts Dashboards EditMode @product.version@ (@product.date@)
- * @module dashboards/modules/math-modifier
+ * @module dashboards/modules/editmode
  * @requires dashboards
  *
  * (c) 2009-2024 Highsoft AS

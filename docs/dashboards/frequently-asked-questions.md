@@ -16,9 +16,11 @@ How to connect component to a cell?
 ----------------------------------
 1. Enabled layout creator (GUI)
 To be able to use Dashboards with layout system and editmode you first have to load the editmode module.
+The order of the imports is important, so make sure that the EditMode module is imported after the Dashboards module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/editmode.js"></script>
 ```
 
 Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
