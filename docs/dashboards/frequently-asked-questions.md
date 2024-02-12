@@ -15,7 +15,7 @@ After that, you need to pass the connector to the component config, and that’s
 How to connect component to a cell?
 ----------------------------------
 1. Enabled layout creator (GUI)
-To be able to use Dashboards with layout system and editmode you first have to load the editmode module.
+To be able to use Dashboards with layout system and edit mode you first have to load the `layout` module.
 The order of the imports is important, so make sure that the EditMode module is imported after the Dashboards module.
 
 ```html
