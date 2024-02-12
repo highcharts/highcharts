@@ -165,7 +165,7 @@ function task() {
             gulp.series(
                 'scripts-ts',
                 'scripts-css',
-                'scripts-js'
+                argv.webpack ? 'scripts-webpack' : 'scripts-js'
             )(
                 function (error) {
 

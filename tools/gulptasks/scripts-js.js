@@ -34,20 +34,19 @@ async function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
-    const fs = require('node:fs/promises');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
-    // const BuildScripts = buildTool.getBuildScripts({
-    //     debug: (argv.d || argv.debug || false),
-    //     files: (
-    //         (argv.file) ?
-    //             argv.file.split(',') :
-    //             null
-    //     ),
-    //     type: (argv.type || null)
-    // });
+    const BuildScripts = buildTool.getBuildScripts({
+        debug: (argv.d || argv.debug || false),
+        files: (
+            (argv.file) ?
+                argv.file.split(',') :
+                null
+        ),
+        type: (argv.type || null)
+    });
 
     logLib.message('Generating code...');
 
@@ -55,7 +54,7 @@ async function scriptsJS() {
 
     try {
         // assemble JS files
-        // await BuildScripts.fnFirstBuild();
+        await BuildScripts.fnFirstBuild();
 
         // deleting invalid masters DTS
         fsLib
@@ -66,17 +65,10 @@ async function scriptsJS() {
         fsLib.copyAllFiles(
             'js/',
             'code/es-modules/',
-            true
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts')
         );
 
-        const log = await processLib.exec(
-            'npx webpack -c tools/webpacks/highcharts.webpack.mjs',
-            { silent: 2, timeout: 60000 }
-        );
-
-        await fs.writeFile('webpack.log', log);
-
-        logLib.success('Created code');
     } finally {
         processLib.isRunning('scripts-js', false);
     }
