@@ -37,15 +37,17 @@ const electionYears = ['2020', '2016', '2012', '2008'];
 const selectedYear = electionYears[0];
 
 let electionData = null;
+let mapData = null;
 
 // Launches the Dashboards application
 async function setupDashboard() {
     // Load the dataset and convert to JSON data that are suitable for this application.
+    mapData = await fetch(mapUrl).then(response => response.json());
 
     electionData = await fetch(elVoteUrl)
         .then(response => response.text()).then(function (csv) {
             // TBD: Add mandates
-            const header = ['state', 'candRep', 'canDem', 'totalVotes', 'repPercent', 'demPercent', 'pc'];
+            const header = ['state', 'candRep', 'canDem', 'totalVotes', 'repPercent', 'demPercent', 'postal-code'];
             // eslint-disable-next-line max-len
             const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
             const tidyCol = /[,"]/g;
@@ -275,8 +277,8 @@ async function setupDashboard() {
                 chartConstructor: 'mapChart',
                 chartOptions: {
                     chart: {
-                        map: await fetch(mapUrl)
-                            .then(response => response.json())
+                        map: mapData,
+                        styledMode: true
                     },
                     title: {
                         text: '' // Populated later
@@ -291,54 +293,52 @@ async function setupDashboard() {
                         enabled: true,
                         enableMouseWheelZoom: true
                     },
-                    mapView: {
-                        maxZoom: 4
+                    colorAxis: {
+                        dataClasses: [{
+                            from: -100,
+                            to: 0,
+                            color: '#0200D0',
+                            name: 'Democrat'
+                        }, {
+                            from: 0,
+                            to: 100,
+                            color: '#C40401',
+                            name: 'Republican'
+                        }]
                     },
                     series: [{
-                        type: 'map',
-                        name: 'US map'
-                    }, {
-                        type: 'mappoint',
-                        name: 'Votes',
-                        data: [],
-                        allowPointSelect: true,
-                        dataLabels: [{
-                            align: 'left',
-                            crop: false,
+                        data: getStateElectionData(),
+                        joinBy: 'postal-code',
+                        dataLabels: {
                             enabled: true,
-                            format: '{point.name}',
-                            padding: 0,
-                            verticalAlign: 'top',
-                            x: -2,
-                            y: 2
-                        }, {
-                            crop: false,
-                            enabled: true,
-                            format: '{point.y:.0f}',
-                            inside: true,
-                            padding: 0,
-                            verticalAlign: 'bottom',
-                            y: -16
-                        }],
-                        events: {
-                            click: function (e) {
-                                const state = e.point.name;
-                                // TBD: change data filter
+                            color: '#FFFFFF',
+                            format: '{point.postal-code}',
+                            style: {
+                                textTransform: 'uppercase'
                             }
                         },
-                        tooltip: {
-                            footerFormat: '',
-                            headerFormat: '',
-                            pointFormat: (
-                                '<b>{point.name}</b>'
-                            )
+                        name: 'Result percentages', // TBD: electoral mandates
+                        point: {
+                            /*
+                            events: {
+                                click: pointClick
+                            }
+                            */
+                        },
+                        cursor: 'pointer'
+                    }, {
+                        name: 'Separators',
+                        type: 'mapline',
+                        nullColor: 'silver',
+                        showInLegend: false,
+                        enableMouseTracking: false,
+                        accessibility: {
+                            enabled: false
                         }
                     }],
                     tooltip: {
-                        shape: 'rect',
-                        distance: -60,
-                        useHTML: true,
-                        stickOnContact: true
+                        valueSuffix: '%',
+                        pointFormat: '{point.name} {point.value:.1f}'
                     },
                     lang: {
                         accessibility: {
@@ -431,7 +431,7 @@ async function setupDashboard() {
                         demPercent: {
                             headerFormat: 'Dem. percent.'
                         },
-                        pc: {
+                        'postal-code': {
                             show: false
                         }
                     }
@@ -449,30 +449,46 @@ async function setupDashboard() {
         'change',
         async function () {
             const selectedOption = this.options[this.selectedIndex];
-            await updateBoard(board, 'Alabama', selectedOption.value);
+            await updateBoard(board, null, selectedOption.value);
         }
     );
+
+    function getStateElectionData() {
+        const mapSeries = [];
+
+        // Get election data
+        const stateTable = electionData['y' + selectedYear];
+
+        // Skip header and federal results
+        for (let row = 2; row < stateTable.data.length; row++) {
+            const state = stateTable.data[row];
+            const postCode = state[6];
+            const diffRep = state[4] - state[5];
+
+            mapSeries.push({
+                value: Number(diffRep),
+                'postal-code': postCode
+            });
+        }
+
+        return mapSeries;
+    }
 }
 
+async function getVotesTable(board, year) {
+    return board.dataPool.getConnectorTable('votes' + year);
+}
 
 // Update board after changing data set (state or election year)
 async function updateBoard(board, state, year) {
-
-    // Data access
-    const dataPool = board.dataPool;
-
-    // Connector ID
-    const connId = 'votes' + year;
+    // Get election data
+    const votesTable = await getVotesTable(board, year);
 
     // Common title
     const title = commonTitle + ' ' + year;
 
-    // Geographical information (TBD)
-    const votesTable = await dataPool.getConnectorTable(connId);
-
     const [
-        // The order here must be the same as
-        // in the component definition in the Dashboard.
+        // The order here must be the same as in the component definition in the Dashboard.
         resultKpi,
         controlHtml,
         usMap,
@@ -511,8 +527,30 @@ async function updateBoard(board, state, year) {
             text: title
         }
     });
-    // TBD: Map update
-    const mapPoints = usMap.chart.series[1].data;
+
+    // Update all map points (states with results)
+    const mapSeries = usMap.chart.series[1].data;
+    const mapPoints = mapData.objects.default.geometries;
+    /*
+    mapSeries.length = 0;
+
+    for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
+        // Add state election data
+        const geometry = mapPoints[i].properties;
+        if ('postal-code' in geometry) {
+            const postCode = geometry['postal-code'];
+            const row = votesTable.getRowIndexBy('postal-code', postCode);
+            const state = votesTable.getCellAsString('state', row);
+            const percentRep = votesTable.getCellAsNumber('repPercent', row);
+            const percentDem = votesTable.getCellAsNumber('demPercent', row);
+
+            mapSeries.push({
+                value: percentRep,
+                'postal-code': postCode
+            });
+        }
+    }
+    */
 
     // 4. Update chart (if state clicked)
 
@@ -522,7 +560,7 @@ async function updateBoard(board, state, year) {
             text: title
         },
         connector: {
-            id: connId
+            id: 'votes' + year
         },
         dataGridOptions: {
             columns: {
