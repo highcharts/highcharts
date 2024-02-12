@@ -33,12 +33,9 @@ QUnit.test(
         });
 
         function toFastSTWithRound(series) {
-            if (series.useDataTable) {
-                return series.table.columns.y.map(
-                    n => parseFloat(n.toFixed(4))
-                );
-            }
-            return series.yData.map(point => parseFloat(point.toFixed(4)));
+            return series.table.columns.y.map(
+                n => parseFloat(n.toFixed(4))
+            );
         }
 
         assert.strictEqual(

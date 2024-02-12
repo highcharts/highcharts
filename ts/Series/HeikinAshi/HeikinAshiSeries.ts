@@ -73,13 +73,6 @@ function onHeikinAshiSeriesAfterTranslate(
         heikiashiData = series.heikiashiData,
         cropStart = series.cropStart || 0;
 
-    // Reset the proccesed data.
-    // Note: Don't know why this is needed. All tests pass when using data
-    // table, without resetting.
-    if (!series.useDataTable) {
-        series.processedYData.length = 0;
-    }
-
     // Modify points.
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
@@ -89,12 +82,6 @@ function onHeikinAshiSeriesAfterTranslate(
         point.high = heikiashiDataPoint[1];
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
-
-        if (!series.useDataTable) {
-            series.processedYData.push(
-                [point.open, point.high, point.low, point.close]
-            );
-        }
     }
 
 }
@@ -198,44 +185,22 @@ class HeikinAshiSeries extends CandlestickSeries {
     public getHeikinashiData(): void {
         const series = this,
             table = series.allGroupedTable || series.table,
-            processedYData = series.useDataTable ?
-                table.getColumn('y') || [] :
-                series.allGroupedData || series.yData,
-            dataLength = series.useDataTable ?
-                table.rowCount :
-                processedYData?.length,
+            dataLength = table.rowCount,
             heikiashiData = series.heikiashiData;
 
         if (!heikiashiData.length && dataLength) {
 
-            if (series.useDataTable) {
-                // Modify the first point.
-                this.modifyFirstPointValue(
-                    table.getRow(0, this.pointArrayMap) as Array<number>
+            // Modify the first point.
+            this.modifyFirstPointValue(
+                table.getRow(0, this.pointArrayMap) as Array<number>
+            );
+
+            // Modify other points.
+            for (let i = 1; i < dataLength; i++) {
+                this.modifyDataPoint(
+                    table.getRow(i, this.pointArrayMap) as Array<number>,
+                    heikiashiData[i - 1]
                 );
-
-                // Modify other points.
-                for (let i = 1; i < dataLength; i++) {
-                    this.modifyDataPoint(
-                        table.getRow(i, this.pointArrayMap) as Array<number>,
-                        heikiashiData[i - 1]
-                    );
-                }
-            } else {
-                // Cast to `any` in order to avoid checks before calculation.
-                // Adding null doesn't change anything.
-                const firstPoint: any = processedYData[0];
-
-                // Modify the first point.
-                this.modifyFirstPointValue(firstPoint);
-
-                // Modify other points.
-                for (let i = 1; i < processedYData.length; i++) {
-                    const dataPoint: any = processedYData[i],
-                        previousDataPoint: any = heikiashiData[i - 1];
-
-                    this.modifyDataPoint(dataPoint, previousDataPoint);
-                }
             }
         }
         series.heikiashiData = heikiashiData;

@@ -1068,17 +1068,12 @@ function seriesGeneratePoints(
 
         if (clusteredData) {
 
-            if (series.useDataTable) {
-                series.table.modified = new DataTable({
-                    columns: {
-                        x: clusteredData.groupedXData,
-                        y: clusteredData.groupedYData
-                    }
-                });
-            } else {
-                series.processedXData = clusteredData.groupedXData;
-                series.processedYData = clusteredData.groupedYData;
-            }
+            series.table.modified = new DataTable({
+                columns: {
+                    x: clusteredData.groupedXData,
+                    y: clusteredData.groupedYData
+                }
+            });
 
             series.hasGroupedData = true;
             series.markerClusterInfo = clusteredData;

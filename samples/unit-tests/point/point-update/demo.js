@@ -359,21 +359,12 @@ QUnit.test(
             [5, 7, 9],
             '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
         );
-        if (chart.series[0].useDataTable) {
 
-            assert.deepEqual(
-                chart.series[0].table.columns.y,
-                [2, 4, 6],
-                '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
-            );
-
-        } else {
-            assert.deepEqual(
-                chart.series[0].yData,
-                [[2], [4], [6]],
-                '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
-            );
-        }
+        assert.deepEqual(
+            chart.series[0].table.columns.y,
+            [2, 4, 6],
+            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+        );
 
         Highcharts.Series.types.line.prototype.pointArrayMap = map;
     }

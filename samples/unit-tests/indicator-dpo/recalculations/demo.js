@@ -48,12 +48,9 @@ QUnit.test(
             range = period + Math.floor(period / 2 + 1);
 
         function toFastDPOWithRound(series) {
-            if (series.useDataTable) {
-                return series.table.columns.y.map(
-                    y => parseFloat(y.toFixed(4))
-                );
-            }
-            return series.yData.map(point => parseFloat(point.toFixed(4)));
+            return series.table.columns.y.map(
+                y => parseFloat(y.toFixed(4))
+            );
         }
 
         assert.strictEqual(

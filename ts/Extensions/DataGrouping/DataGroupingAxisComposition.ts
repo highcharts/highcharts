@@ -158,9 +158,7 @@ function getGroupPixelWidth(
                 )
             );
 
-            dataLength = series[i].useDataTable ?
-                (series[i].table.modified || series[i].table).rowCount :
-                (series[i].processedXData || series[i].data).length;
+            dataLength = (series[i].table.modified || series[i].table).rowCount;
 
             // Execute grouping if the amount of points is greater than the
             // limit defined in groupPixelWidth

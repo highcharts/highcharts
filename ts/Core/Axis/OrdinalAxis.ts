@@ -1227,7 +1227,6 @@ namespace OrdinalAxis {
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
                         reserveSpace: Series.prototype.reserveSpace,
-                        useDataTable: series.useDataTable,
                         visible: series.visible
                     } as any;
 

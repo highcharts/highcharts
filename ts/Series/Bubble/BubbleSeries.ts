@@ -550,12 +550,8 @@ class BubbleSeries extends ScatterSeries {
      */
     public getRadii(): void {
         const columns = this.table.getColumns(['y', 'z'], true),
-            zData = this.useDataTable ?
-                columns.z as Array<number|undefined> :
-                this.zData,
-            yData = this.useDataTable ?
-                columns.y as Array<number|undefined> :
-                this.yData,
+            zData = columns.z as Array<number|undefined>,
+            yData = columns.y as Array<number|undefined>,
             radii = [] as Array<(number|null)>;
 
         let len: number,
@@ -677,10 +673,7 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        if (this.useDataTable) {
-            return !!this.table.rowCount;
-        }
-        return !!this.processedXData.length; // != 0
+        return !!this.table.rowCount;
     }
 
     /**
@@ -786,13 +779,7 @@ class BubbleSeries extends ScatterSeries {
     public getZExtremes(): BubbleZExtremes|undefined {
 
         const options = this.options,
-            zData = (
-                (
-                    this.useDataTable ?
-                        this.table.getColumn('z', true) :
-                        this.zData
-                ) || []
-            ).filter(isNumber);
+            zData = this.getColumn('z').filter(isNumber);
 
         if (zData.length) {
             const zMin = pick(options.zMin, clamp(

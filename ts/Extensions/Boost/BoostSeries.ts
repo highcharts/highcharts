@@ -898,7 +898,6 @@ function scatterProcessData(
 
     const boostThreshold = options.boostThreshold || 0,
         cropThreshold = options.cropThreshold,
-        data = options.data || series.data,
         xData = series.getColumn('x'),
         xExtremes = xAxis.getExtremes(),
         xMax = xExtremes.max ?? Number.MAX_VALUE,
@@ -924,9 +923,7 @@ function scatterProcessData(
     }
 
     // Without thresholds just assign data
-    const dataLength = series.useDataTable ?
-        series.table.rowCount :
-        isArray(data) ? data.length : 0;
+    const dataLength = series.table.rowCount;
     if (
         !boostThreshold ||
         dataLength < boostThreshold ||

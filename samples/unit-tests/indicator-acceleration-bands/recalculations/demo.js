@@ -102,13 +102,11 @@ QUnit.test('Test ABANDS-algorithm on data updates.', function (assert) {
     });
 
     const getValues = series => (
-        series.useDataTable ?
-            series.table.columns.x.map((x, i) => [
-                series.table.columns.top[i],
-                series.table.columns.middle[i],
-                series.table.columns.bottom[i]
-            ]) :
-            chart.series[1].yData
+        series.table.columns.x.map((x, i) => [
+            series.table.columns.top[i],
+            series.table.columns.middle[i],
+            series.table.columns.bottom[i]
+        ])
     );
 
     assert.deepEqual(

@@ -360,7 +360,7 @@ function applyGrouping(
     if (
         groupPixelWidth &&
         xData &&
-        (this.useDataTable ? table.rowCount : xData.length) &&
+        table.rowCount &&
         plotSizeX
     ) {
         hasGroupedData = true;
@@ -418,7 +418,7 @@ function applyGrouping(
         // to the new anchoring mechanism. #12455.
         if (
             dataGroupingOptions?.smoothed &&
-            (series.useDataTable ? modified.rowCount : groupedXData?.length)
+            modified.rowCount
         ) {
             dataGroupingOptions.firstAnchor = 'firstPoint';
             dataGroupingOptions.anchor = 'middle';
@@ -630,10 +630,8 @@ function groupData(
     approximation: (ApproximationKeyValue|Function),
     table: DataTableLight
 ): DataGroupingResultObject {
-    if (this.useDataTable) {
-        xData = table.getColumn('x', true) as Array<number> || [];
-        yData = table.getColumn('y', true) as Array<number> || [];
-    }
+    xData = this.getColumn('x');
+    yData = this.getColumn('y');
 
     const series = this,
         data = series.data,
@@ -642,9 +640,9 @@ function groupData(
         groupedYData = [],
         modified = new DataTable(),
         groupMap = [],
-        dataLength = series.useDataTable ? table.rowCount : xData.length,
-        // When grouping the fake extended axis for panning,
-        // we don't need to consider y
+        dataLength = table.rowCount,
+        // When grouping the fake extended axis for panning, we don't need to
+        // consider y
         handleYData = !!yData,
         values = [] as Array<ApproximationArray>,
         pointArrayMap = series.pointArrayMap,

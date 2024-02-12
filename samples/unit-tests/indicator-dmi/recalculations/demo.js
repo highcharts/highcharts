@@ -61,13 +61,11 @@ QUnit.test(
         );
 
         const getValues = indicator => (
-            indicator.useDataTable ?
-                indicator.table.columns.x.map((x, i) => [
-                    indicator.table.columns.y[i],
-                    indicator.table.columns.plusDI[i],
-                    indicator.table.columns.minusDI[i]
-                ]) :
-                indicator.yData
+            indicator.table.columns.x.map((x, i) => [
+                indicator.table.columns.y[i],
+                indicator.table.columns.plusDI[i],
+                indicator.table.columns.minusDI[i]
+            ])
         );
 
         assert.deepEqual(

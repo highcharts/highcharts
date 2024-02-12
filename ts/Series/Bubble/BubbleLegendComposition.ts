@@ -180,17 +180,18 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
             series[i] &&
             series[i].isBubble &&
             series[i].visible &&
+            series[i].table.rowCount
+            /*
             (
-                series[i].useDataTable ?
+                (
                     (
-                        (
-                            series[i].getColumn('z').length &&
-                            series[i].getColumn('z')
-                        ) ||
-                        series[i].getColumn('value')
-                    ).length :
-                    (series[i] as any).zData.length
+                        series[i].getColumn('z').length &&
+                        series[i].getColumn('z')
+                    ) ||
+                    series[i].getColumn('value')
+                ).length
             )
+            */
         ) {
             return i;
         }

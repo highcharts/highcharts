@@ -104,9 +104,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].useDataTable ?
-            chart.series[1].table.columns.y.map(n => Number(n.toFixed(5))) :
-            toFastStochasticWithRound(chart.series[1].yData, 0),
+        chart.series[1].table.columns.y.map(n => Number(n.toFixed(5))),
         [
             70.43822,
             67.60891,
@@ -137,9 +135,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        chart.series[1].useDataTable ?
-            chart.series[1].table.columns.y.map(n => Number(n.toFixed(5))) :
-            toFastStochasticWithRound(chart.series[1].yData, 0),
+        chart.series[1].table.columns.y.map(n => Number(n.toFixed(5))),
         [
             70.43822,
             67.60891,
@@ -162,11 +158,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[1].useDataTable ?
-            chart.series[1].table.columns.smoothed.map(
-                n => (typeof n === 'number' ? Number(n.toFixed(5)) : n)
-            ) :
-            toFastStochasticWithRound(chart.series[1].yData, 1),
+        chart.series[1].table.columns.smoothed.map(
+            n => (typeof n === 'number' ? Number(n.toFixed(5)) : n)
+        ),
         [
             null,
             null,

@@ -843,7 +843,7 @@ test('Data columnAssignment', async function (assert) {
     } else {
         assert.ok(
             mountedComponents[3].component.chart.series[2]
-                .processedYData[0].length > 0,
+                .getColumn('close', true).length > 0,
             'OHLC point is an array of open/low/high/close'
         );
     }

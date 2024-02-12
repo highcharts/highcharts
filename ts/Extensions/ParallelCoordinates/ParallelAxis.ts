@@ -33,8 +33,7 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
-    splat
+    pushUnique
 } = U;
 
 /* *
@@ -250,27 +249,13 @@ namespace ParallelAxis {
             let currentPoints: Array<number|null> = [];
 
             axis.series.forEach(function (series): void {
-                if (series.useDataTable) {
-                    if (series.visible && isNumber(index)) {
-                        currentPoints = (series.pointArrayMap || ['y'])
-                            .reduce((currentPoints, key): Array<number|null> =>
-                                [
-                                    ...currentPoints,
-                                    series.getColumn(key)?.[index] ?? null
-                                ], currentPoints);
-                    }
-                } else {
-                    if (
-                        series.yData &&
-                        series.visible &&
-                        isNumber(index)
-                    ) {
-                        const y = series.yData[index];
-
-                        // Take into account range series points as well
-                        // (#15752)
-                        currentPoints.push.apply(currentPoints, splat(y));
-                    }
+                if (series.visible && isNumber(index)) {
+                    currentPoints = (series.pointArrayMap || ['y'])
+                        .reduce((currentPoints, key): Array<number|null> =>
+                            [
+                                ...currentPoints,
+                                series.getColumn(key)?.[index] ?? null
+                            ], currentPoints);
                 }
             });
 

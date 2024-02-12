@@ -35,8 +35,7 @@ const {
     extend,
     isArray,
     merge,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -66,13 +65,7 @@ interface CalculateOnObject {
 const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
     series: TLinkedSeries,
     processed?: boolean
-): Array<number|Array<number|null>> => {
-    if (!series.useDataTable) {
-        return processed ?
-            (series.processedYData as any) :
-            (series.yData as any);
-    }
-
+): Array<number|null|Array<number|null>> => {
     const yData = [],
         pointArrayMap = series.pointArrayMap,
         table = processed && series.table.modified || series.table;
@@ -439,25 +432,22 @@ class SMAIndicator extends LineSeries {
             oldFirstPointIndex,
             oldLastPointIndex,
             min,
-            max,
-            i;
+            max;
 
         // For the newer data table, temporarily set the parent series `yData`
         // to the legacy format that is documented for custom indicators, and
         // get the xData from the data table
         const yData = indicator.linkedParent.yData,
             processedYData = indicator.linkedParent.processedYData;
-        if (indicator.useDataTable) {
-            indicator.linkedParent.xData = indicator.linkedParent
-                .getColumn('x');
-            indicator.linkedParent.yData = tableToMultiYData(
-                indicator.linkedParent
-            ) as any;
-            indicator.linkedParent.processedYData = tableToMultiYData(
-                indicator.linkedParent,
-                true
-            ) as any;
-        }
+        indicator.linkedParent.xData = indicator.linkedParent
+            .getColumn('x');
+        indicator.linkedParent.yData = tableToMultiYData(
+            indicator.linkedParent
+        ) as any;
+        indicator.linkedParent.processedYData = tableToMultiYData(
+            indicator.linkedParent,
+            true
+        ) as any;
 
 
         // Updating an indicator with redraw=false may destroy data.
@@ -468,12 +458,8 @@ class SMAIndicator extends LineSeries {
         const processedData: IndicatorValuesObject<
             typeof LineSeries.prototype
         > = indicator.linkedParent.options &&
-            (
-                // #18176, #18177 indicators should work with empty dataset
-                this.useDataTable ?
-                    indicator.linkedParent.table.rowCount :
-                    indicator.linkedParent.yData?.length
-            ) ?
+            // #18176, #18177 indicators should work with empty dataset
+            indicator.linkedParent.table.rowCount ?
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -482,11 +468,9 @@ class SMAIndicator extends LineSeries {
             ) : emptySet;
 
         // Reset
-        if (indicator.useDataTable) {
-            delete indicator.linkedParent.xData;
-            indicator.linkedParent.yData = yData;
-            indicator.linkedParent.processedYData = processedYData;
-        }
+        delete indicator.linkedParent.xData;
+        indicator.linkedParent.yData = yData;
+        indicator.linkedParent.processedYData = processedYData;
 
         const pointArrayMap = indicator.pointArrayMap || ['y'],
             valueColumns: Record<string, Array<number|null>> = {};
@@ -528,31 +512,16 @@ class SMAIndicator extends LineSeries {
                     table
                 );
 
-                if (indicator.useDataTable) {
-                    const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
-                    for (
-                        let i = 0;
-                        i < (croppedData.modified?.rowCount || 0);
-                        i++
-                    ) {
-                        const values = keys.map((key): number =>
-                            (
-                                table.getColumn(key, true) as
-                                    Array<number>|undefined
-                            )?.[i] || 0
-                        );
-                        croppedDataValues.push(values);
-                    }
-
-                } else {
-                    for (i = 0; i < croppedData.xData.length; i++) {
-                        // (#10774)
-                        croppedDataValues.push([
-                            croppedData.xData[i]
-                        ].concat(
-                            splat(croppedData.yData[i])
-                        ));
-                    }
+                const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
+                for (
+                    let i = 0;
+                    i < (croppedData.modified?.rowCount || 0);
+                    i++
+                ) {
+                    const values = keys.map((key): number =>
+                        this.getColumn(key)[i] || 0
+                    );
+                    croppedDataValues.push(values);
                 }
 
                 oldFirstPointIndex = processedData.xData.indexOf(
@@ -588,23 +557,16 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            if (this.useDataTable) {
-                table.setColumns({
-                    ...valueColumns,
-                    x: processedData.xData as Array<number>
-                });
-            } else {
-                indicator.xData = processedData.xData;
-                indicator.yData = (processedData.yData as any);
-            }
+            table.setColumns({
+                ...valueColumns,
+                x: processedData.xData as Array<number>
+            });
             indicator.options.data = (processedData.values as any);
         }
 
-        // Primarily for test compliance
-        if (indicator.useDataTable) {
-            indicator.xData = table.getColumn('x', true) as Array<number>;
-            indicator.yData = table.getColumn('y', true) as Array<number>;
-        }
+        // Primarily for test compliance - @todo remove
+        indicator.xData = table.getColumn('x', true) as Array<number>;
+        indicator.yData = table.getColumn('y', true) as Array<number>;
 
         if (
             indicator.calculateOn.xAxis &&

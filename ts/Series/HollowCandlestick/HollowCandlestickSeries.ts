@@ -172,12 +172,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            // Processed and grouped data
-            processedYData = series.allGroupedData || series.yData,
             table = series.allGroupedTable || series.table,
-            dataLength = series.useDataTable ?
-                table.rowCount :
-                processedYData?.length,
+            dataLength = table.rowCount,
             hollowCandlestickData = this.hollowCandlestickData;
 
         hollowCandlestickData.length = 0;
@@ -188,30 +184,18 @@ class HollowCandlestickSeries extends CandlestickSeries {
             trendDirection: 'up'
         });
 
-        if (series.useDataTable) {
-            let previousDataArr: DataArr|undefined;
-            for (let i = 1; i < dataLength; i++) {
-                const dataArr = table.getRow(
-                    i,
-                    this.pointArrayMap
-                ) as Array<number>;
+        let previousDataArr: DataArr|undefined;
+        for (let i = 1; i < dataLength; i++) {
+            const dataArr = table.getRow(
+                i,
+                this.pointArrayMap
+            ) as Array<number>;
 
-                hollowCandlestickData.push(series.isBullish(
-                    dataArr,
-                    previousDataArr
-                ));
-                previousDataArr = dataArr;
-            }
-        } else {
-            for (let i = 1; i < dataLength; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = processedYData[i - 1];
-
-                hollowCandlestickData.push(series.isBullish(
-                    dataPoint,
-                    previousDataPoint
-                ));
-            }
+            hollowCandlestickData.push(series.isBullish(
+                dataArr,
+                previousDataArr
+            ));
+            previousDataArr = dataArr;
         }
     }
 
