@@ -97,7 +97,6 @@ function chartHideOverlappingLabels(
         ): boolean => {
             const len = polygon.length,
                 [checkpointX, checkpointY] = p;
-            let inside = false;
 
             for (let i = 0, j = len - 1; i < len; j = i++) {
                 const x1 = ~~polygon[i][0];
@@ -112,10 +111,10 @@ function chartHideOverlappingLabels(
                         x1
                     )
                 ) {
-                    inside = !inside;
+                    return true;
                 }
             }
-            return inside;
+            return false;
         },
         boxCheck = (
             box1Poly: BBoxObject['poly'],
