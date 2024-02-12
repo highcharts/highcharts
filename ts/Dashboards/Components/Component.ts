@@ -379,7 +379,6 @@ abstract class Component {
             true
         );
 
-        this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
         this.setupEventListeners();
 
@@ -451,6 +450,7 @@ abstract class Component {
 
         return this;
     }
+
     /**
     * Filter the sync options that are declared in the component options.
     * Assigns the sync options to the component and to the sync instance.
@@ -472,23 +472,29 @@ abstract class Component {
         ): Sync.OptionsRecord => {
             if (handlerName) {
                 const defaultHandler = defaultHandlers[handlerName];
+                const defaultOptions = Sync.defaultSyncOptions[handlerName];
                 const handler = sync[handlerName];
 
-                if (defaultHandler) {
-                    if (isObject(handler) && handler.enabled) {
-                        const keys: (keyof Sync.OptionsEntry)[] = [
-                            'emitter', 'handler'
-                        ];
+                // Make it always an object
+                carry[handlerName] = merge(
+                    defaultOptions || {},
+                    { enabled: isObject(handler) ? handler.enabled : handler },
+                    isObject(handler) ? handler : {}
+                );
 
-                        carry[handlerName] = {};
-                        for (const key of keys) {
-                            if (
-                                handler[key] === true ||
-                                handler[key] === void 0
-                            ) {
-                                carry[handlerName][key] =
-                                    defaultHandler[key] as any;
-                            }
+                // Set emitter and handler default functions
+                if (defaultHandler && carry[handlerName].enabled) {
+                    const keys: (keyof Sync.OptionsEntry)[] = [
+                        'emitter', 'handler'
+                    ];
+
+                    for (const key of keys) {
+                        if (
+                            carry[handlerName][key] === true ||
+                            carry[handlerName][key] === void 0
+                        ) {
+                            carry[handlerName][key] =
+                                defaultHandler[key] as any;
                         }
                     }
                 }
@@ -846,32 +852,10 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        this.standardizeSyncOptions();
-
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
         }
-
-    }
-
-    /**
-     * Standardizes the sync options to be always an object.
-     *
-     * @internal
-     */
-    protected standardizeSyncOptions(): void {
-        const sync = this.options.sync || {};
-        Object.keys(sync).forEach((handlerName): void => {
-            const handler = sync[handlerName];
-            const defaultOptions = Sync.defaultSyncOptions[handlerName];
-
-            sync[handlerName] = merge(
-                defaultOptions || {},
-                { enabled: isObject(handler) ? handler.enabled : handler },
-                isObject(handler) ? handler : {}
-            );
-        });
     }
 
     /**

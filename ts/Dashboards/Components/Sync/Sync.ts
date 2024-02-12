@@ -164,14 +164,17 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
+
         for (const id of Object.keys(syncConfig)) {
-            if (!syncConfig[id]) {
+            const syncOptions = syncConfig[id];
+            if (!syncOptions) {
                 continue;
             }
+
             let {
                 emitter: emitterConfig,
                 handler: handlerConfig
-            } = syncConfig[id];
+            } = syncOptions;
             if (handlerConfig) {
                 // Avoid registering the same handler multiple times
                 // i.e. panning and selection uses the same handler
@@ -181,12 +184,7 @@ class Sync {
                             .handler as Sync.HandlerConfig;
                 }
 
-                // Create a tuple if the handler is a function.
-                if (typeof handlerConfig === 'function') {
-                    handlerConfig = [id, handlerConfig];
-                }
-
-                const handler = new SyncHandler(...handlerConfig);
+                const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
 
@@ -201,13 +199,7 @@ class Sync {
                             .emitter as Sync.EmitterConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
-                if (typeof emitterConfig === 'function') {
-                    emitterConfig = [id, emitterConfig];
-                }
-
-                const emitter = new SyncEmitter(...emitterConfig);
+                const emitter = new SyncEmitter(id, emitterConfig);
                 if (!this.isRegisteredEmitter(emitter.id)) {
                     this.registerSyncEmitter(emitter);
                     emitter.create(component);
@@ -271,19 +263,10 @@ namespace Sync {
      * */
 
     /** @internal */
-    export type EmitterConfig = (
-        | [SyncEmitter['id'], SyncEmitter['func']]
-        | SyncEmitter['func']
-    );
+    export type EmitterConfig = SyncEmitter['func'];
 
     /** @internal */
-    export type HandlerConfig = (
-        [
-            SyncHandler['id'],
-            SyncHandler['func']
-        ] |
-        SyncHandler['func']
-    );
+    export type HandlerConfig = SyncHandler['func'];
 
     export interface OptionsEntry {
 

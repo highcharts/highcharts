@@ -228,7 +228,6 @@ class HighchartsComponent extends Component {
             true
         );
 
-        this.standardizeSyncOptions();
         this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
