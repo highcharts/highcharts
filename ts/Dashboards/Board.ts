@@ -179,7 +179,7 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init edit mode.
         if (this.guiEnabled) {
             if (!Dashboards.EditMode) {
-                throw new Error('Missing editmode.js module');
+                throw new Error('Missing layout.js module');
             } else {
                 if (!(this.options.editMode &&
                     !this.options.editMode.enabled)
