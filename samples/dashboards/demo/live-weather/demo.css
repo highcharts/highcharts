@@ -445,3 +445,45 @@
 div#description {
     padding: 15px;
 }
+
+#world-map,
+#kpi-layout,
+#selection-grid,
+#city-chart {
+    flex: 1 1 50%;
+}
+
+#kpi-temperature,
+#kpi-wind,
+#kpi-precipitation {
+    height: 204px;
+    flex: 1 1 33.333%;
+}
+
+#html-geo-info {
+    height: 204px;
+    flex: 1 1 100%;
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #kpi-temperature,
+    #kpi-wind,
+    #kpi-precipitation,
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+}
