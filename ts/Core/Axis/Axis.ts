@@ -3258,6 +3258,25 @@ class Axis {
     }
 
     /**
+     * Returns the title defined in axis.options.title,
+     * or the default title depending on axis.coll if the option is unset
+     *
+     * @private
+     */
+    public getAxisTitle(): string | undefined {
+        const axis = this;
+        const axisTitleOptions = axis.options.title;
+
+        if (axisTitleOptions) {
+            return axisTitleOptions.text ?? (
+                axis.coll === 'yAxis' && !('text' in axisTitleOptions) ?
+                    axis.chart.options.lang.yAxisTitle :
+                    ''
+            );
+        }
+    }
+
+    /**
      * Adds the title defined in axis.options.title.
      *
      * @function Highcharts.Axis#addTitle
@@ -3276,7 +3295,6 @@ class Axis {
 
         let textAlign: (AlignValue|undefined);
 
-
         if (!axis.axisTitle) {
             textAlign = axisTitleOptions.textAlign;
             if (!textAlign) {
@@ -3293,15 +3311,9 @@ class Axis {
                 ];
             }
 
-            const text = axisTitleOptions.text ?? (
-                axis.coll === 'yAxis' && !('text' in axisTitleOptions) ?
-                    axis.chart.options.lang.yAxisTitle :
-                    ''
-            );
-
             axis.axisTitle = renderer
                 .text(
-                    text,
+                    axis.getAxisTitle(),
                     0,
                     0,
                     axisTitleOptions.useHTML
@@ -3502,20 +3514,19 @@ class Axis {
         }
 
         if (
-            axisTitleOptions?.text &&
+            axis.getAxisTitle() &&
             axisTitleOptions.enabled !== false
         ) {
             axis.addTitle(showAxis);
 
             if (
+                axis.axisTitle &&
                 showAxis &&
                 !hasCrossing &&
                 axisTitleOptions.reserveSpace !== false
             ) {
                 axis.titleOffset = titleOffset =
-                    (axis.axisTitle as any).getBBox()[
-                        horiz ? 'height' : 'width'
-                    ];
+                    axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
                 titleOffsetOption = axisTitleOptions.offset;
                 titleMargin = defined(titleOffsetOption) ?
                     0 :
