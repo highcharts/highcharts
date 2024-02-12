@@ -27,6 +27,8 @@
 import type Component from './Components/Component';
 import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from './JSON';
+import type EditMode from './EditMode/EditMode';
+import type Fullscreen from './EditMode/Fullscreen';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -34,8 +36,6 @@ import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js'
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
 import DataPool from '../Data/DataPool.js';
-import EditMode from './EditMode/EditMode.js';
-import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
@@ -178,17 +178,21 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // Init edit mode.
         if (this.guiEnabled) {
-            if (
-                EditMode && !(
-                    this.options.editMode &&
-                    !this.options.editMode.enabled
-                )
-            ) {
-                this.editMode = new EditMode(this, this.options.editMode);
-            }
+            if (!Dashboards.EditMode) {
+                throw new Error('Missing layout.js module');
+            } else {
+                if (!(this.options.editMode &&
+                    !this.options.editMode.enabled)
+                ) {
+                    this.editMode = new Dashboards.EditMode(
+                        this,
+                        this.options.editMode
+                    );
 
-            // Add fullscreen support.
-            this.fullscreen = new Fullscreen(this);
+                    // Add fullscreen support.
+                    this.fullscreen = new Dashboards.FullScreen(this);
+                }
+            }
         }
 
         // Add table cursors support.

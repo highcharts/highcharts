@@ -14,6 +14,7 @@ Order of the imports is important, so make sure that the Dashboards module is im
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can also use the NPM package.
