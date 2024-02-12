@@ -170,7 +170,12 @@ function uniqueKey(): string {
  *
  * @return {void}
  */
-function error(code: string, stop?: boolean): void {
+function error(code: number|string, stop?: boolean): void {
+    // TODO- replace with proper error handling
+    if (code === 16) {
+        console.warn('Dashboard error: Dashboards library loaded more than once. This may cause undefined behavior.');
+        return;
+    }
     coreError(code, stop);
 }
 
